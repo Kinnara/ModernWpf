@@ -369,11 +369,83 @@ namespace ModernWpf.Gallery.Tests
             }
 
             Assert.AreEqual(54, mappedFileCount, "The active WPF Gallery code-behind mapping count changed; update the 5.4 public-member scan deliberately.");
-            Assert.AreEqual(154, officialMemberCount, "The active WPF Gallery code-behind public member count changed; update the 5.4 public-member scan deliberately.");
+            Assert.AreEqual(100, officialMemberCount, "The active WPF Gallery code-behind public member count changed; update the 5.4 public-member scan deliberately.");
             Assert.AreEqual(
                 0,
                 missingMembers.Count,
                 "Missing official 5.4 code-behind public member names from local official source:\n" + string.Join("\n", missingMembers));
+        }
+
+        [TestMethod]
+        public void MappedWpfGalleryControlsKeepOfficialPublicMemberNamesFromLocalSource()
+        {
+            var repoRoot = GetRepoRoot();
+            var officialControlsRoot = @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Controls";
+            if (!Directory.Exists(officialControlsRoot))
+            {
+                Assert.Inconclusive("Local official WPF Gallery source was not found at " + officialControlsRoot + ".");
+            }
+
+            var controlMappings = new[]
+            {
+                new
+                {
+                    OfficialFileName = "ColorPageExample.xaml.cs",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Controls", "ColorPageExample.cs")
+                },
+                new
+                {
+                    OfficialFileName = "ColorTile.xaml.cs",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Controls", "ColorTile.cs")
+                },
+                new
+                {
+                    OfficialFileName = "ControlExample.xaml.cs",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Controls", "ControlExample.cs")
+                },
+                new
+                {
+                    OfficialFileName = "HeaderTile.xaml.cs",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Controls", "HeaderTile.xaml.cs")
+                },
+                new
+                {
+                    OfficialFileName = "PageHeader.xaml.cs",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Controls", "PageHeader.cs")
+                },
+                new
+                {
+                    OfficialFileName = "TileGallery.xaml.cs",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Controls", "TileGallery.xaml.cs")
+                }
+            };
+            var missingMembers = new List<string>();
+            var officialMemberCount = 0;
+
+            foreach (var mapping in controlMappings)
+            {
+                var officialPath = Path.Combine(officialControlsRoot, mapping.OfficialFileName);
+                var localPath = Path.Combine(repoRoot, mapping.LocalRelativePath);
+                var officialSource = File.ReadAllText(officialPath);
+                var localSource = File.ReadAllText(localPath);
+                var officialMembers = GetPublicCodeBehindMemberNames(officialSource).ToArray();
+
+                officialMemberCount += officialMembers.Length;
+                foreach (var memberName in officialMembers)
+                {
+                    if (!Regex.IsMatch(localSource, "\\b" + Regex.Escape(memberName) + "\\b"))
+                    {
+                        missingMembers.Add(mapping.OfficialFileName + " :: " + memberName + " -> " + mapping.LocalRelativePath);
+                    }
+                }
+            }
+
+            Assert.AreEqual(6, controlMappings.Length, "The copied/adapted WPF Gallery control mapping count changed; update the 5.4 control public-member scan deliberately.");
+            Assert.AreEqual(29, officialMemberCount, "The official copied/adapted WPF Gallery control public member count changed; update the 5.4 control public-member scan deliberately.");
+            Assert.AreEqual(
+                0,
+                missingMembers.Count,
+                "Missing official 5.4 control public member names from local official source:\n" + string.Join("\n", missingMembers));
         }
 
         [TestMethod]
@@ -496,14 +568,14 @@ namespace ModernWpf.Gallery.Tests
                 Regex
                     .Matches(
                         source,
-                        "(?m)^\\s*public\\s+partial\\s+class\\s+(\\w+)\\b")
+                        "(?m)^\\s*public\\s+(?:partial\\s+)?class\\s+(\\w+)\\b")
                     .Cast<Match>()
                     .Select(match => match.Groups[1].Value));
             members.AddRange(
                 Regex
                     .Matches(
                         source,
-                        "(?m)^\\s*public\\s+(?!class\\b)(?!event\\b)[^\\r\\n{;(=]+?\\s+(\\w+)\\s*\\{")
+                        "(?m)^\\s*public\\s+(?!class\\b)(?!partial\\s+class\\b)(?!event\\b)[^\\r\\n{;(=]+?\\s+(\\w+)\\s*\\{")
                     .Cast<Match>()
                     .Select(match => match.Groups[1].Value));
             members.AddRange(

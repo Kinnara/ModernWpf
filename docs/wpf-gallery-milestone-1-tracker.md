@@ -75,6 +75,24 @@ Current pointer:
    guard this ordering; row 1 is inactive again unless another priority/order
    conflict appears.
 2. Latest guard-automation batch, 2026-05-31: **global order 11 / P2 row
+   5.4** for the mapped WPF Gallery Controls public-member source-shape scan.
+   Selection proof: `SystemParameters.HighContrast` returned `False`; the
+   active row 5.1 sample-pane token guard, row 5.3 automation/name/hook token
+   guard, broad ViewModel observable-field 5.4 guard, broad model
+   public-property 5.4 guard, broad helper public-method 5.4 guard, and active
+   mapped code-behind public-member 5.4 guard passed; global orders 2-9
+   remained recorded or inactive; and local official source
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Controls` exposed a
+   broad non-visible copied/adapted shared-control public-member contract guard.
+   The new
+   `WpfGallerySourceShapeTests.MappedWpfGalleryControlsKeepOfficialPublicMemberNamesFromLocalSource`
+   maps 6 official control code-behind files and checks 29 official public
+   class, constructor, property, and method names. This batch also tightens the
+   shared public-member extractor so the previous active mapped `Views`
+   code-behind guard checks 100 true public member names instead of the stale
+   154 count that included base-type tokens from `public partial class`
+   declarations.
+3. Previous guard-automation batch, 2026-05-31: **global order 11 / P2 row
    5.4** for the active mapped code-behind public-member source-shape scan.
    Selection proof: `SystemParameters.HighContrast` returned `False`; the
    active row 5.1 sample-pane token guard, row 5.3 automation/name/hook token
@@ -85,9 +103,9 @@ Current pointer:
    non-visible copied/adapted code-behind public-member contract guard rather
    than an isolated constructor or summary cleanup. The new
    `WpfGallerySourceShapeTests.ActiveMappedCodeBehindKeepsOfficialPublicMemberNamesFromLocalSource`
-   maps 54 same-name official/local code-behind files and checks 154 official
+   maps 54 same-name official/local code-behind files and checks 100 official
    public class, constructor, property, and method names.
-3. Previous guard-automation batch, 2026-05-31: **global order 11 / P2 row
+4. Previous guard-automation batch, 2026-05-31: **global order 11 / P2 row
    5.4** for the mapped WPF Gallery helper public-method source-shape scan.
    Selection proof: `SystemParameters.HighContrast` returned `False`; the
    active row 5.1 sample-pane token guard, row 5.3 automation/name/hook token
@@ -104,7 +122,7 @@ Current pointer:
    method names. The official `NameToPageTypeConverter` and `Utility` helpers
    remain recorded retained-adapter paths through the local catalog route,
    theme, and window helpers rather than direct copied helper classes.
-4. Previous guard-automation batch, 2026-05-31: **global order 11 / P2 row
+5. Previous guard-automation batch, 2026-05-31: **global order 11 / P2 row
    5.4** for the mapped WPF Gallery model public-property source-shape scan.
    Selection proof: `SystemParameters.HighContrast` returned `False`; the
    active row 5.1 sample-pane token guard, row 5.3 automation/name/hook token
@@ -118,7 +136,7 @@ Current pointer:
    `IconData`, and `User`) to local adapters and checks 27 official public
    property names, including the retained local `UserDashboardUser` adapter for
    official `User`.
-5. Previous guard-automation batch, 2026-05-31: **global order 11 / P2 row
+6. Previous guard-automation batch, 2026-05-31: **global order 11 / P2 row
    5.4** for the mapped WPF Gallery ViewModel observable-field source-shape
    scan. Selection proof: `SystemParameters.HighContrast` returned `False`;
    the active row 5.1 sample-pane token guard and row 5.3
@@ -133,7 +151,7 @@ Current pointer:
    those field names. The only excluded fields are recorded adapters:
    `PageTitle` / `PageDescription` moved to the shared local base class and
    retained-shell `MainWindowViewModel` search/selection state.
-6. Previous guard-automation batch, 2026-05-31: **global order 8 / P2 row
+7. Previous guard-automation batch, 2026-05-31: **global order 8 / P2 row
    5.1** for active mapped-XAML sample-pane code token coverage. A fresh scan
    against local official source
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` found the
@@ -143,7 +161,7 @@ Current pointer:
    fails on any missing official `HeaderText`, `XamlCode`, or `CSharpCode`
    token so visible sample panes cannot drift silently while lower source
    cleanup is in progress.
-7. Previous guard-automation batch, 2026-05-31: **global order 10 / P2 row
+8. Previous guard-automation batch, 2026-05-31: **global order 10 / P2 row
    5.3** for the active mapped-XAML automation/name/hook token scan. The
    previously ad-hoc direct comparison against local official source
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` is now a
@@ -1376,10 +1394,15 @@ entities, and fails on missing official `HeaderText`, `XamlCode`, or
 `CSharpCode` sample-pane tokens; the row 5.3 automation/name/hook token guard
 also remains automated and clean. The latest substantive row is now **global
 order 11 / P2 row 5.4** for
+`WpfGallerySourceShapeTests.MappedWpfGalleryControlsKeepOfficialPublicMemberNamesFromLocalSource`,
+which maps 6 official shared-control code-behind files under local official
+`Controls` and checks 29 official public class, constructor, property, and
+method names. The previous broad 5.4 active code-behind guard is
 `WpfGallerySourceShapeTests.ActiveMappedCodeBehindKeepsOfficialPublicMemberNamesFromLocalSource`,
 which maps 54 same-name official/local code-behind files under local official
-`Views` and checks 154 official public class, constructor, property, and
-method names. The previous broad 5.4 helper guard maps local official
+`Views` and now checks 100 official public class, constructor, property, and
+method names after tightening the shared extractor to avoid base-type tokens
+from class declarations. The previous broad 5.4 helper guard maps local official
 `Helpers`, checks 4 copied/adapted helper classes and 7 official public method
 names, and records the retained local catalog/theme/window adapter paths for
 official `NameToPageTypeConverter` and `Utility`. Earlier broad 5.4 model and
@@ -1673,13 +1696,14 @@ Current row 5 decision:
    `ViewModel.Navigate(typeof(MessageBoxPage));`, and the retained local
    adapter resolves that Type back to `"MessageBox"`. Before selecting 5.4
    again, run the automated 5.1 and 5.3 guards or an equivalent current scan.
-   The latest 5.4 guard maps same-name local official `Views` code-behind
-   files to active local `Pages` code-behind files and checks official public
-   class, constructor, property, and method names; previous broad 5.4 guards
-   map local official `Helpers`, `Models`, and `ViewModels`, checking helper
-   public method names, model public property names, and copied observable
-   backing-field names. These guards were selected instead of isolated
-   constructor, summary, or member-order cleanup.
+   The latest 5.4 guard maps local official `Controls` code-behind files to
+   copied/adapted local shared controls and checks official public class,
+   constructor, property, and method names; previous broad 5.4 guards map
+   local official `Views`, `Helpers`, `Models`, and `ViewModels`, checking
+   active code-behind public member names, helper public method names, model
+   public property names, and copied observable backing-field names. These
+   guards were selected instead of isolated constructor, summary, or
+   member-order cleanup.
 4. Row 5.5 is blocked while any 5.1-5.4 item is current, and 5.4 is blocked
    immediately if any 5.1-5.3 item reopens.
 
@@ -1688,7 +1712,7 @@ Current row 5 decision:
 | 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip with the active mapped-XAML sample-pane guard. `ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource` compares 54 mapped files under local official `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` and local active `Pages`, with entity decoding, for official `HeaderText`, `XamlCode`, and `CSharpCode` tokens. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named or this automated guard fails. |
 | 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns app-manifest runtime compatibility with local official WPF Gallery source by keeping the `true/PM` DPI fallback, `longPathAware`, and active `Microsoft.Windows.Common-Controls` v6 dependency while retaining the local `PerMonitorV2` DPI-awareness adapter. Earlier named 5.2 batches align the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and record the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
 | 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Recorded for the current branch tip with no current named gap after the latest automated mapped-XAML token scan and the current stale-guard correction. `ActiveMappedXamlKeepsOfficialAutomationNameAndHookTokensFromLocalSource` now compares 54 mapped files under local official `Views` and local active `Pages`, with entity decoding, for official `AutomationProperties.Name`, `x:Name`, `Name`, event-hook, and `Command` tokens. The copied `WhatsNewPage` handler guard follows local official WPF Gallery `Views\WhatsNewPage.xaml.cs` by expecting `ViewModel.Navigate(typeof(MessageBoxPage));` and the retained Type-to-`"MessageBox"` route adapter, not the superseded string selector. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, and the copied Iconography direct search-placeholder visibility handlers. | Reopen before 5.4 if a new named resource/key/name/selector/hook gap appears that can affect visuals, behavior, or harness evidence. |
-| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard maps 54 same-name local official WPF Gallery `Views` code-behind files to active local `Pages` code-behind files and checks 154 official public class, constructor, property, and method names. The previous broad 5.4 helper guard maps local official WPF Gallery `Helpers`, checks 4 copied/adapted official helper classes and 7 official public method names, and records the official `NameToPageTypeConverter` / `Utility` helpers as retained local catalog/theme/window adapter paths rather than direct copied helper classes. Earlier broad 5.4 guards map local official WPF Gallery `Models` and `ViewModels`, checking 4 copied/adapted official model classes, 27 official public property names, 57 official ViewModel classes, and 79 official observable backing-field names, with only recorded local adapters excluded. Previous 5.4 guards include the copied Collections `ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex` expression-bodied getter with local official WPF Gallery `ViewModels\Collections\ListViewPageViewModel.cs`; the copied User Dashboard `UserDashboardUser` expression-bodied property getter source shape with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser` optional constructor placeholder and full-constructor parameter source shape with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser` direct copy-constructor assignment block and full-constructor `IsNewGraduate` assignment order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser.Deletedname` field/property member order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `ImageIdToBrushConverter` local-variable type shape with local official WPF Gallery `Helpers\ImageIdToBrushConverter.cs`; copied model XML summary text with local official WPF Gallery `Models\Person.cs` and `Models\IconsData.cs`; copied code-behind interaction-summary text for `ButtonPage`, `CheckBoxPage`, `ComboBoxPage`, `Navigation\Page1`, `Navigation\Page2`, and `Text\RichTextEditPage`; top-level Dashboard code-behind `ViewModel` member placement; the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder; the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named broad guard from local official source with focused tests, scheduler proof, tracker update, and a full Gallery build. |
+| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard maps 6 local official WPF Gallery `Controls` code-behind files to copied/adapted local shared controls and checks 29 official public class, constructor, property, and method names. The previous broad active code-behind guard maps 54 same-name local official WPF Gallery `Views` code-behind files to active local `Pages` code-behind files and now checks 100 official public class, constructor, property, and method names after tightening the shared extractor to avoid base-type tokens from class declarations. Earlier broad 5.4 guards map local official WPF Gallery `Helpers`, `Models`, and `ViewModels`, checking 4 copied/adapted official helper classes, 7 official helper public method names, 4 copied/adapted official model classes, 27 official public property names, 57 official ViewModel classes, and 79 official observable backing-field names, with only recorded local adapters excluded. Previous 5.4 guards include the copied Collections `ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex` expression-bodied getter with local official WPF Gallery `ViewModels\Collections\ListViewPageViewModel.cs`; the copied User Dashboard `UserDashboardUser` expression-bodied property getter source shape with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser` optional constructor placeholder and full-constructor parameter source shape with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser` direct copy-constructor assignment block and full-constructor `IsNewGraduate` assignment order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser.Deletedname` field/property member order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `ImageIdToBrushConverter` local-variable type shape with local official WPF Gallery `Helpers\ImageIdToBrushConverter.cs`; copied model XML summary text with local official WPF Gallery `Models\Person.cs` and `Models\IconsData.cs`; copied code-behind interaction-summary text for `ButtonPage`, `CheckBoxPage`, `ComboBoxPage`, `Navigation\Page1`, `Navigation\Page2`, and `Text\RichTextEditPage`; top-level Dashboard code-behind `ViewModel` member placement; the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder; the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named broad guard from local official source with focused tests, scheduler proof, tracker update, and a full Gallery build. |
 | 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
 
 Latest accepted visual/high-drift priority-correction note:
@@ -2715,6 +2739,65 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- Selection proof and verification for the mapped Controls public-member 5.4
+  source-shape guard:
+  - `git status --short` returned clean before the batch at branch tip
+    `23a607fe`. `SystemParameters.HighContrast` returned `False`.
+    `TrackerPriorityTests`, the active row 5.1 mapped-XAML sample-pane guard,
+    the active row 5.3 mapped-XAML automation/name/hook guard, the broad
+    ViewModel observable-field 5.4 guard, the broad model public-property 5.4
+    guard, the broad helper public-method 5.4 guard, and the active mapped
+    code-behind public-member 5.4 guard passed before selecting this 5.4 work.
+    The selected rank is **global order 11 / P2 row 5.4**, because global
+    orders 2-9 are recorded or inactive for the current branch tip, P2 rows
+    2-4 are recorded by the latest retained Light/Dark reports, rows 5.1-5.3
+    remain recorded/clean, and local official source
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Controls` exposes a
+    broad non-visible copied/adapted shared-control public-member contract
+    guard. This batch adds
+    `WpfGallerySourceShapeTests.MappedWpfGalleryControlsKeepOfficialPublicMemberNamesFromLocalSource`,
+    mapping 6 official shared-control code-behind files to copied/adapted local
+    shared controls and checking 29 official public class, constructor,
+    property, and method names. It also tightens the shared public-member
+    extractor so
+    `WpfGallerySourceShapeTests.ActiveMappedCodeBehindKeepsOfficialPublicMemberNamesFromLocalSource`
+    checks 100 true public member names instead of the stale 154 count that
+    included `Page`, `Window`, or `UserControl` base-type tokens from public
+    class declarations.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter "TrackerPriorityTests|ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource|ActiveMappedXamlKeepsOfficialAutomationNameAndHookTokensFromLocalSource|MappedWpfGalleryViewModelsKeepOfficialObservableFieldNamesFromLocalSource|MappedWpfGalleryModelsKeepOfficialPublicPropertyNamesFromLocalSource|MappedWpfGalleryHelpersKeepOfficialPublicMethodNamesFromLocalSource|ActiveMappedCodeBehindKeepsOfficialPublicMemberNamesFromLocalSource" --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 10 tests per
+    target before selecting row 5.4. Existing warning/output remains `NU1903`,
+    generated WinRT warnings, and recurring `Failed to resolve
+    WinRT.Runtime.dll` messages.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter "ActiveMappedCodeBehindKeepsOfficialPublicMemberNamesFromLocalSource|MappedWpfGalleryControlsKeepOfficialPublicMemberNamesFromLocalSource" --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 2 tests per
+    target after adding the local-official Controls public-member guard and
+    correcting the active code-behind public-member extraction count. Existing
+    warning/output remains `NU1903` and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter WpfGallerySourceShapeTests --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 87 tests per
+    target after adding the Controls public-member guard. Existing
+    warning/output remains `NU1903` and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter TrackerPriorityTests --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per
+    target after updating the tracker current pointer, Current Order Lock, and
+    row 5.4 queue for the Controls public-member guard. Existing
+    warning/output remains `NU1903` and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the Controls public-member guard, with 19 existing warnings and 0 errors.
+    Recurring output still includes `Failed to resolve WinRT.Runtime.dll`.
+- `git diff --check`
+  - Passed after the Controls public-member guard and tracker update, with
+    only the existing LF/CRLF working-copy warnings for touched files.
+  - No visual audit was rerun for this batch because no product code, XAML,
+    visual asset, or visual-check harness surface changed; the latest
+    visual/high-drift evidence above remains the scheduler gate and any new
+    visual, High Contrast, high-drift, asset, measurement, automation, or
+    harness trigger still preempts row 5 source cleanup.
 - Selection proof and verification for the active mapped code-behind
   public-member 5.4 source-shape guard:
   - `git status --short` returned clean before the batch at branch tip
@@ -2731,8 +2814,9 @@ Latest local verification for the current branch tip:
     rather than an isolated constructor, summary, or member-order cleanup.
     This batch adds
     `WpfGallerySourceShapeTests.ActiveMappedCodeBehindKeepsOfficialPublicMemberNamesFromLocalSource`,
-    mapping 54 same-name official/local code-behind files and checking 154
-    official public class, constructor, property, and method names.
+    mapping 54 same-name official/local code-behind files. The current
+    corrected extractor checks 100 official public class, constructor,
+    property, and method names.
 - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter "TrackerPriorityTests|ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource|ActiveMappedXamlKeepsOfficialAutomationNameAndHookTokensFromLocalSource|MappedWpfGalleryViewModelsKeepOfficialObservableFieldNamesFromLocalSource|MappedWpfGalleryModelsKeepOfficialPublicPropertyNamesFromLocalSource|MappedWpfGalleryHelpersKeepOfficialPublicMethodNamesFromLocalSource" --no-restore -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 9 tests per
     target before selecting row 5.4. Existing warning/output remains `NU1903`,
