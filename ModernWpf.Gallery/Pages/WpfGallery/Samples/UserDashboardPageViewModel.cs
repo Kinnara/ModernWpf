@@ -216,7 +216,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
                 "Room 1426, 7394 Welch Alley, Huntsville, Alabama, United States",
                 "20th Floor, 11 Eastwood Road, El Paso, Texas, United States",
                 "Suite 92, 9 Hermina Point, Bakersfield, United States",
-                string.Empty
+                ""
             };
 
             for (int i = 0; i < 20; i++)
@@ -239,9 +239,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         private void AddUser()
         {
-            var user = new UserDashboardUser("New User", string.Empty);
-            Users.Add(user);
-            SelectedUser = user;
+            Users.Add(new UserDashboardUser("New User", ""));
+            SelectedUser = Users.Last();
             IsReadOnly = false;
             IsEditing = true;
         }
