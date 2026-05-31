@@ -706,21 +706,41 @@ Current distance to completion:
 1. The higher visual, real OS High Contrast, high-drift, asset, measurement,
    automation, and harness rows are recorded or inactive for the current branch
    tip, not permanently complete.
-2. This turn is row 1 because the user reported a priority/order conflict.
+2. The user-reported priority/order conflict was recorded by the front-door
+   selector update; row 1 is inactive again unless a new scheduler ambiguity
+   appears.
 3. The next substantive row is not open-ended row 5.4. It can remain global
    order 11 only if another broad 5.4 guard survives the local-official-source
    proof. Thin member-shape cleanup, root shell adapter trivia, or stale
    historical notes are not enough.
-4. If no broad 5.4 candidate survives, record row 5.5 bookkeeping/not
-   applicable, then run row 6/final verification. Any reopened item from rows
-   2-10 stops closeout and becomes the next task.
+4. The row 5.5 bookkeeping pass found no remaining current broad 5.4 candidate
+   after the inventory recorded below. Row 6/final verification is therefore
+   the current lower bucket. Any reopened item from rows 2-10 stops closeout
+   and becomes the next task.
 
 Current active selection snapshot:
 
 1. The user-requested priority/order hygiene edit is recorded by this ordering
    update. It is inactive again unless a new priority/order conflict appears;
    rows 2-7 explicitly outrank all row 5 source cleanup.
-2. The latest visual/high-drift path is **global orders 3, 4, 5, and 7 /
+2. Current bookkeeping/verification batch, 2026-05-31: **global order 12 /
+   P2 row 5.5**, then **global order 13 / P2 row 6** for final verification.
+   Selection proof: worktree was clean at `5975efc9`; `SystemParameters.HighContrast`
+   returned `False`; the priority, active row 5.1 mapped-XAML, active row 5.3
+   mapped-XAML, and existing broad 5.4 source-shape gates passed for both test
+   targets; global orders 2-10 remained recorded or inactive. The remaining
+   row 5.4 inventory did not produce another broad local-official-source guard:
+   the helper public-member broadening maps only the four already-covered
+   helper adapters and would add only class-name trivia beyond the existing
+   method guard; root `App.xaml.cs` / `MainWindow.xaml.cs` are shell/DI/runtime
+   adapters rather than a broad copied source module; official
+   `NavigationService` / `NavigatingEventArgs` are intentionally represented by
+   retained local shell navigation adapters and existing 5.3 source-hook
+   coverage; and `Resources` / XAML gaps remain higher row 5.2/5.3 or visual
+   work if new named evidence appears. No product code, XAML, visual asset, or
+   visual-check harness surface changed in this bookkeeping/verification batch,
+   so the latest visual/high-drift reports below remain the scheduler gate.
+3. The latest visual/high-drift path is **global orders 3, 4, 5, and 7 /
    visible drift, retained ModernWpf/WinUI high-drift visual triage, P2 row 2
    freshness, and P2 row 4 interaction/harness parity** for the
    `CommandBarFlyout` retained-control interaction evidence path.
@@ -916,12 +936,13 @@ Current active selection snapshot:
    for the current branch tip.
 20. Global orders 2-9 are recorded or inactive for the current branch tip and
    must be rechecked before every new substantive batch.
-21. P2 rows 2-4 are recorded for the current branch tip. P2 row 6 and general
-   tracker cleanup remain blocked while row 5 has executable work.
-22. Inside row 5, rows 5.1 and 5.2 are recorded for the current branch tip after
-   the `ColorTile` visibility-template batch. Row 5.3 currently has no named
-   executable gap, so row 5.4 is the current row-5 sub-bucket; row 5.5 stays
-   blocked while any row 5.1-5.4 item is current.
+21. P2 rows 2-4 are recorded for the current branch tip. P2 row 6/final
+   verification is selectable only after row 5.5 and stays preempted by any
+   reopened higher-priority evidence.
+22. Inside row 5, rows 5.1 and 5.2 are recorded for the current branch tip
+   after the `ColorTile` visibility-template batch. Row 5.3 currently has no
+   named executable gap, row 5.4 has no remaining broad current candidate after
+   the row 5.5 inventory, and row 5.5 is recorded for the current branch tip.
 23. Recorded forward-command selection proof, 2026-05-31:
    `SystemParameters.HighContrast` returned `False`. The selected substantive
    row was **global order 10 / P2 row
@@ -1474,13 +1495,13 @@ recently touched.
 | 8 | P2 row 5.1 sample panes and runtime-visible example content | Reopen before 5.2 or 5.3 for any named visible sample/content gap. |
 | 9 | P2 row 5.2 source-backed visible/runtime structure | Recorded by the latest `ColorTile` visibility-template batch; always reopen before 5.3 for any structural gap that can affect layout, resources, interaction, automation, or harness behavior. |
 | 10 | P2 row 5.3 resource-key, naming, selector, and source-hook parity tied to behavior | Reopen before 5.4 if any new named 5.3 gap appears; otherwise recorded/no-current-gap after the latest scan. |
-| 11 | P2 row 5.4 non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. |
-| 12 | P2 row 5.5 row-5 bookkeeping and stale-status cleanup | Blocked until substantive row 5 items are recorded or not applicable. |
-| 13 | P2 row 6 and final closeout cleanup | Last; only after row 5 is recorded or explicitly not applicable and the final verification sweep is current. |
+| 11 | P2 row 5.4 non-visible copied/adapted source-shape guards | Recorded for the current branch tip; reopen only if rows 5.1-5.3 remain clean and a new broad local-official-source candidate survives proof. |
+| 12 | P2 row 5.5 row-5 bookkeeping and stale-status cleanup | Recorded for the current branch tip by the latest row 5.4 inventory. |
+| 13 | P2 row 6 and final closeout cleanup | Current lower bucket after row 5.5; stop immediately if any higher row reopens. |
 
 After the latest `CommandBarFlyout` retained-control visual/interaction/harness
-batch is recorded, the current row 5 path has two automated higher row-5
-guards ahead of any row 5.4 work: the row 5.1 sample-pane guard
+batch is recorded, any reopened row 5.4 path has two automated higher row-5
+guards ahead of it: the row 5.1 sample-pane guard
 `WpfGallerySourceShapeTests.ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource`
 maps 54 active local/official XAML files under local official
 `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views`, decodes XAML
@@ -1522,9 +1543,17 @@ names, and records the retained local catalog/theme/window adapter paths for
 official `NameToPageTypeConverter` and `Utility`. Earlier broad 5.4 model and
 ViewModel guards map local official `Models` and `ViewModels`, checking 27
 official public property names and 79 official observable backing-field names.
-The next substantive row may remain in 5.4 only if the row 5.1, 5.2, and 5.3
-guards stay recorded/clean and another named 5.4 guard survives the full proof
-again.
+The latest row 5.5 inventory records no remaining current broad 5.4 guard:
+`Helpers` public-member broadening is too thin because it only covers the four
+already-mapped helper adapters and adds class-name trivia beyond the existing
+public-method guard; top-level `App.xaml.cs` / `MainWindow.xaml.cs` are
+shell/runtime adapters with only a small public surface; official
+`NavigationService` / `NavigatingEventArgs` have no direct copied local module
+and remain represented by retained shell navigation adapters plus existing 5.3
+source-hook coverage; and `Resources` / XAML remain higher row 5.2/5.3 or
+visual work if a new named gap appears. Row 5.4 reopens only if a new broad,
+non-visible copied/adapted source-shape guard is proven from local official
+source after rows 5.1-5.3 stay clean.
 The latest retained high-drift evidence is
 `artifacts/visual-checks/20260531-203633-033-63888/report.md` and
 `artifacts/visual-checks/20260531-203756-601-64316/report.md`; both record
@@ -1725,18 +1754,17 @@ Current P2 state:
    the current row 4 automation/harness verifier is recorded in Latest local
    verification. These supersede older per-row section evidence paths for
    scheduling.
-5. When resuming from the current branch tip with no new P0, row 7, row 8, or
-   row 4 trigger, the next selectable P2 work is row 5. This is the only reason
-   row 5 is currently selectable; any new visual, High Contrast, high-drift,
-   asset, measurement, automation, or harness evidence immediately closes row 5
-   again. While row 5 is selectable, use the `P2 Row 5 Internal Queue`; the
-   current known row 5.1 Color subsection visible-content guard and row 5.2
-   visible/runtime-facing structural items are recorded, including the current
-   app-manifest runtime-compatibility batch and the `ColorTile`
-   warning/separator visibility-template batch. The next row 5
-   selection starts at row 5.3 unless a new sample-pane, runtime-visible
-   example-content, or visible/runtime-facing structural gap appears.
-6. Row 6 remains blocked until row 5 is recorded or not applicable.
+5. Row 5 is recorded for the current branch tip through the row 5.5
+   bookkeeping inventory. Rows 5.1-5.3 remain guarded by the active mapped
+   XAML gates, and the remaining 5.4 inventory found no current broad
+   local-official-source candidate beyond the recorded ViewModel, model,
+   catalog, control, code-behind, helper, property, and observable-field
+   guards. Any new sample-pane, runtime-visible content, structural,
+   source-hook, resource, naming, selector, or broad 5.4 evidence reopens row
+   5 before final closeout.
+6. Row 6/final verification is the current lower bucket after row 5.5. It is
+   not allowed to override any reopened visual, High Contrast, high-drift,
+   asset, measurement, automation, harness, or row 5 evidence.
 
 | P2 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
@@ -1744,8 +1772,8 @@ Current P2 state:
 | 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest focused WPF Gallery Light/Dark reports `artifacts/wpf-gallery-visual-audit/20260531-183709-517-35000/report.md` / `artifacts/wpf-gallery-visual-audit/20260531-183606-886-14072/report.md` and refreshed retained-control Light/Dark reports `artifacts/visual-checks/20260531-203633-033-63888/report.md` / `artifacts/visual-checks/20260531-203756-601-64316/report.md` in Row 8 and Latest local verification. CommandBarFlyout records UIA-sourced matching `80x72 vs 80x72` open crops with interaction crop deltas Light `3.53` / Dark `1.69`. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: the executable `ApplicationIcon` now points to the official WPF Gallery `Assets\AppIcons\WPFGallery.ico` asset, non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
 | 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Recorded at branch tip. The latest row 4 batch fixes the retained `CommandBarFlyout` interaction/harness evidence path after fresh Light checks failed to prove the installed WinUI reference open state. The harness now captures interaction frames without reactivating the target window, keeps native screen-copy fallback behind failed `CopyFromScreen`, and retries CommandBarFlyout open through click, InvokePattern, and Space only until expected open command UIA names appear. Earlier row 4 interaction batches for Iconography reload/current-page behavior, Iconography whitespace search filtering, shared `ControlExample.Copy_SourceCode`, Iconography copy behavior, MessageBox net10 button values, and TileGallery scroll-back visibility remain recorded. | Reopen only for new named measurement, interaction, automation, or harness-impacting evidence. |
-| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations, Design Guidance Color subsection visible example-content guards, Iconography instructions Expander inline/source structure, Design Guidance Spacing/Geometry default design-image `Source` resource fallback, Navigation `FrameWindow` same-folder `Frame.Source` behavior, Navigation `NavigationWindow` runtime URI/template-resource behavior, MainWindow/title-bar plus NavigationRoot footer style resource keys, SectionPage retained-extension scroll-host structural lookup/no-local-name hooks, NavigationRootPage content-frame Border structural lookup/no-local-name hook, NavigationRootPage Settings footer event-handler naming/sender-notification parity, NavigationRootPage High Contrast pane-edge cover structural lookup/no-local-name hook, NavigationRootPage visual-test status panel structural lookup/no-local-name hooks, ShellNavigation rendered-artifact crop hardening, MainWindow retained NavigationRootPage host structural lookup/no-local-name hook, NavigationRootPage retained content Frame structural lookup/no-local-name hook, NavigationRootPage retained NavigationView structural lookup/no-local-name hook, NavigationRootPage Settings footer official command-binding path through the retained PaneFooter BindingProxy bridge, MainWindow title-bar `WindowChrome.IsHitTestVisibleInChrome` attached-property source shape, Design Guidance Color `ColorsPage` class/file naming, Design Guidance Icons `IconsPage` / `IconsPageViewModel` class/file naming plus the official `Copy_Content` command selector and official direct search-placeholder visibility handlers, top-level and section WPF Gallery navigation view-model `Navigate(object pageType)` Type gates with retained local route fallbacks, top-level `DashboardPage` / `AllSamplesPage` class/file naming while preserving the retained `Home` / `AllControls` routes and visual artifact IDs, official WPF Gallery display-route aliases such as `Date & Calendar`, `Status & Info`, `Design Guidance`, `Basic Input`, `Colors`, `Icons`, `File and Folder Dialogs`, `User Dashboard`, `All Controls`, and `Home` resolving to retained local route IDs, WPF visual-audit launch routes using those official display IDs with canonical ready-route waits, and direct page registry display-ID normalization for official item IDs, with focused source-shape/runtime tests, full Gallery builds, and refreshed Color, Iconography, Home/AllControls, DateAndCalendar/StatusAndInfo, FileAndFolderDialogs, UserDashboard, Spacing/Geometry, Frame, NavigationWindow, ShellNavigation, and BasicInput Light/Dark visual audits recorded in Latest local verification. | Continue only with the first executable item from the `P2 Row 5 Internal Queue`; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
-| 6 | Pure tracker/status cleanup and documentation-only work | Last; blocked by row 5 except row 1 priority/order fixes. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
+| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Recorded for the current branch tip through row 5.5. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations, Design Guidance Color subsection visible example-content guards, Iconography instructions Expander inline/source structure, Design Guidance Spacing/Geometry default design-image `Source` resource fallback, Navigation `FrameWindow` same-folder `Frame.Source` behavior, Navigation `NavigationWindow` runtime URI/template-resource behavior, MainWindow/title-bar plus NavigationRoot footer style resource keys, SectionPage retained-extension scroll-host structural lookup/no-local-name hooks, NavigationRootPage content-frame Border structural lookup/no-local-name hook, NavigationRootPage Settings footer event-handler naming/sender-notification parity, NavigationRootPage High Contrast pane-edge cover structural lookup/no-local-name hook, NavigationRootPage visual-test status panel structural lookup/no-local-name hooks, ShellNavigation rendered-artifact crop hardening, MainWindow retained NavigationRootPage host structural lookup/no-local-name hook, NavigationRootPage retained content Frame structural lookup/no-local-name hook, NavigationRootPage retained NavigationView structural lookup/no-local-name hook, NavigationRootPage Settings footer official command-binding path through the retained PaneFooter BindingProxy bridge, MainWindow title-bar `WindowChrome.IsHitTestVisibleInChrome` attached-property source shape, Design Guidance Color `ColorsPage` class/file naming, Design Guidance Icons `IconsPage` / `IconsPageViewModel` class/file naming plus the official `Copy_Content` command selector and official direct search-placeholder visibility handlers, top-level and section WPF Gallery navigation view-model `Navigate(object pageType)` Type gates with retained local route fallbacks, top-level `DashboardPage` / `AllSamplesPage` class/file naming while preserving the retained `Home` / `AllControls` routes and visual artifact IDs, official WPF Gallery display-route aliases such as `Date & Calendar`, `Status & Info`, `Design Guidance`, `Basic Input`, `Colors`, `Icons`, `File and Folder Dialogs`, `User Dashboard`, `All Controls`, and `Home` resolving to retained local route IDs, WPF visual-audit launch routes using those official display IDs with canonical ready-route waits, and direct page registry display-ID normalization for official item IDs, with focused source-shape/runtime tests, full Gallery builds, and refreshed Color, Iconography, Home/AllControls, DateAndCalendar/StatusAndInfo, FileAndFolderDialogs, UserDashboard, Spacing/Geometry, Frame, NavigationWindow, ShellNavigation, and BasicInput Light/Dark visual audits recorded in Latest local verification. The row 5.5 inventory records no remaining current broad row 5.4 candidate. | Reopen immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears, or if rows 5.1-5.4 get new named evidence. Otherwise continue to row 6/final verification. |
+| 6 | Pure tracker/status cleanup and documentation-only work | Current only as row 6/final verification after row 5.5 recorded no remaining current broad 5.4 candidate. | Use only for final verification/closeout bookkeeping; stop if any higher row reopens. |
 
 Current row 5 summary addendum: the latest row 5.3 navigation view-model batch
 aligns top-level and section `Navigate(object pageType)` source hooks with the
@@ -1798,7 +1826,7 @@ Current row 5 decision:
    layout, resources, keyboard, interaction, automation, or visual-harness
    behavior. The current `ColorTile` warning/separator visibility-template
    structural item is recorded by this batch.
-3. Otherwise 5.4 is active only for named non-visible copied/adapted
+3. Otherwise 5.4 reopens only for named non-visible copied/adapted
    source-shape guards after the 5.3 source-hook guards and local official
    source comparison remain clean. The active mapped-XAML scan is now
    automated by
@@ -1821,16 +1849,21 @@ Current row 5 decision:
    member names, helper public method names, model public property names, and
    copied observable backing-field names. These guards were selected instead
    of isolated constructor, summary, or member-order cleanup.
-4. Row 5.5 is blocked while any 5.1-5.4 item is current, and 5.4 is blocked
-   immediately if any 5.1-5.3 item reopens.
+4. Row 5.5 records the current inventory: no remaining broad 5.4 candidate
+   survived proof. Helper public-member broadening is thin; root
+   `App.xaml.cs` / `MainWindow.xaml.cs` are shell/runtime adapters; official
+   `NavigationService` / `NavigatingEventArgs` are represented by retained
+   shell adapters; and `Resources` / XAML remain higher 5.2/5.3 or visual work
+   if new named evidence appears. Row 5.4 is blocked immediately if any
+   5.1-5.3 item reopens.
 
 | Row 5 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
 | 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip with the active mapped-XAML sample-pane guard. `ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource` compares 54 mapped files under local official `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` and local active `Pages`, with entity decoding, for official `HeaderText`, `XamlCode`, and `CSharpCode` tokens. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named or this automated guard fails. |
 | 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns app-manifest runtime compatibility with local official WPF Gallery source by keeping the `true/PM` DPI fallback, `longPathAware`, and active `Microsoft.Windows.Common-Controls` v6 dependency while retaining the local `PerMonitorV2` DPI-awareness adapter. Earlier named 5.2 batches align the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and record the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
 | 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Recorded for the current branch tip with no current named gap after the latest automated mapped-XAML token scan and the current stale-guard correction. `ActiveMappedXamlKeepsOfficialAutomationNameAndHookTokensFromLocalSource` now compares 54 mapped files under local official `Views` and local active `Pages`, with entity decoding, for official `AutomationProperties.Name`, `x:Name`, `Name`, event-hook, and `Command` tokens. The copied `WhatsNewPage` handler guard follows local official WPF Gallery `Views\WhatsNewPage.xaml.cs` by expecting `ViewModel.Navigate(typeof(MessageBoxPage));` and the retained Type-to-`"MessageBox"` route adapter, not the superseded string selector. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, and the copied Iconography direct search-placeholder visibility handlers. | Reopen before 5.4 if a new named resource/key/name/selector/hook gap appears that can affect visuals, behavior, or harness evidence. |
-| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard maps 4 local official WPF Gallery `Models` files to local copied/adapted models and checks 30 official public type, constructor, property, and method names, with the official `User` type/constructor name recorded as the local `UserDashboardUser` adapter. The previous named 5.4 guard maps 57 local official WPF Gallery `ViewModels` classes to local copied/adapted ViewModels and checks 76 official public class, constructor, property, and method names, with `MainWindowViewModel.UpdateSearchText` recorded as a local shell/search adapter. The previous named 5.4 guard extracts `ControlInfoDataItem` from local official WPF Gallery `Models\ControlsInfoDataSource.cs` and checks the 10 retained public member names against local `GalleryGroup` / `GalleryItem`, with `IconGlyph`, `PageName`, and `IsGroup` recorded as catalog/navigation adapters. The previous named 5.4 guard maps 6 local official WPF Gallery `Controls` code-behind files to copied/adapted local shared controls and checks 29 official public class, constructor, property, and method names. The previous broad active code-behind guard maps 54 same-name local official WPF Gallery `Views` code-behind files to active local `Pages` code-behind files and now checks 100 official public class, constructor, property, and method names after tightening the shared extractor to avoid base-type tokens from class declarations. Earlier broad 5.4 guards map local official WPF Gallery `Helpers`, `Models`, and `ViewModels`, checking 4 copied/adapted official helper classes, 7 official helper public method names, 4 copied/adapted official model classes, 27 official public property names, 57 official ViewModel classes, and 79 official observable backing-field names, with only recorded local adapters excluded. Previous 5.4 guards include the copied Collections `ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex` expression-bodied getter with local official WPF Gallery `ViewModels\Collections\ListViewPageViewModel.cs`; the copied User Dashboard `UserDashboardUser` expression-bodied property getter source shape with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser` optional constructor placeholder and full-constructor parameter source shape with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser` direct copy-constructor assignment block and full-constructor `IsNewGraduate` assignment order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser.Deletedname` field/property member order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `ImageIdToBrushConverter` local-variable type shape with local official WPF Gallery `Helpers\ImageIdToBrushConverter.cs`; copied model XML summary text with local official WPF Gallery `Models\Person.cs` and `Models\IconsData.cs`; copied code-behind interaction-summary text for `ButtonPage`, `CheckBoxPage`, `ComboBoxPage`, `Navigation\Page1`, `Navigation\Page2`, and `Text\RichTextEditPage`; top-level Dashboard code-behind `ViewModel` member placement; the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder; the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named broad guard from local official source with focused tests, scheduler proof, tracker update, and a full Gallery build. |
-| 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
+| 5.4 | Non-visible copied/adapted source-shape guards | Recorded for the current branch tip; no remaining current broad candidate survived the row 5.5 inventory. The latest named 5.4 guard maps 4 local official WPF Gallery `Models` files to local copied/adapted models and checks 30 official public type, constructor, property, and method names, with the official `User` type/constructor name recorded as the local `UserDashboardUser` adapter. The previous named 5.4 guard maps 57 local official WPF Gallery `ViewModels` classes to local copied/adapted ViewModels and checks 76 official public class, constructor, property, and method names, with `MainWindowViewModel.UpdateSearchText` recorded as a local shell/search adapter. The previous named 5.4 guard extracts `ControlInfoDataItem` from local official WPF Gallery `Models\ControlsInfoDataSource.cs` and checks the 10 retained public member names against local `GalleryGroup` / `GalleryItem`, with `IconGlyph`, `PageName`, and `IsGroup` recorded as catalog/navigation adapters. The previous named 5.4 guard maps 6 local official WPF Gallery `Controls` code-behind files to copied/adapted local shared controls and checks 29 official public class, constructor, property, and method names. The previous broad active code-behind guard maps 54 same-name local official WPF Gallery `Views` code-behind files to active local `Pages` code-behind files and now checks 100 official public class, constructor, property, and method names after tightening the shared extractor to avoid base-type tokens from class declarations. Earlier broad 5.4 guards map local official WPF Gallery `Helpers`, `Models`, and `ViewModels`, checking 4 copied/adapted official helper classes, 7 official helper public method names, 4 copied/adapted official model classes, 27 official public property names, 57 official ViewModel classes, and 79 official observable backing-field names, with only recorded local adapters excluded. Previous 5.4 guards include the copied Collections `ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex` expression-bodied getter with local official WPF Gallery `ViewModels\Collections\ListViewPageViewModel.cs`; the copied User Dashboard `UserDashboardUser` expression-bodied property getter source shape with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser` optional constructor placeholder and full-constructor parameter source shape with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser` direct copy-constructor assignment block and full-constructor `IsNewGraduate` assignment order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser.Deletedname` field/property member order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `ImageIdToBrushConverter` local-variable type shape with local official WPF Gallery `Helpers\ImageIdToBrushConverter.cs`; copied model XML summary text with local official WPF Gallery `Models\Person.cs` and `Models\IconsData.cs`; copied code-behind interaction-summary text for `ButtonPage`, `CheckBoxPage`, `ComboBoxPage`, `Navigation\Page1`, `Navigation\Page2`, and `Text\RichTextEditPage`; top-level Dashboard code-behind `ViewModel` member placement; the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder; the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Reopen only for a new named broad guard from local official source with focused tests, scheduler proof, tracker update, and a full Gallery build. |
+| 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Recorded for the current branch tip by the row 5.4 inventory. Helper public-member broadening, root shell public surface, official Navigation service types, and Resources/XAML were all classified as either too thin, retained adapters, or higher-priority 5.2/5.3/visual work. | Proceed to row 6/final verification unless any higher row or row 5 item reopens. |
 
 Latest accepted visual/high-drift priority-correction note:
 
@@ -2856,6 +2889,58 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- Selection proof, row 5.5 inventory, and row 6 verification sweep:
+  - `git status --short` returned clean before the batch at branch tip
+    `5975efc9`. `SystemParameters.HighContrast` returned `False`.
+    `TrackerPriorityTests`, the active row 5.1 mapped-XAML sample-pane guard,
+    the active row 5.3 mapped-XAML automation/name/hook guard, the broad
+    ViewModel observable-field 5.4 guard, the broad ViewModel public-member
+    5.4 guard, the broad model public-property 5.4 guard, the broad model
+    public-member 5.4 guard, the broad helper public-method 5.4 guard, the
+    active mapped code-behind public-member 5.4 guard, the mapped Controls
+    public-member 5.4 guard, and the mapped catalog item public-member 5.4
+    guard passed before recording row 5.5. The selected rank is **global order
+    12 / P2 row 5.5**, followed by **global order 13 / P2 row 6**, because
+    global orders 2-10 stayed recorded or inactive and no remaining broad 5.4
+    candidate survived proof.
+  - Row 5.4 inventory: local official source root
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery` was inspected for
+    remaining broad copied/adapted source areas. `Helpers` public-member
+    broadening was rejected as too thin because the four copied/adapted helper
+    classes already pass the public-method guard and broadening would add only
+    class-name trivia; official `NameToPageTypeConverter` and `Utility` remain
+    recorded local catalog/theme/window adapters. Root `App.xaml.cs` /
+    `MainWindow.xaml.cs` were rejected as a small shell/DI/runtime adapter
+    surface rather than a broad copied module. Official
+    `Navigation\NavigationService.cs` and `Navigation\NavigatedEventArgs.cs`
+    were rejected because there is no direct local copied module; their
+    behavior is represented by retained shell navigation adapters and existing
+    5.3 source-hook coverage. `Resources` and active XAML stay higher 5.2/5.3
+    or visual work if new named evidence appears.
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter "TrackerPriorityTests|ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource|ActiveMappedXamlKeepsOfficialAutomationNameAndHookTokensFromLocalSource|MappedWpfGalleryViewModelsKeepOfficialObservableFieldNamesFromLocalSource|MappedWpfGalleryViewModelsKeepOfficialPublicMemberNamesFromLocalSource|MappedWpfGalleryModelsKeepOfficialPublicPropertyNamesFromLocalSource|MappedWpfGalleryModelsKeepOfficialPublicMemberNamesFromLocalSource|MappedWpfGalleryHelpersKeepOfficialPublicMethodNamesFromLocalSource|ActiveMappedCodeBehindKeepsOfficialPublicMemberNamesFromLocalSource|MappedWpfGalleryControlsKeepOfficialPublicMemberNamesFromLocalSource|MappedWpfGalleryCatalogItemsKeepOfficialPublicMemberNamesFromLocalSource" --no-build --no-restore -p:UseSharedCompilation=false`
+    - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 14 tests per
+      target before recording row 5.5.
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter WpfGallerySourceShapeTests --no-build --no-restore -p:UseSharedCompilation=false`
+    - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 90 tests per
+      target in the row 6 verification sweep.
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --no-build --no-restore -p:UseSharedCompilation=false`
+    - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 541 tests per
+      target in the row 6 verification sweep.
+  - `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+    - Passed for `net462`, `net8.0-windows7.0`, and
+      `net10.0-windows7.0`: 104 existing warnings and 0 errors. Recurring
+      output still includes `Failed to resolve WinRT.Runtime.dll`.
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter "TrackerPriorityTests|ActiveMappedXamlKeepsOfficialSamplePaneCodeTokensFromLocalSource|ActiveMappedXamlKeepsOfficialAutomationNameAndHookTokensFromLocalSource|MappedWpfGalleryViewModelsKeepOfficialObservableFieldNamesFromLocalSource|MappedWpfGalleryViewModelsKeepOfficialPublicMemberNamesFromLocalSource|MappedWpfGalleryModelsKeepOfficialPublicPropertyNamesFromLocalSource|MappedWpfGalleryModelsKeepOfficialPublicMemberNamesFromLocalSource|MappedWpfGalleryHelpersKeepOfficialPublicMethodNamesFromLocalSource|ActiveMappedCodeBehindKeepsOfficialPublicMemberNamesFromLocalSource|MappedWpfGalleryControlsKeepOfficialPublicMemberNamesFromLocalSource|MappedWpfGalleryCatalogItemsKeepOfficialPublicMemberNamesFromLocalSource" --no-build --no-restore -p:UseSharedCompilation=false`
+    - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 14 tests per
+      target after updating the tracker for row 5.5 and row 6.
+  - `git diff --check`
+    - Passed after the row 5.5 / row 6 tracker update, with only the existing
+      LF/CRLF working-copy warning for the touched tracker file.
+  - No visual audit was rerun for this bookkeeping/verification batch because
+    no product code, XAML, visual asset, or visual-check harness surface
+    changed; the latest visual/high-drift evidence above remains the scheduler
+    gate and any new visual, High Contrast, high-drift, asset, measurement,
+    automation, or harness trigger still preempts closeout.
 - Selection proof and verification for the mapped model public-member 5.4
   source-shape guard:
   - `git status --short` returned clean before the batch at branch tip
@@ -8796,9 +8881,11 @@ Immediate execution rule for the next round:
 2. Visual, real OS High Contrast, high-drift retained-control, asset,
    measurement, interaction, automation, and harness evidence always preempts
    row 5 source-shape/resource-key/name/selector cleanup.
-3. P2 row 5.4 is currently selectable only after the proof in `Current Order
-   Lock` is current for the branch tip; row 5.5 and P2 row 6 remain blocked
-   while any 5.1-5.4 item or higher-priority evidence is current.
+3. P2 row 5.4 reopens only after the proof in `Current Order Lock` is current
+   for the branch tip and a new broad local-official-source candidate survives;
+   row 5.5 is recorded by the latest inventory, and P2 row 6/final
+   verification is the current lower bucket unless any 5.1-5.4 item or
+   higher-priority evidence reopens.
 
 The direct-reference section baseline is now refreshed for Light and Dark, and
 Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media,
