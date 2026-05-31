@@ -449,6 +449,37 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void MappedWpfGalleryCatalogItemsKeepOfficialPublicMemberNamesFromLocalSource()
+        {
+            var repoRoot = GetRepoRoot();
+            var officialModelsRoot = @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models";
+            if (!Directory.Exists(officialModelsRoot))
+            {
+                Assert.Inconclusive("Local official WPF Gallery source was not found at " + officialModelsRoot + ".");
+            }
+
+            var officialSource = File.ReadAllText(Path.Combine(officialModelsRoot, "ControlsInfoDataSource.cs"));
+            var officialItemSource = ExtractPublicClassSource(officialSource, "ControlInfoDataItem");
+            var officialMembers = GetPublicPropertyNames(officialItemSource)
+                .Concat(GetPublicMethodNames(officialItemSource))
+                .Where(memberName => !IsOfficialCatalogItemMemberAdaptedAway(memberName))
+                .Distinct(StringComparer.Ordinal)
+                .OrderBy(memberName => memberName, StringComparer.Ordinal)
+                .ToArray();
+
+            var localSource = File.ReadAllText(Path.Combine(repoRoot, "ModernWpf.Gallery", "Models", "GalleryCatalog.cs"));
+            var missingMembers = officialMembers
+                .Where(memberName => !Regex.IsMatch(localSource, "\\b" + Regex.Escape(memberName) + "\\b"))
+                .ToArray();
+
+            Assert.AreEqual(10, officialMembers.Length, "The retained WPF Gallery catalog item public-member count changed; update the 5.4 catalog item scan deliberately.");
+            Assert.AreEqual(
+                0,
+                missingMembers.Length,
+                "Missing official 5.4 catalog item public member names from local official source:\n" + string.Join("\n", missingMembers));
+        }
+
+        [TestMethod]
         public void CopiedWpfGalleryCodeBehindClassesStayUnsealedLikeOfficialSource()
         {
             var repoRoot = GetRepoRoot();
@@ -539,6 +570,42 @@ namespace ModernWpf.Gallery.Tests
 
             return className == "MainWindowViewModel"
                 && (fieldName == "_controls" || fieldName == "_selectedControl");
+        }
+
+        private static bool IsOfficialCatalogItemMemberAdaptedAway(string memberName)
+        {
+            return memberName == "IconGlyph" ||
+                memberName == "PageName" ||
+                memberName == "IsGroup";
+        }
+
+        private static string ExtractPublicClassSource(string source, string className)
+        {
+            var classMatch = Regex.Match(source, "public\\s+(?:sealed\\s+)?class\\s+" + Regex.Escape(className) + "\\b");
+            Assert.IsTrue(classMatch.Success, "Missing public class " + className + " in official WPF Gallery source.");
+
+            var braceIndex = source.IndexOf('{', classMatch.Index);
+            Assert.IsTrue(braceIndex >= 0, "Missing opening brace for public class " + className + ".");
+
+            var depth = 0;
+            for (var index = braceIndex; index < source.Length; index++)
+            {
+                if (source[index] == '{')
+                {
+                    depth++;
+                }
+                else if (source[index] == '}')
+                {
+                    depth--;
+                    if (depth == 0)
+                    {
+                        return source.Substring(classMatch.Index, index - classMatch.Index + 1);
+                    }
+                }
+            }
+
+            Assert.Fail("Missing closing brace for public class " + className + ".");
+            return string.Empty;
         }
 
         private static IEnumerable<string> GetPublicPropertyNames(string source)
