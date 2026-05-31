@@ -1472,6 +1472,11 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(UpdateSourceTrigger.PropertyChanged, textBinding.UpdateSourceTrigger);
                 Assert.AreEqual(1, textBinding.ValidationRules.Count);
                 Assert.AreEqual("AlphabeticValidationRule", textBinding.ValidationRules[0].GetType().Name);
+                Assert.AreEqual(ValidationResult.ValidResult, textBinding.ValidationRules[0].Validate(string.Empty, System.Globalization.CultureInfo.InvariantCulture));
+                Assert.AreEqual(ValidationResult.ValidResult, textBinding.ValidationRules[0].Validate("Alphabetic", System.Globalization.CultureInfo.InvariantCulture));
+                var invalidResult = textBinding.ValidationRules[0].Validate("abc123", System.Globalization.CultureInfo.InvariantCulture);
+                Assert.IsFalse(invalidResult.IsValid);
+                Assert.AreEqual("Only English alphabetic characters (a-z, A-Z) are allowed.", invalidResult.ErrorContent);
 
                 var multilineTextBox = (TextBox)textBoxExamples[2].ExampleContent;
                 Assert.IsTrue(multilineTextBox.AcceptsReturn);

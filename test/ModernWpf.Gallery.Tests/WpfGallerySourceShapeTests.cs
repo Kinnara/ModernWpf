@@ -542,6 +542,25 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void TextValidationRuleKeepsOfficialAlphabeticSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Helpers",
+                "AlphabeticValidationRule.cs");
+
+            AssertContainsInOrder(
+                source,
+                "/// Validation rule that ensures the input contains only English alphabetic characters (a-z, A-Z).",
+                "public class AlphabeticValidationRule : ValidationRule",
+                "var input = value as string;",
+                "if (string.IsNullOrEmpty(input))",
+                "// Check if the input contains only English alphabetic characters (a-z, A-Z)",
+                "if (!Regex.IsMatch(input, @\"^[a-zA-Z]+$\"))",
+                "return new ValidationResult(false, \"Only English alphabetic characters (a-z, A-Z) are allowed.\");");
+        }
+
+        [TestMethod]
         public void SimpleItemViewModelsKeepOfficialObservableTitleSourceShape()
         {
             var dateSource = ReadRepoFile(
