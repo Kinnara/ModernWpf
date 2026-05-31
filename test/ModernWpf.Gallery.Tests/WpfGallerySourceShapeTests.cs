@@ -1458,6 +1458,21 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryProjectKeepsWpfGalleryApplicationIconShape()
+        {
+            var project = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "ModernWpf.Gallery.csproj");
+
+            StringAssert.Contains(
+                project,
+                "<ApplicationIcon>Assets\\AppIcons\\WPFGallery.ico</ApplicationIcon>");
+            Assert.IsFalse(
+                project.Contains("<ApplicationIcon>Assets\\Tiles\\GalleryIcon.ico</ApplicationIcon>", StringComparison.Ordinal),
+                "The Gallery executable icon should use the official WPF Gallery AppIcons asset instead of the legacy tile icon.");
+        }
+
+        [TestMethod]
         public void MainWindowViewModelKeepsWpfGalleryCommandHandlerSourceShape()
         {
             var source = ReadRepoFile(

@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net462;net8.0-windows7.0;net10.0-windows7.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Assets\Tiles\GalleryIcon.ico</ApplicationIcon>
+    <ApplicationIcon>Assets\AppIcons\WPFGallery.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
