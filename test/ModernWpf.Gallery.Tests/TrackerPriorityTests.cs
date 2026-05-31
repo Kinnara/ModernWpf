@@ -120,10 +120,12 @@ namespace ModernWpf.Gallery.Tests
                 .ToList();
 
             Assert.AreEqual(
-                23,
+                22,
                 nonDoneRows.Count,
                 string.Join(", ", nonDoneRows.Select(row => row.Name + " " + row.Status)));
 
+            Assert.AreEqual("Done/Done/Done", ReadWorkingChecklistRows(tracker).Single(row => row.Name == "What's New").Status);
+            Assert.IsFalse(nonDoneRows.Any(row => row.Name == "What's New"), "What's New has current 0/0 visual evidence and should not remain a completion-audit blocker.");
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "All Controls");
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "Status & Info section");
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "System section");
@@ -131,7 +133,7 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 tracker,
                 "Working Checklist page/status completion audit:",
-                "table still has 23 rows with at least one non-`Done` status",
+                "table still has 22 rows with at least one non-`Done` status",
                 "`Home`",
                 "`System section`",
                 "These are",
