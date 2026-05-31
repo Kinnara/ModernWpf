@@ -1350,6 +1350,8 @@ namespace ModernWpf.Gallery.Tests
                 "x:Name=\"GroupItemsControl\"",
                 "AutomationProperties.Name=\"GalleryItemPageTitle\"",
                 "GalleryNav_",
+                "ModernWpfGroupScrollViewer",
+                "ModernWpfGroupItemsControl",
                 "ModernWpfGalleryMainWindow",
                 "GalleryNavigationRoot",
                 "GalleryNavigationView",

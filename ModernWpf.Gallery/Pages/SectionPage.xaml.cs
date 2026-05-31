@@ -29,7 +29,7 @@ namespace ModernWpf.Gallery.Pages
             if (IsModernWpfExtensionSection(group.UniqueId))
             {
                 GetOfficialGroupItemsControl().Visibility = System.Windows.Visibility.Collapsed;
-                ModernWpfGroupScrollViewer.Visibility = System.Windows.Visibility.Visible;
+                GetModernWpfExtensionScrollViewer().Visibility = System.Windows.Visibility.Visible;
             }
         }
 
@@ -104,6 +104,12 @@ namespace ModernWpf.Gallery.Pages
         {
             var root = (Grid)Content;
             return root.Children.OfType<ItemsControl>().Single();
+        }
+
+        private ScrollViewer GetModernWpfExtensionScrollViewer()
+        {
+            var root = (Grid)Content;
+            return root.Children.OfType<ScrollViewer>().Single();
         }
     }
 }

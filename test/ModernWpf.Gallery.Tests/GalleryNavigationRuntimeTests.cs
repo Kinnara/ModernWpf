@@ -914,12 +914,15 @@ namespace ModernWpf.Gallery.Tests
                 {
                     AssertReferencePageHeader(FindVisualChildren<PageHeader>(modernWpfSectionPage).Single(), modernWpfGroup.Title, modernWpfGroup.PageDescription, true);
                     Assert.AreEqual(Visibility.Collapsed, GetOfficialSectionItemsControl(modernWpfSectionPage).Visibility);
-                    var scrollViewer = (ScrollViewer)modernWpfSectionPage.FindName("ModernWpfGroupScrollViewer");
+                    Assert.IsNull(modernWpfSectionPage.FindName("ModernWpfGroupScrollViewer"));
+                    Assert.IsNull(modernWpfSectionPage.FindName("ModernWpfGroupItemsControl"));
+                    var scrollViewer = GetModernWpfExtensionScrollViewer(modernWpfSectionPage);
                     Assert.AreEqual(Visibility.Visible, scrollViewer.Visibility);
                     Assert.AreEqual(1, Grid.GetRow(scrollViewer));
                     Assert.AreEqual(new Thickness(0), scrollViewer.Margin);
                     Assert.AreEqual(ScrollBarVisibility.Auto, scrollViewer.VerticalScrollBarVisibility);
-                    var itemsControl = (ItemsControl)modernWpfSectionPage.FindName("ModernWpfGroupItemsControl");
+                    var itemsControl = scrollViewer.Content as ItemsControl;
+                    Assert.IsNotNull(itemsControl);
                     AssertNavigationItemsControl(itemsControl, "Items in group");
                     AssertBindingPath(itemsControl, ItemsControl.ItemsSourceProperty, "ViewModel.NavigationCards");
                     AssertRenderedNavigationCard(itemsControl, modernWpfGroup.Items.First().Title, modernWpfGroup.Items.First().Description, modernWpfSectionPage.ViewModel.NavigateCommand);
@@ -1359,6 +1362,14 @@ namespace ModernWpf.Gallery.Tests
             var itemsControl = root.Children.OfType<ItemsControl>().Single();
             Assert.AreEqual(string.Empty, itemsControl.Name);
             return itemsControl;
+        }
+
+        private static ScrollViewer GetModernWpfExtensionScrollViewer(SectionPage sectionPage)
+        {
+            var root = GetOfficialSectionRoot(sectionPage);
+            var scrollViewer = root.Children.OfType<ScrollViewer>().Single();
+            Assert.AreEqual(string.Empty, scrollViewer.Name);
+            return scrollViewer;
         }
 
         private static Grid GetOfficialSectionRoot(SectionPage sectionPage)
