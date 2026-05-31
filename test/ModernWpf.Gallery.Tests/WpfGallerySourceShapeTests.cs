@@ -326,6 +326,73 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void MappedWpfGalleryModelsKeepOfficialPublicMemberNamesFromLocalSource()
+        {
+            var repoRoot = GetRepoRoot();
+            var officialModelsRoot = @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models";
+            if (!Directory.Exists(officialModelsRoot))
+            {
+                Assert.Inconclusive("Local official WPF Gallery source was not found at " + officialModelsRoot + ".");
+            }
+
+            var modelMappings = new[]
+            {
+                new
+                {
+                    OfficialFileName = "Product.cs",
+                    OfficialClassName = "Product",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Models", "Product.cs")
+                },
+                new
+                {
+                    OfficialFileName = "Person.cs",
+                    OfficialClassName = "Person",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Models", "Person.cs")
+                },
+                new
+                {
+                    OfficialFileName = "IconsData.cs",
+                    OfficialClassName = "IconData",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "DesignGuidance", "IconData.cs")
+                },
+                new
+                {
+                    OfficialFileName = "User.cs",
+                    OfficialClassName = "User",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "Samples", "UserDashboardUser.cs")
+                }
+            };
+            var missingMembers = new List<string>();
+            var officialMemberCount = 0;
+
+            foreach (var mapping in modelMappings)
+            {
+                var officialPath = Path.Combine(officialModelsRoot, mapping.OfficialFileName);
+                var localPath = Path.Combine(repoRoot, mapping.LocalRelativePath);
+                var officialMembers = GetPublicModelMemberNames(File.ReadAllText(officialPath))
+                    .Where(memberName => !IsOfficialModelPublicMemberAdaptedAway(mapping.OfficialClassName, memberName))
+                    .ToArray();
+                var localSource = File.ReadAllText(localPath);
+
+                officialMemberCount += officialMembers.Length;
+                foreach (var memberName in officialMembers)
+                {
+                    if (!Regex.IsMatch(localSource, "\\b" + Regex.Escape(memberName) + "\\b"))
+                    {
+                        missingMembers.Add(mapping.OfficialClassName + "." + memberName + " -> " + mapping.LocalRelativePath);
+                    }
+                }
+            }
+
+            Assert.AreEqual(4, modelMappings.Length, "The copied/adapted WPF Gallery model mapping count changed; update the 5.4 model public-member scan deliberately.");
+            Assert.AreEqual(30, officialMemberCount, "The official copied/adapted WPF Gallery model public member count changed; update the 5.4 model public-member scan deliberately.");
+            Assert.AreEqual(
+                0,
+                missingMembers.Count,
+                "Missing official 5.4 model public member names from local official source:\n" + string.Join("\n", missingMembers));
+        }
+
+        [TestMethod]
         public void MappedWpfGalleryHelpersKeepOfficialPublicMethodNamesFromLocalSource()
         {
             var repoRoot = GetRepoRoot();
@@ -643,6 +710,11 @@ namespace ModernWpf.Gallery.Tests
             return className == "MainWindowViewModel" && memberName == "UpdateSearchText";
         }
 
+        private static bool IsOfficialModelPublicMemberAdaptedAway(string className, string memberName)
+        {
+            return className == "User" && memberName == "User";
+        }
+
         private static bool IsOfficialCatalogItemMemberAdaptedAway(string memberName)
         {
             return memberName == "IconGlyph" ||
@@ -697,6 +769,29 @@ namespace ModernWpf.Gallery.Tests
                     "(?m)^\\s*public\\s+(?:override\\s+)?[^\\r\\n(;=]+?\\s+(\\w+)\\s*\\(")
                 .Cast<Match>()
                 .Select(match => match.Groups[1].Value);
+        }
+
+        private static IEnumerable<string> GetPublicModelMemberNames(string source)
+        {
+            var members = new List<string>();
+            members.AddRange(
+                Regex
+                    .Matches(
+                        source,
+                        "(?m)^\\s*public\\s+(?:partial\\s+)?(?:class|record)\\s+(\\w+)\\b")
+                    .Cast<Match>()
+                    .Select(match => match.Groups[1].Value));
+            members.AddRange(GetPublicPropertyNames(source));
+            members.AddRange(
+                Regex
+                    .Matches(
+                        source,
+                        "(?m)^\\s*public\\s+(\\w+)\\s*\\(")
+                    .Cast<Match>()
+                    .Select(match => match.Groups[1].Value));
+            members.AddRange(GetPublicMethodNames(source));
+
+            return members.Distinct(StringComparer.Ordinal).OrderBy(memberName => memberName, StringComparer.Ordinal);
         }
 
         private static IEnumerable<string> GetPublicCodeBehindMemberNames(string source)
