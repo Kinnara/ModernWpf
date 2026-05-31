@@ -898,6 +898,21 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void IconographyReloadKeepsWpfGalleryCurrentPage()
+        {
+            var viewModel = new IconsPageViewModel();
+            viewModel.LoadDataCommand.Execute(null);
+            Assert.IsTrue(viewModel.NextPageCommand.CanExecute(null));
+
+            viewModel.NextPageCommand.Execute(null);
+            Assert.AreEqual(2, viewModel.CurrentPage);
+
+            viewModel.LoadDataCommand.Execute(null);
+
+            Assert.AreEqual(2, viewModel.CurrentPage);
+        }
+
+        [TestMethod]
         public void DesignGuidanceItemPagesUseOfficialPageRoots()
         {
             WpfTestHost.Run(() =>

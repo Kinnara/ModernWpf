@@ -401,6 +401,7 @@ namespace ModernWpf.Gallery.Tests
                 "AllIcons = ReadIconData().ToList();",
                 "SelectedIcon = AllIcons.FirstOrDefault();",
                 "SearchFilteredIcons = new ObservableCollection<IconData>(AllIcons);",
+                "UpdatePagination();",
                 "private int PageSize => SelectedPageSizeIndex == 4",
                 "? int.MaxValue",
                 ": int.Parse(PageSizeOptions[SelectedPageSizeIndex]);",
@@ -425,6 +426,13 @@ namespace ModernWpf.Gallery.Tests
                 "private void UpdateDisplayedIcons(bool resetSelectedIcon = true)",
                 "var skip = (CurrentPage - 1) * pageSize;",
                 "var iconsToDisplay = pageSize == int.MaxValue");
+
+            var loadDataStart = iconographySource.IndexOf("private void LoadData()", StringComparison.Ordinal);
+            var pageSizeStart = iconographySource.IndexOf("private int PageSize", loadDataStart, StringComparison.Ordinal);
+            var loadDataSource = iconographySource.Substring(loadDataStart, pageSizeStart - loadDataStart);
+            Assert.IsFalse(
+                loadDataSource.Contains("CurrentPage = 1;", StringComparison.Ordinal),
+                "Iconography LoadData should keep the official WPF Gallery reload behavior instead of forcing the current page back to 1.");
             Assert.IsFalse(
                 iconographySource.Contains("public event PropertyChangedEventHandler", StringComparison.Ordinal),
                 "Iconography should use the shared observable page-view-model adapter instead of local event plumbing.");

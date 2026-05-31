@@ -136,7 +136,6 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             AllIcons = ReadIconData().ToList();
             SelectedIcon = AllIcons.FirstOrDefault();
             SearchFilteredIcons = new ObservableCollection<IconData>(AllIcons);
-            CurrentPage = 1;
             UpdatePagination();
         }
 
