@@ -193,6 +193,72 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void MappedWpfGalleryViewModelsKeepOfficialPublicMemberNamesFromLocalSource()
+        {
+            var repoRoot = GetRepoRoot();
+            var officialViewModelsRoot = @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels";
+            if (!Directory.Exists(officialViewModelsRoot))
+            {
+                Assert.Inconclusive("Local official WPF Gallery source was not found at " + officialViewModelsRoot + ".");
+            }
+
+            var localSources = Directory
+                .EnumerateFiles(Path.Combine(repoRoot, "ModernWpf.Gallery"), "*.cs", SearchOption.AllDirectories)
+                .Where(path => !path.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                .Where(path => !path.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                .Select(path => new
+                {
+                    Path = path,
+                    Source = File.ReadAllText(path)
+                })
+                .ToList();
+            var missingMembers = new List<string>();
+            var mappedClassCount = 0;
+            var officialMemberCount = 0;
+
+            foreach (var officialPath in Directory.EnumerateFiles(officialViewModelsRoot, "*.cs", SearchOption.AllDirectories))
+            {
+                var officialSource = File.ReadAllText(officialPath);
+                var classMatch = Regex.Match(officialSource, "public\\s+partial\\s+class\\s+(\\w+)");
+                if (!classMatch.Success)
+                {
+                    continue;
+                }
+
+                var className = classMatch.Groups[1].Value;
+                var localSource = localSources.FirstOrDefault(file =>
+                    Regex.IsMatch(file.Source, "\\bclass\\s+" + Regex.Escape(className) + "\\b"));
+                if (localSource == null)
+                {
+                    missingMembers.Add(Path.GetRelativePath(officialViewModelsRoot, officialPath) + " :: missing local class " + className);
+                    continue;
+                }
+
+                mappedClassCount++;
+                var officialRelativePath = Path.GetRelativePath(officialViewModelsRoot, officialPath);
+                var officialMembers = GetPublicCodeBehindMemberNames(officialSource)
+                    .Where(memberName => !IsOfficialViewModelPublicMemberAdaptedAway(className, memberName))
+                    .ToArray();
+
+                officialMemberCount += officialMembers.Length;
+                foreach (var memberName in officialMembers)
+                {
+                    if (!Regex.IsMatch(localSource.Source, "\\b" + Regex.Escape(memberName) + "\\b"))
+                    {
+                        missingMembers.Add(officialRelativePath + " :: " + className + "." + memberName + " -> " + Path.GetRelativePath(repoRoot, localSource.Path));
+                    }
+                }
+            }
+
+            Assert.AreEqual(57, mappedClassCount, "The active WPF Gallery ViewModel mapping count changed; update the 5.4 public-member scan deliberately.");
+            Assert.AreEqual(76, officialMemberCount, "The active WPF Gallery ViewModel public member count changed; update the 5.4 public-member scan deliberately.");
+            Assert.AreEqual(
+                0,
+                missingMembers.Count,
+                "Missing official 5.4 ViewModel public member names from local official source:\n" + string.Join("\n", missingMembers));
+        }
+
+        [TestMethod]
         public void MappedWpfGalleryModelsKeepOfficialPublicPropertyNamesFromLocalSource()
         {
             var repoRoot = GetRepoRoot();
@@ -570,6 +636,11 @@ namespace ModernWpf.Gallery.Tests
 
             return className == "MainWindowViewModel"
                 && (fieldName == "_controls" || fieldName == "_selectedControl");
+        }
+
+        private static bool IsOfficialViewModelPublicMemberAdaptedAway(string className, string memberName)
+        {
+            return className == "MainWindowViewModel" && memberName == "UpdateSearchText";
         }
 
         private static bool IsOfficialCatalogItemMemberAdaptedAway(string memberName)
