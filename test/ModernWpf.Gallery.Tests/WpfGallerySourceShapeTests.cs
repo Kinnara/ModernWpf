@@ -121,6 +121,78 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void MappedWpfGalleryViewModelsKeepOfficialObservableFieldNamesFromLocalSource()
+        {
+            var repoRoot = GetRepoRoot();
+            var officialViewModelsRoot = @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels";
+            if (!Directory.Exists(officialViewModelsRoot))
+            {
+                Assert.Inconclusive("Local official WPF Gallery source was not found at " + officialViewModelsRoot + ".");
+            }
+
+            var localSources = Directory
+                .EnumerateFiles(Path.Combine(repoRoot, "ModernWpf.Gallery"), "*.cs", SearchOption.AllDirectories)
+                .Where(path => !path.Contains(Path.DirectorySeparatorChar + "bin" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                .Where(path => !path.Contains(Path.DirectorySeparatorChar + "obj" + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+                .Select(path => new
+                {
+                    Path = path,
+                    Source = File.ReadAllText(path)
+                })
+                .ToList();
+            var missingFields = new List<string>();
+            var mappedClassCount = 0;
+            var officialFieldCount = 0;
+
+            foreach (var officialPath in Directory.EnumerateFiles(officialViewModelsRoot, "*.cs", SearchOption.AllDirectories))
+            {
+                var officialSource = File.ReadAllText(officialPath);
+                var classMatch = Regex.Match(officialSource, "public\\s+partial\\s+class\\s+(\\w+)");
+                if (!classMatch.Success)
+                {
+                    continue;
+                }
+
+                var className = classMatch.Groups[1].Value;
+                var localSource = localSources.FirstOrDefault(file =>
+                    Regex.IsMatch(file.Source, "\\bclass\\s+" + Regex.Escape(className) + "\\b"));
+                if (localSource == null)
+                {
+                    missingFields.Add(Path.GetRelativePath(officialViewModelsRoot, officialPath) + " :: missing local class " + className);
+                    continue;
+                }
+
+                mappedClassCount++;
+                var officialRelativePath = Path.GetRelativePath(officialViewModelsRoot, officialPath);
+                var officialFields = Regex
+                    .Matches(
+                        officialSource,
+                        "\\[ObservableProperty\\]\\s*(?:\\r?\\n\\s*)private\\s+[^;]*\\s+(_\\w+)\\b[^;]*;")
+                    .Cast<Match>()
+                    .Select(match => match.Groups[1].Value)
+                    .Where(fieldName => !IsOfficialObservableFieldAdaptedAway(className, fieldName))
+                    .Distinct(StringComparer.Ordinal)
+                    .OrderBy(fieldName => fieldName, StringComparer.Ordinal);
+
+                foreach (var fieldName in officialFields)
+                {
+                    officialFieldCount++;
+                    if (!localSource.Source.Contains(fieldName, StringComparison.Ordinal))
+                    {
+                        missingFields.Add(officialRelativePath + " :: " + className + "." + fieldName);
+                    }
+                }
+            }
+
+            Assert.AreEqual(57, mappedClassCount, "The active WPF Gallery ViewModel mapping count changed; update the 5.4 observable-field scan deliberately.");
+            Assert.AreEqual(79, officialFieldCount, "The active WPF Gallery observable field count changed; update the 5.4 observable-field scan deliberately.");
+            Assert.AreEqual(
+                0,
+                missingFields.Count,
+                "Missing official 5.4 observable backing-field names from local official source:\n" + string.Join("\n", missingFields));
+        }
+
+        [TestMethod]
         public void CopiedWpfGalleryCodeBehindClassesStayUnsealedLikeOfficialSource()
         {
             var repoRoot = GetRepoRoot();
@@ -200,6 +272,17 @@ namespace ModernWpf.Gallery.Tests
                 .Replace("\r", string.Empty)
                 .Replace("\n", string.Empty)
                 .Replace("\t", string.Empty);
+        }
+
+        private static bool IsOfficialObservableFieldAdaptedAway(string className, string fieldName)
+        {
+            if (fieldName == "_pageTitle" || fieldName == "_pageDescription")
+            {
+                return true;
+            }
+
+            return className == "MainWindowViewModel"
+                && (fieldName == "_controls" || fieldName == "_selectedControl");
         }
 
         private static string GetOfficialCodeBehindSummaryName(string className, string xamlFileName)
