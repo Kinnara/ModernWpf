@@ -9,85 +9,12 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 {
     public abstract class CollectionsPageViewModelBase : WpfGalleryPageViewModel
     {
-        // Visual audits compare two processes; fixed seeds remove false drift from source-matching random samples.
-        private const int BasicListViewVisualTestSeed = 22043;
-        private const int GridViewVisualTestSeed = 22044;
-
         protected CollectionsPageViewModelBase(string pageTitle)
             : base(pageTitle, string.Empty)
         {
         }
 
-        protected static ObservableCollection<Person> GenerateBasicListViewPersons()
-        {
-            return GeneratePersons(BasicListViewVisualTestSeed);
-        }
-
-        protected static ObservableCollection<Person> GenerateGridViewPersons()
-        {
-            return GeneratePersons(GridViewVisualTestSeed);
-        }
-
-        private static ObservableCollection<Person> GeneratePersons(int visualTestSeed)
-        {
-            var random = CreateSampleRandom(visualTestSeed);
-            var persons = new ObservableCollection<Person>();
-            var names = new[]
-            {
-                "John",
-                "Winston",
-                "Adrianna",
-                "Spencer",
-                "Phoebe",
-                "Lucas",
-                "Carl",
-                "Marissa",
-                "Brandon",
-                "Antoine",
-                "Arielle",
-                "Arielle",
-                "Jamie",
-                "Alexander"
-            };
-            var surnames = new[]
-            {
-                "Doe",
-                "Tapia",
-                "Cisneros",
-                "Lynch",
-                "Munoz",
-                "Marsh",
-                "Hudson",
-                "Bartlett",
-                "Gregory",
-                "Banks",
-                "Hood",
-                "Fry",
-                "Carroll"
-            };
-            var companies = new[]
-            {
-                "Luminary Nexus",
-                "CrestWave Dynamics",
-                "Horizon Ventures",
-                "Sapphire Pulse Technologies",
-                "EmberLight Industries",
-                "StellarEdge Ventrues",
-                "Elysium Crest Holdings"
-            };
-
-            for (int i = 0; i < 50; i++)
-                persons.Add(
-                    new Person(
-                        names[random.Next(0, names.Length)],
-                        surnames[random.Next(0, surnames.Length)],
-                        companies[random.Next(0, companies.Length)]
-                    )
-                );
-
-            return persons;
-        }
-
+        // Visual audits compare two processes; fixed seeds remove false drift from source-matching random samples.
         private protected static GallerySampleRandom CreateSampleRandom(int visualTestSeed)
         {
             return GalleryDiagnostics.IsEnabled
@@ -169,6 +96,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 
     public partial class ListViewPageViewModel : CollectionsPageViewModelBase
     {
+        private const int BasicListViewVisualTestSeed = 22043;
+        private const int GridViewVisualTestSeed = 22044;
         private int _listViewSelectionModeComboBoxSelectedIndex = 0;
 
         public int ListViewSelectionModeComboBoxSelectedIndex
@@ -188,8 +117,69 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
         public ListViewPageViewModel()
             : base("ListView")
         {
-            _basicListViewItems = GenerateBasicListViewPersons();
-            _gridViewItems = GenerateGridViewPersons();
+            _basicListViewItems = GeneratePersons(BasicListViewVisualTestSeed);
+            _gridViewItems = GeneratePersons(GridViewVisualTestSeed);
+        }
+
+        private ObservableCollection<Person> GeneratePersons(int visualTestSeed)
+        {
+            var random = CreateSampleRandom(visualTestSeed);
+            var persons = new ObservableCollection<Person>();
+
+            var names = new[]
+            {
+                "John",
+                "Winston",
+                "Adrianna",
+                "Spencer",
+                "Phoebe",
+                "Lucas",
+                "Carl",
+                "Marissa",
+                "Brandon",
+                "Antoine",
+                "Arielle",
+                "Arielle",
+                "Jamie",
+                "Alexander"
+            };
+            var surnames = new[]
+            {
+                "Doe",
+                "Tapia",
+                "Cisneros",
+                "Lynch",
+                "Munoz",
+                "Marsh",
+                "Hudson",
+                "Bartlett",
+                "Gregory",
+                "Banks",
+                "Hood",
+                "Fry",
+                "Carroll"
+            };
+            var companies = new[]
+            {
+                "Luminary Nexus",
+                "CrestWave Dynamics",
+                "Horizon Ventures",
+                "Sapphire Pulse Technologies",
+                "EmberLight Industries",
+                "StellarEdge Ventrues",
+                "Elysium Crest Holdings"
+            };
+
+            for (int i = 0; i < 50; i++)
+                persons.Add(
+                    new Person(
+                        names[random.Next(0, names.Length)],
+                        surnames[random.Next(0, surnames.Length)],
+                        companies[random.Next(0, companies.Length)]
+                    )
+                );
+
+            return persons;
         }
 
         public SelectionMode ListViewSelectionMode
