@@ -3,6 +3,9 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Controls
 {
+    /// <summary>
+    /// Interaction logic for TileGallery.xaml
+    /// </summary>
     public partial class TileGallery : UserControl
     {
         public TileGallery()

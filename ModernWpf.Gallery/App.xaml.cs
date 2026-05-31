@@ -7,6 +7,9 @@ using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery
 {
+    /// <summary>
+    /// Interaction logic for App.xaml
+    /// </summary>
     public partial class App
     {
         protected override void OnStartup(StartupEventArgs e)

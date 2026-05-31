@@ -10,6 +10,9 @@ using ModernWpf.Gallery.ViewModels;
 
 namespace ModernWpf.Gallery
 {
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
     public partial class MainWindow
     {
         private static readonly Version OSVersion = GetOSVersion();

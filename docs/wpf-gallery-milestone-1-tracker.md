@@ -5,7 +5,21 @@ Last updated: 2026-05-31
 ## Current Order Lock
 
 Use this block before every new work batch. It overrides any lower section that
-looks convenient or recently edited.
+looks convenient or recently edited. This is a scheduling contract, not a
+progress summary.
+
+Non-negotiable sort:
+
+1. Real OS High Contrast visual/harness evidence preempts everything.
+2. Visible drift, high-drift retained-control visuals, assets, measurements,
+   interaction, automation, and harness-impacting work always preempt general
+   source-shape/resource-key/naming/test cleanup.
+3. P2 row 5 source cleanup is selectable only after this block and the
+   `P2 Subqueue` both say rows 2-4 are recorded for the current branch tip and
+   no new trigger appeared during the current batch.
+4. Tracker-only cleanup is selectable only for explicit priority/order hygiene
+   like this block, then control returns immediately to the first substantive
+   executable row.
 
 Current decisive order, top row wins:
 
@@ -18,12 +32,14 @@ Current decisive order, top row wins:
 | 5 | P2 row 2 visual/high-drift freshness | Recorded for the current branch tip. | Reopen before any lower P2 work when fresh visual or high-drift evidence appears. |
 | 6 | P2 row 3 asset, thumbnail, and visual-reference parity | Recorded for current active references. | Reopen only for new asset/reference evidence. |
 | 7 | P2 row 4 measurement, interaction, automation, and harness-impacting parity | Recorded for the current branch tip. | Reopen only for named measurement, interaction, automation, or harness-impacting evidence. |
-| 8 | P2 row 5 source-shape, resource-key, naming, selector, and test cleanup | Current next substantive bucket only while ranks 2-7 remain recorded with no new trigger. | Select a named source-alignment row; stop immediately if any higher visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appears. |
+| 8 | P2 row 5 source-shape, resource-key, naming, selector, and test cleanup | Current next substantive bucket only while ranks 2-7 remain recorded with no new trigger and P2 rows 2-4 are explicitly current in the `P2 Subqueue`. | Select a named source-alignment row; stop immediately if any higher visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appears. |
 | 9 | P2 row 6 pure tracker/status cleanup and documentation-only work | Blocked by row 5, except this rank-1 priority/order hygiene exception. | Do not use for convenience cleanup until row 5 is recorded or explicitly not applicable. |
 
 Do not scan lower historical tables to find easier work. If a lower row says
 `Partial` or `Needs Work` but conflicts with this ranking, update the stale
-status only when its ranked bucket is executable.
+status only when its ranked bucket is executable. When in doubt, choose the
+higher-ranked visual/High Contrast/high-drift/harness row and record why source
+cleanup is not being taken.
 
 1. User-requested priority/order hygiene is the only tracker-only exception.
    Fix the ordering text, then immediately return to the first substantive row
@@ -191,7 +207,10 @@ Current P2 state:
    verification. These supersede older per-row section evidence paths for
    scheduling.
 5. When resuming from the current branch tip with no new P0, row 7, row 8, or
-   row 4 trigger, the next selectable P2 work is row 5.
+   row 4 trigger, the next selectable P2 work is row 5. This is the only reason
+   row 5 is currently selectable; any new visual, High Contrast, high-drift,
+   asset, measurement, automation, or harness evidence immediately closes row 5
+   again.
 6. Row 6 remains blocked until row 5 is recorded or not applicable.
 
 | P2 order | Bucket | State | Allowed next work |
@@ -200,7 +219,7 @@ Current P2 state:
 | 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest retained-control Light/Dark refreshes in Row 8 and Latest local verification. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
 | 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Recorded at branch tip. Typography/Spacing/Geometry/Iconography, Color, remaining WPF-equivalent section/item Light/Dark measurement evidence, and the focused automation/harness verifier are current. | Reopen only for new named measurement, interaction, automation, or harness-impacting evidence. |
-| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, and shared `HeaderTile`/Color support-control code-behind source shape with official WPF Gallery source/behavior, with focused source-shape/runtime tests and full Gallery builds recorded in Latest local verification. | Continue selecting only named P2 source-alignment rows; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
+| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, and shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard with official WPF Gallery source/behavior, with focused source-shape/runtime tests and full Gallery builds recorded in Latest local verification. | Continue selecting only named P2 source-alignment rows; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
 | 6 | Pure tracker/status cleanup and documentation-only work | Last; blocked by row 5 except row 1 priority/order fixes. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
 
 ### Row 8 Strict Subqueue
@@ -1015,6 +1034,12 @@ Latest local verification for the current branch tip:
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 8 tests per target. `HeaderTile`, `ColorPageExample`, and `ColorTile` now keep the official code-behind summary/comment source shape while preserving HeaderTile acrylic/High Contrast resources, HeaderTile automation, and ColorTile template/resource behavior. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
   - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the row 5 shared HeaderTile/Color support-control source-alignment round. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages, generated warnings, and existing ModernWpf/ModernWpf.Controls warnings.
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before this row 5 ordering/source guard cleanup, so real OS High Contrast visual slices were not locally executable in this batch.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedTileGalleryCodeBehindKeepsOfficialScrollHandlerSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.SharedTileGalleryKeepsOfficialDeclarationSourceShape|FullyQualifiedName~GalleryApplicationResourceTests.HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. `App`, `MainWindow`, and `TileGallery` now keep the official WPF Gallery interaction-logic summary shape, and the shell source-shape guard now pins the current `AlignNavigationViewShellResourcesWithWpfGallery()` theme/High Contrast refresh path instead of the stale removed `AlignNavigationViewItemResourcesWithWpfGalleryTreeView()` expectation. Existing warning/output remains `NU1903`, generated warnings, existing ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the row 5 shell/shared summary and shell resource-hook guard cleanup. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages, generated warnings, and existing ModernWpf/ModernWpf.Controls warnings.
 - PowerShell parser checks for `tools/visual-checks/Run-GalleryVisualChecks.ps1` and `tools/visual-checks/Run-WpfGalleryVisualAudit.ps1`
   - Passed with zero parser errors after the row 4 automation/harness verifier.
 - Retained ModernWpf/WinUI extension visual ranking from existing

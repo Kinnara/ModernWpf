@@ -1223,6 +1223,7 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 mainWindowCode,
+                "/// Interaction logic for MainWindow.xaml",
                 "InitializeComponent();",
                 "UpdateWindowBackground();",
                 "ConfigureWindowChrome();",
@@ -1261,8 +1262,22 @@ namespace ModernWpf.Gallery.Tests
                 "SystemParameters.StaticPropertyChanged += OnSystemParametersChanged;",
                 "ThemeManager.Current.ActualApplicationThemeChanged -= OnActualApplicationThemeChanged;",
                 "SystemParameters.StaticPropertyChanged -= OnSystemParametersChanged;",
+                "private void OnActualApplicationThemeChanged(ThemeManager sender, object args)",
+                "AlignNavigationViewShellResourcesWithWpfGallery();",
+                "private void OnSystemParametersChanged(object sender, PropertyChangedEventArgs e)",
                 "if (string.Equals(e.PropertyName, nameof(SystemParameters.HighContrast), StringComparison.Ordinal))",
-                "AlignNavigationViewItemResourcesWithWpfGalleryTreeView();");
+                "AlignNavigationViewShellResourcesWithWpfGallery();");
+
+            var appCode = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "App.xaml.cs");
+
+            AssertContainsInOrder(
+                appCode,
+                "/// Interaction logic for App.xaml",
+                "protected override void OnStartup(StartupEventArgs e)",
+                "ApplyTheme(options.Theme);",
+                "var window = new MainWindow();");
         }
 
         [TestMethod]
@@ -1994,6 +2009,7 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "/// Interaction logic for TileGallery.xaml",
                 "public partial class TileGallery : UserControl",
                 "public TileGallery()",
                 "InitializeComponent();",
