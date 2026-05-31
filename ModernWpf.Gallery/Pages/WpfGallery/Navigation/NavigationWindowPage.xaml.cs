@@ -25,7 +25,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
             {
                 Width = 800,
                 Height = 450,
-                Source = new Uri("/Pages/WpfGallery/Navigation/Page1.xaml", UriKind.Relative)
+                Source = new Uri("pack://application:,,,/ModernWpf.Gallery;component/Pages/WpfGallery/Navigation/Page1.xaml", UriKind.Absolute)
             };
             window.Show();
         }

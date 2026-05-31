@@ -11,6 +11,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
@@ -2026,6 +2027,32 @@ namespace ModernWpf.Gallery.Tests
                     StringAssert.Contains(navigationWindowExamples[0].XamlCode, "Source=\"/Views/Navigation/Page1.xaml\"");
                     StringAssert.Contains(navigationWindowExamples[0].XamlCode, "Width=\"800\"");
                 });
+
+                var navigationWindow = new NavigationWindow
+                {
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Source = new Uri("pack://application:,,,/ModernWpf.Gallery;component/Pages/WpfGallery/Navigation/Page1.xaml", UriKind.Absolute)
+                };
+                try
+                {
+                    navigationWindow.Show();
+                    WpfTestHost.DoEvents();
+                    navigationWindow.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    StringAssert.Contains(
+                        navigationWindow.Source.OriginalString,
+                        "ModernWpf.Gallery;component/Pages/WpfGallery/Navigation/Page1.xaml");
+                    Assert.IsInstanceOfType(navigationWindow.Content, typeof(Page1));
+                }
+                finally
+                {
+                    navigationWindow.Close();
+                    WpfTestHost.DoEvents();
+                }
 
                 var frameWindow = new FrameWindow
                 {

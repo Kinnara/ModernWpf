@@ -9,6 +9,10 @@
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:controls="clr-namespace:System.Windows.Controls;assembly=PresentationFramework">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Frame.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <system:String x:Key="NavigationWindowMenuItemChevronDownGlyph">&#xE70D;</system:String>
     <system:String x:Key="NavigationWindowMenuItemArrowLeftGlyph">&#xE72B;</system:String>
     <system:String x:Key="NavigationWindowMenuItemArrowRightGlyph">&#xE72A;</system:String>

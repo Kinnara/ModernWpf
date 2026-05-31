@@ -94,6 +94,43 @@ public class FoundationNavigationVisualStateTests
     }
 
     [TestMethod]
+    public void NavigationWindowTemplateResolvesFrameJournalResourcesWhenShown()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navigationWindow = new NavigationWindow
+            {
+                Width = 320,
+                Height = 240,
+                Left = -32000,
+                Top = -32000,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Content = new Page
+                {
+                    Content = new TextBlock { Text = "Navigation" }
+                }
+            };
+
+            try
+            {
+                navigationWindow.Show();
+                WpfTestHost.DoEvents();
+                navigationWindow.UpdateLayout();
+
+                Assert.IsNotNull(navigationWindow.Template.FindName("PART_NavWinCP", navigationWindow));
+            }
+            finally
+            {
+                navigationWindow.Close();
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    [TestMethod]
     public void TextBlockStylesUseOfficialWpfFluentShapeWithLegacyAliases()
     {
         WpfTestHost.Run(() =>
