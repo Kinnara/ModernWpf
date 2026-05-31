@@ -1442,6 +1442,35 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryConvertersKeepOfficialVisibilitySourceShape()
+        {
+            var nullConverterSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Controls",
+                "NullToVisibilityConverter.cs");
+            AssertContainsInOrder(
+                nullConverterSource,
+                "/// Converts a null value to Visibility.Collapsed",
+                "return value is null ? Visibility.Collapsed : Visibility.Visible;",
+                "throw new NotImplementedException();");
+
+            var userDashboardConverterSource = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Samples",
+                "UserDashboardConverters.cs");
+            AssertContainsInOrder(
+                userDashboardConverterSource,
+                "/// Converts an empty string to Visibility.Collapsed",
+                "if (value is string str)",
+                "return string.IsNullOrWhiteSpace(str) ? Visibility.Collapsed : Visibility.Visible;",
+                "return value is null ? Visibility.Collapsed : Visibility.Visible;",
+                "throw new NotImplementedException();",
+                "/// Converts an image id to a brush");
+        }
+
+        [TestMethod]
         public void WpfGalleryTemplatesKeepOfficialNavigationCardSourceShape()
         {
             var xaml = ReadRepoFile(

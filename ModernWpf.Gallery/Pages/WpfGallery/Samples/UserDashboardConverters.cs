@@ -5,20 +5,30 @@ using System.Windows.Data;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 {
+    /// <summary>
+    /// Converts an empty string to Visibility.Collapsed
+    /// </summary>
     public sealed class EmptyToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var text = value as string;
-            return string.IsNullOrEmpty(text) ? Visibility.Collapsed : Visibility.Visible;
+            if (value is string str)
+            {
+                return string.IsNullOrWhiteSpace(str) ? Visibility.Collapsed : Visibility.Visible;
+            }
+
+            return value is null ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotSupportedException();
+            throw new NotImplementedException();
         }
     }
 
+    /// <summary>
+    /// Converts an image id to a brush
+    /// </summary>
     public sealed class ImageIdToBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -38,7 +48,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotSupportedException();
+            throw new NotImplementedException();
         }
     }
 }

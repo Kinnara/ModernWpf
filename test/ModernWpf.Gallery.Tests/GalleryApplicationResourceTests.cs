@@ -144,6 +144,39 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryVisibilityConvertersMatchReferenceBehavior()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var nullConverter = new NullToVisibilityConverter();
+                Assert.AreEqual(
+                    Visibility.Collapsed,
+                    nullConverter.Convert(null, typeof(Visibility), null, CultureInfo.InvariantCulture));
+                Assert.AreEqual(
+                    Visibility.Visible,
+                    nullConverter.Convert(new object(), typeof(Visibility), null, CultureInfo.InvariantCulture));
+                Assert.ThrowsException<NotImplementedException>(
+                    () => nullConverter.ConvertBack(Visibility.Visible, typeof(object), null, CultureInfo.InvariantCulture));
+
+                var emptyConverter = new EmptyToVisibilityConverter();
+                Assert.AreEqual(
+                    Visibility.Collapsed,
+                    emptyConverter.Convert(null, typeof(Visibility), null, CultureInfo.InvariantCulture));
+                Assert.AreEqual(
+                    Visibility.Collapsed,
+                    emptyConverter.Convert(string.Empty, typeof(Visibility), null, CultureInfo.InvariantCulture));
+                Assert.AreEqual(
+                    Visibility.Collapsed,
+                    emptyConverter.Convert("   ", typeof(Visibility), null, CultureInfo.InvariantCulture));
+                Assert.AreEqual(
+                    Visibility.Visible,
+                    emptyConverter.Convert("Deleted", typeof(Visibility), null, CultureInfo.InvariantCulture));
+                Assert.ThrowsException<NotImplementedException>(
+                    () => emptyConverter.ConvertBack(Visibility.Visible, typeof(object), null, CultureInfo.InvariantCulture));
+            });
+        }
+
+        [TestMethod]
         public void ColorTileStyleKeepsWpfGalleryNaturalHeight()
         {
             WpfTestHost.Run(() =>
