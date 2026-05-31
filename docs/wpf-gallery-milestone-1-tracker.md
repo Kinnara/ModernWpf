@@ -47,19 +47,18 @@ Current pointer:
    5 source cleanup. `TrackerPriorityTests` guard this ordering; row 1 is
    inactive again unless another priority/order conflict appears.
 2. Latest substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
-   for the copied User Dashboard `UserDashboardUser` optional constructor
-   placeholder and full-constructor parameter source-shape guard. Selection
-   proof: `SystemParameters.HighContrast` returned `False`; a direct
+   for the copied User Dashboard `UserDashboardUser` expression-bodied
+   property getter source-shape guard. Selection proof:
+   `SystemParameters.HighContrast` returned `False`; a direct
    same-path XAML 5.3 scan against
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` found no
    missing official `AutomationProperties.Name`, `x:Name`, event, or
-   `Command` token after entity normalization across 54 mapped files; before
-   selecting row 5.4 and again after the model edit, focused UserDashboard
-   Light/Dark visual audits against the local official WPF Gallery direct
-   reference passed at
-   `artifacts/wpf-gallery-visual-audit/20260531-212228-403-89548/report.md`
+   `Command` token after entity normalization across 54 mapped files; after
+   the model edit, focused UserDashboard Light/Dark visual audits against the
+   local official WPF Gallery direct reference passed at
+   `artifacts/wpf-gallery-visual-audit/20260531-213452-274-71188/report.md`
    and
-   `artifacts/wpf-gallery-visual-audit/20260531-212249-043-53948/report.md`
+   `artifacts/wpf-gallery-visual-audit/20260531-213514-183-74416/report.md`
    with deltas `0` / `0.01`, matching `868x758` crops, and max RGB diff `3`;
    the latest retained ModernWpf/WinUI high-drift and interaction/harness
    evidence is recorded at
@@ -67,12 +66,13 @@ Current pointer:
    `artifacts/visual-checks/20260531-203756-601-64316/report.md`; P2 rows 2-4
    are recorded; and rows 5.1-5.2 are recorded. The local official source
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models\User.cs` keeps
-   the commented parameterless constructor placeholder, `imageID` / `doj`
-   parameter names, and `isNewGraduate = false` default before assigning
-   `DateOfJoining = doj`. The local copied/adapted User Dashboard model now
-   keeps that non-visible constructor source shape while retaining the local
-   namespace, non-nullable model adapter, and `SetProperty` helpers. Focused
-   source-shape/runtime tests, full `WpfGallerySourceShapeTests`, and the full
+   expression-bodied getters such as `get => _firstName;`,
+   `get => _lastName;`, `get => _imageId;`, `get => _company;`,
+   `get => _address;`, `get => _age;`, `get => _dateOfJoining;`, and
+   `get => _isNewGraduate;`. The local copied/adapted User Dashboard model now
+   keeps that non-visible getter source shape while retaining the local
+   namespace, non-nullable model adapter, and `SetProperty` setters. Focused
+   source-shape test, full `WpfGallerySourceShapeTests`, and the full
    `ModernWpf.Gallery` build passed.
 3. Previous substantive batch, 2026-05-31: **global orders 3, 4, 5, and
    7 / visible drift, retained ModernWpf/WinUI high-drift triage, P2 row 2
@@ -523,18 +523,17 @@ Current active selection snapshot:
    and
    `artifacts/wpf-gallery-visual-audit/20260531-183606-886-14072/report.md`.
    The current branch-tip focused UserDashboard Light/Dark refresh also passed
-   after the copied model constructor parameter/default source-shape edit at
-   `artifacts/wpf-gallery-visual-audit/20260531-212228-403-89548/report.md`
+   after the copied model expression-bodied property getter source-shape edit at
+   `artifacts/wpf-gallery-visual-audit/20260531-213452-274-71188/report.md`
    and
-   `artifacts/wpf-gallery-visual-audit/20260531-212249-043-53948/report.md`,
+   `artifacts/wpf-gallery-visual-audit/20260531-213514-183-74416/report.md`,
    with deltas `0` / `0.01`, matching `868x758` crops, and max RGB diff `3`.
    Lower row 5 work is allowed only while this proof remains current and no
    newer visual, High Contrast, high-drift, asset, measurement, automation, or
    harness trigger appears.
 3. The latest row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
    5 Internal Queue row 5.4** for the copied User Dashboard
-   `UserDashboardUser` optional constructor placeholder and full-constructor
-   parameter source-shape guard.
+   `UserDashboardUser` expression-bodied property getter source-shape guard.
    `SystemParameters.HighContrast` returned `False`, global orders 2-9 are
    recorded or inactive for the current branch tip, rows 5.1-5.2 are recorded,
    row 5.3 has no current named executable gap after a direct same-path XAML
@@ -542,11 +541,11 @@ Current active selection snapshot:
    and the latest high-drift/interaction proof above remains current. The
    local official source
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models\User.cs`
-   keeps the commented parameterless constructor placeholder, `imageID` /
-   `doj` parameter names, and `isNewGraduate = false` default before assigning
-   `DateOfJoining = doj`; the local copied/adapted model now keeps that
-   non-visible constructor source shape while retaining the local namespace,
-   non-nullable model adapter, and `SetProperty` helpers.
+   keeps expression-bodied getters for copied properties including
+   `FirstName`, `LastName`, `ImageId`, `Company`, `Address`, `Age`,
+   `DateOfJoining`, and `IsNewGraduate`; the local copied/adapted model now
+   keeps that non-visible getter source shape while retaining the local
+   namespace, non-nullable model adapter, and `SetProperty` setters.
 4. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
    5 Internal Queue row 5.4** for the copied User Dashboard
    `UserDashboardUser` constructor assignment source-shape guard. The local
@@ -1516,7 +1515,7 @@ Current row 5 decision:
 | 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named. |
 | 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns app-manifest runtime compatibility with local official WPF Gallery source by keeping the `true/PM` DPI fallback, `longPathAware`, and active `Microsoft.Windows.Common-Controls` v6 dependency while retaining the local `PerMonitorV2` DPI-awareness adapter. Earlier named 5.2 batches align the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and record the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
 | 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Recorded for the current branch tip with no current named gap after the latest scan. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, the copied `WhatsNewPage` handler selector, and the copied Iconography direct search-placeholder visibility handlers. | Reopen before 5.4 if a new named resource/key/name/selector/hook gap appears that can affect visuals, behavior, or harness evidence. |
-| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns the copied User Dashboard `UserDashboardUser` optional constructor placeholder and full-constructor parameter source shape with local official WPF Gallery `Models\User.cs`, including the commented parameterless constructor placeholder, `imageID` / `doj` parameter names, and `isNewGraduate = false` default, while retaining the local namespace, non-nullable model adapter, and `SetProperty` helpers. Previous 5.4 guards include the copied User Dashboard `UserDashboardUser` direct copy-constructor assignment block and full-constructor `IsNewGraduate` assignment order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser.Deletedname` field/property member order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `ImageIdToBrushConverter` local-variable type shape with local official WPF Gallery `Helpers\ImageIdToBrushConverter.cs`; copied model XML summary text with local official WPF Gallery `Models\Person.cs` and `Models\IconsData.cs`; copied code-behind interaction-summary text for `ButtonPage`, `CheckBoxPage`, `ComboBoxPage`, `Navigation\Page1`, `Navigation\Page2`, and `Text\RichTextEditPage`; top-level Dashboard code-behind `ViewModel` member placement; the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder; the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
+| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns the copied User Dashboard `UserDashboardUser` expression-bodied property getter source shape with local official WPF Gallery `Models\User.cs`, including `get => _firstName;`, `get => _lastName;`, `get => _imageId;`, `get => _company;`, `get => _address;`, `get => _age;`, `get => _dateOfJoining;`, and `get => _isNewGraduate;`, while retaining the local namespace, non-nullable model adapter, and `SetProperty` setters. Previous 5.4 guards include the copied User Dashboard `UserDashboardUser` optional constructor placeholder and full-constructor parameter source shape with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser` direct copy-constructor assignment block and full-constructor `IsNewGraduate` assignment order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `UserDashboardUser.Deletedname` field/property member order with local official WPF Gallery `Models\User.cs`; the copied User Dashboard `ImageIdToBrushConverter` local-variable type shape with local official WPF Gallery `Helpers\ImageIdToBrushConverter.cs`; copied model XML summary text with local official WPF Gallery `Models\Person.cs` and `Models\IconsData.cs`; copied code-behind interaction-summary text for `ButtonPage`, `CheckBoxPage`, `ComboBoxPage`, `Navigation\Page1`, `Navigation\Page2`, and `Text\RichTextEditPage`; top-level Dashboard code-behind `ViewModel` member placement; the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder; the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
 | 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
 
 Latest accepted visual/high-drift priority-correction note:
@@ -2543,6 +2542,60 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- Selection proof and verification for the copied User Dashboard
+  `UserDashboardUser` expression-bodied property getter 5.4 source-shape guard:
+  - `git status --short` returned clean before the batch at branch tip
+    `2e09a952`. `SystemParameters.HighContrast` returned `False`.
+    `TrackerPriorityTests` passed before selecting lower-priority source-shape
+    work. A direct same-path XAML 5.3 scan against
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` found no
+    missing official `AutomationProperties.Name`, `x:Name`, event, or
+    `Command` tokens after entity normalization across 54 mapped files. The
+    selected rank is therefore **global order 11 / P2 row 5.4**, because
+    global orders 2-9 are recorded or inactive for the current branch tip, P2
+    rows 2-4 are recorded by the latest retained Light/Dark reports, rows
+    5.1-5.2 are recorded, and row 5.3 has no current named executable gap.
+    The named 5.4 candidate is the copied User Dashboard model compared with
+    local official source
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models\User.cs`.
+    The local copied/adapted model now keeps the official expression-bodied
+    getter source shape for `FirstName`, `LastName`, `ImageId`, `Company`,
+    `Address`, `Age`, `DateOfJoining`, and `IsNewGraduate`, while retaining the
+    local namespace, non-nullable model adapter, and `SetProperty` setters.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter CopiedWpfGalleryUserDashboardUserKeepsOfficialMemberOrderShape --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per
+    target after adding the User Dashboard model expression-bodied getter
+    source-shape guard. Existing warning/output remains `NU1903` and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter WpfGallerySourceShapeTests --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 80 tests per
+    target after adding the User Dashboard model expression-bodied getter
+    guard. Existing warning/output remains `NU1903` and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the User Dashboard model expression-bodied getter guard, with 19 existing
+    warnings and 0 errors. Recurring output still includes
+    `Failed to resolve WinRT.Runtime.dll`.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases UserDashboard -Theme Light -Reference OfficialWpfGallery -TimeoutSeconds 40`
+  - Passed at
+    `artifacts/wpf-gallery-visual-audit/20260531-213452-274-71188/report.md`
+    after the getter guard, with content delta `0`, `75/41230 (0.182%)`
+    changed samples, max RGB diff `3`, and matching `868x758` crops.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases UserDashboard -Theme Dark -Reference OfficialWpfGallery -TimeoutSeconds 40`
+  - Passed at
+    `artifacts/wpf-gallery-visual-audit/20260531-213514-183-74416/report.md`
+    after the getter guard, with content delta `0.01`, `296/41230 (0.718%)`
+    changed samples, max RGB diff `3`, and matching `868x758` crops.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter TrackerPriorityTests --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after updating the tracker current pointer, Current Order Lock, and
+    row 5.4 queue for the User Dashboard getter guard. Existing warning/output
+    remains `NU1903` and recurring `Failed to resolve WinRT.Runtime.dll`
+    messages.
+- `git diff --check`
+  - Passed after the User Dashboard getter guard and tracker update, with only
+    the existing LF/CRLF working-copy warnings for touched files.
 - Selection proof and verification for the copied User Dashboard
   `UserDashboardUser` optional constructor placeholder and full-constructor
   parameter 5.4 source-shape guard:

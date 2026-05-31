@@ -27,7 +27,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         public string FirstName
         {
-            get { return _firstName; }
+            get => _firstName;
             set
             {
                 if (SetProperty(ref _firstName, value, nameof(FirstName)))
@@ -39,7 +39,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         public string LastName
         {
-            get { return _lastName; }
+            get => _lastName;
             set
             {
                 if (SetProperty(ref _lastName, value, nameof(LastName)))
@@ -53,7 +53,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         public string ImageId
         {
-            get { return _imageId; }
+            get => _imageId;
             set
             {
                 if (SetProperty(ref _imageId, value, nameof(ImageId)))
@@ -67,31 +67,31 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 
         public string Company
         {
-            get { return _company; }
+            get => _company;
             set { SetProperty(ref _company, value, nameof(Company)); }
         }
 
         public string Address
         {
-            get { return _address; }
+            get => _address;
             set { SetProperty(ref _address, value, nameof(Address)); }
         }
 
         public int Age
         {
-            get { return _age; }
+            get => _age;
             set { SetProperty(ref _age, value, nameof(Age)); }
         }
 
         public DateTime DateOfJoining
         {
-            get { return _dateOfJoining; }
+            get => _dateOfJoining;
             set { SetProperty(ref _dateOfJoining, value, nameof(DateOfJoining)); }
         }
 
         public bool IsNewGraduate
         {
-            get { return _isNewGraduate; }
+            get => _isNewGraduate;
             set { SetProperty(ref _isNewGraduate, value, nameof(IsNewGraduate)); }
         }
 

@@ -1123,15 +1123,23 @@ namespace ModernWpf.Gallery.Tests
                 "_deletedname = value;",
                 "OnPropertyChanged(nameof(Deletedname));",
                 "public string FirstName",
+                "get => _firstName;",
                 "public string LastName",
+                "get => _lastName;",
                 "public string Name => $\"{FirstName} {LastName}\";",
                 "public string ImageId",
+                "get => _imageId;",
                 "public string ImageKey => $\"p{ImageId}\";",
                 "public string Company",
+                "get => _company;",
                 "public string Address",
+                "get => _address;",
                 "public int Age",
+                "get => _age;",
                 "public DateTime DateOfJoining",
+                "get => _dateOfJoining;",
                 "public bool IsNewGraduate",
+                "get => _isNewGraduate;",
                 "public event PropertyChangedEventHandler PropertyChanged;",
                 "protected void OnPropertyChanged(string propertyName)",
                 "PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));",
@@ -1167,6 +1175,9 @@ namespace ModernWpf.Gallery.Tests
                 "OnPropertyChanged(nameof(Name));",
                 "if (SetProperty(ref _imageId, value, nameof(ImageId)))",
                 "OnPropertyChanged(nameof(ImageKey));");
+            Assert.IsFalse(
+                source.Contains("get { return _firstName; }", StringComparison.Ordinal),
+                "UserDashboardUser should keep the official expression-bodied getter source shape while retaining local SetProperty setters.");
         }
 
         [TestMethod]
