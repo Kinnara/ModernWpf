@@ -44,7 +44,7 @@ namespace ModernWpf.Gallery.Pages
 
         private void NavigateToMessageBoxSample(object sender, RoutedEventArgs e)
         {
-            ViewModel.NavigateCommand.Execute("MessageBox");
+            ViewModel.Navigate("MessageBox");
         }
 
         private void Open_UsingFluentInWPFPage(object sender, RoutedEventArgs e)

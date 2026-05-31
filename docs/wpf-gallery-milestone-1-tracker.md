@@ -310,6 +310,12 @@ Current row 5 decision:
 
 Latest accepted visual/high-drift priority-correction note:
 
+- The current row 5.3 `WhatsNew` handler-selector batch reran focused WPF
+  `WhatsNew` Light/Dark visual evidence after the code change. Both reports
+  passed against the official WPF Gallery direct reference with content delta
+  `0`, matching `868x758` crops, and only max RGB `3` sampled residuals. This
+  keeps the visible page and visual harness recorded before further row 5.3
+  work continues.
 - The current visual freshness round refreshed retained high-drift spot checks
   for `GridView`, `CommandBarFlyout`, and `ProgressRing` in Light and Dark at
   the current branch tip, then refreshed WPF top-level `Home`, `WhatsNew`,
@@ -429,6 +435,18 @@ Latest accepted row 5.3 execution note:
   returned `False`, global orders 2-9 were recorded or inactive, and no new
   High Contrast, visible-drift, high-drift, asset, measurement, automation, or
   harness trigger appeared.
+- The twenty-second named 5.3 batch aligned the copied `WhatsNewPage`
+  `NavigateToMessageBoxSample` handler selector with the official WPF Gallery
+  `ViewModel.Navigate(...)` path while preserving the retained local
+  `"MessageBox"` item route. Runtime coverage now proves the visible
+  `MessageBox sample` hyperlink flows through the page view-model navigation
+  handler to `ItemRequested`, and source-shape coverage rejects the local-only
+  `NavigateCommand.Execute("MessageBox")` selector in that copied handler. This
+  was selected only after `SystemParameters.HighContrast` returned `False`,
+  global orders 2-9 were recorded or inactive, the official/local XAML hook
+  scan found no new actionable `x:Name`, event, command, or automation-hook
+  gap, and no new High Contrast, visible-drift, high-drift, asset,
+  measurement, automation, or harness trigger appeared.
 
 ### Row 8 Strict Subqueue
 
@@ -632,7 +650,7 @@ next task.
 | Priority | Area | Current evidence | Next action |
 | --- | --- | --- | --- |
 | P0.1 | Broader High Contrast shell/control coverage | Recorded in the latest accepted Windows session where `SystemParameters.HighContrast = True`. Current top-level evidence is `artifacts/wpf-gallery-visual-audit/20260530-041747-131-79388/report.md`: Home `0`, WhatsNew `0`, AllControls `0`, Settings `0`, all with matching crops and only max RGB `3` sampled residuals outside Home. Current post-mutex serial shell evidence is `artifacts/wpf-gallery-visual-audit/20260530-042403-060-18520/report.md`: ShellNavigation `3.24` with matching `250x698` crops after the retained `NavigationView` High Contrast pane edge, text/glyph offsets, and rendered-artifact crop were corrected; the previous white right-edge column remains gone. Current focused control evidence is `artifacts/wpf-gallery-visual-audit/20260530-041855-137-11752/report.md`: TextBox `0.91`, ProgressBar `0`, Button `1.21`, ColorHighContrast `0.56`, all passed with matching `852x749` crops. Current Design Guidance measurement evidence is `artifacts/wpf-gallery-visual-audit/20260530-041854-934-15592/report.md`: Typography `0`, Spacing `0`, Geometry `0.3`, all with matching `852x749` crops. The concurrent GUI-audit ShellNavigation artifact `artifacts/wpf-gallery-visual-audit/20260530-041854-512-14912/report.md` is invalid evidence and superseded by the serial rerun. | Recorded for this milestone round. Reopen only for new High Contrast visual/harness drift; otherwise row 8 remains recorded through ProgressRing. |
-| P0.2 | Completed top-level residual visual drift gate | Done at branch tip. Latest Light top-level audit is `artifacts/wpf-gallery-visual-audit/20260531-095716-591-68764/report.md`: Home `0`, WhatsNew `0`, AllControls `0`, Settings `0`. Latest Dark top-level audit is `artifacts/wpf-gallery-visual-audit/20260531-095800-603-85688/report.md`: Home `0.04`, WhatsNew `0`, AllControls `0`, Settings `0`. Home and Settings now use the official direct reference host, including the Dashboard content root target, Settings theme selector state, and the official full-shell Dark `#272727` background for transparent top-level roots. | Done; keep these reports as the current top-level gate. |
+| P0.2 | Completed top-level residual visual drift gate | Done at branch tip. Latest full Light top-level audit is `artifacts/wpf-gallery-visual-audit/20260531-095716-591-68764/report.md`: Home `0`, WhatsNew `0`, AllControls `0`, Settings `0`. Latest full Dark top-level audit is `artifacts/wpf-gallery-visual-audit/20260531-095800-603-85688/report.md`: Home `0.04`, WhatsNew `0`, AllControls `0`, Settings `0`. Focused post-handler `WhatsNew` evidence is current at `artifacts/wpf-gallery-visual-audit/20260531-100935-119-84212/report.md` and `artifacts/wpf-gallery-visual-audit/20260531-100957-704-63076/report.md`: both themes remain content delta `0` with matching `868x758` crops. Home and Settings now use the official direct reference host, including the Dashboard content root target, Settings theme selector state, and the official full-shell Dark `#272727` background for transparent top-level roots. | Done; keep these reports as the current top-level gate. |
 | P0.3 | Completed direct item drift gate | Done at branch tip. Latest Light focused audit is `artifacts/wpf-gallery-visual-audit/20260529-023052-142-69976/report.md`: TextBox `0`, Clipboard `0`, FileAndFolderDialogs `0`. Latest Dark focused audit is `artifacts/wpf-gallery-visual-audit/20260529-023138-825-52464/report.md`: TextBox `0`, Clipboard `0`, FileAndFolderDialogs `0`. All use matching `868x758` Modern `ContentPagePaneRenderedArtifact` and official `OfficialDirectRootContentFrameRenderedArtifact` crops. | Done; keep these reports as the current direct-item gate. |
 | P0.4 | Completed residual NavigationView shell details | Done at branch tip. Current shell-pane evidence is `artifacts/wpf-gallery-visual-audit/20260529-081823-368-31712/report.md` for Light and `artifacts/wpf-gallery-visual-audit/20260529-081846-263-45260/report.md` for Dark. Both runs pass with matching `250x707` Modern/official navigation-pane crops and deltas of Light `0.80` and Dark `0.82`, down from the previous `9.40/9.36`, with exact comparison metrics `142/11151` changed samples (`1.273%`) and max RGB diff `669`. The retained `NavigationView` now navigates to the selected child before capture, no longer leaves the Home selection indicator active on `item/Menu`, keeps the selected child indicator aligned after shifting the selected child background toward the official WPF Gallery `TreeView` active rectangle, keeps the screenshot-aligned retained-control offsets for selected-child, top-level, child, and disclosure-category row content, preserves that group-row offset after selection resets, hides retained menu-scrollbar chrome, maps retained pane separator/SplitView edge brushes to the official pane background, and disables the retained pane shadow. The retained `NavigationView` and official `TreeView` expose different UIA absolute content origins under the comparable pane crop; do not replace the screenshot-proven retained offsets with UIA-only absolute coordinates unless a new visual crop regression also appears. Remaining pixel drift is below one mean delta point and is retained-control rendering/crop residue rather than a current P0 blocker. | Done; keep these reports as the current shell gate unless a new shell regression appears. |
 | P1.1 | Residual item visual drift queue | Recorded at branch tip. Current Iconography evidence is Light `artifacts/wpf-gallery-visual-audit/20260531-085737-499-82256/report.md` at `0.23` and Dark `artifacts/wpf-gallery-visual-audit/20260531-085823-767-83140/report.md` at `0.24`, still maxRgbSum `3` channel quantization with no visible layout drift. Latest GridSplitter/DataGrid Light residual evidence remains `artifacts/wpf-gallery-visual-audit/20260529-055921-904-3944/report.md`: GridSplitter `0.24`, DataGrid `0.13`, ProgressBar `0`; latest Dark residual evidence remains `artifacts/wpf-gallery-visual-audit/20260529-060033-783-44788/report.md`: GridSplitter `0`, DataGrid `0`, ProgressBar `0`. ProgressBar's real animated-phase drift is fixed. GridSplitter Light and DataGrid Light are minor text/line antialiasing with no visible geometry drift. | Recorded; move to P1.2 unless a new visible P1.1 drift appears. |
@@ -1159,6 +1177,21 @@ updated with each coherent round.
 Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
+
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the current row 5.3 `WhatsNew` MessageBox link handler-selector batch. Winning rank was **global order 10 / P2 row 5.3** because global orders 2-9 were recorded or inactive for the branch tip and no new visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appeared.
+- Current 5.3 official/local hook scans
+  - Recompared official/local matched XAML attributes including `x:Key`, `x:Name`, `Name`, event handlers, commands, and automation names. The only local-only resource keys are the already-recorded `DashboardPageRootStyle` and `SettingsPageRootStyle` dark-background adapters; the only automation-name difference is the Settings warranty text entity escape for the same displayed text. Recompared copied page code-behind method names; the actionable row 5.3 gap found in this pass was `WhatsNewPage.NavigateToMessageBoxSample` using the local-only `NavigateCommand.Execute("MessageBox")` selector instead of the official `ViewModel.Navigate(...)` handler path.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGalleryWhatsNewSnippetTests|FullyQualifiedName~WhatsNewMessageBoxLinkUsesViewModelNavigationHandler" -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per target. The focused filter covers the copied `WhatsNew` process-start handler source shape, the `ViewModel.Navigate("MessageBox")` selector, and runtime flow from the visible MessageBox hyperlink handler through `ItemRequested`.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases WhatsNew -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-100935-119-84212/report.md`: `WhatsNew` content delta `0`, `114/41230` changed samples (`0.276%`), max RGB diff `3`, and matching `868x758` ModernWpf/official crops after the handler-selector change.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases WhatsNew -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-100957-704-63076/report.md`: `WhatsNew` content delta `0`, `76/41230` changed samples (`0.184%`), max RGB diff `3`, and matching `868x758` ModernWpf/official crops after the handler-selector change.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the row 5.3 `WhatsNew` handler-selector batch. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
+- `git diff --check`
+  - Passed after the row 5.3 `WhatsNew` handler-selector batch, with only the existing LF/CRLF working-copy warnings.
 
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the current visual/high-drift freshness refresh. Winning high-priority refresh scope was global orders 3-5/P2 row 2 evidence because the branch tip had advanced through row 5.3 work and the user explicitly called out visual/high-drift priority risk; no real OS High Contrast batch was locally executable.

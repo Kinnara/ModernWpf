@@ -67,7 +67,10 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(source, "Process.Start(new ProcessStartInfo(\"https://learn.microsoft.com/en-in/dotnet/desktop/wpf/whats-new/net90\") { UseShellExecute = true });");
             StringAssert.Contains(source, "Process.Start(new ProcessStartInfo(\"https://github.com/dotnet/wpf/issues/9613\") { UseShellExecute = true });");
             StringAssert.Contains(source, "Process.Start(new ProcessStartInfo(\"https://aka.ms/wpf-fluentdoc\") { UseShellExecute = true });");
-            StringAssert.Contains(source, "ViewModel.NavigateCommand.Execute(\"MessageBox\");");
+            StringAssert.Contains(source, "ViewModel.Navigate(\"MessageBox\");");
+            Assert.IsFalse(
+                source.Contains("NavigateCommand.Execute(\"MessageBox\")", System.StringComparison.Ordinal),
+                "The copied WhatsNew MessageBox hyperlink should use the official ViewModel.Navigate handler shape instead of the local command selector.");
         }
     }
 }

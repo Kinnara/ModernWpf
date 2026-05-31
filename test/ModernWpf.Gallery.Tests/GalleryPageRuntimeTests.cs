@@ -293,6 +293,26 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WhatsNewMessageBoxLinkUsesViewModelNavigationHandler()
+        {
+            WpfTestHost.Run(() =>
+            {
+                string requestedItemId = null;
+                var page = new WhatsNewPage();
+                page.ItemRequested = uniqueId => requestedItemId = uniqueId;
+
+                var handler = typeof(WhatsNewPage).GetMethod(
+                    "NavigateToMessageBoxSample",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+
+                Assert.IsNotNull(handler);
+                handler.Invoke(page, new object[] { page, new RoutedEventArgs() });
+
+                Assert.AreEqual("MessageBox", requestedItemId);
+            });
+        }
+
+        [TestMethod]
         public void CopiedWpfGalleryPagesKeepReferencePageResources()
         {
             WpfTestHost.Run(() =>
