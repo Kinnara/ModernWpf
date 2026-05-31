@@ -22,6 +22,7 @@ namespace ModernWpf.Gallery.Shell
     public partial class NavigationRootPage
     {
         private readonly Stack<NavigationTarget> _backStack = new Stack<NavigationTarget>();
+        private readonly Stack<NavigationTarget> _forwardStack = new Stack<NavigationTarget>();
         private readonly Dictionary<string, NavigationViewItem> _itemContainers = new Dictionary<string, NavigationViewItem>(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, NavigationViewItem> _parentContainers = new Dictionary<string, NavigationViewItem>(StringComparer.OrdinalIgnoreCase);
         private static readonly ISet<string> WpfGalleryGroupIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -160,7 +161,29 @@ namespace ModernWpf.Gallery.Shell
                 return;
             }
 
-            Navigate(_backStack.Pop(), false);
+            var target = _backStack.Pop();
+            if (_currentTarget != null)
+            {
+                _forwardStack.Push(_currentTarget);
+            }
+
+            Navigate(target, false, true);
+        }
+
+        public void GoForward()
+        {
+            if (_forwardStack.Count == 0)
+            {
+                return;
+            }
+
+            var target = _forwardStack.Pop();
+            if (_currentTarget != null)
+            {
+                _backStack.Push(_currentTarget);
+            }
+
+            Navigate(target, false, true);
         }
 
         public void NavigateTo(string navigationValue)
@@ -813,16 +836,25 @@ namespace ModernWpf.Gallery.Shell
             }
         }
 
-        private void Navigate(NavigationTarget target, bool addBackEntry)
+        private void Navigate(NavigationTarget target, bool addBackEntry, bool preserveForwardStack = false)
         {
             var route = FormatRoute(target);
             SetVisualTestState(route, "Navigating:" + route);
 
             try
             {
-                if (_currentTarget != null && addBackEntry && !_currentTarget.Equals(target))
+                var isNewTarget = _currentTarget == null || !_currentTarget.Equals(target);
+                if (isNewTarget)
                 {
-                    _backStack.Push(_currentTarget);
+                    if (_currentTarget != null && addBackEntry)
+                    {
+                        _backStack.Push(_currentTarget);
+                    }
+
+                    if (!preserveForwardStack)
+                    {
+                        _forwardStack.Clear();
+                    }
                 }
 
                 _currentTarget = target;

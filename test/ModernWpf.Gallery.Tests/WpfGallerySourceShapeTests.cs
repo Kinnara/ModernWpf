@@ -1311,6 +1311,8 @@ namespace ModernWpf.Gallery.Tests
                 "using ModernWpf.Gallery.Shell;",
                 "private void GoBack()",
                 "GetNavigationRootPage().GoBack();",
+                "private void GoForward()",
+                "GetNavigationRootPage().GoForward();",
                 "private void OpenSettings()",
                 "GetNavigationRootPage().OpenSettings();",
                 "internal void NavigateTo(string uniqueId)",
@@ -1425,20 +1427,28 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "private readonly Action _backAction;",
                 "private readonly Action _settingsAction;",
+                "private readonly Action _forwardAction;",
                 "_backAction = backAction;",
                 "_settingsAction = settingsAction;",
+                "_forwardAction = forwardAction;",
                 "BackCommand = new RelayCommand(delegate { Back(); });",
                 "SettingsCommand = new RelayCommand(delegate { Settings(); });",
+                "ForwardCommand = new RelayCommand(delegate { Forward(); });",
                 "public void Back()",
                 "_backAction();",
                 "public void Settings()",
-                "_settingsAction();");
+                "_settingsAction();",
+                "public void Forward()",
+                "_forwardAction();");
             Assert.IsFalse(
                 source.Contains("delegate { backAction(); }", StringComparison.Ordinal),
                 "BackCommand should route through the retained official Back command-handler name instead of calling the constructor adapter directly.");
             Assert.IsFalse(
                 source.Contains("delegate { settingsAction(); }", StringComparison.Ordinal),
                 "SettingsCommand should route through the retained official Settings command-handler name instead of calling the constructor adapter directly.");
+            Assert.IsFalse(
+                source.Contains("delegate { forwardAction(); }", StringComparison.Ordinal),
+                "ForwardCommand should route through the retained official Forward command-handler name instead of calling the constructor adapter directly.");
         }
 
         [TestMethod]

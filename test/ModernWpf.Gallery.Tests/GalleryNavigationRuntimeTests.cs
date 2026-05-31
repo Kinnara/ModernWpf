@@ -138,7 +138,7 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var page = new NavigationRootPage();
-                page.DataContext = new { ViewModel = new MainWindowViewModel(page.GoBack, page.OpenSettings) };
+                page.DataContext = new { ViewModel = new MainWindowViewModel(page.GoBack, page.OpenSettings, page.GoForward) };
                 var navigation = GetNavigationView(page);
                 var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
 
@@ -665,17 +665,75 @@ namespace ModernWpf.Gallery.Tests
         {
             var backCount = 0;
             var settingsCount = 0;
+            var forwardCount = 0;
             var viewModel = new MainWindowViewModel(
                 () => backCount++,
-                () => settingsCount++);
+                () => settingsCount++,
+                () => forwardCount++);
 
             viewModel.Back();
             viewModel.Settings();
+            viewModel.Forward();
             viewModel.BackCommand.Execute(null);
             viewModel.SettingsCommand.Execute(null);
+            viewModel.ForwardCommand.Execute(null);
 
             Assert.AreEqual(2, backCount);
             Assert.AreEqual(2, settingsCount);
+            Assert.AreEqual(2, forwardCount);
+        }
+
+        [TestMethod]
+        public void MainWindowViewModelForwardCommandRestoresShellForwardNavigation()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new NavigationRootPage();
+                var viewModel = new MainWindowViewModel(page.GoBack, page.OpenSettings, page.GoForward);
+                page.DataContext = new { ViewModel = viewModel };
+                var window = new Window
+                {
+                    Width = 1180,
+                    Height = 820,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var contentHost = GetContentHost(page);
+                    var dashboard = (DashboardPage)contentHost.Content;
+                    var targetItem = dashboard.RecentlyAddedOrUpdatedSamplesInfo.First();
+
+                    dashboard.ViewModel.Navigate(targetItem);
+                    WpfTestHost.DoEvents();
+                    var itemPage = (ItemPage)contentHost.Content;
+                    Assert.AreEqual(targetItem.UniqueId, itemPage.UniqueId);
+
+                    viewModel.BackCommand.Execute(null);
+                    WpfTestHost.DoEvents();
+                    Assert.IsInstanceOfType(contentHost.Content, typeof(DashboardPage));
+
+                    viewModel.ForwardCommand.Execute(null);
+                    WpfTestHost.DoEvents();
+                    itemPage = (ItemPage)contentHost.Content;
+                    Assert.AreEqual(targetItem.UniqueId, itemPage.UniqueId);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
         }
 
         [TestMethod]

@@ -122,6 +122,17 @@ Current active selection snapshot:
    the `ColorTile` visibility-template batch. Row 5.3 is the next substantive
    row; rows 5.4 and 5.5 stay blocked while any row 5.3
    visual/runtime/harness-facing gap is current.
+7. Current batch selection proof, 2026-05-31: `SystemParameters.HighContrast`
+   returned `False`. The selected substantive row is **global order 10 / P2 row
+   5.3** because global orders 2-9 are recorded or inactive for the current
+   branch tip, P2 rows 2-4 are recorded, and rows 5.1-5.2 are recorded. The
+   comparison uses local official source
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`,
+   which exposes `Forward()` through `_navigationService.NavigateForward()`;
+   the retained local shell currently has only the `Back` and `Settings`
+   command-handler source hooks. No new visible, High Contrast, high-drift,
+   asset, measurement, automation, or harness trigger was found before taking
+   this row 5.3 source-hook batch.
 
 Mandatory next-work selector:
 
@@ -362,12 +373,15 @@ fallback still routes non-Type `GalleryGroup`, `GalleryItem`, and `"MessageBox"`
 payloads used by the ModernWpf catalog adapters, and the What's New
 `MessageBoxPage` Type path still resolves to the retained `MessageBox` item
 route.
-The earlier row 5.3 shell batch routes the
-retained `MainWindowViewModel` `BackCommand` and `SettingsCommand` through the
-official `Back()` and `Settings()` command-handler names while preserving the
-local constructor `Action` adapter. The preceding selector batch also
-normalizes official WPF Gallery display group IDs inside section page and
-section view-model selectors, so `Design Guidance`, `Basic Input`,
+The current row 5.3 shell command batch routes the retained
+`MainWindowViewModel` `BackCommand`, `SettingsCommand`, and `ForwardCommand`
+through the official `Back()`, `Settings()`, and `Forward()` command-handler
+names while preserving the local constructor `Action` adapter. `Forward()`
+uses the retained `NavigationRootPage.GoForward()` shell adapter because the
+local official WPF Gallery source uses `_navigationService.NavigateForward()`.
+The preceding selector batch also normalizes official WPF Gallery display
+group IDs inside section page and section view-model selectors, so
+`Design Guidance`, `Basic Input`,
 `Date & Calendar`, `Status & Info`, and `Media Controls` route through the
 retained canonical groups without falling back to generic section behavior.
 For Media specifically, the official WPF Gallery source uses page title
@@ -1344,6 +1358,34 @@ updated with each coherent round.
 Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
+
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the current MainWindow forward-command source-hook
+    batch. Winning rank was **global order 10 / P2 row 5.3** because global
+    orders 2-9 were recorded or inactive for the current branch tip, P2 rows
+    2-4 were recorded, and rows 5.1-5.2 were recorded. The local official WPF
+    Gallery source at
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`
+    exposes `[RelayCommand] Forward()` calling
+    `_navigationService.NavigateForward()`, while the retained local shell only
+    had `Back` and `Settings` command-handler source hooks.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowViewModelOfficialCommandHandlersDriveShellActions|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowViewModelForwardCommandRestoresShellForwardNavigation|FullyQualifiedName~WpfGallerySourceShapeTests.MainWindowViewModelKeepsWpfGalleryCommandHandlerSourceShape" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target. The focused filter covers the official `Forward()` command-handler
+    name, the retained `ForwardCommand` command binding, and a runtime
+    back-then-forward shell navigation path through `NavigationRootPage`.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the MainWindow forward-command source-hook batch. Existing warning/output
+    remains recurring `Failed to resolve WinRT.Runtime.dll` messages and
+    existing ModernWpf/ModernWpf.Controls warnings.
+- Visual audits were not rerun for this batch because no XAML, layout,
+  resource, image, rendered-artifact, or visual-check harness surface changed;
+  the current Home/What's New/All Controls/Basic Input and focused visual
+  evidence remains the latest visual evidence recorded below.
+- `git diff --check`
+  - Passed after the MainWindow forward-command source-hook batch, with only
+    the existing LF/CRLF working-copy warnings.
 
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the shared `ControlExample.Copy_SourceCode`

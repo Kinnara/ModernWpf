@@ -4035,7 +4035,7 @@ namespace ModernWpf.Gallery.Tests
                 GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--visual-artifact-dir", artifactDirectory }));
 
                 var page = new NavigationRootPage();
-                page.DataContext = new { ViewModel = new MainWindowViewModel(page.GoBack, page.OpenSettings) };
+                page.DataContext = new { ViewModel = new MainWindowViewModel(page.GoBack, page.OpenSettings, page.GoForward) };
                 var window = new Window
                 {
                     Width = 1180,

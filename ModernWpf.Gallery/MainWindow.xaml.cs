@@ -23,7 +23,7 @@ namespace ModernWpf.Gallery
 
         public MainWindow()
         {
-            ViewModel = new MainWindowViewModel(GoBack, OpenSettings);
+            ViewModel = new MainWindowViewModel(GoBack, OpenSettings, GoForward);
             DataContext = this;
             InitializeComponent();
             if (GalleryDiagnostics.IsEnabled)
@@ -44,6 +44,11 @@ namespace ModernWpf.Gallery
         private void GoBack()
         {
             GetNavigationRootPage().GoBack();
+        }
+
+        private void GoForward()
+        {
+            GetNavigationRootPage().GoForward();
         }
 
         private void OpenSettings()
