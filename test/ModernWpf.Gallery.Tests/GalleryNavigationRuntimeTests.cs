@@ -690,7 +690,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertWpfGalleryHighContrastHoverTrigger(closeButtonStyle, "title bar close button");
 
                     var rootPage = (NavigationRootPage)window.FindName("RootPage");
-                    var footerButtonStyle = (Style)rootPage.Resources["GalleryNavigationFooterButtonStyle"];
+                    var footerButtonStyle = (Style)rootPage.Resources["BorderlessButtonStyle"];
                     AssertWpfGalleryHighContrastHoverTrigger(footerButtonStyle, "navigation footer button");
                 }
                 finally

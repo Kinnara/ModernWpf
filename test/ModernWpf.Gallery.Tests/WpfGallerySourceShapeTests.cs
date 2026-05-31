@@ -1199,7 +1199,7 @@ namespace ModernWpf.Gallery.Tests
                 "PaneDisplayMode=\"Left\"");
             AssertContainsInOrder(
                 navigationRootXaml,
-                "x:Key=\"GalleryNavigationFooterButtonStyle\"",
+                "x:Key=\"BorderlessButtonStyle\"",
                 "<MultiDataTrigger>",
                 "<Condition Binding=\"{Binding Path=(SystemParameters.HighContrast)}\" Value=\"True\" />",
                 "<Condition Binding=\"{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}\" Value=\"True\" />",
@@ -1216,7 +1216,7 @@ namespace ModernWpf.Gallery.Tests
                 "VerticalContentAlignment=\"Center\"",
                 "AutomationProperties.Name=\"Settings\"",
                 "Command=\"{Binding Value.ViewModel.SettingsCommand, Source={StaticResource NavigationRootDataContextProxy}}\"",
-                "Style=\"{StaticResource GalleryNavigationFooterButtonStyle}\"",
+                "Style=\"{StaticResource BorderlessButtonStyle}\"",
                 "Click=\"OnSettingsButtonClick\"",
                 "<StackPanel Orientation=\"Horizontal\" Margin=\"11,0,0,0\">");
             AssertContainsInOrder(

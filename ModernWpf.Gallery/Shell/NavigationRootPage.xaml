@@ -11,7 +11,7 @@
     <UserControl.Resources>
         <ui:BindingProxy x:Key="NavigationRootDataContextProxy" Value="{Binding}" />
 
-        <Style x:Key="GalleryNavigationFooterButtonStyle" TargetType="Button">
+        <Style x:Key="BorderlessButtonStyle" TargetType="Button">
             <Setter Property="MinWidth" Value="48" />
             <Setter Property="MinHeight" Value="32" />
             <Setter Property="Background" Value="Transparent" />
@@ -109,7 +109,7 @@
                         VerticalContentAlignment="Center"
                         AutomationProperties.Name="Settings"
                         Command="{Binding Value.ViewModel.SettingsCommand, Source={StaticResource NavigationRootDataContextProxy}}"
-                        Style="{StaticResource GalleryNavigationFooterButtonStyle}"
+                        Style="{StaticResource BorderlessButtonStyle}"
                         Click="OnSettingsButtonClick">
                         <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
                             <TextBlock
