@@ -41,7 +41,15 @@ Current pointer:
 1. This user-requested priority/order clarification is row 1. The tracker hard
    order is now guarded by `TrackerPriorityTests`; once committed, row 1 is
    inactive again unless another priority/order conflict appears.
-2. Latest substantive batch, 2026-05-31: **global orders 3-5 / P1.3 and P2
+2. Latest substantive batch, 2026-05-31: **global order 9 / P2 row 5.2**
+   for app manifest runtime compatibility. The local official WPF Gallery
+   source at
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\app.manifest`
+   carries the `true/PM` DPI fallback, `longPathAware`, and active
+   `Microsoft.Windows.Common-Controls` v6 dependency; the local Gallery
+   manifest now keeps those runtime-compatibility hooks while retaining the
+   existing ModernWpf `PerMonitorV2` DPI awareness adapter.
+3. Latest high-priority visual batch, 2026-05-31: **global orders 3-5 / P1.3 and P2
    row 2 visual-high-drift freshness** preempted row 5.3 after the branch
    refreshed current visual/high-drift evidence. `SystemParameters.HighContrast`
    returned `False`. A local official-source scan under
@@ -53,7 +61,7 @@ Current pointer:
    theme probe did not prove Light theme; `Run-GalleryVisualChecks.ps1` now
    fails/retries unproven WinUI reference theme probes before comparison.
    Valid Light/Dark reruns are recorded in Row 8 and Latest local verification.
-3. Latest interaction/automation correction, 2026-05-31: **global order 7 /
+4. Latest interaction/automation correction, 2026-05-31: **global order 7 /
    P2 row 4** preempted row 5.3 because the local official source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Controls\ControlExample.xaml.cs`
    gates `ControlExample.Copy_SourceCode` through a non-empty `XamlCode` check,
@@ -61,7 +69,7 @@ Current pointer:
    unknown parameter. `ModernWpf.Gallery\Controls\ControlExample.cs` now keeps
    that interaction shape while retaining the local notification compatibility
    adapter. This row 7 batch is recorded in Latest local verification.
-4. The latest recorded row 5 source batch was **global order 10 / P2 row 5.3** because
+5. The latest recorded row 5.3 source batch was **global order 10 / P2 row 5.3** because
    the local official WPF Gallery sources
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\MainWindow.xaml.cs`
    and
@@ -70,9 +78,9 @@ Current pointer:
    `_navigationService.IsBackHistoryNonEmpty()`, while the local retained shell
    still used the direct `MainWindow.SetBackButtonVisible(bool)` adapter. That
    batch is now recorded in Latest local verification.
-5. The next substantive row returns to **global order 10 / P2 row 5.3** only
+6. The next substantive row returns to **global order 10 / P2 row 5.3** only
    while every higher row remains recorded or inactive.
-6. Any new High Contrast, visible drift, high-drift retained-control, asset,
+7. Any new High Contrast, visible drift, high-drift retained-control, asset,
    measurement, interaction, automation, or harness evidence immediately
    preempts row 5 source cleanup.
 
@@ -182,6 +190,17 @@ Current active selection snapshot:
     branch-tip Light/Dark high-drift reruns are recorded at
     `artifacts/visual-checks/20260531-125756-652-39076/report.md` and
     `artifacts/visual-checks/20260531-125906-951-89176/report.md`.
+11. Recorded app-manifest runtime-compatibility selection proof, 2026-05-31:
+    `SystemParameters.HighContrast` returned `False`. The selected substantive
+    row was **global order 9 / P2 row 5.2** because the local official WPF
+    Gallery source
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\app.manifest`
+    exposes runtime-compatibility hooks that can affect process/runtime visual
+    behavior: `dpiAware` fallback `true/PM`, `longPathAware`, and active
+    `Microsoft.Windows.Common-Controls` v6. Global orders 2-8 remained recorded
+    or inactive, and this row 5.2 app-level runtime structure preempted row
+    5.3. The local manifest now keeps those official hooks while retaining the
+    existing ModernWpf `PerMonitorV2` adapter.
 
 Mandatory next-work selector:
 
@@ -212,8 +231,9 @@ Type-gate batch, the `WhatsNewPage` MessageBox type-selector source-hook batch,
 the Iconography search-placeholder handler source-hook batch, the Iconography
 global order 7 / P2 row 4 batch, the shared `ControlExample.Copy_SourceCode`
 global order 7 / P2 row 4 batch, the MainWindow forward-command and
-`UpdateCanNavigateBack` source-hook batches, and the earlier `ColorTile` row
-5.2 visibility-template batch are recorded. If any visual, High Contrast,
+`UpdateCanNavigateBack` source-hook batches, the app-manifest row 5.2 runtime
+compatibility batch, and the earlier `ColorTile` row 5.2 visibility-template
+batch are recorded. If any visual, High Contrast,
 high-drift, asset, measurement, automation, or harness trigger appears, this
 pointer is stale and the higher row wins.
 
@@ -401,7 +421,8 @@ Current P2 state:
    again. While row 5 is selectable, use the `P2 Row 5 Internal Queue`; the
    current known row 5.1 Color subsection visible-content guard and row 5.2
    visible/runtime-facing structural items are recorded, including the current
-   `ColorTile` warning/separator visibility-template batch. The next row 5
+   app-manifest runtime-compatibility batch and the `ColorTile`
+   warning/separator visibility-template batch. The next row 5
    selection starts at row 5.3 unless a new sample-pane, runtime-visible
    example-content, or visible/runtime-facing structural gap appears.
 6. Row 6 remains blocked until row 5 is recorded or not applicable.
@@ -433,6 +454,11 @@ Back-state refresh now also flows through the retained official
 `UpdateCanNavigateBack()` view-model source hook, backed by a local
 `NavigationRootPage.CanGoBack` provider because the official WPF Gallery source
 uses `_navigationService.IsBackHistoryNonEmpty()`.
+The current row 5.2 app-manifest batch uses local official WPF Gallery
+`app.manifest` as the runtime-compatibility source, adds the official
+`true/PM` DPI fallback, `longPathAware`, and active Common Controls v6
+dependency, and retains the local `PerMonitorV2` DPI-awareness adapter because
+that is the existing ModernWpf Gallery launch/runtime behavior.
 The preceding selector batch also normalizes official WPF Gallery display
 group IDs inside section page and section view-model selectors, so
 `Design Guidance`, `Basic Input`,
@@ -466,7 +492,7 @@ Current row 5 decision:
 | Row 5 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
 | 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named. |
-| 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and records the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
+| 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns app-manifest runtime compatibility with local official WPF Gallery source by keeping the `true/PM` DPI fallback, `longPathAware`, and active `Microsoft.Windows.Common-Controls` v6 dependency while retaining the local `PerMonitorV2` DPI-awareness adapter. Earlier named 5.2 batches align the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and record the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
 | 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Current while 5.1 and 5.2 remain recorded and no higher visual/High Contrast/high-drift/harness trigger appears. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, the copied `WhatsNewPage` handler selector, and the copied Iconography direct search-placeholder visibility handlers. | Continue with the next named resource/key/name/selector/hook gap that can affect visuals, behavior, or harness evidence. |
 | 5.4 | Non-visible copied/adapted source-shape guards | Lower priority. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked while 5.1-5.3 have current work. | Take only a named guard gap with focused tests and a full Gallery build. |
 | 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
@@ -1449,6 +1475,38 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the app-manifest runtime-compatibility batch.
+    Winning rank was **global order 9 / P2 row 5.2** because global orders
+    2-8 remained recorded or inactive and local official WPF Gallery source at
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\app.manifest`
+    exposed app-level runtime compatibility hooks missing locally: the
+    `true/PM` DPI fallback, `longPathAware`, and active
+    `Microsoft.Windows.Common-Controls` v6 dependency. This row 5.2 runtime
+    structure preempted row 5.3.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.GalleryManifestKeepsWpfGalleryRuntimeCompatibilityShape|FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 2 tests per
+    target. The focused filter covers the app manifest runtime-compatibility
+    shape and adjacent shell source-shape guard. Existing warning/output
+    remains `NU1903`, recurring `Failed to resolve WinRT.Runtime.dll`, and
+    existing ModernWpf/ModernWpf.Controls warnings.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the app-manifest runtime-compatibility batch. Existing warning/output
+    remains recurring `Failed to resolve WinRT.Runtime.dll` messages and
+    existing ModernWpf/ModernWpf.Controls warnings.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home,Settings -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-133120-779-78032/report.md`:
+    Home `0` with matching `916x762` crops and Settings `0` with matching
+    `868x758` crops after the manifest runtime-compatibility batch.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home,Settings -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-133208-706-57960/report.md`:
+    Home remains the accepted `0.04` residual with matching `916x762` crops
+    and Settings remains `0` with matching `868x758` crops after the manifest
+    runtime-compatibility batch.
+- `git diff --check`
+  - Passed after the app-manifest runtime-compatibility batch, with only the
+    existing LF/CRLF working-copy warnings for touched files.
 - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
     target. This row 1 guard pins the hard order with visual, real OS High
