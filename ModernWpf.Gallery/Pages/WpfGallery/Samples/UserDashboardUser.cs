@@ -109,16 +109,15 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
         }
 
         public UserDashboardUser(UserDashboardUser user)
-            : this(
-                user.ImageId,
-                user.FirstName,
-                user.LastName,
-                user.Company,
-                user.Address,
-                user.Age,
-                user.DateOfJoining,
-                user.IsNewGraduate)
         {
+            ImageId = user.ImageId;
+            FirstName = user.FirstName;
+            LastName = user.LastName;
+            Company = user.Company;
+            Address = user.Address;
+            Age = user.Age;
+            DateOfJoining = user.DateOfJoining;
+            IsNewGraduate = user.IsNewGraduate;
         }
 
         public UserDashboardUser(string imageId, string firstName, string lastName, string company, string address, int age, DateTime dateOfJoining, bool isNewGraduate)
@@ -128,9 +127,9 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
             LastName = lastName;
             Company = company;
             Address = address;
+            IsNewGraduate = isNewGraduate;
             Age = age;
             DateOfJoining = dateOfJoining;
-            IsNewGraduate = isNewGraduate;
         }
 
         private bool SetProperty<T>(ref T field, T value, string propertyName)
