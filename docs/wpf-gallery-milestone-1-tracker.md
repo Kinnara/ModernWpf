@@ -268,7 +268,10 @@ Current P2 state:
 | 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations, Design Guidance Color subsection visible example-content guards, Iconography instructions Expander inline/source structure, Design Guidance Spacing/Geometry default design-image `Source` resource fallback, Navigation `FrameWindow` same-folder `Frame.Source` behavior, Navigation `NavigationWindow` runtime URI/template-resource behavior, MainWindow/title-bar plus NavigationRoot footer style resource keys, SectionPage retained-extension scroll-host structural lookup/no-local-name hooks, NavigationRootPage content-frame Border structural lookup/no-local-name hook, NavigationRootPage Settings footer event-handler naming/sender-notification parity, NavigationRootPage High Contrast pane-edge cover structural lookup/no-local-name hook, NavigationRootPage visual-test status panel structural lookup/no-local-name hooks, ShellNavigation rendered-artifact crop hardening, MainWindow retained NavigationRootPage host structural lookup/no-local-name hook, NavigationRootPage retained content Frame structural lookup/no-local-name hook, NavigationRootPage retained NavigationView structural lookup/no-local-name hook, NavigationRootPage Settings footer official command-binding path through the retained PaneFooter BindingProxy bridge, MainWindow title-bar `WindowChrome.IsHitTestVisibleInChrome` attached-property source shape, Design Guidance Color `ColorsPage` class/file naming, Design Guidance Icons `IconsPage` / `IconsPageViewModel` class/file naming plus the official `Copy_Content` command selector, top-level `DashboardPage` / `AllSamplesPage` class/file naming while preserving the retained `Home` / `AllControls` routes and visual artifact IDs, official WPF Gallery display-route aliases such as `Date & Calendar`, `Status & Info`, `Design Guidance`, `Basic Input`, `Colors`, `Icons`, `File and Folder Dialogs`, `User Dashboard`, `All Controls`, and `Home` resolving to retained local route IDs, WPF visual-audit launch routes using those official display IDs with canonical ready-route waits, and direct page registry display-ID normalization for official item IDs, with focused source-shape/runtime tests, full Gallery builds, and refreshed Color, Iconography, Home/AllControls, DateAndCalendar/StatusAndInfo, FileAndFolderDialogs, UserDashboard, Spacing/Geometry, Frame, NavigationWindow, ShellNavigation, and BasicInput Light/Dark visual audits recorded in Latest local verification. | Continue only with the first executable item from the `P2 Row 5 Internal Queue`; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
 | 6 | Pure tracker/status cleanup and documentation-only work | Last; blocked by row 5 except row 1 priority/order fixes. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
 
-Current row 5 summary addendum: the latest row 5.3 selector batch also
+Current row 5 summary addendum: the latest row 5.3 shell batch routes the
+retained `MainWindowViewModel` `BackCommand` and `SettingsCommand` through the
+official `Back()` and `Settings()` command-handler names while preserving the
+local constructor `Action` adapter. The preceding selector batch also
 normalizes official WPF Gallery display group IDs inside section page and
 section view-model selectors, so `Design Guidance`, `Basic Input`,
 `Date & Calendar`, `Status & Info`, and `Media Controls` route through the
@@ -408,6 +411,16 @@ Latest accepted row 5.3 execution note:
   `SystemParameters.HighContrast` returned `False`, global orders 2-9 were
   recorded or inactive, and no new High Contrast, visible-drift, high-drift,
   asset, measurement, automation, or harness trigger appeared.
+- The twenty-first named 5.3 batch aligned the retained shell
+  `MainWindowViewModel` command-handler source hooks with official WPF Gallery
+  handler names by routing `BackCommand` and `SettingsCommand` through explicit
+  `Back()` and `Settings()` methods while preserving the local constructor
+  `Action` adapter used by `MainWindow`. Runtime and source-shape coverage now
+  pins both direct handler calls and `ICommand` execution to the same shell
+  actions. This was selected only after `SystemParameters.HighContrast`
+  returned `False`, global orders 2-9 were recorded or inactive, and no new
+  High Contrast, visible-drift, high-drift, asset, measurement, automation, or
+  harness trigger appeared.
 
 ### Row 8 Strict Subqueue
 
@@ -1138,6 +1151,19 @@ updated with each coherent round.
 Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
+
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the current row 5.3 MainWindowViewModel command-handler source-hook batch. Winning rank was **global order 10 / P2 row 5.3** because global orders 2-9 were recorded or inactive for the branch tip and no new visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appeared.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowViewModelOfficialCommandHandlersDriveShellActions|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~WpfGallerySourceShapeTests.MainWindowViewModelKeepsWpfGalleryCommandHandlerSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per target. The focused filter covers the explicit `Back()` / `Settings()` command-handler methods, both `ICommand` routes, retained MainWindow shell bindings, and the source-shape guard that prevents commands from bypassing the official handler names.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the row 5.3 MainWindowViewModel command-handler source-hook batch. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases ShellNavigation -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-094709-431-85824/report.md`: ShellNavigation remains `0.8` with matching `250x707` crops, `142/11151` changed samples (`1.273%`), max RGB diff `669`, and no new shell visual or harness regression after the command-handler batch.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases ShellNavigation -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-094731-706-50472/report.md`: ShellNavigation remains `0.82` with matching `250x707` crops, `142/11151` changed samples (`1.273%`), max RGB diff `669`, and the accepted rendered-artifact pane crop unchanged.
+- `git diff --check`
+  - Passed after the row 5.3 MainWindowViewModel command-handler source-hook batch, with only the existing LF/CRLF working-copy warnings.
 
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the current priority-order and row 5.3 Media selector correction round. Winning rank was **global order 10 / P2 row 5.3** because global orders 2-9 were recorded or inactive for the branch tip and no new visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appeared.

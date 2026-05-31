@@ -660,6 +660,24 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void MainWindowViewModelOfficialCommandHandlersDriveShellActions()
+        {
+            var backCount = 0;
+            var settingsCount = 0;
+            var viewModel = new MainWindowViewModel(
+                () => backCount++,
+                () => settingsCount++);
+
+            viewModel.Back();
+            viewModel.Settings();
+            viewModel.BackCommand.Execute(null);
+            viewModel.SettingsCommand.Execute(null);
+
+            Assert.AreEqual(2, backCount);
+            Assert.AreEqual(2, settingsCount);
+        }
+
+        [TestMethod]
         public void MainWindowDiagnosticAutomationIdIsVisualTestOnly()
         {
             WpfTestHost.Run(() =>

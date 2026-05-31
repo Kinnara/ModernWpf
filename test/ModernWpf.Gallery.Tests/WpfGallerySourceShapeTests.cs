@@ -1405,6 +1405,34 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void MainWindowViewModelKeepsWpfGalleryCommandHandlerSourceShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "ViewModels",
+                "MainWindowViewModel.cs");
+
+            AssertContainsInOrder(
+                source,
+                "private readonly Action _backAction;",
+                "private readonly Action _settingsAction;",
+                "_backAction = backAction;",
+                "_settingsAction = settingsAction;",
+                "BackCommand = new RelayCommand(delegate { Back(); });",
+                "SettingsCommand = new RelayCommand(delegate { Settings(); });",
+                "public void Back()",
+                "_backAction();",
+                "public void Settings()",
+                "_settingsAction();");
+            Assert.IsFalse(
+                source.Contains("delegate { backAction(); }", StringComparison.Ordinal),
+                "BackCommand should route through the retained official Back command-handler name instead of calling the constructor adapter directly.");
+            Assert.IsFalse(
+                source.Contains("delegate { settingsAction(); }", StringComparison.Ordinal),
+                "SettingsCommand should route through the retained official Settings command-handler name instead of calling the constructor adapter directly.");
+        }
+
+        [TestMethod]
         public void ItemPageWrapperAvoidsLocalOnlyAutomationHooks()
         {
             var xaml = ReadRepoFile(

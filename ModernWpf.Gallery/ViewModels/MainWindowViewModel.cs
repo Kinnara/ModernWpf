@@ -6,6 +6,8 @@ namespace ModernWpf.Gallery.ViewModels
 {
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
+        private readonly Action _backAction;
+        private readonly Action _settingsAction;
         private bool _canNavigateback;
 
         public MainWindowViewModel(Action backAction, Action settingsAction)
@@ -20,8 +22,11 @@ namespace ModernWpf.Gallery.ViewModels
                 throw new ArgumentNullException(nameof(settingsAction));
             }
 
-            BackCommand = new RelayCommand(delegate { backAction(); });
-            SettingsCommand = new RelayCommand(delegate { settingsAction(); });
+            _backAction = backAction;
+            _settingsAction = settingsAction;
+
+            BackCommand = new RelayCommand(delegate { Back(); });
+            SettingsCommand = new RelayCommand(delegate { Settings(); });
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -31,6 +36,16 @@ namespace ModernWpf.Gallery.ViewModels
         public ICommand BackCommand { get; }
 
         public ICommand SettingsCommand { get; }
+
+        public void Back()
+        {
+            _backAction();
+        }
+
+        public void Settings()
+        {
+            _settingsAction();
+        }
 
         public bool CanNavigateback
         {
