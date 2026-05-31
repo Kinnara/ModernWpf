@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using ModernWpf.Gallery.Pages.WpfGallery;
+using ModernWpf.Gallery.Pages.WpfGallery.SystemPages;
 
 namespace ModernWpf.Gallery.Pages
 {
@@ -44,7 +45,7 @@ namespace ModernWpf.Gallery.Pages
 
         private void NavigateToMessageBoxSample(object sender, RoutedEventArgs e)
         {
-            ViewModel.Navigate("MessageBox");
+            ViewModel.Navigate(typeof(MessageBoxPage));
         }
 
         private void Open_UsingFluentInWPFPage(object sender, RoutedEventArgs e)
@@ -57,6 +58,10 @@ namespace ModernWpf.Gallery.Pages
             if (parameter is string uniqueId)
             {
                 ItemRequested?.Invoke(uniqueId);
+            }
+            else if (parameter is Type pageType && pageType == typeof(MessageBoxPage))
+            {
+                ItemRequested?.Invoke("MessageBox");
             }
         }
     }

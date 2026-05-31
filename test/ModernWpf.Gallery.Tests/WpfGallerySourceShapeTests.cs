@@ -2554,6 +2554,26 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WhatsNewPageMessageBoxHandlerKeepsOfficialTypeSelectorShape()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WhatsNewPage.xaml.cs");
+
+            Assert.IsFalse(
+                source.Contains("ViewModel.Navigate(\"MessageBox\")", StringComparison.Ordinal),
+                "Copied What's New handler should keep the official MessageBoxPage type selector instead of a local string selector.");
+            AssertContainsInOrder(
+                source,
+                "using ModernWpf.Gallery.Pages.WpfGallery.SystemPages;",
+                "private void NavigateToMessageBoxSample(object sender, RoutedEventArgs e)",
+                "ViewModel.Navigate(typeof(MessageBoxPage));",
+                "else if (parameter is Type pageType && pageType == typeof(MessageBoxPage))",
+                "ItemRequested?.Invoke(\"MessageBox\");");
+        }
+
+        [TestMethod]
         public void SettingsPageKeepsOfficialSettingsDeclarationSourceShape()
         {
             var xaml = ReadRepoFile(
