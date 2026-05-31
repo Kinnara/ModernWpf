@@ -44,6 +44,22 @@ status only when its ranked bucket is executable. When in doubt, choose the
 higher-ranked visual/High Contrast/high-drift/harness row and record why source
 cleanup is not being taken.
 
+Current allowed substantive row after this priority/order hygiene edit:
+
+- `P2` row 5 is selectable only because P0.1, row 7, row 8, and P2 rows 2-4
+  are currently recorded and `SystemParameters.HighContrast = False` in the
+  local shell.
+- Inside row 5, `5.1` is recorded and the active substantive row is **5.2**:
+  source-backed structure that can affect visible layout, resources, keyboard,
+  interaction, automation, or visual-harness behavior.
+- `5.3` is blocked until no named `5.2` item remains.
+- `5.4` and `5.5` are blocked while any `5.1`, `5.2`, or `5.3` item is current;
+  comments, declaration order, member order, summaries, and stale tracker
+  cleanup must not be selected ahead of visible/runtime-facing structure.
+- Any new High Contrast, visible-drift, high-drift retained-control, asset,
+  measurement, interaction, automation, or harness evidence immediately
+  preempts row 5 and reopens the higher-ranked bucket.
+
 1. User-requested priority/order hygiene is the only tracker-only exception.
    Fix the ordering text, then immediately return to the first substantive row
    below.
