@@ -82,6 +82,9 @@ public static class GalleryVisualNative
     private static extern IntPtr GetWindowDC(IntPtr hWnd);
 
     [DllImport("user32.dll")]
+    private static extern IntPtr GetDC(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
     private static extern int ReleaseDC(IntPtr hWnd, IntPtr hdc);
 
     [DllImport("gdi32.dll")]
@@ -146,6 +149,24 @@ public static class GalleryVisualNative
         finally
         {
             ReleaseDC(hWnd, hdcSource);
+        }
+    }
+
+    public static bool CopyScreenSurface(IntPtr hdcDest, int sourceX, int sourceY, int width, int height)
+    {
+        IntPtr hdcSource = GetDC(IntPtr.Zero);
+        if (hdcSource == IntPtr.Zero)
+        {
+            return false;
+        }
+
+        try
+        {
+            return BitBlt(hdcDest, 0, 0, width, height, hdcSource, sourceX, sourceY, 0x00CC0020);
+        }
+        finally
+        {
+            ReleaseDC(IntPtr.Zero, hdcSource);
         }
     }
 }
@@ -835,9 +856,11 @@ function Get-ImageMeanLuminance([string]$path, [int]$step = 3) {
     }
 }
 
-function Capture-Window([IntPtr]$hwnd, [string]$path) {
-    [GalleryVisualNative]::Activate($hwnd)
-    Start-Sleep -Milliseconds 300
+function Capture-Window([IntPtr]$hwnd, [string]$path, [switch]$SkipActivate) {
+    if (!$SkipActivate) {
+        [GalleryVisualNative]::Activate($hwnd)
+        Start-Sleep -Milliseconds 300
+    }
     $rect = [GalleryVisualNative]::GetRect($hwnd)
     $width = [Math]::Max(1, $rect.Right - $rect.Left)
     $height = [Math]::Max(1, $rect.Bottom - $rect.Top)
@@ -904,7 +927,25 @@ function Capture-ScreenRect([IntPtr]$hwnd, [string]$path) {
     $bitmap = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
     $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
     try {
-        $graphics.CopyFromScreen($rect.Left, $rect.Top, 0, 0, [System.Drawing.Size]::new($width, $height))
+        try {
+            $graphics.CopyFromScreen($rect.Left, $rect.Top, 0, 0, [System.Drawing.Size]::new($width, $height))
+        }
+        catch {
+            $copyFromScreenError = $_.Exception.Message
+            $graphics.Clear([System.Drawing.Color]::Transparent)
+            $hdc = $graphics.GetHdc()
+            $copied = $false
+            try {
+                $copied = [GalleryVisualNative]::CopyScreenSurface($hdc, $rect.Left, $rect.Top, $width, $height)
+            }
+            finally {
+                $graphics.ReleaseHdc($hdc)
+            }
+
+            if (!$copied) {
+                throw "CopyFromScreen failed and native screen capture fallback failed: $copyFromScreenError"
+            }
+        }
         $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
     }
     finally {
@@ -1777,6 +1818,31 @@ function Invoke-ElementPatternOnce($window, $element) {
     return $false
 }
 
+function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames) {
+    $invoked = Invoke-ElementOnce $window $element
+    Start-Sleep -Milliseconds 150
+    if ($null -ne (Find-ElementByNameInProcess $window.Current.ProcessId $openNames)) {
+        return $invoked
+    }
+
+    $invoked = (Invoke-ElementPatternOnce $window $element) -or $invoked
+    Start-Sleep -Milliseconds 150
+    if ($null -ne (Find-ElementByNameInProcess $window.Current.ProcessId $openNames)) {
+        return $invoked
+    }
+
+    try {
+        $element.SetFocus()
+        [GalleryVisualNative]::PressSpace()
+        $invoked = $true
+        Start-Sleep -Milliseconds 150
+    }
+    catch {
+    }
+
+    return $invoked
+}
+
 function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDir, $window, $showButton, [string[]]$openNames) {
     if (!$IncludeInteractions -or ($control -ne "TeachingTip" -and $control -ne "CommandBarFlyout")) {
         return $null
@@ -1786,13 +1852,13 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     Start-Sleep -Milliseconds 250
     $baselinePath = Join-Path $caseDir ("{0}-{1}-closed.png" -f $app.ToLowerInvariant(), $control)
     try {
-        Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
-    }
-    catch {
         Capture-Window $window.Current.NativeWindowHandle $baselinePath
     }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    }
     $invoked = if ($control -eq "CommandBarFlyout") {
-        Invoke-ElementOnce $window $showButton
+        Invoke-ElementUntilOpen $window $showButton $openNames
     }
     else {
         Invoke-Element $window $showButton
@@ -1810,10 +1876,17 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         $framePath = Join-Path $caseDir ("{0}-{1}-open-{2:D3}ms.png" -f $app.ToLowerInvariant(), $control, $delay)
         $frameError = ""
         try {
-            Capture-ScreenRect $window.Current.NativeWindowHandle $framePath
+            Capture-Window $window.Current.NativeWindowHandle $framePath -SkipActivate
         }
         catch {
             $frameError = $_.Exception.Message
+            try {
+                Capture-ScreenRect $window.Current.NativeWindowHandle $framePath
+                $frameError = ""
+            }
+            catch {
+                $frameError = $frameError + "; fallback Capture-ScreenRect failed: " + $_.Exception.Message
+            }
         }
         $frames.Add([ordered]@{
             DelayMs = $delay

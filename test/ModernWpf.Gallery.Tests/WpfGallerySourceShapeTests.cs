@@ -1791,6 +1791,69 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryVisualChecksCaptureInteractionFramesWithoutReactivatingWindow()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Capture-Window([IntPtr]$hwnd, [string]$path, [switch]$SkipActivate)",
+                "if (!$SkipActivate)",
+                "[GalleryVisualNative]::Activate($hwnd)",
+                "Capture-Window $window.Current.NativeWindowHandle $baselinePath",
+                "Capture-Window $window.Current.NativeWindowHandle $framePath -SkipActivate",
+                "$frameError = $_.Exception.Message",
+                "Capture-ScreenRect $window.Current.NativeWindowHandle $framePath",
+                "$frameError = \"\"",
+                "\"; fallback Capture-ScreenRect failed: \"");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksRetriesCommandBarFlyoutOpenThroughInvokePattern()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames)",
+                "$invoked = Invoke-ElementOnce $window $element",
+                "Find-ElementByNameInProcess $window.Current.ProcessId $openNames",
+                "$invoked = (Invoke-ElementPatternOnce $window $element) -or $invoked",
+                "[GalleryVisualNative]::PressSpace()",
+                "$invoked = if ($control -eq \"CommandBarFlyout\")",
+                "Invoke-ElementUntilOpen $window $showButton $openNames");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksFallsBackToNativeScreenCapture()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "private static extern IntPtr GetDC(IntPtr hWnd);",
+                "public static bool CopyScreenSurface(IntPtr hdcDest, int sourceX, int sourceY, int width, int height)",
+                "IntPtr hdcSource = GetDC(IntPtr.Zero);",
+                "return BitBlt(hdcDest, 0, 0, width, height, hdcSource, sourceX, sourceY, 0x00CC0020);",
+                "function Capture-ScreenRect([IntPtr]$hwnd, [string]$path)",
+                "$graphics.CopyFromScreen($rect.Left, $rect.Top, 0, 0, [System.Drawing.Size]::new($width, $height))",
+                "$copied = [GalleryVisualNative]::CopyScreenSurface($hdc, $rect.Left, $rect.Top, $width, $height)",
+                "CopyFromScreen failed and native screen capture fallback failed");
+        }
+
+        [TestMethod]
         public void WpfGalleryVisualAuditUsesSingleRenderedContentArtifactPriority()
         {
             var source = File.ReadAllText(Path.Combine(
