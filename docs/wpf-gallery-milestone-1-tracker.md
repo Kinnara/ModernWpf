@@ -48,6 +48,19 @@ Current pointer:
    committed, row 1 is inactive again unless another priority/order conflict
    appears.
 2. Latest substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
+   for the `MessageBoxPageViewModel` common-message verbatim-string
+   source-shape guard. The local official WPF Gallery source at
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\System\MessageBoxPageViewModel.cs`
+   keeps `_commonMessagesXamlCode` and `_commonMessagesCSharpCode` as
+   verbatim string literals. The local copied view model now keeps that
+   non-visible backing-field source shape while preserving the same runtime
+   sample-pane strings through the existing System snippet tests. This row was
+   selected only after `SystemParameters.HighContrast` returned `False`,
+   retained high-drift Light/Dark evidence stayed Passed, direct same-path
+   XAML scans found no missing official `AutomationProperties.Name`, `x:Name`,
+   or event-hook item that would reopen row 5.3, global orders 2-9 stayed
+   recorded or inactive, and rows 5.1-5.2 stayed recorded.
+3. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `MessageBoxPageViewModel.UpdateButtonCodeSnippets(int index)` and
    `UpdateImageCodeSnippets(int index)` switch-expression source-shape guard.
    The local official WPF Gallery source at
@@ -63,7 +76,7 @@ Current pointer:
    `AutomationProperties.Name`, `x:Name`, or event-hook item that would reopen
    row 5.3, global orders 2-9 stayed recorded or inactive, and rows 5.1-5.2
    stayed recorded.
-3. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+4. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `CheckBoxPageViewModel` command branch-body source-shape guard.
    The local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\BasicInput\CheckBoxPageViewModel.cs`
@@ -77,7 +90,7 @@ Current pointer:
    missing official `AutomationProperties.Name`, `x:Name`, or event-hook item
    that would reopen row 5.3, global orders 2-9 stayed recorded or inactive,
    and rows 5.1-5.2 stayed recorded.
-4. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+5. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `ListViewPageViewModel.GeneratePersons(int visualTestSeed)`
    source-shape guard. The local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\Collections\ListViewPageViewModel.cs`
@@ -92,7 +105,7 @@ Current pointer:
    found no missing official `AutomationProperties.Name`, `x:Name`, or
    event-hook item that would reopen row 5.3, global orders 2-9 stayed
    recorded or inactive, and rows 5.1-5.2 stayed recorded.
-5. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+6. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `DataGridPageViewModel.GenerateProducts()` source-shape guard. The
    local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\Collections\DataGridPageViewModel.cs`
@@ -106,7 +119,7 @@ Current pointer:
    same-path XAML scans found no missing official `AutomationProperties.Name`,
    `x:Name`, or event-hook item that would reopen row 5.3, global orders 2-9
    stayed recorded or inactive, and rows 5.1-5.2 stayed recorded.
-6. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+7. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex`
    explicit-generic `SetProperty<int>` source-shape guard. The local official
    WPF Gallery source at
@@ -120,7 +133,7 @@ Current pointer:
    global orders 2-9 stayed recorded or inactive, rows 5.1-5.2 stayed
    recorded, row 5.3 still had no current named executable gap, and the latest
    high-drift evidence remained current.
-7. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+8. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `CheckBoxPageViewModel.OnSingleChecked(string option)` source-shape
    guard. The local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\BasicInput\CheckBoxPageViewModel.cs`
@@ -132,7 +145,7 @@ Current pointer:
    global orders 2-9 stayed recorded or inactive, rows 5.1-5.2 stayed
    recorded, row 5.3 still had no current named executable gap, and the latest
    high-drift evidence remained current.
-8. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+9. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel.ApplyTagFilter(string? tag)` source-shape
    guard. The local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -145,7 +158,7 @@ Current pointer:
    recorded or inactive, rows 5.1-5.2 stayed recorded, row 5.3 still had no
    current named executable gap, and the latest high-drift evidence remained
    current.
-9. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+10. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel` PageSize helper source-shape guard. The local
    official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -158,7 +171,7 @@ Current pointer:
    `SystemParameters.HighContrast` returned `False`, global orders 2-9 stayed
    recorded or inactive, rows 5.1-5.2 stayed recorded, and no current row 5.3
    executable gap appeared.
-10. Previous high-priority verification batch, 2026-05-31: **global orders 3-5 /
+11. Previous high-priority verification batch, 2026-05-31: **global orders 3-5 /
    P1.3 and P2 row 2 visual-high-drift freshness** preempted further row 5.4
    source-shape work after the user called out visual/high-drift priority risk.
    `SystemParameters.HighContrast` returned `False`. Retained high-drift
@@ -168,7 +181,7 @@ Current pointer:
    nonblank ModernWpf/WinUI captures and required sample elements. No new
    visible drift, high-drift retained-control regression, High Contrast,
    asset, measurement, automation, or harness trigger appeared.
-11. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+12. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel` pagination/displayed-icons source-shape guard.
    The local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -179,14 +192,14 @@ Current pointer:
    This row was selected only after `SystemParameters.HighContrast` returned
    `False`, global orders 2-9 stayed recorded or inactive, rows 5.1-5.2
    stayed recorded, and no current row 5.3 executable gap appeared.
-12. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+13. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel` selected-icon name source-shape guard. The
    local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
    caches `previousSelectedIcon?.Name` before rebuilding search results; the
    local copied view model now keeps that non-visible source shape while
    retaining the local WPF command and serializer adapters.
-13. Previous row 4 batch, 2026-05-31: **global order 7 / P2 row 4**
+14. Previous row 4 batch, 2026-05-31: **global order 7 / P2 row 4**
    for Iconography reload/current-page interaction parity. The local official
    WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -196,7 +209,7 @@ Current pointer:
    serializer adapters. This measurement/interaction row preempted row 5.4
    source-shape cleanup after `SystemParameters.HighContrast` returned `False`
    and no visual, high-drift, or asset trigger appeared.
-14. Previous row 4 batch, 2026-05-31: **global order 7 / P2 row 4**
+15. Previous row 4 batch, 2026-05-31: **global order 7 / P2 row 4**
    for Iconography search interaction parity. The local official WPF Gallery
    source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -207,7 +220,7 @@ Current pointer:
    measurement/interaction row preempted row 5.4 source-shape cleanup after
    `SystemParameters.HighContrast` returned `False` and no visual,
    high-drift, or asset trigger appeared.
-15. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+16. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel` pagination helper source-shape guard. The local
    official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -218,7 +231,7 @@ Current pointer:
    `SystemParameters.HighContrast` returned `False`, global orders 2-9 stayed
    recorded or inactive, rows 5.1-5.2 stayed recorded, and no current row 5.3
    executable gap appeared.
-16. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+17. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `IconsPageViewModel.PageSize` source-shape guard. The local official
    WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\DesignGuidance\IconsPageViewModel.cs`
@@ -230,14 +243,14 @@ Current pointer:
    and direct mapped XAML hook/name/automation, direct code-behind member,
    official XAML resource-key, and matched ViewModel scans found no current row
    5.3 executable gap.
-17. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
+18. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the `MainWindowViewModel.ApplicationTitle` source-shape guard. The local
    official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`
    carries `_applicationTitle = "WPF Gallery"` as backing state; the local
    retained shell view model now uses the same backing field while keeping the
    local get-only property adapter.
-18. Previous higher-priority substantive batch, 2026-05-31: **global order 6 /
+19. Previous higher-priority substantive batch, 2026-05-31: **global order 6 /
    P2 row 3** for executable application-icon asset parity. The local official
    WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\WPFGallery.csproj`
@@ -248,7 +261,7 @@ Current pointer:
    This asset/runtime-visible shell surface preempted row 5.3 source cleanup.
    The previous **global order 9 / P2 row 5.2** app-manifest runtime
    compatibility batch remains recorded.
-19. Previous high-priority visual batch, 2026-05-31: **global orders 3-5 / P1.3 and P2
+20. Previous high-priority visual batch, 2026-05-31: **global orders 3-5 / P1.3 and P2
    row 2 visual-high-drift freshness** preempted row 5.3 after the branch
    refreshed current visual/high-drift evidence. `SystemParameters.HighContrast`
    returned `False`. A local official-source scan under
@@ -264,7 +277,7 @@ Current pointer:
    `artifacts/visual-checks/20260531-134103-490-70788/report.md` and
    `artifacts/visual-checks/20260531-134200-949-83644/report.md`, so row 5.3
    stays selectable only after this higher visual freshness check.
-20. Previous interaction/automation correction, 2026-05-31: **global order 7 /
+21. Previous interaction/automation correction, 2026-05-31: **global order 7 /
    P2 row 4** preempted row 5.3 because the local official source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Controls\ControlExample.xaml.cs`
    gates `ControlExample.Copy_SourceCode` through a non-empty `XamlCode` check,
@@ -272,7 +285,7 @@ Current pointer:
    unknown parameter. `ModernWpf.Gallery\Controls\ControlExample.cs` now keeps
    that interaction shape while retaining the local notification compatibility
    adapter. This row 7 batch is recorded in Latest local verification.
-21. The latest recorded row 5.3 source batch was **global order 10 / P2 row 5.3** because
+22. The latest recorded row 5.3 source batch was **global order 10 / P2 row 5.3** because
    the local official WPF Gallery sources
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\MainWindow.xaml.cs`
    and
@@ -281,10 +294,10 @@ Current pointer:
    `_navigationService.IsBackHistoryNonEmpty()`, while the local retained shell
    still used the direct `MainWindow.SetBackButtonVisible(bool)` adapter. That
    batch is now recorded in Latest local verification.
-22. The next substantive row returns to **global order 11 / P2 row 5.4** only
+23. The next substantive row returns to **global order 11 / P2 row 5.4** only
     while every higher row, including row 5.3, remains recorded, inactive, or
     has no current named executable gap.
-23. Any new High Contrast, visible drift, high-drift retained-control, asset,
+24. Any new High Contrast, visible drift, high-drift retained-control, asset,
    measurement, interaction, automation, or harness evidence immediately
    preempts row 5 source cleanup.
 
@@ -312,9 +325,9 @@ Current distance, in executable buckets rather than a percentage:
    MainWindow `UpdateCanNavigateBack` source-hook alignments. The current
    executable row is 5.4 only for named non-visible source-shape guards proven
    against local official source; the latest such guard is the System
-   MessageBox switch-expression snippet helper shape with the retained
-   `net462`-compatible `int` switch adapter, and it is valid only while rows
-   above remain recorded and `SystemParameters.HighContrast = False`.
+   MessageBox common-message verbatim-string backing-field shape, and it is
+   valid only while rows above remain recorded and
+   `SystemParameters.HighContrast = False`.
 4. Remaining work before the goal can close: finish any named 5.4 guards that
    survive the local official-source comparison, record or explicitly mark row
    5.5 as not applicable, then do P2 row 6/final closeout with a fresh
@@ -354,6 +367,16 @@ Current active selection snapshot:
    harness trigger appeared, so lower row 5 work is allowed only after this
    proof remains current.
 3. The latest row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
+   5 Internal Queue row 5.4** for the System `MessageBoxPageViewModel`
+   common-message verbatim-string backing-field source-shape guard.
+   `SystemParameters.HighContrast` returned `False`, global orders 2-9 are
+   recorded or inactive for the current branch tip, rows 5.1-5.2 are recorded,
+   row 5.3 has no current named executable gap after direct same-path XAML
+   `AutomationProperties.Name`, `x:Name`, and event-hook scans, and the latest
+   high-drift freshness proof above remains current. The local copied view
+   model keeps the official non-visible verbatim-string backing-field shape
+   while preserving the same runtime System sample-pane strings.
+4. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
    5 Internal Queue row 5.4** for the System
    `MessageBoxPageViewModel.UpdateButtonCodeSnippets(int index)` and
    `UpdateImageCodeSnippets(int index)` switch-expression source-shape guard.
@@ -365,7 +388,7 @@ Current active selection snapshot:
    model keeps the official non-visible switch-expression helper shape while
    retaining the local `int` switch adapter for cross-target
    `MessageBoxButton` enum compatibility.
-4. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
+5. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
    5 Internal Queue row 5.4** for the
    `CheckBoxPageViewModel` command branch-body source-shape guard.
    `SystemParameters.HighContrast` returned `False`, global orders 2-9 are
@@ -373,7 +396,7 @@ Current active selection snapshot:
    row 5.3 has no current named executable gap after direct same-path XAML
    `AutomationProperties.Name`, `x:Name`, and event-hook scans, and the latest
    high-drift freshness proof above remains current.
-5. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
+6. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
    5 -> P2 Row 5 Internal Queue row 5.4** for the
    `ListViewPageViewModel.GeneratePersons(int visualTestSeed)`
    source-shape guard. `SystemParameters.HighContrast` returned `False`,
@@ -381,7 +404,7 @@ Current active selection snapshot:
    5.1-5.2 are recorded, row 5.3 has no current named executable gap after
    direct same-path XAML `AutomationProperties.Name`, `x:Name`, and event-hook
    scans, and the latest high-drift freshness proof above remains current.
-6. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
+7. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
    5 -> P2 Row 5 Internal Queue row 5.4** for the
    `DataGridPageViewModel.GenerateProducts()` private-method source-shape
    guard. `SystemParameters.HighContrast` returned `False`, global orders 2-9
@@ -389,7 +412,7 @@ Current active selection snapshot:
    recorded, row 5.3 has no current named executable gap after direct
    same-path XAML `AutomationProperties.Name`, `x:Name`, and event-hook scans,
    and the latest high-drift freshness proof above remains current.
-7. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
+8. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
    5 -> P2 Row 5 Internal Queue row 5.4** for the
    `ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex`
    explicit-generic `SetProperty<int>` source-shape guard.
@@ -397,42 +420,42 @@ Current active selection snapshot:
    global orders 2-9 are recorded or inactive for the current branch tip, rows
    5.1-5.2 are recorded, row 5.3 has no current named executable gap, and the
    latest high-drift freshness proof above remains current.
-8. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
+9. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
    5 -> P2 Row 5 Internal Queue row 5.4** for the
    `CheckBoxPageViewModel.OnSingleChecked(string option)` source-shape guard.
    `SystemParameters.HighContrast` returned `False`, global orders 2-9 are
    recorded or inactive for the current branch tip, rows 5.1-5.2 are recorded,
    and row 5.3 has no current named executable gap.
-9. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
+10. The previous substantive row 5 path was **global order 11 -> P2 Subqueue row
    5 -> P2 Row 5 Internal Queue row 5.4** for the
    `IconsPageViewModel.ApplyTagFilter(string? tag)` source-shape guard.
    `SystemParameters.HighContrast` returned `False`, global orders 2-9 are
    recorded or inactive for the current branch tip, rows 5.1-5.2 are recorded,
    and row 5.3 has no current named executable gap.
-10. The previous row 5 substantive path was **global order 11 -> P2 Subqueue
+11. The previous row 5 substantive path was **global order 11 -> P2 Subqueue
    row 5 -> P2 Row 5 Internal Queue row 5.4** for the `IconsPageViewModel`
    selected-icon name source-shape guard.
-11. The latest preemptive substantive path was **global order 7 / P2 row 4**
+12. The latest preemptive substantive path was **global order 7 / P2 row 4**
    for Iconography reload/current-page behavior, and it is now recorded for the
    current branch tip. This row 4 interaction gap preempted row 5.4 after the
    local official WPF Gallery source showed `LoadData()` updates pagination
    without forcing `CurrentPage = 1`.
-12. The previous preemptive substantive path was **global order 7 / P2 row 4**
+13. The previous preemptive substantive path was **global order 7 / P2 row 4**
    for Iconography whitespace search filtering, and it is recorded for the
    current branch tip.
-13. The previous row 5 substantive path was **global order 11 -> P2 Subqueue row
+14. The previous row 5 substantive path was **global order 11 -> P2 Subqueue row
    5 -> P2 Row 5 Internal Queue row 5.4** for the `IconsPageViewModel`
    pagination-helper source-shape guard; earlier 5.3 batches are also recorded
    for the current branch tip.
-14. Global orders 2-9 are recorded or inactive for the current branch tip and
+15. Global orders 2-9 are recorded or inactive for the current branch tip and
    must be rechecked before every new substantive batch.
-15. P2 rows 2-4 are recorded for the current branch tip. P2 row 6 and general
+16. P2 rows 2-4 are recorded for the current branch tip. P2 row 6 and general
    tracker cleanup remain blocked while row 5 has executable work.
-16. Inside row 5, rows 5.1 and 5.2 are recorded for the current branch tip after
+17. Inside row 5, rows 5.1 and 5.2 are recorded for the current branch tip after
    the `ColorTile` visibility-template batch. Row 5.3 currently has no named
    executable gap, so row 5.4 is the current row-5 sub-bucket; row 5.5 stays
    blocked while any row 5.1-5.4 item is current.
-17. Recorded forward-command selection proof, 2026-05-31:
+18. Recorded forward-command selection proof, 2026-05-31:
    `SystemParameters.HighContrast` returned `False`. The selected substantive
    row was **global order 10 / P2 row
    5.3** because global orders 2-9 are recorded or inactive for the current
@@ -441,7 +464,7 @@ Current active selection snapshot:
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`,
    which exposes `Forward()` through `_navigationService.NavigateForward()`.
    That row 5.3 source-hook batch is now recorded for the current branch tip.
-18. Recorded back-state source-hook selection proof, 2026-05-31:
+19. Recorded back-state source-hook selection proof, 2026-05-31:
    `SystemParameters.HighContrast` returned `False`. The selected substantive
    row was **global order 10 / P2 row
    5.3** because global orders 2-9 are recorded or inactive for the current
@@ -457,7 +480,7 @@ Current active selection snapshot:
    `UpdateCanNavigateBack()` source hook and a local `CanGoBack` provider. No
    new visible, High Contrast, high-drift, asset, measurement, automation, or
    harness trigger was found before taking this row 5.3 source-hook batch.
-19. Priority correction checkpoint, 2026-05-31:
+20. Priority correction checkpoint, 2026-05-31:
    the scheduler must be read as a hard priority queue, not as a convenience
    backlog. Visual, real OS High Contrast, high-drift retained-control, asset,
    measurement, interaction, automation, and harness evidence always preempts
@@ -465,7 +488,7 @@ Current active selection snapshot:
    comparison is confirmed as
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery`; every future source
    comparison must name the exact local official file or folder used.
-20. Visual/high-drift correction checkpoint, 2026-05-31:
+21. Visual/high-drift correction checkpoint, 2026-05-31:
     row 5.3 source cleanup was paused after the local official-source scan
     found no current mapped-page event-hook/name/automation-name gap. The
     selected work became **global orders 3-5 / P1.3 and P2 row 2** because a
@@ -476,7 +499,7 @@ Current active selection snapshot:
     branch-tip Light/Dark high-drift reruns are recorded at
     `artifacts/visual-checks/20260531-125756-652-39076/report.md` and
     `artifacts/visual-checks/20260531-125906-951-89176/report.md`.
-21. Recorded app-manifest runtime-compatibility selection proof, 2026-05-31:
+22. Recorded app-manifest runtime-compatibility selection proof, 2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 9 / P2 row 5.2** because the local official WPF
     Gallery source
@@ -487,7 +510,7 @@ Current active selection snapshot:
     or inactive, and this row 5.2 app-level runtime structure preempted row
     5.3. The local manifest now keeps those official hooks while retaining the
     existing ModernWpf `PerMonitorV2` adapter.
-22. Post-manifest visual/high-drift freshness checkpoint, 2026-05-31:
+23. Post-manifest visual/high-drift freshness checkpoint, 2026-05-31:
     row 5.3 stayed paused until retained high-drift evidence was refreshed
     after the manifest runtime-compatibility batch. `SystemParameters.HighContrast`
     returned `False`; `GridView`, `CommandBarFlyout`, and `ProgressRing`
@@ -497,7 +520,7 @@ Current active selection snapshot:
     High Contrast, visible-drift, high-drift, asset, measurement, automation,
     or harness trigger appeared, so the next substantive row returns to global
     order 10 / P2 row 5.3.
-23. Recorded app-icon asset selection proof, 2026-05-31:
+24. Recorded app-icon asset selection proof, 2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 6 / P2 row 3** because the local official WPF
     Gallery source
@@ -511,7 +534,7 @@ Current active selection snapshot:
     SHA-256 `A58A690D437F60C052331340718413BF751419EC49C904640DD73797FF33B780`.
     No new visual, High Contrast, high-drift, measurement, automation, or
     harness trigger was found before taking this higher-priority asset row.
-24. Recorded `ApplicationTitle` source-shape guard selection proof,
+25. Recorded `ApplicationTitle` source-shape guard selection proof,
     2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -531,7 +554,7 @@ Current active selection snapshot:
     and aligns the local `ApplicationTitle` property to an official
     `_applicationTitle = "WPF Gallery"` backing field without changing the
     visible title value.
-25. Recorded Iconography page-size source-shape guard selection proof,
+26. Recorded Iconography page-size source-shape guard selection proof,
     2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -544,7 +567,7 @@ Current active selection snapshot:
     branch is `SelectedPageSizeIndex == 4`. The local copied view model now
     keeps that official source shape; behavior remains the same for the
     official page-size option list `{ "100", "250", "500", "1000", "All" }`.
-26. Recorded Iconography pagination-helper source-shape guard selection proof,
+27. Recorded Iconography pagination-helper source-shape guard selection proof,
     2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -556,7 +579,7 @@ Current active selection snapshot:
     the displayed-icon projection. The local copied view model now keeps that
     official non-visible helper shape while preserving the local WPF command
     adapter and serializer adapter.
-27. Recorded Iconography search-filter interaction selection proof,
+28. Recorded Iconography search-filter interaction selection proof,
     2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 7 / P2 row 4** because the local official source
@@ -568,7 +591,7 @@ Current active selection snapshot:
     view model now keeps the official direct filter value, null-conditional tag
     match, and selected-icon predicate shape while preserving the local WPF
     command and serializer adapters.
-28. Recorded Iconography reload current-page interaction selection proof,
+29. Recorded Iconography reload current-page interaction selection proof,
     2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 7 / P2 row 4** because the local official source
@@ -579,7 +602,7 @@ Current active selection snapshot:
     preempted row 5.4. The local view model now keeps the official
     reload/current-page behavior while preserving the local WPF command and
     serializer adapters.
-29. Recorded Iconography selected-icon name source-shape guard selection proof,
+30. Recorded Iconography selected-icon name source-shape guard selection proof,
     2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -591,7 +614,7 @@ Current active selection snapshot:
     repopulating filtered results. The local copied view model now keeps that
     official non-visible source shape while preserving the local WPF command
     and serializer adapters.
-30. Recorded Iconography pagination/displayed-icons source-shape guard
+31. Recorded Iconography pagination/displayed-icons source-shape guard
     selection proof, 2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -605,7 +628,7 @@ Current active selection snapshot:
     and uses `if(resetSelectedIcon)` before resetting `SelectedIcon`. The
     local copied view model now keeps those official non-visible source shapes
     while preserving the local WPF command and serializer adapters.
-31. Recorded Iconography PageSize helper-block source-shape guard selection
+32. Recorded Iconography PageSize helper-block source-shape guard selection
     proof, 2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -620,7 +643,7 @@ Current active selection snapshot:
     `PageSizeOptions`, then the one-line `PageSize` helper before `LoadData`.
     The local copied view model now keeps that official non-visible helper-block
     shape while preserving the local WPF command and serializer adapters.
-32. Recorded Iconography tag-filter nullable-parameter source-shape guard
+33. Recorded Iconography tag-filter nullable-parameter source-shape guard
     selection proof, 2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -636,7 +659,7 @@ Current active selection snapshot:
     preserving the local WPF `RelayCommand` adapter and using a local
     annotations-only nullable directive so the legacy file does not enable
     nullable flow warnings.
-33. Recorded Basic Input CheckBox single-option command signature source-shape
+34. Recorded Basic Input CheckBox single-option command signature source-shape
     guard selection proof, 2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -652,7 +675,7 @@ Current active selection snapshot:
     view model now keeps that official non-visible handler signature while
     preserving the local WPF `ICommand` adapter through an object-to-string
     command bridge.
-34. Recorded Collections ListView selection-mode setter source-shape guard
+35. Recorded Collections ListView selection-mode setter source-shape guard
     selection proof, 2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -668,7 +691,7 @@ Current active selection snapshot:
     before `UpdateListViewSelectionMode(value)`. The local copied view model
     now keeps that official non-visible setter shape while preserving the
     shared WPF observable adapter and deterministic sample-generation adapters.
-35. Recorded Collections DataGrid product generation source-shape guard
+36. Recorded Collections DataGrid product generation source-shape guard
     selection proof, 2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -684,7 +707,7 @@ Current active selection snapshot:
     `_productsCollection = GenerateProducts();`. The local copied view model
     now keeps that official non-visible method location/signature while
     preserving the deterministic visual-test `CreateSampleRandom` adapter.
-36. Recorded Collections ListView person generation source-shape guard
+37. Recorded Collections ListView person generation source-shape guard
     selection proof, 2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -702,7 +725,7 @@ Current active selection snapshot:
     `ListViewPageViewModel` while preserving deterministic visual-test splits
     through `BasicListViewVisualTestSeed`, `GridViewVisualTestSeed`, and
     `CreateSampleRandom`.
-37. Recorded Basic Input CheckBox command branch-body source-shape guard
+38. Recorded Basic Input CheckBox command branch-body source-shape guard
     selection proof, 2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -718,7 +741,7 @@ Current active selection snapshot:
     block braces. The local copied view model now keeps that official
     non-visible branch-body shape while retaining the WPF `ICommand` adapter
     and object-to-string command bridge.
-38. Recorded System MessageBox snippet switch-expression source-shape guard
+39. Recorded System MessageBox snippet switch-expression source-shape guard
     selection proof, 2026-05-31:
     `SystemParameters.HighContrast` returned `False`. The selected substantive
     row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
@@ -735,6 +758,21 @@ Current active selection snapshot:
     now keeps that official non-visible helper shape while retaining the local
     `int` switch adapter for `net462`/older-target compatibility with newer
     `MessageBoxButton` enum names that stay present in snippet strings.
+40. Recorded System MessageBox common-message verbatim-string source-shape
+    guard selection proof, 2026-05-31:
+    `SystemParameters.HighContrast` returned `False`. The selected substantive
+    row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
+    recorded or inactive, rows 5.1-5.2 were recorded, direct same-path XAML
+    scans found no missing official `AutomationProperties.Name`, `x:Name`, or
+    event-hook item to reopen row 5.3, and the refreshed high-drift Light/Dark
+    evidence `artifacts/visual-checks/20260531-151548-761-78380/report.md` /
+    `artifacts/visual-checks/20260531-151737-949-59816/report.md` stayed
+    current. The local official source
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\System\MessageBoxPageViewModel.cs`
+    keeps `_commonMessagesXamlCode` and `_commonMessagesCSharpCode` as
+    verbatim string literals. The local copied view model now keeps that
+    official non-visible backing-field shape while preserving the same runtime
+    System sample-pane strings.
 
 Mandatory next-work selector:
 
@@ -759,7 +797,7 @@ recently touched.
 | 12 | P2 row 5.5 row-5 bookkeeping and stale-status cleanup | Blocked until substantive row 5 items are recorded or not applicable. |
 | 13 | P2 row 6 and final closeout cleanup | Last; only after row 5 is recorded or explicitly not applicable and the final verification sweep is current. |
 
-After the latest System MessageBox row 5.4 switch-expression snippet guard is
+After the latest System MessageBox row 5.4 common-message verbatim-string guard is
 recorded, the next substantive row may remain **global order 11 / P2 row 5.4**
 only if another named 5.4 guard survives the same proof. The latest
 direct same-path XAML scans found no missing official
@@ -796,7 +834,7 @@ Required selection proof before any substantive edit:
    cleanup stay blocked while any 5.1-5.4 item is current.
 
 Current allowed substantive row may remain **global order 11 / P2 row 5.4**
-after the latest System MessageBox row 5.4 switch-expression snippet guard is
+after the latest System MessageBox row 5.4 common-message verbatim-string guard is
 recorded only if `SystemParameters.HighContrast` is `False`, global orders 2-9
 are recorded or inactive for the current branch tip, P2 rows 2-4 are recorded,
 rows 5.1-5.2 are recorded, row 5.3 has no current named executable gap, and a
@@ -1036,7 +1074,7 @@ Current row 5 decision:
 | 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named. |
 | 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns app-manifest runtime compatibility with local official WPF Gallery source by keeping the `true/PM` DPI fallback, `longPathAware`, and active `Microsoft.Windows.Common-Controls` v6 dependency while retaining the local `PerMonitorV2` DPI-awareness adapter. Earlier named 5.2 batches align the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and record the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
 | 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Recorded for the current branch tip with no current named gap after the latest scan. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, the copied `WhatsNewPage` handler selector, and the copied Iconography direct search-placeholder visibility handlers. | Reopen before 5.4 if a new named resource/key/name/selector/hook gap appears that can affect visuals, behavior, or harness evidence. |
-| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns `MessageBoxPageViewModel.UpdateButtonCodeSnippets(int index)` and `UpdateImageCodeSnippets(int index)` with the official switch-expression snippet helper shape while retaining the local `int` switch adapter for `net462`/older-target compatibility with newer `MessageBoxButton` enum names in snippet strings. Previous 5.4 guards aligned `CheckBoxPageViewModel` command branch bodies with the official single-statement `OnSelectAllChecked(object sender)` and `OnSingleChecked(string option)` source shape while retaining the local WPF `ICommand` adapter and object-to-string command bridge, `ListViewPageViewModel.GeneratePersons(int visualTestSeed)` with the official private person-generation method location inside `ListViewPageViewModel` while keeping deterministic visual-test splits through `BasicListViewVisualTestSeed`, `GridViewVisualTestSeed`, and `CreateSampleRandom`, `DataGridPageViewModel.GenerateProducts()` with the official private method location/signature inside `DataGridPageViewModel` while keeping the deterministic visual-test random adapter, `ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex` with the official explicit-generic `SetProperty<int>(ref _listViewSelectionModeComboBoxSelectedIndex, value);` setter shape while keeping the shared WPF observable adapter, `CheckBoxPageViewModel.OnSingleChecked(string option)` with the official single-option command handler signature while keeping the local WPF `ICommand` adapter through an object-to-string bridge, `IconsPageViewModel.ApplyTagFilter(string? tag)` with the official nullable tag-parameter handler signature, the `IconsPageViewModel` PageSize helper block with the official default-250 comment, `PageSizeOptions` adjacency, and one-line `PageSize` helper before `LoadData`, pagination/displayed-icons helper shape with the official zero-total clamp, one-line displayed-icons projection, and `if(resetSelectedIcon)` reset guard, selected-icon name caching with the official `previousSelectedIcon?.Name` source shape, pagination helpers with the official expression-bodied `CanGoToPreviousPage()` / `CanGoToNextPage()` helpers and `UpdateDisplayedIcons` local `skip` variable shape, `IconsPageViewModel.PageSize` with the official expression-bodied `SelectedPageSizeIndex == 4` "All" branch, and `MainWindowViewModel.ApplicationTitle` with the official `_applicationTitle = "WPF Gallery"` backing-field source shape. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
+| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns `MessageBoxPageViewModel` common-message backing fields with the official verbatim-string source shape while preserving the same runtime sample-pane strings. Previous 5.4 guards aligned `MessageBoxPageViewModel.UpdateButtonCodeSnippets(int index)` and `UpdateImageCodeSnippets(int index)` with the official switch-expression snippet helper shape while retaining the local `int` switch adapter for `net462`/older-target compatibility with newer `MessageBoxButton` enum names in snippet strings, `CheckBoxPageViewModel` command branch bodies with the official single-statement `OnSelectAllChecked(object sender)` and `OnSingleChecked(string option)` source shape while retaining the local WPF `ICommand` adapter and object-to-string command bridge, `ListViewPageViewModel.GeneratePersons(int visualTestSeed)` with the official private person-generation method location inside `ListViewPageViewModel` while keeping deterministic visual-test splits through `BasicListViewVisualTestSeed`, `GridViewVisualTestSeed`, and `CreateSampleRandom`, `DataGridPageViewModel.GenerateProducts()` with the official private method location/signature inside `DataGridPageViewModel` while keeping the deterministic visual-test random adapter, `ListViewPageViewModel.ListViewSelectionModeComboBoxSelectedIndex` with the official explicit-generic `SetProperty<int>(ref _listViewSelectionModeComboBoxSelectedIndex, value);` setter shape while keeping the shared WPF observable adapter, `CheckBoxPageViewModel.OnSingleChecked(string option)` with the official single-option command handler signature while keeping the local WPF `ICommand` adapter through an object-to-string bridge, `IconsPageViewModel.ApplyTagFilter(string? tag)` with the official nullable tag-parameter handler signature, the `IconsPageViewModel` PageSize helper block with the official default-250 comment, `PageSizeOptions` adjacency, and one-line `PageSize` helper before `LoadData`, pagination/displayed-icons helper shape with the official zero-total clamp, one-line displayed-icons projection, and `if(resetSelectedIcon)` reset guard, selected-icon name caching with the official `previousSelectedIcon?.Name` source shape, pagination helpers with the official expression-bodied `CanGoToPreviousPage()` / `CanGoToNextPage()` helpers and `UpdateDisplayedIcons` local `skip` variable shape, `IconsPageViewModel.PageSize` with the official expression-bodied `SelectedPageSizeIndex == 4` "All" branch, and `MainWindowViewModel.ApplicationTitle` with the official `_applicationTitle = "WPF Gallery"` backing-field source shape. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
 | 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
 
 Latest accepted visual/high-drift priority-correction note:
@@ -2032,6 +2070,50 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the System MessageBox common-message
+    verbatim-string source-shape guard. Winning rank was **global order 11 /
+    P2 row 5.4** because global orders 2-9 were recorded or inactive, rows
+    5.1-5.2 were recorded, direct same-path XAML scans found no missing
+    official `AutomationProperties.Name`, `x:Name`, or event-hook item to
+    reopen row 5.3, and the visual/high-drift freshness evidence
+    `artifacts/visual-checks/20260531-151548-761-78380/report.md` /
+    `artifacts/visual-checks/20260531-151737-949-59816/report.md` remained
+    current.
+- Local official-source comparison used
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\System\MessageBoxPageViewModel.cs`
+  - Official source keeps `_commonMessagesXamlCode` and
+    `_commonMessagesCSharpCode` as verbatim string literals. Local
+    `ModernWpf.Gallery\Pages\WpfGallery\System\SystemPageViewModels.cs`
+    now keeps that non-visible backing-field source shape while preserving the
+    same runtime System sample-pane strings.
+- Direct same-path XAML scans against
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` and
+  `ModernWpf.Gallery\Pages\WpfGallery`
+  - Found no missing official `AutomationProperties.Name`, `x:Name`, or event
+    hook items in matched local XAML files before selecting row 5.4.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.SystemViewModelsKeepOfficialObservableStateSourceShape|FullyQualifiedName~WpfGallerySystemSnippetTests.SystemControlExamplesMatchOfficialWpfGallerySampleCode|FullyQualifiedName~WpfGallerySystemSnippetTests.MessageBoxDynamicSnippetsMatchOfficialWpfGallerySampleCode|FullyQualifiedName~GalleryPageRuntimeTests.SystemPagesMatchWpfGalleryReference|FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per
+    target after aligning the System MessageBox common-message verbatim-string
+    source shape. Existing warning/output remains `NU1903`, generated WinRT,
+    ModernWpf/ModernWpf.Controls warnings, and recurring `Failed to resolve
+    WinRT.Runtime.dll` messages.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the System MessageBox common-message verbatim-string source-shape guard.
+    Build summary reported 19 warnings and 0 errors, including existing
+    ModernWpf/ModernWpf.Controls warnings and recurring `Failed to resolve
+    WinRT.Runtime.dll` messages.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after updating the tracker hard-order/current-selection notes for
+    the System MessageBox common-message verbatim-string guard. Existing
+    warning/output remains `NU1903` and recurring `Failed to resolve
+    WinRT.Runtime.dll` messages.
+- `git diff --check`
+  - Passed after the System MessageBox common-message verbatim-string guard and
+    tracker update, with only the existing LF/CRLF working-copy warnings for
+    touched files.
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the System MessageBox switch-expression snippet
     source-shape guard. Winning rank was **global order 11 / P2 row 5.4**

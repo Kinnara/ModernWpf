@@ -69,26 +69,28 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
         private string _differentImagesXamlCode = "<Button Content=\"Show MessageBox\" Click=\"ShowMessageButton_Click\" />";
         private string _differentImagesCSharpCode = string.Format(_differentImagesMessageBoxSampleCSharpCodeString, "\tMessageBox.Show(\"Message\", \"Title\", MessageBoxButton.OK, MessageBoxImage.None);");
         private string _commonMessagesResult = "No common message shown yet";
-        private string _commonMessagesXamlCode = "<WrapPanel Margin=\"0,0,0,10\">\n" +
-            "    <Button Content=\"Information\" Click=\"ShowInformationButton_Click\" />\n" +
-            "    <Button Content=\"Error\" Click=\"ShowErrorButton_Click\" />\n" +
-            "    <Button Content=\"Warning\" Click=\"ShowWarningButton_Click\" />\n" +
-            "</WrapPanel>";
-        private string _commonMessagesCSharpCode = "// Information\n" +
-            "private void ShowInformationButton_Click(object sender, RoutedEventArgs e)\n" +
-            "{\n" +
-            "    MessageBox.Show(\"Operation completed successfully.\", \"Information\", MessageBoxButton.OK, MessageBoxImage.Information);\n" +
-            "}\n\n" +
-            "// Error\n" +
-            "private void ShowErrorButton_Click(object sender, RoutedEventArgs e)\n" +
-            "{\n" +
-            "    MessageBox.Show(\"An error occurred!\", \"Error\", MessageBoxButton.OK, MessageBoxImage.Error);\n" +
-            "}\n\n" +
-            "// Warning\n" +
-            "private void ShowWarningButton_Click(object sender, RoutedEventArgs e)\n" +
-            "{\n" +
-            "    MessageBox.Show(\"This action cannot be undone!\", \"Warning\", MessageBoxButton.OKCancel, MessageBoxImage.Warning);\n" +
-            "}";
+        private string _commonMessagesXamlCode = @"<WrapPanel Margin=""0,0,0,10"">
+    <Button Content=""Information"" Click=""ShowInformationButton_Click"" />
+    <Button Content=""Error"" Click=""ShowErrorButton_Click"" />
+    <Button Content=""Warning"" Click=""ShowWarningButton_Click"" />
+</WrapPanel>";
+        private string _commonMessagesCSharpCode = @"// Information
+private void ShowInformationButton_Click(object sender, RoutedEventArgs e)
+{
+    MessageBox.Show(""Operation completed successfully."", ""Information"", MessageBoxButton.OK, MessageBoxImage.Information);
+}
+
+// Error
+private void ShowErrorButton_Click(object sender, RoutedEventArgs e)
+{
+    MessageBox.Show(""An error occurred!"", ""Error"", MessageBoxButton.OK, MessageBoxImage.Error);
+}
+
+// Warning
+private void ShowWarningButton_Click(object sender, RoutedEventArgs e)
+{
+    MessageBox.Show(""This action cannot be undone!"", ""Warning"", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+}";
         private string _customDefaultResult = "No selection made";
 
         public MessageBoxPageViewModel()
