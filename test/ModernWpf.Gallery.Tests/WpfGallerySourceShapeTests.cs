@@ -3007,6 +3007,12 @@ namespace ModernWpf.Gallery.Tests
                 "var buttonType = GetMessageBoxButton(ViewModel.SelectedButtonIndex);",
                 "var result = MessageBox.Show($\"This MessageBox has {buttonName} button(s).\", $\"{buttonName} Button(s)\", buttonType);",
                 "private static MessageBoxButton GetMessageBoxButton(int index)");
+            StringAssert.Contains(
+                normalizedSource,
+                "#if NET10_0_OR_GREATER\n                case 2:\n                    return MessageBoxButton.AbortRetryIgnore;\n#endif");
+            StringAssert.Contains(
+                normalizedSource,
+                "#if NET10_0_OR_GREATER\n                case 5:\n                    return MessageBoxButton.RetryCancel;\n                case 6:\n                    return MessageBoxButton.CancelTryContinue;\n#endif");
             AssertContainsInOrder(
                 normalizedSource,
                 "var imageType = GetMessageBoxImage(ViewModel.SelectedImageIndex);",

@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Windows;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Gallery.Pages.WpfGallery.SystemPages;
 using ClipboardPage = ModernWpf.Gallery.Pages.WpfGallery.SystemPages.ClipboardPage;
@@ -329,6 +331,35 @@ namespace ModernWpf.Gallery.Tests
                 viewModel.SelectedImageIndex = i;
                 Assert.AreEqual(imageSnippets[i], viewModel.DifferentImagesCSharpCode, "Image snippet " + i);
             }
+        }
+
+        [TestMethod]
+        public void MessageBoxRuntimeButtonSelectionUsesOfficialEnumsWhenAvailable()
+        {
+            var method = typeof(MessageBoxPage).GetMethod(
+                "GetMessageBoxButton",
+                BindingFlags.NonPublic | BindingFlags.Static);
+            Assert.IsNotNull(method);
+
+            MessageBoxButton GetButton(int index)
+            {
+                return (MessageBoxButton)method.Invoke(null, new object[] { index });
+            }
+
+            Assert.AreEqual(MessageBoxButton.OK, GetButton(0));
+            Assert.AreEqual(MessageBoxButton.OKCancel, GetButton(1));
+            Assert.AreEqual(MessageBoxButton.YesNoCancel, GetButton(3));
+            Assert.AreEqual(MessageBoxButton.YesNo, GetButton(4));
+
+#if NET10_0_OR_GREATER
+            Assert.AreEqual(MessageBoxButton.AbortRetryIgnore, GetButton(2));
+            Assert.AreEqual(MessageBoxButton.RetryCancel, GetButton(5));
+            Assert.AreEqual(MessageBoxButton.CancelTryContinue, GetButton(6));
+#else
+            Assert.AreEqual(MessageBoxButton.OK, GetButton(2));
+            Assert.AreEqual(MessageBoxButton.OK, GetButton(5));
+            Assert.AreEqual(MessageBoxButton.OK, GetButton(6));
+#endif
         }
 
         private static string MessageBoxButtonSnippet(params string[] contentLines)

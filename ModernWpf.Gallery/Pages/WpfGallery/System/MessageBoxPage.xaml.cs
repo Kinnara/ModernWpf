@@ -77,10 +77,20 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
             {
                 case 1:
                     return MessageBoxButton.OKCancel;
+#if NET10_0_OR_GREATER
+                case 2:
+                    return MessageBoxButton.AbortRetryIgnore;
+#endif
                 case 3:
                     return MessageBoxButton.YesNoCancel;
                 case 4:
                     return MessageBoxButton.YesNo;
+#if NET10_0_OR_GREATER
+                case 5:
+                    return MessageBoxButton.RetryCancel;
+                case 6:
+                    return MessageBoxButton.CancelTryContinue;
+#endif
                 default:
                     return MessageBoxButton.OK;
             }
