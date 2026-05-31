@@ -864,6 +864,51 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SectionPagesAcceptOfficialWpfGalleryDisplayGroupIds()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var expectedGroups = new[]
+                {
+                    new { LookupId = "Design Guidance", CanonicalId = "DesignGuidance", PageType = typeof(DesignGuidancePage), ViewModelType = typeof(DesignGuidancePageViewModel), PageTitle = "DesignGuidancePage" },
+                    new { LookupId = "Basic Input", CanonicalId = "BasicInput", PageType = typeof(BasicInputPage), ViewModelType = typeof(BasicInputPageViewModel), PageTitle = "BasicInputPage" },
+                    new { LookupId = "Date & Calendar", CanonicalId = "DateAndCalendar", PageType = typeof(DateAndTimePage), ViewModelType = typeof(DateAndTimePageViewModel), PageTitle = "DateAndTimePage" },
+                    new { LookupId = "Status & Info", CanonicalId = "StatusAndInfo", PageType = typeof(StatusAndInfoPage), ViewModelType = typeof(StatusAndInfoPageViewModel), PageTitle = "StatusAndInfoPage" },
+                    new { LookupId = "Media Controls", CanonicalId = "Media", PageType = typeof(MediaPage), ViewModelType = typeof(MediaPageViewModel), PageTitle = "MediaPage" }
+                };
+
+                foreach (var expected in expectedGroups)
+                {
+                    var canonicalGroup = GalleryCatalog.FindGroup(expected.LookupId);
+                    Assert.IsNotNull(canonicalGroup, expected.LookupId);
+                    Assert.AreEqual(expected.CanonicalId, canonicalGroup.UniqueId, expected.LookupId);
+
+                    var displayGroup = new GalleryGroup(
+                        expected.LookupId,
+                        canonicalGroup.Title,
+                        canonicalGroup.Subtitle,
+                        canonicalGroup.ImagePath,
+                        canonicalGroup.IsSpecialSection,
+                        canonicalGroup.Items,
+                        canonicalGroup.PageDescription);
+
+                    var factoryPage = WpfGallerySectionPageFactory.Create(displayGroup);
+                    Assert.IsInstanceOfType(factoryPage, expected.PageType, expected.LookupId);
+                    Assert.AreEqual(expected.PageTitle, factoryPage.Title, expected.LookupId);
+                    Assert.IsInstanceOfType(factoryPage.ViewModel, expected.ViewModelType, expected.LookupId);
+                    Assert.AreEqual(canonicalGroup.Title, factoryPage.ViewModel.PageTitle, expected.LookupId);
+                    AssertNavigationCardIds(canonicalGroup.Items, factoryPage.ViewModel.NavigationCards, expected.LookupId);
+
+                    var genericPage = new SectionPage(displayGroup);
+                    Assert.AreEqual(expected.PageTitle, genericPage.Title, expected.LookupId);
+                    Assert.IsInstanceOfType(genericPage.ViewModel, expected.ViewModelType, expected.LookupId);
+                    Assert.AreEqual(canonicalGroup.Title, genericPage.ViewModel.PageTitle, expected.LookupId);
+                    AssertNavigationCardIds(canonicalGroup.Items, genericPage.ViewModel.NavigationCards, expected.LookupId);
+                }
+            });
+        }
+
+        [TestMethod]
         public void WpfGalleryPageShellCardsMatchReferenceAutomationAndLayout()
         {
             WpfTestHost.Run(() =>

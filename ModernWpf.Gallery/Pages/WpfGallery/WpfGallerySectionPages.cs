@@ -12,7 +12,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
                 throw new ArgumentNullException(nameof(group));
             }
 
-            switch (group.UniqueId)
+            switch (GalleryCatalog.NormalizeLookupId(group.UniqueId))
             {
                 case "DesignGuidance":
                     return new DesignGuidancePage();

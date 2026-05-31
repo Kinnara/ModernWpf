@@ -22,11 +22,13 @@ namespace ModernWpf.Gallery.Pages
                 throw new ArgumentNullException(nameof(group));
             }
 
+            var normalizedUniqueId = GalleryCatalog.NormalizeLookupId(group.UniqueId);
+
             InitializeComponent();
             ViewModel = viewModel ?? WpfGalleryNavigationPageViewModel.CreateForGroup(group, OnNavigateCard);
             DataContext = this;
-            Title = GetOfficialSectionPageTitle(group.UniqueId);
-            if (IsModernWpfExtensionSection(group.UniqueId))
+            Title = GetOfficialSectionPageTitle(normalizedUniqueId);
+            if (IsModernWpfExtensionSection(normalizedUniqueId))
             {
                 GetOfficialGroupItemsControl().Visibility = System.Windows.Visibility.Collapsed;
                 GetModernWpfExtensionScrollViewer().Visibility = System.Windows.Visibility.Visible;

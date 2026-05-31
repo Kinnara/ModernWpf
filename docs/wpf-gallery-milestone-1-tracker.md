@@ -328,6 +328,12 @@ Current P2 state:
 | 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations, Design Guidance Color subsection visible example-content guards, Iconography instructions Expander inline/source structure, Design Guidance Spacing/Geometry default design-image `Source` resource fallback, Navigation `FrameWindow` same-folder `Frame.Source` behavior, Navigation `NavigationWindow` runtime URI/template-resource behavior, MainWindow/title-bar plus NavigationRoot footer style resource keys, SectionPage retained-extension scroll-host structural lookup/no-local-name hooks, NavigationRootPage content-frame Border structural lookup/no-local-name hook, NavigationRootPage Settings footer event-handler naming/sender-notification parity, NavigationRootPage High Contrast pane-edge cover structural lookup/no-local-name hook, NavigationRootPage visual-test status panel structural lookup/no-local-name hooks, ShellNavigation rendered-artifact crop hardening, MainWindow retained NavigationRootPage host structural lookup/no-local-name hook, NavigationRootPage retained content Frame structural lookup/no-local-name hook, NavigationRootPage retained NavigationView structural lookup/no-local-name hook, NavigationRootPage Settings footer official command-binding path through the retained PaneFooter BindingProxy bridge, MainWindow title-bar `WindowChrome.IsHitTestVisibleInChrome` attached-property source shape, Design Guidance Color `ColorsPage` class/file naming, Design Guidance Icons `IconsPage` / `IconsPageViewModel` class/file naming plus the official `Copy_Content` command selector, top-level `DashboardPage` / `AllSamplesPage` class/file naming while preserving the retained `Home` / `AllControls` routes and visual artifact IDs, official WPF Gallery display-route aliases such as `Date & Calendar`, `Status & Info`, `Design Guidance`, `Basic Input`, `Colors`, `Icons`, `File and Folder Dialogs`, `User Dashboard`, `All Controls`, and `Home` resolving to retained local route IDs, WPF visual-audit launch routes using those official display IDs with canonical ready-route waits, and direct page registry display-ID normalization for official item IDs, with focused source-shape/runtime tests, full Gallery builds, and refreshed Color, Iconography, Home/AllControls, DateAndCalendar/StatusAndInfo, FileAndFolderDialogs, UserDashboard, Spacing/Geometry, Frame, NavigationWindow, ShellNavigation, and BasicInput Light/Dark visual audits recorded in Latest local verification. | Continue only with the first executable item from the `P2 Row 5 Internal Queue`; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
 | 6 | Pure tracker/status cleanup and documentation-only work | Last; blocked by row 5 except row 1 priority/order fixes. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
 
+Current row 5 summary addendum: the latest row 5.3 selector batch also
+normalizes official WPF Gallery display group IDs inside section page and
+section view-model selectors, so `Design Guidance`, `Basic Input`,
+`Date & Calendar`, `Status & Info`, and `Media Controls` route through the
+retained canonical groups without falling back to generic section behavior.
+
 ### P2 Row 5 Internal Queue
 
 Use this table only when `P2 Subqueue` row 5 is the first executable row. This
@@ -435,6 +441,19 @@ Latest accepted row 5.3 execution note:
   returned `False`, ranks 2-7 were recorded, and P2 rows 2-4 were current with
   no new High Contrast, visible-drift, high-drift, asset, measurement,
   automation, or harness trigger.
+- The nineteenth named 5.3 batch reused the shared official display-route
+  normalization inside `WpfGallerySectionPageFactory`, `SectionPage`, and
+  `WpfGalleryNavigationPageViewModel.CreateForGroup`, so official WPF Gallery
+  display group IDs such as `Design Guidance`, `Basic Input`,
+  `Date & Calendar`, `Status & Info`, and `Media Controls` instantiate the
+  expected concrete section pages, official page titles, section view models,
+  and canonical navigation cards instead of falling back to generic section
+  behavior. The retained canonical group IDs and visual audit case names remain
+  unchanged, and DateAndCalendar/StatusAndInfo Light/Dark evidence remains
+  zero-drift. This was selected only after `SystemParameters.HighContrast`
+  returned `False`, global orders 2-9 were recorded or inactive, and no new
+  High Contrast, visible-drift, high-drift, asset, measurement, automation, or
+  harness trigger appeared.
 
 ### Row 8 Strict Subqueue
 
@@ -1165,6 +1184,17 @@ updated with each coherent round.
 Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
+
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the current row 5.3 official display group selector round. Winning rank was **global order 10 / P2 row 5.3** because global orders 2-9 were recorded or inactive for the branch tip and no new visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appeared.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryNavigationRuntimeTests.SectionPagesAcceptOfficialWpfGalleryDisplayGroupIds|FullyQualifiedName~GalleryNavigationRuntimeTests.SectionPagesUseOfficialWpfGalleryViewModels|FullyQualifiedName~NavigationRootPageTests.ResolveNavigationTargetAcceptsOfficialWpfGalleryCategoryIds|FullyQualifiedName~GalleryCatalogTests.FindGroupAcceptsOfficialWpfGalleryCategoryIds" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 7 tests per target. The focused filter covers official WPF Gallery section display IDs flowing through catalog group lookup, `WpfGallerySectionPageFactory`, generic `SectionPage`, section page titles, section view-model selection, and canonical navigation cards.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the row 5.3 official display group selector round. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages, generated warnings, and existing ModernWpf/ModernWpf.Controls warnings.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases DateAndCalendar,StatusAndInfo -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-091432-928-32988/report.md`: DateAndCalendar `0` and StatusAndInfo `0`, both with matching `868x758` crops and max RGB diff `3`, after official display group IDs were accepted by the section page and view-model selectors.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases DateAndCalendar,StatusAndInfo -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-091510-640-84288/report.md`: DateAndCalendar `0` and StatusAndInfo `0`, both with matching `868x758` crops and max RGB diff `3`, with no new direct-section visual drift or visual-harness regression.
 
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the current priority-correction visual freshness round. Per the mandatory next-work selector, the branch refreshed visual/high-drift evidence before taking any lower source-shape cleanup; no new High Contrast trigger appeared.
