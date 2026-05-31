@@ -31,12 +31,23 @@ namespace ModernWpf.Gallery.Tests
             {
                 var source = File.ReadAllText(path);
                 var xamlFileName = Path.GetFileNameWithoutExtension(path);
+                var className = Path.GetFileNameWithoutExtension(xamlFileName);
+                var expectedBaseType = className == "FrameWindow"
+                    ? "Window"
+                    : className == "HeaderTile" || className == "TileGallery"
+                        ? "UserControl"
+                        : "Page";
+                var declaration = "public partial class " + className + " : " + expectedBaseType;
                 Assert.IsFalse(
                     source.Contains("public sealed partial class", StringComparison.Ordinal),
                     Path.GetRelativePath(repoRoot, path) + " should match the official WPF Gallery unsealed partial class shape.");
                 Assert.IsTrue(
-                    source.Contains("/// Interaction logic for " + xamlFileName, StringComparison.Ordinal),
-                    Path.GetRelativePath(repoRoot, path) + " should keep the official WPF Gallery code-behind summary shape.");
+                    source.Contains(declaration, StringComparison.Ordinal),
+                    Path.GetRelativePath(repoRoot, path) + " should keep the official WPF Gallery explicit code-behind base type shape.");
+                AssertContainsInOrder(
+                    source,
+                    "/// Interaction logic for " + xamlFileName,
+                    declaration);
             }
 
             var sectionSource = ReadRepoFile(
