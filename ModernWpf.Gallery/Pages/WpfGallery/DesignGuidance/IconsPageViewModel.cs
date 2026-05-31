@@ -9,7 +9,7 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
-    public partial class IconographyPageViewModel : WpfGalleryPageViewModel
+    public partial class IconsPageViewModel : WpfGalleryPageViewModel
     {
         private readonly RelayCommand _previousPageCommand;
         private readonly RelayCommand _nextPageCommand;
@@ -22,7 +22,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
         private int _totalPages = 1;
         private int _selectedPageSizeIndex = 1;
 
-        public IconographyPageViewModel()
+        public IconsPageViewModel()
             : base("Icons", "Guide showing how to use icons in your application.")
         {
             LoadDataCommand = new RelayCommand(delegate { LoadData(); });

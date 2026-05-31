@@ -8,27 +8,27 @@ using System.Windows.Input;
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
     /// <summary>
-    /// Interaction logic for IconographyPage.xaml
+    /// Interaction logic for IconsPage.xaml
     /// </summary>
-    public partial class IconographyPage : Page
+    public partial class IconsPage : Page
     {
-        static IconographyPage()
+        static IconsPage()
         {
-            CommandManager.RegisterClassCommandBinding(typeof(IconographyPage), new CommandBinding(ApplicationCommands.Copy, CopyContent));
+            CommandManager.RegisterClassCommandBinding(typeof(IconsPage), new CommandBinding(ApplicationCommands.Copy, Copy_Content));
         }
 
-        public IconographyPage(IconographyPageViewModel viewModel)
+        public IconsPage(IconsPageViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;
             DataContext = this;
         }
 
-        public IconographyPageViewModel ViewModel { get; }
+        public IconsPageViewModel ViewModel { get; }
 
-        private static void CopyContent(object sender, ExecutedRoutedEventArgs e)
+        public static void Copy_Content(object sender, RoutedEventArgs e)
         {
-            var text = e.Parameter as string;
+            var text = ((ExecutedRoutedEventArgs)e).Parameter as string;
             if (string.IsNullOrEmpty(text))
             {
                 return;

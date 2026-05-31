@@ -50,7 +50,7 @@ namespace ModernWpf.Gallery.Tests
                 "Pages",
                 "WpfGallery",
                 "DesignGuidance",
-                "IconographyPage.xaml");
+                "IconsPage.xaml");
 
             StringAssert.Contains(pageXaml, "xmlns:i=\"http://schemas.microsoft.com/xaml/behaviors\"");
             StringAssert.Contains(pageXaml, "<i:InvokeCommandAction Command=\"{Binding ViewModel.LoadDataCommand}\" />");
@@ -60,8 +60,14 @@ namespace ModernWpf.Gallery.Tests
                 "Pages",
                 "WpfGallery",
                 "DesignGuidance",
-                "IconographyPage.xaml.cs");
+                "IconsPage.xaml.cs");
 
+            StringAssert.Contains(
+                pageSource,
+                "CommandManager.RegisterClassCommandBinding(typeof(IconsPage), new CommandBinding(ApplicationCommands.Copy, Copy_Content));");
+            StringAssert.Contains(
+                pageSource,
+                "public static void Copy_Content(object sender, RoutedEventArgs e)");
             Assert.IsFalse(
                 pageSource.Contains("OnLoaded"),
                 "The copied Iconography page should use the official WPF Gallery behavior trigger instead of a local Loaded handler.");
@@ -71,7 +77,7 @@ namespace ModernWpf.Gallery.Tests
                 "Pages",
                 "WpfGallery",
                 "DesignGuidance",
-                "IconographyPageViewModel.cs");
+                "IconsPageViewModel.cs");
 
             StringAssert.Contains(viewModelSource, "private void LoadData()");
         }

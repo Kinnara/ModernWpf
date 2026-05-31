@@ -29,7 +29,7 @@ namespace ModernWpf.Gallery.Pages
                 { "Geometry", () => new WpfGallery.DesignGuidance.GeometryPage(new WpfGallery.DesignGuidance.GeometryPageViewModel()) },
                 { "GroupBox", () => new WpfGallery.Layout.GroupBoxPage(new WpfGallery.Layout.GroupBoxPageViewModel()) },
                 { "Hyperlink", () => new WpfGallery.Text.HyperlinkPage(new WpfGallery.Text.HyperlinkPageViewModel()) },
-                { "Iconography", () => new WpfGallery.DesignGuidance.IconographyPage(new WpfGallery.DesignGuidance.IconographyPageViewModel()) },
+                { "Iconography", () => new WpfGallery.DesignGuidance.IconsPage(new WpfGallery.DesignGuidance.IconsPageViewModel()) },
                 { "Image", () => new WpfGallery.Media.ImagePage(new WpfGallery.Media.ImagePageViewModel()) },
                 { "Label", () => new WpfGallery.Text.LabelPage(new WpfGallery.Text.LabelPageViewModel()) },
                 { "ListBox", () => new WpfGallery.Collections.ListBoxPage(new WpfGallery.Collections.ListBoxPageViewModel()) },

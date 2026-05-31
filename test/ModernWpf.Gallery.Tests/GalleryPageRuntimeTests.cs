@@ -841,8 +841,8 @@ namespace ModernWpf.Gallery.Tests
                     "Guide showing how to use spacing in your app");
                 AssertWpfGalleryPageViewModel<GeometryPage, GeometryPageViewModel>("Geometry", "Geometry", string.Empty);
 
-                var iconographyPage = (IconographyPage)new ItemPage(GalleryCatalog.FindItem("Iconography")).DirectPageContent;
-                Assert.IsInstanceOfType(iconographyPage.ViewModel, typeof(IconographyPageViewModel));
+                var iconographyPage = (IconsPage)new ItemPage(GalleryCatalog.FindItem("Iconography")).DirectPageContent;
+                Assert.IsInstanceOfType(iconographyPage.ViewModel, typeof(IconsPageViewModel));
                 Assert.AreEqual("Icons", iconographyPage.ViewModel.PageTitle);
                 Assert.AreEqual("Guide showing how to use icons in your application.", iconographyPage.ViewModel.PageDescription);
                 var changedProperties = new List<string>();
@@ -862,7 +862,7 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 AssertWpfGalleryPageRoot<ColorsPage>("Color", "ColorsPage");
-                AssertWpfGalleryPageRoot<IconographyPage>("Iconography", "IconsPage");
+                AssertWpfGalleryPageRoot<IconsPage>("Iconography", "IconsPage");
                 AssertWpfGalleryPageRoot<TypographyPage>("Typography");
                 AssertWpfGalleryPageRoot<SpacingPage>("Spacing");
                 AssertWpfGalleryPageRoot<GeometryPage>("Geometry");
@@ -881,9 +881,9 @@ namespace ModernWpf.Gallery.Tests
                     colorsViewModel.PageTitle,
                     colorsViewModel.PageDescription);
 
-                var iconographyViewModel = new IconographyPageViewModel();
+                var iconographyViewModel = new IconsPageViewModel();
                 AssertRenderedPageHeader(
-                    new IconographyPage(iconographyViewModel),
+                    new IconsPage(iconographyViewModel),
                     iconographyViewModel,
                     iconographyViewModel.PageTitle,
                     iconographyViewModel.PageDescription);
@@ -2578,7 +2578,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsTrue(page.HasDirectPageContent);
                 AssertNoContentPagePaneHook(page);
 
-                var directPage = (IconographyPage)page.DirectPageContent;
+                var directPage = (IconsPage)page.DirectPageContent;
                 RenderPage(directPage);
 
                 var body = (Grid)directPage.Content;

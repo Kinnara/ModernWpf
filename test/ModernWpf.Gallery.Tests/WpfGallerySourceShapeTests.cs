@@ -177,8 +177,8 @@ namespace ModernWpf.Gallery.Tests
                 },
                 new
                 {
-                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "DesignGuidance", "IconographyPageViewModel.cs"),
-                    ClassNames = new[] { "IconographyPageViewModel" }
+                    RelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "DesignGuidance", "IconsPageViewModel.cs"),
+                    ClassNames = new[] { "IconsPageViewModel" }
                 },
                 new
                 {
@@ -366,11 +366,11 @@ namespace ModernWpf.Gallery.Tests
                 "Pages",
                 "WpfGallery",
                 "DesignGuidance",
-                "IconographyPageViewModel.cs");
+                "IconsPageViewModel.cs");
 
             AssertContainsInOrder(
                 iconographySource,
-                "public partial class IconographyPageViewModel : WpfGalleryPageViewModel",
+                "public partial class IconsPageViewModel : WpfGalleryPageViewModel",
                 "private ICollection<IconData> _allIcons = new List<IconData>();",
                 "private IconData _selectedIcon;",
                 "private string _searchText = string.Empty;",
@@ -379,7 +379,7 @@ namespace ModernWpf.Gallery.Tests
                 "private int _currentPage = 1;",
                 "private int _totalPages = 1;",
                 "private int _selectedPageSizeIndex = 1;",
-                "public IconographyPageViewModel()",
+                "public IconsPageViewModel()",
                 ": base(\"Icons\", \"Guide showing how to use icons in your application.\")",
                 "public ICollection<IconData> AllIcons",
                 "SetProperty(ref _allIcons, value ?? new List<IconData>());",
@@ -3707,11 +3707,11 @@ namespace ModernWpf.Gallery.Tests
                 "Pages",
                 "WpfGallery",
                 "DesignGuidance",
-                "IconographyPage.xaml");
+                "IconsPage.xaml");
             var normalizedIconographyXaml = iconographyXaml.Replace("\r\n", "\n").Replace('\r', '\n');
             AssertContainsInOrder(
                 iconographyXaml,
-                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.IconographyPage\"",
+                "<Page x:Class=\"ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.IconsPage\"",
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
                 "xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"",
                 "xmlns:i=\"http://schemas.microsoft.com/xaml/behaviors\"",
@@ -3732,7 +3732,7 @@ namespace ModernWpf.Gallery.Tests
                 "<Page.Resources>");
             Assert.IsFalse(
                 iconographyXaml.Contains("xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance\"", StringComparison.Ordinal),
-                "IconographyPage.xaml should keep the current official root namespace shape, which has no local namespace declaration.");
+                "IconsPage.xaml should keep the current official root namespace shape, which has no local namespace declaration.");
             StringAssert.Contains(
                 iconographyXaml,
                 "<controls:PageHeader Margin=\"2,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" />");
