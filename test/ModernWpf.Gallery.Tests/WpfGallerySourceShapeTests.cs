@@ -260,6 +260,73 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void MappedWpfGalleryHelpersKeepOfficialPublicMethodNamesFromLocalSource()
+        {
+            var repoRoot = GetRepoRoot();
+            var officialHelpersRoot = @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Helpers";
+            if (!Directory.Exists(officialHelpersRoot))
+            {
+                Assert.Inconclusive("Local official WPF Gallery source was not found at " + officialHelpersRoot + ".");
+            }
+
+            var helperMappings = new[]
+            {
+                new
+                {
+                    OfficialFileName = "AlphabeticValidationRule.cs",
+                    OfficialClassName = "AlphabeticValidationRule",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Helpers", "AlphabeticValidationRule.cs")
+                },
+                new
+                {
+                    OfficialFileName = "NullToVisibilityConverter.cs",
+                    OfficialClassName = "NullToVisibilityConverter",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Controls", "NullToVisibilityConverter.cs")
+                },
+                new
+                {
+                    OfficialFileName = "EmptyToVisibilityConverter.cs",
+                    OfficialClassName = "EmptyToVisibilityConverter",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "Samples", "UserDashboardConverters.cs")
+                },
+                new
+                {
+                    OfficialFileName = "ImageIdToBrushConverter.cs",
+                    OfficialClassName = "ImageIdToBrushConverter",
+                    LocalRelativePath = Path.Combine("ModernWpf.Gallery", "Pages", "WpfGallery", "Samples", "UserDashboardConverters.cs")
+                }
+            };
+            var missingMethods = new List<string>();
+            var officialMethodCount = 0;
+
+            foreach (var mapping in helperMappings)
+            {
+                var officialPath = Path.Combine(officialHelpersRoot, mapping.OfficialFileName);
+                var localPath = Path.Combine(repoRoot, mapping.LocalRelativePath);
+                var officialMethods = GetPublicMethodNames(File.ReadAllText(officialPath)).ToArray();
+                var localMethods = new HashSet<string>(
+                    GetPublicMethodNames(File.ReadAllText(localPath)),
+                    StringComparer.Ordinal);
+
+                officialMethodCount += officialMethods.Length;
+                foreach (var methodName in officialMethods)
+                {
+                    if (!localMethods.Contains(methodName))
+                    {
+                        missingMethods.Add(mapping.OfficialClassName + "." + methodName + " -> " + mapping.LocalRelativePath);
+                    }
+                }
+            }
+
+            Assert.AreEqual(4, helperMappings.Length, "The copied/adapted WPF Gallery helper mapping count changed; update the 5.4 helper method scan deliberately.");
+            Assert.AreEqual(7, officialMethodCount, "The official copied/adapted WPF Gallery helper public method count changed; update the 5.4 helper method scan deliberately.");
+            Assert.AreEqual(
+                0,
+                missingMethods.Count,
+                "Missing official 5.4 helper method names from local official source:\n" + string.Join("\n", missingMethods));
+        }
+
+        [TestMethod]
         public void CopiedWpfGalleryCodeBehindClassesStayUnsealedLikeOfficialSource()
         {
             var repoRoot = GetRepoRoot();
@@ -358,6 +425,16 @@ namespace ModernWpf.Gallery.Tests
                 .Matches(
                     source,
                     "(?m)^\\s*public\\s+(?!class\\b)(?!record\\b)(?!event\\b)[^\\r\\n(]+?\\s+(\\w+)\\s*(?:\\{|=>)")
+                .Cast<Match>()
+                .Select(match => match.Groups[1].Value);
+        }
+
+        private static IEnumerable<string> GetPublicMethodNames(string source)
+        {
+            return Regex
+                .Matches(
+                    source,
+                    "(?m)^\\s*public\\s+(?:override\\s+)?[^\\r\\n(;=]+?\\s+(\\w+)\\s*\\(")
                 .Cast<Match>()
                 .Select(match => match.Groups[1].Value);
         }
