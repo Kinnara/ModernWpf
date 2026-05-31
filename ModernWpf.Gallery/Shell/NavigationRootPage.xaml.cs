@@ -154,6 +154,11 @@ namespace ModernWpf.Gallery.Shell
             Navigate(NavigationTarget.Home(), false);
         }
 
+        public bool CanGoBack
+        {
+            get { return _backStack.Count > 0; }
+        }
+
         public void GoBack()
         {
             if (_backStack.Count == 0)
@@ -1144,12 +1149,12 @@ namespace ModernWpf.Gallery.Shell
 
         private void UpdateBackButton()
         {
-            var canGoBack = _backStack.Count > 0;
+            var canGoBack = CanGoBack;
             GetNavigationView().IsBackEnabled = canGoBack;
             var window = Window.GetWindow(this) as MainWindow;
             if (window != null)
             {
-                window.SetBackButtonVisible(canGoBack);
+                window.UpdateCanNavigateBack();
             }
         }
 

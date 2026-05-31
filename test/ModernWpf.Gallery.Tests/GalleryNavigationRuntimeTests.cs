@@ -612,10 +612,6 @@ namespace ModernWpf.Gallery.Tests
                         BindingOperations.GetBindingExpression(backButton, UIElement.IsEnabledProperty)?.ParentBinding.Path.Path);
                     Assert.IsFalse(window.ViewModel.CanNavigateback);
                     Assert.IsFalse(backButton.IsEnabled);
-                    window.SetBackButtonVisible(true);
-                    WpfTestHost.DoEvents();
-                    Assert.IsTrue(window.ViewModel.CanNavigateback);
-                    Assert.IsTrue(backButton.IsEnabled);
 
                     Assert.IsNull(window.FindName("AppTitleBar"));
                     Assert.IsNull(window.FindName("TitleIcon"));
@@ -631,13 +627,24 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.IsNull(window.FindName("RootPage"));
                     var rootPage = GetNavigationRootPage(window);
+                    rootPage.UpdateLayout();
+                    WpfTestHost.DoEvents();
                     var settingsButton = (Button)rootPage.FindName("SettingsButton");
-                    Assert.AreSame(window.ViewModel.SettingsCommand, settingsButton.Command);
+                    Assert.AreSame(
+                        window.ViewModel.SettingsCommand,
+                        settingsButton.Command,
+                        "Settings button command should bind to the MainWindow ViewModel. Actual command: " +
+                        (settingsButton.Command == null ? "<null>" : settingsButton.Command.GetType().FullName) +
+                        "; root DataContext: " +
+                        (rootPage.DataContext == null ? "<null>" : rootPage.DataContext.GetType().FullName));
                     Assert.AreEqual("ViewModel.SettingsCommand",
                         BindingOperations.GetBindingExpression(settingsButton, System.Windows.Controls.Primitives.ButtonBase.CommandProperty)?.ParentBinding.Path.Path);
                     var contentHost = GetContentHost(rootPage);
                     window.ViewModel.SettingsCommand.Execute(null);
                     WpfTestHost.DoEvents();
+                    Assert.IsTrue(rootPage.CanGoBack);
+                    Assert.IsTrue(window.ViewModel.CanNavigateback);
+                    Assert.IsTrue(backButton.IsEnabled);
                     Assert.IsInstanceOfType(contentHost.Content, typeof(SettingsPage));
 
                     var minimizeButton = (Button)window.FindName("MinimizeButton");
@@ -666,10 +673,12 @@ namespace ModernWpf.Gallery.Tests
             var backCount = 0;
             var settingsCount = 0;
             var forwardCount = 0;
+            var canNavigateBack = false;
             var viewModel = new MainWindowViewModel(
                 () => backCount++,
                 () => settingsCount++,
-                () => forwardCount++);
+                () => forwardCount++,
+                () => canNavigateBack);
 
             viewModel.Back();
             viewModel.Settings();
@@ -681,6 +690,10 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(2, backCount);
             Assert.AreEqual(2, settingsCount);
             Assert.AreEqual(2, forwardCount);
+            Assert.IsFalse(viewModel.CanNavigateback);
+            canNavigateBack = true;
+            viewModel.UpdateCanNavigateBack();
+            Assert.IsTrue(viewModel.CanNavigateback);
         }
 
         [TestMethod]

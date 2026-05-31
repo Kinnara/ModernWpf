@@ -23,7 +23,7 @@ namespace ModernWpf.Gallery
 
         public MainWindow()
         {
-            ViewModel = new MainWindowViewModel(GoBack, OpenSettings, GoForward);
+            ViewModel = new MainWindowViewModel(GoBack, OpenSettings, GoForward, CanGoBack);
             DataContext = this;
             InitializeComponent();
             if (GalleryDiagnostics.IsEnabled)
@@ -56,14 +56,19 @@ namespace ModernWpf.Gallery
             GetNavigationRootPage().OpenSettings();
         }
 
-        internal void SetBackButtonVisible(bool canGoBack)
+        internal void UpdateCanNavigateBack()
         {
-            ViewModel.CanNavigateback = canGoBack;
+            ViewModel.UpdateCanNavigateBack();
         }
 
         internal void NavigateTo(string uniqueId)
         {
             GetNavigationRootPage().NavigateTo(uniqueId);
+        }
+
+        private bool CanGoBack()
+        {
+            return GetNavigationRootPage().CanGoBack;
         }
 
         private NavigationRootPage GetNavigationRootPage()

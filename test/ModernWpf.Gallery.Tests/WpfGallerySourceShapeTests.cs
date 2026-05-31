@@ -1309,14 +1309,19 @@ namespace ModernWpf.Gallery.Tests
                 mainWindowCode,
                 "using System.Linq;",
                 "using ModernWpf.Gallery.Shell;",
+                "ViewModel = new MainWindowViewModel(GoBack, OpenSettings, GoForward, CanGoBack);",
                 "private void GoBack()",
                 "GetNavigationRootPage().GoBack();",
                 "private void GoForward()",
                 "GetNavigationRootPage().GoForward();",
                 "private void OpenSettings()",
                 "GetNavigationRootPage().OpenSettings();",
+                "internal void UpdateCanNavigateBack()",
+                "ViewModel.UpdateCanNavigateBack();",
                 "internal void NavigateTo(string uniqueId)",
                 "GetNavigationRootPage().NavigateTo(uniqueId);",
+                "private bool CanGoBack()",
+                "return GetNavigationRootPage().CanGoBack;",
                 "private NavigationRootPage GetNavigationRootPage()",
                 "return MainGrid.Children.OfType<NavigationRootPage>().Single();");
             AssertContainsInOrder(
@@ -1354,6 +1359,13 @@ namespace ModernWpf.Gallery.Tests
                 "Shell",
                 "NavigationRootPage.xaml.cs");
 
+            AssertContainsInOrder(
+                navigationRootCode,
+                "public bool CanGoBack",
+                "get { return _backStack.Count > 0; }",
+                "var canGoBack = CanGoBack;",
+                "GetNavigationView().IsBackEnabled = canGoBack;",
+                "window.UpdateCanNavigateBack();");
             AssertContainsInOrder(
                 navigationRootCode,
                 "ThemeManager.Current.ActualApplicationThemeChanged += OnActualApplicationThemeChanged;",
@@ -1428,9 +1440,11 @@ namespace ModernWpf.Gallery.Tests
                 "private readonly Action _backAction;",
                 "private readonly Action _settingsAction;",
                 "private readonly Action _forwardAction;",
+                "private readonly Func<bool> _canNavigateBack;",
                 "_backAction = backAction;",
                 "_settingsAction = settingsAction;",
                 "_forwardAction = forwardAction;",
+                "_canNavigateBack = canNavigateBack;",
                 "BackCommand = new RelayCommand(delegate { Back(); });",
                 "SettingsCommand = new RelayCommand(delegate { Settings(); });",
                 "ForwardCommand = new RelayCommand(delegate { Forward(); });",
@@ -1439,7 +1453,9 @@ namespace ModernWpf.Gallery.Tests
                 "public void Settings()",
                 "_settingsAction();",
                 "public void Forward()",
-                "_forwardAction();");
+                "_forwardAction();",
+                "public void UpdateCanNavigateBack()",
+                "CanNavigateback = _canNavigateBack();");
             Assert.IsFalse(
                 source.Contains("delegate { backAction(); }", StringComparison.Ordinal),
                 "BackCommand should route through the retained official Back command-handler name instead of calling the constructor adapter directly.");
@@ -1449,6 +1465,9 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 source.Contains("delegate { forwardAction(); }", StringComparison.Ordinal),
                 "ForwardCommand should route through the retained official Forward command-handler name instead of calling the constructor adapter directly.");
+            Assert.IsFalse(
+                source.Contains("CanNavigateback = canGoBack", StringComparison.Ordinal),
+                "Back state should update through the retained official UpdateCanNavigateBack source hook instead of a local direct setter adapter.");
         }
 
         [TestMethod]

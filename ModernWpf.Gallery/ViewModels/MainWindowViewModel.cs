@@ -9,9 +9,14 @@ namespace ModernWpf.Gallery.ViewModels
         private readonly Action _backAction;
         private readonly Action _settingsAction;
         private readonly Action _forwardAction;
+        private readonly Func<bool> _canNavigateBack;
         private bool _canNavigateback;
 
-        public MainWindowViewModel(Action backAction, Action settingsAction, Action forwardAction = null)
+        public MainWindowViewModel(
+            Action backAction,
+            Action settingsAction,
+            Action forwardAction = null,
+            Func<bool> canNavigateBack = null)
         {
             if (backAction == null)
             {
@@ -26,6 +31,7 @@ namespace ModernWpf.Gallery.ViewModels
             _backAction = backAction;
             _settingsAction = settingsAction;
             _forwardAction = forwardAction;
+            _canNavigateBack = canNavigateBack;
 
             BackCommand = new RelayCommand(delegate { Back(); });
             SettingsCommand = new RelayCommand(delegate { Settings(); });
@@ -57,6 +63,14 @@ namespace ModernWpf.Gallery.ViewModels
             if (_forwardAction != null)
             {
                 _forwardAction();
+            }
+        }
+
+        public void UpdateCanNavigateBack()
+        {
+            if (_canNavigateBack != null)
+            {
+                CanNavigateback = _canNavigateBack();
             }
         }
 

@@ -49,12 +49,14 @@ Current pointer:
    that interaction shape while retaining the local notification compatibility
    adapter. This row 7 batch is recorded in Latest local verification.
 3. The latest recorded substantive batch was **global order 10 / P2 row 5.3** because
-   local top-level and section WPF Gallery navigation view-model adapters still
-   forwarded route payloads directly while local official WPF Gallery source
-   under `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels`
-   first gates `Navigate(object pageType)` through
-   `if (pageType is Type page)`. That batch is now recorded in Latest local
-   verification.
+   the local official WPF Gallery sources
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\MainWindow.xaml.cs`
+   and
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`
+   route back-state refresh through `ViewModel.UpdateCanNavigateBack()` and
+   `_navigationService.IsBackHistoryNonEmpty()`, while the local retained shell
+   still used the direct `MainWindow.SetBackButtonVisible(bool)` adapter. That
+   batch is now recorded in Latest local verification.
 4. The next substantive row returns to **global order 10 / P2 row 5.3** only
    while every higher row remains recorded or inactive.
 5. Any new High Contrast, visible drift, high-drift retained-control, asset,
@@ -122,17 +124,31 @@ Current active selection snapshot:
    the `ColorTile` visibility-template batch. Row 5.3 is the next substantive
    row; rows 5.4 and 5.5 stay blocked while any row 5.3
    visual/runtime/harness-facing gap is current.
-7. Current batch selection proof, 2026-05-31: `SystemParameters.HighContrast`
-   returned `False`. The selected substantive row is **global order 10 / P2 row
+7. Recorded forward-command selection proof, 2026-05-31:
+   `SystemParameters.HighContrast` returned `False`. The selected substantive
+   row was **global order 10 / P2 row
    5.3** because global orders 2-9 are recorded or inactive for the current
    branch tip, P2 rows 2-4 are recorded, and rows 5.1-5.2 are recorded. The
    comparison uses local official source
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`,
-   which exposes `Forward()` through `_navigationService.NavigateForward()`;
-   the retained local shell currently has only the `Back` and `Settings`
-   command-handler source hooks. No new visible, High Contrast, high-drift,
-   asset, measurement, automation, or harness trigger was found before taking
-   this row 5.3 source-hook batch.
+   which exposes `Forward()` through `_navigationService.NavigateForward()`.
+   That row 5.3 source-hook batch is now recorded for the current branch tip.
+8. Recorded back-state source-hook selection proof, 2026-05-31:
+   `SystemParameters.HighContrast` returned `False`. The selected substantive
+   row was **global order 10 / P2 row
+   5.3** because global orders 2-9 are recorded or inactive for the current
+   branch tip, P2 rows 2-4 are recorded, and rows 5.1-5.2 are recorded. The
+   comparison uses local official sources
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`
+   and
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\MainWindow.xaml.cs`,
+   where `RootContentFrame_Navigated` calls
+   `ViewModel.UpdateCanNavigateBack()` and the view model queries navigation
+   history through `_navigationService.IsBackHistoryNonEmpty()`. The retained
+   local shell now updates `CanNavigateback` through the retained official
+   `UpdateCanNavigateBack()` source hook and a local `CanGoBack` provider. No
+   new visible, High Contrast, high-drift, asset, measurement, automation, or
+   harness trigger was found before taking this row 5.3 source-hook batch.
 
 Mandatory next-work selector:
 
@@ -162,8 +178,9 @@ row 5.3**, and only because the latest WPF Gallery navigation view-model
 Type-gate batch, the `WhatsNewPage` MessageBox type-selector source-hook batch,
 the Iconography search-placeholder handler source-hook batch, the Iconography
 global order 7 / P2 row 4 batch, the shared `ControlExample.Copy_SourceCode`
-global order 7 / P2 row 4 batch, and the earlier `ColorTile` row 5.2
-visibility-template batch are recorded. If any visual, High Contrast,
+global order 7 / P2 row 4 batch, the MainWindow forward-command and
+`UpdateCanNavigateBack` source-hook batches, and the earlier `ColorTile` row
+5.2 visibility-template batch are recorded. If any visual, High Contrast,
 high-drift, asset, measurement, automation, or harness trigger appears, this
 pointer is stale and the higher row wins.
 
@@ -379,6 +396,10 @@ through the official `Back()`, `Settings()`, and `Forward()` command-handler
 names while preserving the local constructor `Action` adapter. `Forward()`
 uses the retained `NavigationRootPage.GoForward()` shell adapter because the
 local official WPF Gallery source uses `_navigationService.NavigateForward()`.
+Back-state refresh now also flows through the retained official
+`UpdateCanNavigateBack()` view-model source hook, backed by a local
+`NavigationRootPage.CanGoBack` provider because the official WPF Gallery source
+uses `_navigationService.IsBackHistoryNonEmpty()`.
 The preceding selector batch also normalizes official WPF Gallery display
 group IDs inside section page and section view-model selectors, so
 `Design Guidance`, `Basic Input`,
@@ -483,6 +504,26 @@ Latest accepted visual/high-drift priority-correction note:
 
 Latest accepted row 5.3 execution note:
 
+- The twenty-seventh named 5.3 batch aligned MainWindow back-state refresh with
+  local official WPF Gallery sources by replacing the local
+  `SetBackButtonVisible(bool)` direct setter path with the retained official
+  `ViewModel.UpdateCanNavigateBack()` source hook. The retained shell exposes a
+  local `NavigationRootPage.CanGoBack` provider for that hook because the
+  official source queries `_navigationService.IsBackHistoryNonEmpty()`.
+  Focused runtime/source tests and a full Gallery build passed. This was
+  selected only after `SystemParameters.HighContrast` returned `False`, global
+  orders 2-9 were recorded or inactive, and no new High Contrast,
+  visible-drift, high-drift, asset, measurement, automation, or harness trigger
+  appeared.
+- The twenty-sixth named 5.3 batch aligned MainWindow forward command parity by
+  adding the official `Forward()` command-handler name and retained
+  `ForwardCommand` source hook, backed by a local `NavigationRootPage.GoForward`
+  shell adapter and forward stack because the official source calls
+  `_navigationService.NavigateForward()`. Focused runtime/source tests and a
+  full Gallery build passed. This was selected only after
+  `SystemParameters.HighContrast` returned `False`, global orders 2-9 were
+  recorded or inactive, and no new High Contrast, visible-drift, high-drift,
+  asset, measurement, automation, or harness trigger appeared.
 - The twenty-fifth named 5.3 batch aligned the top-level and section WPF
   Gallery navigation view-model `Navigate(object pageType)` source hooks with
   local official WPF Gallery sources by adding the official
@@ -1358,6 +1399,38 @@ updated with each coherent round.
 Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
+
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the current MainWindow back-state source-hook
+    batch. Winning rank was **global order 10 / P2 row 5.3** because global
+    orders 2-9 were recorded or inactive for the current branch tip, P2 rows
+    2-4 were recorded, and rows 5.1-5.2 were recorded. The local official WPF
+    Gallery sources at
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\MainWindow.xaml.cs`
+    and
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`
+    route back-state refresh through `ViewModel.UpdateCanNavigateBack()` and
+    `_navigationService.IsBackHistoryNonEmpty()`, while the retained local
+    shell still used the direct `MainWindow.SetBackButtonVisible(bool)`
+    adapter before this batch.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowViewModelOfficialCommandHandlersDriveShellActions|FullyQualifiedName~WpfGallerySourceShapeTests.MainWindowViewModelKeepsWpfGalleryCommandHandlerSourceShape" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target. The focused filter covers the official `UpdateCanNavigateBack()`
+    source hook, retained `CanGoBack` shell provider, Settings navigation
+    updating `CanNavigateback`, and the existing Back/Settings/Forward command
+    handler source-shape guards.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the MainWindow back-state source-hook batch. Existing warning/output
+    remains recurring `Failed to resolve WinRT.Runtime.dll` messages and
+    existing ModernWpf/ModernWpf.Controls warnings.
+- Visual audits were not rerun for this batch because no XAML, layout,
+  resource, image, rendered-artifact, or visual-check harness surface changed;
+  the current Home/What's New/All Controls/Basic Input and focused visual
+  evidence remains the latest visual evidence recorded below.
+- `git diff --check`
+  - Passed after the MainWindow back-state source-hook batch, with only the
+    existing LF/CRLF working-copy warnings.
 
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the current MainWindow forward-command source-hook
