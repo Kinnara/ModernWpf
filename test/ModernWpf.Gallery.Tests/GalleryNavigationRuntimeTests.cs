@@ -413,7 +413,8 @@ namespace ModernWpf.Gallery.Tests
                         ? new Thickness(0)
                         : new Thickness(0, 0, 1, 0);
                     Assert.AreEqual(expectedPaneBorderThickness, paneContentGrid.BorderThickness);
-                    var edgeCover = (Border)page.FindName("HighContrastNavigationPaneEdgeCover");
+                    Assert.IsNull(page.FindName("HighContrastNavigationPaneEdgeCover"));
+                    var edgeCover = GetHighContrastNavigationPaneEdgeCover(page);
                     Assert.AreSame(paneBackground, edgeCover.Background);
                     Assert.AreEqual(SystemParameters.HighContrast ? Visibility.Visible : Visibility.Collapsed, edgeCover.Visibility);
                     Assert.AreEqual(1d, edgeCover.Width);
@@ -1385,6 +1386,14 @@ namespace ModernWpf.Gallery.Tests
             var contentHost = (System.Windows.Controls.Frame)page.FindName("ContentHost");
             var border = contentHost.Parent as Border;
             Assert.IsNotNull(border);
+            Assert.AreEqual(string.Empty, border.Name);
+            return border;
+        }
+
+        private static Border GetHighContrastNavigationPaneEdgeCover(NavigationRootPage page)
+        {
+            var root = (Grid)page.Content;
+            var border = root.Children.OfType<Border>().Single();
             Assert.AreEqual(string.Empty, border.Name);
             return border;
         }

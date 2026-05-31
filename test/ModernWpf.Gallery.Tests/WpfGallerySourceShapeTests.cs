@@ -1229,6 +1229,17 @@ namespace ModernWpf.Gallery.Tests
                 "BorderBrush=\"{DynamicResource CardStrokeColorDefaultBrush}\"",
                 "BorderThickness=\"1\"",
                 "CornerRadius=\"8,0,0,0\"");
+            AssertContainsInOrder(
+                navigationRootXaml,
+                "</ui:NavigationView>",
+                "<Border",
+                "Width=\"1\"",
+                "Height=\"698\"",
+                "Margin=\"257,8,0,0\"",
+                "HorizontalAlignment=\"Left\"",
+                "VerticalAlignment=\"Top\"",
+                "IsHitTestVisible=\"False\"",
+                "Visibility=\"Collapsed\" />");
             Assert.IsFalse(
                 navigationRootXaml.Contains("one pixel narrower", StringComparison.Ordinal),
                 "The retained NavigationView pane should use the official 258px left shell width instead of a local one-pixel compensation comment.");
@@ -1285,6 +1296,14 @@ namespace ModernWpf.Gallery.Tests
                 "AlignNavigationViewShellResourcesWithWpfGallery();",
                 "private void SettingsButton_Click(object sender, RoutedEventArgs e)",
                 "RaiseSettingsOpenedNotification((UIElement)sender);");
+            AssertContainsInOrder(
+                navigationRootCode,
+                "var highContrastNavigationPaneEdgeCover = GetHighContrastNavigationPaneEdgeCover();",
+                "highContrastNavigationPaneEdgeCover.Background = paneBackground;",
+                "highContrastNavigationPaneEdgeCover.Visibility = SystemParameters.HighContrast",
+                "private Border GetHighContrastNavigationPaneEdgeCover()",
+                "var root = (Grid)Content;",
+                "return root.Children.OfType<Border>().Single();");
 
             var appCode = ReadRepoFile(
                 "ModernWpf.Gallery",
@@ -1356,6 +1375,7 @@ namespace ModernWpf.Gallery.Tests
                 "ModernWpfGroupScrollViewer",
                 "ModernWpfGroupItemsControl",
                 "ContentFrameBorder",
+                "HighContrastNavigationPaneEdgeCover",
                 "ModernWpfGalleryMainWindow",
                 "GalleryNavigationRoot",
                 "GalleryNavigationView",

@@ -642,8 +642,9 @@ namespace ModernWpf.Gallery.Shell
                     : new Thickness(0, 0, 1, 0);
             }
 
-            HighContrastNavigationPaneEdgeCover.Background = paneBackground;
-            HighContrastNavigationPaneEdgeCover.Visibility = SystemParameters.HighContrast
+            var highContrastNavigationPaneEdgeCover = GetHighContrastNavigationPaneEdgeCover();
+            highContrastNavigationPaneEdgeCover.Background = paneBackground;
+            highContrastNavigationPaneEdgeCover.Visibility = SystemParameters.HighContrast
                 ? Visibility.Visible
                 : Visibility.Collapsed;
 
@@ -673,6 +674,12 @@ namespace ModernWpf.Gallery.Shell
             }
 
             return new SolidColorBrush(WpfGalleryLightNavigationPaneBackgroundColor);
+        }
+
+        private Border GetHighContrastNavigationPaneEdgeCover()
+        {
+            var root = (Grid)Content;
+            return root.Children.OfType<Border>().Single();
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
