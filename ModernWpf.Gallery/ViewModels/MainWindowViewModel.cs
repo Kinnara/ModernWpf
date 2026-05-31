@@ -6,6 +6,7 @@ namespace ModernWpf.Gallery.ViewModels
 {
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
+        private string _applicationTitle = "WPF Gallery";
         private readonly Action _backAction;
         private readonly Action _settingsAction;
         private readonly Action _forwardAction;
@@ -40,7 +41,10 @@ namespace ModernWpf.Gallery.ViewModels
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public string ApplicationTitle { get; } = "WPF Gallery";
+        public string ApplicationTitle
+        {
+            get { return _applicationTitle; }
+        }
 
         public ICommand BackCommand { get; }
 

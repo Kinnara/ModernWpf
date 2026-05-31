@@ -1482,6 +1482,7 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "private string _applicationTitle = \"WPF Gallery\";",
                 "private readonly Action _backAction;",
                 "private readonly Action _settingsAction;",
                 "private readonly Action _forwardAction;",
@@ -1501,6 +1502,10 @@ namespace ModernWpf.Gallery.Tests
                 "_forwardAction();",
                 "public void UpdateCanNavigateBack()",
                 "CanNavigateback = _canNavigateBack();");
+            AssertContainsInOrder(
+                source,
+                "public string ApplicationTitle",
+                "get { return _applicationTitle; }");
             Assert.IsFalse(
                 source.Contains("delegate { backAction(); }", StringComparison.Ordinal),
                 "BackCommand should route through the retained official Back command-handler name instead of calling the constructor adapter directly.");

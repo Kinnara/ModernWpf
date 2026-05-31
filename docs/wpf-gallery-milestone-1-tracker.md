@@ -41,18 +41,29 @@ Current pointer:
 1. This user-requested priority/order clarification is row 1. The tracker hard
    order is now guarded by `TrackerPriorityTests`; once committed, row 1 is
    inactive again unless another priority/order conflict appears.
-2. Latest substantive batch, 2026-05-31: **global order 6 / P2 row 3**
-   for executable application-icon asset parity. The local official WPF Gallery
-   source at
+2. Latest substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
+   for the `MainWindowViewModel.ApplicationTitle` source-shape guard. The local
+   official WPF Gallery source at
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`
+   carries `_applicationTitle = "WPF Gallery"` as backing state; the local
+   retained shell view model now uses the same backing field while keeping the
+   local get-only property adapter. This row was selected only after direct
+   mapped XAML hook/name/automation, direct code-behind member, and official
+   XAML resource-key scans found no current row 5.3 gap, and after the remaining
+   official MainWindow search/TreeView and User Dashboard timer differences
+   were confirmed as recorded local adapters.
+3. Previous higher-priority substantive batch, 2026-05-31: **global order 6 /
+   P2 row 3** for executable application-icon asset parity. The local official
+   WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\WPFGallery.csproj`
    sets `ApplicationIcon` to `Assets\AppIcons\WPFGallery.ico`; the local
-   `ModernWpf.Gallery.csproj` now uses the same official AppIcons asset, whose
+   `ModernWpf.Gallery.csproj` uses the same official AppIcons asset, whose
    local SHA-256 matches
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Assets\AppIcons\WPFGallery.ico`.
    This asset/runtime-visible shell surface preempted row 5.3 source cleanup.
    The previous **global order 9 / P2 row 5.2** app-manifest runtime
    compatibility batch remains recorded.
-3. Latest high-priority visual batch, 2026-05-31: **global orders 3-5 / P1.3 and P2
+4. Latest high-priority visual batch, 2026-05-31: **global orders 3-5 / P1.3 and P2
    row 2 visual-high-drift freshness** preempted row 5.3 after the branch
    refreshed current visual/high-drift evidence. `SystemParameters.HighContrast`
    returned `False`. A local official-source scan under
@@ -68,7 +79,7 @@ Current pointer:
    `artifacts/visual-checks/20260531-134103-490-70788/report.md` and
    `artifacts/visual-checks/20260531-134200-949-83644/report.md`, so row 5.3
    stays selectable only after this higher visual freshness check.
-4. Latest interaction/automation correction, 2026-05-31: **global order 7 /
+5. Latest interaction/automation correction, 2026-05-31: **global order 7 /
    P2 row 4** preempted row 5.3 because the local official source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Controls\ControlExample.xaml.cs`
    gates `ControlExample.Copy_SourceCode` through a non-empty `XamlCode` check,
@@ -76,7 +87,7 @@ Current pointer:
    unknown parameter. `ModernWpf.Gallery\Controls\ControlExample.cs` now keeps
    that interaction shape while retaining the local notification compatibility
    adapter. This row 7 batch is recorded in Latest local verification.
-5. The latest recorded row 5.3 source batch was **global order 10 / P2 row 5.3** because
+6. The latest recorded row 5.3 source batch was **global order 10 / P2 row 5.3** because
    the local official WPF Gallery sources
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\MainWindow.xaml.cs`
    and
@@ -85,10 +96,10 @@ Current pointer:
    `_navigationService.IsBackHistoryNonEmpty()`, while the local retained shell
    still used the direct `MainWindow.SetBackButtonVisible(bool)` adapter. That
    batch is now recorded in Latest local verification.
-6. The next substantive row returns to **global order 10 / P2 row 5.3** only
-   while every higher row, including the current app-icon asset correction,
-   remains recorded or inactive.
-7. Any new High Contrast, visible drift, high-drift retained-control, asset,
+7. The next substantive row returns to **global order 11 / P2 row 5.4** only
+   while every higher row, including row 5.3, remains recorded, inactive, or
+   has no current named executable gap.
+8. Any new High Contrast, visible drift, high-drift retained-control, asset,
    measurement, interaction, automation, or harness evidence immediately
    preempts row 5 source cleanup.
 
@@ -233,6 +244,26 @@ Current active selection snapshot:
     SHA-256 `A58A690D437F60C052331340718413BF751419EC49C904640DD73797FF33B780`.
     No new visual, High Contrast, high-drift, measurement, automation, or
     harness trigger was found before taking this higher-priority asset row.
+14. Recorded `ApplicationTitle` source-shape guard selection proof,
+    2026-05-31:
+    `SystemParameters.HighContrast` returned `False`. The selected substantive
+    row was **global order 11 / P2 row 5.4** because global orders 2-9 remained
+    recorded or inactive, rows 5.1-5.2 were recorded, and current scans found
+    no direct mapped XAML hook/name/automation diff, no missing direct
+    code-behind member names, and no missing official XAML resource keys under
+    local official source
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery`. The remaining
+    matched ViewModel differences were retained adapters: official MainWindow
+    search/TreeView hierarchy members are tied to the commented official search
+    box and official TreeView shell, User Dashboard timer/task state is
+    superseded by the local WPF `DispatcherTimer`/deterministic visual-test
+    adapter, and Iconography title/description state is carried by the shared
+    `WpfGalleryPageViewModel` adapter. With no current row 5.3 gap, the named
+    row 5.4 guard uses local official source
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\MainWindowViewModel.cs`
+    and aligns the local `ApplicationTitle` property to an official
+    `_applicationTitle = "WPF Gallery"` backing field without changing the
+    visible title value.
 
 Mandatory next-work selector:
 
@@ -252,21 +283,19 @@ recently touched.
 | 7 | P2 row 4 measurement, interaction, automation, and harness-impacting parity | Measurement, keyboard, automation, and harness-impacting gaps beat row 5 cleanup. |
 | 8 | P2 row 5.1 sample panes and runtime-visible example content | Reopen before 5.2 or 5.3 for any named visible sample/content gap. |
 | 9 | P2 row 5.2 source-backed visible/runtime structure | Recorded by the latest `ColorTile` visibility-template batch; always reopen before 5.3 for any structural gap that can affect layout, resources, interaction, automation, or harness behavior. |
-| 10 | P2 row 5.3 resource-key, naming, selector, and source-hook parity tied to behavior | Current next substantive row only while rows 1-9 remain recorded or inactive. |
-| 11 | P2 row 5.4 non-visible copied/adapted source-shape guards | Blocked while any 5.1-5.3 item is current. |
+| 10 | P2 row 5.3 resource-key, naming, selector, and source-hook parity tied to behavior | Reopen before 5.4 if any new named 5.3 gap appears; otherwise recorded/no-current-gap after the latest scan. |
+| 11 | P2 row 5.4 non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. |
 | 12 | P2 row 5.5 row-5 bookkeeping and stale-status cleanup | Blocked until substantive row 5 items are recorded or not applicable. |
 | 13 | P2 row 6 and final closeout cleanup | Last; only after row 5 is recorded or explicitly not applicable and the final verification sweep is current. |
 
-Current next substantive row by this selector remains **global order 10 / P2
-row 5.3**, and only because the latest WPF Gallery navigation view-model
-Type-gate batch, the `WhatsNewPage` MessageBox type-selector source-hook batch,
-the Iconography search-placeholder handler source-hook batch, the Iconography
-global order 7 / P2 row 4 batch, the shared `ControlExample.Copy_SourceCode`
-global order 7 / P2 row 4 batch, the MainWindow forward-command and
-`UpdateCanNavigateBack` source-hook batches, the app-manifest row 5.2 runtime
-compatibility batch, and the earlier `ColorTile` row 5.2 visibility-template
-batch are recorded. If any visual, High Contrast,
-high-drift, asset, measurement, automation, or harness trigger appears, this
+Current next substantive row by this selector remains **global order 11 / P2
+row 5.4**, and only because the latest direct mapped XAML hook/name/automation,
+direct code-behind member, official XAML resource-key, and matched ViewModel
+source scans found no current row 5.3 gap after the recorded navigation
+view-model Type-gate, `WhatsNewPage` MessageBox type-selector, Iconography
+search-placeholder, MainWindow forward-command, and `UpdateCanNavigateBack`
+source-hook batches. If any visual, High Contrast, high-drift, asset,
+measurement, automation, harness, 5.1, 5.2, or 5.3 trigger appears, this
 pointer is stale and the higher row wins.
 
 Use this block before every new work batch. The 1-13 `Global order` table above
@@ -287,16 +316,19 @@ Required selection proof before any substantive edit:
    is stale immediately.
 5. If global order 10 is selected, first prove row 5.2 is recorded or not
    applicable, then follow `P2 Subqueue` row 5 and `P2 Row 5 Internal Queue`
-   row 5.3. Rows 5.4, 5.5, P2 row 6, comments, declaration order, member
-   order, summaries, and stale tracker cleanup stay blocked while any 5.1-5.3
-   item is current.
+   row 5.3. If global order 11 is selected, first prove rows 5.1-5.3 are
+   recorded or have no current named executable gap. Rows 5.5, P2 row 6,
+   comments, declaration order, member order, summaries, and stale tracker
+   cleanup stay blocked while any 5.1-5.4 item is current.
 
-Current allowed substantive row is **global order 10 / P2 row 5.3** only
+Current allowed substantive row is **global order 11 / P2 row 5.4** only
 because `SystemParameters.HighContrast` is `False`, global orders 2-9 are
-recorded or inactive for the current branch tip, P2 rows 2-4 are recorded, and
-rows 5.1-5.2 are recorded. Any new High Contrast, visible-drift, high-drift
-retained-control, asset, measurement, interaction, automation, or harness
-evidence immediately preempts row 5 and reopens the higher global order.
+recorded or inactive for the current branch tip, P2 rows 2-4 are recorded,
+rows 5.1-5.2 are recorded, and row 5.3 has no current named executable gap
+after the latest scans. Any new High Contrast, visible-drift, high-drift
+retained-control, asset, measurement, interaction, automation, harness, 5.1,
+5.2, or 5.3 evidence immediately preempts row 5.4 and reopens the higher
+global order.
 
 Priority fail-safe:
 
@@ -525,8 +557,8 @@ Current row 5 decision:
 | --- | --- | --- | --- |
 | 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named. |
 | 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns app-manifest runtime compatibility with local official WPF Gallery source by keeping the `true/PM` DPI fallback, `longPathAware`, and active `Microsoft.Windows.Common-Controls` v6 dependency while retaining the local `PerMonitorV2` DPI-awareness adapter. Earlier named 5.2 batches align the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and record the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
-| 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Current while 5.1 and 5.2 remain recorded and no higher visual/High Contrast/high-drift/harness trigger appears. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, the copied `WhatsNewPage` handler selector, and the copied Iconography direct search-placeholder visibility handlers. | Continue with the next named resource/key/name/selector/hook gap that can affect visuals, behavior, or harness evidence. |
-| 5.4 | Non-visible copied/adapted source-shape guards | Lower priority. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked while 5.1-5.3 have current work. | Take only a named guard gap with focused tests and a full Gallery build. |
+| 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Recorded for the current branch tip with no current named gap after the latest scan. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, the copied `WhatsNewPage` handler selector, and the copied Iconography direct search-placeholder visibility handlers. | Reopen before 5.4 if a new named resource/key/name/selector/hook gap appears that can affect visuals, behavior, or harness evidence. |
+| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns `MainWindowViewModel.ApplicationTitle` with the official `_applicationTitle = "WPF Gallery"` backing-field source shape while keeping the local retained-shell get-only property adapter. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
 | 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
 
 Latest accepted visual/high-drift priority-correction note:
@@ -1510,6 +1542,40 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the `MainWindowViewModel.ApplicationTitle`
+    source-shape guard. Winning rank was **global order 11 / P2 row 5.4**
+    because global orders 2-9 were recorded or inactive, rows 5.1-5.2 were
+    recorded, and no current row 5.3 gap was found before this batch.
+- Local official-source scans under
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery`
+  - Direct mapped WPF Gallery XAML hook/name/automation scan found no diffs.
+    Direct mapped code-behind member scan found no missing local member names.
+    Official XAML resource-key scan found no missing local resource keys.
+    Remaining matched ViewModel differences were classified as recorded local
+    adapters: official MainWindow search/TreeView members, User Dashboard
+    timer/task state, and Iconography title/description state carried by the
+    shared `WpfGalleryPageViewModel` adapter.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.MainWindowViewModelKeepsWpfGalleryCommandHandlerSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowUsesWpfGalleryTitleChrome|FullyQualifiedName~GalleryNavigationRuntimeTests.MainWindowViewModelOfficialCommandHandlersDriveShellActions" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target. This covers the `ApplicationTitle` backing-field source guard, the
+    visible title binding, and retained official command-handler paths.
+    Existing warning/output remains `NU1903`, recurring
+    `Failed to resolve WinRT.Runtime.dll`, and existing
+    ModernWpf/ModernWpf.Controls warnings.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the `ApplicationTitle` backing-field source-shape guard. Existing
+    warning/output remains recurring `Failed to resolve WinRT.Runtime.dll`
+    messages and existing ModernWpf/ModernWpf.Controls warnings.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after updating the current pointer from row 5.3 to row 5.4.
+    Existing warning/output remains `NU1903`, recurring
+    `Failed to resolve WinRT.Runtime.dll`, and existing build warnings.
+- `git diff --check`
+  - Passed after the `ApplicationTitle` backing-field source-shape guard, with
+    only the existing LF/CRLF working-copy warnings for touched files.
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the app-icon asset parity batch. Winning rank was
     **global order 6 / P2 row 3** because global orders 2-5 remained recorded
