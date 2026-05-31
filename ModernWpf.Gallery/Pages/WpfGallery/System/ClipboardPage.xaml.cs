@@ -6,6 +6,9 @@ using System.Windows.Navigation;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
+    /// <summary>
+    /// Interaction logic for ClipboardPage.xaml
+    /// </summary>
     public partial class ClipboardPage : Page
     {
         public ClipboardPageViewModel ViewModel { get; }

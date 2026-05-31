@@ -3,6 +3,9 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
+    /// <summary>
+    /// Interaction logic for FramePage.xaml
+    /// </summary>
     public partial class FramePage : Page
     {
         public FramePage(FramePageViewModel viewModel)

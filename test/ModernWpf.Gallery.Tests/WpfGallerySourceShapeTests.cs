@@ -30,9 +30,13 @@ namespace ModernWpf.Gallery.Tests
             foreach (var path in wpfGalleryPageCodeBehind.Concat(copiedTopLevelCodeBehind))
             {
                 var source = File.ReadAllText(path);
+                var xamlFileName = Path.GetFileNameWithoutExtension(path);
                 Assert.IsFalse(
                     source.Contains("public sealed partial class", StringComparison.Ordinal),
                     Path.GetRelativePath(repoRoot, path) + " should match the official WPF Gallery unsealed partial class shape.");
+                Assert.IsTrue(
+                    source.Contains("/// Interaction logic for " + xamlFileName, StringComparison.Ordinal),
+                    Path.GetRelativePath(repoRoot, path) + " should keep the official WPF Gallery code-behind summary shape.");
             }
 
             var sectionSource = ReadRepoFile(

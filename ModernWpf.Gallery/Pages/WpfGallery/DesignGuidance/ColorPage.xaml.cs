@@ -5,6 +5,9 @@ using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
+    /// <summary>
+    /// Interaction logic for ColorPage.xaml
+    /// </summary>
     public partial class ColorPage : Page
     {
         public ColorsPageViewModel ViewModel { get; }

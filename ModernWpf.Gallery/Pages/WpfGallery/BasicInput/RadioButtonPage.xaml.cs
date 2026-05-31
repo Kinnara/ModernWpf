@@ -3,6 +3,9 @@ using System.Windows.Input;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
+    /// <summary>
+    /// Interaction logic for RadioButtonPage.xaml
+    /// </summary>
     public partial class RadioButtonPage : Page
     {
         public RadioButtonPageViewModel ViewModel { get; }

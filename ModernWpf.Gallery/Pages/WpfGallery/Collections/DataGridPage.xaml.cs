@@ -4,6 +4,9 @@ using Microsoft.Win32;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 {
+    /// <summary>
+    /// Interaction logic for DataGridPage.xaml
+    /// </summary>
     public partial class DataGridPage : Page
     {
         public DataGridPageViewModel ViewModel { get; }

@@ -7,6 +7,9 @@ using System.Windows.Input;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
+    /// <summary>
+    /// Interaction logic for IconographyPage.xaml
+    /// </summary>
     public partial class IconographyPage : Page
     {
         static IconographyPage()

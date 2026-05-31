@@ -8,6 +8,9 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages
 {
+    /// <summary>
+    /// Interaction logic for HomePage.xaml
+    /// </summary>
     public partial class HomePage : Page
     {
         public HomePage()

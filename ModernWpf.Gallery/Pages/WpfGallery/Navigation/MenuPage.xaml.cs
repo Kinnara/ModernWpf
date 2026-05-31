@@ -3,6 +3,9 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
+    /// <summary>
+    /// Interaction logic for MenuPage.xaml
+    /// </summary>
     public partial class MenuPage : Page
     {
         public MenuPageViewModel ViewModel { get; }

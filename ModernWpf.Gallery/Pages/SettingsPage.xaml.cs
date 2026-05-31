@@ -8,6 +8,9 @@ using ModernWpf.Gallery.Testing;
 
 namespace ModernWpf.Gallery.Pages
 {
+    /// <summary>
+    /// Interaction logic for SettingsPage.xaml
+    /// </summary>
     public partial class SettingsPage : Page
     {
         private bool _canApplyThemeSelection;

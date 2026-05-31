@@ -3,6 +3,9 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Layout
 {
+    /// <summary>
+    /// Interaction logic for ResizeGripPage.xaml
+    /// </summary>
     public partial class ResizeGripPage : Page
     {
         public ResizeGripPage(ResizeGripPageViewModel viewModel)

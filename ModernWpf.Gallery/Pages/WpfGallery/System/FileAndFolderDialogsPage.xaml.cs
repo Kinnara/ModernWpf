@@ -5,6 +5,9 @@ using Microsoft.Win32;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
+    /// <summary>
+    /// Interaction logic for FileAndFolderDialogsPage.xaml
+    /// </summary>
     public partial class FileAndFolderDialogsPage : Page
     {
         public FileAndFolderDialogsPageViewModel ViewModel { get; }

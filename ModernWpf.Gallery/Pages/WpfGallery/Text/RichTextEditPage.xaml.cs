@@ -1,6 +1,9 @@
 using System.Windows.Controls;
 namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
+    /// <summary>
+    /// Interaction logic for RichTextEditPage.xaml
+    /// </summary>
     public partial class RichTextEditPage : Page
     {
         public RichTextEditPageViewModel ViewModel { get; }

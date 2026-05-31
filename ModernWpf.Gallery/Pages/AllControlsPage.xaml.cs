@@ -7,6 +7,9 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages
 {
+    /// <summary>
+    /// Interaction logic for AllControlsPage.xaml
+    /// </summary>
     public partial class AllControlsPage : Page
     {
         public AllSamplesPageViewModel ViewModel { get; }

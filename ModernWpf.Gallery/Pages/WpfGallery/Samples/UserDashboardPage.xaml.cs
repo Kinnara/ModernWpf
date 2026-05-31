@@ -5,6 +5,9 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
 {
+    /// <summary>
+    /// Interaction logic for UserDashboardPage.xaml
+    /// </summary>
     public partial class UserDashboardPage : Page
     {
         public UserDashboardPageViewModel ViewModel { get; }

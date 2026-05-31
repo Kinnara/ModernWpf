@@ -4,6 +4,9 @@ using System.Windows.Navigation;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 {
+    /// <summary>
+    /// Interaction logic for HyperlinkPage.xaml
+    /// </summary>
     public partial class HyperlinkPage : Page
     {
         public HyperlinkPage(HyperlinkPageViewModel viewModel)

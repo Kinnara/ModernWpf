@@ -5,6 +5,9 @@ using System.Windows.Navigation;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.Navigation
 {
+    /// <summary>
+    /// Interaction logic for NavigationWindowPage.xaml
+    /// </summary>
     public partial class NavigationWindowPage : Page
     {
         public NavigationWindowPage(NavigationWindowPageViewModel viewModel)

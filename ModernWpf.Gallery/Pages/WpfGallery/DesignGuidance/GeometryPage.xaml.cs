@@ -7,6 +7,9 @@ using ModernWpf;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
+    /// <summary>
+    /// Interaction logic for GeometryPage.xaml
+    /// </summary>
     public partial class GeometryPage : Page
     {
         public GeometryPageViewModel ViewModel { get; }

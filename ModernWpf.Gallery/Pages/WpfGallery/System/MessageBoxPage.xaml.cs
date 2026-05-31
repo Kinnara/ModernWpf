@@ -3,6 +3,9 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.SystemPages
 {
+    /// <summary>
+    /// Interaction logic for MessageBoxPage.xaml
+    /// </summary>
     public partial class MessageBoxPage : Page
     {
         public MessageBoxPageViewModel ViewModel { get; }

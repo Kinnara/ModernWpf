@@ -6,6 +6,9 @@ using ModernWpf.Gallery.Pages.WpfGallery;
 
 namespace ModernWpf.Gallery.Pages
 {
+    /// <summary>
+    /// Interaction logic for WhatsNewPage.xaml
+    /// </summary>
     public partial class WhatsNewPage : Page
     {
         public WhatsNewPageViewModel ViewModel { get; }
