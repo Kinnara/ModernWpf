@@ -1221,7 +1221,8 @@ namespace ModernWpf.Gallery.Tests
                 "<StackPanel Orientation=\"Horizontal\" Margin=\"11,0,0,0\">");
             AssertContainsInOrder(
                 navigationRootXaml,
-                "x:Name=\"ContentFrameBorder\"",
+                "PaneDisplayMode=\"Left\"",
+                "<Border",
                 "Margin=\"4,0,0,0\"",
                 "Padding=\"24,16,24,0\"",
                 "Background=\"{DynamicResource LayerFillColorDefaultBrush}\"",
@@ -1352,6 +1353,7 @@ namespace ModernWpf.Gallery.Tests
                 "GalleryNav_",
                 "ModernWpfGroupScrollViewer",
                 "ModernWpfGroupItemsControl",
+                "ContentFrameBorder",
                 "ModernWpfGalleryMainWindow",
                 "GalleryNavigationRoot",
                 "GalleryNavigationView",

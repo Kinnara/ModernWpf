@@ -167,7 +167,8 @@ namespace ModernWpf.Gallery.Tests
                     AssertNavigationViewResourceAlias(navigation, resourcePair.Item1, resourcePair.Item2);
                 }
 
-                var contentFrameBorder = (Border)page.FindName("ContentFrameBorder");
+                Assert.IsNull(page.FindName("ContentFrameBorder"));
+                var contentFrameBorder = GetContentFrameBorder(page);
                 Assert.AreEqual(new Thickness(4, 0, 0, 0), contentFrameBorder.Margin);
                 Assert.AreEqual(new Thickness(24, 16, 24, 0), contentFrameBorder.Padding);
 
@@ -1377,6 +1378,15 @@ namespace ModernWpf.Gallery.Tests
             var root = (Grid)sectionPage.Content;
             Assert.AreEqual(string.Empty, root.Name);
             return root;
+        }
+
+        private static Border GetContentFrameBorder(NavigationRootPage page)
+        {
+            var contentHost = (System.Windows.Controls.Frame)page.FindName("ContentHost");
+            var border = contentHost.Parent as Border;
+            Assert.IsNotNull(border);
+            Assert.AreEqual(string.Empty, border.Name);
+            return border;
         }
 
         private static void AssertReferenceCategoryPageRoot(Grid root, bool hasItemsScrollViewer)

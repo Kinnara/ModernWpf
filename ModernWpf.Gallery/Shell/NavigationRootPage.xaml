@@ -126,7 +126,6 @@
                 </StackPanel>
             </ui:NavigationView.PaneFooter>
             <Border
-                x:Name="ContentFrameBorder"
                 Margin="4,0,0,0"
                 Padding="24,16,24,0"
                 Background="{DynamicResource LayerFillColorDefaultBrush}"
