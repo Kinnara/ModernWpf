@@ -16,7 +16,10 @@ Non-negotiable sort:
    source-shape/resource-key/naming/test cleanup.
 3. P2 row 5 source cleanup is selectable only after this block and the
    `P2 Subqueue` both say rows 2-4 are recorded for the current branch tip and
-   no new trigger appeared during the current batch.
+   no new trigger appeared during the current batch. Once row 5 is selected,
+   the `P2 Row 5 Internal Queue` below is mandatory; sample panes and
+   visual/runtime-facing source parity stay ahead of comments, declarations,
+   member-order, and other non-visible source-shape cleanup.
 4. Tracker-only cleanup is selectable only for explicit priority/order hygiene
    like this block, then control returns immediately to the first substantive
    executable row.
@@ -32,7 +35,7 @@ Current decisive order, top row wins:
 | 5 | P2 row 2 visual/high-drift freshness | Recorded for the current branch tip. | Reopen before any lower P2 work when fresh visual or high-drift evidence appears. |
 | 6 | P2 row 3 asset, thumbnail, and visual-reference parity | Recorded for current active references. | Reopen only for new asset/reference evidence. |
 | 7 | P2 row 4 measurement, interaction, automation, and harness-impacting parity | Recorded for the current branch tip. | Reopen only for named measurement, interaction, automation, or harness-impacting evidence. |
-| 8 | P2 row 5 source-shape, resource-key, naming, selector, and test cleanup | Current next substantive bucket only while ranks 2-7 remain recorded with no new trigger and P2 rows 2-4 are explicitly current in the `P2 Subqueue`. | Select a named source-alignment row; stop immediately if any higher visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appears. |
+| 8 | P2 row 5 source-shape, resource-key, naming, selector, and test cleanup | Current next substantive bucket only while ranks 2-7 remain recorded with no new trigger and P2 rows 2-4 are explicitly current in the `P2 Subqueue`. | Select the first executable item from the `P2 Row 5 Internal Queue`; do not jump to code-behind summaries, declarations, member-order, or tracker cleanup while sample panes or visual/runtime-facing source parity remain open. Stop immediately if any higher visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appears. |
 | 9 | P2 row 6 pure tracker/status cleanup and documentation-only work | Blocked by row 5, except this rank-1 priority/order hygiene exception. | Do not use for convenience cleanup until row 5 is recorded or explicitly not applicable. |
 
 Do not scan lower historical tables to find easier work. If a lower row says
@@ -210,7 +213,9 @@ Current P2 state:
    row 4 trigger, the next selectable P2 work is row 5. This is the only reason
    row 5 is currently selectable; any new visual, High Contrast, high-drift,
    asset, measurement, automation, or harness evidence immediately closes row 5
-   again.
+   again. While row 5 is selectable, use the `P2 Row 5 Internal Queue`; its
+   first current substantive item is source-backed sample pane coverage for
+   visible example content, not low-risk code-behind/comment cleanup.
 6. Row 6 remains blocked until row 5 is recorded or not applicable.
 
 | P2 order | Bucket | State | Allowed next work |
@@ -219,8 +224,23 @@ Current P2 state:
 | 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest retained-control Light/Dark refreshes in Row 8 and Latest local verification. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
 | 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Recorded at branch tip. Typography/Spacing/Geometry/Iconography, Color, remaining WPF-equivalent section/item Light/Dark measurement evidence, and the focused automation/harness verifier are current. | Reopen only for new named measurement, interaction, automation, or harness-impacting evidence. |
-| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, and copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations with official WPF Gallery source/behavior, with focused source-shape/runtime tests and full Gallery builds recorded in Latest local verification. | Continue selecting only named P2 source-alignment rows; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
+| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, and copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations with official WPF Gallery source/behavior, with focused source-shape/runtime tests and full Gallery builds recorded in Latest local verification. | Continue only with the first executable item from the `P2 Row 5 Internal Queue`; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
 | 6 | Pure tracker/status cleanup and documentation-only work | Last; blocked by row 5 except row 1 priority/order fixes. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
+
+### P2 Row 5 Internal Queue
+
+Use this table only when `P2 Subqueue` row 5 is the first executable row. This
+is a hard order, not a menu. Pick the first current or newly discovered item
+below; do not choose a lower row because it is smaller, easier, or recently
+touched.
+
+| Row 5 order | Bucket | State | Allowed next work |
+| --- | --- | --- | --- |
+| 5.1 | Source-backed sample panes and runtime-visible example content | Current. Snippet coverage is partial after Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New coverage; remaining visible sample-pane gaps must be handled before more non-visible source cleanup. The next known current item is Design Guidance color subsection `ColorPageExample` snippet coverage unless a higher visual/High Contrast/high-drift/harness trigger appears first. | Add or repair the first named source-pane/runtime-visible example-content guard, updating XAML/source only when the guard exposes a mismatch. |
+| 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Select only after 5.1 is recorded or not applicable for the current branch tip. | Fix the highest-impact named diff and verify with focused runtime, source-shape, automation, or visual-harness tests as appropriate. |
+| 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Select only after 5.1 and 5.2 are clear. | Align the first named resource/key/name/selector/hook gap that can affect visuals, behavior, or harness evidence. |
+| 5.4 | Non-visible copied/adapted source-shape guards | Lower priority. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked while 5.1-5.3 have current work. | Take only a named guard gap with focused tests and a full Gallery build. |
+| 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
 
 ### Row 8 Strict Subqueue
 
