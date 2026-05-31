@@ -12,7 +12,18 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
         private bool _isNewGraduate;
         private string _imageId = "91";
         private int _age;
+        private string _deletedname;
         private DateTime _dateOfJoining;
+
+        public string Deletedname
+        {
+            get => _deletedname;
+            set
+            {
+                _deletedname = value;
+                OnPropertyChanged(nameof(Deletedname));
+            }
+        }
 
         public string FirstName
         {
