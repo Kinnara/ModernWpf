@@ -256,7 +256,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
     public partial class MediaPageViewModel : WpfGalleryNavigationPageViewModel
     {
         public MediaPageViewModel(Action<object> navigate)
-            : base("Media Controls", "Controls for media presentation", GetControlsInfo("Media Controls"), navigate)
+            : base("Media Controls", "Controls for media presentation", GetControlsInfo("Media"), navigate)
         {
         }
     }

@@ -31,22 +31,22 @@ check instead of taking source cleanup.
 
 ## Current Order Lock
 
-This section is the single scheduler for current work. The `Current decisive
-order` table below is the only place to choose the next batch; older queues,
-historical priority snapshots, and detailed evidence sections are supporting
-context only. If any lower section conflicts with this block, this block wins.
+This section is the single scheduler for current work. The `Global order` table
+below is the only place to choose the next batch; older queues, historical
+priority snapshots, and detailed evidence sections are supporting context only.
+If any lower section conflicts with this block, this block wins.
 After selecting a rank here, use a subordinate queue only when this block names
-it explicitly: `P2 Subqueue`, then `P2 Row 5 Internal Queue` when rank 8 is the
-first executable substantive row.
+it explicitly: `P2 Subqueue`, then `P2 Row 5 Internal Queue` when global order
+10 is the first executable substantive row.
 
 Current active selection snapshot:
 
 1. The user-requested priority/order hygiene edit is recorded by this ordering
    update. It is inactive again unless a new priority/order conflict appears.
 2. After that tracker-only edit, the next substantive executable path is
-   **rank 8 -> P2 Subqueue row 5 -> P2 Row 5 Internal Queue row 5.3**.
-3. Ranks 2-7 are not skipped. They are recorded or inactive for the current
-   branch tip and must be rechecked before every new substantive batch.
+   **global order 10 -> P2 Subqueue row 5 -> P2 Row 5 Internal Queue row 5.3**.
+3. Global orders 2-9 are not skipped. They are recorded or inactive for the
+   current branch tip and must be rechecked before every new substantive batch.
 4. P2 rows 2-4 are recorded for the current branch tip. P2 row 6 and general
    tracker cleanup remain blocked while row 5 has executable work.
 5. Inside row 5, rows 5.1 and 5.2 are recorded for the current branch tip.
@@ -82,94 +82,34 @@ for the branch tip. If any visual, High Contrast, high-drift, asset,
 measurement, automation, or harness trigger appears, this pointer is stale and
 the higher row wins.
 
-Use this block before every new work batch. It overrides any lower section that
-looks convenient or recently edited. This is a scheduling contract, not a
-progress summary. Before editing code, identify the winning rank below in the
-work notes or tracker update; if the chosen work is not the first executable
-rank, stop and update the stale ordering text instead of continuing.
+Use this block before every new work batch. The 1-13 `Global order` table above
+is the only scheduler. Do not use lower historical tables, stale `Partial`
+labels, or nearby source files to choose easier work. If the next intended edit
+is not the first executable global order, stop and update this ordering text or
+run the higher-ranked evidence first.
 
-Non-negotiable sort:
+Required selection proof before any substantive edit:
 
-1. Real OS High Contrast visual/harness evidence preempts everything.
-2. Visible drift, high-drift retained-control visuals, assets, measurements,
-   interaction, automation, and harness-impacting work always preempt general
-   source-shape/resource-key/naming/test cleanup.
-3. P2 row 5 source cleanup is selectable only after this block and the
-   `P2 Subqueue` both say rows 2-4 are recorded for the current branch tip and
-   no new trigger appeared during the current batch. Once row 5 is selected,
-   the `P2 Row 5 Internal Queue` below is mandatory; sample panes and
-   visual/runtime-facing source parity stay ahead of comments, declarations,
-   member-order, and other non-visible source-shape cleanup.
-4. Tracker-only cleanup is selectable only for explicit priority/order hygiene
-   like this block, then control returns immediately to the first substantive
-   executable row.
-5. Every substantive batch must record which rank it executed and why all
-   higher-ranked visual, High Contrast, high-drift, asset, measurement,
-   automation, and harness rows were recorded or blocked.
+1. Re-check `SystemParameters.HighContrast`.
+2. Record the selected global order in the work notes or Latest local
+   verification.
+3. If the selected row is global order 10 or lower, explicitly record why every
+   higher visual, High Contrast, high-drift, asset, measurement, automation,
+   and harness row is recorded, inactive, or blocked.
+4. If new evidence appears for global orders 2-7, the row 5 source-cleanup path
+   is stale immediately.
+5. If global order 10 is selected, follow `P2 Subqueue` row 5 and then `P2 Row
+   5 Internal Queue` row 5.3. Rows 5.4, 5.5, P2 row 6, comments, declaration
+   order, member order, summaries, and stale tracker cleanup stay blocked while
+   any 5.1-5.3 item is current.
 
-Current decisive order, top row wins:
-
-| Rank | Bucket | Current branch-tip state | Next action |
-| --- | --- | --- | --- |
-| 1 | User-requested priority/order hygiene | Recorded by this user-requested tracker-order clarification; inactive unless a new priority/order conflict appears. | Fix only the ordering text when reactivated, then return to the first substantive executable row. |
-| 2 | P0.1 real OS High Contrast visual/harness evidence | Recorded for the latest accepted batch, but must be re-checked before every new batch. | If `SystemParameters.HighContrast = True` and new HC drift exists, run P0.1 first. |
-| 3 | P1 visible-drift and visual-harness stability | Recorded unless new visible or harness drift appears. | Reopen immediately for any new screenshot, crop, UIA, or harness failure. |
-| 4 | P1 retained ModernWpf/WinUI high-drift visuals, row 8 | Recorded through the strict row 8 subqueue, including `InfoBar` and `ProgressRing`. | Reopen only on new retained-control visual or harness evidence. |
-| 5 | P2 row 2 visual/high-drift freshness | Recorded for the current branch tip. | Reopen before any lower P2 work when fresh visual or high-drift evidence appears. |
-| 6 | P2 row 3 asset, thumbnail, and visual-reference parity | Recorded for current active references. | Reopen only for new asset/reference evidence. |
-| 7 | P2 row 4 measurement, interaction, automation, and harness-impacting parity | Recorded for the current branch tip. | Reopen only for named measurement, interaction, automation, or harness-impacting evidence. |
-| 8 | P2 row 5 source-shape, resource-key, naming, selector, and test cleanup | Current next substantive bucket only while ranks 2-7 remain recorded with no new trigger and P2 rows 2-4 are explicitly current in the `P2 Subqueue`. | Select the first executable item from the `P2 Row 5 Internal Queue`; do not jump to code-behind summaries, declarations, member-order, or tracker cleanup while sample panes or visual/runtime-facing source parity remain open. Stop immediately if any higher visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appears. |
-| 9 | P2 row 6 pure tracker/status cleanup and documentation-only work | Blocked by row 5, except this rank-1 priority/order hygiene exception. | Do not use for convenience cleanup until row 5 is recorded or explicitly not applicable. |
-
-Do not scan lower historical tables to find easier work. If a lower row says
-`Partial` or `Needs Work` but conflicts with this ranking, update the stale
-status only when its ranked bucket is executable. When in doubt, choose the
-higher-ranked visual/High Contrast/high-drift/harness row and record why source
-cleanup is not being taken.
-
-Current allowed substantive row after this priority/order hygiene edit:
-
-- `P2` row 5 is selectable only because P0.1, row 7, row 8, and P2 rows 2-4
-  are currently recorded and `SystemParameters.HighContrast = False` in the
-  local shell.
-- Inside row 5, `5.1` and `5.2` are recorded for the current branch tip. The
-  active substantive row is **5.3**: resource-key, naming, selector, and
-  source-hook parity tied to visible or harness behavior.
-- `5.2` reopens only if a new named source-backed structural gap is found that
-  can affect visible layout, resources, keyboard, interaction, automation, or
-  visual-harness behavior.
-- `5.4` and `5.5` are blocked while any `5.1`, `5.2`, or `5.3` item is current;
-  comments, declaration order, member order, summaries, and stale tracker
-  cleanup must not be selected ahead of visible/runtime-facing structure or
-  resource/key/hook parity.
-- Any new High Contrast, visible-drift, high-drift retained-control, asset,
-  measurement, interaction, automation, or harness evidence immediately
-  preempts row 5 and reopens the higher-ranked bucket.
-
-1. User-requested priority/order hygiene is the only tracker-only exception.
-   Fix the ordering text, then immediately return to the first substantive row
-   below.
-2. Re-check `SystemParameters.HighContrast`.
-3. If High Contrast has new unrecorded visual or harness drift, run P0.1 first.
-4. If the current P0.1 High Contrast batch remains recorded with no new drift,
-   the row 8 strict visual subqueue is currently recorded through
-   **8.10 `InfoBar`** and **8.11 `ProgressRing`**. Reopen either item only on
-   new visual regression evidence.
-5. If a new retained-control visual or harness drift appears, it preempts all
-   source-shape/resource-key/test cleanup and P2 work.
-6. If no new P0, row 7, or row 8 visual/harness item exists, P2 is the next
-   executable bucket, but it must use the `P2 Subqueue` below. Within P2, row 2
-   visual/high-drift freshness is the first substantive row and must be current
-   before any row 4 measurement/automation/harness work continues. Do not infer
-   row 2 from stale report paths: write the current Light/Dark evidence into
-   this tracker first.
-7. P2 row 3 asset/thumbnail/visual-reference parity stays ahead of row 4.
-8. P2 row 4 measurement, interaction, automation, and harness-impacting parity
-   runs only after rows 2 and 3 are recorded for the current branch tip.
-9. P2 row 5 remains blocked until rows 2-4 are recorded or not applicable.
-   Because rows 2-4 are recorded for the current branch tip, row 5 is the next
-   substantive P2 row. P2 row 6, including pure tracker/status cleanup, remains
-   blocked until row 5 is recorded or explicitly not applicable.
+Current allowed substantive row after this priority/order hygiene edit is
+**global order 10 / P2 row 5.3** only because `SystemParameters.HighContrast`
+is `False`, global orders 2-9 are recorded or inactive for the current branch
+tip, P2 rows 2-4 are recorded, and rows 5.1-5.2 are recorded. Any new High
+Contrast, visible-drift, high-drift retained-control, asset, measurement,
+interaction, automation, or harness evidence immediately preempts row 5 and
+reopens the higher global order.
 
 ## Goal
 
@@ -333,10 +273,10 @@ normalizes official WPF Gallery display group IDs inside section page and
 section view-model selectors, so `Design Guidance`, `Basic Input`,
 `Date & Calendar`, `Status & Info`, and `Media Controls` route through the
 retained canonical groups without falling back to generic section behavior.
-The follow-up Media Controls selector batch also makes the Media section
-view-model's card source use the official `Media Controls` display lookup
-rather than the retained `Media` ID, with source-shape, route, and visual audit
-coverage preserving the retained canonical route.
+For Media specifically, the official WPF Gallery source uses page title
+`Media Controls` but keeps the navigation-card selector at
+`GetControlsInfo("Media")`; `category/Media Controls` remains only the display
+route alias, with `category/Media` as the retained canonical ready route.
 
 ### P2 Row 5 Internal Queue
 
@@ -458,18 +398,16 @@ Latest accepted row 5.3 execution note:
   returned `False`, global orders 2-9 were recorded or inactive, and no new
   High Contrast, visible-drift, high-drift, asset, measurement, automation, or
   harness trigger appeared.
-- The twentieth named 5.3 batch aligned the Media section navigation-card
-  source selector to the official WPF Gallery display group string by changing
-  `MediaPageViewModel` from `GetControlsInfo("Media")` to
-  `GetControlsInfo("Media Controls")`. The shared catalog alias still resolves
-  this to the retained canonical `Media` group, while the source-shape guard,
-  shell route guard, visual-audit launch-route guard, and Media Light/Dark
-  visual audits prove the official display string flows through runtime and
-  harness paths without changing the retained route or zero-drift section
-  crop. This was selected only after `SystemParameters.HighContrast` returned
-  `False`, global orders 2-9 were recorded or inactive, and no new High
-  Contrast, visible-drift, high-drift, asset, measurement, automation, or
-  harness trigger appeared.
+- The twentieth named 5.3 Media selector note is superseded by the current
+  correction after checking the official WPF Gallery source: official
+  `MediaPageViewModel` sets page title `Media Controls` but keeps the
+  navigation-card selector at `GetControlsInfo("Media")`. The local view model
+  was restored to that selector while preserving the shell and visual-audit
+  display route alias `category/Media Controls` with retained canonical ready
+  route `category/Media`. This correction was selected only after
+  `SystemParameters.HighContrast` returned `False`, global orders 2-9 were
+  recorded or inactive, and no new High Contrast, visible-drift, high-drift,
+  asset, measurement, automation, or harness trigger appeared.
 
 ### Row 8 Strict Subqueue
 
@@ -1202,15 +1140,15 @@ Goal tracker status in Codex: active, not complete.
 Latest local verification for the current branch tip:
 
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
-  - Returned `False` before the current row 5.3 Media Controls selector round. Winning rank was **global order 10 / P2 row 5.3** because global orders 2-9 were recorded or inactive for the branch tip and no new visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appeared.
+  - Returned `False` before the current priority-order and row 5.3 Media selector correction round. Winning rank was **global order 10 / P2 row 5.3** because global orders 2-9 were recorded or inactive for the branch tip and no new visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appeared.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryNavigationViewModelsKeepOfficialStateAndNavigateSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryVisualAuditLaunchesOfficialDisplayRoutesWithCanonicalReadyRoutes|FullyQualifiedName~NavigationRootPageTests.ResolveNavigationTargetAcceptsOfficialWpfGalleryCategoryIds|FullyQualifiedName~GalleryNavigationRuntimeTests.SectionPagesAcceptOfficialWpfGalleryDisplayGroupIds|FullyQualifiedName~GalleryNavigationRuntimeTests.SectionPagesUseOfficialWpfGalleryViewModels|FullyQualifiedName~GalleryCatalogTests.FindGroupAcceptsOfficialWpfGalleryCategoryIds" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
-  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 11 tests per target. The focused filter covers the Media Controls `GetControlsInfo` display selector, visual-audit display launch route / canonical ready route guard, shell category alias, section factory/display group alias, section view-model construction, and catalog group alias.
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 11 tests per target. The focused filter covers the official Media `GetControlsInfo("Media")` card selector, the `category/Media Controls` visual-audit display launch route with canonical `category/Media` ready route, shell category alias, section factory/display group alias, section view-model construction, and catalog group alias.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
-  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the row 5.3 Media Controls selector round. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the row 5.3 Media selector correction round. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Media -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 60`
-  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-092407-496-74504/report.md`: Media `0`, `76/41230` changed samples (`0.184%`), max RGB diff `3`, and matching `868x758` ModernWpf/official crops through the official `category/Media Controls` launch route and retained `category/Media` ready route.
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-093411-963-54944/report.md`: Media `0`, `76/41230` changed samples (`0.184%`), max RGB diff `3`, and matching `868x758` ModernWpf/official crops through the display route alias `category/Media Controls` and retained `category/Media` ready route.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Media -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 60`
-  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-092428-052-6804/report.md`: Media `0`, `56/41230` changed samples (`0.136%`), max RGB diff `3`, and matching `868x758` crops with no new section visual drift or visual-harness regression.
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-093513-350-45288/report.md`: Media `0`, `56/41230` changed samples (`0.136%`), max RGB diff `3`, and matching `868x758` crops with no new section visual drift or visual-harness regression.
 
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the current row 5.3 official display group selector round. Winning rank was **global order 10 / P2 row 5.3** because global orders 2-9 were recorded or inactive for the branch tip and no new visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appeared.
@@ -1518,7 +1456,7 @@ Latest local verification for the current branch tip:
 - `git diff --check`
   - Passed after the row 5.3 NavigationRootPage High Contrast pane-edge cover source-hook batch; only the existing LF/CRLF warnings were reported.
 - User-requested priority/order hygiene
-  - Strengthened `Current Order Lock` as the single scheduler: the `Current decisive order` table is now the only place to choose the next batch, older queues and historical priority snapshots are supporting context only, and subordinate queues are usable only when the top-level rank explicitly names them.
+  - Strengthened `Current Order Lock` as the single scheduler: the top-level global order table is now the only place to choose the next batch, older queues and historical priority snapshots are supporting context only, and subordinate queues are usable only when the top-level global order explicitly names them.
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the row 5.3 NavigationRootPage visual-test status panel and ShellNavigation harness-crop batch. Winning substantive rank was `Current Order Lock` rank 8 / P2 row 5 because ranks 2-7 and P2 rows 2-4 remained recorded and no new High Contrast, visible-drift, high-drift, asset, measurement, automation, or harness trigger appeared before the batch.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryNavigationRuntimeTests.ShellVisualTestStatusHooksStayOutOfNormalAutomationTree|FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.ActiveGalleryXamlAvoidsLocalOnlyAutomationHooks|FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryVisualAuditUsesSingleRenderedContentArtifactPriority" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
