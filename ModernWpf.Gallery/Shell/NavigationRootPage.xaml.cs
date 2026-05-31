@@ -675,9 +675,9 @@ namespace ModernWpf.Gallery.Shell
             return new SolidColorBrush(WpfGalleryLightNavigationPaneBackgroundColor);
         }
 
-        private void OnSettingsButtonClick(object sender, RoutedEventArgs e)
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            RaiseSettingsOpenedNotification(SettingsButton);
+            RaiseSettingsOpenedNotification((UIElement)sender);
         }
 
         internal void OpenSettings()

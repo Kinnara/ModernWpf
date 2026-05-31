@@ -1217,7 +1217,7 @@ namespace ModernWpf.Gallery.Tests
                 "AutomationProperties.Name=\"Settings\"",
                 "Command=\"{Binding Value.ViewModel.SettingsCommand, Source={StaticResource NavigationRootDataContextProxy}}\"",
                 "Style=\"{StaticResource BorderlessButtonStyle}\"",
-                "Click=\"OnSettingsButtonClick\"",
+                "Click=\"SettingsButton_Click\"",
                 "<StackPanel Orientation=\"Horizontal\" Margin=\"11,0,0,0\">");
             AssertContainsInOrder(
                 navigationRootXaml,
@@ -1282,7 +1282,9 @@ namespace ModernWpf.Gallery.Tests
                 "AlignNavigationViewShellResourcesWithWpfGallery();",
                 "private void OnSystemParametersChanged(object sender, PropertyChangedEventArgs e)",
                 "if (string.Equals(e.PropertyName, nameof(SystemParameters.HighContrast), StringComparison.Ordinal))",
-                "AlignNavigationViewShellResourcesWithWpfGallery();");
+                "AlignNavigationViewShellResourcesWithWpfGallery();",
+                "private void SettingsButton_Click(object sender, RoutedEventArgs e)",
+                "RaiseSettingsOpenedNotification((UIElement)sender);");
 
             var appCode = ReadRepoFile(
                 "ModernWpf.Gallery",
