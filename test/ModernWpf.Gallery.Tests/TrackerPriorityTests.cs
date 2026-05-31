@@ -44,15 +44,21 @@ namespace ModernWpf.Gallery.Tests
                 "## Current Order Lock",
                 "This section is the single scheduler for current work.",
                 "If any lower section conflicts with this block, this block wins.",
-                "Mandatory next-work selector:",
-                "Use this compact selector before every batch. Start at the top and take the",
-                "first row that is current, newly triggered, or not recorded for the current",
-                "branch tip.",
-                "If the next intended edit",
-                "is not the first executable global order, stop and update this ordering text or",
-                "run the higher-ranked evidence first.",
-                "Continue only with the first executable item from the `P2 Row 5 Internal Queue`;",
-                "stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears.");
+                "Front-door priority selector:",
+                "Run this selector before any edit. Pick the first true item below;",
+                "1. User-requested priority/order conflict or scheduler ambiguity:",
+                "2. Real OS High Contrast visual/harness evidence:",
+                "3. Visible drift and visual-harness stability:",
+                "4. Retained ModernWpf/WinUI high-drift visual triage:",
+                "5. P2 row 2 visual/high-drift freshness.",
+                "6. P2 row 3 asset, thumbnail, and visual-reference parity.",
+                "7. P2 row 4 measurement, interaction, automation, and harness-impacting parity.",
+                "11. P2 row 5.4 non-visible copied/adapted source-shape guards, only for a",
+                "12. P2 row 5.5 row-5 bookkeeping and stale-status cleanup, only after 5.1-5.4",
+                "13. P2 row 6/final closeout cleanup, last, with a fresh verification sweep.",
+                "Current distance to completion:",
+                "The next substantive row is not open-ended row 5.4.",
+                "Current active selection snapshot:");
         }
 
         [TestMethod]

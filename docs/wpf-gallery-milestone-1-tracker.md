@@ -673,6 +673,48 @@ it explicitly: `P2 Subqueue`, then `P2 Row 5 Internal Queue` for the first
 executable row-5 global order. The top-level global order still wins over the
 row-5 internal queue.
 
+Front-door priority selector:
+
+Run this selector before any edit. Pick the first true item below; do not scan
+lower historical notes, stale `Partial` labels, or nearby source files for
+easier work.
+
+1. User-requested priority/order conflict or scheduler ambiguity: fix tracker
+   ordering and tests first, then return to this selector.
+2. Real OS High Contrast visual/harness evidence: if
+   `SystemParameters.HighContrast = True`, or a new HC drift appears, run this
+   before all lower work.
+3. Visible drift and visual-harness stability: any new screenshot, crop, UIA,
+   rendered-artifact, launch, or harness failure beats source cleanup.
+4. Retained ModernWpf/WinUI high-drift visual triage: any new retained-control
+   visual or harness drift beats all P2 work.
+5. P2 row 2 visual/high-drift freshness.
+6. P2 row 3 asset, thumbnail, and visual-reference parity.
+7. P2 row 4 measurement, interaction, automation, and harness-impacting parity.
+8. P2 row 5.1 sample panes and runtime-visible example content.
+9. P2 row 5.2 source-backed visible/runtime structure.
+10. P2 row 5.3 resource-key, naming, selector, and behavior-tied source-hook
+    parity.
+11. P2 row 5.4 non-visible copied/adapted source-shape guards, only for a
+    named broad guard proven from local official WPF Gallery source.
+12. P2 row 5.5 row-5 bookkeeping and stale-status cleanup, only after 5.1-5.4
+    are recorded or explicitly not applicable.
+13. P2 row 6/final closeout cleanup, last, with a fresh verification sweep.
+
+Current distance to completion:
+
+1. The higher visual, real OS High Contrast, high-drift, asset, measurement,
+   automation, and harness rows are recorded or inactive for the current branch
+   tip, not permanently complete.
+2. This turn is row 1 because the user reported a priority/order conflict.
+3. The next substantive row is not open-ended row 5.4. It can remain global
+   order 11 only if another broad 5.4 guard survives the local-official-source
+   proof. Thin member-shape cleanup, root shell adapter trivia, or stale
+   historical notes are not enough.
+4. If no broad 5.4 candidate survives, record row 5.5 bookkeeping/not
+   applicable, then run row 6/final verification. Any reopened item from rows
+   2-10 stops closeout and becomes the next task.
+
 Current active selection snapshot:
 
 1. The user-requested priority/order hygiene edit is recorded by this ordering
