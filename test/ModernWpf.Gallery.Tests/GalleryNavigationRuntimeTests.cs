@@ -16,6 +16,7 @@ using ModernWpf.Gallery.Controls;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
 using ModernWpf.Gallery.Pages.WpfGallery;
+using ModernWpf.Gallery.Pages.WpfGallery.SystemPages;
 using ModernWpf.Gallery.Shell;
 using ModernWpf.Gallery.Testing;
 using ModernWpf.Gallery.ViewModels;
@@ -780,6 +781,14 @@ namespace ModernWpf.Gallery.Tests
         {
             WpfTestHost.Run(() =>
             {
+                object requestedPayload = null;
+                var dashboardViewModel = new DashboardPageViewModel(payload => requestedPayload = payload);
+                dashboardViewModel.Navigate(typeof(DashboardPage));
+                Assert.AreSame(typeof(DashboardPage), requestedPayload);
+                requestedPayload = null;
+                dashboardViewModel.Navigate(GalleryCatalog.OverviewGroups.First());
+                Assert.AreSame(GalleryCatalog.OverviewGroups.First(), requestedPayload);
+
                 var homePage = new DashboardPage();
                 Assert.IsInstanceOfType(homePage, typeof(System.Windows.Controls.Page));
                 Assert.IsInstanceOfType(homePage.ViewModel, typeof(DashboardPageViewModel));
@@ -813,6 +822,9 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("MessageBox", requestedItemId);
                 requestedItemId = null;
                 whatsNewPage.ViewModel.Navigate("MessageBox");
+                Assert.AreEqual("MessageBox", requestedItemId);
+                requestedItemId = null;
+                whatsNewPage.ViewModel.Navigate(typeof(MessageBoxPage));
                 Assert.AreEqual("MessageBox", requestedItemId);
 
                 var allControlsPage = new AllSamplesPage();
@@ -861,6 +873,18 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(group.Title, page.ViewModel.PageTitle, expected.UniqueId);
                     Assert.AreEqual(group.PageDescription, page.ViewModel.PageDescription, expected.UniqueId);
                     AssertNavigationCardIds(group.Items, page.ViewModel.NavigationCards, expected.UniqueId);
+
+                    object requestedPayload = null;
+                    var navigationViewModel = new WpfGalleryNavigationPageViewModel(
+                        group.Title,
+                        group.PageDescription,
+                        group.Items,
+                        payload => requestedPayload = payload);
+                    navigationViewModel.Navigate(typeof(SectionPage));
+                    Assert.AreSame(typeof(SectionPage), requestedPayload, expected.UniqueId);
+                    requestedPayload = null;
+                    navigationViewModel.Navigate(group.Items.First());
+                    Assert.AreSame(group.Items.First(), requestedPayload, expected.UniqueId);
 
                     GalleryItem requestedItem = null;
                     page.ItemRequested = item => requestedItem = item;

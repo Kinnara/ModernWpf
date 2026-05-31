@@ -292,6 +292,9 @@ namespace ModernWpf.Gallery.Tests
                 "SetProperty(ref _recentlyAddedOrUpdatedSamplesInfo, value ?? Array.Empty<GalleryItem>());",
                 "public ICommand NavigateCommand { get; }",
                 "public void Navigate(object pageType)",
+                "if (pageType is Type page)",
+                "_navigate(page);",
+                "else if (pageType != null && _navigate != null)",
                 "_navigate(pageType);");
             AssertContainsInOrder(
                 source,
@@ -312,6 +315,9 @@ namespace ModernWpf.Gallery.Tests
                 "SetProperty(ref _gridShorthandSyntaxXamlCode, value);",
                 "public ICommand NavigateCommand { get; }",
                 "public void Navigate(object pageType)",
+                "if (pageType is Type page)",
+                "_navigate(page);",
+                "else if (pageType != null && _navigate != null)",
                 "_navigate(pageType);",
                 "private const string _accentColorBrushApiXamlUsage =",
                 "private const string _hyphenBasedLiagatureXamlUsage =",
@@ -512,6 +518,9 @@ namespace ModernWpf.Gallery.Tests
                 "SetProperty(ref _navigationCards, value ?? Array.Empty<GalleryItem>());",
                 "public ICommand NavigateCommand { get; }",
                 "public void Navigate(object pageType)",
+                "if (pageType is Type page)",
+                "_navigate(page);",
+                "else if (pageType != null && _navigate != null)",
                 "_navigate(pageType);");
             foreach (var className in new[]
             {

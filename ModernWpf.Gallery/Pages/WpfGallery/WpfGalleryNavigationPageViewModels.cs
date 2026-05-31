@@ -34,7 +34,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
 
         public void Navigate(object pageType)
         {
-            if (_navigate != null)
+            if (pageType is Type page)
+            {
+                if (_navigate != null)
+                {
+                    _navigate(page);
+                }
+            }
+            else if (pageType != null && _navigate != null)
             {
                 _navigate(pageType);
             }
@@ -77,7 +84,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
 
         public void Navigate(object pageType)
         {
-            if (_navigate != null)
+            if (pageType is Type page)
+            {
+                if (_navigate != null)
+                {
+                    _navigate(page);
+                }
+            }
+            else if (pageType != null && _navigate != null)
             {
                 _navigate(pageType);
             }
@@ -148,7 +162,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
 
         public void Navigate(object pageType)
         {
-            if (_navigate != null)
+            if (pageType is Type page)
+            {
+                if (_navigate != null)
+                {
+                    _navigate(page);
+                }
+            }
+            else if (pageType != null && _navigate != null)
             {
                 _navigate(pageType);
             }

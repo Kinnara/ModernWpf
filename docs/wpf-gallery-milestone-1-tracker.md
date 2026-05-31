@@ -33,10 +33,12 @@ Current pointer:
 1. This user-requested priority/order clarification is row 1. Once committed,
    row 1 is inactive again unless another priority/order conflict appears.
 2. The latest substantive batch was **global order 10 / P2 row 5.3** because
-   `WhatsNewPage.NavigateToMessageBoxSample` still used a retained local
-   string selector while official WPF Gallery uses
-   `ViewModel.Navigate(typeof(MessageBoxPage))`. That batch is now recorded in
-   Latest local verification.
+   local top-level and section WPF Gallery navigation view-model adapters still
+   forwarded route payloads directly while local official WPF Gallery source
+   under `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels`
+   first gates `Navigate(object pageType)` through
+   `if (pageType is Type page)`. That batch is now recorded in Latest local
+   verification.
 3. The next substantive row remains **global order 10 / P2 row 5.3** only
    while every higher row remains recorded or inactive.
 4. Any new High Contrast, visible drift, high-drift retained-control, asset,
@@ -58,7 +60,7 @@ Current distance, in executable buckets rather than a percentage:
 2. P2 rows 2-4 are recorded for the branch tip, including the latest
    Iconography copy command interaction batch.
 3. The first substantive local bucket is therefore P2 row 5, and within row 5
-   to 5.3. The latest 5.3 `WhatsNew` MessageBox type-selector batch is
+   to 5.3. The latest 5.3 WPF Gallery navigation view-model Type-gate batch is
    recorded, but row 5.3 remains the active sub-bucket while more
    behavior/harness-facing hook gaps exist. This is only true while rows above
    remain recorded and `SystemParameters.HighContrast = False`.
@@ -87,10 +89,11 @@ Current active selection snapshot:
 1. The user-requested priority/order hygiene edit is recorded by this ordering
    update. It is inactive again unless a new priority/order conflict appears.
 2. The latest substantive executable path was **global order 10 -> P2 Subqueue
-   row 5 -> P2 Row 5 Internal Queue row 5.3** because a source audit found the
-   `WhatsNewPage` MessageBox link handler selector still used a local string
-   instead of the official `MessageBoxPage` type selector; that 5.3 batch is
-   now recorded for the current branch tip.
+   row 5 -> P2 Row 5 Internal Queue row 5.3** because local official WPF
+   Gallery source showed top-level and section navigation view models gate
+   `Navigate(object pageType)` through `if (pageType is Type page)` before
+   routing, while the local adapters still forwarded all route payloads
+   directly; that 5.3 batch is now recorded for the current branch tip.
 3. Global orders 2-9 are recorded or inactive for the current branch tip and
    must be rechecked before every new substantive batch.
 4. P2 rows 2-4 are recorded for the current branch tip. P2 row 6 and general
@@ -124,12 +127,13 @@ recently touched.
 | 13 | P2 row 6 and final closeout cleanup | Last; only after row 5 is recorded or explicitly not applicable and the final verification sweep is current. |
 
 Current next substantive row by this selector remains **global order 10 / P2
-row 5.3**, and only because the latest `WhatsNewPage` MessageBox type-selector
-source-hook batch, the Iconography search-placeholder handler source-hook
-batch, the Iconography global order 7 / P2 row 4 batch, and the earlier
-`ColorTile` row 5.2 visibility-template batch are recorded. If any visual,
-High Contrast, high-drift, asset, measurement, automation, or harness trigger
-appears, this pointer is stale and the higher row wins.
+row 5.3**, and only because the latest WPF Gallery navigation view-model
+Type-gate batch, the `WhatsNewPage` MessageBox type-selector source-hook batch,
+the Iconography search-placeholder handler source-hook batch, the Iconography
+global order 7 / P2 row 4 batch, and the earlier `ColorTile` row 5.2
+visibility-template batch are recorded. If any visual, High Contrast,
+high-drift, asset, measurement, automation, or harness trigger appears, this
+pointer is stale and the higher row wins.
 
 Use this block before every new work batch. The 1-13 `Global order` table above
 is the only scheduler. Do not use lower historical tables, stale `Partial`
@@ -326,10 +330,18 @@ Current P2 state:
 | 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest retained-control Light/Dark refreshes in Row 8 and Latest local verification. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
 | 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Recorded at branch tip. The latest row 4 batch aligns Iconography `Copy_Content` with official WPF Gallery's `ExecutedRoutedEventArgs.Parameter.ToString()` behavior instead of the local string-only parameter path, with focused runtime/source tests, full Gallery build, and refreshed Iconography Light/Dark visual evidence recorded in Latest local verification. Earlier row 4 interaction batches for MessageBox net10 button values and TileGallery scroll-back visibility remain recorded. | Reopen only for new named measurement, interaction, automation, or harness-impacting evidence. |
-| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations, Design Guidance Color subsection visible example-content guards, Iconography instructions Expander inline/source structure, Design Guidance Spacing/Geometry default design-image `Source` resource fallback, Navigation `FrameWindow` same-folder `Frame.Source` behavior, Navigation `NavigationWindow` runtime URI/template-resource behavior, MainWindow/title-bar plus NavigationRoot footer style resource keys, SectionPage retained-extension scroll-host structural lookup/no-local-name hooks, NavigationRootPage content-frame Border structural lookup/no-local-name hook, NavigationRootPage Settings footer event-handler naming/sender-notification parity, NavigationRootPage High Contrast pane-edge cover structural lookup/no-local-name hook, NavigationRootPage visual-test status panel structural lookup/no-local-name hooks, ShellNavigation rendered-artifact crop hardening, MainWindow retained NavigationRootPage host structural lookup/no-local-name hook, NavigationRootPage retained content Frame structural lookup/no-local-name hook, NavigationRootPage retained NavigationView structural lookup/no-local-name hook, NavigationRootPage Settings footer official command-binding path through the retained PaneFooter BindingProxy bridge, MainWindow title-bar `WindowChrome.IsHitTestVisibleInChrome` attached-property source shape, Design Guidance Color `ColorsPage` class/file naming, Design Guidance Icons `IconsPage` / `IconsPageViewModel` class/file naming plus the official `Copy_Content` command selector and official direct search-placeholder visibility handlers, top-level `DashboardPage` / `AllSamplesPage` class/file naming while preserving the retained `Home` / `AllControls` routes and visual artifact IDs, official WPF Gallery display-route aliases such as `Date & Calendar`, `Status & Info`, `Design Guidance`, `Basic Input`, `Colors`, `Icons`, `File and Folder Dialogs`, `User Dashboard`, `All Controls`, and `Home` resolving to retained local route IDs, WPF visual-audit launch routes using those official display IDs with canonical ready-route waits, and direct page registry display-ID normalization for official item IDs, with focused source-shape/runtime tests, full Gallery builds, and refreshed Color, Iconography, Home/AllControls, DateAndCalendar/StatusAndInfo, FileAndFolderDialogs, UserDashboard, Spacing/Geometry, Frame, NavigationWindow, ShellNavigation, and BasicInput Light/Dark visual audits recorded in Latest local verification. | Continue only with the first executable item from the `P2 Row 5 Internal Queue`; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
+| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations, Design Guidance Color subsection visible example-content guards, Iconography instructions Expander inline/source structure, Design Guidance Spacing/Geometry default design-image `Source` resource fallback, Navigation `FrameWindow` same-folder `Frame.Source` behavior, Navigation `NavigationWindow` runtime URI/template-resource behavior, MainWindow/title-bar plus NavigationRoot footer style resource keys, SectionPage retained-extension scroll-host structural lookup/no-local-name hooks, NavigationRootPage content-frame Border structural lookup/no-local-name hook, NavigationRootPage Settings footer event-handler naming/sender-notification parity, NavigationRootPage High Contrast pane-edge cover structural lookup/no-local-name hook, NavigationRootPage visual-test status panel structural lookup/no-local-name hooks, ShellNavigation rendered-artifact crop hardening, MainWindow retained NavigationRootPage host structural lookup/no-local-name hook, NavigationRootPage retained content Frame structural lookup/no-local-name hook, NavigationRootPage retained NavigationView structural lookup/no-local-name hook, NavigationRootPage Settings footer official command-binding path through the retained PaneFooter BindingProxy bridge, MainWindow title-bar `WindowChrome.IsHitTestVisibleInChrome` attached-property source shape, Design Guidance Color `ColorsPage` class/file naming, Design Guidance Icons `IconsPage` / `IconsPageViewModel` class/file naming plus the official `Copy_Content` command selector and official direct search-placeholder visibility handlers, top-level and section WPF Gallery navigation view-model `Navigate(object pageType)` Type gates with retained local route fallbacks, top-level `DashboardPage` / `AllSamplesPage` class/file naming while preserving the retained `Home` / `AllControls` routes and visual artifact IDs, official WPF Gallery display-route aliases such as `Date & Calendar`, `Status & Info`, `Design Guidance`, `Basic Input`, `Colors`, `Icons`, `File and Folder Dialogs`, `User Dashboard`, `All Controls`, and `Home` resolving to retained local route IDs, WPF visual-audit launch routes using those official display IDs with canonical ready-route waits, and direct page registry display-ID normalization for official item IDs, with focused source-shape/runtime tests, full Gallery builds, and refreshed Color, Iconography, Home/AllControls, DateAndCalendar/StatusAndInfo, FileAndFolderDialogs, UserDashboard, Spacing/Geometry, Frame, NavigationWindow, ShellNavigation, and BasicInput Light/Dark visual audits recorded in Latest local verification. | Continue only with the first executable item from the `P2 Row 5 Internal Queue`; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
 | 6 | Pure tracker/status cleanup and documentation-only work | Last; blocked by row 5 except row 1 priority/order fixes. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
 
-Current row 5 summary addendum: the latest row 5.3 shell batch routes the
+Current row 5 summary addendum: the latest row 5.3 navigation view-model batch
+aligns top-level and section `Navigate(object pageType)` source hooks with the
+local official WPF Gallery sources by adding the official
+`if (pageType is Type page)` gate before route dispatch. The retained local
+fallback still routes non-Type `GalleryGroup`, `GalleryItem`, and `"MessageBox"`
+payloads used by the ModernWpf catalog adapters, and the What's New
+`MessageBoxPage` Type path still resolves to the retained `MessageBox` item
+route.
+The earlier row 5.3 shell batch routes the
 retained `MainWindowViewModel` `BackCommand` and `SettingsCommand` through the
 official `Back()` and `Settings()` command-handler names while preserving the
 local constructor `Action` adapter. The preceding selector batch also
@@ -408,6 +420,15 @@ Latest accepted visual/high-drift priority-correction note:
   delta `0`, matching `868x758` crops, and only max RGB `3` sampled residuals.
   This keeps the visible page and visual harness recorded before further row
   5.3 work continues.
+- The current row 5.3 navigation view-model Type-gate batch reran focused WPF
+  `Home`, `WhatsNew`, `AllControls`, and `BasicInput` Light/Dark visual
+  evidence after the code change. Reports
+  `artifacts/wpf-gallery-visual-audit/20260531-115340-460-77272/report.md`
+  and
+  `artifacts/wpf-gallery-visual-audit/20260531-115422-084-33620/report.md`
+  passed against the official WPF Gallery direct reference; all selected cases
+  stayed content delta `0` except the accepted Dark Home `0.04` residual, with
+  matching crops and no new visual-harness drift.
 - The current visual freshness round refreshed retained high-drift spot checks
   for `GridView`, `CommandBarFlyout`, and `ProgressRing` in Light and Dark at
   the current branch tip, then refreshed WPF top-level `Home`, `WhatsNew`,
@@ -427,6 +448,18 @@ Latest accepted visual/high-drift priority-correction note:
 
 Latest accepted row 5.3 execution note:
 
+- The twenty-fifth named 5.3 batch aligned the top-level and section WPF
+  Gallery navigation view-model `Navigate(object pageType)` source hooks with
+  local official WPF Gallery sources by adding the official
+  `if (pageType is Type page)` gate before dispatch. The retained local
+  fallback remains explicit for ModernWpf `GalleryGroup`, `GalleryItem`, and
+  `"MessageBox"` route payloads, and null route payloads now no-op like the
+  official Type-gated command path. Focused runtime/source tests, a full Gallery
+  build, and refreshed Home/WhatsNew/AllControls/BasicInput Light/Dark visual
+  audits passed. This was selected only after `SystemParameters.HighContrast`
+  returned `False`, global orders 2-9 were recorded or inactive, and no new
+  High Contrast, visible-drift, high-drift, asset, measurement, automation, or
+  harness trigger appeared.
 - The twenty-fourth named 5.3 batch aligned the copied `WhatsNewPage`
   `NavigateToMessageBoxSample` handler with current official WPF Gallery by
   using `ViewModel.Navigate(typeof(MessageBoxPage))` instead of the retained
@@ -1290,6 +1323,47 @@ updated with each coherent round.
 Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
+
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the current WPF Gallery navigation view-model
+    Type-gate source-hook batch. Winning rank was **global order 10 / P2 row
+    5.3** because global orders 2-9 were recorded or inactive for the branch
+    tip and no new visual, High Contrast, high-drift, asset, measurement,
+    automation, or harness trigger appeared. The local official WPF Gallery
+    sources at `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels`
+    show top-level and section `Navigate(object pageType)` methods first
+    gating route payloads through `if (pageType is Type page)`, while local
+    adapters still forwarded all payloads directly.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.TopLevelWpfGalleryViewModelsKeepOfficialStateAndNavigateSourceShape|FullyQualifiedName~WpfGallerySourceShapeTests.WpfGalleryNavigationViewModelsKeepOfficialStateAndNavigateSourceShape|FullyQualifiedName~GalleryNavigationRuntimeTests.TopLevelPagesUseOfficialWpfGalleryViewModels|FullyQualifiedName~GalleryNavigationRuntimeTests.SectionPagesUseOfficialWpfGalleryViewModels|FullyQualifiedName~GalleryPageRuntimeTests.WhatsNewMessageBoxLinkUsesViewModelNavigationHandler" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per
+    target. The focused filter covers the official Type gate source shape for
+    Dashboard, What's New, and shared section navigation view models; direct
+    Type dispatch through the retained `Action<object>` adapter; retained
+    non-Type `GalleryGroup`, `GalleryItem`, and `"MessageBox"` route fallbacks;
+    and the What's New `MessageBoxPage` Type selector resolving back to
+    `ItemRequested("MessageBox")`.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the WPF Gallery navigation view-model Type-gate source-hook batch. Existing
+    warning/output remains recurring `Failed to resolve WinRT.Runtime.dll`
+    messages and existing ModernWpf/ModernWpf.Controls warnings.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home,WhatsNew,AllControls,BasicInput -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-115340-460-77272/report.md`:
+    Home content delta `0` (`3/43739` changed samples, max RGB diff `72`),
+    WhatsNew content delta `0` (`114/41230`, max RGB diff `3`), AllControls
+    content delta `0` (`51/41230`, max RGB diff `3`), and BasicInput content
+    delta `0` (`77/41230`, max RGB diff `3`) with matching ModernWpf/official
+    crops after the Type-gate source-hook batch.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Home,WhatsNew,AllControls,BasicInput -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 60`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-115422-084-33620/report.md`:
+    Home content delta `0.04` (`3231/43739` changed samples, max RGB diff
+    `3`), WhatsNew content delta `0` (`76/41230`, max RGB diff `3`),
+    AllControls content delta `0` (`30/41230`, max RGB diff `3`), and
+    BasicInput content delta `0` (`89/41230`, max RGB diff `3`) with matching
+    ModernWpf/official crops after the Type-gate source-hook batch.
+- `git diff --check`
+  - Passed after the WPF Gallery navigation view-model Type-gate source-hook
+    batch, with only the existing LF/CRLF working-copy warnings.
 
 - `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
   - Returned `False` before the current `WhatsNew` MessageBox type-selector
