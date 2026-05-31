@@ -1,6 +1,6 @@
 # WPF Gallery Milestone 1 Tracker
 
-Last updated: 2026-05-31
+Last updated: 2026-06-01
 
 ## Non-Negotiable Execution Gate
 
@@ -51,16 +51,18 @@ Distance to completion, using executable buckets:
    asset/reference, measurement, interaction, automation, or harness signal
    appears, that higher global order is the next task and row 5 source cleanup
    is stale immediately.
-2. If the higher rows remain recorded/inactive, the current lower bucket may be
-   **global order 11 / P2 row 5.4** only after proving row 5.1 sample panes,
-   row 5.2 source-backed runtime structure, and row 5.3 behavior/source hooks
-   are still recorded or clean.
-3. Row 5.4 work must be a named broad guard from local official WPF Gallery
-   source at `D:\repos\WPF-Samples\Sample Applications\WPFGallery`, not a
-   convenient isolated source-shape cleanup.
-4. Remaining closeout after row 5.4: record or mark row 5.5 not applicable,
-   then run P2 row 6/final verification. Any reopened visual, High Contrast,
-   high-drift, asset, measurement, automation, or harness issue stops closeout.
+2. Row 5 is recorded for the current branch tip through the row 5.5 inventory.
+   Row 5.4 reopens only if a new broad non-visible copied/adapted guard is
+   proven from local official WPF Gallery source at
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery` after rows 5.1-5.3
+   remain clean.
+3. Row 6/final verification has run for the current branch tip, but completion
+   is still unproven. The current lower bucket is completion-audit/status
+   consistency under global order 13.
+4. Do not mark the goal complete while `Goal tracker status in Codex` remains
+   active/not complete, while any current-state tracker section contradicts the
+   row 5.5 / row 6 record, or while explicit page/status evidence is too weak
+   to prove completion requirement by requirement.
 
 Fail closed: if any lower tracker section, stale `Current` note, historical
 queue, or nearby source file suggests row 5 while this proof is missing, ignore
@@ -74,7 +76,19 @@ Current pointer:
    harness evidence always beats row 5 source cleanup. `TrackerPriorityTests`
    guard this ordering; row 1 is inactive again unless another priority/order
    conflict appears.
-2. Latest guard-automation batch, 2026-05-31: **global order 11 / P2 row
+2. Latest completion-audit/status pass, 2026-06-01: **global order 13 / P2
+   row 6** remains active because completion is not proven. The branch tip is
+   `e3e568e5`; worktree was clean before this pass. The previous row 5.5
+   inventory and row 6 sweep are recorded, but this audit found stale
+   current-state text in the top status sections, so the goal remains active
+   and not complete until the tracker's current-state sections and evidence
+   prove completion without contradiction.
+3. Previous bookkeeping/verification batch, 2026-05-31: **global order 12 /
+   P2 row 5.5**, then **global order 13 / P2 row 6**. The row 5.5 inventory
+   found no remaining current broad 5.4 candidate, and the row 6 verification
+   sweep passed the recorded tests/build without changing product code, XAML,
+   visual assets, or visual-check harness behavior.
+4. Previous guard-automation batch, 2026-05-31: **global order 11 / P2 row
    5.4** for the mapped WPF Gallery model public-member source-shape scan.
    Selection proof: `SystemParameters.HighContrast` returned `False`;
    `TrackerPriorityTests`, the active row 5.1 sample-pane token guard, row 5.3
@@ -643,18 +657,15 @@ Current distance, in executable buckets rather than a percentage:
    earlier focused WPF Gallery audit reports. These rows stay above all row 5
    work and must be refreshed again if evidence goes stale or a new drift is
    found.
-3. The first lower-priority local bucket can return to P2 row 5 only while the
-   higher rows above remain recorded. Within row 5, rows 5.1-5.2 are recorded
-   and row 5.3 has no current named executable gap after the latest direct
-   local official-source scans; row 5.4 is selectable only for named
-   non-visible copied/adapted source-shape guards proven against
+3. P2 row 5 is recorded for the branch tip through row 5.5. Rows 5.1-5.3 are
+   guarded by the active mapped-XAML gates, and row 5.4 reopens only for a new
+   broad non-visible copied/adapted source-shape guard proven against
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery`.
-4. Remaining work before the goal can close: finish any named 5.4 guards that
-   survive local official-source comparison, record or explicitly mark row 5.5
-   as not applicable, then do P2 row 6/final closeout with a fresh verification
-   sweep. If that sweep reopens visual, High Contrast, high-drift, asset,
-   measurement, automation, or harness work, the goal is not close until that
-   higher row is handled.
+4. Row 6/final verification has run for the current branch tip, but the goal is
+   not close until the completion audit proves every explicit requirement and
+   no current-state tracker section contradicts the evidence. If the audit or
+   any later sweep reopens visual, High Contrast, high-drift, asset,
+   measurement, automation, or harness work, that higher row becomes current.
 
 Before any code edit, write the winning rank in the work notes. If the selected
 rank is P2 row 5 or lower, also write why every higher visual, High Contrast,
@@ -1589,22 +1600,21 @@ Required selection proof before any substantive edit:
 5. If global order 10 is selected, first prove row 5.2 is recorded or not
    applicable, then follow `P2 Subqueue` row 5 and `P2 Row 5 Internal Queue`
    row 5.3. If global order 11 is selected, first prove rows 5.1-5.3 are
-   recorded or have no current named executable gap. Rows 5.5, P2 row 6,
-   comments, declaration order, member order, summaries, and stale tracker
-   cleanup stay blocked while any 5.1-5.4 item is current.
+   recorded or have no current named executable gap. Row 5.4 reopens only for
+   a new broad local-official-source guard. Row 5.5 and P2 row 6 are recorded
+   for the current branch tip; the active lower work is completion-audit/status
+   consistency under row 6 unless any higher row reopens.
 
-Current allowed substantive row may return to **global order 11 / P2 row 5.4**
-after the latest row 5.1 sample-pane guard only if
+Current allowed lower row remains **global order 13 / P2 row 6** for
+completion-audit/status consistency after the latest row 5.5 inventory and
+row 6 verification sweep. Row 5.4 reopens only if
 `SystemParameters.HighContrast` is `False`, global orders 2-9 are recorded or
 inactive for the current branch tip, P2 rows 2-4 are recorded with the latest
-retained high-drift reports above, rows 5.1-5.2 are recorded, row 5.3 has no
-current named executable gap, the automated row 5.1 and 5.3 mapped-XAML scans
-remain clean, and a new named 5.4 guard is identified against local official
-source.
-Any new High Contrast, visible-drift, high-drift
-retained-control, asset, measurement, interaction, automation, harness, 5.1,
-5.2, or 5.3 evidence immediately
-preempts row 5.4 and reopens the higher global order.
+retained high-drift reports above, rows 5.1-5.3 remain clean, and a new broad
+named 5.4 guard is identified against local official source.
+Any new High Contrast, visible-drift, high-drift retained-control, asset,
+measurement, interaction, automation, harness, 5.1, 5.2, or 5.3 evidence
+immediately preempts row 6 and reopens the higher global order.
 
 Priority fail-safe:
 
@@ -2889,6 +2899,24 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- Completion audit/status consistency pass:
+  - `git status --short` returned clean before the batch at branch tip
+    `e3e568e5`.
+  - The completion audit did **not** prove the goal complete. The tracker still
+    explicitly says `Goal tracker status in Codex: active, not complete`, and
+    the audit found stale current-state text in the top status sections that
+    still described row 5.4 as the possible/current lower bucket after row 5.5
+    and row 6 had already been recorded. This batch corrects those current
+    status sections and keeps completion under global order 13 until every
+    explicit requirement is proven without contradictory tracker state.
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter TrackerPriorityTests -p:UseSharedCompilation=false`
+    - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per
+      target after updating the immediate-status and completion-audit tracker
+      guards. Existing warning/output remains `NU1903`, generated WinRT
+      warnings, and recurring `Failed to resolve WinRT.Runtime.dll` messages.
+  - `git diff --check`
+    - Passed after the completion-audit/status update, with only the existing
+      LF/CRLF working-copy warnings for touched files.
 - Selection proof, row 5.5 inventory, and row 6 verification sweep:
   - `git status --short` returned clean before the batch at branch tip
     `5975efc9`. `SystemParameters.HighContrast` returned `False`.

@@ -74,12 +74,29 @@ namespace ModernWpf.Gallery.Tests
                 "Distance to completion, using executable buckets:",
                 "If a new real OS High Contrast, visible drift, high-drift retained-control,",
                 "row 5 source cleanup",
-                "**global order 11 / P2 row 5.4** only after proving row 5.1 sample panes,",
-                @"source at `D:\repos\WPF-Samples\Sample Applications\WPFGallery`, not a",
-                "Remaining closeout after row 5.4:",
+                "Row 5 is recorded for the current branch tip through the row 5.5 inventory.",
+                "Row 6/final verification has run for the current branch tip, but completion",
+                "Do not mark the goal complete while `Goal tracker status in Codex` remains",
                 "Fail closed: if any lower tracker section, stale `Current` note, historical",
                 "the lower note and run the higher-ranked evidence first.",
                 "Current pointer:");
+        }
+
+        [TestMethod]
+        public void TrackerKeepsCompletionAuditActiveAfterRowFiveCloseout()
+        {
+            var tracker = ReadRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
+
+            AssertContainsInOrder(
+                tracker,
+                "Current allowed lower row remains **global order 13 / P2 row 6**",
+                "completion-audit/status consistency",
+                "Row 5.4 reopens only if",
+                "Any new High Contrast, visible-drift, high-drift retained-control, asset,",
+                "immediately preempts row 6 and reopens the higher global order.",
+                "Goal tracker status in Codex: active, not complete.",
+                "Completion audit/status consistency pass:",
+                "The completion audit did **not** prove the goal complete.");
         }
 
         [TestMethod]
