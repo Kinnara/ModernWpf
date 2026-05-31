@@ -1056,6 +1056,10 @@ namespace ModernWpf.Gallery.Tests
                 "Person should not drift back to a local-only class declaration.");
             AssertContainsInOrder(
                 source,
+                "/// <summary>",
+                "/// Person class for User Dashboard page",
+                "/// </summary>",
+                "public record Person",
                 "public string FirstName { get; init; }",
                 "public string LastName { get; init; }",
                 "public string Name => FirstName + \" \" + LastName;",
@@ -1075,6 +1079,10 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "/// <summary>",
+                "/// IconData class for icons in icon page",
+                "/// </summary>",
+                "public class IconData",
                 "[DataMember]",
                 "public string Name { get; set; }",
                 "[DataMember]",

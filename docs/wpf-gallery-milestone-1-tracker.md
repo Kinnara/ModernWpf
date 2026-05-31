@@ -47,6 +47,29 @@ Current pointer:
    5 source cleanup. `TrackerPriorityTests` guard this ordering; row 1 is
    inactive again unless another priority/order conflict appears.
 2. Latest substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
+   for copied WPF Gallery model XML summary source-shape guards. Selection
+   proof: `SystemParameters.HighContrast` returned `False`; the latest
+   retained ModernWpf/WinUI high-drift and interaction/harness evidence is
+   recorded at
+   `artifacts/visual-checks/20260531-193740-842-65400/report.md` and
+   `artifacts/visual-checks/20260531-193831-688-41656/report.md`; P2 rows 2-4
+   are recorded; rows 5.1-5.2 are recorded; and a direct same-path XAML 5.3
+   scan against
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` found no
+   missing official `AutomationProperties.Name`, `x:Name`, or event-hook token
+   after normalizing semantically equivalent XAML entity encoding. A local
+   official-source comparison found two non-visible copied model summary gaps:
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models\Person.cs`
+   keeps `Person class for User Dashboard page`, and
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models\IconsData.cs`
+   keeps `IconData class for icons in icon page`. The local copied models now
+   keep those non-visible official summary strings while retaining local
+   namespace, `DataContract`/`DataMember`, and WPF compatibility adapters. The
+   model summary scan reports no remaining mismatch for Product, Person, and
+   IconData; focused model source-shape tests and full
+   `WpfGallerySourceShapeTests` passed on `net8.0` and `net10.0`; and the full
+   `ModernWpf.Gallery` build passed.
+3. Previous substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for copied code-behind XML summary source-shape guards. Selection proof:
    `SystemParameters.HighContrast` returned `False`; the latest retained
    ModernWpf/WinUI high-drift and interaction/harness evidence is recorded at
@@ -66,7 +89,7 @@ Current pointer:
    focused summary mismatch scan reports no remaining differences. The focused
    guard test and full `WpfGallerySourceShapeTests` passed on `net8.0` and
    `net10.0`, and the full `ModernWpf.Gallery` build passed.
-3. Previous substantive batch, 2026-05-31: **global orders 4, 5, and 7 /
+4. Previous substantive batch, 2026-05-31: **global orders 4, 5, and 7 /
    retained ModernWpf/WinUI high-drift visual triage, P2 row 2 freshness, and
    P2 row 4 interaction/harness parity** for `CommandBarFlyout` open-state
    primary command labels. A retained high-drift refresh found a current
@@ -93,7 +116,7 @@ Current pointer:
    preempted row 5.4; row 5 source-shape cleanup is selectable again only
    after this higher-priority evidence is recorded and no new global-order
    2-7 trigger appears.
-4. Previous substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
+5. Previous substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the top-level Dashboard code-behind ViewModel member-placement guard.
    The local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views\DashboardPage.xaml.cs`
@@ -458,19 +481,18 @@ Current active selection snapshot:
    or harness trigger appeared, so lower row 5 work is allowed only after this
    proof remains current.
 3. The latest row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
-   5 Internal Queue row 5.4** for copied code-behind XML summary
+   5 Internal Queue row 5.4** for copied WPF Gallery model XML summary
    source-shape guards. `SystemParameters.HighContrast` returned
    `False`, global orders 2-9 are recorded or inactive for the current branch
    tip, rows 5.1-5.2 are recorded, row 5.3 has no current named executable gap
-   after direct same-path XAML `AutomationProperties.Name`, `x:Name`, and
-   event-hook scans, and the latest high-drift/interaction proof above remains
-   current. The local official source folder
-   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` keeps six
-   non-file-name interaction summary strings for copied code-behind files:
-   `Button.xaml`, `CheckBox.xaml`, `ComboBox.xaml`, `FramePage1.xaml`,
-   `FramePage2.xaml`, and `RichTextBoxPage.xaml`. The local copied files now
-   keep those non-visible official summary strings while retaining their local
-   WPF namespaces, class names, and route adapters.
+   after a direct same-path XAML scan of `AutomationProperties.Name`, `x:Name`,
+   and event-hook tokens, and the latest high-drift/interaction proof above
+   remains current. The local official sources
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models\Person.cs` and
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models\IconsData.cs`
+   keep XML summary text for the copied Person and IconData models. The local
+   copied models now keep those non-visible official summary strings while
+   retaining their local namespaces and serialization/WPF adapters.
 4. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
    5 Internal Queue row 5.4** for the User Dashboard `DeletedName`
    early-return source-shape guard. `SystemParameters.HighContrast` returned
@@ -1399,7 +1421,7 @@ Current row 5 decision:
 | 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named. |
 | 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns app-manifest runtime compatibility with local official WPF Gallery source by keeping the `true/PM` DPI fallback, `longPathAware`, and active `Microsoft.Windows.Common-Controls` v6 dependency while retaining the local `PerMonitorV2` DPI-awareness adapter. Earlier named 5.2 batches align the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and record the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
 | 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Recorded for the current branch tip with no current named gap after the latest scan. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, the copied `WhatsNewPage` handler selector, and the copied Iconography direct search-placeholder visibility handlers. | Reopen before 5.4 if a new named resource/key/name/selector/hook gap appears that can affect visuals, behavior, or harness evidence. |
-| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns copied code-behind interaction-summary text with the local official WPF Gallery `Views` source for `ButtonPage`, `CheckBoxPage`, `ComboBoxPage`, `Navigation\Page1`, `Navigation\Page2`, and `Text\RichTextEditPage` while retaining local namespaces, class names, and route adapters. Previous 5.4 guards include the top-level Dashboard code-behind `ViewModel` member placement; the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder; the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
+| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns copied model XML summary text with local official WPF Gallery `Models\Person.cs` and `Models\IconsData.cs` while retaining local namespaces, `DataContract`/`DataMember`, and WPF compatibility adapters. Previous 5.4 guards include copied code-behind interaction-summary text for `ButtonPage`, `CheckBoxPage`, `ComboBoxPage`, `Navigation\Page1`, `Navigation\Page2`, and `Text\RichTextEditPage`; top-level Dashboard code-behind `ViewModel` member placement; the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder; the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
 | 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
 
 Latest accepted visual/high-drift priority-correction note:
@@ -2426,6 +2448,56 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `git status --short`
+  - Returned clean before selecting the copied WPF Gallery model XML summary
+    source-shape guard from branch tip `535d32fb`.
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the copied model XML summary source-shape guard.
+    Winning rank was **global order 11 / P2 row 5.4** because global orders
+    2-9 were recorded or inactive, P2 rows 2-4 were recorded with the latest
+    retained high-drift reports
+    `artifacts/visual-checks/20260531-193740-842-65400/report.md` /
+    `artifacts/visual-checks/20260531-193831-688-41656/report.md`, rows
+    5.1-5.2 were recorded, and row 5.3 had no current named executable gap.
+- Direct same-path XAML 5.3 scan:
+  - Compared official `AutomationProperties.Name`, `x:Name`, and event-hook
+    tokens from `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views`
+    against the local copied WPF Gallery pages. One raw mismatch was the
+    Settings disclaimer automation name because official source uses literal
+    curly quotes and local XAML uses equivalent XML entities; after entity
+    normalization the scan returned `No missing official 5.3 XAML tokens after
+    entity normalization`.
+- Local official-source model summary comparison:
+  - Compared `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models\Person.cs`
+    and
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models\IconsData.cs`
+    against `ModernWpf.Gallery\Models\Person.cs` and
+    `ModernWpf.Gallery\Pages\WpfGallery\DesignGuidance\IconData.cs`. The
+    copied models were missing the official non-visible summary text. After the
+    fix, the Product/Person/IconData summary scan returned
+    `No model summary mismatches`.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryPersonModelKeepsOfficialRecordAndInitShape|FullyQualifiedName~WpfGallerySourceShapeTests.CopiedWpfGalleryIconDataModelKeepsOfficialPropertyAndGlyphShape" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 2 tests per
+    target after adding the official model summary guard. Existing
+    warning/output remains `NU1903`, generated WinRT warnings,
+    ModernWpf/Controls warnings, and recurring `Failed to resolve
+    WinRT.Runtime.dll` messages.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 76 tests per
+    target after aligning the copied model summary strings. Existing
+    warning/output remains `NU1903` and recurring `Failed to resolve
+    WinRT.Runtime.dll` messages.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed with 19 existing warnings and 0 errors after the copied model
+    summary source-shape guard.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after updating the current pointer and Current Order Lock for the
+    copied model summary guard. Existing warning/output remains `NU1903` and
+    recurring `Failed to resolve WinRT.Runtime.dll` messages.
+- `git diff --check`
+  - Passed after the copied model summary guard and tracker update, with only
+    the existing LF/CRLF working-copy warnings for touched files.
 - `git status --short`
   - Returned clean before selecting the copied code-behind XML summary
     source-shape guard from branch tip `601b8fc0`.

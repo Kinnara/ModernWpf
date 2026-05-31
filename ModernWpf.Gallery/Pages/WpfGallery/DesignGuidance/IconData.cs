@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 {
+    /// <summary>
+    /// IconData class for icons in icon page
+    /// </summary>
     [DataContract]
     public class IconData
     {
