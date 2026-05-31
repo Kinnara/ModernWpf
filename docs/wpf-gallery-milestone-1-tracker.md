@@ -53,6 +53,35 @@ Current active selection snapshot:
    Row 5.3 is the active substantive row; rows 5.4 and 5.5 stay blocked while
    any row 5.3 visual/runtime/harness-facing gap is current.
 
+Mandatory next-work selector:
+
+Use this compact selector before every batch. Start at the top and take the
+first row that is current, newly triggered, or not recorded for the current
+branch tip. A lower row is not selectable because it is smaller, easier, or
+recently touched.
+
+| Global order | Work class | Selection rule |
+| --- | --- | --- |
+| 1 | User-requested priority/order hygiene | Only for explicit priority/order conflicts. After the tracker text is fixed, return to the first substantive row below. |
+| 2 | Real OS High Contrast visual/harness evidence | If `SystemParameters.HighContrast = True`, or new HC drift is reported, run this before all non-HC work. |
+| 3 | Visible drift and visual-harness stability | Any new screenshot, crop, UIA, rendered-artifact, launch, or harness failure beats source cleanup. |
+| 4 | Retained ModernWpf/WinUI high-drift visuals | Any new retained-control visual or harness drift beats all P2 work. |
+| 5 | P2 row 2 visual/high-drift freshness | Refresh and record visual/high-drift evidence before assets, measurement, or source-shape work. |
+| 6 | P2 row 3 asset, thumbnail, and visual-reference parity | Asset/reference gaps beat measurement and source-shape work. |
+| 7 | P2 row 4 measurement, interaction, automation, and harness-impacting parity | Measurement, keyboard, automation, and harness-impacting gaps beat row 5 cleanup. |
+| 8 | P2 row 5.1 sample panes and runtime-visible example content | Reopen before 5.2 or 5.3 for any named visible sample/content gap. |
+| 9 | P2 row 5.2 source-backed visible/runtime structure | Reopen before 5.3 for any structural gap that can affect layout, resources, interaction, automation, or harness behavior. |
+| 10 | P2 row 5.3 resource-key, naming, selector, and source-hook parity tied to behavior | Current next substantive row only while rows 1-9 remain recorded or inactive. |
+| 11 | P2 row 5.4 non-visible copied/adapted source-shape guards | Blocked while any 5.1-5.3 item is current. |
+| 12 | P2 row 5.5 row-5 bookkeeping and stale-status cleanup | Blocked until substantive row 5 items are recorded or not applicable. |
+| 13 | P2 row 6 and final closeout cleanup | Last; only after row 5 is recorded or explicitly not applicable and the final verification sweep is current. |
+
+Current next substantive row by this selector is **global order 10 / P2 row
+5.3**, and only because global orders 2-9 are currently recorded or inactive
+for the branch tip. If any visual, High Contrast, high-drift, asset,
+measurement, automation, or harness trigger appears, this pointer is stale and
+the higher row wins.
+
 Use this block before every new work batch. It overrides any lower section that
 looks convenient or recently edited. This is a scheduling contract, not a
 progress summary. Before editing code, identify the winning rank below in the
