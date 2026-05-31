@@ -3037,6 +3037,89 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void CopiedViewModelBackedCodeBehindKeepsOfficialConstructorInitializationOrder()
+        {
+            foreach (var page in new[]
+            {
+                Tuple.Create("BasicInput", "ButtonPage"),
+                Tuple.Create("BasicInput", "CheckBoxPage"),
+                Tuple.Create("BasicInput", "ComboBoxPage"),
+                Tuple.Create("BasicInput", "RadioButtonPage"),
+                Tuple.Create("BasicInput", "SliderPage"),
+                Tuple.Create("Collections", "DataGridPage"),
+                Tuple.Create("Collections", "ListBoxPage"),
+                Tuple.Create("Collections", "ListViewPage"),
+                Tuple.Create("Collections", "TreeViewPage"),
+                Tuple.Create("DateAndTime", "CalendarPage"),
+                Tuple.Create("DateAndTime", "DatePickerPage"),
+                Tuple.Create("Layout", "BorderPage"),
+                Tuple.Create("Layout", "ExpanderPage"),
+                Tuple.Create("Layout", "GridPage"),
+                Tuple.Create("Layout", "GridSplitterPage"),
+                Tuple.Create("Layout", "GroupBoxPage"),
+                Tuple.Create("Layout", "ResizeGripPage"),
+                Tuple.Create("Layout", "StackPanelPage"),
+                Tuple.Create("Media", "CanvasPage"),
+                Tuple.Create("Media", "ImagePage"),
+                Tuple.Create("Navigation", "FramePage"),
+                Tuple.Create("Navigation", "MenuPage"),
+                Tuple.Create("Navigation", "NavigationWindowPage"),
+                Tuple.Create("Navigation", "TabControlPage"),
+                Tuple.Create("StatusAndInfo", "ProgressBarPage"),
+                Tuple.Create("StatusAndInfo", "ToolTipPage"),
+                Tuple.Create("System", "ClipboardPage"),
+                Tuple.Create("System", "FileAndFolderDialogsPage"),
+                Tuple.Create("System", "MessageBoxPage"),
+                Tuple.Create("Text", "HyperlinkPage"),
+                Tuple.Create("Text", "LabelPage"),
+                Tuple.Create("Text", "PasswordBoxPage"),
+                Tuple.Create("Text", "RichTextEditPage"),
+                Tuple.Create("Text", "TextBlockPage"),
+                Tuple.Create("Text", "TextBoxPage")
+            })
+            {
+                var source = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    page.Item1,
+                    page.Item2 + ".xaml.cs");
+
+                AssertContainsInOrder(
+                    source,
+                    "public " + page.Item2 + "(",
+                    "ViewModel = viewModel;",
+                    "DataContext = this;",
+                    "InitializeComponent();");
+            }
+
+            foreach (var page in new[]
+            {
+                Tuple.Create("DesignGuidance", "ColorsPage"),
+                Tuple.Create("DesignGuidance", "GeometryPage"),
+                Tuple.Create("DesignGuidance", "IconsPage"),
+                Tuple.Create("DesignGuidance", "SpacingPage"),
+                Tuple.Create("DesignGuidance", "TypographyPage"),
+                Tuple.Create("Samples", "UserDashboardPage")
+            })
+            {
+                var source = ReadRepoFile(
+                    "ModernWpf.Gallery",
+                    "Pages",
+                    "WpfGallery",
+                    page.Item1,
+                    page.Item2 + ".xaml.cs");
+
+                AssertContainsInOrder(
+                    source,
+                    "public " + page.Item2 + "(",
+                    "InitializeComponent();",
+                    "ViewModel = viewModel;",
+                    "DataContext = this;");
+            }
+        }
+
+        [TestMethod]
         public void SimpleDateMediaAndStatusCodeBehindKeepOfficialConstructorParagraphShape()
         {
             foreach (var page in new[]
