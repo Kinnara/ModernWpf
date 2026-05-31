@@ -327,6 +327,56 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void ActiveMappedCodeBehindKeepsOfficialPublicMemberNamesFromLocalSource()
+        {
+            var repoRoot = GetRepoRoot();
+            var officialViewsRoot = @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views";
+            if (!Directory.Exists(officialViewsRoot))
+            {
+                Assert.Inconclusive("Local official WPF Gallery source was not found at " + officialViewsRoot + ".");
+            }
+
+            var localPagesRoot = Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages");
+            var localCodeBehindByFileName = Directory
+                .EnumerateFiles(localPagesRoot, "*.xaml.cs", SearchOption.AllDirectories)
+                .ToDictionary(Path.GetFileName, path => path, StringComparer.OrdinalIgnoreCase);
+            var missingMembers = new List<string>();
+            var mappedFileCount = 0;
+            var officialMemberCount = 0;
+
+            foreach (var officialPath in Directory.EnumerateFiles(officialViewsRoot, "*.xaml.cs", SearchOption.AllDirectories))
+            {
+                var officialFileName = Path.GetFileName(officialPath);
+                if (!localCodeBehindByFileName.TryGetValue(officialFileName, out var localPath))
+                {
+                    continue;
+                }
+
+                mappedFileCount++;
+                var officialSource = File.ReadAllText(officialPath);
+                var localSource = File.ReadAllText(localPath);
+                var officialRelativePath = Path.GetRelativePath(officialViewsRoot, officialPath);
+                var officialMembers = GetPublicCodeBehindMemberNames(officialSource).ToArray();
+
+                officialMemberCount += officialMembers.Length;
+                foreach (var memberName in officialMembers)
+                {
+                    if (!Regex.IsMatch(localSource, "\\b" + Regex.Escape(memberName) + "\\b"))
+                    {
+                        missingMembers.Add(officialRelativePath + " :: " + memberName);
+                    }
+                }
+            }
+
+            Assert.AreEqual(54, mappedFileCount, "The active WPF Gallery code-behind mapping count changed; update the 5.4 public-member scan deliberately.");
+            Assert.AreEqual(154, officialMemberCount, "The active WPF Gallery code-behind public member count changed; update the 5.4 public-member scan deliberately.");
+            Assert.AreEqual(
+                0,
+                missingMembers.Count,
+                "Missing official 5.4 code-behind public member names from local official source:\n" + string.Join("\n", missingMembers));
+        }
+
+        [TestMethod]
         public void CopiedWpfGalleryCodeBehindClassesStayUnsealedLikeOfficialSource()
         {
             var repoRoot = GetRepoRoot();
@@ -437,6 +487,35 @@ namespace ModernWpf.Gallery.Tests
                     "(?m)^\\s*public\\s+(?:override\\s+)?[^\\r\\n(;=]+?\\s+(\\w+)\\s*\\(")
                 .Cast<Match>()
                 .Select(match => match.Groups[1].Value);
+        }
+
+        private static IEnumerable<string> GetPublicCodeBehindMemberNames(string source)
+        {
+            var members = new List<string>();
+            members.AddRange(
+                Regex
+                    .Matches(
+                        source,
+                        "(?m)^\\s*public\\s+partial\\s+class\\s+(\\w+)\\b")
+                    .Cast<Match>()
+                    .Select(match => match.Groups[1].Value));
+            members.AddRange(
+                Regex
+                    .Matches(
+                        source,
+                        "(?m)^\\s*public\\s+(?!class\\b)(?!event\\b)[^\\r\\n{;(=]+?\\s+(\\w+)\\s*\\{")
+                    .Cast<Match>()
+                    .Select(match => match.Groups[1].Value));
+            members.AddRange(
+                Regex
+                    .Matches(
+                        source,
+                        "(?m)^\\s*public\\s+(\\w+)\\s*\\(")
+                    .Cast<Match>()
+                    .Select(match => match.Groups[1].Value));
+            members.AddRange(GetPublicMethodNames(source));
+
+            return members.Distinct(StringComparer.Ordinal).OrderBy(memberName => memberName, StringComparer.Ordinal);
         }
 
         private static string GetOfficialCodeBehindSummaryName(string className, string xamlFileName)
