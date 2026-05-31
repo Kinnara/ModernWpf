@@ -137,7 +137,7 @@ namespace ModernWpf.Gallery.Shell
             if (GalleryDiagnostics.IsEnabled)
             {
                 AutomationProperties.SetAutomationId(this, "GalleryNavigationRoot");
-                AutomationProperties.SetAutomationId(Navigation, "GalleryNavigationView");
+                AutomationProperties.SetAutomationId(GetNavigationView(), "GalleryNavigationView");
                 AutomationProperties.SetAutomationId(GetContentHost(), "GalleryContentHost");
             }
 
@@ -270,9 +270,10 @@ namespace ModernWpf.Gallery.Shell
             _homeNavigationItem = CreateNavigationItem("Home", NavigationTarget.Home(), CreateWpfGalleryGlyphIcon("Home"));
             _whatsNewNavigationItem = CreateNavigationItem("What's New", NavigationTarget.WhatsNew(), CreateWpfGalleryGlyphIcon("WhatsNew"));
             _allControlsNavigationItem = CreateNavigationItem("All Controls", NavigationTarget.AllControls(), CreateWpfGalleryGlyphIcon("AllControls"));
+            var navigation = GetNavigationView();
 
-            Navigation.MenuItems.Add(_homeNavigationItem);
-            Navigation.MenuItems.Add(_whatsNewNavigationItem);
+            navigation.MenuItems.Add(_homeNavigationItem);
+            navigation.MenuItems.Add(_whatsNewNavigationItem);
 
             foreach (var group in GalleryCatalog.Groups)
             {
@@ -287,12 +288,12 @@ namespace ModernWpf.Gallery.Shell
                     _parentContainers[item.UniqueId] = groupItem;
                 }
 
-                Navigation.MenuItems.Add(groupItem);
+                navigation.MenuItems.Add(groupItem);
                 _itemContainers[group.UniqueId] = groupItem;
 
                 if (string.Equals(group.UniqueId, "Samples", StringComparison.OrdinalIgnoreCase))
                 {
-                    Navigation.MenuItems.Add(_allControlsNavigationItem);
+                    navigation.MenuItems.Add(_allControlsNavigationItem);
                 }
             }
         }
@@ -483,7 +484,7 @@ namespace ModernWpf.Gallery.Shell
         private void SuppressNavigationViewDefaultExpandGlyph()
         {
             Resources["NavigationViewItemExpandedPath"] = Geometry.Empty;
-            Navigation.Resources["NavigationViewItemExpandedPath"] = Geometry.Empty;
+            GetNavigationView().Resources["NavigationViewItemExpandedPath"] = Geometry.Empty;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -536,15 +537,16 @@ namespace ModernWpf.Gallery.Shell
 
         private void AlignNavigationViewShellResourcesWithWpfGallery()
         {
+            var navigation = GetNavigationView();
             foreach (var alias in WpfGalleryNavigationResourceAliases)
             {
-                Navigation.Resources[alias.Key] = TryFindResource(alias.Value);
+                navigation.Resources[alias.Key] = TryFindResource(alias.Value);
             }
 
             var paneBackground = GetWpfGalleryNavigationPaneBackground();
-            Navigation.Resources["NavigationViewDefaultPaneBackground"] = paneBackground;
-            Navigation.Resources["NavigationViewExpandedPaneBackground"] = paneBackground;
-            Navigation.Resources["NavigationViewItemSeparatorForeground"] = paneBackground;
+            navigation.Resources["NavigationViewDefaultPaneBackground"] = paneBackground;
+            navigation.Resources["NavigationViewExpandedPaneBackground"] = paneBackground;
+            navigation.Resources["NavigationViewItemSeparatorForeground"] = paneBackground;
             AlignNavigationItemMarginsWithWpfGalleryTreeView();
             AlignNavigationItemContentLayoutWithWpfGalleryTreeView();
             AlignNavigationViewShellChromeWithWpfGallery(paneBackground);
@@ -556,7 +558,7 @@ namespace ModernWpf.Gallery.Shell
 
         private void AlignNavigationItemMarginsWithWpfGalleryTreeView()
         {
-            foreach (var item in GetNavigationItems(Navigation.MenuItems))
+            foreach (var item in GetNavigationItems(GetNavigationView().MenuItems))
             {
                 if (item.Tag is NavigationTarget target)
                 {
@@ -567,7 +569,7 @@ namespace ModernWpf.Gallery.Shell
 
         private void AlignNavigationItemContentLayoutWithWpfGalleryTreeView()
         {
-            foreach (var item in GetNavigationItems(Navigation.MenuItems))
+            foreach (var item in GetNavigationItems(GetNavigationView().MenuItems))
             {
                 if (item.Content is Grid contentGrid)
                 {
@@ -602,8 +604,9 @@ namespace ModernWpf.Gallery.Shell
 
         private void AlignNavigationViewShellChromeWithWpfGallery(Brush paneBackground)
         {
+            var navigation = GetNavigationView();
             var menuScrollViewer = FindVisualChild<ScrollViewer>(
-                Navigation,
+                navigation,
                 scrollViewer => string.Equals(scrollViewer.Name, "MenuItemsScrollViewer", StringComparison.Ordinal));
             if (menuScrollViewer != null)
             {
@@ -612,7 +615,7 @@ namespace ModernWpf.Gallery.Shell
             }
 
             var itemsContainerGrid = FindVisualChild<Grid>(
-                Navigation,
+                navigation,
                 grid => string.Equals(grid.Name, "ItemsContainerGrid", StringComparison.Ordinal));
             if (itemsContainerGrid != null)
             {
@@ -620,7 +623,7 @@ namespace ModernWpf.Gallery.Shell
             }
 
             var rootSplitView = FindVisualChild<SplitView>(
-                Navigation,
+                navigation,
                 splitView => string.Equals(splitView.Name, "RootSplitView", StringComparison.Ordinal));
             if (rootSplitView != null)
             {
@@ -631,7 +634,7 @@ namespace ModernWpf.Gallery.Shell
             }
 
             var paneContentGrid = FindVisualChild<Border>(
-                Navigation,
+                navigation,
                 border => string.Equals(border.Name, "PaneContentGrid", StringComparison.Ordinal));
             if (paneContentGrid != null)
             {
@@ -649,7 +652,7 @@ namespace ModernWpf.Gallery.Shell
                 : Visibility.Collapsed;
 
             var paneShadow = FindVisualChild<ThemeShadowChrome>(
-                Navigation,
+                navigation,
                 shadow => string.Equals(shadow.Name, "ShadowCaster", StringComparison.Ordinal));
             if (paneShadow != null)
             {
@@ -890,8 +893,14 @@ namespace ModernWpf.Gallery.Shell
 
         private System.Windows.Controls.Frame GetContentHost()
         {
-            var contentBorder = (Border)Navigation.Content;
+            var contentBorder = (Border)GetNavigationView().Content;
             return (System.Windows.Controls.Frame)contentBorder.Child;
+        }
+
+        private NavigationView GetNavigationView()
+        {
+            var root = (Grid)Content;
+            return root.Children.OfType<NavigationView>().Single();
         }
 
         private void SelectNavigationItem(NavigationTarget target)
@@ -916,25 +925,26 @@ namespace ModernWpf.Gallery.Shell
 
             _isProgrammaticNavigation = true;
             ExpandNavigationPath(target);
+            var navigation = GetNavigationView();
             if (target.Kind == NavigationTargetKind.Item)
             {
-                Navigation.UpdateLayout();
+                navigation.UpdateLayout();
             }
 
-            ApplyNavigationSelection(selectedItem);
+            ApplyNavigationSelection(navigation, selectedItem);
             _isProgrammaticNavigation = false;
         }
 
-        private void ApplyNavigationSelection(NavigationViewItem selectedItem)
+        private void ApplyNavigationSelection(NavigationView navigation, NavigationViewItem selectedItem)
         {
-            Navigation.SelectedItem = null;
-            ClearNavigationSelection(Navigation.MenuItems);
+            navigation.SelectedItem = null;
+            ClearNavigationSelection(navigation.MenuItems);
             if (selectedItem == null)
             {
                 return;
             }
 
-            Navigation.SelectedItem = selectedItem;
+            navigation.SelectedItem = selectedItem;
             selectedItem.IsSelected = true;
             if (selectedItem.Tag is NavigationTarget { Kind: NavigationTargetKind.Item } target &&
                 _parentContainers.TryGetValue(target.UniqueId, out var parentItem))
@@ -1098,7 +1108,7 @@ namespace ModernWpf.Gallery.Shell
         private void UpdateBackButton()
         {
             var canGoBack = _backStack.Count > 0;
-            Navigation.IsBackEnabled = canGoBack;
+            GetNavigationView().IsBackEnabled = canGoBack;
             var window = Window.GetWindow(this) as MainWindow;
             if (window != null)
             {

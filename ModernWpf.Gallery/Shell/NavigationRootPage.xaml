@@ -77,7 +77,6 @@
         </StackPanel>
 
         <ui:NavigationView
-            x:Name="Navigation"
             AutomationProperties.Name="Navigation Pane"
             IsBackButtonVisible="Collapsed"
             IsPaneToggleButtonVisible="False"

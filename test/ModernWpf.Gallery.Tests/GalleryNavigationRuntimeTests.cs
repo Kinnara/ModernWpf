@@ -138,7 +138,7 @@ namespace ModernWpf.Gallery.Tests
             {
                 var page = new NavigationRootPage();
                 page.DataContext = new { ViewModel = new MainWindowViewModel(page.GoBack, page.OpenSettings) };
-                var navigation = (NavigationView)page.FindName("Navigation");
+                var navigation = GetNavigationView(page);
                 var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
 
                 Assert.AreEqual(258d, navigation.OpenPaneLength);
@@ -288,7 +288,8 @@ namespace ModernWpf.Gallery.Tests
                     AssertVisualTestStatusPanelHidden(normalPanel);
                     AssertVisualTestStatusTextAutomationIds(normalPage);
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(normalPage));
-                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId((DependencyObject)normalPage.FindName("Navigation")));
+                    Assert.IsNull(normalPage.FindName("Navigation"));
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(GetNavigationView(normalPage)));
                     Assert.IsNull(normalPage.FindName("ContentHost"));
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(GetContentHost(normalPage)));
 
@@ -301,7 +302,8 @@ namespace ModernWpf.Gallery.Tests
                     AssertVisualTestStatusPanelNonInteractive(visualTestPanel);
                     AssertVisualTestStatusTextAutomationIds(visualTestPage);
                     Assert.AreEqual("GalleryNavigationRoot", AutomationProperties.GetAutomationId(visualTestPage));
-                    Assert.AreEqual("GalleryNavigationView", AutomationProperties.GetAutomationId((DependencyObject)visualTestPage.FindName("Navigation")));
+                    Assert.IsNull(visualTestPage.FindName("Navigation"));
+                    Assert.AreEqual("GalleryNavigationView", AutomationProperties.GetAutomationId(GetNavigationView(visualTestPage)));
                     Assert.IsNull(visualTestPage.FindName("ContentHost"));
                     Assert.AreEqual("GalleryContentHost", AutomationProperties.GetAutomationId(GetContentHost(visualTestPage)));
                     Assert.AreEqual("home", GetVisualTestStatusText(visualTestPage, "GalleryVisualTestCurrentRoute").Text);
@@ -381,7 +383,7 @@ namespace ModernWpf.Gallery.Tests
                     page.UpdateLayout();
                     WpfTestHost.DoEvents();
 
-                    var navigation = (NavigationView)page.FindName("Navigation");
+                    var navigation = GetNavigationView(page);
                     var contentHost = GetContentHost(page);
                     var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
                     var homeItem = topLevelItems[0];
@@ -505,7 +507,7 @@ namespace ModernWpf.Gallery.Tests
                 {
                     RenderPage(page, () =>
                     {
-                        var navigation = (NavigationView)page.FindName("Navigation");
+                        var navigation = GetNavigationView(page);
 
                         ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
                         WpfTestHost.DoEvents();
@@ -1423,11 +1425,19 @@ namespace ModernWpf.Gallery.Tests
 
         private static System.Windows.Controls.Frame GetContentHost(NavigationRootPage page)
         {
-            var navigation = (NavigationView)page.FindName("Navigation");
+            var navigation = GetNavigationView(page);
             var contentBorder = (Border)navigation.Content;
             var contentHost = (System.Windows.Controls.Frame)contentBorder.Child;
             Assert.AreEqual(string.Empty, contentHost.Name);
             return contentHost;
+        }
+
+        private static NavigationView GetNavigationView(NavigationRootPage page)
+        {
+            var root = (Grid)page.Content;
+            var navigation = root.Children.OfType<NavigationView>().Single();
+            Assert.AreEqual(string.Empty, navigation.Name);
+            return navigation;
         }
 
         private static NavigationRootPage GetNavigationRootPage(MainWindow window)
