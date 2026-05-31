@@ -2230,7 +2230,7 @@ namespace ModernWpf.Gallery.Tests
                 "ScrollBackButton.Visibility = Visibility.Visible;",
                 "ScrollForwardButton.Visibility = Visibility.Visible;",
                 "if (RootScrollViewer.ActualWidth < TilesPanel.ActualWidth)",
-                "if (newOffset <= 0)",
+                "if (newOffset == 0)",
                 "ScrollBackButton.Visibility = Visibility.Collapsed;",
                 "else if (newOffset >= RootScrollViewer.ScrollableWidth)",
                 "ScrollForwardButton.Visibility = Visibility.Collapsed;",

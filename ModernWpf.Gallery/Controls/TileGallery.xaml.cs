@@ -40,7 +40,7 @@ namespace ModernWpf.Gallery.Controls
 
             if (RootScrollViewer.ActualWidth < TilesPanel.ActualWidth)
             {
-                if (newOffset <= 0)
+                if (newOffset == 0)
                 {
                     ScrollBackButton.Visibility = Visibility.Collapsed;
                 }
