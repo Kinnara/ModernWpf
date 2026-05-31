@@ -79,10 +79,11 @@ Current distance, in executable buckets rather than a percentage:
    `ControlExample.Copy_SourceCode` and Iconography copy command interaction
    batches.
 3. The first substantive local bucket is therefore P2 row 5, and within row 5
-   to 5.3. The latest 5.3 WPF Gallery navigation view-model Type-gate batch is
-   recorded, but row 5.3 remains the active sub-bucket while more
-   behavior/harness-facing hook gaps exist. This is only true while rows above
-   remain recorded and `SystemParameters.HighContrast = False`.
+   to 5.3. The latest recorded 5.3 batches include the WPF Gallery navigation
+   view-model Type-gate, MainWindow forward-command, and MainWindow
+   `UpdateCanNavigateBack` source-hook alignments. Row 5.3 remains the active
+   sub-bucket only while more behavior/harness-facing hook gaps exist and only
+   while rows above remain recorded and `SystemParameters.HighContrast = False`.
 4. P2 row 6, stale tracker/status cleanup, and final milestone closeout remain
    blocked until row 5 is recorded or explicitly not applicable, then a final
    verification sweep is still required.
@@ -149,6 +150,14 @@ Current active selection snapshot:
    `UpdateCanNavigateBack()` source hook and a local `CanGoBack` provider. No
    new visible, High Contrast, high-drift, asset, measurement, automation, or
    harness trigger was found before taking this row 5.3 source-hook batch.
+9. Priority correction checkpoint, 2026-05-31:
+   the scheduler must be read as a hard priority queue, not as a convenience
+   backlog. Visual, real OS High Contrast, high-drift retained-control, asset,
+   measurement, interaction, automation, and harness evidence always preempts
+   row 5 source cleanup. The local official source root for WPF Gallery
+   comparison is confirmed as
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery`; every future source
+   comparison must name the exact local official file or folder used.
 
 Mandatory next-work selector:
 
