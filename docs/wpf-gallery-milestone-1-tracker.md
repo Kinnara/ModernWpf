@@ -7,6 +7,24 @@ Last updated: 2026-05-31
 Use this block before every new work batch. It overrides any lower section that
 looks convenient or recently edited.
 
+Current decisive order, top row wins:
+
+| Rank | Bucket | Current branch-tip state | Next action |
+| --- | --- | --- | --- |
+| 1 | User-requested priority/order hygiene | Active only for this tracker-order clarification. | Fix only the ordering text, then return to the first substantive executable row. |
+| 2 | P0.1 real OS High Contrast visual/harness evidence | Recorded for the latest accepted batch, but must be re-checked before every new batch. | If `SystemParameters.HighContrast = True` and new HC drift exists, run P0.1 first. |
+| 3 | P1 visible-drift and visual-harness stability | Recorded unless new visible or harness drift appears. | Reopen immediately for any new screenshot, crop, UIA, or harness failure. |
+| 4 | P1 retained ModernWpf/WinUI high-drift visuals, row 8 | Recorded through the strict row 8 subqueue, including `InfoBar` and `ProgressRing`. | Reopen only on new retained-control visual or harness evidence. |
+| 5 | P2 row 2 visual/high-drift freshness | Recorded for the current branch tip. | Reopen before any lower P2 work when fresh visual or high-drift evidence appears. |
+| 6 | P2 row 3 asset, thumbnail, and visual-reference parity | Recorded for current active references. | Reopen only for new asset/reference evidence. |
+| 7 | P2 row 4 measurement, interaction, automation, and harness-impacting parity | Recorded for the current branch tip. | Reopen only for named measurement, interaction, automation, or harness-impacting evidence. |
+| 8 | P2 row 5 source-shape, resource-key, naming, selector, and test cleanup | Current next substantive bucket only while ranks 2-7 remain recorded with no new trigger. | Select a named source-alignment row; stop immediately if any higher visual, High Contrast, high-drift, asset, measurement, automation, or harness trigger appears. |
+| 9 | P2 row 6 pure tracker/status cleanup and documentation-only work | Blocked by row 5, except this rank-1 priority/order hygiene exception. | Do not use for convenience cleanup until row 5 is recorded or explicitly not applicable. |
+
+Do not scan lower historical tables to find easier work. If a lower row says
+`Partial` or `Needs Work` but conflicts with this ranking, update the stale
+status only when its ranked bucket is executable.
+
 1. User-requested priority/order hygiene is the only tracker-only exception.
    Fix the ordering text, then immediately return to the first substantive row
    below.
