@@ -63,6 +63,17 @@ Distance to completion, using executable buckets:
    active/not complete, while any current-state tracker section contradicts the
    row 5.5 / row 6 record, or while explicit page/status evidence is too weak
    to prove completion requirement by requirement.
+5. Working Checklist page/status completion audit: the `## Working Checklist`
+   table still has 23 rows with at least one non-`Done` status: `Home`,
+   `What's New`, `All Controls`, `Settings`, `Design Guidance section`,
+   `Color`, `Iconography`, `Samples section`, `User Dashboard`,
+   `Basic Input section`, `Collections section`, `DataGrid`,
+   `Date & Calendar section`, `Layout section`, `Expander`, `ResizeGrip`,
+   `GridSplitter`, `GroupBox`, `Media section`, `Navigation section`,
+   `Text section`, `Status & Info section`, and `System section`. These are
+   row 6 completion-audit blockers, not permission to run lower-priority source
+   cleanup ahead of reopened visual, High Contrast, high-drift, asset,
+   measurement, automation, harness, or row 5 evidence.
 
 Fail closed: if any lower tracker section, stale `Current` note, historical
 queue, or nearby source file suggests row 5 while this proof is missing, ignore
@@ -85,6 +96,9 @@ Current pointer:
    cited the older `e3e568e5` pass as latest. Current Order Lock and Immediate
    Status both point to row 6 after this pass; completion remains unproven
    until the tracker evidence proves every requirement without contradiction.
+   The current Working Checklist status audit still has 23 rows with at least
+   one non-`Done` status, so this is the next row 6 evidence gap to close or
+   explicitly classify.
 3. Previous bookkeeping/verification batch, 2026-05-31: **global order 12 /
    P2 row 5.5**, then **global order 13 / P2 row 6**. The row 5.5 inventory
    found no remaining current broad 5.4 candidate, and the row 6 verification
@@ -744,6 +758,9 @@ Current active selection snapshot:
    still cited the older `e3e568e5` pass as latest. This pass keeps the
    tracker source of truth on row 6 and updates the top status pointer so row
    5.4 is only a reopen path for a new broad local-official-source guard.
+   The current Working Checklist status audit still has 23 rows with at least
+   one non-`Done` status, which keeps row 6 active until those page/status
+   requirements are closed or classified without contradiction.
 3. Previous bookkeeping/verification batch, 2026-05-31: **global order 12 /
    P2 row 5.5**, then **global order 13 / P2 row 6** for final verification.
    Selection proof: worktree was clean at `5975efc9`; `SystemParameters.HighContrast`
@@ -2909,6 +2926,22 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- Working Checklist page/status completion audit:
+  - `git status --short` returned clean before the batch at branch tip
+    `58eda11a`. `SystemParameters.HighContrast` returned `False`.
+  - The completion audit remained active under **global order 13 / P2 row 6**:
+    parsing the `## Working Checklist` table found 23 rows with at least one
+    non-`Done` status. Those rows are now explicitly named in `Immediate
+    Status` as completion-audit blockers rather than implicit permission to run
+    lower-priority source cleanup.
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter TrackerPriorityTests -p:UseSharedCompilation=false`
+    - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 6 tests per
+      target after adding the parsed Working Checklist completion-audit guard.
+      Existing warning/output remains `NU1903`, generated WinRT warnings, and
+      recurring `Failed to resolve WinRT.Runtime.dll` messages.
+  - `git diff --check`
+    - Passed after the Working Checklist completion-audit update, with only the
+      existing LF/CRLF working-copy warnings for touched files.
 - Immediate Status completion-audit consistency pass:
   - `git status --short` returned clean before the batch at branch tip
     `f9d76b15`. `SystemParameters.HighContrast` returned `False`.

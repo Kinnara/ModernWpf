@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static ModernWpf.Gallery.Tests.WpfGallerySnippetTestHelpers;
 
@@ -110,6 +112,35 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void TrackerKeepsCompletionAuditActiveUntilWorkingChecklistStatusesClose()
+        {
+            var tracker = ReadRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
+            var nonDoneRows = ReadWorkingChecklistRows(tracker)
+                .Where(row => row.StructuralTests != "Done" || row.ExactSourceAudit != "Done" || row.VisualChecked != "Done")
+                .ToList();
+
+            Assert.AreEqual(
+                23,
+                nonDoneRows.Count,
+                string.Join(", ", nonDoneRows.Select(row => row.Name + " " + row.Status)));
+
+            CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "All Controls");
+            CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "Status & Info section");
+            CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "System section");
+
+            AssertContainsInOrder(
+                tracker,
+                "Working Checklist page/status completion audit:",
+                "table still has 23 rows with at least one non-`Done` status",
+                "`Home`",
+                "`System section`",
+                "These are",
+                "row 6 completion-audit blockers, not permission to run lower-priority source",
+                "cleanup ahead of reopened visual, High Contrast, high-drift, asset,",
+                "measurement, automation, harness, or row 5 evidence.");
+        }
+
+        [TestMethod]
         public void TrackerNamesLocalOfficialWpfGallerySourceAsAuthority()
         {
             var tracker = ReadRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
@@ -125,6 +156,66 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 tracker.Contains("use remote source before local official source", StringComparison.OrdinalIgnoreCase),
                 "Tracker should not allow remote WPF Gallery source to outrank the local official source checkout.");
+        }
+
+        private static IReadOnlyList<WorkingChecklistRow> ReadWorkingChecklistRows(string tracker)
+        {
+            var rows = new List<WorkingChecklistRow>();
+            var inTable = false;
+            var lines = tracker.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+
+            foreach (var line in lines)
+            {
+                if (line.StartsWith("| Page or group | Structural tests | Exact source audit | Visual checked | Notes |", StringComparison.Ordinal))
+                {
+                    inTable = true;
+                    continue;
+                }
+
+                if (!inTable)
+                {
+                    continue;
+                }
+
+                if (line.StartsWith("| ---", StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                if (!line.StartsWith("|", StringComparison.Ordinal))
+                {
+                    break;
+                }
+
+                var cells = line.Split('|').Select(cell => cell.Trim()).ToArray();
+                if (cells.Length >= 6 && cells[1].Length > 0)
+                {
+                    rows.Add(new WorkingChecklistRow(cells[1], cells[2], cells[3], cells[4]));
+                }
+            }
+
+            return rows;
+        }
+
+        private sealed class WorkingChecklistRow
+        {
+            public WorkingChecklistRow(string name, string structuralTests, string exactSourceAudit, string visualChecked)
+            {
+                Name = name;
+                StructuralTests = structuralTests;
+                ExactSourceAudit = exactSourceAudit;
+                VisualChecked = visualChecked;
+            }
+
+            public string Name { get; }
+
+            public string StructuralTests { get; }
+
+            public string ExactSourceAudit { get; }
+
+            public string VisualChecked { get; }
+
+            public string Status => StructuralTests + "/" + ExactSourceAudit + "/" + VisualChecked;
         }
     }
 }
