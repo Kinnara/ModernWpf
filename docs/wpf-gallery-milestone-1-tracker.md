@@ -2,6 +2,42 @@
 
 Last updated: 2026-05-31
 
+## Non-Negotiable Execution Gate
+
+Read this block first before every batch. It is the scheduler, not a suggestion.
+A lower row is selectable only when every row above it is recorded for the
+current branch tip, inactive by environment, or explicitly blocked in the latest
+verification notes. Source-shape, resource-key, naming, selector, test cleanup,
+and tracker cleanup are never selectable merely because they are small.
+
+Hard order:
+
+1. User-reported priority/order conflict: tracker-only, then return to the
+   first substantive row below.
+2. Real OS High Contrast visual and harness evidence.
+3. Visible drift and visual-harness stability.
+4. Retained ModernWpf/WinUI high-drift visual triage.
+5. P2 row 2 visual and high-drift freshness.
+6. P2 row 3 asset, thumbnail, and visual-reference parity.
+7. P2 row 4 measurement, interaction, automation, and harness-impacting parity.
+8. P2 row 5.1 sample panes and runtime-visible example content.
+9. P2 row 5.2 source-backed visible/runtime structure.
+10. P2 row 5.3 resource-key, naming, selector, and source-hook parity tied to
+    behavior.
+11. P2 row 5.4 non-visible copied/adapted source-shape guards.
+12. P2 row 5.5 row-5 bookkeeping and stale-status cleanup.
+13. P2 row 6 and final closeout cleanup.
+
+Current pointer:
+
+1. This user-requested priority/order clarification is row 1. Once committed,
+   row 1 is inactive again unless another priority/order conflict appears.
+2. The next substantive row remains **global order 10 / P2 row 5.3** only while
+   rows 2-9 remain recorded or inactive for the current branch tip.
+3. Any new High Contrast, visible drift, high-drift retained-control, asset,
+   measurement, interaction, automation, or harness evidence immediately
+   preempts row 5 source cleanup.
+
 ## Completion Distance and Priority Lock
 
 Milestone 1 is not complete. The high-priority visual, real OS High Contrast,
