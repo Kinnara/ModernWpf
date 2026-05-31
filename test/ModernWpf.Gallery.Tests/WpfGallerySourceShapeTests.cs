@@ -1138,6 +1138,9 @@ namespace ModernWpf.Gallery.Tests
                 "public UserDashboardUser(string firstName, string lastName)",
                 "FirstName = firstName;",
                 "LastName = lastName;",
+                "//public UserDashboardUser()",
+                "//{",
+                "//}",
                 "public UserDashboardUser(UserDashboardUser user)",
                 "ImageId = user.ImageId;",
                 "FirstName = user.FirstName;",
@@ -1147,15 +1150,15 @@ namespace ModernWpf.Gallery.Tests
                 "Age = user.Age;",
                 "DateOfJoining = user.DateOfJoining;",
                 "IsNewGraduate = user.IsNewGraduate;",
-                "public UserDashboardUser(string imageId, string firstName, string lastName, string company, string address, int age, DateTime dateOfJoining, bool isNewGraduate)",
-                "ImageId = imageId;",
+                "public UserDashboardUser(string imageID, string firstName, string lastName, string company, string address, int age, DateTime doj, bool isNewGraduate = false)",
+                "ImageId = imageID;",
                 "FirstName = firstName;",
                 "LastName = lastName;",
                 "Company = company;",
                 "Address = address;",
                 "IsNewGraduate = isNewGraduate;",
                 "Age = age;",
-                "DateOfJoining = dateOfJoining;");
+                "DateOfJoining = doj;");
             AssertContainsInOrder(
                 source,
                 "if (SetProperty(ref _firstName, value, nameof(FirstName)))",

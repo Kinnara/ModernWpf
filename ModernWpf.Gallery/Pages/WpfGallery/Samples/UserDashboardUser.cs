@@ -108,6 +108,10 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
             LastName = lastName;
         }
 
+        //public UserDashboardUser()
+        //{
+        //}
+
         public UserDashboardUser(UserDashboardUser user)
         {
             ImageId = user.ImageId;
@@ -120,16 +124,16 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
             IsNewGraduate = user.IsNewGraduate;
         }
 
-        public UserDashboardUser(string imageId, string firstName, string lastName, string company, string address, int age, DateTime dateOfJoining, bool isNewGraduate)
+        public UserDashboardUser(string imageID, string firstName, string lastName, string company, string address, int age, DateTime doj, bool isNewGraduate = false)
         {
-            ImageId = imageId;
+            ImageId = imageID;
             FirstName = firstName;
             LastName = lastName;
             Company = company;
             Address = address;
             IsNewGraduate = isNewGraduate;
             Age = age;
-            DateOfJoining = dateOfJoining;
+            DateOfJoining = doj;
         }
 
         private bool SetProperty<T>(ref T field, T value, string propertyName)
