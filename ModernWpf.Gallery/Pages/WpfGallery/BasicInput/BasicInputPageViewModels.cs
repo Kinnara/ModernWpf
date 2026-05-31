@@ -109,7 +109,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
             : base("CheckBox")
         {
             SelectAllCheckedCommand = CreateCommand(OnSelectAllChecked);
-            SingleCheckedCommand = CreateCommand(OnSingleChecked);
+            SingleCheckedCommand = CreateCommand(option => OnSingleChecked(option as string));
         }
 
         public ICommand SelectAllCheckedCommand { get; }
@@ -166,7 +166,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
             }
         }
 
-        private void OnSingleChecked(object option)
+        private void OnSingleChecked(string option)
         {
             if (OptionOneCheckBoxChecked && OptionTwoCheckBoxChecked && OptionThreeCheckBoxChecked)
             {
