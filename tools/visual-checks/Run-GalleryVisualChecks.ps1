@@ -2010,6 +2010,13 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
             $windowCaptureError = $_.Exception.Message
         }
         $staticCrops = Capture-StaticCrops "ModernWpf" $control $caseDir $window $screenshot
+        $latestStatusFile = Read-ModernWpfStatusFile $artifactDir
+        if ($null -ne $latestStatusFile -and ![string]::IsNullOrWhiteSpace($latestStatusFile.LastException)) {
+            $lastException = $latestStatusFile.LastException
+        }
+        elseif ([string]::IsNullOrWhiteSpace($lastException)) {
+            $lastException = Get-AutomationText $window "GalleryVisualTestLastException"
+        }
         $hasRenderedCrops = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and $staticCrops.Primary.NonBlank
         $windowScreenshotNonBlank = if (Test-Path $screenshot) { Test-ImageNotBlank $screenshot } else { $false }
         $notBlank = $windowScreenshotNonBlank -or $hasRenderedCrops

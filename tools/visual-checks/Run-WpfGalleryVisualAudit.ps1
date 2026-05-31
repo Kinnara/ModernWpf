@@ -497,6 +497,40 @@ function Wait-Until([scriptblock]$Probe, [int]$timeoutSeconds, [string]$descript
     throw "Timed out waiting for $description."
 }
 
+function Read-ModernWpfStatusFile([string]$artifactDir) {
+    $path = Join-Path $artifactDir "modernwpf-gallery-status.txt"
+    if (!(Test-Path $path)) {
+        return $null
+    }
+
+    try {
+        $lines = @(Get-Content -Path $path -ErrorAction Stop)
+        if ($lines.Count -lt 2) {
+            return $null
+        }
+
+        $lastException = ""
+        if ($lines.Count -ge 3 -and ![string]::IsNullOrEmpty($lines[2])) {
+            try {
+                $lastException = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($lines[2]))
+            }
+            catch {
+                $lastException = $lines[2]
+            }
+        }
+
+        return [ordered]@{
+            CurrentRoute = $lines[0]
+            ReadyState = $lines[1]
+            LastException = $lastException
+            Path = $path
+        }
+    }
+    catch {
+        return $null
+    }
+}
+
 function Find-WindowByProcessId([int]$processId) {
     $condition = New-Object System.Windows.Automation.PropertyCondition(
         [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
@@ -1691,7 +1725,11 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case
         }
 
-        $lastException = Get-AutomationText $window "GalleryVisualTestLastException"
+        $statusFile = Read-ModernWpfStatusFile $artifactDir
+        $lastException = if ($null -ne $statusFile) { $statusFile.LastException } else { Get-AutomationText $window "GalleryVisualTestLastException" }
+        if ([string]::IsNullOrWhiteSpace($lastException)) {
+            $lastException = Get-AutomationText $window "GalleryVisualTestLastException"
+        }
         if ([string]::IsNullOrWhiteSpace($lastException) -and
             ($null -eq $contentCrop -or !$contentCrop.NonBlank) -and
             !$capture.Succeeded) {
