@@ -80,7 +80,16 @@ namespace ModernWpf.Gallery.Tests
                 "Do not mark the goal complete while `Goal tracker status in Codex` remains",
                 "Fail closed: if any lower tracker section, stale `Current` note, historical",
                 "the lower note and run the higher-ranked evidence first.",
-                "Current pointer:");
+                "Current pointer:",
+                "Latest completion-audit/status pass, 2026-06-01:",
+                "Previous committed",
+                "branch tip before this row 6 pass was `f9d76b15`",
+                "Current Order Lock and Immediate",
+                "Status both point to row 6");
+
+            Assert.IsFalse(
+                tracker.Contains("The branch tip is", StringComparison.Ordinal),
+                "Immediate Status should not describe a historical commit as the current branch tip.");
         }
 
         [TestMethod]

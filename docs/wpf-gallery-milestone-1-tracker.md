@@ -77,12 +77,14 @@ Current pointer:
    guard this ordering; row 1 is inactive again unless another priority/order
    conflict appears.
 2. Latest completion-audit/status pass, 2026-06-01: **global order 13 / P2
-   row 6** remains active because completion is not proven. The branch tip is
-   `e3e568e5`; worktree was clean before this pass. The previous row 5.5
-   inventory and row 6 sweep are recorded, but this audit found stale
-   current-state text in the top status sections, so the goal remains active
-   and not complete until the tracker's current-state sections and evidence
-   prove completion without contradiction.
+   row 6** remains active because completion is not proven. Previous committed
+   branch tip before this row 6 pass was `f9d76b15`; worktree was clean and
+   `SystemParameters.HighContrast` returned `False`. The previous row 5.5
+   inventory and row 6 sweep are recorded, and the previous `Current Order
+   Lock` repair is recorded, but this audit found `Immediate Status` still
+   cited the older `e3e568e5` pass as latest. Current Order Lock and Immediate
+   Status both point to row 6 after this pass; completion remains unproven
+   until the tracker evidence proves every requirement without contradiction.
 3. Previous bookkeeping/verification batch, 2026-05-31: **global order 12 /
    P2 row 5.5**, then **global order 13 / P2 row 6**. The row 5.5 inventory
    found no remaining current broad 5.4 candidate, and the row 6 verification
@@ -735,11 +737,13 @@ Current active selection snapshot:
    update. It is inactive again unless a new priority/order conflict appears;
    rows 2-7 explicitly outrank all row 5 source cleanup.
 2. Current completion-audit/status pass, 2026-06-01: **global order 13 / P2
-   row 6** remains active because completion is not proven. The previous audit
-   found stale current-state text in this section after row 5.5 and row 6 had
-   already been recorded. This pass updates the `Current Order Lock` row 6
-   state so the tracker source of truth no longer points back to row 5.4 as
-   current lower work.
+   row 6** remains active because completion is not proven. Previous committed
+   branch tip before this row 6 pass was `f9d76b15`; worktree was clean and
+   `SystemParameters.HighContrast` returned `False`. `Current Order Lock`
+   already points to row 6 after the previous repair, but `Immediate Status`
+   still cited the older `e3e568e5` pass as latest. This pass keeps the
+   tracker source of truth on row 6 and updates the top status pointer so row
+   5.4 is only a reopen path for a new broad local-official-source guard.
 3. Previous bookkeeping/verification batch, 2026-05-31: **global order 12 /
    P2 row 5.5**, then **global order 13 / P2 row 6** for final verification.
    Selection proof: worktree was clean at `5975efc9`; `SystemParameters.HighContrast`
@@ -2905,6 +2909,22 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- Immediate Status completion-audit consistency pass:
+  - `git status --short` returned clean before the batch at branch tip
+    `f9d76b15`. `SystemParameters.HighContrast` returned `False`.
+  - The completion audit remained active under **global order 13 / P2 row 6**:
+    `Current Order Lock` already pointed to row 6 after the previous repair,
+    but `Immediate Status` still cited the older `e3e568e5` pass as latest and
+    repeated the previous stale-top-status finding. This batch updates
+    `Immediate Status`, keeps the local official WPF Gallery source authority
+    intact, and leaves completion unproven until every requirement is proven
+    without contradictory current-state text.
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter TrackerPriorityTests -p:UseSharedCompilation=false`
+    - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 5 tests per
+      target after updating the Immediate Status row 6 assertions.
+  - `git diff --check`
+    - Passed after the Immediate Status consistency update, with only the
+      existing LF/CRLF working-copy warnings for touched files.
 - Current Order Lock completion-audit consistency pass:
   - `git status --short` returned clean before the batch at branch tip
     `43ab65df`. `SystemParameters.HighContrast` returned `False`.
