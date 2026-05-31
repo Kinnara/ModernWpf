@@ -146,7 +146,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
         private void UpdateSearchFilter()
         {
             var previousSelectedIcon = SelectedIcon;
-            var selectedIconName = previousSelectedIcon == null ? null : previousSelectedIcon.Name;
+            var selectedIconName = previousSelectedIcon?.Name;
             var comparison = StringComparison.OrdinalIgnoreCase;
             var filterText = SearchText ?? string.Empty;
             SearchFilteredIcons.Clear();

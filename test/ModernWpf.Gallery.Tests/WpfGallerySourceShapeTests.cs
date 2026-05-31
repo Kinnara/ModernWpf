@@ -405,6 +405,7 @@ namespace ModernWpf.Gallery.Tests
                 "private int PageSize => SelectedPageSizeIndex == 4",
                 "? int.MaxValue",
                 ": int.Parse(PageSizeOptions[SelectedPageSizeIndex]);",
+                "var selectedIconName = previousSelectedIcon?.Name;",
                 "SearchFilteredIcons.Clear();",
                 "var searchFilteredIconData = AllIcons.Where(icon =>",
                 "(icon.Tags?.Any(tag => tag.IndexOf(filterText, comparison) >= 0) ?? false));",
