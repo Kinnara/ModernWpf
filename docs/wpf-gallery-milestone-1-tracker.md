@@ -47,25 +47,25 @@ Current pointer:
    5 source cleanup. `TrackerPriorityTests` guard this ordering; once
    committed, row 1 is inactive again unless another priority/order conflict
    appears.
-2. Latest substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
-   for the User Dashboard `IsSaved` delayed-clear source-shape guard. The local
-   official WPF Gallery source at
-   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\Samples\UserDashboardPageViewModel.cs`
-   starts the delayed saved-message clear inside `EditUserCommit()` immediately
-   after `IsSaved = true;`. The local copied view model now keeps that
-   non-visible statement placement while retaining the local `UserDashboardUser`
-   model type, deterministic visual-test random adapter, WPF `ICommand`
-   adapter, and `DispatcherTimer` notification adapter. This row was selected
-   only after `SystemParameters.HighContrast` returned `False`, the latest
-   visual/high-drift freshness batch at
-   `artifacts/visual-checks/20260531-181452-172-75996/report.md` /
-   `artifacts/visual-checks/20260531-181545-766-89732/report.md` and
-   `artifacts/wpf-gallery-visual-audit/20260531-181647-064-62908/report.md` /
-   `artifacts/wpf-gallery-visual-audit/20260531-181725-768-89888/report.md`
-   stayed Passed, direct same-path XAML scans found no missing official
-   `AutomationProperties.Name`, `x:Name`, or event-hook item that would reopen
-   row 5.3, global orders 2-9 stayed recorded or inactive, and rows 5.1-5.2
-   stayed recorded.
+2. Latest substantive batch, 2026-05-31: **global orders 3-5 / P2 row 2
+   visual and high-drift freshness** refreshed current-tip evidence after the
+   User Dashboard `IsSaved` source-shape guard at branch tip `589efc76`. The
+   worktree was clean before the refresh, and
+   `SystemParameters.HighContrast` returned `False`, so real OS High Contrast
+   stayed inactive in this environment. Retained high-drift Light/Dark reports
+   `artifacts/visual-checks/20260531-183214-606-1380/report.md` and
+   `artifacts/visual-checks/20260531-183322-668-84320/report.md` passed for
+   `GridView`, `CommandBarFlyout`, and `ProgressRing`, with nonblank
+   ModernWpf/WinUI captures and required sample elements. Focused WPF Gallery
+   Light/Dark reports
+   `artifacts/wpf-gallery-visual-audit/20260531-183709-517-35000/report.md`
+   and
+   `artifacts/wpf-gallery-visual-audit/20260531-183606-886-14072/report.md`
+   used the local official WPF Gallery checkout at
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery` and passed for
+   `Color`, `Iconography`, `FileAndFolderDialogs`, and `UserDashboard`. No new
+   visible-drift, high-drift retained-control regression, real OS High
+   Contrast, asset, measurement, automation, or harness trigger appeared.
 3. Previous row 5.4 batch, 2026-05-31: **global order 11 / P2 row 5.4**
    for the User Dashboard `DeletedName` early-return source-shape guard. The
    local official WPF Gallery source at
@@ -950,6 +950,24 @@ Current active selection snapshot:
     that official non-visible statement placement while retaining the local
     `UserDashboardUser` model type, deterministic visual-test random adapter,
     WPF `ICommand` adapter, and `DispatcherTimer` notification adapter.
+49. Recorded post-`IsSaved` visual/high-drift freshness proof, 2026-05-31:
+    the selected substantive row was **global orders 3-5 / P2 row 2** because
+    current-tip visual and retained high-drift evidence outranks any further
+    row 5.4 source-shape guard. `git status --short` was clean at branch tip
+    `589efc76`, and `SystemParameters.HighContrast` returned `False`.
+    Retained high-drift Light/Dark reports
+    `artifacts/visual-checks/20260531-183214-606-1380/report.md` /
+    `artifacts/visual-checks/20260531-183322-668-84320/report.md` passed for
+    `GridView`, `CommandBarFlyout`, and `ProgressRing`, with nonblank captures
+    and required sample elements. WPF Gallery Light/Dark reports
+    `artifacts/wpf-gallery-visual-audit/20260531-183709-517-35000/report.md`
+    /
+    `artifacts/wpf-gallery-visual-audit/20260531-183606-886-14072/report.md`
+    used the local official source checkout
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery` and passed for
+    `Color`, `Iconography`, `FileAndFolderDialogs`, and `UserDashboard`. No
+    new visual, High Contrast, high-drift, asset, measurement, interaction,
+    automation, or harness trigger appeared.
 
 Mandatory next-work selector:
 
@@ -974,9 +992,9 @@ recently touched.
 | 12 | P2 row 5.5 row-5 bookkeeping and stale-status cleanup | Blocked until substantive row 5 items are recorded or not applicable. |
 | 13 | P2 row 6 and final closeout cleanup | Last; only after row 5 is recorded or explicitly not applicable and the final verification sweep is current. |
 
-After the latest User Dashboard row 5.4 `IsSaved` delayed-clear guard is
-recorded, the next substantive row may remain **global order 11 / P2 row 5.4**
-only if another named 5.4 guard survives the same proof. The latest direct
+After the post-`IsSaved` visual/high-drift freshness round is recorded, the
+next substantive row may return to **global order 11 / P2 row 5.4** only if
+another named 5.4 guard survives the full proof again. The latest direct
 same-path XAML scans found no missing official
 `AutomationProperties.Name`, `x:Name`, or event-hook item, and the earlier
 direct code-behind member, official XAML resource-key, and matched ViewModel
@@ -984,8 +1002,8 @@ source scans found no current row 5.3 gap after the recorded navigation
 view-model Type-gate, `WhatsNewPage` MessageBox type-selector, Iconography
 search-placeholder, MainWindow forward-command, and `UpdateCanNavigateBack`
 source-hook batches. If any visual, High Contrast, high-drift, asset,
-measurement, automation, harness, 5.1, 5.2, or 5.3 trigger appears, this
-pointer is stale and the higher row wins.
+measurement, interaction, automation, harness, 5.1, 5.2, or 5.3 trigger
+appears, this pointer is stale and the higher row wins.
 
 Use this block before every new work batch. The 1-13 `Global order` table above
 is the only scheduler. Do not use lower historical tables, stale `Partial`
@@ -1186,7 +1204,7 @@ Current P2 state:
 | P2 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
 | 1 | Priority/order hygiene | Recorded by this user-requested tracker-order clarification; inactive unless order/status text conflicts or the user requests priority clarification again. | Edit this tracker only to remove priority ambiguity or stale execution state, then return to the first substantive P2 row. Do not perform unrelated source cleanup under this bucket. |
-| 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest focused WPF Gallery Light/Dark reports `artifacts/wpf-gallery-visual-audit/20260531-124818-683-31684/report.md` / `artifacts/wpf-gallery-visual-audit/20260531-124941-695-67844/report.md` and refreshed retained-control Light/Dark reports `artifacts/visual-checks/20260531-151548-761-78380/report.md` / `artifacts/visual-checks/20260531-151737-949-59816/report.md` in Row 8 and Latest local verification. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
+| 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest focused WPF Gallery Light/Dark reports `artifacts/wpf-gallery-visual-audit/20260531-183709-517-35000/report.md` / `artifacts/wpf-gallery-visual-audit/20260531-183606-886-14072/report.md` and refreshed retained-control Light/Dark reports `artifacts/visual-checks/20260531-183214-606-1380/report.md` / `artifacts/visual-checks/20260531-183322-668-84320/report.md` in Row 8 and Latest local verification. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: the executable `ApplicationIcon` now points to the official WPF Gallery `Assets\AppIcons\WPFGallery.ico` asset, non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
 | 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Recorded at branch tip. The latest row 4 batch aligns Iconography reload/current-page behavior with the local official WPF Gallery source by avoiding a forced `CurrentPage = 1` reset during `LoadData()`, while retaining the local WPF command and serializer adapters. Earlier row 4 interaction batches for Iconography whitespace search filtering, shared `ControlExample.Copy_SourceCode`, Iconography copy behavior, MessageBox net10 button values, and TileGallery scroll-back visibility remain recorded. | Reopen only for new named measurement, interaction, automation, or harness-impacting evidence. |
 | 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations, Design Guidance Color subsection visible example-content guards, Iconography instructions Expander inline/source structure, Design Guidance Spacing/Geometry default design-image `Source` resource fallback, Navigation `FrameWindow` same-folder `Frame.Source` behavior, Navigation `NavigationWindow` runtime URI/template-resource behavior, MainWindow/title-bar plus NavigationRoot footer style resource keys, SectionPage retained-extension scroll-host structural lookup/no-local-name hooks, NavigationRootPage content-frame Border structural lookup/no-local-name hook, NavigationRootPage Settings footer event-handler naming/sender-notification parity, NavigationRootPage High Contrast pane-edge cover structural lookup/no-local-name hook, NavigationRootPage visual-test status panel structural lookup/no-local-name hooks, ShellNavigation rendered-artifact crop hardening, MainWindow retained NavigationRootPage host structural lookup/no-local-name hook, NavigationRootPage retained content Frame structural lookup/no-local-name hook, NavigationRootPage retained NavigationView structural lookup/no-local-name hook, NavigationRootPage Settings footer official command-binding path through the retained PaneFooter BindingProxy bridge, MainWindow title-bar `WindowChrome.IsHitTestVisibleInChrome` attached-property source shape, Design Guidance Color `ColorsPage` class/file naming, Design Guidance Icons `IconsPage` / `IconsPageViewModel` class/file naming plus the official `Copy_Content` command selector and official direct search-placeholder visibility handlers, top-level and section WPF Gallery navigation view-model `Navigate(object pageType)` Type gates with retained local route fallbacks, top-level `DashboardPage` / `AllSamplesPage` class/file naming while preserving the retained `Home` / `AllControls` routes and visual artifact IDs, official WPF Gallery display-route aliases such as `Date & Calendar`, `Status & Info`, `Design Guidance`, `Basic Input`, `Colors`, `Icons`, `File and Folder Dialogs`, `User Dashboard`, `All Controls`, and `Home` resolving to retained local route IDs, WPF visual-audit launch routes using those official display IDs with canonical ready-route waits, and direct page registry display-ID normalization for official item IDs, with focused source-shape/runtime tests, full Gallery builds, and refreshed Color, Iconography, Home/AllControls, DateAndCalendar/StatusAndInfo, FileAndFolderDialogs, UserDashboard, Spacing/Geometry, Frame, NavigationWindow, ShellNavigation, and BasicInput Light/Dark visual audits recorded in Latest local verification. | Continue only with the first executable item from the `P2 Row 5 Internal Queue`; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
@@ -1257,6 +1275,29 @@ Current row 5 decision:
 
 Latest accepted visual/high-drift priority-correction note:
 
+- The current post-`IsSaved` visual/high-drift freshness batch preempted any
+  further row 5.4 source-shape work under global orders 3-5 / P2 row 2. The
+  worktree was clean at `589efc76` before the refresh and
+  `SystemParameters.HighContrast` returned `False`. Retained high-drift
+  Light/Dark reports
+  `artifacts/visual-checks/20260531-183214-606-1380/report.md` and
+  `artifacts/visual-checks/20260531-183322-668-84320/report.md` passed for
+  `GridView`, `CommandBarFlyout`, and `ProgressRing`, with nonblank
+  ModernWpf/WinUI captures and required sample elements. The refreshed scores
+  remain stable: GridView `1.61` / `1.6`, CommandBarFlyout score `5.09` /
+  `5.09` with primary `4.99` / `4.99`, and ProgressRing `14.95` / `14.71`.
+  Focused WPF Gallery Light/Dark reports
+  `artifacts/wpf-gallery-visual-audit/20260531-183709-517-35000/report.md`
+  and
+  `artifacts/wpf-gallery-visual-audit/20260531-183606-886-14072/report.md`
+  used the local official WPF Gallery checkout at
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery` and also passed for
+  `Color`, `Iconography`, `FileAndFolderDialogs`, and `UserDashboard`; `Color`
+  remains a sparse low-mean residual, `Iconography` remains max-RGB-3 channel
+  quantization, and `FileAndFolderDialogs` / `UserDashboard` remain zero or
+  near-zero deltas. No new visible-drift, high-drift retained-control
+  regression, real OS High Contrast, asset, measurement, automation, or
+  harness trigger appeared.
 - The current visual/high-drift freshness batch preempted further row 5.4
   source-shape work under global orders 3-5 / P2 row 2. The worktree was clean
   at `bee51fb5` before the refresh and `SystemParameters.HighContrast`
@@ -2256,6 +2297,51 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `git status --short`
+  - Returned clean before refreshing visual/high-drift evidence from branch tip
+    `589efc76`.
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the post-`IsSaved` visual/high-drift freshness
+    refresh, so no real OS High Contrast batch was started in this environment.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls GridView,CommandBarFlyout,ProgressRing -Reference InstalledWinUI3Gallery -Theme Light -IncludeInteractions -TimeoutSeconds 60`
+  - Passed at `artifacts/visual-checks/20260531-183214-606-1380/report.md`:
+    GridView primary `1.61` with matching `657x412` crops,
+    CommandBarFlyout score `5.09` / primary `4.99` with `454x302` vs
+    `453x302` crops, and ProgressRing score/primary `14.95` with matching
+    `60x60` crops. All ModernWpf and WinUI rows passed with nonblank captures
+    and required sample elements.
+- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls GridView,CommandBarFlyout,ProgressRing -Reference InstalledWinUI3Gallery -Theme Dark -IncludeInteractions -TimeoutSeconds 60`
+  - Passed at `artifacts/visual-checks/20260531-183322-668-84320/report.md`:
+    GridView primary `1.6` with matching `657x412` crops, CommandBarFlyout
+    score `5.09` / primary `4.99` with `454x302` vs `453x302` crops, and
+    ProgressRing score/primary `14.71` with matching `60x60` crops. All
+    ModernWpf and WinUI rows passed with nonblank captures and required sample
+    elements.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Color,Iconography,FileAndFolderDialogs,UserDashboard -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 60`
+  - Passed at
+    `artifacts/wpf-gallery-visual-audit/20260531-183709-517-35000/report.md`
+    using the local official WPF Gallery checkout at
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery`: Color `0.05`,
+    Iconography `0.23`, FileAndFolderDialogs `0`, and UserDashboard `0`, all
+    with matching `868x758` crops.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases Color,Iconography,FileAndFolderDialogs,UserDashboard -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 60`
+  - Passed at
+    `artifacts/wpf-gallery-visual-audit/20260531-183606-886-14072/report.md`
+    using the local official WPF Gallery checkout at
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery`: Color `0.06`,
+    Iconography `0.24`, FileAndFolderDialogs `0`, and UserDashboard `0.01`,
+    all with matching `868x758` crops.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after updating the tracker hard-order/current-selection notes for
+    the post-`IsSaved` visual/high-drift freshness refresh. Existing
+    warning/output remains `NU1903`, generated WinRT,
+    ModernWpf/ModernWpf.Controls warnings, and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `git diff --check`
+  - Passed after the post-`IsSaved` visual/high-drift freshness tracker update,
+    with only the existing LF/CRLF working-copy warning for the touched tracker
+    file.
 - `git status --short`
   - Returned clean before selecting the User Dashboard `IsSaved` delayed-clear
     source-shape guard from branch tip `4d95241c`.
