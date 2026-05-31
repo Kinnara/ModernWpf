@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using static ModernWpf.Gallery.Tests.WpfGallerySnippetTestHelpers;
 
@@ -9,6 +12,60 @@ namespace ModernWpf.Gallery.Tests
     [TestClass]
     public class WpfGallerySourceShapeTests
     {
+        [TestMethod]
+        public void ActiveMappedXamlKeepsOfficialAutomationNameAndHookTokensFromLocalSource()
+        {
+            var repoRoot = GetRepoRoot();
+            var officialViewsRoot = @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views";
+            if (!Directory.Exists(officialViewsRoot))
+            {
+                Assert.Inconclusive("Local official WPF Gallery source was not found at " + officialViewsRoot + ".");
+            }
+
+            var localPagesRoot = Path.Combine(repoRoot, "ModernWpf.Gallery", "Pages");
+            var localXamlByFileName = Directory
+                .EnumerateFiles(localPagesRoot, "*.xaml", SearchOption.AllDirectories)
+                .ToDictionary(Path.GetFileName, path => path, StringComparer.OrdinalIgnoreCase);
+            var missingTokens = new List<string>();
+            var mappedFileCount = 0;
+
+            foreach (var officialPath in Directory.EnumerateFiles(officialViewsRoot, "*.xaml", SearchOption.AllDirectories))
+            {
+                var officialFileName = Path.GetFileName(officialPath);
+                if (!localXamlByFileName.TryGetValue(officialFileName, out var localPath))
+                {
+                    continue;
+                }
+
+                mappedFileCount++;
+                var localSource = NormalizeXamlTokenSource(File.ReadAllText(localPath));
+                var officialSource = File.ReadAllText(officialPath);
+                var officialRelativePath = Path.GetRelativePath(officialViewsRoot, officialPath);
+                var officialTokens = Regex
+                    .Matches(
+                        officialSource,
+                        "AutomationProperties\\.Name\\s*=\\s*\"[^\"]+\"|x:Name\\s*=\\s*\"[^\"]+\"|Name\\s*=\\s*\"[^\"]+\"|\\b(?:Click|Checked|Unchecked|SelectionChanged|TextChanged|RequestNavigate|Loaded|Unloaded|SizeChanged|ValueChanged|Navigated|Selected|MouseLeftButtonDown|PreviewKeyDown|KeyDown)\\s*=\\s*\"[^\"]+\"|Command\\s*=\\s*\"[^\"]+\"")
+                    .Cast<Match>()
+                    .Select(match => NormalizeXamlTokenSource(match.Value))
+                    .Distinct(StringComparer.Ordinal)
+                    .OrderBy(token => token, StringComparer.Ordinal);
+
+                foreach (var token in officialTokens)
+                {
+                    if (!localSource.Contains(token, StringComparison.Ordinal))
+                    {
+                        missingTokens.Add(officialRelativePath + " :: " + token);
+                    }
+                }
+            }
+
+            Assert.AreEqual(54, mappedFileCount, "The active WPF Gallery XAML mapping count changed; update the 5.3 scan deliberately.");
+            Assert.AreEqual(
+                0,
+                missingTokens.Count,
+                "Missing official 5.3 XAML tokens from local official source:\n" + string.Join("\n", missingTokens));
+        }
+
         [TestMethod]
         public void CopiedWpfGalleryCodeBehindClassesStayUnsealedLikeOfficialSource()
         {
@@ -78,6 +135,17 @@ namespace ModernWpf.Gallery.Tests
                     sectionSource.Contains("public partial class " + className + " : SectionPage", StringComparison.Ordinal),
                     className + " should keep the official WPF Gallery partial section page declaration shape.");
             }
+        }
+
+        private static string NormalizeXamlTokenSource(string value)
+        {
+            return WebUtility.HtmlDecode(value)
+                .Replace("&quot;", "\"")
+                .Replace("&amp;", "&")
+                .Replace(" ", string.Empty)
+                .Replace("\r", string.Empty)
+                .Replace("\n", string.Empty)
+                .Replace("\t", string.Empty);
         }
 
         private static string GetOfficialCodeBehindSummaryName(string className, string xamlFileName)
