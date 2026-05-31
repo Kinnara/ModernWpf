@@ -905,6 +905,7 @@ namespace ModernWpf.Gallery.Tests
                 "public partial class ListViewPageViewModel : CollectionsPageViewModelBase",
                 "private int _listViewSelectionModeComboBoxSelectedIndex = 0;",
                 "public int ListViewSelectionModeComboBoxSelectedIndex",
+                "get => _listViewSelectionModeComboBoxSelectedIndex;",
                 "SetProperty<int>(ref _listViewSelectionModeComboBoxSelectedIndex, value);",
                 "UpdateListViewSelectionMode(value);",
                 "private SelectionMode _listViewSelectionMode = SelectionMode.Single;",
@@ -925,6 +926,9 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 source.Contains("private void OnPropertyChanged", StringComparison.Ordinal),
                 "Collections view models should use the shared SetProperty adapter instead of local OnPropertyChanged plumbing.");
+            Assert.IsFalse(
+                source.Contains("get { return _listViewSelectionModeComboBoxSelectedIndex; }", StringComparison.Ordinal),
+                "ListView selection-mode index should keep the official expression-bodied getter source shape.");
         }
 
         [TestMethod]

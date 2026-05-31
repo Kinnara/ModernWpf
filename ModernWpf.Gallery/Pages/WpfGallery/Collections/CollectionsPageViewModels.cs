@@ -102,7 +102,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Collections
 
         public int ListViewSelectionModeComboBoxSelectedIndex
         {
-            get { return _listViewSelectionModeComboBoxSelectedIndex; }
+            get => _listViewSelectionModeComboBoxSelectedIndex;
             set
             {
                 SetProperty<int>(ref _listViewSelectionModeComboBoxSelectedIndex, value);
