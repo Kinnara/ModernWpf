@@ -128,9 +128,7 @@
                 BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="8,0,0,0">
-                <Frame
-                    x:Name="ContentHost"
-                    NavigationUIVisibility="Hidden" />
+                <Frame NavigationUIVisibility="Hidden" />
             </Border>
         </ui:NavigationView>
         <Border

@@ -138,7 +138,7 @@ namespace ModernWpf.Gallery.Shell
             {
                 AutomationProperties.SetAutomationId(this, "GalleryNavigationRoot");
                 AutomationProperties.SetAutomationId(Navigation, "GalleryNavigationView");
-                AutomationProperties.SetAutomationId(ContentHost, "GalleryContentHost");
+                AutomationProperties.SetAutomationId(GetContentHost(), "GalleryContentHost");
             }
 
             AlignNavigationViewShellResourcesWithWpfGallery();
@@ -818,7 +818,8 @@ namespace ModernWpf.Gallery.Shell
                 }
 
                 _currentTarget = target;
-                ContentHost.Content = CreatePage(target);
+                var contentHost = GetContentHost();
+                contentHost.Content = CreatePage(target);
                 SelectNavigationItem(target);
                 UpdateBackButton();
 
@@ -828,9 +829,9 @@ namespace ModernWpf.Gallery.Shell
                     {
                         if (_currentTarget != null && _currentTarget.Equals(target))
                         {
-                            ContentHost.UpdateLayout();
-                            GalleryDiagnostics.PrepareInteractiveVisualState(ContentHost);
-                            ContentHost.UpdateLayout();
+                            contentHost.UpdateLayout();
+                            GalleryDiagnostics.PrepareInteractiveVisualState(contentHost);
+                            contentHost.UpdateLayout();
                             SetVisualTestState(route, "Ready:" + route);
                             GalleryDiagnostics.WriteVisualArtifacts(Window.GetWindow(this) ?? (DependencyObject)this);
                         }
@@ -885,6 +886,12 @@ namespace ModernWpf.Gallery.Shell
             var itemPage = new ItemPage(GalleryCatalog.FindItem(target.UniqueId));
             itemPage.ItemRequested = item => Navigate(NavigationTarget.Item(item.UniqueId), true);
             return itemPage;
+        }
+
+        private System.Windows.Controls.Frame GetContentHost()
+        {
+            var contentBorder = (Border)Navigation.Content;
+            return (System.Windows.Controls.Frame)contentBorder.Child;
         }
 
         private void SelectNavigationItem(NavigationTarget target)

@@ -92,7 +92,7 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
-                    var contentHost = (ContentControl)page.FindName("ContentHost");
+                    var contentHost = GetContentHost(page);
                     foreach (var route in CatalogRoutes())
                     {
                         try
@@ -269,7 +269,7 @@ namespace ModernWpf.Gallery.Tests
                 settingsButton.Command.Execute(settingsButton.CommandParameter);
                 WpfTestHost.DoEvents();
                 Assert.IsNull(navigation.SelectedItem);
-                Assert.IsInstanceOfType(((ContentControl)page.FindName("ContentHost")).Content, typeof(SettingsPage));
+                Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(SettingsPage));
             });
         }
 
@@ -289,7 +289,8 @@ namespace ModernWpf.Gallery.Tests
                     AssertVisualTestStatusTextAutomationIds(normalPage);
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(normalPage));
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId((DependencyObject)normalPage.FindName("Navigation")));
-                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId((DependencyObject)normalPage.FindName("ContentHost")));
+                    Assert.IsNull(normalPage.FindName("ContentHost"));
+                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(GetContentHost(normalPage)));
 
                     GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test" }));
                     var visualTestPage = new NavigationRootPage();
@@ -301,7 +302,8 @@ namespace ModernWpf.Gallery.Tests
                     AssertVisualTestStatusTextAutomationIds(visualTestPage);
                     Assert.AreEqual("GalleryNavigationRoot", AutomationProperties.GetAutomationId(visualTestPage));
                     Assert.AreEqual("GalleryNavigationView", AutomationProperties.GetAutomationId((DependencyObject)visualTestPage.FindName("Navigation")));
-                    Assert.AreEqual("GalleryContentHost", AutomationProperties.GetAutomationId((DependencyObject)visualTestPage.FindName("ContentHost")));
+                    Assert.IsNull(visualTestPage.FindName("ContentHost"));
+                    Assert.AreEqual("GalleryContentHost", AutomationProperties.GetAutomationId(GetContentHost(visualTestPage)));
                     Assert.AreEqual("home", GetVisualTestStatusText(visualTestPage, "GalleryVisualTestCurrentRoute").Text);
                     Assert.AreEqual("Ready:home", GetVisualTestStatusText(visualTestPage, "GalleryVisualTestReadyState").Text);
                 }
@@ -380,7 +382,7 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
 
                     var navigation = (NavigationView)page.FindName("Navigation");
-                    var contentHost = (ContentControl)page.FindName("ContentHost");
+                    var contentHost = GetContentHost(page);
                     var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
                     var homeItem = topLevelItems[0];
                     var navigationItem = topLevelItems.Single(item => string.Equals(GetNavigationItemText(item), "Navigation", StringComparison.Ordinal));
@@ -628,7 +630,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreSame(window.ViewModel.SettingsCommand, settingsButton.Command);
                     Assert.AreEqual("Value.ViewModel.SettingsCommand",
                         BindingOperations.GetBindingExpression(settingsButton, System.Windows.Controls.Primitives.ButtonBase.CommandProperty)?.ParentBinding.Path.Path);
-                    var contentHost = (ContentControl)rootPage.FindName("ContentHost");
+                    var contentHost = GetContentHost(rootPage);
                     window.ViewModel.SettingsCommand.Execute(null);
                     WpfTestHost.DoEvents();
                     Assert.IsInstanceOfType(contentHost.Content, typeof(SettingsPage));
@@ -1412,11 +1414,20 @@ namespace ModernWpf.Gallery.Tests
 
         private static Border GetContentFrameBorder(NavigationRootPage page)
         {
-            var contentHost = (System.Windows.Controls.Frame)page.FindName("ContentHost");
+            var contentHost = GetContentHost(page);
             var border = contentHost.Parent as Border;
             Assert.IsNotNull(border);
             Assert.AreEqual(string.Empty, border.Name);
             return border;
+        }
+
+        private static System.Windows.Controls.Frame GetContentHost(NavigationRootPage page)
+        {
+            var navigation = (NavigationView)page.FindName("Navigation");
+            var contentBorder = (Border)navigation.Content;
+            var contentHost = (System.Windows.Controls.Frame)contentBorder.Child;
+            Assert.AreEqual(string.Empty, contentHost.Name);
+            return contentHost;
         }
 
         private static NavigationRootPage GetNavigationRootPage(MainWindow window)

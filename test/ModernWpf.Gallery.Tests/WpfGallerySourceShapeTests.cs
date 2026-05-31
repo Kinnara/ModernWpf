@@ -1247,7 +1247,11 @@ namespace ModernWpf.Gallery.Tests
                 "Background=\"{DynamicResource LayerFillColorDefaultBrush}\"",
                 "BorderBrush=\"{DynamicResource CardStrokeColorDefaultBrush}\"",
                 "BorderThickness=\"1\"",
-                "CornerRadius=\"8,0,0,0\"");
+                "CornerRadius=\"8,0,0,0\"",
+                "<Frame NavigationUIVisibility=\"Hidden\" />");
+            Assert.IsFalse(
+                navigationRootXaml.Contains("x:Name=\"ContentHost\"", StringComparison.Ordinal),
+                "The retained shell content Frame should be located structurally instead of by a local-only NavigationRootPage name hook.");
             AssertContainsInOrder(
                 navigationRootXaml,
                 "</ui:NavigationView>",
@@ -1327,6 +1331,17 @@ namespace ModernWpf.Gallery.Tests
                 "AlignNavigationViewShellResourcesWithWpfGallery();",
                 "private void SettingsButton_Click(object sender, RoutedEventArgs e)",
                 "RaiseSettingsOpenedNotification((UIElement)sender);");
+            AssertContainsInOrder(
+                navigationRootCode,
+                "AutomationProperties.SetAutomationId(GetContentHost(), \"GalleryContentHost\");",
+                "var contentHost = GetContentHost();",
+                "contentHost.Content = CreatePage(target);",
+                "contentHost.UpdateLayout();",
+                "GalleryDiagnostics.PrepareInteractiveVisualState(contentHost);",
+                "contentHost.UpdateLayout();",
+                "private System.Windows.Controls.Frame GetContentHost()",
+                "var contentBorder = (Border)Navigation.Content;",
+                "return (System.Windows.Controls.Frame)contentBorder.Child;");
             AssertContainsInOrder(
                 navigationRootCode,
                 "var highContrastNavigationPaneEdgeCover = GetHighContrastNavigationPaneEdgeCover();",
@@ -1424,6 +1439,7 @@ namespace ModernWpf.Gallery.Tests
                 "VisualTestReadyStateText",
                 "VisualTestLastExceptionText",
                 "x:Name=\"RootPage\"",
+                "x:Name=\"ContentHost\"",
                 "ModernWpfGalleryMainWindow",
                 "GalleryNavigationRoot",
                 "GalleryNavigationView",
@@ -1465,7 +1481,7 @@ namespace ModernWpf.Gallery.Tests
                 @"ModernWpf.Gallery\Pages\GalleryAutomation.cs: AutomationProperties.SetAutomationId(element, automationId);",
                 @"ModernWpf.Gallery\Shell\NavigationRootPage.xaml.cs: AutomationProperties.SetAutomationId(this, ""GalleryNavigationRoot"");",
                 @"ModernWpf.Gallery\Shell\NavigationRootPage.xaml.cs: AutomationProperties.SetAutomationId(Navigation, ""GalleryNavigationView"");",
-                @"ModernWpf.Gallery\Shell\NavigationRootPage.xaml.cs: AutomationProperties.SetAutomationId(ContentHost, ""GalleryContentHost"");"
+                @"ModernWpf.Gallery\Shell\NavigationRootPage.xaml.cs: AutomationProperties.SetAutomationId(GetContentHost(), ""GalleryContentHost"");"
             };
             var violations = Directory.EnumerateFiles(galleryRoot, "*.cs", SearchOption.AllDirectories)
                 .SelectMany(path => File.ReadLines(path)
