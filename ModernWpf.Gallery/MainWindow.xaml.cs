@@ -1,10 +1,12 @@
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Media;
 using System.Windows.Shell;
 using Microsoft.Win32;
+using ModernWpf.Gallery.Shell;
 using ModernWpf.Gallery.Testing;
 using ModernWpf.Gallery.ViewModels;
 
@@ -41,12 +43,12 @@ namespace ModernWpf.Gallery
 
         private void GoBack()
         {
-            RootPage.GoBack();
+            GetNavigationRootPage().GoBack();
         }
 
         private void OpenSettings()
         {
-            RootPage.OpenSettings();
+            GetNavigationRootPage().OpenSettings();
         }
 
         internal void SetBackButtonVisible(bool canGoBack)
@@ -56,7 +58,12 @@ namespace ModernWpf.Gallery
 
         internal void NavigateTo(string uniqueId)
         {
-            RootPage.NavigateTo(uniqueId);
+            GetNavigationRootPage().NavigateTo(uniqueId);
+        }
+
+        private NavigationRootPage GetNavigationRootPage()
+        {
+            return MainGrid.Children.OfType<NavigationRootPage>().Single();
         }
 
         private void UpdateWindowBackground()

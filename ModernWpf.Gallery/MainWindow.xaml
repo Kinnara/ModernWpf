@@ -191,9 +191,7 @@
                 </Button>
             </Grid>
 
-            <galleryShell:NavigationRootPage
-                x:Name="RootPage"
-                Grid.Row="1" />
+            <galleryShell:NavigationRootPage Grid.Row="1" />
         </Grid>
     </Border>
 </Window>

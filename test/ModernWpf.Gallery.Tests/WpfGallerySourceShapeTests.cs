@@ -1182,6 +1182,12 @@ namespace ModernWpf.Gallery.Tests
                 "Style=\"{StaticResource CaptionTextBlockStyle}\"",
                 "pages:GalleryAutomation.HeadingLevel=\"Level1\"",
                 "Text=\"{Binding ViewModel.ApplicationTitle}\"");
+            AssertContainsInOrder(
+                mainWindowXaml,
+                "<galleryShell:NavigationRootPage Grid.Row=\"1\" />");
+            Assert.IsFalse(
+                mainWindowXaml.Contains("x:Name=\"RootPage\"", StringComparison.Ordinal),
+                "The retained NavigationRootPage host should be located structurally instead of by a local-only MainWindow name hook.");
 
             var navigationRootXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
@@ -1261,6 +1267,18 @@ namespace ModernWpf.Gallery.Tests
                 "ModernWpf.Gallery",
                 "MainWindow.xaml.cs");
 
+            AssertContainsInOrder(
+                mainWindowCode,
+                "using System.Linq;",
+                "using ModernWpf.Gallery.Shell;",
+                "private void GoBack()",
+                "GetNavigationRootPage().GoBack();",
+                "private void OpenSettings()",
+                "GetNavigationRootPage().OpenSettings();",
+                "internal void NavigateTo(string uniqueId)",
+                "GetNavigationRootPage().NavigateTo(uniqueId);",
+                "private NavigationRootPage GetNavigationRootPage()",
+                "return MainGrid.Children.OfType<NavigationRootPage>().Single();");
             AssertContainsInOrder(
                 mainWindowCode,
                 "/// Interaction logic for MainWindow.xaml",
@@ -1405,6 +1423,7 @@ namespace ModernWpf.Gallery.Tests
                 "VisualTestCurrentRouteText",
                 "VisualTestReadyStateText",
                 "VisualTestLastExceptionText",
+                "x:Name=\"RootPage\"",
                 "ModernWpfGalleryMainWindow",
                 "GalleryNavigationRoot",
                 "GalleryNavigationView",

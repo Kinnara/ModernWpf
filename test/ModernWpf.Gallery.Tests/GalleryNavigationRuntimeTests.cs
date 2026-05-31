@@ -622,7 +622,8 @@ namespace ModernWpf.Gallery.Tests
                         BindingOperations.GetBindingExpression(titleText, TextBlock.TextProperty)?.ParentBinding.Path.Path);
                     Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleText));
 
-                    var rootPage = (NavigationRootPage)window.FindName("RootPage");
+                    Assert.IsNull(window.FindName("RootPage"));
+                    var rootPage = GetNavigationRootPage(window);
                     var settingsButton = (Button)rootPage.FindName("SettingsButton");
                     Assert.AreSame(window.ViewModel.SettingsCommand, settingsButton.Command);
                     Assert.AreEqual("Value.ViewModel.SettingsCommand",
@@ -719,7 +720,7 @@ namespace ModernWpf.Gallery.Tests
                     var closeButtonStyle = (Style)window.Resources["TitleBarDefaultCloseButtonStyle"];
                     AssertWpfGalleryHighContrastHoverTrigger(closeButtonStyle, "title bar close button");
 
-                    var rootPage = (NavigationRootPage)window.FindName("RootPage");
+                    var rootPage = GetNavigationRootPage(window);
                     var footerButtonStyle = (Style)rootPage.Resources["BorderlessButtonStyle"];
                     AssertWpfGalleryHighContrastHoverTrigger(footerButtonStyle, "navigation footer button");
                 }
@@ -1416,6 +1417,14 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsNotNull(border);
             Assert.AreEqual(string.Empty, border.Name);
             return border;
+        }
+
+        private static NavigationRootPage GetNavigationRootPage(MainWindow window)
+        {
+            var mainGrid = (Grid)window.FindName("MainGrid");
+            var rootPage = mainGrid.Children.OfType<NavigationRootPage>().Single();
+            Assert.AreEqual(string.Empty, rootPage.Name);
+            return rootPage;
         }
 
         private static Border GetHighContrastNavigationPaneEdgeCover(NavigationRootPage page)
