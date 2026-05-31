@@ -28,19 +28,16 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
 
         public static void Copy_Content(object sender, RoutedEventArgs e)
         {
-            var text = ((ExecutedRoutedEventArgs)e).Parameter as string;
-            if (string.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(((ExecutedRoutedEventArgs)e).Parameter.ToString()))
             {
-                return;
-            }
-
-            try
-            {
-                Clipboard.SetText(text);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error copying to clipboard: " + ex.Message);
+                try
+                {
+                    Clipboard.SetText(((ExecutedRoutedEventArgs)e).Parameter.ToString());
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error copying to clipboard: " + ex.Message);
+                }
             }
         }
 

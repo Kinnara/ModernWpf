@@ -68,6 +68,15 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(
                 pageSource,
                 "public static void Copy_Content(object sender, RoutedEventArgs e)");
+            AssertContainsInOrder(
+                pageSource,
+                "public static void Copy_Content(object sender, RoutedEventArgs e)",
+                "if (!string.IsNullOrEmpty(((ExecutedRoutedEventArgs)e).Parameter.ToString()))",
+                "Clipboard.SetText(((ExecutedRoutedEventArgs)e).Parameter.ToString());",
+                "MessageBox.Show(\"Error copying to clipboard: \" + ex.Message);");
+            Assert.IsFalse(
+                pageSource.Contains("var text = ((ExecutedRoutedEventArgs)e).Parameter as string", StringComparison.Ordinal),
+                "The copied Iconography copy command should keep the official Parameter.ToString() behavior instead of narrowing the command parameter to string.");
             Assert.IsFalse(
                 pageSource.Contains("OnLoaded"),
                 "The copied Iconography page should use the official WPF Gallery behavior trigger instead of a local Loaded handler.");
