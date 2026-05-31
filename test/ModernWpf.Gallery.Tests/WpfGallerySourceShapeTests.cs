@@ -1221,11 +1221,11 @@ namespace ModernWpf.Gallery.Tests
             var homeSource = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Pages",
-                "DashboardPage.xaml.cs");
+                "DashboardPage.xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
             AssertContainsInOrder(
                 homeSource,
                 "public DashboardPage(DashboardPageViewModel viewModel)",
-                "public DashboardPageViewModel ViewModel { get; }");
+                "            InitializeComponent();\n            ViewModel = viewModel ?? new DashboardPageViewModel(OnNavigateCard);\n            DataContext = this;\n        }\n\n        public DashboardPageViewModel ViewModel { get; }\n\n        public Action<GalleryItem> ItemRequested { get; set; }");
         }
 
         [TestMethod]

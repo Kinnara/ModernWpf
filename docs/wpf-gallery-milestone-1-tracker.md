@@ -47,17 +47,16 @@ Current pointer:
    5 source cleanup. `TrackerPriorityTests` guard this ordering; row 1 is
    inactive again unless another priority/order conflict appears.
 2. Latest substantive batch, 2026-05-31: **global order 11 / P2 row 5.4**
-   for the copied code-behind constructor initialization-order guard. The
-   local official WPF Gallery sources under
-   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` keep two
-   ViewModel-backed constructor source shapes: most copied item pages assign
-   `ViewModel`, set `DataContext`, then call `InitializeComponent()`, while
-   the Design Guidance pages and User Dashboard call `InitializeComponent()`
-   before assigning `ViewModel` and `DataContext`. The local copied/adapted
-   code-behind files already matched those non-visible official order shapes;
-   `WpfGallerySourceShapeTests.CopiedViewModelBackedCodeBehindKeepsOfficialConstructorInitializationOrder`
-   now guards them across the copied WPF Gallery page set. This row was
-   selected only after `SystemParameters.HighContrast` returned `False`, the
+   for the top-level Dashboard code-behind ViewModel member-placement guard.
+   The local official WPF Gallery source at
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views\DashboardPage.xaml.cs`
+   keeps the injected `DashboardPage(DashboardPageViewModel viewModel)`
+   constructor immediately followed by `public DashboardPageViewModel
+   ViewModel { get; }`. The local copied/adapted `DashboardPage.xaml.cs` now
+   keeps that non-visible official member order while retaining the local
+   parameterless constructor, fallback `DashboardPageViewModel(OnNavigateCard)`
+   adapter, and retained navigation callback properties. This row was selected
+   only after `SystemParameters.HighContrast` returned `False`, the
    latest visual/high-drift freshness batch at
    `artifacts/visual-checks/20260531-183214-606-1380/report.md` /
    `artifacts/visual-checks/20260531-183322-668-84320/report.md` and
@@ -408,18 +407,16 @@ Current active selection snapshot:
    or harness trigger appeared, so lower row 5 work is allowed only after this
    proof remains current.
 3. The latest row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
-   5 Internal Queue row 5.4** for the copied code-behind constructor
-   initialization-order guard. `SystemParameters.HighContrast` returned
+   5 Internal Queue row 5.4** for the top-level Dashboard code-behind
+   ViewModel member-placement guard. `SystemParameters.HighContrast` returned
    `False`, global orders 2-9 are recorded or inactive for the current branch
    tip, rows 5.1-5.2 are recorded, row 5.3 has no current named executable gap
    after direct same-path XAML `AutomationProperties.Name`, `x:Name`, and
    event-hook scans, and the latest high-drift freshness proof above remains
-   current. The local copied/adapted ViewModel-backed code-behind files keep
-   the official non-visible constructor order shapes from
-   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views`: most pages use
-   `ViewModel`/`DataContext` before `InitializeComponent()`, while Design
-   Guidance pages and User Dashboard use `InitializeComponent()` before
-   `ViewModel`/`DataContext`.
+   current. The local copied/adapted Dashboard code-behind keeps the official
+   non-visible constructor-then-`ViewModel` member order from
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views\DashboardPage.xaml.cs`
+   while retaining the local navigation callback adapters.
 4. The previous row 5 path was **global order 11 -> P2 Subqueue row 5 -> P2 Row
    5 Internal Queue row 5.4** for the User Dashboard `DeletedName`
    early-return source-shape guard. `SystemParameters.HighContrast` returned
@@ -1019,6 +1016,28 @@ Current active selection snapshot:
     `DataContext`, then call `InitializeComponent()`, while the Design Guidance
     pages and User Dashboard call `InitializeComponent()` before assigning
     `ViewModel` and `DataContext`.
+52. Recorded top-level Dashboard ViewModel member-placement guard selection
+    proof, 2026-05-31:
+    `SystemParameters.HighContrast` returned `False`. The selected substantive
+    row was **global order 11 / P2 row 5.4** because global orders 2-9
+    remained recorded or inactive, rows 5.1-5.2 were recorded, direct
+    same-path XAML scans against
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` and
+    `ModernWpf.Gallery\Pages\WpfGallery` found no missing official
+    `AutomationProperties.Name`, `x:Name`, or event-hook item to reopen row
+    5.3, and the refreshed visual/high-drift evidence
+    `artifacts/visual-checks/20260531-183214-606-1380/report.md` /
+    `artifacts/visual-checks/20260531-183322-668-84320/report.md` plus
+    `artifacts/wpf-gallery-visual-audit/20260531-183709-517-35000/report.md`
+    /
+    `artifacts/wpf-gallery-visual-audit/20260531-183606-886-14072/report.md`
+    stayed current. The local official source
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views\DashboardPage.xaml.cs`
+    keeps `public DashboardPage(DashboardPageViewModel viewModel)` followed by
+    `public DashboardPageViewModel ViewModel { get; }`; the local copied
+    `ModernWpf.Gallery\Pages\DashboardPage.xaml.cs` now keeps that
+    non-visible member-placement shape while retaining local navigation
+    callback adapters.
 
 Mandatory next-work selector:
 
@@ -1043,7 +1062,7 @@ recently touched.
 | 12 | P2 row 5.5 row-5 bookkeeping and stale-status cleanup | Blocked until substantive row 5 items are recorded or not applicable. |
 | 13 | P2 row 6 and final closeout cleanup | Last; only after row 5 is recorded or explicitly not applicable and the final verification sweep is current. |
 
-After the copied code-behind constructor initialization-order row 5.4 guard is
+After the top-level Dashboard ViewModel member-placement row 5.4 guard is
 recorded, the next substantive row may remain **global order 11 / P2 row 5.4**
 only if another named 5.4 guard survives the full proof again. The latest direct
 same-path XAML scans found no missing official
@@ -1080,7 +1099,7 @@ Required selection proof before any substantive edit:
    cleanup stay blocked while any 5.1-5.4 item is current.
 
 Current allowed substantive row may remain **global order 11 / P2 row 5.4**
-after the latest copied code-behind constructor initialization-order guard is
+after the latest top-level Dashboard ViewModel member-placement guard is
 recorded only if
 `SystemParameters.HighContrast` is `False`, global orders 2-9 are recorded or
 inactive for the current branch tip, P2 rows 2-4 are recorded, rows 5.1-5.2
@@ -1321,7 +1340,7 @@ Current row 5 decision:
 | 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named. |
 | 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named 5.2 batch aligns app-manifest runtime compatibility with local official WPF Gallery source by keeping the `true/PM` DPI fallback, `longPathAware`, and active `Microsoft.Windows.Common-Controls` v6 dependency while retaining the local `PerMonitorV2` DPI-awareness adapter. Earlier named 5.2 batches align the shared `ColorTile` warning visibility to the official WPF Gallery `TemplateBinding ShowWarning` plus `BooleanToVisibilityConverter` shape and record the official `TemplateBinding ShowSeparator` shape as not locally viable because WPF leaves the separator visible when `ShowSeparator=false`; the retained `RelativeSource TemplatedParent` converter binding is therefore an explicit WPF compatibility adapter. Earlier recorded 5.2 items remain the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
 | 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Recorded for the current branch tip with no current named gap after the latest scan. Earlier named 5.3 batches remain recorded, including title-bar/footer resource keys, retained shell structural lookups, route/display aliases, direct page registry normalization, command-handler names, the copied `WhatsNewPage` handler selector, and the copied Iconography direct search-placeholder visibility handlers. | Reopen before 5.4 if a new named resource/key/name/selector/hook gap appears that can affect visuals, behavior, or harness evidence. |
-| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard covers the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder: most ViewModel-backed item pages assign `ViewModel`, set `DataContext`, then call `InitializeComponent()`, while Design Guidance pages and User Dashboard call `InitializeComponent()` before assigning `ViewModel` and `DataContext`. Previous 5.4 guards include the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
+| 5.4 | Non-visible copied/adapted source-shape guards | Current only while 5.1-5.3 remain recorded or no current named gap exists. The latest named 5.4 guard aligns the top-level Dashboard code-behind `ViewModel` member placement with the official WPF Gallery constructor-then-property order while retaining local navigation callback adapters. Previous 5.4 guards include the official WPF Gallery copied code-behind constructor initialization-order shapes from the local `Views` folder; the official WPF Gallery ViewModel XML summary source shape for Button, File and Folder Dialogs, and MessageBox; User Dashboard `IsSaved` delayed-clear statement placement; User Dashboard `DeletedName` empty-value early-return shape; User Dashboard `EditUserCancel()` statement shape; User Dashboard `EditUserCommit`/`EditUserStart`/`RemoveUser` command-handler statement shape; User Dashboard final address `""` literal and `AddUser()` statement shape; copied Basic Input, Collections, Date & Calendar, Layout, Media, Navigation, Status & Info, Text, Design Guidance Geometry, and All Samples empty page descriptions with the official `""` literal source shape; System MessageBox/Clipboard empty descriptions and Clipboard status backing fields; System MessageBox verbatim/switch-expression snippet helpers; Basic Input CheckBox command branch bodies and handler signatures; Collections ListView/DataGrid helper shapes; Iconography helper shapes; and `MainWindowViewModel.ApplicationTitle`. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked if any 5.1-5.3 item reopens. | Take only a named guard gap with focused tests and a full Gallery build. |
 | 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
 
 Latest accepted visual/high-drift priority-correction note:
@@ -2348,6 +2367,55 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- `git status --short`
+  - Returned clean before selecting the top-level Dashboard ViewModel
+    member-placement guard from branch tip `ca5b4bbf`.
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the top-level Dashboard ViewModel
+    member-placement guard. Winning rank was **global order 11 / P2 row 5.4**
+    because global orders 2-9 were recorded or inactive, rows 5.1-5.2 were
+    recorded, direct same-path XAML scans found no missing official
+    `AutomationProperties.Name`, `x:Name`, or event-hook item to reopen row
+    5.3, and the visual/high-drift freshness evidence
+    `artifacts/visual-checks/20260531-183214-606-1380/report.md` /
+    `artifacts/visual-checks/20260531-183322-668-84320/report.md` plus
+    `artifacts/wpf-gallery-visual-audit/20260531-183709-517-35000/report.md`
+    /
+    `artifacts/wpf-gallery-visual-audit/20260531-183606-886-14072/report.md`
+    remained current.
+- Direct same-path XAML scans against
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views` and
+  `ModernWpf.Gallery\Pages\WpfGallery`
+  - Found no missing official `AutomationProperties.Name`, `x:Name`, or event
+    hook items in matched local XAML files before selecting row 5.4.
+- Local official-source comparison used
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views\DashboardPage.xaml.cs`
+  - Official source keeps `public DashboardPage(DashboardPageViewModel
+    viewModel)` followed by `public DashboardPageViewModel ViewModel { get; }`.
+    Local `ModernWpf.Gallery\Pages\DashboardPage.xaml.cs` now keeps that
+    non-visible member-placement shape while retaining local parameterless
+    construction and navigation callback adapters.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~WpfGallerySourceShapeTests.TopLevelCodeBehindKeepsOfficialViewModelMemberOrderShape" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 1 test per
+    target after aligning and guarding the top-level Dashboard ViewModel
+    member placement. Existing warning/output remains `NU1903`, generated
+    WinRT, ModernWpf/ModernWpf.Controls warnings, and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after
+    the top-level Dashboard ViewModel member-placement guard. Existing
+    warning/output remains recurring `Failed to resolve WinRT.Runtime.dll`
+    messages and 19 existing ModernWpf/ModernWpf.Controls warnings.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~TrackerPriorityTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 3 tests per
+    target after updating the tracker hard-order/current-selection notes for
+    the top-level Dashboard ViewModel member-placement guard. Existing
+    warning/output remains `NU1903` and recurring
+    `Failed to resolve WinRT.Runtime.dll` messages.
+- `git diff --check`
+  - Passed after the top-level Dashboard ViewModel member-placement guard and
+    tracker update, with only the existing LF/CRLF working-copy warnings for
+    touched files.
 - `git status --short`
   - Returned clean before selecting the copied code-behind constructor
     initialization-order guard from branch tip `77f11349`.

@@ -25,10 +25,11 @@ namespace ModernWpf.Gallery.Pages
             DataContext = this;
         }
 
+        public DashboardPageViewModel ViewModel { get; }
+
         public Action<GalleryItem> ItemRequested { get; set; }
         public Action<GalleryGroup> GroupRequested { get; set; }
         public Action AllControlsRequested { get; set; }
-        public DashboardPageViewModel ViewModel { get; }
 
         public ICommand NavigateCommand
         {
