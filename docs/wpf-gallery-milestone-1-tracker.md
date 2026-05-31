@@ -39,13 +39,41 @@ Hard order:
 12. P2 row 5.5 row-5 bookkeeping and stale-status cleanup.
 13. P2 row 6 and final closeout cleanup.
 
+## Immediate Status and Next Selection
+
+Milestone 1 is not complete. The visual, real OS High Contrast, high-drift,
+asset, measurement, interaction, automation, and harness buckets are recorded
+for the current branch tip, not closed permanently.
+
+Distance to completion, using executable buckets:
+
+1. If a new real OS High Contrast, visible drift, high-drift retained-control,
+   asset/reference, measurement, interaction, automation, or harness signal
+   appears, that higher global order is the next task and row 5 source cleanup
+   is stale immediately.
+2. If the higher rows remain recorded/inactive, the current lower bucket may be
+   **global order 11 / P2 row 5.4** only after proving row 5.1 sample panes,
+   row 5.2 source-backed runtime structure, and row 5.3 behavior/source hooks
+   are still recorded or clean.
+3. Row 5.4 work must be a named broad guard from local official WPF Gallery
+   source at `D:\repos\WPF-Samples\Sample Applications\WPFGallery`, not a
+   convenient isolated source-shape cleanup.
+4. Remaining closeout after row 5.4: record or mark row 5.5 not applicable,
+   then run P2 row 6/final verification. Any reopened visual, High Contrast,
+   high-drift, asset, measurement, automation, or harness issue stops closeout.
+
+Fail closed: if any lower tracker section, stale `Current` note, historical
+queue, or nearby source file suggests row 5 while this proof is missing, ignore
+the lower note and run the higher-ranked evidence first.
+
 Current pointer:
 
 1. This user-requested priority/order clarification is recorded. The tracker
-   hard order states that visual, real OS High Contrast, high-drift, asset,
-   measurement, interaction, automation, and harness evidence always beats row
-   5 source cleanup. `TrackerPriorityTests` guard this ordering; row 1 is
-   inactive again unless another priority/order conflict appears.
+   hard order and Immediate Status block state that visual, real OS High
+   Contrast, high-drift, asset, measurement, interaction, automation, and
+   harness evidence always beats row 5 source cleanup. `TrackerPriorityTests`
+   guard this ordering; row 1 is inactive again unless another priority/order
+   conflict appears.
 2. Latest guard-automation batch, 2026-05-31: **global order 11 / P2 row
    5.4** for the mapped WPF Gallery ViewModel observable-field source-shape
    scan. Selection proof: `SystemParameters.HighContrast` returned `False`;
@@ -2633,6 +2661,27 @@ Goal tracker status in Codex: active, not complete.
 
 Latest local verification for the current branch tip:
 
+- Selection proof and verification for the priority/order clarification:
+  - `git status --short` returned clean before the batch at branch tip
+    `fccb3e6f`. This tracker-only batch answers the remaining-distance
+    question before historical row queues: Milestone 1 is not complete;
+    visual, real OS High Contrast, high-drift, asset, measurement,
+    interaction, automation, and harness buckets are recorded for the current
+    branch tip rather than permanently closed; row 5.4 remains selectable only
+    after the higher rows and row 5.1-5.3 gates are proved clean; and any new
+    higher-priority signal preempts source cleanup immediately.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter TrackerPriorityTests --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 4 tests per
+    target after adding the Immediate Status and Next Selection tracker guard.
+    Existing warning/output remains `NU1903` and recurring `Failed to resolve
+    WinRT.Runtime.dll` messages.
+- `git diff --check`
+  - Passed after the tracker priority/order clarification, with only the
+    existing LF/CRLF working-copy warnings for touched files.
+  - No visual audit was rerun for this tracker-only batch because no product
+    code or visual asset changed; the Immediate Status block requires any new
+    visual, High Contrast, high-drift, asset, measurement, automation, or
+    harness trigger to preempt row 5 source cleanup.
 - Selection proof and verification for the mapped ViewModel observable-field
   5.4 source-shape guard:
   - `git status --short` returned clean before the batch at branch tip

@@ -56,6 +56,27 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void TrackerImmediateStatusAnswersDistanceBeforeHistoricalQueues()
+        {
+            var tracker = ReadRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
+
+            AssertContainsInOrder(
+                tracker,
+                "## Immediate Status and Next Selection",
+                "Milestone 1 is not complete.",
+                "for the current branch tip, not closed permanently.",
+                "Distance to completion, using executable buckets:",
+                "If a new real OS High Contrast, visible drift, high-drift retained-control,",
+                "row 5 source cleanup",
+                "**global order 11 / P2 row 5.4** only after proving row 5.1 sample panes,",
+                @"source at `D:\repos\WPF-Samples\Sample Applications\WPFGallery`, not a",
+                "Remaining closeout after row 5.4:",
+                "Fail closed: if any lower tracker section, stale `Current` note, historical",
+                "the lower note and run the higher-ranked evidence first.",
+                "Current pointer:");
+        }
+
+        [TestMethod]
         public void TrackerNamesLocalOfficialWpfGallerySourceAsAuthority()
         {
             var tracker = ReadRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
