@@ -158,40 +158,55 @@
             Header="Instructions on how to use Segoe Fluent Icons"
             IsExpanded="False"
             Margin="2 -8 0 0">
+
             <TextBlock TextWrapping="Wrap">
-                <Run FontWeight="SemiBold">How to get the font</Run>
+            <Run FontWeight="SemiBold">
+                How to get the font
+            </Run>
+            <LineBreak />
+            <Span>
+                On Windows 11: There's nothing you need to do, the font comes with Windows.
                 <LineBreak />
-                <Span>
-                    On Windows 11: There's nothing you need to do, the font comes with Windows.
-                    <LineBreak />
-                    On Windows 10: Segoe Fluent Icons is not included by default on Windows 10. You can download it
-                    <Hyperlink Click="Open_SegoeFontDownloadPage">here</Hyperlink> .
-                </Span>
-                <LineBreak/>
-                <LineBreak/>
-                <Span FontWeight="SemiBold">How to use the font</Span>
-                <LineBreak/>
-                <Span>
-                    An icon with a 16-epx font size is the equivalent of a 16x16-epx icon, to make sizing and positioning more predictable.
-                    For optimal appearance, use these specific sizes: 16, 20, 24, 32, 40, 48, and 64. Deviating from these font sizes could lead to less crisp or blurry outcomes.
-                </Span>
-                <LineBreak/>
-                <Span>
-                    All glyphs in Segoe Fluent Icons have the same fixed width with a consistent height and left origin point, so
-                    <Hyperlink Click="Open_IconDesignGuidelinesPage">layering</Hyperlink>
-                    and colorization effects can be achieved by drawing glyphs directly on top of each other.
-                </Span>
-                <LineBreak/>
-                <LineBreak/>
-                <Run FontWeight="SemiBold">XAML</Run>
-                <LineBreak/>
-                <Span>&lt;Grid&gt;</Span>
-                <LineBreak/>
-                <Span>&lt;TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&amp;#xEB51;" Foreground="#C72335"/&gt;</Span>
-                <LineBreak/>
-                <Span>&#x09;&lt;TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&amp;#xEB51;" /&gt;</Span>
-                <LineBreak/>
-                <Span>&lt;/Grid&gt;</Span>
+                On Windows 10: Segoe Fluent Icons is not included by default on Windows 10. You can download it
+                <Hyperlink Click="Open_SegoeFontDownloadPage">here</Hyperlink> .
+            </Span>
+            <LineBreak/>
+            <LineBreak/>
+            <Span FontWeight="SemiBold">
+                How to use the font
+            </Span>
+            <LineBreak/>
+            <Span>
+                An icon with a 16-epx font size is the equivalent of a 16x16-epx icon, to make sizing and positioning more predictable.
+                For optimal appearance, use these specific sizes: 16, 20, 24, 32, 40, 48, and 64. Deviating from these font sizes could lead to less crisp or blurry outcomes.
+            </Span>
+            <LineBreak/>
+            <Span>
+                All glyphs in Segoe Fluent Icons have the same fixed width with a consistent height and left origin point, so
+                <Hyperlink Click="Open_IconDesignGuidelinesPage">
+                    layering</Hyperlink> and colorization effects can be achieved by drawing glyphs directly on top of each other.
+            </Span>
+            <LineBreak/>
+            <LineBreak/>
+            <Run FontWeight="SemiBold">
+                XAML
+            </Run>
+            <LineBreak/>
+            <Span>
+                &lt;Grid&gt;
+            </Span>
+            <LineBreak/>
+            <Span>
+                &lt;TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&amp;#xEB51;" Foreground="#C72335"/&gt;
+            </Span>
+            <LineBreak/>
+            <Span>
+                &#x09;&lt;TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&amp;#xEB51;" /&gt;
+            </Span>
+            <LineBreak/>
+            <Span>
+                &lt;/Grid&gt;
+            </Span>
             </TextBlock>
         </Expander>
 
