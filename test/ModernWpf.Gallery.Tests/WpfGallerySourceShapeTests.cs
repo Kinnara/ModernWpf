@@ -1132,7 +1132,7 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 mainWindowXaml,
-                "x:Key=\"GalleryTitleBarButtonStyle\"",
+                "x:Key=\"BorderlessButtonStyle\"",
                 "<MultiDataTrigger>",
                 "<Condition Binding=\"{Binding Path=(SystemParameters.HighContrast)}\" Value=\"True\" />",
                 "<Condition Binding=\"{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}\" Value=\"True\" />",
@@ -1140,13 +1140,13 @@ namespace ModernWpf.Gallery.Tests
                 "<Setter Property=\"Foreground\" Value=\"{DynamicResource SystemColorHighlightTextColorBrush}\" />");
             AssertContainsInOrder(
                 mainWindowXaml,
-                "<Style x:Key=\"GalleryTitleBarDefaultButtonStyle\" BasedOn=\"{StaticResource GalleryTitleBarButtonStyle}\" TargetType=\"Button\">",
+                "<Style x:Key=\"TitleBarDefaultButtonStyle\" BasedOn=\"{StaticResource BorderlessButtonStyle}\" TargetType=\"Button\">",
                 "<Setter Property=\"winShell:WindowChrome.IsHitTestVisibleInChrome\" Value=\"True\" />",
                 "<Setter Property=\"Border.CornerRadius\" Value=\"0\" />",
-                "<Style x:Key=\"GalleryTitleBarDefaultCloseButtonStyle\" BasedOn=\"{StaticResource GalleryTitleBarDefaultButtonStyle}\" TargetType=\"Button\">");
+                "<Style x:Key=\"TitleBarDefaultCloseButtonStyle\" BasedOn=\"{StaticResource TitleBarDefaultButtonStyle}\" TargetType=\"Button\">");
             AssertContainsInOrder(
                 mainWindowXaml,
-                "x:Key=\"GalleryTitleBarDefaultCloseButtonStyle\"",
+                "x:Key=\"TitleBarDefaultCloseButtonStyle\"",
                 "<MultiDataTrigger>",
                 "<Condition Binding=\"{Binding Path=(SystemParameters.HighContrast)}\" Value=\"True\" />",
                 "<Condition Binding=\"{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}\" Value=\"True\" />",
@@ -1171,7 +1171,7 @@ namespace ModernWpf.Gallery.Tests
                 "Margin=\"8,0\"",
                 "VerticalAlignment=\"Center\"",
                 "AutomationProperties.Name=\"Back\"",
-                "Style=\"{StaticResource GalleryTitleBarButtonStyle}\"",
+                "Style=\"{StaticResource BorderlessButtonStyle}\"",
                 "Command=\"{Binding ViewModel.BackCommand}\"",
                 "IsEnabled=\"{Binding ViewModel.CanNavigateback}\"",
                 "winShell:WindowChrome.IsHitTestVisibleInChrome=\"True\"",

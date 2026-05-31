@@ -680,13 +680,13 @@ namespace ModernWpf.Gallery.Tests
                 var window = new MainWindow();
                 try
                 {
-                    var titleBarButtonStyle = (Style)window.Resources["GalleryTitleBarButtonStyle"];
+                    var titleBarButtonStyle = (Style)window.Resources["BorderlessButtonStyle"];
                     AssertWpfGalleryHighContrastHoverTrigger(titleBarButtonStyle, "title bar button");
 
-                    var defaultButtonStyle = (Style)window.Resources["GalleryTitleBarDefaultButtonStyle"];
+                    var defaultButtonStyle = (Style)window.Resources["TitleBarDefaultButtonStyle"];
                     Assert.AreSame(titleBarButtonStyle, defaultButtonStyle.BasedOn);
 
-                    var closeButtonStyle = (Style)window.Resources["GalleryTitleBarDefaultCloseButtonStyle"];
+                    var closeButtonStyle = (Style)window.Resources["TitleBarDefaultCloseButtonStyle"];
                     AssertWpfGalleryHighContrastHoverTrigger(closeButtonStyle, "title bar close button");
 
                     var rootPage = (NavigationRootPage)window.FindName("RootPage");

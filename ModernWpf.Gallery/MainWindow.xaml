@@ -18,7 +18,7 @@
     mc:Ignorable="d"
     ui:ThemeManager.IsThemeAware="True">
     <Window.Resources>
-        <Style x:Key="GalleryTitleBarButtonStyle" TargetType="Button">
+        <Style x:Key="BorderlessButtonStyle" TargetType="Button">
             <Setter Property="MinWidth" Value="48" />
             <Setter Property="MinHeight" Value="32" />
             <Setter Property="Background" Value="Transparent" />
@@ -63,12 +63,12 @@
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="GalleryTitleBarDefaultButtonStyle" BasedOn="{StaticResource GalleryTitleBarButtonStyle}" TargetType="Button">
+        <Style x:Key="TitleBarDefaultButtonStyle" BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
             <Setter Property="winShell:WindowChrome.IsHitTestVisibleInChrome" Value="True" />
             <Setter Property="Border.CornerRadius" Value="0" />
         </Style>
 
-        <Style x:Key="GalleryTitleBarDefaultCloseButtonStyle" BasedOn="{StaticResource GalleryTitleBarDefaultButtonStyle}" TargetType="Button">
+        <Style x:Key="TitleBarDefaultCloseButtonStyle" BasedOn="{StaticResource TitleBarDefaultButtonStyle}" TargetType="Button">
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="#C42B1C" />
@@ -115,7 +115,7 @@
                     Margin="8,0"
                     VerticalAlignment="Center"
                     AutomationProperties.Name="Back"
-                    Style="{StaticResource GalleryTitleBarButtonStyle}"
+                    Style="{StaticResource BorderlessButtonStyle}"
                     Command="{Binding ViewModel.BackCommand}"
                     IsEnabled="{Binding ViewModel.CanNavigateback}"
                     winShell:WindowChrome.IsHitTestVisibleInChrome="True"
@@ -157,7 +157,7 @@
                     x:Name="MinimizeButton"
                     Grid.Column="2"
                     Click="MinimizeWindow"
-                    Style="{StaticResource GalleryTitleBarDefaultButtonStyle}">
+                    Style="{StaticResource TitleBarDefaultButtonStyle}">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -169,7 +169,7 @@
                     x:Name="MaximizeButton"
                     Grid.Column="3"
                     Click="MaximizeWindow"
-                    Style="{StaticResource GalleryTitleBarDefaultButtonStyle}">
+                    Style="{StaticResource TitleBarDefaultButtonStyle}">
                     <TextBlock
                         x:Name="MaximizeIcon"
                         VerticalAlignment="Center"
@@ -182,7 +182,7 @@
                     x:Name="CloseButton"
                     Grid.Column="4"
                     Click="CloseWindow"
-                    Style="{StaticResource GalleryTitleBarDefaultCloseButtonStyle}">
+                    Style="{StaticResource TitleBarDefaultCloseButtonStyle}">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"

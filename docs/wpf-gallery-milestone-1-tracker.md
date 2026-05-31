@@ -49,13 +49,16 @@ Current allowed substantive row after this priority/order hygiene edit:
 - `P2` row 5 is selectable only because P0.1, row 7, row 8, and P2 rows 2-4
   are currently recorded and `SystemParameters.HighContrast = False` in the
   local shell.
-- Inside row 5, `5.1` is recorded and the active substantive row is **5.2**:
-  source-backed structure that can affect visible layout, resources, keyboard,
-  interaction, automation, or visual-harness behavior.
-- `5.3` is blocked until no named `5.2` item remains.
+- Inside row 5, `5.1` and `5.2` are recorded for the current branch tip. The
+  active substantive row is **5.3**: resource-key, naming, selector, and
+  source-hook parity tied to visible or harness behavior.
+- `5.2` reopens only if a new named source-backed structural gap is found that
+  can affect visible layout, resources, keyboard, interaction, automation, or
+  visual-harness behavior.
 - `5.4` and `5.5` are blocked while any `5.1`, `5.2`, or `5.3` item is current;
   comments, declaration order, member order, summaries, and stale tracker
-  cleanup must not be selected ahead of visible/runtime-facing structure.
+  cleanup must not be selected ahead of visible/runtime-facing structure or
+  resource/key/hook parity.
 - Any new High Contrast, visible-drift, high-drift retained-control, asset,
   measurement, interaction, automation, or harness evidence immediately
   preempts row 5 and reopens the higher-ranked bucket.
@@ -230,9 +233,10 @@ Current P2 state:
    row 5 is currently selectable; any new visual, High Contrast, high-drift,
    asset, measurement, automation, or harness evidence immediately closes row 5
    again. While row 5 is selectable, use the `P2 Row 5 Internal Queue`; the
-   current known row 5.1 Color subsection visible-content guard is recorded, so
-   the next row 5 selection starts at row 5.2 unless a new sample-pane or
-   runtime-visible example-content gap appears.
+   current known row 5.1 Color subsection visible-content guard and row 5.2
+   visible/runtime-facing structural items are recorded, so the next row 5
+   selection starts at row 5.3 unless a new sample-pane, runtime-visible
+   example-content, or visible/runtime-facing structural gap appears.
 6. Row 6 remains blocked until row 5 is recorded or not applicable.
 
 | P2 order | Bucket | State | Allowed next work |
@@ -241,7 +245,7 @@ Current P2 state:
 | 2 | Visual and high-drift freshness | Recorded for the current branch tip by the P0/P1 evidence above plus the latest retained-control Light/Dark refreshes in Row 8 and Latest local verification. | Reopen P0/P1/row 8 immediately if refreshed evidence shows new visual, High Contrast, high-drift, or harness drift. Do not continue row 4 or lower work until current visual/high-drift evidence is written here. |
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
 | 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Recorded at branch tip. Typography/Spacing/Geometry/Iconography, Color, remaining WPF-equivalent section/item Light/Dark measurement evidence, and the focused automation/harness verifier are current. | Reopen only for new named measurement, interaction, automation, or harness-impacting evidence. |
-| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations, Design Guidance Color subsection visible example-content guards, Iconography instructions Expander inline/source structure, Design Guidance Spacing/Geometry default design-image `Source` resource fallback, Navigation `FrameWindow` same-folder `Frame.Source` behavior, and Navigation `NavigationWindow` runtime URI/template-resource behavior with official WPF Gallery source/behavior, with focused source-shape/runtime tests, full Gallery builds, and refreshed Iconography, Spacing/Geometry, Frame, and NavigationWindow Light/Dark visual audits recorded in Latest local verification. | Continue only with the first executable item from the `P2 Row 5 Internal Queue`; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
+| 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Current executable P2 bucket while P0, row 7, row 8, and row 4 remain recorded with no new trigger. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations, Design Guidance Color subsection visible example-content guards, Iconography instructions Expander inline/source structure, Design Guidance Spacing/Geometry default design-image `Source` resource fallback, Navigation `FrameWindow` same-folder `Frame.Source` behavior, Navigation `NavigationWindow` runtime URI/template-resource behavior, and MainWindow title-bar style resource keys with official WPF Gallery source/behavior, with focused source-shape/runtime tests, full Gallery builds, and refreshed Iconography, Spacing/Geometry, Frame, NavigationWindow, and ShellNavigation Light/Dark visual audits recorded in Latest local verification. | Continue only with the first executable item from the `P2 Row 5 Internal Queue`; stop immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears. |
 | 6 | Pure tracker/status cleanup and documentation-only work | Last; blocked by row 5 except row 1 priority/order fixes. | Use only after the substantive P2 rows above are clear, except for row 1 priority/order fixes. |
 
 ### P2 Row 5 Internal Queue
@@ -254,8 +258,8 @@ touched.
 | Row 5 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
 | 5.1 | Source-backed sample panes and runtime-visible example content | Recorded for the current branch tip. Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media, Navigation, Status & Info, Text, System, and What's New `ControlExample` snippets are covered; Design Guidance Color subsection `ColorPageExample` titles, descriptions, and visible example content types are now guarded against the official WPF Gallery source shape. | Reopen before row 5.2 only if a new sample-pane or runtime-visible example-content gap is named. |
-| 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Current. The latest named row 5.2 items record the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` navigation behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency against official WPF Gallery while preserving the existing collapsed first-viewport layout, constructor-driven current-theme image selection, loaded `Page1` runtime navigation, and zero-drift NavigationWindow page visuals. Additional copied-page structural diffs remain selectable only one named visible/runtime-facing item at a time while 5.1 stays recorded and no higher visual/High Contrast/high-drift/harness trigger appears. | Fix the next highest-impact named diff and verify with focused runtime, source-shape, automation, or visual-harness tests as appropriate. |
-| 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Select only after 5.1 and 5.2 are clear. | Align the first named resource/key/name/selector/hook gap that can affect visuals, behavior, or harness evidence. |
+| 5.2 | Source-backed structural alignment that can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior | Recorded for the current branch tip. The latest named row 5.2 items record the Design Guidance Iconography instructions Expander inline/source structure, the Design Guidance Spacing/Geometry default dark design-image `Source` fallback, the Navigation `FrameWindow` same-folder `Frame.Source` navigation behavior, and the Navigation `NavigationWindow` explicit Gallery component URI plus `Frame.xaml` template-resource dependency against official WPF Gallery while preserving the existing collapsed first-viewport layout, constructor-driven current-theme image selection, loaded `Page1` runtime navigation, and zero-drift NavigationWindow page visuals. The latest rescan found no remaining named 5.2 item to take before row 5.3. | Reopen before row 5.3 only if a new source-backed structural diff is named and can affect visible layout, resources, keyboard, interaction, automation, or visual-harness behavior. |
+| 5.3 | Resource-key, naming, selector, and source-hook parity tied to visible or harness behavior | Current while 5.1 and 5.2 remain recorded and no higher visual/High Contrast/high-drift/harness trigger appears. The first named 5.3 batch aligned MainWindow title-bar style keys from the local `GalleryTitleBar*` names to the official `BorderlessButtonStyle`, `TitleBarDefaultButtonStyle`, and `TitleBarDefaultCloseButtonStyle` resource keys while preserving the accepted High Contrast hover behavior and shell visual crop. | Continue with the next named resource/key/name/selector/hook gap that can affect visuals, behavior, or harness evidence. |
 | 5.4 | Non-visible copied/adapted source-shape guards | Lower priority. Recent summary/base-declaration rounds are recorded; comments, declaration shape, member order, and pure source-text guards stay blocked while 5.1-5.3 have current work. | Take only a named guard gap with focused tests and a full Gallery build. |
 | 5.5 | Stale-status cleanup and tracker-only row 5 bookkeeping | Last inside row 5, except for explicit user-requested priority/order hygiene. | Use only after substantive row 5 items are recorded or not applicable. |
 
@@ -1149,6 +1153,18 @@ Latest local verification for the current branch tip:
   - Passed at `artifacts/wpf-gallery-visual-audit/20260531-051407-790-73952/report.md`: NavigationWindow `0`, ModernWpf and official status `Passed`, no changed samples, max RGB diff `0`, and matching `868x758` crops.
 - `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases NavigationWindow -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 60`
   - Passed at `artifacts/wpf-gallery-visual-audit/20260531-051434-447-85440/report.md`: NavigationWindow `0`, ModernWpf and official status `Passed`, no changed samples, max RGB diff `0`, and matching `868x758` crops.
+- `Add-Type -AssemblyName PresentationFramework; [System.Windows.SystemParameters]::HighContrast`
+  - Returned `False` before the row 5.3 MainWindow title-bar resource-key batch, so real OS High Contrast visual slices were not locally executable in this batch.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~GalleryNavigationRuntimeTests.ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome|FullyQualifiedName~WpfGallerySourceShapeTests.ShellChromeKeepsWpfGalleryHighContrastSourceShape" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
+  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 2 tests per target. `MainWindow.xaml` now uses the official WPF Gallery title-bar style keys `BorderlessButtonStyle`, `TitleBarDefaultButtonStyle`, and `TitleBarDefaultCloseButtonStyle`; runtime coverage still pins the High Contrast hover triggers and close-button behavior.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --no-restore -p:UseSharedCompilation=false`
+  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the row 5.3 MainWindow title-bar resource-key batch. Existing warning/output remains recurring `Failed to resolve WinRT.Runtime.dll` messages and existing ModernWpf/ModernWpf.Controls warnings.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases ShellNavigation -Reference OfficialWpfGallery -Theme Light -TimeoutSeconds 40`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-052804-927-45976/report.md`: ShellNavigation remains `0.80` with matching `250x707` crops, `142/11151` changed samples (`1.273%`), and max RGB diff `669`.
+- `.\tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases ShellNavigation -Reference OfficialWpfGallery -Theme Dark -TimeoutSeconds 40`
+  - Passed at `artifacts/wpf-gallery-visual-audit/20260531-052826-170-56100/report.md`: ShellNavigation remains `0.82` with matching `250x707` crops, `142/11151` changed samples (`1.273%`), and max RGB diff `669`.
+- `git diff --check`
+  - Passed after the row 5.3 MainWindow title-bar resource-key batch; only the existing LF/CRLF warnings were reported.
 - PowerShell parser checks for `tools/visual-checks/Run-GalleryVisualChecks.ps1` and `tools/visual-checks/Run-WpfGalleryVisualAudit.ps1`
   - Passed with zero parser errors after the row 4 automation/harness verifier.
 - Retained ModernWpf/WinUI extension visual ranking from existing
