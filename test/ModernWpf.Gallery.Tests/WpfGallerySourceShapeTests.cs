@@ -4320,7 +4320,7 @@ namespace ModernWpf.Gallery.Tests
                 "Title=\"FrameWindow\" Height=\"450\" Width=\"800\">");
             StringAssert.Contains(
                 frameWindowXaml,
-                "<Frame Source=\"/Pages/WpfGallery/Navigation/Page1.xaml\" NavigationUIVisibility=\"Visible\"/>");
+                "<Frame Source=\"Page1.xaml\" NavigationUIVisibility=\"Visible\"/>");
 
             var page1Xaml = ReadRepoFile(
                 "ModernWpf.Gallery",

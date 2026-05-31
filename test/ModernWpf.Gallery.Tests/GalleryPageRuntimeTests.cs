@@ -2027,6 +2027,33 @@ namespace ModernWpf.Gallery.Tests
                     StringAssert.Contains(navigationWindowExamples[0].XamlCode, "Width=\"800\"");
                 });
 
+                var frameWindow = new FrameWindow
+                {
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual
+                };
+                try
+                {
+                    frameWindow.Show();
+                    WpfTestHost.DoEvents();
+                    frameWindow.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var hostedFrame = FindDescendant<Frame>(frameWindow);
+                    Assert.IsNotNull(hostedFrame);
+                    StringAssert.Contains(
+                        hostedFrame.Source.OriginalString,
+                        "ModernWpf.Gallery;component/pages/wpfgallery/navigation/Page1.xaml");
+                    Assert.IsInstanceOfType(hostedFrame.Content, typeof(Page1));
+                }
+                finally
+                {
+                    frameWindow.Close();
+                    WpfTestHost.DoEvents();
+                }
+
                 var tabControlPage = new ItemPage(GalleryCatalog.FindItem("TabControl"));
                 WithRenderedPage(tabControlPage, () =>
                 {
