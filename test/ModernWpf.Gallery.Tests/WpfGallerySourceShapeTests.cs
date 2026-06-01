@@ -2712,7 +2712,7 @@ namespace ModernWpf.Gallery.Tests
                 "$navigationArtifact = Join-Path $artifactDir \"GalleryNavigationView.png\"",
                 "return Save-Crop $navigationArtifact $path 12 8 250 $height \"ModernWpfNavigationPaneRenderedArtifact\"",
                 "$contentCrop = $null",
-                "if ($case.Id -eq \"ShellNavigation\") {",
+                "if (Test-ShellNavigationCase $case) {",
                 "$contentCrop = Save-ModernShellNavigationArtifactCrop $artifactDir $contentCropPath",
                 "if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and $windowNonBlank) {",
                 "$contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case $isRenderedWindowArtifact",
@@ -2733,6 +2733,7 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(source, "ReadyRoute = $readyRoute");
             StringAssert.Contains(source, "$_.ReadyRoute -eq $caseId");
             StringAssert.Contains(source, "Ready:$($case.ReadyRoute)");
+            StringAssert.Contains(source, "New-Case \"ShellHomeNavigation\" \"home\" @(\"Home\") \"\" \"home\"");
             StringAssert.Contains(source, "New-Case \"AllControls\" \"All Controls\" @(\"All Controls\") \"\" \"AllControls\"");
             StringAssert.Contains(source, "New-Case \"DesignGuidance\" \"category/Design Guidance\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\"");
             StringAssert.Contains(source, "New-Case \"Color\" \"item/Colors\" @(\"Design Guidance\", \"Colors\") \"\" \"item/Color\"");

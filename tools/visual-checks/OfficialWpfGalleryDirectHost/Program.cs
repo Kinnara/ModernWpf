@@ -49,7 +49,7 @@ internal static class Program
         app.ShutdownMode = ShutdownMode.OnMainWindowClose;
         ApplyTheme(app, options.Theme);
 
-        if (options.Page == "ShellNavigation")
+        if (IsShellNavigationPage(options.Page))
         {
             var shellWindow = CreateShellNavigationWindow(app, options);
             app.MainWindow = shellWindow;
@@ -113,6 +113,12 @@ internal static class Program
         app.Run(window);
     }
 
+    private static bool IsShellNavigationPage(string page)
+    {
+        return string.Equals(page, "ShellNavigation", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(page, "ShellHomeNavigation", StringComparison.OrdinalIgnoreCase);
+    }
+
     private static Window CreateShellNavigationWindow(Application app, HostOptions options)
     {
         var serviceProvider = new DirectHostServiceProvider();
@@ -120,7 +126,7 @@ internal static class Program
         var viewModel = new MainWindowViewModel(navigationService);
         var window = new MainWindow(viewModel, serviceProvider, navigationService)
         {
-            Title = "Official WPF Gallery Direct Reference - ShellNavigation",
+            Title = $"Official WPF Gallery Direct Reference - {options.Page}",
             Width = options.Width,
             Height = options.Height
         };
@@ -132,7 +138,10 @@ internal static class Program
                 DispatcherPriority.ApplicationIdle,
                 new Action(() =>
                 {
-                    navigationService.NavigateTo(typeof(MenuPage));
+                    navigationService.NavigateTo(
+                        string.Equals(options.Page, "ShellNavigation", StringComparison.OrdinalIgnoreCase)
+                            ? typeof(MenuPage)
+                            : typeof(DashboardPage));
                     window.UpdateLayout();
                     WriteShellNavigationArtifact(window, options.ArtifactDirectory);
                 }));

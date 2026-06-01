@@ -192,7 +192,7 @@ namespace ModernWpf.Gallery.Tests
                 var expectedTopLevelContentLeft = SystemParameters.HighContrast ? 20 : 32;
                 var expectedChildGlyphContentLeft = SystemParameters.HighContrast ? -12 : 0;
                 var expectedChildTextContentLeft = SystemParameters.HighContrast ? 4 : 16;
-                var expectedTopLevelContentTop = SystemParameters.HighContrast ? -2 : 14;
+                var expectedTopLevelContentTop = SystemParameters.HighContrast ? -2 : 0;
                 var expectedChildItemMargin = SystemParameters.HighContrast
                     ? new Thickness(20, 0, -1, 0)
                     : new Thickness(20, 1, 0, 1);
@@ -398,11 +398,11 @@ namespace ModernWpf.Gallery.Tests
                     var expectedTopLevelGlyphLeft = isHighContrast ? 44 : 56;
                     var expectedTopLevelTextLeft = isHighContrast ? 77 : 89;
                     var expectedGroupChevronLeft = isHighContrast ? 22.5 : 34.5;
-                    var expectedTopLevelGlyphTop = isHighContrast ? 20 : 28;
-                    var expectedTopLevelTextTop = isHighContrast ? 19 : 27;
-                    var expectedGroupChevronTop = isHighContrast ? 399 : 407;
-                    var expectedGroupGlyphTop = isHighContrast ? 398 : 406;
-                    var expectedGroupTextTop = isHighContrast ? 397 : 405;
+                    var expectedTopLevelGlyphTop = isHighContrast ? 20 : 21;
+                    var expectedTopLevelTextTop = isHighContrast ? 19 : 20;
+                    var expectedGroupChevronTop = isHighContrast ? 399 : 400;
+                    var expectedGroupGlyphTop = isHighContrast ? 398 : 399;
+                    var expectedGroupTextTop = isHighContrast ? 397 : 398;
                     var expectedChildTextLeft = isHighContrast ? 80 : 92;
                     var expectedGroupContentLeft = isHighContrast ? -4 : 8;
                     var expectedChildSelectedContentLeft = isHighContrast ? -4 : 8;
@@ -417,6 +417,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertTextLeft(page, homeItem, "Home", expectedTopLevelTextLeft, "Home text");
                     AssertTextTop(page, homeItem, "\uE80F", expectedTopLevelGlyphTop, "Home glyph");
                     AssertTextTop(page, homeItem, "Home", expectedTopLevelTextTop, "Home text");
+                    AssertNavigationItemContentVerticallyCentered(page, homeItem, new[] { "\uE80F", "Home" }, "Home selected row");
                     AssertTextLeft(page, navigationItem, "\uE76C", expectedGroupChevronLeft, "Navigation disclosure chevron");
                     AssertTextLeft(page, navigationItem, "\uE700", expectedTopLevelGlyphLeft, "Navigation glyph");
                     AssertTextLeft(page, navigationItem, "Navigation", expectedTopLevelTextLeft, "Navigation text");
@@ -1251,13 +1252,41 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(16d, bounds.Height, 1.0, context + " height");
         }
 
+        private static void AssertNavigationItemContentVerticallyCentered(
+            FrameworkElement root,
+            NavigationViewItem item,
+            IEnumerable<string> texts,
+            string context)
+        {
+            var layoutRoot = FindNavigationItemLayoutRoot(item, context);
+            var layoutBounds = GetElementBounds(root, layoutRoot);
+            var layoutCenter = layoutBounds.Top + (layoutBounds.Height / 2);
+
+            foreach (var text in texts)
+            {
+                var textBlock = FindVisualChildren<TextBlock>(item)
+                    .FirstOrDefault(block => string.Equals(block.Text, text, StringComparison.Ordinal));
+                Assert.IsNotNull(textBlock, context + " " + text);
+
+                var textBounds = GetElementBounds(root, textBlock);
+                var textCenter = textBounds.Top + (textBounds.Height / 2);
+                Assert.AreEqual(layoutCenter, textCenter, 1.0, context + " " + text + " vertical center");
+            }
+        }
+
         private static void AssertNavigationItemLayoutRootMargin(NavigationViewItem item, Thickness expectedMargin, string context)
+        {
+            var layoutRoot = FindNavigationItemLayoutRoot(item, context);
+
+            Assert.AreEqual(expectedMargin, layoutRoot.Margin, context);
+        }
+
+        private static Border FindNavigationItemLayoutRoot(NavigationViewItem item, string context)
         {
             var layoutRoot = FindVisualChildren<Border>(item)
                 .FirstOrDefault(border => string.Equals(border.Name, "LayoutRoot", StringComparison.Ordinal));
             Assert.IsNotNull(layoutRoot, context);
-
-            Assert.AreEqual(expectedMargin, layoutRoot.Margin, context);
+            return layoutRoot;
         }
 
         private static void AssertWpfGalleryNavigationPaneBackground(NavigationView navigation, string resourceKey, Color expectedColor)

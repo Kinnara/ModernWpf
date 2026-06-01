@@ -116,7 +116,7 @@ namespace ModernWpf.Gallery.Shell
         private const double DefaultGroupNavigationContentLeftMargin = 8;
         private const double GroupNavigationDisclosureColumnWidth = 24;
         private const double GroupNavigationChevronLeftOffset = 0;
-        private const double DefaultTopLevelNavigationContentVerticalOffset = 14;
+        private const double DefaultTopLevelNavigationContentVerticalOffset = 0;
         private const double DefaultChildNavigationContentVerticalOffset = 16;
         private static readonly Thickness DefaultNavigationSelectionIndicatorMargin = new Thickness(0);
         private static readonly Thickness ChildNavigationSelectionIndicatorMargin = new Thickness(-35, 0, 0, -6);

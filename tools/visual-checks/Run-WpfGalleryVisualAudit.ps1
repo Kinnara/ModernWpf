@@ -54,6 +54,7 @@ function New-Case([string]$id, [string]$modernRoute, [string[]]$officialPath, [s
 
 $CaseCatalog = @(
     New-Case "Home" "Home" @("Home") "" "home"
+    New-Case "ShellHomeNavigation" "home" @("Home") "" "home"
     New-Case "WhatsNew" "What's New" @("What's New") "" "WhatsNew"
     New-Case "AllControls" "All Controls" @("All Controls") "" "AllControls"
     New-Case "DesignGuidance" "category/Design Guidance" @("Design Guidance") "" "category/DesignGuidance"
@@ -118,8 +119,14 @@ $CaseCatalog = @(
     New-Case "Settings" "Settings" @("Settings") "" "settings"
 )
 
+function Test-ShellNavigationCase($case) {
+    return $null -ne $case -and
+        ($case.Id -eq "ShellNavigation" -or $case.Id -eq "ShellHomeNavigation")
+}
+
 $OfficialDirectReferenceCaseIds = @(
     "Home",
+    "ShellHomeNavigation",
     "WhatsNew",
     "AllControls",
     "Settings",
@@ -1329,7 +1336,7 @@ function Find-ModernHomeContentRootPane($window) {
 }
 
 function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path, $case) {
-    if ($case.Id -eq "ShellNavigation") {
+    if (Test-ShellNavigationCase $case) {
         $navigationPane = Find-DescendantByNameAndType $window "Navigation Pane" ([System.Windows.Automation.ControlType]::Tree)
         if ($null -ne $navigationPane) {
             $paneCrop = Save-ElementCrop $window $screenshot $path $navigationPane "OfficialNavigationPane" 0
@@ -1386,7 +1393,7 @@ function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path, $
 }
 
 function Save-ModernContentCrop($window, [string]$screenshot, [string]$path, $case, [bool]$isRenderedWindowArtifact = $false) {
-    if ($null -ne $case -and $case.Id -eq "ShellNavigation") {
+    if (Test-ShellNavigationCase $case) {
         $menu = Find-DescendantByAutomationId $window "MenuItemsHost"
         if ($null -ne $menu) {
             $windowRect = [WpfGalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
@@ -1641,7 +1648,7 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         } | Out-Null
 
         $settleDelayMilliseconds = 500
-        if ($case.Id -eq "ShellNavigation") {
+        if (Test-ShellNavigationCase $case) {
             $settleDelayMilliseconds = 1000
         }
 
@@ -1673,7 +1680,7 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         }
 
         $contentCrop = $null
-        if ($case.Id -eq "ShellNavigation") {
+        if (Test-ShellNavigationCase $case) {
             $contentCrop = Save-ModernShellNavigationArtifactCrop $artifactDir $contentCropPath
             if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and $windowNonBlank) {
                 $isRenderedWindowArtifact = $windowScreenshotSource -eq "ModernWpfGalleryMainWindowRenderedArtifact"
@@ -1750,7 +1757,7 @@ function Capture-OfficialWpfGalleryDirectHost($case, [string]$caseDir) {
         }
         [void][WpfGalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
         [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
-        if ($case.Id -eq "ShellNavigation") {
+        if (Test-ShellNavigationCase $case) {
             $navigationPaneArtifact = Join-Path $artifactDir "NavigationPane.png"
             Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery direct navigation pane artifact" -Probe {
                 if (!(Test-Path -LiteralPath $navigationPaneArtifact)) {
@@ -1777,7 +1784,7 @@ function Capture-OfficialWpfGalleryDirectHost($case, [string]$caseDir) {
         $screenshot = $capture.Screenshot
         Write-UiaTree $window $treePath 7
         $frame = Find-DescendantByAutomationId $window "RootContentFrame"
-        if ($case.Id -eq "ShellNavigation") {
+        if (Test-ShellNavigationCase $case) {
             $renderedContentArtifact = Join-Path $artifactDir "NavigationPane.png"
             $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "OfficialDirectNavigationPaneRenderedArtifact"
         }
@@ -1787,7 +1794,7 @@ function Capture-OfficialWpfGalleryDirectHost($case, [string]$caseDir) {
         }
 
         if (!$contentCrop.NonBlank -and $capture.Succeeded) {
-            if ($case.Id -eq "ShellNavigation") {
+            if (Test-ShellNavigationCase $case) {
                 $contentCrop = Save-OfficialContentCrop $window $screenshot $contentCropPath $case
             }
             else {
