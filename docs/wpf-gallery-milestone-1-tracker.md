@@ -2971,15 +2971,15 @@ Latest local verification for the current branch tip:
     `Mostly done`, `Partial`, `Open, gated`, `milestone-open`, or
     `later substantive` label remained in current-state scheduler/status
     sections.
-  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj -p:UseSharedCompilation=false`
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --no-build -p:UseSharedCompilation=false`
     - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 544 tests per
       target, 0 failed, 0 skipped.
   - `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj -p:UseSharedCompilation=false`
     - Passed for `net462`, `net8.0-windows7.0`, and
-      `net10.0-windows7.0`; 0 warnings, 0 errors. The command still printed
-      the recurring `Failed to resolve WinRT.Runtime.dll` messages before
-      reporting success.
-  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --no-build --filter TrackerPriorityTests -p:UseSharedCompilation=false`
+      `net10.0-windows7.0`; existing warnings only, 0 errors. The command
+      still printed the recurring `Failed to resolve WinRT.Runtime.dll`
+      messages before reporting success.
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter TrackerPriorityTests -p:UseSharedCompilation=false`
     - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 7 tests per
       target, 0 failed, 0 skipped after the final completion-state tracker
       guard update.
