@@ -40,9 +40,10 @@ namespace ModernWpf.Gallery.Tests
         public void TrackerUsesCurrentOrderLockAsSingleScheduler()
         {
             var tracker = ReadRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
+            var currentOrderLock = ReadMarkdownSection(tracker, "## Current Order Lock");
 
             AssertContainsInOrder(
-                tracker,
+                currentOrderLock,
                 "## Current Order Lock",
                 "This section is the single scheduler for current work.",
                 "If any lower section conflicts with this block, this block wins.",
@@ -58,38 +59,41 @@ namespace ModernWpf.Gallery.Tests
                 "11. P2 row 5.4 non-visible copied/adapted source-shape guards, only for a",
                 "12. P2 row 5.5 row-5 bookkeeping and stale-status cleanup, only after 5.1-5.4",
                 "13. P2 row 6/final closeout cleanup, last, with a fresh verification sweep.",
-                "Current distance to completion:",
-                "The next lower bucket is **global order 13 / P2 row 6**",
+                "Current completion state:",
+                "The final lower bucket, **global order 13 / P2 row 6**, is complete",
                 "Current active selection snapshot:",
-                "Current completion-audit/status pass, 2026-06-01:");
+                "Final completion audit, 2026-06-01:");
         }
 
         [TestMethod]
-        public void TrackerImmediateStatusAnswersDistanceBeforeHistoricalQueues()
+        public void TrackerImmediateStatusAnswersCompletionBeforeHistoricalQueues()
         {
             var tracker = ReadRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
+            var immediateStatus = ReadMarkdownSection(tracker, "## Immediate Status and Next Selection");
 
             AssertContainsInOrder(
-                tracker,
+                immediateStatus,
                 "## Immediate Status and Next Selection",
-                "Milestone 1 is not complete.",
-                "for the current branch tip, not closed permanently.",
-                "Distance to completion, using executable buckets:",
+                "Milestone 1 is complete for the current branch tip",
+                "not closed permanently for future changes.",
+                "Completion proof, using executable buckets:",
                 "If a new real OS High Contrast, visible drift, high-drift retained-control,",
                 "row 5 source cleanup",
                 "Row 5 is recorded for the current branch tip through the row 5.5 inventory.",
-                "Row 6/final verification has run for the current branch tip, but completion",
-                "Do not mark the goal complete while `Goal tracker status in Codex` remains",
+                "Row 6/final verification has run for the current branch tip and proved no",
+                "The goal may remain complete only while `Goal tracker status in Codex`",
                 "Fail closed: if any lower tracker section, stale `Current` note, historical",
                 "the lower note and run the higher-ranked evidence first.",
                 "Current pointer:",
-                "Latest completion-audit/status pass, 2026-06-01:",
-                "Previous committed",
-                "branch tip before this row 6 pass was `accbbbd4`",
-                "stale current-status table wording",
-                "## Recorded Reopen-Only Work",
-                "Current Order Lock and Immediate",
-                "Status both point to row 6");
+                "Latest final completion audit, 2026-06-01:",
+                "Previous committed branch tip before",
+                "`a4aeb46d`",
+                "artifact report/json references existed",
+                "all were `Done/Done/Done`",
+                "full",
+                "passed",
+                "544 tests per target",
+                "Post-visual-status commits");
 
             Assert.IsFalse(
                 tracker.Contains("The branch tip is", StringComparison.Ordinal),
@@ -97,24 +101,40 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void TrackerKeepsCompletionAuditActiveAfterRowFiveCloseout()
+        public void TrackerMarksFinalCompletionAfterRowSixAudit()
         {
             var tracker = ReadRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
+            var currentStatus = ReadMarkdownSection(tracker, "## Current Status");
+            var currentOrderLock = ReadMarkdownSection(tracker, "## Current Order Lock");
 
             AssertContainsInOrder(
-                tracker,
-                "Current allowed lower row remains **global order 13 / P2 row 6**",
-                "completion-audit/status consistency",
-                "Row 5.4 reopens only if",
-                "Any new High Contrast, visible-drift, high-drift retained-control, asset,",
-                "immediately preempts row 6 and reopens the higher global order.",
-                "Goal tracker status in Codex: active, not complete.",
-                "Completion audit/status consistency pass:",
-                "The completion audit did **not** prove the goal complete.");
+                currentStatus,
+                "Goal tracker status in Codex: complete.",
+                "Final row 6 completion audit:",
+                "artifact-reference audit found 547 unique tracked",
+                "0 missing files",
+                "Current status tables were internally consistent",
+                "## Working Checklist",
+                "544 tests per",
+                "`git diff --name-only e3e568e5..a4aeb46d` showed",
+                "visual, real High Contrast,",
+                "high-drift, and harness evidence",
+                "remains current");
+
+            AssertContainsInOrder(
+                currentOrderLock,
+                "Current completion state:",
+                "The final lower bucket, **global order 13 / P2 row 6**, is complete",
+                "Row 5.4 is not open-ended",
+                "Current active selection snapshot:",
+                "future visual,",
+                "evidence still preempts any",
+                "source-shape cleanup.",
+                "No current allowed lower row remains.");
         }
 
         [TestMethod]
-        public void TrackerKeepsCompletionAuditActiveAfterWorkingChecklistStatusesClose()
+        public void TrackerKeepsWorkingChecklistClosedAfterFinalAudit()
         {
             var tracker = ReadRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
             var workingChecklistRows = ReadWorkingChecklistRows(tracker);
@@ -174,10 +194,9 @@ namespace ModernWpf.Gallery.Tests
                 tracker,
                 "Working Checklist page/status completion audit:",
                 "table now has 0 rows with at least one non-`Done` status",
-                "This removes the",
-                "current page/status blocker",
-                "completion remains unproven until the row 6",
-                "final audit verifies",
+                "The final row 6",
+                "audit verified",
+                "no current-state tracker section",
                 "visual/High Contrast/high-drift record",
                 "harness result",
                 "explicit goal");
@@ -282,6 +301,25 @@ namespace ModernWpf.Gallery.Tests
             }
 
             return rows;
+        }
+
+        private static string ReadMarkdownSection(string markdown, string heading)
+        {
+            var start = markdown.StartsWith(heading, StringComparison.Ordinal)
+                ? 0
+                : markdown.IndexOf("\n" + heading, StringComparison.Ordinal);
+
+            if (start > 0)
+            {
+                start++;
+            }
+
+            Assert.IsTrue(start >= 0, "Could not find markdown section " + heading);
+
+            var next = markdown.IndexOf("\n## ", start + heading.Length, StringComparison.Ordinal);
+            return next >= 0
+                ? markdown.Substring(start, next - start)
+                : markdown.Substring(start);
         }
 
         private static IReadOnlyList<AreaStatusRow> ReadAreaStatusRows(string tracker, string heading, string tableHeader)

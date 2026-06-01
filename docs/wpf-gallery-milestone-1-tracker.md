@@ -41,38 +41,44 @@ Hard order:
 
 ## Immediate Status and Next Selection
 
-Milestone 1 is not complete. The visual, real OS High Contrast, high-drift,
-asset, measurement, interaction, automation, and harness buckets are recorded
-for the current branch tip, not closed permanently.
+Milestone 1 is complete for the current branch tip after the final row 6 audit.
+The visual, real OS High Contrast, high-drift, asset, measurement,
+interaction, automation, and harness buckets are recorded for the current
+branch tip, not closed permanently for future changes.
 
-Distance to completion, using executable buckets:
+Completion proof, using executable buckets:
 
 1. If a new real OS High Contrast, visible drift, high-drift retained-control,
    asset/reference, measurement, interaction, automation, or harness signal
-   appears, that higher global order is the next task and row 5 source cleanup
-   is stale immediately.
+   appears, that higher global order reopens and row 5 source cleanup is stale
+   immediately.
 2. Row 5 is recorded for the current branch tip through the row 5.5 inventory.
    Row 5.4 reopens only if a new broad non-visible copied/adapted guard is
    proven from local official WPF Gallery source at
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery` after rows 5.1-5.3
    remain clean.
-3. Row 6/final verification has run for the current branch tip, but completion
-   is still unproven. The current lower bucket is completion-audit/status
-   consistency under global order 13.
-4. Do not mark the goal complete while `Goal tracker status in Codex` remains
-   active/not complete, while any current-state tracker section contradicts the
-   row 5.5 / row 6 record, or while explicit page/status evidence is too weak
-   to prove completion requirement by requirement.
+3. Row 6/final verification has run for the current branch tip and proved no
+   current contradiction across tracker status, requirement tables, artifact
+   references, local official source availability, tests, or Gallery app build.
+   The strict artifact audit found 547 unique tracked `report.md` / `.json`
+   references with 0 missing, and the local official-source audit found 42
+   backticked WPF Gallery paths with 0 missing.
+4. The goal may remain complete only while `Goal tracker status in Codex`
+   remains complete, no current-state tracker section contradicts the row 5.5 /
+   row 6 record, and explicit page/status evidence remains strong enough to
+   prove completion requirement by requirement. Future work starts at global
+   order 1, and any reopened visual, High Contrast, high-drift, asset,
+   measurement, automation, interaction, or harness evidence outranks source
+   cleanup immediately.
 5. Working Checklist page/status completion audit: the `## Working Checklist`
-   table now has 0 rows with at least one non-`Done` status. This removes the
-   current page/status blocker, but completion remains unproven until the row 6
-   final audit verifies that no current-state tracker section, requirement,
+   table now has 0 rows with at least one non-`Done` status. The final row 6
+   audit verified that no current-state tracker section, requirement,
    visual/High Contrast/high-drift record, harness result, or explicit goal
    condition contradicts completion.
 
 Fail closed: if any lower tracker section, stale `Current` note, historical
-queue, or nearby source file suggests row 5 while this proof is missing, ignore
-the lower note and run the higher-ranked evidence first.
+queue, or nearby source file suggests row 5 after new higher-priority evidence
+appears, ignore the lower note and run the higher-ranked evidence first.
 
 Current pointer:
 
@@ -82,24 +88,35 @@ Current pointer:
    harness evidence always beats row 5 source cleanup. `TrackerPriorityTests`
    guard this ordering; row 1 is inactive again unless another priority/order
    conflict appears.
-2. Latest completion-audit/status pass, 2026-06-01: **global order 13 / P2
-   row 6** remains active because completion is not proven. Previous committed
-   branch tip before this row 6 pass was `accbbbd4`; worktree was clean and
-   `SystemParameters.HighContrast` returned `False`. The selected closeout was
-   stale current-status table wording after the Working Checklist had already
-   reached 0 non-`Done` rows: the `## Done` table still carried `Mostly done`
-   labels, and the former `## Needs Work` table still carried `Partial`,
-   `Mostly done`, and `Open, gated` labels. This pass classifies those rows as
-   `Done for current scope` or `Recorded, reopen-only`, renames the supporting
-   table to `## Recorded Reopen-Only Work`, and adds tracker guard coverage so
-   those stale labels cannot contradict row 6 again.
-   Current Order Lock and Immediate Status both point to row 6;
-   completion remains unproven until the tracker evidence proves every
-   requirement without contradiction. The current Working Checklist status
-   audit still has 0 rows with at least one non-`Done` status. The next row 6
-   evidence gap is the final completion audit against the full tracker and goal
-   contract.
-3. Previous bookkeeping/verification batch, 2026-05-31: **global order 12 /
+2. Latest final completion audit, 2026-06-01: **global order 13 / P2 row 6**
+   is complete for the current branch tip. Previous committed branch tip before
+   this final audit was `a4aeb46d`; worktree was clean; all 547 tracked
+   artifact report/json references existed; local official WPF Gallery source
+   existed at
+   `D:\repos\WPF-Samples\Sample Applications\WPFGallery` with `Views`,
+   `ViewModels`, and `Models\ControlsInfoData.json`, and all 42 backticked
+   local official-source references existed; current status tables had no stale
+   `Mostly done`, `Partial`, or `Open, gated` labels; the Working Checklist had
+   56 rows and all were `Done/Done/Done`; full `ModernWpf.Gallery.Tests` passed
+   544 tests per target for `net8.0-windows7.0` and `net10.0-windows7.0`; and
+   `ModernWpf.Gallery.csproj` built for `net462`, `net8.0-windows7.0`, and
+   `net10.0-windows7.0` with 0 warnings/errors while still printing the
+   recurring `Failed to resolve WinRT.Runtime.dll` messages. Post-visual-status commits
+   from `e3e568e5` through `a4aeb46d` touched only tracker/test guard files, so
+   the recorded visual, High Contrast, high-drift, and harness evidence remains
+   applicable to product and visual-harness surfaces.
+3. Previous completion-audit/status pass, 2026-06-01: **global order 13 / P2
+   row 6** remained active because completion was not yet proven. Previous
+   committed branch tip before that row 6 pass was `accbbbd4`; worktree was
+   clean and `SystemParameters.HighContrast` returned `False`. The selected
+   closeout was stale current-status table wording after the Working Checklist
+   had already reached 0 non-`Done` rows: the `## Done` table still carried
+   `Mostly done` labels, and the former `## Needs Work` table still carried
+   `Partial`, `Mostly done`, and `Open, gated` labels. That pass classified
+   those rows as `Done for current scope` or `Recorded, reopen-only`, renamed
+   the supporting table to `## Recorded Reopen-Only Work`, and added tracker
+   guard coverage so those stale labels cannot contradict row 6 again.
+4. Previous bookkeeping/verification batch, 2026-05-31: **global order 12 /
    P2 row 5.5**, then **global order 13 / P2 row 6**. The row 5.5 inventory
    found no remaining current broad 5.4 candidate, and the row 6 verification
    sweep passed the recorded tests/build without changing product code, XAML,
@@ -653,12 +670,13 @@ Current pointer:
 
 ## Completion Distance and Priority Lock
 
-Milestone 1 is not complete. The high-priority visual, real OS High Contrast,
-high-drift retained-control, asset, measurement, automation, and harness rows
-are recorded for the current branch tip, not permanently closed. They must be
-reopened before any source cleanup when fresh evidence appears.
+Milestone 1 is complete for the current branch tip. The high-priority visual,
+real OS High Contrast, high-drift retained-control, asset, measurement,
+automation, and harness rows are recorded for the current branch tip, not
+permanently closed for future changes. They must be reopened before any source
+cleanup when fresh evidence appears.
 
-Current distance, in executable buckets rather than a percentage:
+Current completion state, in executable buckets rather than a percentage:
 
 1. P0/P1 visual, real OS High Contrast, high-drift, and harness buckets are
    currently recorded again for the branch tip, not permanently complete. The
@@ -677,10 +695,9 @@ Current distance, in executable buckets rather than a percentage:
    guarded by the active mapped-XAML gates, and row 5.4 reopens only for a new
    broad non-visible copied/adapted source-shape guard proven against
    `D:\repos\WPF-Samples\Sample Applications\WPFGallery`.
-4. Row 6/final verification has run for the current branch tip, but the goal is
-   not close until the completion audit proves every explicit requirement and
-   no current-state tracker section contradicts the evidence. If the audit or
-   any later sweep reopens visual, High Contrast, high-drift, asset,
+4. Row 6/final verification has run for the current branch tip and proved every
+   explicit requirement without a contradictory current-state tracker section.
+   If any later sweep reopens visual, High Contrast, high-drift, asset,
    measurement, automation, or harness work, that higher row becomes current.
 
 Before any code edit, write the winning rank in the work notes. If the selected
@@ -728,7 +745,7 @@ easier work.
     are recorded or explicitly not applicable.
 13. P2 row 6/final closeout cleanup, last, with a fresh verification sweep.
 
-Current distance to completion:
+Current completion state:
 
 1. The higher visual, real OS High Contrast, high-drift, asset, measurement,
    automation, and harness rows are recorded or inactive for the current branch
@@ -736,34 +753,44 @@ Current distance to completion:
 2. The user-reported priority/order conflict was recorded by the front-door
    selector update; row 1 is inactive again unless a new scheduler ambiguity
    appears.
-3. The next lower bucket is **global order 13 / P2 row 6** completion audit and
-   status consistency. Row 5.4 is not open-ended and reopens only if another
+3. The final lower bucket, **global order 13 / P2 row 6**, is complete for the
+   current branch tip. Row 5.4 is not open-ended and reopens only if another
    broad local-official-source guard survives proof. Thin member-shape cleanup,
    root shell adapter trivia, or stale historical notes are not enough.
 4. The row 5.5 bookkeeping pass found no remaining current broad 5.4 candidate
    after the inventory recorded below, and the row 6 verification sweep has
-   run. Any reopened item from rows 2-10 stops closeout and becomes the next
-   task.
+   completed. Any reopened item from rows 2-10 stops closeout and becomes the
+   next task.
 
 Current active selection snapshot:
 
 1. The user-requested priority/order hygiene edit is recorded by this ordering
    update. It is inactive again unless a new priority/order conflict appears;
    rows 2-7 explicitly outrank all row 5 source cleanup.
-2. Current completion-audit/status pass, 2026-06-01: **global order 13 / P2
-   row 6** remains active because completion is not proven. Previous committed
-   branch tip before this row 6 pass was `accbbbd4`; worktree was clean and
-   `SystemParameters.HighContrast` returned `False`. The Working Checklist
-   status audit already had 0 rows with at least one non-`Done` status, but
-   current supporting status tables still carried stale `Mostly done`,
-   `Partial`, and `Open, gated` labels. This pass keeps the tracker source of
-   truth on row 6, changes the `## Done` table's residual local-adapter labels
-   to `Done for current scope`, renames the former `## Needs Work` table to
-   `## Recorded Reopen-Only Work`, and records those rows as reopen-only unless
-   new evidence wins through the Current Order Lock. Row 5.4 remains only a
-   reopen path for a new broad local-official-source guard, and row 6 continues
-   as the final completion audit rather than a page/status closeout.
-3. Previous bookkeeping/verification batch, 2026-05-31: **global order 12 /
+2. Final completion audit, 2026-06-01: **global order 13 / P2 row 6** is
+   complete for the current branch tip. Previous committed branch tip before
+   this final audit was `a4aeb46d`; worktree was clean; all 547 tracked
+   artifact report/json references existed; all 42 backticked local official
+   WPF Gallery source references existed; current status tables carried no
+   stale open labels; the Working Checklist had 0 non-`Done` rows; full Gallery
+   tests passed; and the Gallery app built for the supported targets with 0
+   warnings/errors while still printing the recurring WinRT resolve messages.
+   Row 5.4 remains only a reopen path for a new broad
+   local-official-source guard, and future visual, High Contrast, high-drift,
+   asset, measurement, automation, or harness evidence still preempts any
+   source-shape cleanup.
+3. Previous completion-audit/status pass, 2026-06-01: **global order 13 / P2
+   row 6** remained active because completion was not yet proven. Previous
+   committed branch tip before that row 6 pass was `accbbbd4`; worktree was
+   clean and `SystemParameters.HighContrast` returned `False`. The Working
+   Checklist status audit already had 0 rows with at least one non-`Done`
+   status, but current supporting status tables still carried stale
+   `Mostly done`, `Partial`, and `Open, gated` labels. That pass kept the
+   tracker source of truth on row 6, changed the `## Done` table's residual
+   local-adapter labels to `Done for current scope`, renamed the former
+   `## Needs Work` table to `## Recorded Reopen-Only Work`, and recorded those
+   rows as reopen-only unless new evidence wins through the Current Order Lock.
+4. Previous bookkeeping/verification batch, 2026-05-31: **global order 12 /
    P2 row 5.5**, then **global order 13 / P2 row 6** for final verification.
    Selection proof: worktree was clean at `5975efc9`; `SystemParameters.HighContrast`
    returned `False`; the priority, active row 5.1 mapped-XAML, active row 5.3
@@ -1631,19 +1658,19 @@ Required selection proof before any substantive edit:
    row 5.3. If global order 11 is selected, first prove rows 5.1-5.3 are
    recorded or have no current named executable gap. Row 5.4 reopens only for
    a new broad local-official-source guard. Row 5.5 and P2 row 6 are recorded
-   for the current branch tip; the active lower work is completion-audit/status
-   consistency under row 6 unless any higher row reopens.
+   for the current branch tip; no current lower work remains unless a higher
+   row reopens.
 
-Current allowed lower row remains **global order 13 / P2 row 6** for
-completion-audit/status consistency after the latest row 5.5 inventory and
-row 6 verification sweep. Row 5.4 reopens only if
+No current allowed lower row remains. **Global order 13 / P2 row 6** is
+recorded complete after the latest row 5.5 inventory and row 6 verification
+sweep. Row 5.4 reopens only if
 `SystemParameters.HighContrast` is `False`, global orders 2-9 are recorded or
 inactive for the current branch tip, P2 rows 2-4 are recorded with the latest
 retained high-drift reports above, rows 5.1-5.3 remain clean, and a new broad
 named 5.4 guard is identified against local official source.
 Any new High Contrast, visible-drift, high-drift retained-control, asset,
 measurement, interaction, automation, harness, 5.1, 5.2, or 5.3 evidence
-immediately preempts row 6 and reopens the higher global order.
+immediately preempts source cleanup and reopens the higher global order.
 
 Priority fail-safe:
 
@@ -1801,9 +1828,9 @@ Current P2 state:
    guards. Any new sample-pane, runtime-visible content, structural,
    source-hook, resource, naming, selector, or broad 5.4 evidence reopens row
    5 before final closeout.
-6. Row 6/final verification is the current lower bucket after row 5.5. It is
-   not allowed to override any reopened visual, High Contrast, high-drift,
-   asset, measurement, automation, harness, or row 5 evidence.
+6. Row 6/final verification is recorded for the current branch tip after row
+   5.5. It is not allowed to override any reopened visual, High Contrast,
+   high-drift, asset, measurement, automation, harness, or row 5 evidence.
 
 | P2 order | Bucket | State | Allowed next work |
 | --- | --- | --- | --- |
@@ -1812,7 +1839,7 @@ Current P2 state:
 | 3 | Asset, thumbnail, and visual-reference parity locks | Recorded for the current active references: the executable `ApplicationIcon` now points to the official WPF Gallery `Assets\AppIcons\WPFGallery.ico` asset, non-`ControlImages` references are shipped and hash-locked, WPF-equivalent catalog `ControlImages` are official-hash locked, and retained catalog `ControlImages` still match the packaged resource set. | Reopen only for new visual asset evidence, a new active image reference, or a new catalog thumbnail/resource gap. |
 | 4 | Measurement, typography, spacing, keyboard, automation, and harness-impacting parity | Recorded at branch tip. The latest row 4 batch fixes the retained `CommandBarFlyout` interaction/harness evidence path after fresh Light checks failed to prove the installed WinUI reference open state. The harness now captures interaction frames without reactivating the target window, keeps native screen-copy fallback behind failed `CopyFromScreen`, and retries CommandBarFlyout open through click, InvokePattern, and Space only until expected open command UIA names appear. Earlier row 4 interaction batches for Iconography reload/current-page behavior, Iconography whitespace search filtering, shared `ControlExample.Copy_SourceCode`, Iconography copy behavior, MessageBox net10 button values, and TileGallery scroll-back visibility remain recorded. | Reopen only for new named measurement, interaction, automation, or harness-impacting evidence. |
 | 5 | Source-shape, resource-key, naming, selector, and test cleanup not tied to active visual drift | Recorded for the current branch tip through row 5.5. The latest named row 5 rounds align the shared `NullToVisibilityConverter`, User Dashboard visibility converters, `AlphabeticValidationRule`, shared `ControlExample`/`PageHeader` wrappers, shared `HeaderTile`/Color support-control code-behind source shape, shell/shared `App`/`MainWindow`/`TileGallery` summaries plus the current `NavigationRootPage` shell resource-hook guard, copied/adapted WPF Gallery page code-behind interaction-logic summaries plus explicit `Page`/`Window`/`UserControl` base declarations, Design Guidance Color subsection visible example-content guards, Iconography instructions Expander inline/source structure, Design Guidance Spacing/Geometry default design-image `Source` resource fallback, Navigation `FrameWindow` same-folder `Frame.Source` behavior, Navigation `NavigationWindow` runtime URI/template-resource behavior, MainWindow/title-bar plus NavigationRoot footer style resource keys, SectionPage retained-extension scroll-host structural lookup/no-local-name hooks, NavigationRootPage content-frame Border structural lookup/no-local-name hook, NavigationRootPage Settings footer event-handler naming/sender-notification parity, NavigationRootPage High Contrast pane-edge cover structural lookup/no-local-name hook, NavigationRootPage visual-test status panel structural lookup/no-local-name hooks, ShellNavigation rendered-artifact crop hardening, MainWindow retained NavigationRootPage host structural lookup/no-local-name hook, NavigationRootPage retained content Frame structural lookup/no-local-name hook, NavigationRootPage retained NavigationView structural lookup/no-local-name hook, NavigationRootPage Settings footer official command-binding path through the retained PaneFooter BindingProxy bridge, MainWindow title-bar `WindowChrome.IsHitTestVisibleInChrome` attached-property source shape, Design Guidance Color `ColorsPage` class/file naming, Design Guidance Icons `IconsPage` / `IconsPageViewModel` class/file naming plus the official `Copy_Content` command selector and official direct search-placeholder visibility handlers, top-level and section WPF Gallery navigation view-model `Navigate(object pageType)` Type gates with retained local route fallbacks, top-level `DashboardPage` / `AllSamplesPage` class/file naming while preserving the retained `Home` / `AllControls` routes and visual artifact IDs, official WPF Gallery display-route aliases such as `Date & Calendar`, `Status & Info`, `Design Guidance`, `Basic Input`, `Colors`, `Icons`, `File and Folder Dialogs`, `User Dashboard`, `All Controls`, and `Home` resolving to retained local route IDs, WPF visual-audit launch routes using those official display IDs with canonical ready-route waits, and direct page registry display-ID normalization for official item IDs, with focused source-shape/runtime tests, full Gallery builds, and refreshed Color, Iconography, Home/AllControls, DateAndCalendar/StatusAndInfo, FileAndFolderDialogs, UserDashboard, Spacing/Geometry, Frame, NavigationWindow, ShellNavigation, and BasicInput Light/Dark visual audits recorded in Latest local verification. The row 5.5 inventory records no remaining current broad row 5.4 candidate. | Reopen immediately if a higher visual, High Contrast, high-drift, asset, measurement, automation, or harness item appears, or if rows 5.1-5.4 get new named evidence. Otherwise continue to row 6/final verification. |
-| 6 | Pure tracker/status cleanup and documentation-only work | Current only as row 6/final verification after row 5.5 recorded no remaining current broad 5.4 candidate. | Use only for final verification/closeout bookkeeping; stop if any higher row reopens. |
+| 6 | Pure tracker/status cleanup and documentation-only work | Recorded by final completion audit after row 5.5 recorded no remaining current broad 5.4 candidate. | Reopen only if current-state tracker evidence contradicts completion or a higher row reopens. |
 
 Current row 5 summary addendum: the latest row 5.3 navigation view-model batch
 aligns top-level and section `Navigate(object pageType)` source hooks with the
@@ -2924,10 +2951,48 @@ Branch: `maintenance-reboot-1x`
 Latest implementation commit: see the current branch tip; this document is
 updated with each coherent round.
 
-Goal tracker status in Codex: active, not complete.
+Goal tracker status in Codex: complete.
 
 Latest local verification for the current branch tip:
 
+- Final row 6 completion audit:
+  - `git status --short` returned clean before the final audit at branch tip
+    `a4aeb46d`.
+  - Tracker artifact-reference audit found 547 unique tracked `report.md` and
+    `.json` evidence references under `artifacts`, with 0 missing files.
+  - Local official WPF Gallery source was available at
+    `D:\repos\WPF-Samples\Sample Applications\WPFGallery`, including
+    `Views`, `ViewModels`, and `Models\ControlsInfoData.json`; all 42
+    backticked local official-source references existed.
+  - Current status tables were internally consistent: `## Done` had 38 rows
+    with only `Done` or `Done for current scope`; `## Recorded Reopen-Only
+    Work` had 44 rows with only `Recorded*` statuses; `## Working Checklist`
+    had 56 rows and all were `Done/Done/Done`; no current `## Needs Work`,
+    `Mostly done`, `Partial`, `Open, gated`, `milestone-open`, or
+    `later substantive` label remained in current-state scheduler/status
+    sections.
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj -p:UseSharedCompilation=false`
+    - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 544 tests per
+      target, 0 failed, 0 skipped.
+  - `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj -p:UseSharedCompilation=false`
+    - Passed for `net462`, `net8.0-windows7.0`, and
+      `net10.0-windows7.0`; 0 warnings, 0 errors. The command still printed
+      the recurring `Failed to resolve WinRT.Runtime.dll` messages before
+      reporting success.
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --no-build --filter TrackerPriorityTests -p:UseSharedCompilation=false`
+    - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 7 tests per
+      target, 0 failed, 0 skipped after the final completion-state tracker
+      guard update.
+  - `git diff --check`
+    - Passed after the final tracker/test update, with only the existing
+      LF/CRLF working-copy warnings for touched files.
+  - `git diff --name-only e3e568e5..a4aeb46d` showed that commits after the
+    last product/visual-harness change through `a4aeb46d` changed only
+    `docs/wpf-gallery-milestone-1-tracker.md`,
+    `test/ModernWpf.Gallery.Tests/TrackerPriorityTests.cs`. They did not
+    change product code, XAML, visual assets, or the visual-check harness, so
+    the recorded visual, real High Contrast, high-drift, and harness evidence
+    remains current for those surfaces.
 - Completion audit current-status table reconciliation:
   - `git status --short` returned clean before the batch at branch tip
     `accbbbd4`. `SystemParameters.HighContrast` returned `False` after
@@ -9261,18 +9326,19 @@ round only from the `Current Order Lock` global-order table above. If this
 section or any historical note appears to conflict with that table, the table
 wins and this section is stale until updated.
 
-Immediate execution rule for the next round:
+Future reopen rule:
 
-1. Start at global order 1 and take the first current, newly triggered, or
+1. Milestone 1 is complete for the current branch tip. If new evidence appears,
+   restart at global order 1 and take the first current, newly triggered, or
    unrecorded row.
 2. Visual, real OS High Contrast, high-drift retained-control, asset,
    measurement, interaction, automation, and harness evidence always preempts
    row 5 source-shape/resource-key/name/selector cleanup.
 3. P2 row 5.4 reopens only after the proof in `Current Order Lock` is current
    for the branch tip and a new broad local-official-source candidate survives;
-   row 5.5 is recorded by the latest inventory, and P2 row 6/final
-   verification is the current lower bucket unless any 5.1-5.4 item or
-   higher-priority evidence reopens.
+   row 5.5 and P2 row 6/final verification are recorded for the current branch
+   tip. No lower bucket remains unless a 5.1-5.4 item or higher-priority
+   evidence reopens.
 
 The direct-reference section baseline is now refreshed for Light and Dark, and
 Basic Input, Collections, Date & Calendar, Design Guidance, Layout, Media,
