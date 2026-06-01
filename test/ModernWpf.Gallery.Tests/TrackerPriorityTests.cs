@@ -121,11 +121,32 @@ namespace ModernWpf.Gallery.Tests
                 .ToList();
 
             Assert.AreEqual(
-                14,
+                4,
                 nonDoneRows.Count,
                 string.Join(", ", nonDoneRows.Select(row => row.Name + " " + row.Status)));
 
-            foreach (var closedRow in new[] { "What's New", "User Dashboard", "DataGrid", "Expander", "ResizeGrip", "GridSplitter", "GroupBox", "Color", "Iconography" })
+            foreach (var closedRow in new[]
+            {
+                "What's New",
+                "User Dashboard",
+                "DataGrid",
+                "Expander",
+                "ResizeGrip",
+                "GridSplitter",
+                "GroupBox",
+                "Color",
+                "Iconography",
+                "Samples section",
+                "Basic Input section",
+                "Collections section",
+                "Date & Calendar section",
+                "Layout section",
+                "Media section",
+                "Navigation section",
+                "Text section",
+                "Status & Info section",
+                "System section"
+            })
             {
                 Assert.AreEqual("Done/Done/Done", workingChecklistRows.Single(row => row.Name == closedRow).Status, closedRow);
                 Assert.IsFalse(nonDoneRows.Any(row => row.Name == closedRow), closedRow + " should not remain a completion-audit blocker.");
@@ -138,16 +159,16 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual("Done/Mostly done/Done", workingChecklistRows.Single(row => row.Name == "Home").Status);
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "Design Guidance section");
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "All Controls");
-            CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "Status & Info section");
-            CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "System section");
+            CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "Settings");
 
             AssertContainsInOrder(
                 tracker,
                 "Working Checklist page/status completion audit:",
-                "table still has 14 rows with at least one non-`Done` status",
+                "table still has 4 rows with at least one non-`Done` status",
                 "`Home`",
-                "`System section`",
-                "Their visual statuses are now closed",
+                "`Design Guidance section`",
+                "Their visual",
+                "statuses are now closed",
                 "structural/source row 6 completion-audit blockers, not permission to run",
                 "lower-priority source cleanup ahead of reopened visual, High Contrast,",
                 "measurement, automation, harness, or row 5 evidence.");
