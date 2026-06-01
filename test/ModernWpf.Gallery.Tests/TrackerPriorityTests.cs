@@ -85,7 +85,9 @@ namespace ModernWpf.Gallery.Tests
                 "Current pointer:",
                 "Latest completion-audit/status pass, 2026-06-01:",
                 "Previous committed",
-                "branch tip before this row 6 pass was `f9d76b15`",
+                "branch tip before this row 6 pass was `e7bd3ec6`",
+                "local official source files",
+                @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views\SettingsPage.xaml",
                 "Current Order Lock and Immediate",
                 "Status both point to row 6");
 
@@ -121,7 +123,7 @@ namespace ModernWpf.Gallery.Tests
                 .ToList();
 
             Assert.AreEqual(
-                4,
+                3,
                 nonDoneRows.Count,
                 string.Join(", ", nonDoneRows.Select(row => row.Name + " " + row.Status)));
 
@@ -145,7 +147,8 @@ namespace ModernWpf.Gallery.Tests
                 "Navigation section",
                 "Text section",
                 "Status & Info section",
-                "System section"
+                "System section",
+                "Settings"
             })
             {
                 Assert.AreEqual("Done/Done/Done", workingChecklistRows.Single(row => row.Name == closedRow).Status, closedRow);
@@ -159,12 +162,13 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual("Done/Mostly done/Done", workingChecklistRows.Single(row => row.Name == "Home").Status);
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "Design Guidance section");
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "All Controls");
-            CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "Settings");
+            Assert.AreEqual("Done/Done/Done", workingChecklistRows.Single(row => row.Name == "Settings").Status);
+            Assert.IsFalse(nonDoneRows.Any(row => row.Name == "Settings"), "Settings should not remain a completion-audit blocker.");
 
             AssertContainsInOrder(
                 tracker,
                 "Working Checklist page/status completion audit:",
-                "table still has 4 rows with at least one non-`Done` status",
+                "table still has 3 rows with at least one non-`Done` status",
                 "`Home`",
                 "`Design Guidance section`",
                 "Their visual",
