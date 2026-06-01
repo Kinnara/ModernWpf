@@ -85,9 +85,9 @@ namespace ModernWpf.Gallery.Tests
                 "Current pointer:",
                 "Latest completion-audit/status pass, 2026-06-01:",
                 "Previous committed",
-                "branch tip before this row 6 pass was `f2c2b3cd`",
-                "local official source files",
-                @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views\AllSamplesPage.xaml",
+                "branch tip before this row 6 pass was `accbbbd4`",
+                "stale current-status table wording",
+                "## Recorded Reopen-Only Work",
                 "Current Order Lock and Immediate",
                 "Status both point to row 6");
 
@@ -184,6 +184,50 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void TrackerCurrentStatusTablesDoNotCarryStaleOpenLabels()
+        {
+            var tracker = ReadRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
+            var doneRows = ReadAreaStatusRows(tracker, "## Done", "| Area | Status | Notes |");
+            var reopenOnlyRows = ReadAreaStatusRows(tracker, "## Recorded Reopen-Only Work", "| Area | Status | Next action |");
+            var staleStatuses = new[] { "Mostly done", "Partial", "Open, gated" };
+
+            Assert.IsFalse(
+                tracker.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None).Any(line => line == "## Needs Work"),
+                "Current status section should be reopen-only, not Needs Work.");
+
+            Assert.IsFalse(
+                doneRows.Any(row => staleStatuses.Contains(row.Status)),
+                string.Join(", ", doneRows.Where(row => staleStatuses.Contains(row.Status)).Select(row => row.Name + " " + row.Status)));
+            Assert.IsFalse(
+                reopenOnlyRows.Any(row => staleStatuses.Contains(row.Status)),
+                string.Join(", ", reopenOnlyRows.Where(row => staleStatuses.Contains(row.Status)).Select(row => row.Name + " " + row.Status)));
+
+            foreach (var recordedRow in new[]
+            {
+                "Page-by-page exact XAML audit",
+                "Home page",
+                "All Controls page",
+                "Section pages",
+                "Sample code panes",
+                "Theme behavior",
+                "Shell high-contrast chrome",
+                "Keyboard and automation details"
+            })
+            {
+                Assert.IsTrue(
+                    reopenOnlyRows.Single(row => row.Name == recordedRow).Status.StartsWith("Recorded", StringComparison.Ordinal),
+                    recordedRow);
+            }
+
+            AssertContainsInOrder(
+                tracker,
+                "## Recorded Reopen-Only Work",
+                "This section is supporting evidence, not the scheduler.",
+                "Every row below is recorded or reopen-only for Milestone 1",
+                "`Current Order Lock` global-order table");
+        }
+
+        [TestMethod]
         public void TrackerNamesLocalOfficialWpfGallerySourceAsAuthority()
         {
             var tracker = ReadRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
@@ -240,6 +284,37 @@ namespace ModernWpf.Gallery.Tests
             return rows;
         }
 
+        private static IReadOnlyList<AreaStatusRow> ReadAreaStatusRows(string tracker, string heading, string tableHeader)
+        {
+            var rows = new List<AreaStatusRow>();
+            var lines = tracker.Split(new[] { "\r\n", "\n" }, StringSplitOptions.None);
+            var headingIndex = lines.ToList().FindIndex(line => line == heading);
+            Assert.IsTrue(headingIndex >= 0, heading);
+            var headerIndex = lines
+                .Skip(headingIndex + 1)
+                .TakeWhile(line => !line.StartsWith("## ", StringComparison.Ordinal))
+                .Select((line, index) => new { Line = line, Index = headingIndex + 1 + index })
+                .FirstOrDefault(item => item.Line == tableHeader)?.Index ?? -1;
+            Assert.IsTrue(headerIndex >= 0, tableHeader);
+
+            for (var i = headerIndex + 2; i < lines.Length; i++)
+            {
+                var line = lines[i];
+                if (!line.StartsWith("|", StringComparison.Ordinal))
+                {
+                    break;
+                }
+
+                var parts = line.Trim('|').Split('|').Select(part => part.Trim()).ToArray();
+                if (parts.Length >= 2)
+                {
+                    rows.Add(new AreaStatusRow(parts[0], parts[1]));
+                }
+            }
+
+            return rows;
+        }
+
         private sealed class WorkingChecklistRow
         {
             public WorkingChecklistRow(string name, string structuralTests, string exactSourceAudit, string visualChecked)
@@ -259,6 +334,19 @@ namespace ModernWpf.Gallery.Tests
             public string VisualChecked { get; }
 
             public string Status => StructuralTests + "/" + ExactSourceAudit + "/" + VisualChecked;
+        }
+
+        private sealed class AreaStatusRow
+        {
+            public AreaStatusRow(string name, string status)
+            {
+                Name = name;
+                Status = status;
+            }
+
+            public string Name { get; }
+
+            public string Status { get; }
         }
     }
 }
