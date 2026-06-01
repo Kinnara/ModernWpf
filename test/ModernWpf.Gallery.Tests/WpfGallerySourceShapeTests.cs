@@ -1972,7 +1972,9 @@ namespace ModernWpf.Gallery.Tests
                 "Pages",
                 "WpfGallery",
                 "Samples",
-                "UserDashboardPageViewModel.cs");
+                "UserDashboardPageViewModel.cs")
+                .Replace("\r\n", "\n")
+                .Replace('\r', '\n');
 
             AssertContainsInOrder(
                 source,
