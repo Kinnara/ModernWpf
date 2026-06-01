@@ -85,9 +85,9 @@ namespace ModernWpf.Gallery.Tests
                 "Current pointer:",
                 "Latest completion-audit/status pass, 2026-06-01:",
                 "Previous committed",
-                "branch tip before this row 6 pass was `79fdbecd`",
-                "local official source files and folders",
-                @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models\ControlsInfoData.json",
+                "branch tip before this row 6 pass was `f2c2b3cd`",
+                "local official source files",
+                @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views\AllSamplesPage.xaml",
                 "Current Order Lock and Immediate",
                 "Status both point to row 6");
 
@@ -114,7 +114,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void TrackerKeepsCompletionAuditActiveUntilWorkingChecklistStatusesClose()
+        public void TrackerKeepsCompletionAuditActiveAfterWorkingChecklistStatusesClose()
         {
             var tracker = ReadRepoFile("docs", "wpf-gallery-milestone-1-tracker.md");
             var workingChecklistRows = ReadWorkingChecklistRows(tracker);
@@ -123,7 +123,7 @@ namespace ModernWpf.Gallery.Tests
                 .ToList();
 
             Assert.AreEqual(
-                2,
+                0,
                 nonDoneRows.Count,
                 string.Join(", ", nonDoneRows.Select(row => row.Name + " " + row.Status)));
 
@@ -149,7 +149,9 @@ namespace ModernWpf.Gallery.Tests
                 "Status & Info section",
                 "System section",
                 "Settings",
-                "Design Guidance section"
+                "Design Guidance section",
+                "All Controls",
+                "Home"
             })
             {
                 Assert.AreEqual("Done/Done/Done", workingChecklistRows.Single(row => row.Name == closedRow).Status, closedRow);
@@ -159,24 +161,26 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 workingChecklistRows.Any(row => row.VisualChecked != "Done"),
                 string.Join(", ", workingChecklistRows.Where(row => row.VisualChecked != "Done").Select(row => row.Name + " " + row.Status)));
-            Assert.AreEqual("Done/Mostly done/Done", workingChecklistRows.Single(row => row.Name == "Home").Status);
-            CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "All Controls");
+            Assert.AreEqual("Done/Done/Done", workingChecklistRows.Single(row => row.Name == "Home").Status);
+            Assert.IsFalse(nonDoneRows.Any(row => row.Name == "Home"), "Home should not remain a completion-audit blocker.");
             Assert.AreEqual("Done/Done/Done", workingChecklistRows.Single(row => row.Name == "Settings").Status);
             Assert.IsFalse(nonDoneRows.Any(row => row.Name == "Settings"), "Settings should not remain a completion-audit blocker.");
             Assert.AreEqual("Done/Done/Done", workingChecklistRows.Single(row => row.Name == "Design Guidance section").Status);
             Assert.IsFalse(nonDoneRows.Any(row => row.Name == "Design Guidance section"), "Design Guidance section should not remain a completion-audit blocker.");
+            Assert.AreEqual("Done/Done/Done", workingChecklistRows.Single(row => row.Name == "All Controls").Status);
+            Assert.IsFalse(nonDoneRows.Any(row => row.Name == "All Controls"), "All Controls should not remain a completion-audit blocker.");
 
             AssertContainsInOrder(
                 tracker,
                 "Working Checklist page/status completion audit:",
-                "table still has 2 rows with at least one non-`Done` status",
-                "`Home`",
-                "`All Controls`",
-                "Their visual",
-                "statuses are now closed",
-                "structural/source row 6 completion-audit blockers, not permission to run",
-                "lower-priority source cleanup ahead of reopened visual, High Contrast,",
-                "measurement, automation, harness, or row 5 evidence.");
+                "table now has 0 rows with at least one non-`Done` status",
+                "This removes the",
+                "current page/status blocker",
+                "completion remains unproven until the row 6",
+                "final audit verifies",
+                "visual/High Contrast/high-drift record",
+                "harness result",
+                "explicit goal");
         }
 
         [TestMethod]
