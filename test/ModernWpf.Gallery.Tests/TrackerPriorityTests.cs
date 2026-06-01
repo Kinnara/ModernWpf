@@ -85,9 +85,9 @@ namespace ModernWpf.Gallery.Tests
                 "Current pointer:",
                 "Latest completion-audit/status pass, 2026-06-01:",
                 "Previous committed",
-                "branch tip before this row 6 pass was `e7bd3ec6`",
-                "local official source files",
-                @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views\SettingsPage.xaml",
+                "branch tip before this row 6 pass was `79fdbecd`",
+                "local official source files and folders",
+                @"D:\repos\WPF-Samples\Sample Applications\WPFGallery\Models\ControlsInfoData.json",
                 "Current Order Lock and Immediate",
                 "Status both point to row 6");
 
@@ -123,7 +123,7 @@ namespace ModernWpf.Gallery.Tests
                 .ToList();
 
             Assert.AreEqual(
-                3,
+                2,
                 nonDoneRows.Count,
                 string.Join(", ", nonDoneRows.Select(row => row.Name + " " + row.Status)));
 
@@ -148,29 +148,30 @@ namespace ModernWpf.Gallery.Tests
                 "Text section",
                 "Status & Info section",
                 "System section",
-                "Settings"
+                "Settings",
+                "Design Guidance section"
             })
             {
                 Assert.AreEqual("Done/Done/Done", workingChecklistRows.Single(row => row.Name == closedRow).Status, closedRow);
                 Assert.IsFalse(nonDoneRows.Any(row => row.Name == closedRow), closedRow + " should not remain a completion-audit blocker.");
             }
 
-            Assert.AreEqual("Partial/Partial/Done", workingChecklistRows.Single(row => row.Name == "Design Guidance section").Status);
             Assert.IsFalse(
                 workingChecklistRows.Any(row => row.VisualChecked != "Done"),
                 string.Join(", ", workingChecklistRows.Where(row => row.VisualChecked != "Done").Select(row => row.Name + " " + row.Status)));
             Assert.AreEqual("Done/Mostly done/Done", workingChecklistRows.Single(row => row.Name == "Home").Status);
-            CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "Design Guidance section");
             CollectionAssert.Contains(nonDoneRows.Select(row => row.Name).ToList(), "All Controls");
             Assert.AreEqual("Done/Done/Done", workingChecklistRows.Single(row => row.Name == "Settings").Status);
             Assert.IsFalse(nonDoneRows.Any(row => row.Name == "Settings"), "Settings should not remain a completion-audit blocker.");
+            Assert.AreEqual("Done/Done/Done", workingChecklistRows.Single(row => row.Name == "Design Guidance section").Status);
+            Assert.IsFalse(nonDoneRows.Any(row => row.Name == "Design Guidance section"), "Design Guidance section should not remain a completion-audit blocker.");
 
             AssertContainsInOrder(
                 tracker,
                 "Working Checklist page/status completion audit:",
-                "table still has 3 rows with at least one non-`Done` status",
+                "table still has 2 rows with at least one non-`Done` status",
                 "`Home`",
-                "`Design Guidance section`",
+                "`All Controls`",
                 "Their visual",
                 "statuses are now closed",
                 "structural/source row 6 completion-audit blockers, not permission to run",
