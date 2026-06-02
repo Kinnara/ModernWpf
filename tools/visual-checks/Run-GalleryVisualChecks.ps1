@@ -831,6 +831,7 @@ function Test-ControlSupportsTextInteraction([string]$control) {
 function Test-ControlSupportsValueInteraction([string]$control) {
     switch ($control) {
         "RatingControl" { return $true }
+        "Slider" { return $true }
         "NumberBox" { return $true }
         default { return $false }
     }
@@ -867,6 +868,7 @@ function Get-OutputInteractionMinimumDelta([string]$control) {
 function Get-ValueInteractionStep([string]$control) {
     switch ($control) {
         "RatingControl" { return 3.0 }
+        "Slider" { return 50.0 }
         "NumberBox" { return 10.0 }
         default { return 0.0 }
     }
@@ -875,6 +877,7 @@ function Get-ValueInteractionStep([string]$control) {
 function Get-ValueInteractionTargetValue([string]$control, $baselineValue) {
     switch ($control) {
         "RatingControl" { return 3.0 }
+        "Slider" { return 50.0 }
         default {
             if ($null -eq $baselineValue) {
                 return $null
@@ -882,6 +885,13 @@ function Get-ValueInteractionTargetValue([string]$control, $baselineValue) {
 
             return [double]$baselineValue + [double](Get-ValueInteractionStep $control)
         }
+    }
+}
+
+function Get-ValueInteractionCropAutomationId([string]$control) {
+    switch ($control) {
+        "Slider" { return "GallerySample_Slider_Root" }
+        default { return "" }
     }
 }
 
@@ -2514,7 +2524,7 @@ function Invoke-ValueIncreaseOnce($window, [string]$control, $element, $expected
         return $false
     }
 
-    if ($control -eq "RatingControl") {
+    if ($control -eq "RatingControl" -or $control -eq "Slider") {
         try {
             $rangePattern = $element.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
             if ($null -ne $rangePattern) {
@@ -3292,6 +3302,16 @@ function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseD
     $baselineValue = Get-ElementNumericValue $element
     $step = Get-ValueInteractionStep $control
     $expectedValue = Get-ValueInteractionTargetValue $control $baselineValue
+    $cropAutomationId = Get-ValueInteractionCropAutomationId $control
+    $cropElement = if (![string]::IsNullOrWhiteSpace($cropAutomationId)) {
+        TryFind-DescendantByAutomationId $window $cropAutomationId
+    }
+    else {
+        $null
+    }
+    if ($null -eq $cropElement) {
+        $cropElement = $element
+    }
     $treePath = Join-Path $caseDir ("{0}-{1}-value.uia.txt" -f $app.ToLowerInvariant(), $control)
     try {
         Write-UiaTree $element $treePath 5
@@ -3311,7 +3331,7 @@ function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseD
 
     $baselineCropPath = Join-Path $caseDir ("{0}-{1}-value-before-crop.png" -f $app.ToLowerInvariant(), $control)
     $baselineCrop = if (Test-Path $baselinePath) {
-        Save-ElementCrop $window $baselinePath $baselineCropPath $element "UIA" 10
+        Save-ElementCrop $window $baselinePath $baselineCropPath $cropElement "UIA" 10
     }
     else {
         $null
@@ -3320,7 +3340,7 @@ function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseD
         Start-Sleep -Milliseconds 300
         try {
             Capture-Window $window.Current.NativeWindowHandle $baselinePath
-            $baselineCrop = Save-ElementCrop $window $baselinePath $baselineCropPath $element "UIA" 10
+            $baselineCrop = Save-ElementCrop $window $baselinePath $baselineCropPath $cropElement "UIA" 10
         }
         catch {
         }
@@ -3340,7 +3360,7 @@ function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseD
 
     $afterCropPath = Join-Path $caseDir ("{0}-{1}-value-after-crop.png" -f $app.ToLowerInvariant(), $control)
     $afterCrop = if (Test-Path $afterPath) {
-        Save-ElementCrop $window $afterPath $afterCropPath $element "UIA" 10
+        Save-ElementCrop $window $afterPath $afterCropPath $cropElement "UIA" 10
     }
     else {
         $null
@@ -3349,7 +3369,7 @@ function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseD
         Start-Sleep -Milliseconds 300
         try {
             Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
-            $afterCrop = Save-ElementCrop $window $afterPath $afterCropPath $element "UIA" 10
+            $afterCrop = Save-ElementCrop $window $afterPath $afterCropPath $cropElement "UIA" 10
         }
         catch {
         }
@@ -3392,6 +3412,7 @@ function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseD
         Step = $step
         ExpectedValue = $expectedValue
         ValueAfter = $afterValue
+        CropAutomationId = $cropAutomationId
         BaselineScreenshot = $baselinePath
         UiaTree = $treePath
         IncreaseButtonFound = $null -ne $increaseButton

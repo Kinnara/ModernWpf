@@ -475,3 +475,27 @@ Expand visual interaction coverage for the Gallery RatingControl sample:
   - Initial RatingControl value run proving the blank baseline crop gap: `artifacts/visual-checks/20260602-063343-205-84752/report.md`
   - Focused passing RatingControl value run after blank-crop hardening: `artifacts/visual-checks/20260602-063640-279-17232/report.md`
   - Passing combined value/output sweep for `RatingControl`, `RepeatButton`, and `NumberBox`: `artifacts/visual-checks/20260602-063726-091-65080/report.md`
+
+## Round 17: Slider Value and Output Coverage
+
+### Scope
+
+Expand visual interaction coverage for the Gallery Slider sample:
+
+- `Slider`
+
+### Current Findings
+
+- The visual harness required `GallerySample_Slider_Slider`, but `-IncludeInteractions` still produced `Interaction: null`, so the sample could render while value changes, thumb movement, and output binding were never exercised.
+- Added Slider to the value interaction path. The check reads the live `RangeValuePattern` value, sets the target value to `50`, verifies `BaselineValue = 0`, `ExpectedValue = 50`, and `ValueAfter = 50`, and records the Slider subtree.
+- Added a value crop automation hook so Slider uses `GallerySample_Slider_Root` instead of only cropping the control. That makes the visual proof include both thumb movement and the bound output text changing from `0` to `50`.
+- The combined value sweep confirms the new crop hook did not regress the existing RatingControl or NumberBox value proofs.
+
+### Verification
+
+- Focused tests:
+  - `WpfGallerySourceShapeTests` `FullyQualifiedName~GalleryVisualChecks` slice: 11 passed on net8 and net10
+- Visual audit:
+  - Static-only Slider baseline with `Interaction: null`: `artifacts/visual-checks/20260602-063954-481-84224/report.md`
+  - Focused passing Slider value/output run: `artifacts/visual-checks/20260602-064149-608-80636/report.md`
+  - Passing combined value sweep for `Slider`, `RatingControl`, and `NumberBox`: `artifacts/visual-checks/20260602-064243-561-24188/report.md`
