@@ -318,3 +318,31 @@ Expand visual interaction coverage for the Gallery `GridView` sample so it prove
   - First failing `GridView` selection run using selection without activation: `artifacts/visual-checks/20260602-035757-449-71644/report.md`
   - Passing focused `GridView` visual activation run after adding item Invoke automation: `artifacts/visual-checks/20260602-042327-414-39708/report.md`
   - Passing combined selection sweep for `GridView`, `PipsPager`, and `Pivot`: `artifacts/visual-checks/20260602-042541-677-12876/report.md`
+
+## Round 11: Shell Navigation Expansion State Coverage
+
+### Scope
+
+Tighten the WPF Gallery shell click audit around NavigationView parent items:
+
+- `ShellClickDesignGuidance`
+- `ShellClickDesignGuidanceCollapse`
+- `ShellClickSamples`
+
+### Current Findings
+
+- The previous shell click checks could pass with broken expansion/collapse behavior because they only proved route readiness and a nonblank pane crop.
+- Once the audit asserted `ExpandCollapsePattern` state and parent item height, the collapse case failed: `Design Guidance` remained `Expanded` with a 250px item extent.
+- The audit itself also had a false recovery path: after a successful collapse click, it re-invoked the last item while trying to recover route readiness, which expanded the item again.
+- Fixed the audit so shell state cases assert expanded/collapsed UIA state and geometry, click the visible disclosure glyph, and skip the route re-invoke/route wait for the state-only collapse case.
+- Fixed the control path behind the click by making `InputHelper` observe handled mouse events and by giving `NavigationViewItemPresenter` an explicit chevron mouse down/up path that raises the normal tapped event. That prevents child glyph handling and parent presenter capture from swallowing or double-processing the disclosure click.
+
+### Verification
+
+- Focused tests:
+  - `NavigationViewApiTests.ExpandCollapseChevronMouseDownDoesNotLetPresenterStealCapture` and `VerifyExpandCollapseChevronVisibility`: passed on net8
+  - `WpfGallerySourceShapeTests.WpfGalleryVisualAuditValidatesShellClickExpansionState` and `WpfGalleryVisualAuditLaunchesOfficialDisplayRoutesWithCanonicalReadyRoutes`: passed on net8 and net10
+- Visual audit:
+  - Initial strengthened audit failure proving the old false pass: `artifacts/wpf-gallery-visual-audit/20260602-043405-461-63352/report.md`
+  - Focused passing collapse state run: `artifacts/wpf-gallery-visual-audit/20260602-051527-032-94560/report.md`
+  - Passing combined shell click run for expand, collapse, and Samples: `artifacts/wpf-gallery-visual-audit/20260602-051552-177-28404/report.md`

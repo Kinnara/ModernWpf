@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -839,6 +840,48 @@ public class NavigationViewApiTests
             parentItem.MenuItems.Clear();
             host.UpdateLayout();
             Assert.AreEqual(Visibility.Collapsed, chevron.Visibility);
+        });
+    }
+
+    [TestMethod]
+    public void ExpandCollapseChevronMouseDownDoesNotLetPresenterStealCapture()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var parentItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "ParentItem",
+                IsExpanded = true
+            };
+            parentItem.MenuItems.Add(new ModernWpf.Controls.NavigationViewItem { Content = "ChildItem" });
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Width = 1008,
+                IsSettingsVisible = false
+            };
+            navView.MenuItems.Add(parentItem);
+
+            using var host = new TestWindowHost(navView);
+
+            var presenter = VisualTreeTestHelper.FindDescendant<ModernWpf.Controls.Primitives.NavigationViewItemPresenter>(parentItem);
+            Assert.IsNotNull(presenter);
+
+            var chevron = FindNamedDescendant<FrameworkElement>(presenter!, "ExpandCollapseChevron");
+            Assert.AreEqual(Visibility.Visible, chevron.Visibility);
+
+            var mouseDown = new MouseButtonEventArgs(Mouse.PrimaryDevice, 1, MouseButton.Left)
+            {
+                RoutedEvent = UIElement.MouseLeftButtonDownEvent,
+                Source = chevron
+            };
+            chevron.RaiseEvent(mouseDown);
+
+            Assert.IsTrue(mouseDown.Handled);
+            Assert.IsFalse(presenter!.IsMouseCaptured);
+
         });
     }
 

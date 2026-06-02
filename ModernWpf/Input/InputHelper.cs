@@ -32,17 +32,17 @@ namespace ModernWpf.Input
 
             if (newValue)
             {
-                element.MouseLeftButtonDown += OnMouseLeftButtonDown;
-                element.MouseLeftButtonUp += OnMouseLeftButtonUp;
-                element.LostMouseCapture += OnLostMouseCapture;
-                element.MouseLeave += OnMouseLeave;
+                element.AddHandler(UIElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(OnMouseLeftButtonDown), true /*handledEventsToo*/);
+                element.AddHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnMouseLeftButtonUp), true /*handledEventsToo*/);
+                element.AddHandler(UIElement.LostMouseCaptureEvent, new MouseEventHandler(OnLostMouseCapture), true /*handledEventsToo*/);
+                element.AddHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(OnMouseLeave), true /*handledEventsToo*/);
             }
             else
             {
-                element.MouseLeftButtonDown -= OnMouseLeftButtonDown;
-                element.MouseLeftButtonUp -= OnMouseLeftButtonUp;
-                element.LostMouseCapture -= OnLostMouseCapture;
-                element.MouseLeave -= OnMouseLeave;
+                element.RemoveHandler(UIElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(OnMouseLeftButtonDown));
+                element.RemoveHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnMouseLeftButtonUp));
+                element.RemoveHandler(UIElement.LostMouseCaptureEvent, new MouseEventHandler(OnLostMouseCapture));
+                element.RemoveHandler(UIElement.MouseLeaveEvent, new MouseEventHandler(OnMouseLeave));
             }
         }
 
@@ -95,7 +95,7 @@ namespace ModernWpf.Input
             element.RemoveHandler(TappedEvent, handler);
         }
 
-        private static void RaiseTapped(UIElement element, int timestamp)
+        internal static void RaiseTapped(UIElement element, int timestamp)
         {
             var e = new TappedRoutedEventArgs { RoutedEvent = TappedEvent, Source = element, Timestamp = timestamp };
             _lastTappedArgs = e;

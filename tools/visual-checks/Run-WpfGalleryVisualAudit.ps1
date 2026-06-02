@@ -727,7 +727,106 @@ function Click-TreeItemHeader($item, [string]$name) {
         return $false
     }
 
-    return Click-Element $text
+    $itemRect = $item.Current.BoundingRectangle
+    $textRect = $text.Current.BoundingRectangle
+    if ($itemRect.Width -le 0 -or $itemRect.Height -le 0 -or
+        $textRect.Width -le 0 -or $textRect.Height -le 0) {
+        return $false
+    }
+
+    [WpfGalleryVisualNative]::Click(
+        [int][Math]::Round($textRect.X + ($textRect.Width / 2)),
+        [int][Math]::Round($itemRect.Y + [Math]::Min(20.0, $itemRect.Height / 2.0)))
+    return $true
+}
+
+function Click-ModernNavigationItemChevron($item) {
+    if ($null -eq $item) {
+        return $false
+    }
+
+    $rect = $item.Current.BoundingRectangle
+    if ($rect.Width -le 0 -or $rect.Height -le 0) {
+        return $false
+    }
+
+    [WpfGalleryVisualNative]::Click(
+        [int][Math]::Round($rect.X + 32.0),
+        [int][Math]::Round($rect.Y + [Math]::Min(20.0, $rect.Height / 2.0)))
+    return $true
+}
+
+function Get-ModernShellExpectedNavigationStates($case) {
+    switch ($case.Id) {
+        "ShellClickDesignGuidance" {
+            return @(
+                [ordered]@{ Name = "Design Guidance"; State = "Expanded"; MinimumHeight = 80; MaximumHeight = 0 })
+        }
+        "ShellClickDesignGuidanceCollapse" {
+            return @(
+                [ordered]@{ Name = "Design Guidance"; State = "Collapsed"; MinimumHeight = 0; MaximumHeight = 64 })
+        }
+        "ShellClickSamples" {
+            return @(
+                [ordered]@{ Name = "Samples"; State = "Expanded"; MinimumHeight = 80; MaximumHeight = 0 })
+        }
+        default {
+            return @()
+        }
+    }
+}
+
+function Get-ExpandCollapseStateName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return $pattern.Current.ExpandCollapseState.ToString()
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Test-ModernShellNavigationState($window, $case) {
+    $expectedStates = @(Get-ModernShellExpectedNavigationStates $case)
+    if ($expectedStates.Count -eq 0) {
+        return ""
+    }
+
+    $failures = New-Object System.Collections.Generic.List[string]
+    foreach ($expected in $expectedStates) {
+        $item = Find-ModernNavigationItemByName $window $expected.Name
+        if ($null -eq $item) {
+            $failures.Add("Navigation item '$($expected.Name)' was not found.")
+            continue
+        }
+
+        $actualState = Get-ExpandCollapseStateName $item
+        if ($actualState -ne $expected.State) {
+            $failures.Add("Navigation item '$($expected.Name)' expected $($expected.State), observed '$actualState'.")
+        }
+
+        $rect = $item.Current.BoundingRectangle
+        if ($expected.MinimumHeight -gt 0 -and $rect.Height -lt $expected.MinimumHeight) {
+            $failures.Add("Navigation item '$($expected.Name)' expected expanded height >= $($expected.MinimumHeight), observed $([int][Math]::Round($rect.Height)).")
+        }
+
+        if ($expected.MaximumHeight -gt 0 -and $rect.Height -gt $expected.MaximumHeight) {
+            $failures.Add("Navigation item '$($expected.Name)' expected collapsed height <= $($expected.MaximumHeight), observed $([int][Math]::Round($rect.Height)).")
+        }
+    }
+
+    if ($failures.Count -eq 0) {
+        return ""
+    }
+
+    return $failures -join " "
 }
 
 
@@ -1041,15 +1140,22 @@ function Navigate-ModernWpfGalleryByClicks($window, $case) {
 
     [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
     $lastItem = $null
-    foreach ($name in $case.ModernClickPath) {
+    for ($clickIndex = 0; $clickIndex -lt $case.ModernClickPath.Count; $clickIndex++) {
+        $name = $case.ModernClickPath[$clickIndex]
         $item = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf Gallery navigation item '$name'" -Probe {
             Find-ModernNavigationItemByName $window $name
         }
 
         $lastItem = $item
-        $clicked = Click-Element $item
+        $clicked = $false
+        if ($case.Id -eq "ShellClickDesignGuidanceCollapse" -and $clickIndex -gt 0) {
+            $clicked = Click-ModernNavigationItemChevron $item
+        }
         if (!$clicked) {
             $clicked = Click-TreeItemHeader $item $name
+        }
+        if (!$clicked) {
+            $clicked = Click-Element $item
         }
 
         if (!$clicked) {
@@ -1059,15 +1165,19 @@ function Navigate-ModernWpfGalleryByClicks($window, $case) {
         Start-Sleep -Milliseconds 500
     }
 
-    if ($null -eq (Test-ModernWpfRouteReady $window $case.ReadyRoute) -and $null -ne $lastItem) {
+    if ($case.Id -ne "ShellClickDesignGuidanceCollapse" -and
+        $null -eq (Test-ModernWpfRouteReady $window $case.ReadyRoute) -and
+        $null -ne $lastItem) {
         [void](Invoke-Element $lastItem)
         Start-Sleep -Milliseconds 500
     }
 
-    Wait-ModernWpfRouteReady `
-        $window `
-        $case.ReadyRoute `
-        "ModernWpf clicked route '$($case.ReadyRoute)' to become ready"
+    if ($case.Id -ne "ShellClickDesignGuidanceCollapse") {
+        Wait-ModernWpfRouteReady `
+            $window `
+            $case.ReadyRoute `
+            "ModernWpf clicked route '$($case.ReadyRoute)' to become ready"
+    }
     Start-Sleep -Milliseconds 500
 }
 
@@ -1820,6 +1930,9 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             ($null -eq $contentCrop -or !$contentCrop.NonBlank) -and
             !$capture.Succeeded) {
             $lastException = $capture.LastException
+        }
+        if ([string]::IsNullOrWhiteSpace($lastException)) {
+            $lastException = Test-ModernShellNavigationState $window $case
         }
 
         return [ordered]@{

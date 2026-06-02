@@ -2951,6 +2951,62 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void WpfGalleryVisualAuditValidatesShellClickExpansionState()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-WpfGalleryVisualAudit.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Get-ModernShellExpectedNavigationStates($case)",
+                "\"ShellClickDesignGuidance\"",
+                "@{ Name = \"Design Guidance\"; State = \"Expanded\"; MinimumHeight = 80; MaximumHeight = 0 }",
+                "\"ShellClickDesignGuidanceCollapse\"",
+                "@{ Name = \"Design Guidance\"; State = \"Collapsed\"; MinimumHeight = 0; MaximumHeight = 64 }",
+                "\"ShellClickSamples\"",
+                "@{ Name = \"Samples\"; State = \"Expanded\"; MinimumHeight = 80; MaximumHeight = 0 }");
+            AssertContainsInOrder(
+                source,
+                "function Click-ModernNavigationItemChevron($item)",
+                "$rect = $item.Current.BoundingRectangle",
+                "[int][Math]::Round($rect.X + 32.0)",
+                "[int][Math]::Round($rect.Y + [Math]::Min(20.0, $rect.Height / 2.0))");
+            AssertContainsInOrder(
+                source,
+                "function Test-ModernShellNavigationState($window, $case)",
+                "$item = Find-ModernNavigationItemByName $window $expected.Name",
+                "$actualState = Get-ExpandCollapseStateName $item",
+                "$actualState -ne $expected.State",
+                "$rect = $item.Current.BoundingRectangle",
+                "$expected.MaximumHeight -gt 0 -and $rect.Height -gt $expected.MaximumHeight",
+                "return $failures -join \" \"");
+            AssertContainsInOrder(
+                source,
+                "function Navigate-ModernWpfGalleryByClicks($window, $case)",
+                "for ($clickIndex = 0; $clickIndex -lt $case.ModernClickPath.Count; $clickIndex++)",
+                "$name = $case.ModernClickPath[$clickIndex]",
+                "if ($case.Id -eq \"ShellClickDesignGuidanceCollapse\" -and $clickIndex -gt 0) {",
+                "$clicked = Click-ModernNavigationItemChevron $item",
+                "$clicked = Click-TreeItemHeader $item $name",
+                "if (!$clicked) {",
+                "$clicked = Click-Element $item");
+            AssertContainsInOrder(
+                source,
+                "$case.Id -ne \"ShellClickDesignGuidanceCollapse\"",
+                "[void](Invoke-Element $lastItem)",
+                "$case.Id -ne \"ShellClickDesignGuidanceCollapse\"",
+                "Wait-ModernWpfRouteReady");
+            AssertContainsInOrder(
+                source,
+                "if ([string]::IsNullOrWhiteSpace($lastException)) {",
+                "$lastException = Test-ModernShellNavigationState $window $case",
+                "Status = $(if (($windowNonBlank -or $contentCrop.NonBlank) -and $contentCrop.NonBlank -and [string]::IsNullOrWhiteSpace($lastException)) { \"Passed\" } else { \"Failed\" })");
+        }
+
+        [TestMethod]
         public void WpfGalleryPageStylesKeepOfficialResourceSetterSourceShape()
         {
             var xaml = ReadRepoFile(
