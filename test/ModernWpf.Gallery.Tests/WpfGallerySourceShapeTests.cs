@@ -4364,6 +4364,16 @@ namespace ModernWpf.Gallery.Tests
                 "ButtonPage.xaml");
             AssertContainsInOrder(
                 buttonXaml,
+                "Margin=\"10\"",
+                "AutomationProperties.AutomationId=\"GallerySample_Button_Root\"",
+                "HeaderText=\"Simple Button\"",
+                "XamlCode=\"&lt;Button Content=&quot;Standard WPF button&quot; /&gt;\"",
+                "<Button",
+                "AutomationProperties.AutomationId=\"GallerySample_Button_PrimaryButton\"",
+                "AutomationProperties.Name=\"Standard WPF\"",
+                "Content=\"Standard WPF button\"");
+            AssertContainsInOrder(
+                buttonXaml,
                 "<!--<controls:ControlExample",
                 "HeaderText=\"Button with Icon\"",
                 "XamlCode=\"&lt;Button Content=&quot;Font Icon Button&quot; Icon=&quot;Fluent24&quot; /&gt;\"",
@@ -4386,9 +4396,16 @@ namespace ModernWpf.Gallery.Tests
                 "BasicInput",
                 "CheckBoxPage.xaml");
             var normalizedCheckBoxXaml = checkBoxXaml.Replace("\r\n", "\n").Replace('\r', '\n');
-            StringAssert.Contains(
+            AssertContainsInOrder(
                 checkBoxXaml,
-                "<controls:ControlExample Margin=\"10\" HeaderText=\"A 2-state CheckBox.\" XamlCode=\"&lt;CheckBox Content=&quot;Two-state CheckBox&quot; /&gt;\">");
+                "Margin=\"10\"",
+                "AutomationProperties.AutomationId=\"GallerySample_CheckBox_Root\"",
+                "HeaderText=\"A 2-state CheckBox.\"",
+                "XamlCode=\"&lt;CheckBox Content=&quot;Two-state CheckBox&quot; /&gt;\"",
+                "<CheckBox",
+                "AutomationProperties.AutomationId=\"GallerySample_CheckBox_CheckBox\"",
+                "AutomationProperties.Name=\"Sample Two State\"",
+                "Content=\"Two-state CheckBox\"");
             StringAssert.Contains(
                 normalizedCheckBoxXaml,
                 "</controls:ControlExample>\n\n\n                <controls:ControlExample\n                    Margin=\"10,32,10,10\"\n                    HeaderText=\"A 3-state CheckBox.\"");
@@ -4405,7 +4422,9 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 comboBoxXaml,
                 "<StackPanel Margin=\"0,0,0,24\">",
+                "AutomationProperties.AutomationId=\"GallerySample_ComboBox_Root\"",
                 "HeaderText=\"A ComboBox with items defined inline.\"",
+                "AutomationProperties.AutomationId=\"GallerySample_ComboBox_ComboBox\"",
                 "AutomationProperties.Name=\"Sample defined inline\"",
                 "<ComboBoxItem Content=\"Blue\" />",
                 "<ComboBoxItem Content=\"Green\" />",
@@ -4434,6 +4453,8 @@ namespace ModernWpf.Gallery.Tests
                 "<StackPanel Grid.Column=\"0\" KeyboardNavigation.TabNavigation=\"Once\" KeyboardNavigation.DirectionalNavigation=\"Cycle\">");
             AssertContainsInOrder(
                 radioButtonXaml,
+                "AutomationProperties.AutomationId=\"GallerySample_RadioButton_Root\"",
+                "AutomationProperties.AutomationId=\"GallerySample_RadioButton_RadioButton\"",
                 "AutomationProperties.Name=\"Default Radio Option 1\"",
                 "Content=\"Option 1\"",
                 "GroupName=\"radio_group_one\"",
@@ -4462,7 +4483,9 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 sliderXaml,
                 "<StackPanel Margin=\"0,0,0,24\">",
+                "AutomationProperties.AutomationId=\"GallerySample_Slider_Root\"",
                 "HeaderText=\"A simple slider.\"",
+                "AutomationProperties.AutomationId=\"GallerySample_Slider_Slider\"",
                 "AutomationProperties.Name=\"Simple\"",
                 "Value=\"{Binding ViewModel.SimpleSliderValue, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SliderPage}, Mode=TwoWay}\"",
                 "Text=\"{Binding ViewModel.SimpleSliderValue, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:SliderPage}, Mode=OneWay}\"",

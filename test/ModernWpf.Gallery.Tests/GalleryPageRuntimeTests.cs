@@ -1286,8 +1286,8 @@ namespace ModernWpf.Gallery.Tests
                     var disableButton = (CheckBox)simpleGrid.Children[1];
                     Assert.AreEqual("Standard WPF button", simpleButton.Content);
                     Assert.AreEqual("Standard WPF", AutomationProperties.GetName(simpleButton));
-                    Assert.AreEqual(string.Empty, buttonExamples[0].AutomationId);
-                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(simpleButton));
+                    Assert.AreEqual("GallerySample_Button_Root", buttonExamples[0].AutomationId);
+                    Assert.AreEqual("GallerySample_Button_PrimaryButton", AutomationProperties.GetAutomationId(simpleButton));
                     Assert.AreEqual("Disable button", disableButton.Content);
                     Assert.AreEqual(1, Grid.GetColumn(disableButton));
                     disableButton.IsChecked = true;
@@ -1321,6 +1321,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsFalse(twoState.IsThreeState);
                     Assert.AreEqual(false, twoState.IsChecked);
                     Assert.AreEqual("Sample Two State", AutomationProperties.GetName(twoState));
+                    Assert.AreEqual("GallerySample_CheckBox_Root", checkBoxExamples[0].AutomationId);
+                    Assert.AreEqual("GallerySample_CheckBox_CheckBox", AutomationProperties.GetAutomationId(twoState));
 
                     var threeState = (CheckBox)checkBoxExamples[1].ExampleContent;
                     Assert.AreEqual("Three-state CheckBox", threeState.Content);
@@ -1381,8 +1383,8 @@ namespace ModernWpf.Gallery.Tests
 
                     var inlineComboBox = (ComboBox)comboBoxExamples[0].ExampleContent;
                     AssertGalleryComboBox(inlineComboBox, "Sample defined inline");
-                    Assert.AreEqual(string.Empty, comboBoxExamples[0].AutomationId);
-                    Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(inlineComboBox));
+                    Assert.AreEqual("GallerySample_ComboBox_Root", comboBoxExamples[0].AutomationId);
+                    Assert.AreEqual("GallerySample_ComboBox_ComboBox", AutomationProperties.GetAutomationId(inlineComboBox));
                     CollectionAssert.AreEqual(
                         new[] { "Blue", "Green", "Red", "Yellow" },
                         inlineComboBox.Items.Cast<ComboBoxItem>().Select(item => (string)item.Content).ToArray());
@@ -1422,6 +1424,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(KeyboardNavigationMode.Cycle, KeyboardNavigation.GetDirectionalNavigation(defaultRadioStack));
                     var defaultRadios = defaultRadioStack.Children.OfType<RadioButton>().ToArray();
                     AssertRadioButtons(defaultRadios, "Default", "radio_group_one", FlowDirection.LeftToRight);
+                    Assert.AreEqual("GallerySample_RadioButton_Root", radioButtonExamples[0].AutomationId);
+                    Assert.AreEqual("GallerySample_RadioButton_RadioButton", AutomationProperties.GetAutomationId(defaultRadios[0]));
 
                     var disableRadioButtons = (CheckBox)radioGrid.Children[1];
                     Assert.AreEqual(1, Grid.GetColumn(disableRadioButtons));
@@ -1461,7 +1465,8 @@ namespace ModernWpf.Gallery.Tests
                         },
                         sliderExamples.Select(example => example.HeaderText).ToArray());
 
-                    AssertSliderExample(sliderExamples[0], "Simple", 0, 100, 0, 1, TickPlacement.None, Orientation.Horizontal);
+                    Assert.AreEqual("GallerySample_Slider_Root", sliderExamples[0].AutomationId);
+                    AssertSliderExample(sliderExamples[0], "Simple", 0, 100, 0, 1, TickPlacement.None, Orientation.Horizontal, "GallerySample_Slider_Slider");
                     AssertSliderExample(sliderExamples[1], "Range and steps specified", 500, 1000, 500, 50, TickPlacement.None, Orientation.Horizontal);
                     AssertSliderExample(sliderExamples[2], "Tick marks", 0, 100, 0, 20, TickPlacement.Both, Orientation.Horizontal);
                     AssertSliderExample(sliderExamples[3], "Vertical", 0, 100, 0, 20, TickPlacement.Both, Orientation.Vertical);
@@ -3668,7 +3673,7 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
-        private static void AssertSliderExample(RenderedExample example, string automationName, double minimum, double maximum, double value, double tickFrequency, TickPlacement tickPlacement, Orientation orientation)
+        private static void AssertSliderExample(RenderedExample example, string automationName, double minimum, double maximum, double value, double tickFrequency, TickPlacement tickPlacement, Orientation orientation, string automationId = "")
         {
             var grid = (Grid)example.ExampleContent;
             Assert.AreEqual(2, grid.ColumnDefinitions.Count);
@@ -3682,6 +3687,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(HorizontalAlignment.Left, slider.HorizontalAlignment);
             Assert.AreEqual(VerticalAlignment.Center, slider.VerticalAlignment);
             Assert.AreEqual(automationName, AutomationProperties.GetName(slider));
+            Assert.AreEqual(automationId, AutomationProperties.GetAutomationId(slider));
             Assert.IsTrue(slider.IsSnapToTickEnabled);
             Assert.AreEqual(minimum, slider.Minimum);
             Assert.AreEqual(maximum, slider.Maximum);

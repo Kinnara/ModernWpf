@@ -198,3 +198,31 @@ Add click-open interaction coverage for controls where the center of the control
 - Visual audit:
   - Dark `SplitButton` and `ToggleSplitButton` with `Reference=None` and `IncludeInteractions`: `artifacts/visual-checks/20260602-031424-328-18236/report.md`
   - Dark combined supported open-interaction sweep for `ContentDialog`, `Flyout`, `Popup`, `MenuFlyout`, `DropDownButton`, `SplitButton`, `ToggleSplitButton`, `CommandBarFlyout`, and `TeachingTip`: `artifacts/visual-checks/20260602-031623-475-52824/report.md`
+
+## Round 7: Basic Input Runtime Guard Cleanup
+
+### Scope
+
+Fix stale Basic Input runtime/source-shape assertions after the visual-anchor work from round 3:
+
+- `Button`
+- `CheckBox`
+- `ComboBox`
+- `RadioButton`
+- `Slider`
+
+### Current Findings
+
+- The gallery pages had the intended `GallerySample_*` automation IDs, but two runtime parity tests still asserted that the first direct WPF Basic Input examples had empty automation IDs.
+- The broader `FullyQualifiedName~BasicInput` slice also caught a source-shape guard that still matched the pre-anchor one-line CheckBox `ControlExample` tag.
+- Updated the runtime tests to verify the stable sample-root and primary-control anchors instead of accepting empty IDs.
+- Updated the source-shape guard to keep checking the official sample headers, XAML snippets, and ordering while also pinning the intentional `GallerySample_*` anchor attributes.
+
+### Verification
+
+- Focused runtime tests:
+  - `GalleryPageRuntimeTests.BasicInputButtonAndCheckBoxPagesMatchWpfGalleryReference`: passed on net8 and net10
+  - `GalleryPageRuntimeTests.BasicInputComboBoxRadioButtonAndSliderPagesMatchWpfGalleryReference`: passed on net8 and net10
+- Broader guard slice:
+  - `ModernWpf.Gallery.Tests` filter `FullyQualifiedName~BasicInput`: 9 passed on net8
+  - `ModernWpf.Gallery.Tests` filter `FullyQualifiedName~BasicInput`: 9 passed on net10
