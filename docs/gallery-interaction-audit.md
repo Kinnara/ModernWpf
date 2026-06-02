@@ -22,7 +22,7 @@ Find and fix WPF Gallery issues that appear during real user interaction, with e
 | Fixed in round 3 | Basic Input visual checks | `Button`, `CheckBox`, `ComboBox`, `RadioButton`, and `Slider` pages rendered successfully but exposed no stable `GallerySample_*` anchors, so visual checks could not crop or require their primary samples. | The visual check reported route-ready pages as failed/missing required sample elements; curated automation-ID coverage did not include these WPF Gallery pages. |
 | Fixed in round 4 | Visual-check harness crops | `SplitView` and `PersonPicture` passed route readiness and rendered correct sample artifacts, but the visual check failed because their ModernWpf primary crops were taken from blank full-window screenshots. | ModernWpf primary crop mappings used inner option names instead of rendered `GallerySample_*` artifact IDs, so full-window capture failures looked like sample failures. |
 | Fixed in round 5 | Click-open visual checks | `ContentDialog`, `Flyout`, `Popup`, `MenuFlyout`, and `DropDownButton` had stable static rendering checks but no actual open-state verification under `-IncludeInteractions`. | The harness only opened `TeachingTip` and `CommandBarFlyout`; static route checks could not catch broken click/open paths for common popup controls. |
-| Tracked gap | SplitButton and ToggleSplitButton click-open checks | Opening the secondary flyout target needs a dedicated path; a naive center click invokes the primary action, while recursive UIA popup searches hang and screen capture is unavailable in this environment. | Keep static coverage for now; add a separate, bounded secondary-target interaction strategy before claiming these are click-open covered. |
+| Fixed in round 6 | SplitButton and ToggleSplitButton click-open checks | Opening the secondary flyout target needs a dedicated path; a naive center click invokes the primary action, while recursive UIA popup searches hang. | Round 5 intentionally left these out; round 6 uses a bounded secondary-segment click and visual-delta verification without walking the popup UIA tree. |
 
 ## Round 1: NavigationView Click Expansion
 
@@ -172,3 +172,29 @@ Expand `Run-GalleryVisualChecks.ps1 -IncludeInteractions` beyond the two existin
   - `WpfGallerySourceShapeTests.GalleryVisualChecksCaptureInteractionFramesWithoutReactivatingWindow`: passed on net8 and net10
 - Visual audit:
   - Dark `ContentDialog`, `Flyout`, `Popup`, `MenuFlyout`, `DropDownButton`, `CommandBarFlyout`, and `TeachingTip` with `Reference=None` and `IncludeInteractions`: `artifacts/visual-checks/20260602-025315-628-56592/report.md`
+  - Full Dark `Reference=None` sweep with `IncludeInteractions` for the supported round-5 open controls and all static controls: `artifacts/visual-checks/20260602-025637-208-12020/report.md`
+
+## Round 6: SplitButton Secondary Flyout Coverage
+
+### Scope
+
+Add click-open interaction coverage for controls where the center of the control is not the flyout opener:
+
+- `SplitButton`
+- `ToggleSplitButton`
+
+### Current Findings
+
+- `SplitButton` and `ToggleSplitButton` have separate primary and secondary regions. Center-clicking the control invokes the primary action, so the round-5 generic opener was intentionally not applied to them.
+- A generic UIA name search after opening these flyouts can hang in this environment, so using popup UIA traversal as the proof would make the visual check flaky.
+- Added a bounded secondary-segment click that targets the right edge of the control.
+- For these two controls, the harness now verifies opening from captured frame deltas and difference crops instead of walking the opened popup UIA subtree.
+- The first attempted two-control run hung before producing open frames: `artifacts/visual-checks/20260602-030901-942-76244`.
+
+### Verification
+
+- Focused test:
+  - `WpfGallerySourceShapeTests.GalleryVisualChecksOpensCommonClickInteractionControls`: passed on net8 and net10
+- Visual audit:
+  - Dark `SplitButton` and `ToggleSplitButton` with `Reference=None` and `IncludeInteractions`: `artifacts/visual-checks/20260602-031424-328-18236/report.md`
+  - Dark combined supported open-interaction sweep for `ContentDialog`, `Flyout`, `Popup`, `MenuFlyout`, `DropDownButton`, `SplitButton`, `ToggleSplitButton`, `CommandBarFlyout`, and `TeachingTip`: `artifacts/visual-checks/20260602-031623-475-52824/report.md`

@@ -2698,6 +2698,8 @@ namespace ModernWpf.Gallery.Tests
                 "\"Popup\" { return $true }",
                 "\"MenuFlyout\" { return $true }",
                 "\"DropDownButton\" { return $true }",
+                "\"SplitButton\" { return $true }",
+                "\"ToggleSplitButton\" { return $true }",
                 "\"CommandBarFlyout\" { return $true }");
             AssertContainsInOrder(
                 source,
@@ -2707,7 +2709,20 @@ namespace ModernWpf.Gallery.Tests
                 "\"Popup\" { return @(\"Simple Popup\", \"Close\") }",
                 "\"MenuFlyout\" { return @(\"By rating\", \"By match\", \"By distance\") }",
                 "\"DropDownButton\" { return @(\"Send\", \"Reply\", \"Reply All\") }",
+                "\"SplitButton\" { return @(\"Red\", \"Orange\", \"Yellow\", \"Green\", \"Blue\", \"Indigo\", \"Violet\", \"Gray\") }",
+                "\"ToggleSplitButton\" { return @(\"Bulleted list\", \"Roman numerals list\") }",
                 "\"CommandBarFlyout\" { return @(\"Share\", \"Save\", \"Delete\", \"Resize\", \"Move\") }");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-SplitButtonSecondaryOnce($window, $element)",
+                "$rect = $element.Current.BoundingRectangle",
+                "$x = [int][Math]::Round($rect.Right - [Math]::Min(12.0, [Math]::Max(6.0, $rect.Width * 0.18)))",
+                "[GalleryVisualNative]::Click($x, $y)",
+                "if ($control -eq \"SplitButton\" -or $control -eq \"ToggleSplitButton\")",
+                "return Invoke-SplitButtonSecondaryOnce $window $element",
+                "$skipOpenUiaSearch = $control -eq \"SplitButton\" -or $control -eq \"ToggleSplitButton\"",
+                "$openElement = if ($skipOpenUiaSearch) { $null } else { Find-ElementByNameInProcess $window.Current.ProcessId $openNames }",
+                "$cropElement = $showButton");
             AssertContainsInOrder(
                 source,
                 "$needsSampleElement = $IncludeInteractions -and (Test-ControlSupportsOpenInteraction $control)",

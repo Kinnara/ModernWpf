@@ -676,6 +676,8 @@ function Test-ControlSupportsOpenInteraction([string]$control) {
         "Popup" { return $true }
         "MenuFlyout" { return $true }
         "DropDownButton" { return $true }
+        "SplitButton" { return $true }
+        "ToggleSplitButton" { return $true }
         "CommandBarFlyout" { return $true }
         default { return $false }
     }
@@ -689,6 +691,8 @@ function Get-OpenInteractionNames([string]$control) {
         "Popup" { return @("Simple Popup", "Close") }
         "MenuFlyout" { return @("By rating", "By match", "By distance") }
         "DropDownButton" { return @("Send", "Reply", "Reply All") }
+        "SplitButton" { return @("Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Gray") }
+        "ToggleSplitButton" { return @("Bulleted list", "Roman numerals list") }
         "CommandBarFlyout" { return @("Share", "Save", "Delete", "Resize", "Move") }
         default { return @() }
     }
@@ -1888,7 +1892,29 @@ function Expand-ElementPatternOnce($window, $element) {
     return $false
 }
 
+function Invoke-SplitButtonSecondaryOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $rect = $element.Current.BoundingRectangle
+    if ($rect.Width -le 0 -or $rect.Height -le 0) {
+        return $false
+    }
+
+    $x = [int][Math]::Round($rect.Right - [Math]::Min(12.0, [Math]::Max(6.0, $rect.Width * 0.18)))
+    $y = [int][Math]::Round($rect.Y + ($rect.Height / 2.0))
+    [GalleryVisualNative]::Click($x, $y)
+    Start-Sleep -Milliseconds 80
+    return $true
+}
+
 function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames, [string]$control = "") {
+    if ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") {
+        return Invoke-SplitButtonSecondaryOnce $window $element
+    }
+
     $invoked = Invoke-ElementOnce $window $element
     Start-Sleep -Milliseconds 150
     if ($null -ne (Find-ElementByNameInProcess $window.Current.ProcessId $openNames)) {
@@ -1971,7 +1997,8 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     $visualOpened = $false
     $crop = $null
     $selectedFrame = $null
-    $openElement = Find-ElementByNameInProcess $window.Current.ProcessId $openNames
+    $skipOpenUiaSearch = $control -eq "SplitButton" -or $control -eq "ToggleSplitButton"
+    $openElement = if ($skipOpenUiaSearch) { $null } else { Find-ElementByNameInProcess $window.Current.ProcessId $openNames }
     if ($null -ne $openElement) {
         $treePath = Join-Path $caseDir ("{0}-{1}-open.uia.txt" -f $app.ToLowerInvariant(), $control)
         Write-UiaTree $openElement $treePath 3
@@ -1985,9 +2012,14 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     }
     else {
         $treePath = ""
-        $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GalleryItemPageRoot"
-        if ($null -eq $cropElement) {
-            $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "ContentRootGrid"
+        if ($skipOpenUiaSearch) {
+            $cropElement = $showButton
+        }
+        else {
+            $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GalleryItemPageRoot"
+            if ($null -eq $cropElement) {
+                $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "ContentRootGrid"
+            }
         }
     }
 
