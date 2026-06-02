@@ -120,16 +120,21 @@
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
-                                        <ui:ContentPresenterEx
-                                            x:Name="ContentPresenter"
-                                            Content="{TemplateBinding Content}"
-                                            ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                                            Foreground="{TemplateBinding Foreground}"
-                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                            RecognizesAccessKey="True"
-                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                        <Border
+                                            Background="{TemplateBinding Background}"
+                                            Padding="{TemplateBinding Padding}"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                            <ui:ContentPresenterEx
+                                                x:Name="ContentPresenter"
+                                                Content="{TemplateBinding Content}"
+                                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                Foreground="{TemplateBinding Foreground}"
+                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                RecognizesAccessKey="True"
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                        </Border>
                                     </ControlTemplate>
                                 </Button.Template>
                             </Button>

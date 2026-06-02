@@ -137,9 +137,9 @@ namespace ModernWpf.Controls
         {
             base.OnPreviewMouseLeftButtonDown(e);
 
-            if (_parentMenuBar?.IsFlyoutOpen != true)
+            if (_parentMenuBar?.IsFlyoutOpen != true && Items.Count > 0)
             {
-                ShowMenuFlyout();
+                _openFlyoutOnMouseLeftButtonUp = true;
             }
 
             UpdateVisualStates();
@@ -148,6 +148,13 @@ namespace ModernWpf.Controls
         protected override void OnPreviewMouseLeftButtonUp(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseLeftButtonUp(e);
+
+            if (_openFlyoutOnMouseLeftButtonUp)
+            {
+                _openFlyoutOnMouseLeftButtonUp = false;
+                BeginOpenMenuFlyout();
+            }
+
             UpdateVisualStates();
         }
 
@@ -241,6 +248,7 @@ namespace ModernWpf.Controls
         {
             if (_button != null)
             {
+                _button.Click += OnButtonClick;
                 _button.PreviewMouseLeftButtonDown += OnButtonMouseStateChanged;
                 _button.PreviewMouseLeftButtonUp += OnButtonMouseStateChanged;
                 _button.MouseEnter += OnButtonMouseStateChanged;
@@ -252,6 +260,7 @@ namespace ModernWpf.Controls
         {
             if (_button != null)
             {
+                _button.Click -= OnButtonClick;
                 _button.PreviewMouseLeftButtonDown -= OnButtonMouseStateChanged;
                 _button.PreviewMouseLeftButtonUp -= OnButtonMouseStateChanged;
                 _button.MouseEnter -= OnButtonMouseStateChanged;
@@ -270,6 +279,25 @@ namespace ModernWpf.Controls
                 _flyout.Closed -= OnFlyoutClosed;
                 _flyout.Presenter.PreviewKeyDown -= OnFlyoutPresenterKeyDown;
             }
+        }
+
+        private void OnButtonClick(object sender, RoutedEventArgs e)
+        {
+            if (!IsFlyoutOpen)
+            {
+                BeginOpenMenuFlyout();
+            }
+        }
+
+        private void BeginOpenMenuFlyout()
+        {
+            Dispatcher.BeginInvoke((Action)(() =>
+            {
+                if (!IsFlyoutOpen)
+                {
+                    ShowMenuFlyout();
+                }
+            }));
         }
 
         private void OnButtonMouseStateChanged(object sender, RoutedEventArgs e)
@@ -422,5 +450,6 @@ namespace ModernWpf.Controls
         private MenuBar _parentMenuBar;
         private FrameworkElement _passThroughElement;
         private bool _isFlyoutOpen;
+        private bool _openFlyoutOnMouseLeftButtonUp;
     }
 }

@@ -777,6 +777,7 @@ function Test-ControlSupportsOpenInteraction([string]$control) {
         "ContentDialog" { return $true }
         "Flyout" { return $true }
         "Popup" { return $true }
+        "MenuBar" { return $true }
         "MenuFlyout" { return $true }
         "DropDownButton" { return $true }
         "SplitButton" { return $true }
@@ -793,6 +794,7 @@ function Get-OpenInteractionNames([string]$control) {
         "ContentDialog" { return @("Save your work?", "Upload your content to the cloud.", "Save", "Don't Save", "Cancel") }
         "Flyout" { return @("All items will be removed. Do you want to continue?", "Yes, empty my cart") }
         "Popup" { return @("Simple Popup", "Close") }
+        "MenuBar" { return @("New", "Open...", "Save", "Exit") }
         "MenuFlyout" { return @("By rating", "By match", "By distance") }
         "DropDownButton" { return @("Send", "Reply", "Reply All") }
         "SplitButton" { return @("Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Gray") }
@@ -800,6 +802,65 @@ function Get-OpenInteractionNames([string]$control) {
         "CommandBarFlyout" { return @("Share", "Save", "Delete", "Resize", "Move") }
         default { return @() }
     }
+}
+
+function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleElement) {
+    switch ($control) {
+        "MenuBar" {
+            $trigger = Find-DescendantByAnyName $sampleElement @("File")
+            if ($null -eq $trigger) {
+                $trigger = Find-ElementByNameInProcess $window.Current.ProcessId @("File")
+            }
+
+            if ($null -ne $trigger) {
+                $button = Find-DescendantButtonByAnyName $trigger @("File")
+                if ($null -ne $button) {
+                    return $button
+                }
+
+                return Find-OpenInteractionTriggerTarget $trigger
+            }
+        }
+    }
+
+    return $sampleElement
+}
+
+function Find-OpenInteractionTriggerTarget($element) {
+    $candidate = $element
+    for ($depth = 0; $depth -lt 8 -and $null -ne $candidate; $depth++) {
+        try {
+            if ($candidate.Current.ControlType -eq [System.Windows.Automation.ControlType]::MenuItem -or
+                $candidate.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button) {
+                return $candidate
+            }
+        }
+        catch {
+        }
+
+        try {
+            [void]$candidate.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+            return $candidate
+        }
+        catch {
+        }
+
+        try {
+            [void]$candidate.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+            return $candidate
+        }
+        catch {
+        }
+
+        try {
+            $candidate = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+        }
+        catch {
+            return $element
+        }
+    }
+
+    return $element
 }
 
 function Test-ControlSupportsStateInteraction([string]$control) {
@@ -2320,6 +2381,7 @@ function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [s
 
 function Test-ControlPrefersScreenOpenCapture([string]$control) {
     switch ($control) {
+        "MenuBar" { return $true }
         default { return $false }
     }
 }
@@ -2736,6 +2798,25 @@ function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames, [strin
         return Invoke-SplitButtonSecondaryOnce $window $element
     }
 
+    if ($control -eq "MenuBar") {
+        $invoked = Invoke-MenuBarTriggerOnce $window $element
+        Start-Sleep -Milliseconds 200
+        if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
+            return $invoked
+        }
+
+        try {
+            $element.SetFocus()
+            [GalleryVisualNative]::PressSpace()
+            $invoked = $true
+            Start-Sleep -Milliseconds 200
+        }
+        catch {
+        }
+
+        return $invoked
+    }
+
     if ($control -eq "ComboBox") {
         $invoked = Expand-ElementPatternOnce $window $element
         Start-Sleep -Milliseconds 150
@@ -2790,6 +2871,33 @@ function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames, [strin
     return $invoked
 }
 
+function Invoke-MenuBarTriggerOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $clicked = $false
+    try {
+        $rect = $element.Current.BoundingRectangle
+        if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+            [GalleryVisualNative]::Click(
+                [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+                [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+            Start-Sleep -Milliseconds 100
+            $clicked = $true
+        }
+    }
+    catch {
+    }
+
+    if (Invoke-ElementPatternOnce $window $element) {
+        return $true
+    }
+
+    return $clicked
+}
+
 function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDir, $window, $showButton, [string[]]$openNames) {
     if (!$IncludeInteractions -or !(Test-ControlSupportsOpenInteraction $control)) {
         return $null
@@ -2802,6 +2910,14 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     if ($preferScreenOpenCapture) {
         [GalleryVisualNative]::SetTopMost($window.Current.NativeWindowHandle, $true)
         Start-Sleep -Milliseconds 100
+    }
+    $triggerElement = Get-OpenInteractionTriggerElement $window $control $showButton
+    $triggerTreePath = Join-Path $caseDir ("{0}-{1}-open-trigger.uia.txt" -f $app.ToLowerInvariant(), $control)
+    try {
+        Write-UiaTree $triggerElement $triggerTreePath 5
+    }
+    catch {
+        Set-Content -Path $triggerTreePath -Value ("Open trigger UIA tree capture failed: " + $_.Exception.Message) -Encoding UTF8
     }
     $screenCaptureTrustReference = ""
     $screenCaptureTrustDelta = $null
@@ -2816,6 +2932,63 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         }
     }
     [void](Capture-OpenInteractionFrame $window $baselinePath $preferScreenOpenCapture)
+    $baselineNonBlank = if (Test-Path $baselinePath) { Test-ImageNotBlank $baselinePath } else { $false }
+    $baselineControlCropPath = Join-Path $caseDir ("{0}-{1}-closed-control-crop.png" -f $app.ToLowerInvariant(), $control)
+    $baselineControlCrop = if (Test-Path $baselinePath) {
+        Save-ElementCrop $window $baselinePath $baselineControlCropPath $showButton "UIA" 10
+    }
+    else {
+        $null
+    }
+    $baselineControlNonBlank = $null -ne $baselineControlCrop -and $baselineControlCrop.Contains("NonBlank") -and $baselineControlCrop.NonBlank
+    if (!$baselineNonBlank -or !$baselineControlNonBlank) {
+        Start-Sleep -Milliseconds 300
+        [void](Capture-OpenInteractionFrame $window $baselinePath $preferScreenOpenCapture)
+        $baselineNonBlank = if (Test-Path $baselinePath) { Test-ImageNotBlank $baselinePath } else { $false }
+        $baselineControlCrop = if (Test-Path $baselinePath) {
+            Save-ElementCrop $window $baselinePath $baselineControlCropPath $showButton "UIA" 10
+        }
+        else {
+            $null
+        }
+        $baselineControlNonBlank = $null -ne $baselineControlCrop -and $baselineControlCrop.Contains("NonBlank") -and $baselineControlCrop.NonBlank
+    }
+    if (!$baselineControlNonBlank) {
+        $existingBaselinePath = Join-Path $caseDir ("{0}-{1}.png" -f $app.ToLowerInvariant(), $control)
+        if (Test-Path $existingBaselinePath) {
+            try {
+                Copy-Item -LiteralPath $existingBaselinePath -Destination $baselinePath -Force
+                $baselineNonBlank = if (Test-Path $baselinePath) { Test-ImageNotBlank $baselinePath } else { $false }
+                $baselineControlCrop = Save-ElementCrop $window $baselinePath $baselineControlCropPath $showButton "UIA" 10
+                $baselineControlNonBlank = $null -ne $baselineControlCrop -and $baselineControlCrop.Contains("NonBlank") -and $baselineControlCrop.NonBlank
+            }
+            catch {
+            }
+        }
+    }
+    if (!$baselineControlNonBlank -and $app -eq "ModernWpf" -and $null -ne $showButton) {
+        try {
+            $artifactId = $showButton.Current.AutomationId
+            if (![string]::IsNullOrWhiteSpace($artifactId)) {
+                $artifactCropPath = Join-Path $caseDir ("modernwpf-artifacts\{0}.png" -f $artifactId)
+                $artifactCrop = New-RenderedArtifactCrop $artifactCropPath $artifactId ([ordered]@{
+                    Found = $true
+                    Reason = ""
+                    X = 0
+                    Y = 0
+                    Width = 0
+                    Height = 0
+                    ChangedSamples = 0
+                })
+                if ($null -ne $artifactCrop -and $artifactCrop.NonBlank) {
+                    $baselineControlCrop = $artifactCrop
+                    $baselineControlNonBlank = $true
+                }
+            }
+        }
+        catch {
+        }
+    }
     if ($preferScreenOpenCapture -and
         ![string]::IsNullOrEmpty($screenCaptureTrustReference) -and
         (Test-Path $screenCaptureTrustReference) -and
@@ -2823,7 +2996,7 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         $screenCaptureTrustDelta = Compare-Images $screenCaptureTrustReference $baselinePath
         $screenCaptureTrusted = $screenCaptureTrustDelta.Comparable -and $screenCaptureTrustDelta.MeanDelta -lt 25.0
     }
-    $invoked = Invoke-ElementUntilOpen $window $showButton $openNames $control
+    $invoked = Invoke-ElementUntilOpen $window $triggerElement $openNames $control
     $frames = New-Object System.Collections.Generic.List[object]
     $frameDelays = @(0, 150, 300, 450)
     $previousDelay = 0
@@ -2853,6 +3026,9 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     $comboBoxPopupScreenshot = ""
     $comboBoxPopupNonBlank = $false
     $comboBoxPopupSize = $null
+    $menuBarPopupNonBlank = $false
+    $menuBarPopupScreenshot = ""
+    $menuBarPopupSize = $null
     $skipOpenUiaSearch = $control -eq "SplitButton" -or $control -eq "ToggleSplitButton"
     $openElement = if ($skipOpenUiaSearch) { $null } else { Find-OpenInteractionElement $window $showButton $openNames $control }
     if ($null -ne $openElement) {
@@ -2873,6 +3049,32 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
                     $comboBoxPopupScreenshot = ""
                     $comboBoxPopupNonBlank = $false
                     $comboBoxPopupSize = $null
+                }
+            }
+        }
+        elseif ($control -eq "MenuBar") {
+            $popupHandle = Get-ElementNativeWindowHandle $openElement
+            if ($popupHandle -ne [IntPtr]::Zero -and $popupHandle -ne $window.Current.NativeWindowHandle) {
+                $menuBarPopupScreenshot = Join-Path $caseDir ("{0}-{1}-popup-window.png" -f $app.ToLowerInvariant(), $control)
+                try {
+                    Capture-Window $popupHandle $menuBarPopupScreenshot -SkipActivate
+                    $menuBarPopupNonBlank = Test-ImageNotBlank $menuBarPopupScreenshot
+                    if (!$menuBarPopupNonBlank) {
+                        Capture-ScreenRect $popupHandle $menuBarPopupScreenshot
+                        $menuBarPopupNonBlank = Test-ImageNotBlank $menuBarPopupScreenshot
+                    }
+
+                    if ($menuBarPopupNonBlank) {
+                        $menuBarPopupSize = Get-ImageSize $menuBarPopupScreenshot
+                    }
+                    else {
+                        $menuBarPopupScreenshot = ""
+                    }
+                }
+                catch {
+                    $menuBarPopupScreenshot = ""
+                    $menuBarPopupNonBlank = $false
+                    $menuBarPopupSize = $null
                 }
             }
         }
@@ -2993,6 +3195,28 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
                 }
             }
         }
+        elseif ($control -eq "MenuBar") {
+            $visualOpened = $menuBarPopupNonBlank
+            if ($menuBarPopupNonBlank) {
+                $crop = [ordered]@{
+                    Found = $true
+                    Screenshot = $menuBarPopupScreenshot
+                    Bounds = [ordered]@{
+                        Found = $true
+                        Reason = ""
+                        X = 0
+                        Y = 0
+                        Width = $menuBarPopupSize.Width
+                        Height = $menuBarPopupSize.Height
+                        ChangedSamples = 0
+                    }
+                    Width = $menuBarPopupSize.Width
+                    Height = $menuBarPopupSize.Height
+                    ChangedSamples = 0
+                    Source = "PopupWindow"
+                }
+            }
+        }
     }
 
     if ($app -eq "ModernWpf" -and $null -eq $crop) {
@@ -3018,12 +3242,16 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     }
 
     if ($control -eq "ComboBox") {
-        $status = if (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
-        $notes = if (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose an expanded dropdown item." } elseif (!$screenCaptureTrusted -and !$comboBoxPopupNonBlank) { "$control screen capture did not match the Gallery window, and the popup window could not be captured." } elseif (!$visualOpened) { "$control exposed dropdown UIA but no changed dropdown pixels were captured." } else { "" }
+        $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
+        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose an expanded dropdown item." } elseif (!$screenCaptureTrusted -and !$comboBoxPopupNonBlank) { "$control screen capture did not match the Gallery window, and the popup window could not be captured." } elseif (!$visualOpened) { "$control exposed dropdown UIA but no changed dropdown pixels were captured." } else { "" }
+    }
+    elseif ($control -eq "MenuBar") {
+        $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
+        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose an opened menu item." } elseif (!$visualOpened) { "$control exposed opened menu UIA but no nonblank popup item pixels were captured." } else { "" }
     }
     else {
-        $status = if (!$invoked) { "Failed" } elseif ($null -ne $openElement -or $visualOpened) { "Passed" } else { "Failed" }
-        $notes = if (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement -and !$visualOpened) { "$control did not produce UIA or visual evidence of opening." } elseif ($null -eq $openElement -and $null -ne $crop -and ($crop.Source -eq "GalleryItemPageRoot" -or $crop.Source -eq "ContentRootGrid")) { "$control open content was verified from the in-app rendered artifact." } elseif ($null -eq $openElement) { "$control open content was not found in UIA; visual delta verified." } else { "" }
+        $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -or $visualOpened) { "Passed" } else { "Failed" }
+        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement -and !$visualOpened) { "$control did not produce UIA or visual evidence of opening." } elseif ($null -eq $openElement -and $null -ne $crop -and ($crop.Source -eq "GalleryItemPageRoot" -or $crop.Source -eq "ContentRootGrid")) { "$control open content was verified from the in-app rendered artifact." } elseif ($null -eq $openElement) { "$control open content was not found in UIA; visual delta verified." } else { "" }
     }
 
     if ($preferScreenOpenCapture) {
@@ -3033,7 +3261,13 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     return [ordered]@{
         Status = $status
         Invoked = $invoked
+        TriggerName = $(if ($null -ne $triggerElement) { $triggerElement.Current.Name } else { "" })
+        TriggerAutomationId = $(if ($null -ne $triggerElement) { $triggerElement.Current.AutomationId } else { "" })
+        TriggerUiaTree = $triggerTreePath
         BaselineScreenshot = $baselinePath
+        BaselineNonBlank = $baselineNonBlank
+        BaselineControlCrop = $baselineControlCrop
+        BaselineControlNonBlank = $baselineControlNonBlank
         OpenElementFound = $null -ne $openElement
         OpenElementName = $(if ($null -ne $openElement) { $openElement.Current.Name } else { "" })
         UiaTree = $treePath
@@ -3048,6 +3282,9 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         ComboBoxPopupScreenshot = $comboBoxPopupScreenshot
         ComboBoxPopupNonBlank = $comboBoxPopupNonBlank
         ComboBoxPopupSize = $comboBoxPopupSize
+        MenuBarPopupScreenshot = $menuBarPopupScreenshot
+        MenuBarPopupNonBlank = $menuBarPopupNonBlank
+        MenuBarPopupSize = $menuBarPopupSize
         SelectedFrameDelayMs = $(if ($null -ne $selectedFrame) { $selectedFrame.DelayMs } else { $null })
         SelectedFrameScreenshot = $(if ($null -ne $selectedFrame) { $selectedFrame.Screenshot } else { "" })
         Notes = $notes

@@ -1,8 +1,11 @@
+using System;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Markup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
@@ -106,7 +109,49 @@ public class MenuBarApiTests
             var button = GetTemplateChild<Button>(fileItem, "ContentButton");
             Assert.IsNotNull(button);
             Assert.AreEqual("File", button.Content);
+            Assert.IsTrue(button.ActualWidth > 35, "MenuBarItem button should include the styled horizontal padding in its hit target.");
+            Assert.IsTrue(button.ActualHeight > 20, "MenuBarItem button should include the styled vertical padding in its hit target.");
             Assert.AreSame(layoutRoot, fileItem.PassThroughElement);
+        });
+    }
+
+    [TestMethod]
+    public void RenderedContentButtonClickOpensMenuFlyout()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var menuBar = new MuxMenuBar();
+            var fileItem = new InspectableMenuBarItem { Title = "File" };
+            fileItem.Items.Add(new WpfMenuItem { Header = "Open" });
+            menuBar.Items.Add(fileItem);
+
+            using var host = new TestWindowHost(menuBar, width: 320, height: 120);
+
+            var button = GetTemplateChild<Button>(fileItem, "ContentButton");
+            Assert.IsNotNull(button);
+
+            fileItem.InvokePreviewMouseLeftButtonDown(button);
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(fileItem.IsFlyoutOpen, "MenuBarItem should wait for the rendered ContentButton click so physical clicks do not close the flyout on mouse-up.");
+
+            fileItem.InvokePreviewMouseLeftButtonUp(button);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(fileItem.IsFlyoutOpen);
+            Assert.IsTrue(fileItem.Flyout.IsOpen);
+            Assert.IsTrue(menuBar.IsFlyoutOpen);
+
+            fileItem.CloseMenuFlyout();
+            WpfTestHost.DoEvents();
+
+            button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, button));
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(fileItem.IsFlyoutOpen);
+            Assert.IsTrue(fileItem.Flyout.IsOpen);
         });
     }
 
@@ -322,6 +367,28 @@ public class MenuBarApiTests
         control.ApplyTemplate();
         control.UpdateLayout();
         return (T)control.Template.FindName(name, control);
+    }
+
+    private sealed class InspectableMenuBarItem : MuxMenuBarItem
+    {
+        public void InvokePreviewMouseLeftButtonDown(UIElement source)
+        {
+            OnPreviewMouseLeftButtonDown(CreateMouseButtonArgs(UIElement.PreviewMouseLeftButtonDownEvent, source));
+        }
+
+        public void InvokePreviewMouseLeftButtonUp(UIElement source)
+        {
+            OnPreviewMouseLeftButtonUp(CreateMouseButtonArgs(UIElement.PreviewMouseLeftButtonUpEvent, source));
+        }
+
+        private static MouseButtonEventArgs CreateMouseButtonArgs(RoutedEvent routedEvent, UIElement source)
+        {
+            return new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Left)
+            {
+                RoutedEvent = routedEvent,
+                Source = source
+            };
+        }
     }
 
     private static void AssertThemeResourceReference(string themeName, object resourceKey, object expectedResourceKey)

@@ -499,3 +499,33 @@ Expand visual interaction coverage for the Gallery Slider sample:
   - Static-only Slider baseline with `Interaction: null`: `artifacts/visual-checks/20260602-063954-481-84224/report.md`
   - Focused passing Slider value/output run: `artifacts/visual-checks/20260602-064149-608-80636/report.md`
   - Passing combined value sweep for `Slider`, `RatingControl`, and `NumberBox`: `artifacts/visual-checks/20260602-064243-561-24188/report.md`
+
+## Round 18: MenuBar Open Interaction Coverage
+
+### Scope
+
+Expand visual interaction coverage for the Gallery MenuBar sample and fix the rendered MenuBar click path:
+
+- `MenuBar`
+
+### Current Findings
+
+- The visual harness required `GallerySample_MenuBar_MenuBar`, but `-IncludeInteractions` did not open a menu or verify menu items, so the sample could render while top-level menu activation was broken or untested.
+- The first MenuBar interaction implementation produced a false pass: the harness found a visual delta from an invalid baseline, but no menu item was open and the crop did not show menu content.
+- Tightened open-interaction baselines so blank full screenshots or blank closed-control crops fail instead of creating render-vs-blank deltas. Added trigger UIA dumps for open checks so failures show exactly which live element was invoked.
+- Fixed `MenuBarItem` so the rendered `ContentButton` has the styled padding as its hit target and the item opens on the routed mouse-up/click path after the current input event. This avoids opening the WPF `ContextMenu` during mouse-down/mouse-up, which can close the flyout before it remains visible.
+- Added `MenuBarApiTests` coverage for the rendered button size, the routed mouse-down/mouse-up open path, and direct button click activation.
+- Hardened MenuBar visual verification to open through native click first with UIA invoke as a fallback, then require both an opened menu item in UIA and a captured popup-window bitmap showing the visible menu content. The verified crop now shows `New`, `Open...`, `Save`, and `Exit`.
+- A combined sweep exposed that the new blank-baseline gate was too strict when full-window control crops were blank but rendered sample artifacts were valid. Added a fallback to use the existing rendered trigger artifact as the closed control proof, while still requiring popup-window proof for opened controls.
+
+### Verification
+
+- Focused tests:
+  - `MenuBarApiTests` `FullyQualifiedName~MenuBar` slice: 11 passed on net8
+  - `WpfGallerySourceShapeTests` `FullyQualifiedName~GalleryVisualChecks` slice: 11 passed on net8 and net10
+- Visual audit:
+  - Static-only MenuBar baseline with `Interaction: null`: `artifacts/visual-checks/20260602-064512-752-43608/report.md`
+  - False-positive MenuBar open run with no visible menu: `artifacts/visual-checks/20260602-064905-812-71400/report.md`
+  - Correct failing MenuBar runs after stricter open verification: `artifacts/visual-checks/20260602-065246-846-29844/report.md`, `artifacts/visual-checks/20260602-070806-234-72688/report.md`, and `artifacts/visual-checks/20260602-072652-671-51660/report.md`
+  - Focused passing MenuBar open run with popup-window crop proof: `artifacts/visual-checks/20260602-073526-505-34772/report.md`
+  - Passing combined open-control sweep for `MenuBar`, `MenuFlyout`, `DropDownButton`, and `ComboBox`: `artifacts/visual-checks/20260602-073855-817-32676/report.md`
