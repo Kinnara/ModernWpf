@@ -398,3 +398,30 @@ Expand visual interaction coverage for the Gallery AutoSuggestBox sample:
   - Static-only AutoSuggestBox baseline showing `Interaction: null`: `artifacts/visual-checks/20260602-054753-493-73932/report.md`
   - Focused passing AutoSuggestBox typing/suggestion run: `artifacts/visual-checks/20260602-055316-223-61868/report.md`
   - Passing combined popup interaction sweep for `AutoSuggestBox` and `ComboBox`: `artifacts/visual-checks/20260602-055556-530-69372/report.md`
+
+## Round 14: NumberBox Spinner Value Coverage
+
+### Scope
+
+Expand visual interaction coverage for the Gallery NumberBox spin-button sample:
+
+- `NumberBox`
+
+### Current Findings
+
+- The visual harness required `GallerySample_NumberBox_SpinButtonNumberBox`, but `-IncludeInteractions` did not activate the spinner or prove that the value changed.
+- The live Gallery sample starts at `Value = 10` with `SmallChange = 10`, while the displayed snippet still says `Value="1"`. The audit now uses the live UIA value as the baseline and verifies baseline plus configured step, so the test follows the running sample instead of stale snippet text.
+- Initial native-coordinate click attempts found the correct `Increase` button (`AutomationId=UpSpinButton`) and even hit-tested the center to the spinner glyph, but the Win32 mouse injection did not change the value in this runner. Those failures made the old gap visible but were not reliable enough as the proof mechanism.
+- Added a value interaction path that reads the `RangeValuePattern` value, invokes the configured increase button through UIA, verifies the expected numeric result (`10 -> 20` in the current Gallery), and records the NumberBox subtree, button identity, hit-test diagnostics, before/after frames, crop delta, and value fields.
+- A combined sweep exposed a blank-window capture retry where the value changed correctly but the UIA crop was white. For value interactions, the numeric state transition is now the hard pass condition; visual crop delta remains diagnostic.
+
+### Verification
+
+- Focused tests:
+  - `WpfGallerySourceShapeTests` `FullyQualifiedName~GalleryVisualChecks` slice: 10 passed on net8 and net10
+- Visual audit:
+  - Initial failing NumberBox native-click value run: `artifacts/visual-checks/20260602-060537-259-96648/report.md`
+  - Diagnostic failing native-click run proving the `Increase`/`UpSpinButton` target existed: `artifacts/visual-checks/20260602-060800-456-96292/report.md`
+  - Native click/topmost and long-hold attempts that still did not advance value in the runner: `artifacts/visual-checks/20260602-061130-411-25500/report.md`, `artifacts/visual-checks/20260602-061438-728-37496/report.md`, and `artifacts/visual-checks/20260602-061514-741-95296/report.md`
+  - Focused passing NumberBox UIA value activation run: `artifacts/visual-checks/20260602-061624-801-78892/report.md`
+  - Passing combined interaction sweep for `ComboBox`, `AutoSuggestBox`, and `NumberBox`: `artifacts/visual-checks/20260602-061845-816-91420/report.md`

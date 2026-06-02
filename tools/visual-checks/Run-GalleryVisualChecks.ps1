@@ -123,7 +123,9 @@ public static class GalleryVisualNative
     public static void Click(int x, int y)
     {
         SetCursorPos(x, y);
+        System.Threading.Thread.Sleep(35);
         mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
+        System.Threading.Thread.Sleep(80);
         mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
     }
 
@@ -317,6 +319,17 @@ function Find-DescendantButtonByName($root, [string]$name) {
         [System.Windows.Automation.ControlType]::Button)
     $condition = New-Object System.Windows.Automation.AndCondition($nameCondition, $buttonCondition)
     return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-DescendantButtonByAnyName($root, [string[]]$names) {
+    foreach ($name in $names) {
+        $button = Find-DescendantButtonByName $root $name
+        if ($null -ne $button) {
+            return $button
+        }
+    }
+
+    return $null
 }
 
 function Find-DescendantByControlType($root, $controlType) {
@@ -799,6 +812,27 @@ function Test-ControlSupportsTextInteraction([string]$control) {
     switch ($control) {
         "AutoSuggestBox" { return $true }
         default { return $false }
+    }
+}
+
+function Test-ControlSupportsValueInteraction([string]$control) {
+    switch ($control) {
+        "NumberBox" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-ValueInteractionStep([string]$control) {
+    switch ($control) {
+        "NumberBox" { return 10.0 }
+        default { return 0.0 }
+    }
+}
+
+function Get-ValueInteractionIncreaseButtonNames([string]$control) {
+    switch ($control) {
+        "NumberBox" { return @("Increase", "Increase value", "Up") }
+        default { return @() }
     }
 }
 
@@ -1973,11 +2007,21 @@ function Invoke-ElementOnce($window, $element) {
     [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
     $rect = $element.Current.BoundingRectangle
     if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
-        [GalleryVisualNative]::Click(
-            [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
-            [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
-        Start-Sleep -Milliseconds 50
-        return $true
+        $keptTopMost = $false
+        try {
+            [GalleryVisualNative]::SetTopMost($window.Current.NativeWindowHandle, $true)
+            $keptTopMost = $true
+            [GalleryVisualNative]::Click(
+                [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+                [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+            Start-Sleep -Milliseconds 50
+            return $true
+        }
+        finally {
+            if ($keptTopMost) {
+                [GalleryVisualNative]::SetTopMost($window.Current.NativeWindowHandle, $false)
+            }
+        }
     }
 
     try {
@@ -2291,6 +2335,158 @@ function Set-EditableElementText($window, $element, [string]$text) {
         }
     }
     catch {
+    }
+
+    return $false
+}
+
+function Try-ParseDouble([string]$text) {
+    $value = 0.0
+    if ([double]::TryParse(
+            $text,
+            [System.Globalization.NumberStyles]::Float,
+            [System.Globalization.CultureInfo]::InvariantCulture,
+            [ref]$value)) {
+        return $value
+    }
+
+    if ([double]::TryParse(
+            $text,
+            [System.Globalization.NumberStyles]::Float,
+            [System.Globalization.CultureInfo]::CurrentCulture,
+            [ref]$value)) {
+        return $value
+    }
+
+    return $null
+}
+
+function Get-ElementNumericValue($element) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return [double]$pattern.Current.Value
+        }
+    }
+    catch {
+    }
+
+    $edit = Find-EditableDescendant $element
+    if ($null -eq $edit) {
+        return $null
+    }
+
+    try {
+        $pattern = $edit.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return Try-ParseDouble $pattern.Current.Value
+        }
+    }
+    catch {
+    }
+
+    try {
+        return Try-ParseDouble $edit.Current.Name
+    }
+    catch {
+        return $null
+    }
+}
+
+function Test-DoubleApproximatelyEqual($actual, $expected) {
+    if ($null -eq $actual -or $null -eq $expected) {
+        return $false
+    }
+
+    return [Math]::Abs(([double]$actual) - ([double]$expected)) -lt 0.001
+}
+
+function Get-ElementCenterHitSummary($element) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    try {
+        $rect = $element.Current.BoundingRectangle
+        if ($rect.Width -le 0 -or $rect.Height -le 0) {
+            return $null
+        }
+
+        $x = [double]($rect.X + ($rect.Width / 2.0))
+        $y = [double]($rect.Y + ($rect.Height / 2.0))
+        $point = New-Object System.Windows.Point -ArgumentList $x, $y
+        $hit = [System.Windows.Automation.AutomationElement]::FromPoint($point)
+        if ($null -eq $hit) {
+            return [ordered]@{
+                X = $x
+                Y = $y
+                Found = $false
+                Name = ""
+                AutomationId = ""
+                ControlType = ""
+            }
+        }
+
+        return [ordered]@{
+            X = $x
+            Y = $y
+            Found = $true
+            Name = $hit.Current.Name
+            AutomationId = $hit.Current.AutomationId
+            ControlType = $hit.Current.ControlType.ProgrammaticName
+        }
+    }
+    catch {
+        return [ordered]@{
+            X = 0
+            Y = 0
+            Found = $false
+            Name = ""
+            AutomationId = ""
+            ControlType = ""
+            Error = $_.Exception.Message
+        }
+    }
+}
+
+function Invoke-ValueIncreaseOnce($window, [string]$control, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    $buttonNames = Get-ValueInteractionIncreaseButtonNames $control
+    $button = Find-DescendantButtonByAnyName $element $buttonNames
+    if ($null -eq $button -and $buttonNames.Count -gt 0) {
+        $candidate = Find-ElementByNameInProcess $window.Current.ProcessId $buttonNames
+        try {
+            if ($null -ne $candidate -and $candidate.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button) {
+                $button = $candidate
+            }
+        }
+        catch {
+        }
+    }
+
+    if ($null -ne $button) {
+        return Invoke-ElementPatternOnce $window $button
+    }
+
+    if ($control -eq "NumberBox") {
+        [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+        $rect = $element.Current.BoundingRectangle
+        if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+            $edit = Find-EditableDescendant $element
+            $editRect = if ($null -ne $edit) { $edit.Current.BoundingRectangle } else { $rect }
+            $x = [int][Math]::Round($rect.Right - [Math]::Min(46.0, [Math]::Max(18.0, $rect.Width * 0.35)))
+            $y = [int][Math]::Round($editRect.Y + ($editRect.Height / 2.0))
+            [GalleryVisualNative]::Click($x, $y)
+            Start-Sleep -Milliseconds 50
+            return $true
+        }
     }
 
     return $false
@@ -3005,6 +3201,118 @@ function Capture-SelectionInteraction([string]$app, [string]$control, [string]$c
     }
 }
 
+function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsValueInteraction $control)) {
+        return $null
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 250
+
+    $step = Get-ValueInteractionStep $control
+    $baselineValue = Get-ElementNumericValue $element
+    $expectedValue = if ($null -ne $baselineValue) { [double]$baselineValue + [double]$step } else { $null }
+    $treePath = Join-Path $caseDir ("{0}-{1}-value.uia.txt" -f $app.ToLowerInvariant(), $control)
+    try {
+        Write-UiaTree $element $treePath 5
+    }
+    catch {
+        Set-Content -Path $treePath -Value ("UIA tree capture failed: " + $_.Exception.Message) -Encoding UTF8
+    }
+    $increaseButtonNames = Get-ValueInteractionIncreaseButtonNames $control
+    $increaseButton = Find-DescendantButtonByAnyName $element $increaseButtonNames
+    $baselinePath = Join-Path $caseDir ("{0}-{1}-value-before.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $baselinePath
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    }
+
+    $baselineCropPath = Join-Path $caseDir ("{0}-{1}-value-before-crop.png" -f $app.ToLowerInvariant(), $control)
+    $baselineCrop = if (Test-Path $baselinePath) {
+        Save-ElementCrop $window $baselinePath $baselineCropPath $element "UIA" 10
+    }
+    else {
+        $null
+    }
+
+    $invoked = Invoke-ValueIncreaseOnce $window $control $element
+    Start-Sleep -Milliseconds 250
+
+    $afterValue = Get-ElementNumericValue $element
+    $afterPath = Join-Path $caseDir ("{0}-{1}-value-after.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $afterPath
+    }
+
+    $afterCropPath = Join-Path $caseDir ("{0}-{1}-value-after-crop.png" -f $app.ToLowerInvariant(), $control)
+    $afterCrop = if (Test-Path $afterPath) {
+        Save-ElementCrop $window $afterPath $afterCropPath $element "UIA" 10
+    }
+    else {
+        $null
+    }
+
+    $valueDelta = $null
+    if ($null -ne $baselineCrop -and $null -ne $afterCrop -and
+        $baselineCrop.Found -and $afterCrop.Found -and
+        ![string]::IsNullOrEmpty($baselineCrop.Screenshot) -and
+        ![string]::IsNullOrEmpty($afterCrop.Screenshot)) {
+        $valueDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot
+    }
+
+    $valueChanged = (Test-DoubleApproximatelyEqual $afterValue $expectedValue)
+    $visualChanged = $null -ne $valueDelta -and $valueDelta.Comparable -and $valueDelta.MeanDelta -gt 0.1
+    $status = if ($null -eq $baselineValue) { "Failed" } elseif (!$invoked) { "Failed" } elseif (!$valueChanged) { "Failed" } else { "Passed" }
+    $notes = if ($null -eq $baselineValue) {
+        "$control did not expose a readable numeric value."
+    }
+    elseif (!$invoked) {
+        "Could not invoke the $control increase button."
+    }
+    elseif (!$valueChanged) {
+        "$control value did not change from $baselineValue to expected $expectedValue; observed '$afterValue'."
+    }
+    else {
+        ""
+    }
+
+    return [ordered]@{
+        Status = $status
+        Kind = "Value"
+        Invoked = $invoked
+        BaselineValue = $baselineValue
+        Step = $step
+        ExpectedValue = $expectedValue
+        ValueAfter = $afterValue
+        BaselineScreenshot = $baselinePath
+        UiaTree = $treePath
+        IncreaseButtonFound = $null -ne $increaseButton
+        IncreaseButtonName = $(if ($null -ne $increaseButton) { $increaseButton.Current.Name } else { "" })
+        IncreaseButtonAutomationId = $(if ($null -ne $increaseButton) { $increaseButton.Current.AutomationId } else { "" })
+        IncreaseButtonCenterHit = Get-ElementCenterHitSummary $increaseButton
+        Frames = @(
+            [ordered]@{
+                DelayMs = 250
+                Screenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+                NonBlank = $(if (Test-Path $afterPath) { Test-ImageNotBlank $afterPath } else { $false })
+                Error = ""
+            }
+        )
+        ValueDelta = $valueDelta
+        VisualChanged = $visualChanged
+        Crop = $afterCrop
+        BaselineCrop = $baselineCrop
+        SelectedFrameDelayMs = 250
+        SelectedFrameScreenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+        Notes = $notes
+    }
+}
+
 function Capture-TextInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element) {
     if (!$IncludeInteractions -or !(Test-ControlSupportsTextInteraction $control)) {
         return $null
@@ -3191,14 +3499,16 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
             (Test-ControlSupportsOpenInteraction $control) -or
             (Test-ControlSupportsStateInteraction $control) -or
             (Test-ControlSupportsSelectionInteraction $control) -or
+            (Test-ControlSupportsValueInteraction $control) -or
             (Test-ControlSupportsTextInteraction $control))
         $sample = if ($requiredSampleArtifactFound -and !$needsSampleElement) { $null } else { TryFind-DescendantByAutomationId $window $requiredSampleAutomationId }
         $openNames = Get-OpenInteractionNames $control
         $openInteraction = Capture-OpenInteraction "ModernWpf" $control $caseDir $window $sample $openNames
         $stateInteraction = Capture-StateInteraction "ModernWpf" $control $caseDir $window $sample
         $selectionInteraction = Capture-SelectionInteraction "ModernWpf" $control $caseDir $window $sample
+        $valueInteraction = Capture-ValueInteraction "ModernWpf" $control $caseDir $window $sample
         $textInteraction = Capture-TextInteraction "ModernWpf" $control $caseDir $window $sample
-        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } else { $textInteraction }
+        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } else { $textInteraction }
         $screenshot = Join-Path $caseDir "modernwpf-$control.png"
         $treePath = Join-Path $caseDir "modernwpf-$control.uia.txt"
 
@@ -3309,8 +3619,9 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         $openInteraction = Capture-OpenInteraction "WinUI3" $control $caseDir $window $showButton $openNames
         $stateInteraction = Capture-StateInteraction "WinUI3" $control $caseDir $window $showButton
         $selectionInteraction = Capture-SelectionInteraction "WinUI3" $control $caseDir $window $showButton
+        $valueInteraction = Capture-ValueInteraction "WinUI3" $control $caseDir $window $showButton
         $textInteraction = Capture-TextInteraction "WinUI3" $control $caseDir $window $showButton
-        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } else { $textInteraction }
+        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } else { $textInteraction }
         $screenshot = Join-Path $caseDir "winui3-$control.png"
         $treePath = Join-Path $caseDir "winui3-$control.uia.txt"
         Write-UiaTree $window $treePath 6

@@ -2790,13 +2790,15 @@ namespace ModernWpf.Gallery.Tests
                 "(Test-ControlSupportsOpenInteraction $control) -or",
                 "(Test-ControlSupportsStateInteraction $control) -or",
                 "(Test-ControlSupportsSelectionInteraction $control) -or",
+                "(Test-ControlSupportsValueInteraction $control) -or",
                 "(Test-ControlSupportsTextInteraction $control))",
                 "$openNames = Get-OpenInteractionNames $control",
                 "$openInteraction = Capture-OpenInteraction \"ModernWpf\" $control $caseDir $window $sample $openNames",
                 "$stateInteraction = Capture-StateInteraction \"ModernWpf\" $control $caseDir $window $sample",
                 "$selectionInteraction = Capture-SelectionInteraction \"ModernWpf\" $control $caseDir $window $sample",
+                "$valueInteraction = Capture-ValueInteraction \"ModernWpf\" $control $caseDir $window $sample",
                 "$textInteraction = Capture-TextInteraction \"ModernWpf\" $control $caseDir $window $sample",
-                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } else { $textInteraction }");
+                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } else { $textInteraction }");
         }
 
         [TestMethod]
@@ -2840,8 +2842,9 @@ namespace ModernWpf.Gallery.Tests
                 "$openInteraction = Capture-OpenInteraction \"WinUI3\" $control $caseDir $window $showButton $openNames",
                 "$stateInteraction = Capture-StateInteraction \"WinUI3\" $control $caseDir $window $showButton",
                 "$selectionInteraction = Capture-SelectionInteraction \"WinUI3\" $control $caseDir $window $showButton",
+                "$valueInteraction = Capture-ValueInteraction \"WinUI3\" $control $caseDir $window $showButton",
                 "$textInteraction = Capture-TextInteraction \"WinUI3\" $control $caseDir $window $showButton",
-                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } else { $textInteraction }");
+                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } else { $textInteraction }");
         }
 
         [TestMethod]
@@ -2910,6 +2913,58 @@ namespace ModernWpf.Gallery.Tests
                 "$selectionDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot",
                 "$expectedName = Get-SelectionInteractionExpectedName $control",
                 "$visualChanged = $null -ne $selectionDelta -and $selectionDelta.Comparable -and $selectionDelta.MeanDelta -gt 0.5");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksActivatesNumberBoxSpinButtonValueInteraction()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsValueInteraction([string]$control)",
+                "\"NumberBox\" { return $true }",
+                "function Get-ValueInteractionStep([string]$control)",
+                "\"NumberBox\" { return 10.0 }",
+                "function Get-ValueInteractionIncreaseButtonNames([string]$control)",
+                "\"NumberBox\" { return @(\"Increase\", \"Increase value\", \"Up\") }");
+            AssertContainsInOrder(
+                source,
+                "function Find-DescendantButtonByAnyName($root, [string[]]$names)",
+                "Find-DescendantButtonByName $root $name",
+                "function Get-ElementNumericValue($element)",
+                "[System.Windows.Automation.RangeValuePattern]::Pattern",
+                "return [double]$pattern.Current.Value",
+                "Find-EditableDescendant $element",
+                "[System.Windows.Automation.ValuePattern]::Pattern",
+                "return Try-ParseDouble $pattern.Current.Value");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-ValueIncreaseOnce($window, [string]$control, $element)",
+                "$buttonNames = Get-ValueInteractionIncreaseButtonNames $control",
+                "$button = Find-DescendantButtonByAnyName $element $buttonNames",
+                "Find-ElementByNameInProcess $window.Current.ProcessId $buttonNames",
+                "return Invoke-ElementPatternOnce $window $button",
+                "if ($control -eq \"NumberBox\")",
+                "[GalleryVisualNative]::Click($x, $y)");
+            AssertContainsInOrder(
+                source,
+                "function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element)",
+                "if (!$IncludeInteractions -or !(Test-ControlSupportsValueInteraction $control))",
+                "$baselineValue = Get-ElementNumericValue $element",
+                "$expectedValue = if ($null -ne $baselineValue) { [double]$baselineValue + [double]$step } else { $null }",
+                "$invoked = Invoke-ValueIncreaseOnce $window $control $element",
+                "$afterValue = Get-ElementNumericValue $element",
+                "$valueDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot",
+                "$valueChanged = (Test-DoubleApproximatelyEqual $afterValue $expectedValue)",
+                "$visualChanged = $null -ne $valueDelta -and $valueDelta.Comparable -and $valueDelta.MeanDelta -gt 0.1",
+                "Kind = \"Value\"",
+                "ExpectedValue = $expectedValue",
+                "ValueAfter = $afterValue");
         }
 
         [TestMethod]
