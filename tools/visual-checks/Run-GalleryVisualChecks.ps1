@@ -1654,6 +1654,51 @@ function New-RenderedArtifactCrop([string]$path, [string]$source, $bounds) {
     }
 }
 
+function Get-ModernRenderedElementArtifactPath([string]$caseDir, $element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $automationId = $element.Current.AutomationId
+        if ([string]::IsNullOrWhiteSpace($automationId)) {
+            return ""
+        }
+
+        $path = Join-Path $caseDir ("modernwpf-artifacts\{0}.png" -f $automationId)
+        if (Test-Path $path) {
+            return $path
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Copy-RenderedArtifactCrop([string]$sourcePath, [string]$destinationPath, [string]$source) {
+    if ([string]::IsNullOrWhiteSpace($sourcePath) -or !(Test-Path $sourcePath)) {
+        return $null
+    }
+
+    Copy-Item -LiteralPath $sourcePath -Destination $destinationPath -Force
+    return New-RenderedArtifactCrop $destinationPath $source $null
+}
+
+function Refresh-ModernWpfVisualArtifacts($window) {
+    $refreshButton = TryFind-DescendantByAutomationId $window "GalleryVisualTestRefreshArtifacts"
+    if ($null -eq $refreshButton) {
+        return $false
+    }
+
+    if (Invoke-ElementPatternOnce $window $refreshButton) {
+        Start-Sleep -Milliseconds 150
+        return $true
+    }
+
+    return $false
+}
+
 function New-RenderedArtifactSliceCrop([string]$sourcePath, [string]$path, [string]$source, [int]$width, [int]$height) {
     if (!(Test-Path $sourcePath) -or $width -le 0 -or $height -le 0) {
         return $null
@@ -3399,6 +3444,8 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
 
     $baselineState = Get-ToggleStateName $element
     $desiredState = if ($baselineState -eq "On") { "Off" } else { "On" }
+    $renderedArtifactPath = if ($app -eq "ModernWpf") { Get-ModernRenderedElementArtifactPath $caseDir $element } else { "" }
+    $renderedArtifactSource = if ($app -eq "ModernWpf" -and $null -ne $element) { $element.Current.AutomationId } else { "" }
     $baselinePath = Join-Path $caseDir ("{0}-{1}-state-before.png" -f $app.ToLowerInvariant(), $control)
     try {
         Capture-Window $window.Current.NativeWindowHandle $baselinePath
@@ -3408,11 +3455,9 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
     }
 
     $baselineCropPath = Join-Path $caseDir ("{0}-{1}-state-before-crop.png" -f $app.ToLowerInvariant(), $control)
-    $baselineCrop = if (Test-Path $baselinePath) {
-        Save-ElementCrop $window $baselinePath $baselineCropPath $element "UIA" 10
-    }
-    else {
-        $null
+    $baselineCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $baselineCropPath $renderedArtifactSource
+    if ($null -eq $baselineCrop -and (Test-Path $baselinePath)) {
+        $baselineCrop = Save-ElementCrop $window $baselinePath $baselineCropPath $element "UIA" 10
     }
 
     $invoked = $false
@@ -3422,6 +3467,9 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
     Start-Sleep -Milliseconds 180
 
     $afterState = Get-ToggleStateName $element
+    if ($app -eq "ModernWpf" -and ![string]::IsNullOrWhiteSpace($renderedArtifactPath)) {
+        [void](Refresh-ModernWpfVisualArtifacts $window)
+    }
     $afterPath = Join-Path $caseDir ("{0}-{1}-state-after.png" -f $app.ToLowerInvariant(), $control)
     try {
         Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
@@ -3431,11 +3479,9 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
     }
 
     $afterCropPath = Join-Path $caseDir ("{0}-{1}-state-after-crop.png" -f $app.ToLowerInvariant(), $control)
-    $afterCrop = if (Test-Path $afterPath) {
-        Save-ElementCrop $window $afterPath $afterCropPath $element "UIA" 10
-    }
-    else {
-        $null
+    $afterCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $afterCropPath $renderedArtifactSource
+    if ($null -eq $afterCrop -and (Test-Path $afterPath)) {
+        $afterCrop = Save-ElementCrop $window $afterPath $afterCropPath $element "UIA" 10
     }
 
     $stateDelta = $null

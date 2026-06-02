@@ -1200,6 +1200,17 @@ namespace ModernWpf.Gallery.Shell
             GalleryDiagnostics.WriteStatusFile();
         }
 
+        private void OnVisualTestRefreshArtifactsClick(object sender, RoutedEventArgs e)
+        {
+            if (!GalleryDiagnostics.IsEnabled)
+            {
+                return;
+            }
+
+            GalleryDiagnostics.WriteVisualArtifacts(Window.GetWindow(this) ?? (DependencyObject)this);
+            GalleryDiagnostics.WriteStatusFile();
+        }
+
         internal static string FormatRoute(NavigationTarget target)
         {
             if (target == null || target.Kind == NavigationTargetKind.Home)

@@ -412,6 +412,17 @@ namespace ModernWpf.Gallery.Tests
                     StringComparison.Ordinal));
         }
 
+        private static Button GetVisualTestRefreshButton(NavigationRootPage root)
+        {
+            return GetVisualTestStatusPanel(root)
+                .Children
+                .OfType<Button>()
+                .Single(button => string.Equals(
+                    AutomationProperties.GetAutomationId(button),
+                    "GalleryVisualTestRefreshArtifacts",
+                    StringComparison.Ordinal));
+        }
+
         private static void AssertVisualTestStatusPanelHidden(FrameworkElement panel)
         {
             Assert.AreEqual(Visibility.Collapsed, panel.Visibility);
@@ -438,6 +449,9 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(
                 "GalleryVisualTestLastException",
                 AutomationProperties.GetAutomationId(GetVisualTestStatusText(root, "GalleryVisualTestLastException")));
+            Assert.AreEqual(
+                "GalleryVisualTestRefreshArtifacts",
+                AutomationProperties.GetAutomationId(GetVisualTestRefreshButton(root)));
         }
 
         [TestMethod]

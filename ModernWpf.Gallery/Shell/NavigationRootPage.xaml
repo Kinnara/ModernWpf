@@ -74,6 +74,10 @@
                 Text="Starting" />
             <TextBlock
                 AutomationProperties.AutomationId="GalleryVisualTestLastException" />
+            <Button
+                AutomationProperties.AutomationId="GalleryVisualTestRefreshArtifacts"
+                Click="OnVisualTestRefreshArtifactsClick"
+                Content="Refresh artifacts" />
         </StackPanel>
 
         <ui:NavigationView

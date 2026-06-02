@@ -611,3 +611,30 @@ Tighten Gallery click-interaction coverage for popup-backed split buttons:
   - Focused dark passing popup-window proof run for `SplitButton` and `ToggleSplitButton`: `artifacts/visual-checks/20260602-082948-602-86820/report.md`
   - Focused light passing popup-window proof run for `SplitButton` and `ToggleSplitButton`: `artifacts/visual-checks/20260602-083753-391-100968/report.md`
   - Follow-up full dark sweep now reaches the next issue: `ToggleSwitch` changes UIA state but the cropped control image does not visibly change. Report: `artifacts/visual-checks/20260602-083136-521-22692/report.md`
+
+## Round 22: State Interaction Artifact Refresh
+
+### Scope
+
+Tighten state-interaction visual proof after the full sweep exposed a bad ToggleSwitch crop:
+
+- `ToggleSwitch`
+- Shared state-interaction harness path
+
+### Current Findings
+
+- The full dark sweep reached `ToggleSwitch` and failed with a changed UIA state but a blank before/after crop.
+- The initial attempted screen-capture fallback was rejected because it could capture another visible desktop surface and create a false pass.
+- Added a visual-test-only hidden refresh hook in the Gallery shell. The harness now copies the pre-toggle rendered artifact, invokes the state change, asks the Gallery to refresh artifacts, and copies the post-toggle rendered artifact before comparing.
+- State checks still fall back to live UIA crops for non-ModernWpf/reference runs, but ModernWpf state checks now prefer artifact-to-artifact comparison using the same renderer as static visual crops.
+
+### Verification
+
+- Focused tests:
+  - `GalleryNavigationRuntimeTests.ShellVisualTestStatusHooksStayOutOfNormalAutomationTree`: passed on net8 and net10
+  - `WpfGallerySourceShapeTests` shell/status plus state-interaction slice: 2 passed on net8 and net10
+- Visual audit:
+  - Initial full dark sweep exposing the ToggleSwitch blank-crop failure: `artifacts/visual-checks/20260602-083136-521-22692/report.md`
+  - Focused dark ToggleSwitch artifact-refresh run: `artifacts/visual-checks/20260602-085024-202-98128/report.md`
+  - Focused light ToggleSwitch artifact-refresh run: `artifacts/visual-checks/20260602-085239-501-98052/report.md`
+  - Full dark interaction sweep after the fix, all configured ModernWpf controls passed: `artifacts/visual-checks/20260602-085331-566-97620/report.md`

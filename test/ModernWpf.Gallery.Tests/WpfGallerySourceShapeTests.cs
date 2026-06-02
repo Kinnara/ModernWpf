@@ -2164,7 +2164,9 @@ namespace ModernWpf.Gallery.Tests
                 "Opacity=\"0\"",
                 "AutomationProperties.AutomationId=\"GalleryVisualTestCurrentRoute\"",
                 "AutomationProperties.AutomationId=\"GalleryVisualTestReadyState\"",
-                "AutomationProperties.AutomationId=\"GalleryVisualTestLastException\"");
+                "AutomationProperties.AutomationId=\"GalleryVisualTestLastException\"",
+                "AutomationProperties.AutomationId=\"GalleryVisualTestRefreshArtifacts\"",
+                "Click=\"OnVisualTestRefreshArtifactsClick\"");
             AssertContainsInOrder(
                 navigationRootXaml,
                 "<ui:NavigationView",
@@ -2348,7 +2350,10 @@ namespace ModernWpf.Gallery.Tests
                 "SetVisualTestState(string route, string readyState)",
                 "GetVisualTestStatusText(\"GalleryVisualTestCurrentRoute\").Text = GalleryDiagnostics.CurrentRoute;",
                 "GetVisualTestStatusText(\"GalleryVisualTestReadyState\").Text = GalleryDiagnostics.ReadyState;",
-                "GetVisualTestStatusText(\"GalleryVisualTestLastException\").Text = GalleryDiagnostics.LastException;");
+                "GetVisualTestStatusText(\"GalleryVisualTestLastException\").Text = GalleryDiagnostics.LastException;",
+                "private void OnVisualTestRefreshArtifactsClick(object sender, RoutedEventArgs e)",
+                "GalleryDiagnostics.WriteVisualArtifacts(Window.GetWindow(this) ?? (DependencyObject)this)",
+                "GalleryDiagnostics.WriteStatusFile();");
 
             var appCode = ReadRepoFile(
                 "ModernWpf.Gallery",
@@ -2904,12 +2909,29 @@ namespace ModernWpf.Gallery.Tests
                 "\"ToggleSwitch\" { return \"simple ToggleSwitch\" }");
             AssertContainsInOrder(
                 source,
+                "function Get-ModernRenderedElementArtifactPath([string]$caseDir, $element)",
+                "$automationId = $element.Current.AutomationId",
+                "$path = Join-Path $caseDir (\"modernwpf-artifacts\\{0}.png\" -f $automationId)",
+                "function Copy-RenderedArtifactCrop([string]$sourcePath, [string]$destinationPath, [string]$source)",
+                "Copy-Item -LiteralPath $sourcePath -Destination $destinationPath -Force",
+                "return New-RenderedArtifactCrop $destinationPath $source $null",
+                "function Refresh-ModernWpfVisualArtifacts($window)",
+                "TryFind-DescendantByAutomationId $window \"GalleryVisualTestRefreshArtifacts\"",
+                "Invoke-ElementPatternOnce $window $refreshButton");
+            AssertContainsInOrder(
+                source,
                 "function Capture-StateInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element)",
                 "if (!$IncludeInteractions -or !(Test-ControlSupportsStateInteraction $control))",
                 "$baselineState = Get-ToggleStateName $element",
                 "$desiredState = if ($baselineState -eq \"On\") { \"Off\" } else { \"On\" }",
+                "$renderedArtifactPath = if ($app -eq \"ModernWpf\") { Get-ModernRenderedElementArtifactPath $caseDir $element } else { \"\" }",
+                "$baselineCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $baselineCropPath $renderedArtifactSource",
+                "Save-ElementCrop $window $baselinePath $baselineCropPath $element \"UIA\" 10",
                 "$invoked = Set-ToggleElementState $window $element $desiredState",
                 "$afterState = Get-ToggleStateName $element",
+                "[void](Refresh-ModernWpfVisualArtifacts $window)",
+                "$afterCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $afterCropPath $renderedArtifactSource",
+                "Save-ElementCrop $window $afterPath $afterCropPath $element \"UIA\" 10",
                 "$stateDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot",
                 "$stateChanged = ![string]::IsNullOrEmpty($baselineState)",
                 "$visualChanged = $null -ne $stateDelta -and $stateDelta.Comparable -and $stateDelta.MeanDelta -gt 0.5");
