@@ -413,6 +413,40 @@ function Find-ElementByNameInPopupWindows($window, [string[]]$names) {
     return $null
 }
 
+function Find-InteractiveElementByNameInProcess([int]$processId, [string[]]$names) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        foreach ($name in $names) {
+            $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+                [System.Windows.Automation.AutomationElement]::NameProperty,
+                $name)
+            $found = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, $nameCondition)
+            foreach ($element in $found) {
+                try {
+                    $controlType = $element.Current.ControlType
+                    if ($controlType -ne [System.Windows.Automation.ControlType]::Button -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::MenuItem -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::ListItem) {
+                        continue
+                    }
+
+                    $rect = $element.Current.BoundingRectangle
+                    if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+                        return $element
+                    }
+                }
+                catch {
+                }
+            }
+        }
+    }
+
+    return $null
+}
+
 function Find-ElementsByNameInProcess([int]$processId, [string[]]$names) {
     $matches = New-Object System.Collections.Generic.List[object]
     $condition = New-Object System.Windows.Automation.PropertyCondition(
@@ -938,7 +972,7 @@ function Get-OutputInteractionTriggerNames([string]$control) {
 
 function Get-OutputInteractionCropAutomationId([string]$control) {
     switch ($control) {
-        "RepeatButton" { return "GallerySample_RepeatButton_Root" }
+        "RepeatButton" { return "GallerySample_RepeatButton_Output" }
         default { return "" }
     }
 }
@@ -947,6 +981,13 @@ function Get-OutputInteractionMinimumDelta([string]$control) {
     switch ($control) {
         "RepeatButton" { return 0.5 }
         default { return 0.5 }
+    }
+}
+
+function Test-OutputInteractionAllowsBlankBaseline([string]$control) {
+    switch ($control) {
+        "RepeatButton" { return $true }
+        default { return $false }
     }
 }
 
@@ -2446,7 +2487,11 @@ function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [s
     }
 
     if ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") {
-        return Find-ElementByNameInPopupWindows $window $openNames
+        if ($null -eq $element -or (Get-ExpandCollapseStateName $element) -ne "Expanded") {
+            return $null
+        }
+
+        return Find-InteractiveElementByNameInProcess $window.Current.ProcessId $openNames
     }
 
     return Find-ElementByNameInProcess $window.Current.ProcessId $openNames
@@ -2902,12 +2947,10 @@ function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames, [strin
     if ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") {
         $invoked = Invoke-SplitButtonSecondaryOnce $window $element
         Start-Sleep -Milliseconds 150
-        if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
-            return $invoked
+        if ((Get-ExpandCollapseStateName $element) -ne "Expanded") {
+            $invoked = (Expand-ElementPatternOnce $window $element) -or $invoked
+            Start-Sleep -Milliseconds 150
         }
-
-        $invoked = (Expand-ElementPatternOnce $window $element) -or $invoked
-        Start-Sleep -Milliseconds 150
         return $invoked
     }
 
@@ -3230,9 +3273,14 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     }
     else {
         $treePath = ""
-        $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GalleryItemPageRoot"
-        if ($null -eq $cropElement) {
-            $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "ContentRootGrid"
+        if (Test-ControlRequiresPopupWindowOpenProof $control) {
+            $cropElement = $null
+        }
+        else {
+            $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GalleryItemPageRoot"
+            if ($null -eq $cropElement) {
+                $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "ContentRootGrid"
+            }
         }
     }
 
@@ -3941,17 +3989,19 @@ function Capture-OutputInteraction([string]$app, [string]$control, [string]$case
     }
 
     $minimumDelta = Get-OutputInteractionMinimumDelta $control
-    $visualChanged = $null -ne $outputDelta -and $outputDelta.Comparable -and $outputDelta.MeanDelta -gt $minimumDelta
+    $allowsBlankBaseline = Test-OutputInteractionAllowsBlankBaseline $control
     $baselineNonBlank = $null -ne $baselineCrop -and $baselineCrop.Contains("NonBlank") -and $baselineCrop.NonBlank
     $afterNonBlank = $null -ne $afterCrop -and $afterCrop.Contains("NonBlank") -and $afterCrop.NonBlank
-    $status = if ($null -eq $trigger) { "Failed" } elseif (!$invoked) { "Failed" } elseif (!$baselineNonBlank -or !$afterNonBlank) { "Failed" } elseif (!$visualChanged) { "Failed" } else { "Passed" }
+    $visualChanged = ($null -ne $outputDelta -and $outputDelta.Comparable -and $outputDelta.MeanDelta -gt $minimumDelta) -or
+        ($allowsBlankBaseline -and !$baselineNonBlank -and $afterNonBlank)
+    $status = if ($null -eq $trigger) { "Failed" } elseif (!$invoked) { "Failed" } elseif ((!$baselineNonBlank -and !$allowsBlankBaseline) -or !$afterNonBlank) { "Failed" } elseif (!$visualChanged) { "Failed" } else { "Passed" }
     $notes = if ($null -eq $trigger) {
         "$control output trigger '$($triggerNames -join "', '")' was not found."
     }
     elseif (!$invoked) {
         "Could not invoke the $control output trigger '$($triggerNames[0])'."
     }
-    elseif (!$baselineNonBlank -or !$afterNonBlank) {
+    elseif ((!$baselineNonBlank -and !$allowsBlankBaseline) -or !$afterNonBlank) {
         "$control output interaction crop was blank before or after activation."
     }
     elseif (!$visualChanged) {

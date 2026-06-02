@@ -693,3 +693,33 @@ Tighten open-interaction proof for the `TeachingTip` popup path exposed by the n
   - Focused light `TeachingTip` run after the fix: `artifacts/visual-checks/20260602-095758-710-85796/report.md` (`TeachingTip` passed with a `248x82` difference crop)
   - Focused dark `TeachingTip` run after the fix: `artifacts/visual-checks/20260602-095837-804-79284/report.md` (`TeachingTip` passed with a `248x86` difference crop)
   - Rerun of the first light interaction batch, all listed controls passed: `artifacts/visual-checks/20260602-100025-041-75000/report.md`
+
+## Round 25: SplitButton Timeout and RepeatButton Output Proof
+
+### Scope
+
+Tighten the next Gallery click-interaction batch after Round 24:
+
+- `RepeatButton`
+- `DropDownButton`
+- `SplitButton`
+- `ToggleSplitButton`
+- Shared output/open-interaction proof paths
+
+### Current Findings
+
+- The next light batch originally timed out while processing popup-backed split buttons. The partial dark split-button artifact stopped after the trigger UIA dump, before any open-frame screenshots, which pointed at the immediate post-click UIA lookup.
+- Split buttons can expose flyout items under a popup child window rather than a root popup window. The old lookup tried popup-root scanning first and could fall into a broad process-tree name search if the click did not leave the control expanded.
+- The harness now opens split buttons with the secondary-side click, falls back to `ExpandCollapsePattern` only when the control is not already expanded, and only searches for named popup content after the split button reports `Expanded`.
+- The broader batch then exposed `RepeatButton`: the sample correctly changed from an empty output to `Number of clicks: 1`, but the original crop compared the whole sample row and diluted the text change below the threshold.
+- Added `GallerySample_RepeatButton_Output` to the output `TextBlock`, pointed the output-interaction crop at that text, and scoped the verifier so `RepeatButton` may pass from a blank baseline only when the after-output crop is nonblank.
+
+### Verification
+
+- Focused tests:
+  - `GalleryAutomationHookTests.RepeatButtonSampleMatchesWinUIGalleryExample`, `WpfGallerySourceShapeTests.GalleryVisualChecksActivatesRepeatButtonOutputInteraction`, and `WpfGallerySourceShapeTests.GalleryVisualChecksOpensCommonClickInteractionControls`: passed on net8 and net10
+- Visual audit:
+  - Focused dark `SplitButton`/`ToggleSplitButton` run after the timeout fix: `artifacts/visual-checks/20260602-122104-805-23188/report.md`
+  - Focused light `SplitButton`/`ToggleSplitButton` run after the timeout fix: `artifacts/visual-checks/20260602-122345-763-98084/report.md`
+  - Light five-control batch for `RepeatButton`, `ToggleButton`, `DropDownButton`, `SplitButton`, and `ToggleSplitButton`: `artifacts/visual-checks/20260602-123759-584-99056/report.md`
+  - Dark five-control batch for the same controls: `artifacts/visual-checks/20260602-124109-882-62108/report.md`

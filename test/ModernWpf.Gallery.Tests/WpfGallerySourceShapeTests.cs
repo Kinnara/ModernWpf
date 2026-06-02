@@ -2762,6 +2762,14 @@ namespace ModernWpf.Gallery.Tests
                 "return $null");
             AssertContainsInOrder(
                 source,
+                "function Find-InteractiveElementByNameInProcess([int]$processId, [string[]]$names)",
+                "$window.FindAll([System.Windows.Automation.TreeScope]::Descendants, $nameCondition)",
+                "[System.Windows.Automation.ControlType]::Button",
+                "[System.Windows.Automation.ControlType]::MenuItem",
+                "[System.Windows.Automation.ControlType]::ListItem",
+                "return $element");
+            AssertContainsInOrder(
+                source,
                 "function Find-ComboBoxOpenElement($window, $element, [string[]]$openNames)",
                 "Get-ExpandCollapseStateName $element",
                 "Find-ElementsByNameInProcess $window.Current.ProcessId $openNames",
@@ -2771,7 +2779,8 @@ namespace ModernWpf.Gallery.Tests
                 "if ($control -eq \"ComboBox\")",
                 "return Find-ComboBoxOpenElement $window $element $openNames",
                 "if ($control -eq \"SplitButton\" -or $control -eq \"ToggleSplitButton\")",
-                "return Find-ElementByNameInPopupWindows $window $openNames",
+                "(Get-ExpandCollapseStateName $element) -ne \"Expanded\"",
+                "return Find-InteractiveElementByNameInProcess $window.Current.ProcessId $openNames",
                 "return Find-ElementByNameInProcess $window.Current.ProcessId $openNames",
                 "function Test-ControlPrefersScreenOpenCapture([string]$control)",
                 "\"TeachingTip\" { return $true }",
@@ -2865,13 +2874,22 @@ namespace ModernWpf.Gallery.Tests
                 "OpenPopupNonBlank = $openPopupNonBlank");
             AssertContainsInOrder(
                 source,
+                "$openElement = Find-OpenInteractionElement $window $showButton $openNames $control",
+                "if ($null -ne $openElement)",
+                "else {",
+                "$treePath = \"\"",
+                "if (Test-ControlRequiresPopupWindowOpenProof $control)",
+                "$cropElement = $null",
+                "$usableFrames = @($frames.ToArray() | Where-Object { $_.NonBlank -and ![string]::IsNullOrEmpty($_.Screenshot) })");
+            AssertContainsInOrder(
+                source,
                 "function Invoke-SplitButtonSecondaryOnce($window, $element)",
                 "$rect = $element.Current.BoundingRectangle",
                 "$x = [int][Math]::Round($rect.Right - [Math]::Min(12.0, [Math]::Max(6.0, $rect.Width * 0.18)))",
                 "[GalleryVisualNative]::Click($x, $y)",
                 "if ($control -eq \"SplitButton\" -or $control -eq \"ToggleSplitButton\")",
                 "$invoked = Invoke-SplitButtonSecondaryOnce $window $element",
-                "if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control))",
+                "if ((Get-ExpandCollapseStateName $element) -ne \"Expanded\")",
                 "$invoked = (Expand-ElementPatternOnce $window $element) -or $invoked",
                 "$openElement = Find-OpenInteractionElement $window $showButton $openNames $control");
             Assert.IsFalse(
@@ -3126,9 +3144,11 @@ namespace ModernWpf.Gallery.Tests
                 "function Get-OutputInteractionTriggerNames([string]$control)",
                 "\"RepeatButton\" { return @(\"Click and hold\") }",
                 "function Get-OutputInteractionCropAutomationId([string]$control)",
-                "\"RepeatButton\" { return \"GallerySample_RepeatButton_Root\" }",
+                "\"RepeatButton\" { return \"GallerySample_RepeatButton_Output\" }",
                 "function Get-OutputInteractionMinimumDelta([string]$control)",
-                "\"RepeatButton\" { return 0.5 }");
+                "\"RepeatButton\" { return 0.5 }",
+                "function Test-OutputInteractionAllowsBlankBaseline([string]$control)",
+                "\"RepeatButton\" { return $true }");
             AssertContainsInOrder(
                 source,
                 "function Capture-OutputInteraction([string]$app, [string]$control, [string]$caseDir, $window, $sampleElement)",
@@ -3141,9 +3161,11 @@ namespace ModernWpf.Gallery.Tests
                 "$invoked = Invoke-ElementPatternOnce $window $trigger",
                 "$outputDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot",
                 "$minimumDelta = Get-OutputInteractionMinimumDelta $control",
-                "$visualChanged = $null -ne $outputDelta -and $outputDelta.Comparable -and $outputDelta.MeanDelta -gt $minimumDelta",
+                "$allowsBlankBaseline = Test-OutputInteractionAllowsBlankBaseline $control",
                 "$baselineNonBlank = $null -ne $baselineCrop -and $baselineCrop.Contains(\"NonBlank\") -and $baselineCrop.NonBlank",
                 "$afterNonBlank = $null -ne $afterCrop -and $afterCrop.Contains(\"NonBlank\") -and $afterCrop.NonBlank",
+                "$visualChanged = ($null -ne $outputDelta -and $outputDelta.Comparable -and $outputDelta.MeanDelta -gt $minimumDelta)",
+                "$allowsBlankBaseline -and !$baselineNonBlank -and $afterNonBlank",
                 "Kind = \"Output\"",
                 "OutputDelta = $outputDelta",
                 "VisualChanged = $visualChanged");

@@ -2856,6 +2856,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Control1Output", output.Name);
                     Assert.AreEqual(new Thickness(8, 0, 0, 0), output.Margin);
                     Assert.AreEqual(VerticalAlignment.Center, output.VerticalAlignment);
+                    Assert.AreEqual("GallerySample_RepeatButton_Output", AutomationProperties.GetAutomationId(output));
                     Assert.AreEqual("Control output", AutomationProperties.GetName(output));
                     Assert.AreEqual(AutomationLiveSetting.Polite, AutomationProperties.GetLiveSetting(output));
                     Assert.AreEqual(string.Empty, output.Text);

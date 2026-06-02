@@ -322,6 +322,7 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(8, 0, 0, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
+            GalleryAutomation.WithAutomationId(output, GalleryAutomation.SampleElementId("RepeatButton", "Output"));
             AutomationProperties.SetName(output, "Control output");
 #if !NET462
             AutomationProperties.SetLiveSetting(output, AutomationLiveSetting.Polite);
