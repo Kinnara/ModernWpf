@@ -2665,13 +2665,54 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
-                "function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames)",
+                "function Expand-ElementPatternOnce($window, $element)",
+                "[System.Windows.Automation.ExpandCollapsePattern]::Pattern",
+                "$pattern.Expand()",
+                "function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames, [string]$control = \"\")",
                 "$invoked = Invoke-ElementOnce $window $element",
                 "Find-ElementByNameInProcess $window.Current.ProcessId $openNames",
+                "$invoked = (Expand-ElementPatternOnce $window $element) -or $invoked",
                 "$invoked = (Invoke-ElementPatternOnce $window $element) -or $invoked",
-                "[GalleryVisualNative]::PressSpace()",
-                "$invoked = if ($control -eq \"CommandBarFlyout\")",
-                "Invoke-ElementUntilOpen $window $showButton $openNames");
+                "[GalleryVisualNative]::PressSpace()");
+            AssertContainsInOrder(
+                source,
+                "function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDir, $window, $showButton, [string[]]$openNames)",
+                "if (!$IncludeInteractions -or !(Test-ControlSupportsOpenInteraction $control))",
+                "Invoke-ElementUntilOpen $window $showButton $openNames $control");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksOpensCommonClickInteractionControls()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsOpenInteraction([string]$control)",
+                "\"ContentDialog\" { return $true }",
+                "\"Flyout\" { return $true }",
+                "\"Popup\" { return $true }",
+                "\"MenuFlyout\" { return $true }",
+                "\"DropDownButton\" { return $true }",
+                "\"CommandBarFlyout\" { return $true }");
+            AssertContainsInOrder(
+                source,
+                "function Get-OpenInteractionNames([string]$control)",
+                "\"ContentDialog\" { return @(\"Save your work?\", \"Upload your content to the cloud.\", \"Save\", \"Don't Save\", \"Cancel\") }",
+                "\"Flyout\" { return @(\"All items will be removed. Do you want to continue?\", \"Yes, empty my cart\") }",
+                "\"Popup\" { return @(\"Simple Popup\", \"Close\") }",
+                "\"MenuFlyout\" { return @(\"By rating\", \"By match\", \"By distance\") }",
+                "\"DropDownButton\" { return @(\"Send\", \"Reply\", \"Reply All\") }",
+                "\"CommandBarFlyout\" { return @(\"Share\", \"Save\", \"Delete\", \"Resize\", \"Move\") }");
+            AssertContainsInOrder(
+                source,
+                "$needsSampleElement = $IncludeInteractions -and (Test-ControlSupportsOpenInteraction $control)",
+                "$openNames = Get-OpenInteractionNames $control",
+                "$interaction = Capture-OpenInteraction \"ModernWpf\" $control $caseDir $window $sample $openNames");
         }
 
         [TestMethod]

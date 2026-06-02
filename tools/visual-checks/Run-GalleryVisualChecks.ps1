@@ -668,6 +668,50 @@ function Get-ReferencePrimaryName([string]$control) {
     }
 }
 
+function Test-ControlSupportsOpenInteraction([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return $true }
+        "ContentDialog" { return $true }
+        "Flyout" { return $true }
+        "Popup" { return $true }
+        "MenuFlyout" { return $true }
+        "DropDownButton" { return $true }
+        "CommandBarFlyout" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-OpenInteractionNames([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return @("This is the title", "Try compact mode", "And this is the subtitle") }
+        "ContentDialog" { return @("Save your work?", "Upload your content to the cloud.", "Save", "Don't Save", "Cancel") }
+        "Flyout" { return @("All items will be removed. Do you want to continue?", "Yes, empty my cart") }
+        "Popup" { return @("Simple Popup", "Close") }
+        "MenuFlyout" { return @("By rating", "By match", "By distance") }
+        "DropDownButton" { return @("Send", "Reply", "Reply All") }
+        "CommandBarFlyout" { return @("Share", "Save", "Delete", "Resize", "Move") }
+        default { return @() }
+    }
+}
+
+function Find-ReferenceInteractionTrigger($window, [string]$control) {
+    if ($control -eq "TeachingTip") {
+        return Find-DescendantButtonByName $window "Show TeachingTip"
+    }
+
+    $automationId = Get-ReferencePrimaryAutomationId $control
+    if (![string]::IsNullOrEmpty($automationId)) {
+        return Find-DescendantByAutomationId $window $automationId
+    }
+
+    $name = Get-ReferencePrimaryName $control
+    if (![string]::IsNullOrEmpty($name)) {
+        return Find-ReferencePrimaryByName $window $control $name
+    }
+
+    return $null
+}
+
 function Get-WinUIReferencePageTitle([string]$control) {
     switch ($control) {
         default { return $control }
@@ -1824,8 +1868,34 @@ function Invoke-ElementPatternOnce($window, $element) {
     return $false
 }
 
-function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames) {
+function Expand-ElementPatternOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Expand()
+            Start-Sleep -Milliseconds 50
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames, [string]$control = "") {
     $invoked = Invoke-ElementOnce $window $element
+    Start-Sleep -Milliseconds 150
+    if ($null -ne (Find-ElementByNameInProcess $window.Current.ProcessId $openNames)) {
+        return $invoked
+    }
+
+    $invoked = (Expand-ElementPatternOnce $window $element) -or $invoked
     Start-Sleep -Milliseconds 150
     if ($null -ne (Find-ElementByNameInProcess $window.Current.ProcessId $openNames)) {
         return $invoked
@@ -1850,7 +1920,7 @@ function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames) {
 }
 
 function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDir, $window, $showButton, [string[]]$openNames) {
-    if (!$IncludeInteractions -or ($control -ne "TeachingTip" -and $control -ne "CommandBarFlyout")) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsOpenInteraction $control)) {
         return $null
     }
 
@@ -1863,12 +1933,7 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     catch {
         Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
     }
-    $invoked = if ($control -eq "CommandBarFlyout") {
-        Invoke-ElementUntilOpen $window $showButton $openNames
-    }
-    else {
-        Invoke-Element $window $showButton
-    }
+    $invoked = Invoke-ElementUntilOpen $window $showButton $openNames $control
     $frames = New-Object System.Collections.Generic.List[object]
     $frameDelays = @(0, 150, 300, 450)
     $previousDelay = 0
@@ -1902,6 +1967,10 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         })
     }
 
+    $openDelta = $null
+    $visualOpened = $false
+    $crop = $null
+    $selectedFrame = $null
     $openElement = Find-ElementByNameInProcess $window.Current.ProcessId $openNames
     if ($null -ne $openElement) {
         $treePath = Join-Path $caseDir ("{0}-{1}-open.uia.txt" -f $app.ToLowerInvariant(), $control)
@@ -1922,10 +1991,6 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         }
     }
 
-    $openDelta = $null
-    $visualOpened = $false
-    $crop = $null
-    $selectedFrame = $null
     $usableFrames = @($frames.ToArray() | Where-Object { $_.NonBlank -and ![string]::IsNullOrEmpty($_.Screenshot) })
     if ($usableFrames.Count -gt 0) {
         $selectedFrame = $usableFrames[$usableFrames.Count - 1]
@@ -2080,9 +2145,9 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $requiredSampleAutomationId = Get-RequiredSampleAutomationId $control
         $requiredSampleArtifact = Join-Path $artifactDir ($requiredSampleAutomationId + ".png")
         $requiredSampleArtifactFound = Test-Path $requiredSampleArtifact
-        $needsSampleElement = $IncludeInteractions -and ($control -eq "TeachingTip" -or $control -eq "CommandBarFlyout")
+        $needsSampleElement = $IncludeInteractions -and (Test-ControlSupportsOpenInteraction $control)
         $sample = if ($requiredSampleArtifactFound -and !$needsSampleElement) { $null } else { TryFind-DescendantByAutomationId $window $requiredSampleAutomationId }
-        $openNames = if ($control -eq "TeachingTip") { @("This is the title", "Try compact mode", "And this is the subtitle") } elseif ($control -eq "CommandBarFlyout") { @("Share", "Save", "Delete", "Resize", "Move") } else { @() }
+        $openNames = Get-OpenInteractionNames $control
         $interaction = Capture-OpenInteraction "ModernWpf" $control $caseDir $window $sample $openNames
         $screenshot = Join-Path $caseDir "modernwpf-$control.png"
         $treePath = Join-Path $caseDir "modernwpf-$control.uia.txt"
@@ -2189,16 +2254,8 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         Reset-WinUIReferenceSampleScroll $window $control
         Reset-ProgressRingAnimationPhase $window $control | Out-Null
 
-        $showButton = if ($control -eq "TeachingTip") {
-            Find-DescendantButtonByName $window "Show TeachingTip"
-        }
-        elseif ($control -eq "CommandBarFlyout") {
-            Find-DescendantByAutomationId $window "myImageButton"
-        }
-        else {
-            $null
-        }
-        $openNames = if ($control -eq "TeachingTip") { @("This is the title", "And this is the subtitle") } elseif ($control -eq "CommandBarFlyout") { @("Share", "Save", "Delete", "Resize", "Move") } else { @() }
+        $showButton = Find-ReferenceInteractionTrigger $window $control
+        $openNames = Get-OpenInteractionNames $control
         $interaction = Capture-OpenInteraction "WinUI3" $control $caseDir $window $showButton $openNames
         $screenshot = Join-Path $caseDir "winui3-$control.png"
         $treePath = Join-Path $caseDir "winui3-$control.uia.txt"

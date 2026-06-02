@@ -21,6 +21,8 @@ Find and fix WPF Gallery issues that appear during real user interaction, with e
 | Fixed in round 2 | NavigationView control layout | Clicking an expanded group again collapsed the child repeater visually, but the parent item kept the old expanded height as a large blank gap before the next row. | Round 1 checked expansion and selected row height, but did not assert that collapsed child layout space was released. |
 | Fixed in round 3 | Basic Input visual checks | `Button`, `CheckBox`, `ComboBox`, `RadioButton`, and `Slider` pages rendered successfully but exposed no stable `GallerySample_*` anchors, so visual checks could not crop or require their primary samples. | The visual check reported route-ready pages as failed/missing required sample elements; curated automation-ID coverage did not include these WPF Gallery pages. |
 | Fixed in round 4 | Visual-check harness crops | `SplitView` and `PersonPicture` passed route readiness and rendered correct sample artifacts, but the visual check failed because their ModernWpf primary crops were taken from blank full-window screenshots. | ModernWpf primary crop mappings used inner option names instead of rendered `GallerySample_*` artifact IDs, so full-window capture failures looked like sample failures. |
+| Fixed in round 5 | Click-open visual checks | `ContentDialog`, `Flyout`, `Popup`, `MenuFlyout`, and `DropDownButton` had stable static rendering checks but no actual open-state verification under `-IncludeInteractions`. | The harness only opened `TeachingTip` and `CommandBarFlyout`; static route checks could not catch broken click/open paths for common popup controls. |
+| Tracked gap | SplitButton and ToggleSplitButton click-open checks | Opening the secondary flyout target needs a dedicated path; a naive center click invokes the primary action, while recursive UIA popup searches hang and screen capture is unavailable in this environment. | Keep static coverage for now; add a separate, bounded secondary-target interaction strategy before claiming these are click-open covered. |
 
 ## Round 1: NavigationView Click Expansion
 
@@ -139,3 +141,34 @@ Fix visual-check false failures that appeared during the broader controls sweep:
   - Initial failing broad sweep: `artifacts/visual-checks/20260602-021906-706-42352/report.md`
   - Focused `SplitView`, `PersonPicture` rerun: `artifacts/visual-checks/20260602-022318-767-63064/report.md`
   - Broad rerun for `ColorPicker`, `HyperlinkButton`, `RatingControl`, `DropDownButton`, `SplitButton`, `ToggleSplitButton`, `SplitView`, `PersonPicture`, `ParallaxView`, `IconElement`, `ThemeShadow`, `TitleBar`, `InfoBadge`, `InfoBar`, `ProgressRing`, `PipsPager`, `AnnotatedScrollBar`, `PullToRefresh`, `GridView`, `ItemsRepeater`, `BreadcrumbBar`, `Pivot`, `SelectorBar`, and `NavigationView` with `Reference=None`: `artifacts/visual-checks/20260602-022401-170-82512/report.md`
+
+## Round 5: Click-Open Interaction Coverage
+
+### Scope
+
+Expand `Run-GalleryVisualChecks.ps1 -IncludeInteractions` beyond the two existing open-state cases:
+
+- `ContentDialog`
+- `Flyout`
+- `Popup`
+- `MenuFlyout`
+- `DropDownButton`
+- `CommandBarFlyout`
+- `TeachingTip`
+
+### Current Findings
+
+- The harness previously only opened `TeachingTip` and `CommandBarFlyout`; other popup/flyout pages could pass from route readiness and static crops alone.
+- Added a supported-control list and expected open-content names, then made the ModernWpf capture path keep the actual UIA trigger element even when rendered artifacts exist.
+- The opener now tries a real click first, checks for opened content, then falls back to `ExpandCollapsePattern`, `InvokePattern`, and keyboard space only when needed.
+- Installed WinUI Gallery reference trigger lookup was updated to use the same interaction-name table, but reference capture remains blocked in this environment by the `winui3gallery://...` access-denied issue noted in round 3.
+- `SplitButton` and `ToggleSplitButton` were intentionally not included in the committed open-state list. An attempted generic path exposed two harness limitations: center-clicking invokes the primary action rather than opening the flyout, and recursive popup UIA search can hang; screen-rect capture also failed with an invalid-handle error in this environment.
+
+### Verification
+
+- Focused tests:
+  - `WpfGallerySourceShapeTests.GalleryVisualChecksRetriesCommandBarFlyoutOpenThroughInvokePattern`: passed on net8 and net10
+  - `WpfGallerySourceShapeTests.GalleryVisualChecksOpensCommonClickInteractionControls`: passed on net8 and net10
+  - `WpfGallerySourceShapeTests.GalleryVisualChecksCaptureInteractionFramesWithoutReactivatingWindow`: passed on net8 and net10
+- Visual audit:
+  - Dark `ContentDialog`, `Flyout`, `Popup`, `MenuFlyout`, `DropDownButton`, `CommandBarFlyout`, and `TeachingTip` with `Reference=None` and `IncludeInteractions`: `artifacts/visual-checks/20260602-025315-628-56592/report.md`
