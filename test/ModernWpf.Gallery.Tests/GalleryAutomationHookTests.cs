@@ -775,6 +775,10 @@ namespace ModernWpf.Gallery.Tests
                     AssertSelectorBarItem(selectorBar1.Items[0], "SelectorBarItemRecent", "Recent", Mux.Symbol.Clock, false);
                     AssertSelectorBarItem(selectorBar1.Items[1], "SelectorBarItemShared", "Shared", Mux.Symbol.Share, false);
                     AssertSelectorBarItem(selectorBar1.Items[2], "SelectorBarItemFavorites", "Favorites", Mux.Symbol.OutlineStar, false);
+                    RaiseSelectorBarItemClick(selectorBar1.Items[1]);
+                    WpfTestHost.DoEvents();
+                    Assert.AreSame(selectorBar1.Items[1], selectorBar1.SelectedItem);
+                    Assert.IsTrue(selectorBar1.Items[1].IsSelected);
 
                     Assert.AreEqual("SelectorBar2", selectorBar2.Name);
                     Assert.AreEqual(5, selectorBar2.Items.Count);
@@ -4796,6 +4800,20 @@ namespace ModernWpf.Gallery.Tests
             {
                 Assert.IsNull(item.Icon);
             }
+        }
+
+        private static void RaiseSelectorBarItemClick(Mux.SelectorBarItem item)
+        {
+            item.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Left)
+            {
+                RoutedEvent = UIElement.MouseLeftButtonDownEvent,
+                Source = item
+            });
+            item.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Left)
+            {
+                RoutedEvent = UIElement.MouseLeftButtonUpEvent,
+                Source = item
+            });
         }
 
         private static void AssertPivotItem(TabItem item, string header, string text)

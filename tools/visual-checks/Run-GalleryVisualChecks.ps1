@@ -709,6 +709,37 @@ function Test-ControlSupportsStateInteraction([string]$control) {
     }
 }
 
+function Test-ControlSupportsSelectionInteraction([string]$control) {
+    switch ($control) {
+        "PipsPager" { return $true }
+        "Pivot" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-SelectionInteractionTriggerName([string]$control) {
+    switch ($control) {
+        "PipsPager" { return "Page 2" }
+        "Pivot" { return "Unread" }
+        default { return "" }
+    }
+}
+
+function Get-SelectionInteractionExpectedName([string]$control) {
+    switch ($control) {
+        "Pivot" { return "unread emails go here." }
+        default { return "" }
+    }
+}
+
+function Get-SelectionInteractionCropAutomationId([string]$control) {
+    switch ($control) {
+        "PipsPager" { return "GallerySample_PipsPager_Root" }
+        "Pivot" { return "GallerySample_Pivot_Pivot" }
+        default { return "" }
+    }
+}
+
 function Find-ReferenceInteractionTrigger($window, [string]$control) {
     if ($control -eq "TeachingTip") {
         return Find-DescendantButtonByName $window "Show TeachingTip"
@@ -1883,6 +1914,72 @@ function Invoke-ElementPatternOnce($window, $element) {
     return $false
 }
 
+function Test-ElementSupportsPattern($element, $pattern) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        return $null -ne $element.GetCurrentPattern($pattern)
+    }
+    catch {
+        return $false
+    }
+}
+
+function Find-SelectionInvokeTarget($element) {
+    $candidate = $element
+    for ($depth = 0; $depth -lt 8 -and $null -ne $candidate; $depth++) {
+        if ((Test-ElementSupportsPattern $candidate ([System.Windows.Automation.SelectionItemPattern]::Pattern)) -or
+            (Test-ElementSupportsPattern $candidate ([System.Windows.Automation.InvokePattern]::Pattern))) {
+            return $candidate
+        }
+
+        try {
+            $candidate = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+        }
+        catch {
+            return $null
+        }
+    }
+
+    return $element
+}
+
+function Invoke-SelectionElementOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $target = Find-SelectionInvokeTarget $element
+
+    try {
+        $pattern = $target.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Select()
+            Start-Sleep -Milliseconds 80
+            [void](Invoke-ElementOnce $window $target)
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $target.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            Start-Sleep -Milliseconds 80
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return Invoke-ElementOnce $window $target
+}
+
 function Expand-ElementPatternOnce($window, $element) {
     if ($null -eq $element) {
         return $false
@@ -2246,6 +2343,134 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
     }
 }
 
+function Capture-SelectionInteraction([string]$app, [string]$control, [string]$caseDir, $window, $sampleElement) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsSelectionInteraction $control)) {
+        return $null
+    }
+
+    $triggerName = Get-SelectionInteractionTriggerName $control
+    if ([string]::IsNullOrWhiteSpace($triggerName)) {
+        return [ordered]@{
+            Status = "Failed"
+            Kind = "Selection"
+            Invoked = $false
+            BaselineScreenshot = ""
+            Frames = @()
+            Crop = $null
+            Notes = "$control does not have a configured selection interaction trigger."
+        }
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 250
+
+    $cropAutomationId = Get-SelectionInteractionCropAutomationId $control
+    $cropElement = if (![string]::IsNullOrWhiteSpace($cropAutomationId)) {
+        TryFind-DescendantByAutomationId $window $cropAutomationId
+    }
+    else {
+        $null
+    }
+    if ($null -eq $cropElement) {
+        $cropElement = $sampleElement
+    }
+
+    $baselinePath = Join-Path $caseDir ("{0}-{1}-selection-before.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $baselinePath
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    }
+
+    $baselineCropPath = Join-Path $caseDir ("{0}-{1}-selection-before-crop.png" -f $app.ToLowerInvariant(), $control)
+    $baselineCrop = if (Test-Path $baselinePath) {
+        Save-ElementCrop $window $baselinePath $baselineCropPath $cropElement "UIA" 10
+    }
+    else {
+        $null
+    }
+
+    $trigger = if ($null -ne $cropElement) { Find-DescendantByName $cropElement $triggerName } else { $null }
+    if ($null -eq $trigger) {
+        $trigger = Find-DescendantByName $window $triggerName
+    }
+    if ($null -eq $trigger) {
+        $trigger = Find-ElementByNameInProcess $window.Current.ProcessId @($triggerName)
+    }
+    $invoked = Invoke-SelectionElementOnce $window $trigger
+    Start-Sleep -Milliseconds 250
+
+    $afterPath = Join-Path $caseDir ("{0}-{1}-selection-after.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $afterPath
+    }
+
+    $afterCropPath = Join-Path $caseDir ("{0}-{1}-selection-after-crop.png" -f $app.ToLowerInvariant(), $control)
+    $afterCrop = if (Test-Path $afterPath) {
+        Save-ElementCrop $window $afterPath $afterCropPath $cropElement "UIA" 10
+    }
+    else {
+        $null
+    }
+
+    $selectionDelta = $null
+    if ($null -ne $baselineCrop -and $null -ne $afterCrop -and
+        $baselineCrop.Found -and $afterCrop.Found -and
+        ![string]::IsNullOrEmpty($baselineCrop.Screenshot) -and
+        ![string]::IsNullOrEmpty($afterCrop.Screenshot)) {
+        $selectionDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot
+    }
+
+    $expectedName = Get-SelectionInteractionExpectedName $control
+    $expectedFound = [string]::IsNullOrWhiteSpace($expectedName) -or
+        $null -ne (Find-ElementByNameInProcess $window.Current.ProcessId @($expectedName))
+    $visualChanged = $null -ne $selectionDelta -and $selectionDelta.Comparable -and $selectionDelta.MeanDelta -gt 0.5
+    $status = if (!$invoked) { "Failed" } elseif (!$expectedFound) { "Failed" } elseif (!$visualChanged) { "Failed" } else { "Passed" }
+    $notes = if ($null -eq $trigger) {
+        "$control selection trigger '$triggerName' was not found."
+    }
+    elseif (!$invoked) {
+        "Could not invoke the $control selection trigger '$triggerName'."
+    }
+    elseif (!$expectedFound) {
+        "$control selection did not expose expected content '$expectedName'."
+    }
+    elseif (!$visualChanged) {
+        "$control selection click did not visibly change the cropped sample image."
+    }
+    else {
+        ""
+    }
+
+    return [ordered]@{
+        Status = $status
+        Kind = "Selection"
+        Invoked = $invoked
+        TriggerName = $triggerName
+        ExpectedName = $expectedName
+        ExpectedFound = $expectedFound
+        BaselineScreenshot = $baselinePath
+        Frames = @(
+            [ordered]@{
+                DelayMs = 250
+                Screenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+                NonBlank = $(if (Test-Path $afterPath) { Test-ImageNotBlank $afterPath } else { $false })
+                Error = ""
+            }
+        )
+        SelectionDelta = $selectionDelta
+        Crop = $afterCrop
+        BaselineCrop = $baselineCrop
+        SelectedFrameDelayMs = 250
+        SelectedFrameScreenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+        Notes = $notes
+    }
+}
+
 function Close-AutomationWindow($window) {
     try {
         $pattern = $window.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
@@ -2294,12 +2519,14 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $requiredSampleArtifactFound = Test-Path $requiredSampleArtifact
         $needsSampleElement = $IncludeInteractions -and (
             (Test-ControlSupportsOpenInteraction $control) -or
-            (Test-ControlSupportsStateInteraction $control))
+            (Test-ControlSupportsStateInteraction $control) -or
+            (Test-ControlSupportsSelectionInteraction $control))
         $sample = if ($requiredSampleArtifactFound -and !$needsSampleElement) { $null } else { TryFind-DescendantByAutomationId $window $requiredSampleAutomationId }
         $openNames = Get-OpenInteractionNames $control
         $openInteraction = Capture-OpenInteraction "ModernWpf" $control $caseDir $window $sample $openNames
         $stateInteraction = Capture-StateInteraction "ModernWpf" $control $caseDir $window $sample
-        $interaction = if ($null -ne $openInteraction) { $openInteraction } else { $stateInteraction }
+        $selectionInteraction = Capture-SelectionInteraction "ModernWpf" $control $caseDir $window $sample
+        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } else { $selectionInteraction }
         $screenshot = Join-Path $caseDir "modernwpf-$control.png"
         $treePath = Join-Path $caseDir "modernwpf-$control.uia.txt"
 
@@ -2409,7 +2636,8 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         $openNames = Get-OpenInteractionNames $control
         $openInteraction = Capture-OpenInteraction "WinUI3" $control $caseDir $window $showButton $openNames
         $stateInteraction = Capture-StateInteraction "WinUI3" $control $caseDir $window $showButton
-        $interaction = if ($null -ne $openInteraction) { $openInteraction } else { $stateInteraction }
+        $selectionInteraction = Capture-SelectionInteraction "WinUI3" $control $caseDir $window $showButton
+        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } else { $selectionInteraction }
         $screenshot = Join-Path $caseDir "winui3-$control.png"
         $treePath = Join-Path $caseDir "winui3-$control.uia.txt"
         Write-UiaTree $window $treePath 6

@@ -257,3 +257,33 @@ Expand `Run-GalleryVisualChecks.ps1 -IncludeInteractions` to cover click-state c
   - Light state sweep for `CheckBox`, `ToggleButton`, `ToggleSwitch`, `AppBarToggleButton`: `artifacts/visual-checks/20260602-033258-522-13052/report.md`
   - Dark combined interaction sweep for the four state controls plus `ContentDialog`, `Flyout`, `Popup`, `MenuFlyout`, `DropDownButton`, `SplitButton`, `ToggleSplitButton`, `CommandBarFlyout`, and `TeachingTip`: `artifacts/visual-checks/20260602-033344-262-37720/report.md`
   - Dark sanity sweep for newly defaulted direct Basic Input controls `CheckBox`, `RadioButton`, and `Slider`: `artifacts/visual-checks/20260602-033759-115-35152/report.md`
+
+## Round 9: Selection Interaction Coverage
+
+### Scope
+
+Expand visual interaction coverage for selection-style controls with stable visible before/after states:
+
+- `PipsPager`
+- `Pivot`
+
+Also add runtime click coverage for `SelectorBar`, which exposed an ambiguous visual-check target during this round.
+
+### Current Findings
+
+- `PipsPager` and `Pivot` previously passed static rendering without proving that a user click changed selection.
+- The first `PipsPager` sample does not show previous/next buttons, so the reliable click target is the visible `Page 2` pip rather than `Next Page`.
+- `Pivot` initially failed because the harness found the visible label but did not invoke the interactive tab item. Added a selection invoker that walks up to a `SelectionItemPattern`/`InvokePattern` ancestor and then uses a native click fallback.
+- `SelectorBar` click behavior is now covered by an in-process runtime mouse down/up regression. The visual harness attempt remains tracked separately because the basic sample has no initially selected item and the visual proof did not show a reliable before/after delta.
+
+### Verification
+
+- Focused tests:
+  - `WpfGallerySourceShapeTests.GalleryVisualChecksClicksCommonSelectionInteractionControls`: passed on net8 and net10
+  - Full `WpfGallerySourceShapeTests` `FullyQualifiedName~GalleryVisualChecks` slice: 8 passed on net8 and net10
+  - `GalleryAutomationHookTests.SelectorBarSampleMatchesWinUIGalleryExamples`: passed on net8 and net10
+- Visual audit:
+  - Initial failing selection sweep for `PipsPager`, `Pivot`, and `SelectorBar`: `artifacts/visual-checks/20260602-034258-580-82964/report.md`
+  - Selection sweep after scoped-target/pattern-invocation fixes, with `Pivot` passing and `PipsPager`/`SelectorBar` still failing: `artifacts/visual-checks/20260602-034618-480-30884/report.md`
+  - Selection sweep after switching `PipsPager` to `Page 2` and adding native-click fallback, with only `SelectorBar` still failing: `artifacts/visual-checks/20260602-034950-835-56632/report.md`
+  - Dark supported selection sweep for `PipsPager` and `Pivot`: `artifacts/visual-checks/20260602-035247-913-16492/report.md`

@@ -2727,11 +2727,13 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "$needsSampleElement = $IncludeInteractions -and (",
                 "(Test-ControlSupportsOpenInteraction $control) -or",
-                "(Test-ControlSupportsStateInteraction $control))",
+                "(Test-ControlSupportsStateInteraction $control) -or",
+                "(Test-ControlSupportsSelectionInteraction $control))",
                 "$openNames = Get-OpenInteractionNames $control",
                 "$openInteraction = Capture-OpenInteraction \"ModernWpf\" $control $caseDir $window $sample $openNames",
                 "$stateInteraction = Capture-StateInteraction \"ModernWpf\" $control $caseDir $window $sample",
-                "$interaction = if ($null -ne $openInteraction) { $openInteraction } else { $stateInteraction }");
+                "$selectionInteraction = Capture-SelectionInteraction \"ModernWpf\" $control $caseDir $window $sample",
+                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } else { $selectionInteraction }");
         }
 
         [TestMethod]
@@ -2774,7 +2776,61 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "$openInteraction = Capture-OpenInteraction \"WinUI3\" $control $caseDir $window $showButton $openNames",
                 "$stateInteraction = Capture-StateInteraction \"WinUI3\" $control $caseDir $window $showButton",
-                "$interaction = if ($null -ne $openInteraction) { $openInteraction } else { $stateInteraction }");
+                "$selectionInteraction = Capture-SelectionInteraction \"WinUI3\" $control $caseDir $window $showButton",
+                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } else { $selectionInteraction }");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksClicksCommonSelectionInteractionControls()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsSelectionInteraction([string]$control)",
+                "\"PipsPager\" { return $true }",
+                "\"Pivot\" { return $true }");
+            AssertContainsInOrder(
+                source,
+                "function Get-SelectionInteractionTriggerName([string]$control)",
+                "\"PipsPager\" { return \"Page 2\" }",
+                "\"Pivot\" { return \"Unread\" }");
+            AssertContainsInOrder(
+                source,
+                "function Get-SelectionInteractionExpectedName([string]$control)",
+                "\"Pivot\" { return \"unread emails go here.\" }");
+            AssertContainsInOrder(
+                source,
+                "function Get-SelectionInteractionCropAutomationId([string]$control)",
+                "\"PipsPager\" { return \"GallerySample_PipsPager_Root\" }",
+                "\"Pivot\" { return \"GallerySample_Pivot_Pivot\" }");
+            AssertContainsInOrder(
+                source,
+                "function Find-SelectionInvokeTarget($element)",
+                "[System.Windows.Automation.SelectionItemPattern]::Pattern",
+                "[System.Windows.Automation.InvokePattern]::Pattern",
+                "[System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)",
+                "function Invoke-SelectionElementOnce($window, $element)",
+                "$pattern = $target.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)",
+                "$pattern.Select()",
+                "[void](Invoke-ElementOnce $window $target)",
+                "$pattern = $target.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)",
+                "$pattern.Invoke()");
+            AssertContainsInOrder(
+                source,
+                "function Capture-SelectionInteraction([string]$app, [string]$control, [string]$caseDir, $window, $sampleElement)",
+                "if (!$IncludeInteractions -or !(Test-ControlSupportsSelectionInteraction $control))",
+                "$triggerName = Get-SelectionInteractionTriggerName $control",
+                "$trigger = if ($null -ne $cropElement) { Find-DescendantByName $cropElement $triggerName } else { $null }",
+                "$trigger = Find-DescendantByName $window $triggerName",
+                "$invoked = Invoke-SelectionElementOnce $window $trigger",
+                "$selectionDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot",
+                "$expectedName = Get-SelectionInteractionExpectedName $control",
+                "$visualChanged = $null -ne $selectionDelta -and $selectionDelta.Comparable -and $selectionDelta.MeanDelta -gt 0.5");
         }
 
         [TestMethod]
