@@ -24,6 +24,7 @@
             <StackPanel Margin="0,0,0,24">
                 <controls:ControlExample
                     Margin="10"
+                    AutomationProperties.AutomationId="GallerySample_RadioButton_Root"
                     HeaderText="Standard RadioButton."
                     XamlCode="&lt;StackPanel&gt;             &#10;&#9;&lt;RadioButton Content=&quot;Option 1&quot; GroupName=&quot;radio_group_one&quot; IsChecked=&quot;True&quot;/&gt;             &#10;&#9;&lt;RadioButton Content=&quot;Option 2&quot; GroupName=&quot;radio_group_one&quot; /&gt;             &#10;&#9;&lt;RadioButton Content=&quot;Option 3&quot; GroupName=&quot;radio_group_one&quot; /&gt;             &#10;&lt;/StackPanel&gt;">
                     <Grid>
@@ -33,6 +34,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Grid.Column="0" KeyboardNavigation.TabNavigation="Once" KeyboardNavigation.DirectionalNavigation="Cycle">
                             <RadioButton
+                                AutomationProperties.AutomationId="GallerySample_RadioButton_RadioButton"
                                 AutomationProperties.Name="Default Radio Option 1"
                                 Content="Option 1"
                                 GroupName="radio_group_one"

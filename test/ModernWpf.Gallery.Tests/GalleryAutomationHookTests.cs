@@ -63,6 +63,11 @@ namespace ModernWpf.Gallery.Tests
         public static IEnumerable<object[]> CuratedSampleAutomationIds()
         {
             yield return new object[] { "TeachingTip", "GallerySample_TeachingTip_Root", "GallerySample_TeachingTip_ShowButton" };
+            yield return new object[] { "Button", "GallerySample_Button_Root", "GallerySample_Button_PrimaryButton" };
+            yield return new object[] { "CheckBox", "GallerySample_CheckBox_Root", "GallerySample_CheckBox_CheckBox" };
+            yield return new object[] { "ComboBox", "GallerySample_ComboBox_Root", "GallerySample_ComboBox_ComboBox" };
+            yield return new object[] { "RadioButton", "GallerySample_RadioButton_Root", "GallerySample_RadioButton_RadioButton" };
+            yield return new object[] { "Slider", "GallerySample_Slider_Root", "GallerySample_Slider_Slider" };
             yield return new object[] { "InfoBadge", "GallerySample_InfoBadge_Root", "GallerySample_InfoBadge_InfoBadge" };
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
@@ -130,7 +135,8 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
-                    var pageHeader = FindDescendants<PageHeader>(page).Single();
+                    var pageHeader = FindDescendants<PageHeader>(page)
+                        .Single(header => header.IsVisible);
                     Assert.IsNotNull(pageHeader, "Item page header is missing.");
                     pageHeader.ApplyTemplate();
                     var titleLabel = (Label)pageHeader.Template.FindName("TitleTextBlock", pageHeader);

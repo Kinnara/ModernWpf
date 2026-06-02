@@ -511,6 +511,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
     switch ($control) {
         "TeachingTip" { return "GallerySample_TeachingTip_ShowButton" }
         "Button" { return "GallerySample_Button_PrimaryButton" }
+        "CheckBox" { return "GallerySample_CheckBox_CheckBox" }
         "ComboBox" { return "GallerySample_ComboBox_ComboBox" }
         "ColorPicker" { return "GallerySample_ColorPicker_ColorPicker" }
         "HyperlinkButton" { return "GallerySample_HyperlinkButton_HyperlinkButton" }
@@ -522,7 +523,9 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
         "ToggleSwitch" { return "GallerySample_ToggleSwitch_ToggleSwitch" }
         "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
+        "RadioButton" { return "GallerySample_RadioButton_RadioButton" }
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
+        "Slider" { return "GallerySample_Slider_Slider" }
         "SplitView" { return "GallerySample_SplitView_SplitView" }
         "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
@@ -571,6 +574,7 @@ function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
 function Get-ModernPrimaryCropAutomationId([string]$control) {
     switch ($control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
+        "CheckBox" { return "GallerySample_CheckBox_CheckBox" }
         "ColorPicker" { return "GallerySample_ColorPicker_ColorPicker" }
         "HyperlinkButton" { return "GallerySample_HyperlinkButton_HyperlinkButton" }
         "RatingControl" { return "GallerySample_RatingControl_RatingControl" }
@@ -581,7 +585,9 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
         "ToggleSwitch" { return "GallerySample_ToggleSwitch_ToggleSwitch" }
         "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
+        "RadioButton" { return "GallerySample_RadioButton_RadioButton" }
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
+        "Slider" { return "GallerySample_Slider_Slider" }
         "SplitView" { return "NavLinksList" }
         "PersonPicture" { return "ProfileImageRadio" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }

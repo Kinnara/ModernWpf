@@ -24,6 +24,7 @@
             <StackPanel Margin="0,0,0,24">
                 <controls:ControlExample
                     Margin="10"
+                    AutomationProperties.AutomationId="GallerySample_Slider_Root"
                     HeaderText="A simple slider."
                     XamlCode="&lt;Slider Width=&quot;200&quot; Margin=&quot;0&quot; HorizontalAlignment=&quot;Left&quot; VerticalAlignment=&quot;Center&quot; Maximum=&quot;100&quot; Minimum=&quot;0&quot;/&gt;">
                     <Grid>
@@ -36,6 +37,7 @@
                             Margin="0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
+                            AutomationProperties.AutomationId="GallerySample_Slider_Slider"
                             AutomationProperties.Name="Simple"
                             IsSnapToTickEnabled="True"
                             Maximum="100"
