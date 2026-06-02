@@ -2592,6 +2592,25 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryVisualChecksUseRenderedModernPrimaryArtifactsForSplitViewAndPersonPicture()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Get-ModernPrimaryCropAutomationId([string]$control)",
+                "\"SplitView\" { return \"GallerySample_SplitView_SplitView\" }",
+                "\"PersonPicture\" { return \"GallerySample_PersonPicture_PersonPicture\" }",
+                "function Get-ReferencePrimaryAutomationId([string]$control)",
+                "\"SplitView\" { return \"NavLinksList\" }",
+                "\"PersonPicture\" { return \"ProfileImageRadio\" }");
+        }
+
+        [TestMethod]
         public void GalleryVisualChecksRejectUnprovenWinUIReferenceThemeProbe()
         {
             var source = File.ReadAllText(Path.Combine(

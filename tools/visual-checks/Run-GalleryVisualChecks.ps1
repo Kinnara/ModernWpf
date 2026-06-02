@@ -588,8 +588,8 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "RadioButton" { return "GallerySample_RadioButton_RadioButton" }
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
         "Slider" { return "GallerySample_Slider_Slider" }
-        "SplitView" { return "NavLinksList" }
-        "PersonPicture" { return "ProfileImageRadio" }
+        "SplitView" { return "GallerySample_SplitView_SplitView" }
+        "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
         "IconElement" { return "GallerySample_IconElement_Root" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_Root" }
