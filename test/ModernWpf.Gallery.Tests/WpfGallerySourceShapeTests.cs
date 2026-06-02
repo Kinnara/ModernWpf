@@ -2919,7 +2919,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void GalleryVisualChecksActivatesNumberBoxSpinButtonValueInteraction()
+        public void GalleryVisualChecksActivatesConfiguredValueInteractions()
         {
             var source = File.ReadAllText(Path.Combine(
                 GetRepoRoot(),
@@ -2930,9 +2930,13 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Test-ControlSupportsValueInteraction([string]$control)",
+                "\"RatingControl\" { return $true }",
                 "\"NumberBox\" { return $true }",
                 "function Get-ValueInteractionStep([string]$control)",
+                "\"RatingControl\" { return 3.0 }",
                 "\"NumberBox\" { return 10.0 }",
+                "function Get-ValueInteractionTargetValue([string]$control, $baselineValue)",
+                "\"RatingControl\" { return 3.0 }",
                 "function Get-ValueInteractionIncreaseButtonNames([string]$control)",
                 "\"NumberBox\" { return @(\"Increase\", \"Increase value\", \"Up\") }");
             AssertContainsInOrder(
@@ -2947,7 +2951,12 @@ namespace ModernWpf.Gallery.Tests
                 "return Try-ParseDouble $pattern.Current.Value");
             AssertContainsInOrder(
                 source,
-                "function Invoke-ValueIncreaseOnce($window, [string]$control, $element)",
+                "function Invoke-ValueIncreaseOnce($window, [string]$control, $element, $expectedValue)",
+                "if ($control -eq \"RatingControl\")",
+                "[System.Windows.Automation.RangeValuePattern]::Pattern",
+                "$rangePattern.SetValue([double]$expectedValue)",
+                "[System.Windows.Automation.ValuePattern]::Pattern",
+                "$valuePattern.SetValue(([double]$expectedValue).ToString([System.Globalization.CultureInfo]::InvariantCulture))",
                 "$buttonNames = Get-ValueInteractionIncreaseButtonNames $control",
                 "$button = Find-DescendantButtonByAnyName $element $buttonNames",
                 "Find-ElementByNameInProcess $window.Current.ProcessId $buttonNames",
@@ -2959,12 +2968,19 @@ namespace ModernWpf.Gallery.Tests
                 "function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element)",
                 "if (!$IncludeInteractions -or !(Test-ControlSupportsValueInteraction $control))",
                 "$baselineValue = Get-ElementNumericValue $element",
-                "$expectedValue = if ($null -ne $baselineValue) { [double]$baselineValue + [double]$step } else { $null }",
-                "$invoked = Invoke-ValueIncreaseOnce $window $control $element",
+                "$expectedValue = Get-ValueInteractionTargetValue $control $baselineValue",
+                "if ($null -ne $baselineCrop -and $baselineCrop.Contains(\"NonBlank\") -and !$baselineCrop.NonBlank)",
+                "$baselineCrop = Save-ElementCrop $window $baselinePath $baselineCropPath $element \"UIA\" 10",
+                "$invoked = Invoke-ValueIncreaseOnce $window $control $element $expectedValue",
                 "$afterValue = Get-ElementNumericValue $element",
+                "if ($null -ne $afterCrop -and $afterCrop.Contains(\"NonBlank\") -and !$afterCrop.NonBlank)",
+                "$afterCrop = Save-ElementCrop $window $afterPath $afterCropPath $element \"UIA\" 10",
                 "$valueDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot",
                 "$valueChanged = (Test-DoubleApproximatelyEqual $afterValue $expectedValue)",
                 "$visualChanged = $null -ne $valueDelta -and $valueDelta.Comparable -and $valueDelta.MeanDelta -gt 0.1",
+                "$baselineNonBlank = $null -ne $baselineCrop -and $baselineCrop.Contains(\"NonBlank\") -and $baselineCrop.NonBlank",
+                "$afterNonBlank = $null -ne $afterCrop -and $afterCrop.Contains(\"NonBlank\") -and $afterCrop.NonBlank",
+                "$control value interaction crop was blank before or after activation.",
                 "Kind = \"Value\"",
                 "ExpectedValue = $expectedValue",
                 "ValueAfter = $afterValue");

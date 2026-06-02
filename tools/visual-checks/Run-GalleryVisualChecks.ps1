@@ -830,6 +830,7 @@ function Test-ControlSupportsTextInteraction([string]$control) {
 
 function Test-ControlSupportsValueInteraction([string]$control) {
     switch ($control) {
+        "RatingControl" { return $true }
         "NumberBox" { return $true }
         default { return $false }
     }
@@ -865,8 +866,22 @@ function Get-OutputInteractionMinimumDelta([string]$control) {
 
 function Get-ValueInteractionStep([string]$control) {
     switch ($control) {
+        "RatingControl" { return 3.0 }
         "NumberBox" { return 10.0 }
         default { return 0.0 }
+    }
+}
+
+function Get-ValueInteractionTargetValue([string]$control, $baselineValue) {
+    switch ($control) {
+        "RatingControl" { return 3.0 }
+        default {
+            if ($null -eq $baselineValue) {
+                return $null
+            }
+
+            return [double]$baselineValue + [double](Get-ValueInteractionStep $control)
+        }
     }
 }
 
@@ -2494,9 +2509,33 @@ function Get-ElementCenterHitSummary($element) {
     }
 }
 
-function Invoke-ValueIncreaseOnce($window, [string]$control, $element) {
+function Invoke-ValueIncreaseOnce($window, [string]$control, $element, $expectedValue) {
     if ($null -eq $element) {
         return $false
+    }
+
+    if ($control -eq "RatingControl") {
+        try {
+            $rangePattern = $element.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
+            if ($null -ne $rangePattern) {
+                $rangePattern.SetValue([double]$expectedValue)
+                Start-Sleep -Milliseconds 50
+                return $true
+            }
+        }
+        catch {
+        }
+
+        try {
+            $valuePattern = $element.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+            if ($null -ne $valuePattern) {
+                $valuePattern.SetValue(([double]$expectedValue).ToString([System.Globalization.CultureInfo]::InvariantCulture))
+                Start-Sleep -Milliseconds 50
+                return $true
+            }
+        }
+        catch {
+        }
     }
 
     $buttonNames = Get-ValueInteractionIncreaseButtonNames $control
@@ -3250,9 +3289,9 @@ function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseD
     [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
     Start-Sleep -Milliseconds 250
 
-    $step = Get-ValueInteractionStep $control
     $baselineValue = Get-ElementNumericValue $element
-    $expectedValue = if ($null -ne $baselineValue) { [double]$baselineValue + [double]$step } else { $null }
+    $step = Get-ValueInteractionStep $control
+    $expectedValue = Get-ValueInteractionTargetValue $control $baselineValue
     $treePath = Join-Path $caseDir ("{0}-{1}-value.uia.txt" -f $app.ToLowerInvariant(), $control)
     try {
         Write-UiaTree $element $treePath 5
@@ -3277,8 +3316,17 @@ function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseD
     else {
         $null
     }
+    if ($null -ne $baselineCrop -and $baselineCrop.Contains("NonBlank") -and !$baselineCrop.NonBlank) {
+        Start-Sleep -Milliseconds 300
+        try {
+            Capture-Window $window.Current.NativeWindowHandle $baselinePath
+            $baselineCrop = Save-ElementCrop $window $baselinePath $baselineCropPath $element "UIA" 10
+        }
+        catch {
+        }
+    }
 
-    $invoked = Invoke-ValueIncreaseOnce $window $control $element
+    $invoked = Invoke-ValueIncreaseOnce $window $control $element $expectedValue
     Start-Sleep -Milliseconds 250
 
     $afterValue = Get-ElementNumericValue $element
@@ -3297,6 +3345,15 @@ function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseD
     else {
         $null
     }
+    if ($null -ne $afterCrop -and $afterCrop.Contains("NonBlank") -and !$afterCrop.NonBlank) {
+        Start-Sleep -Milliseconds 300
+        try {
+            Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
+            $afterCrop = Save-ElementCrop $window $afterPath $afterCropPath $element "UIA" 10
+        }
+        catch {
+        }
+    }
 
     $valueDelta = $null
     if ($null -ne $baselineCrop -and $null -ne $afterCrop -and
@@ -3308,7 +3365,9 @@ function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseD
 
     $valueChanged = (Test-DoubleApproximatelyEqual $afterValue $expectedValue)
     $visualChanged = $null -ne $valueDelta -and $valueDelta.Comparable -and $valueDelta.MeanDelta -gt 0.1
-    $status = if ($null -eq $baselineValue) { "Failed" } elseif (!$invoked) { "Failed" } elseif (!$valueChanged) { "Failed" } else { "Passed" }
+    $baselineNonBlank = $null -ne $baselineCrop -and $baselineCrop.Contains("NonBlank") -and $baselineCrop.NonBlank
+    $afterNonBlank = $null -ne $afterCrop -and $afterCrop.Contains("NonBlank") -and $afterCrop.NonBlank
+    $status = if ($null -eq $baselineValue) { "Failed" } elseif (!$invoked) { "Failed" } elseif (!$valueChanged) { "Failed" } elseif (!$baselineNonBlank -or !$afterNonBlank) { "Failed" } else { "Passed" }
     $notes = if ($null -eq $baselineValue) {
         "$control did not expose a readable numeric value."
     }
@@ -3317,6 +3376,9 @@ function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseD
     }
     elseif (!$valueChanged) {
         "$control value did not change from $baselineValue to expected $expectedValue; observed '$afterValue'."
+    }
+    elseif (!$baselineNonBlank -or !$afterNonBlank) {
+        "$control value interaction crop was blank before or after activation."
     }
     else {
         ""
