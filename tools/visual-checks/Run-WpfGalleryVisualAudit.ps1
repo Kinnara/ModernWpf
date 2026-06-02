@@ -38,15 +38,28 @@ if ([string]::IsNullOrWhiteSpace($OfficialDirectHostExe)) {
     $OfficialDirectHostExe = Join-Path $RepoRoot "tools\visual-checks\OfficialWpfGalleryDirectHost\bin\Debug\net10.0-windows\OfficialWpfGalleryDirectHost.exe"
 }
 
-function New-Case([string]$id, [string]$modernRoute, [string[]]$officialPath, [string]$colorSubpage = "", [string]$readyRoute = "") {
+function New-Case(
+    [string]$id,
+    [string]$modernRoute,
+    [string[]]$officialPath,
+    [string]$colorSubpage = "",
+    [string]$readyRoute = "",
+    [string[]]$modernClickPath = @(),
+    [string]$modernInitialReadyRoute = "") {
     if ([string]::IsNullOrWhiteSpace($readyRoute)) {
         $readyRoute = $modernRoute
+    }
+
+    if ([string]::IsNullOrWhiteSpace($modernInitialReadyRoute)) {
+        $modernInitialReadyRoute = $readyRoute
     }
 
     return [ordered]@{
         Id = $id
         ModernRoute = $modernRoute
         ReadyRoute = $readyRoute
+        ModernInitialReadyRoute = $modernInitialReadyRoute
+        ModernClickPath = $modernClickPath
         OfficialPath = $officialPath
         ColorSubpage = $colorSubpage
     }
@@ -55,6 +68,8 @@ function New-Case([string]$id, [string]$modernRoute, [string[]]$officialPath, [s
 $CaseCatalog = @(
     New-Case "Home" "Home" @("Home") "" "home"
     New-Case "ShellHomeNavigation" "home" @("Home") "" "home"
+    New-Case "ShellDesignGuidance" "category/Design Guidance" @("Design Guidance") "" "category/DesignGuidance"
+    New-Case "ShellClickDesignGuidance" "home" @("Design Guidance") "" "category/DesignGuidance" @("Design Guidance") "home"
     New-Case "WhatsNew" "What's New" @("What's New") "" "WhatsNew"
     New-Case "AllControls" "All Controls" @("All Controls") "" "AllControls"
     New-Case "DesignGuidance" "category/Design Guidance" @("Design Guidance") "" "category/DesignGuidance"
@@ -69,6 +84,8 @@ $CaseCatalog = @(
     New-Case "Spacing" "item/Spacing" @("Design Guidance", "Spacing")
     New-Case "Geometry" "item/Geometry" @("Design Guidance", "Geometry")
     New-Case "Iconography" "item/Icons" @("Design Guidance", "Icons") "" "item/Iconography"
+    New-Case "ShellSamples" "category/Samples" @("Samples")
+    New-Case "ShellClickSamples" "home" @("Samples") "" "category/Samples" @("Samples") "home"
     New-Case "Samples" "category/Samples" @("Samples")
     New-Case "UserDashboard" "item/User Dashboard" @("Samples", "User Dashboard") "" "item/UserDashboard"
     New-Case "BasicInput" "category/Basic Input" @("Basic Input") "" "category/BasicInput"
@@ -121,12 +138,21 @@ $CaseCatalog = @(
 
 function Test-ShellNavigationCase($case) {
     return $null -ne $case -and
-        ($case.Id -eq "ShellNavigation" -or $case.Id -eq "ShellHomeNavigation")
+        ($case.Id -eq "ShellNavigation" -or
+            $case.Id -eq "ShellHomeNavigation" -or
+            $case.Id -eq "ShellDesignGuidance" -or
+            $case.Id -eq "ShellClickDesignGuidance" -or
+            $case.Id -eq "ShellClickSamples" -or
+            $case.Id -eq "ShellSamples")
 }
 
 $OfficialDirectReferenceCaseIds = @(
     "Home",
     "ShellHomeNavigation",
+    "ShellDesignGuidance",
+    "ShellClickDesignGuidance",
+    "ShellClickSamples",
+    "ShellSamples",
     "WhatsNew",
     "AllControls",
     "Settings",
@@ -266,10 +292,11 @@ if ($ListCases) {
                 Id = $_.Id
                 ModernRoute = $_.ModernRoute
                 ReadyRoute = $_.ReadyRoute
+                ModernClickPath = $_.ModernClickPath -join " > "
                 OfficialPath = $_.OfficialPath -join " > "
             }
         } |
-        Format-Table Id, ModernRoute, ReadyRoute, OfficialPath -AutoSize
+        Format-Table Id, ModernRoute, ReadyRoute, ModernClickPath, OfficialPath -AutoSize
     return
 }
 
@@ -958,6 +985,89 @@ function Get-AutomationText($root, [string]$automationId) {
     return $element.Current.Name
 }
 
+function Test-ModernClickCase($case) {
+    return $null -ne $case -and
+        $null -ne $case.ModernClickPath -and
+        $case.ModernClickPath.Count -gt 0
+}
+
+function Wait-ModernWpfRouteReady($window, [string]$route, [string]$description, [string]$artifactDir = "") {
+    Wait-Until -TimeoutSeconds $TimeoutSeconds -Description $description -Probe {
+        $readyElement = Test-ModernWpfRouteReady $window $route
+        if ($null -ne $readyElement) {
+            return $readyElement
+        }
+
+        $readyElement = Find-DescendantByAutomationId $window "GalleryVisualTestReadyState"
+        if ($null -ne $readyElement -and $readyElement.Current.Name -like "Failed:*") {
+            return $null
+        }
+
+        if (![string]::IsNullOrWhiteSpace($artifactDir) -and (Test-ModernRenderedContentArtifact $artifactDir)) {
+            return [pscustomobject]@{
+                Source = "RenderedContentArtifact"
+            }
+        }
+
+        return $null
+    } | Out-Null
+}
+
+function Test-ModernWpfRouteReady($window, [string]$route) {
+    $readyElement = Find-DescendantByAutomationId $window "GalleryVisualTestReadyState"
+    if ($null -ne $readyElement -and $readyElement.Current.Name -eq "Ready:$route") {
+        return $readyElement
+    }
+
+    return $null
+}
+
+function Find-ModernNavigationItemByName($window, [string]$name) {
+    $menu = Find-DescendantByAutomationId $window "MenuItemsHost"
+    if ($null -eq $menu) {
+        return $null
+    }
+
+    return Find-DescendantByNameAndType $menu $name ([System.Windows.Automation.ControlType]::ListItem)
+}
+
+function Navigate-ModernWpfGalleryByClicks($window, $case) {
+    if (!(Test-ModernClickCase $case)) {
+        return
+    }
+
+    [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $lastItem = $null
+    foreach ($name in $case.ModernClickPath) {
+        $item = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf Gallery navigation item '$name'" -Probe {
+            Find-ModernNavigationItemByName $window $name
+        }
+
+        $lastItem = $item
+        $clicked = Click-Element $item
+        if (!$clicked) {
+            $clicked = Click-TreeItemHeader $item $name
+        }
+
+        if (!$clicked) {
+            throw "Could not click ModernWpf Gallery navigation item '$name'."
+        }
+
+        Start-Sleep -Milliseconds 500
+    }
+
+    if ($null -eq (Test-ModernWpfRouteReady $window $case.ReadyRoute) -and $null -ne $lastItem) {
+        [void](Invoke-Element $lastItem)
+        Start-Sleep -Milliseconds 500
+    }
+
+    Wait-ModernWpfRouteReady `
+        $window `
+        $case.ReadyRoute `
+        "ModernWpf clicked route '$($case.ReadyRoute)' to become ready"
+    Start-Sleep -Milliseconds 500
+}
+
 function Write-UiaTree($element, [string]$path, [int]$maxDepth) {
     $lines = New-Object System.Collections.Generic.List[string]
     $walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
@@ -1628,24 +1738,13 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             Find-WindowByProcessId $process.Id
         }
         [void][WpfGalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
-        Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf route '$($case.ModernRoute)' to become ready as '$($case.ReadyRoute)'" -Probe {
-            $readyElement = Find-DescendantByAutomationId $window "GalleryVisualTestReadyState"
-            if ($null -ne $readyElement -and $readyElement.Current.Name -eq "Ready:$($case.ReadyRoute)") {
-                return $readyElement
-            }
+        Wait-ModernWpfRouteReady `
+            $window `
+            $case.ModernInitialReadyRoute `
+            "ModernWpf route '$($case.ModernRoute)' to become ready as '$($case.ModernInitialReadyRoute)'" `
+            $artifactDir
 
-            if ($null -ne $readyElement -and $readyElement.Current.Name -like "Failed:*") {
-                return $null
-            }
-
-            if (Test-ModernRenderedContentArtifact $artifactDir) {
-                return [pscustomobject]@{
-                    Source = "RenderedContentArtifact"
-                }
-            }
-
-            return $null
-        } | Out-Null
+        Navigate-ModernWpfGalleryByClicks $window $case
 
         $settleDelayMilliseconds = 500
         if (Test-ShellNavigationCase $case) {

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -239,7 +240,7 @@ public class NavigationViewApiTests
             var peer = FrameworkElementAutomationPeer.CreatePeerForElement(menuItem1);
             Assert.IsNotNull(peer);
             Assert.AreEqual(AutomationControlType.ListItem, peer!.GetAutomationControlType());
-            Assert.IsNull(peer.GetPattern(PatternInterface.Invoke));
+            Assert.IsInstanceOfType(peer.GetPattern(PatternInterface.Invoke), typeof(IInvokeProvider));
 
             navView.PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top;
             host.UpdateLayout();
@@ -247,7 +248,7 @@ public class NavigationViewApiTests
             peer = FrameworkElementAutomationPeer.CreatePeerForElement(menuItem1);
             Assert.IsNotNull(peer);
             Assert.AreEqual(AutomationControlType.TabItem, peer!.GetAutomationControlType());
-            Assert.IsNull(peer.GetPattern(PatternInterface.Invoke));
+            Assert.IsInstanceOfType(peer.GetPattern(PatternInterface.Invoke), typeof(IInvokeProvider));
         });
     }
 

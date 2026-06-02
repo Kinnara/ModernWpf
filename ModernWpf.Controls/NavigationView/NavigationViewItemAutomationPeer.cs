@@ -49,7 +49,8 @@ namespace ModernWpf.Automation.Peers
 
         public override object GetPattern(PatternInterface pattern)
         {
-            if (pattern == PatternInterface.SelectionItem ||
+            if (pattern == PatternInterface.Invoke ||
+                pattern == PatternInterface.SelectionItem ||
                 // Only provide expand collapse pattern if we have children!
                 (pattern == PatternInterface.ExpandCollapse && HasChildren()))
             {

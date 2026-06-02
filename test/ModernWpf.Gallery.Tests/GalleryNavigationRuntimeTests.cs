@@ -319,6 +319,71 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
+        [TestMethod]
+        public void ShellNavigationGroupRowsToggleExpansionWhenInvoked()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new NavigationRootPage();
+                page.DataContext = new { ViewModel = new MainWindowViewModel(page.GoBack, page.OpenSettings, page.GoForward) };
+
+                RenderPage(page, () =>
+                {
+                    var navigation = GetNavigationView(page);
+                    var designGuidanceItem = navigation.MenuItems
+                        .OfType<NavigationViewItem>()
+                        .Single(item => string.Equals(GetNavigationItemText(item), "Design Guidance", StringComparison.Ordinal));
+                    var designGuidanceChevron = GetNavigationDisclosureChevron(designGuidanceItem);
+                    var designGuidanceChildItem = designGuidanceItem.MenuItems
+                        .OfType<NavigationViewItem>()
+                        .Single(item => string.Equals(GetNavigationItemText(item), "Colors", StringComparison.Ordinal));
+                    var samplesItem = navigation.MenuItems
+                        .OfType<NavigationViewItem>()
+                        .Single(item => string.Equals(GetNavigationItemText(item), "Samples", StringComparison.Ordinal));
+                    var samplesChildItem = samplesItem.MenuItems
+                        .OfType<NavigationViewItem>()
+                        .Single(item => string.Equals(GetNavigationItemText(item), "User Dashboard", StringComparison.Ordinal));
+                    var allControlsItem = navigation.MenuItems
+                        .OfType<NavigationViewItem>()
+                        .Single(item => string.Equals(GetNavigationItemText(item), "All Controls", StringComparison.Ordinal));
+
+                    Assert.IsFalse(designGuidanceItem.IsExpanded);
+                    AssertNavigationItemPresenterRowAutoHeight(designGuidanceItem, "Design Guidance row template");
+                    Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
+
+                    InvokeNavigationViewItem(navigation, designGuidanceItem);
+                    WpfTestHost.DoEvents();
+                    page.UpdateLayout();
+
+                    Assert.IsTrue(designGuidanceItem.IsExpanded, "User-invoked group rows should expand.");
+                    Assert.IsTrue(designGuidanceItem.IsSelected, "User-invoked group rows should still navigate/select the group.");
+                    Assert.AreEqual(90d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
+                    AssertNavigationItemLayoutRootHeight(page, designGuidanceItem, 36d, "Expanded selected group row background");
+                    AssertExpandedNavigationChildVisible(page, designGuidanceItem, designGuidanceChildItem, samplesItem, "Colors");
+                    Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(DesignGuidancePage));
+
+                    InvokeNavigationViewItem(navigation, designGuidanceItem);
+                    WpfTestHost.DoEvents();
+                    page.UpdateLayout();
+
+                    Assert.IsFalse(designGuidanceItem.IsExpanded, "User-invoked expanded group rows should collapse.");
+                    Assert.IsTrue(designGuidanceItem.IsSelected, "Collapsing the selected group should not clear its page selection.");
+                    Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
+                    AssertNavigationItemLayoutRootHeight(page, designGuidanceItem, 36d, "Collapsed selected group row background");
+                    Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(DesignGuidancePage));
+
+                    InvokeNavigationViewItem(navigation, samplesItem);
+                    WpfTestHost.DoEvents();
+                    page.UpdateLayout();
+
+                    Assert.IsTrue(samplesItem.IsExpanded, "User-invoked Samples row should expand.");
+                    Assert.IsTrue(samplesItem.IsSelected, "User-invoked Samples row should still navigate/select the group.");
+                    AssertExpandedNavigationChildVisible(page, samplesItem, samplesChildItem, allControlsItem, "User Dashboard");
+                    Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(SamplesPage));
+                });
+            });
+        }
+
         private static void AssertVisualTestStatusNamesRemoved(NavigationRootPage root)
         {
             Assert.IsNull(root.FindName("VisualTestStatusPanel"));
@@ -1281,6 +1346,53 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(expectedMargin, layoutRoot.Margin, context);
         }
 
+        private static void AssertNavigationItemLayoutRootHeight(FrameworkElement root, NavigationViewItem item, double expectedHeight, string context)
+        {
+            var layoutRoot = FindNavigationItemLayoutRoot(item, context);
+            var bounds = GetElementBounds(root, layoutRoot);
+
+            Assert.AreEqual(expectedHeight, bounds.Height, 1.0, context + " height");
+        }
+
+        private static void AssertNavigationItemPresenterRowAutoHeight(NavigationViewItem item, string context)
+        {
+            var rootGrid = FindVisualChildren<Grid>(item)
+                .SingleOrDefault(grid => string.Equals(grid.Name, "NVIRootGrid", StringComparison.Ordinal));
+
+            Assert.IsNotNull(rootGrid, context);
+            Assert.IsTrue(rootGrid.RowDefinitions.Count > 0, context);
+            Assert.AreEqual(GridUnitType.Auto, rootGrid.RowDefinitions[0].Height.GridUnitType, context);
+        }
+
+        private static void AssertExpandedNavigationChildVisible(
+            FrameworkElement root,
+            NavigationViewItem parent,
+            NavigationViewItem child,
+            NavigationViewItem followingItem,
+            string childText)
+        {
+            var parentLayoutRoot = FindNavigationItemLayoutRoot(parent, childText + " parent row");
+            var parentRowBounds = GetElementBounds(root, parentLayoutRoot);
+            var childBounds = GetElementBounds(root, child);
+            var followingBounds = GetElementBounds(root, followingItem);
+
+            Assert.IsTrue(child.IsVisible, childText + " child item should be visible.");
+            Assert.IsTrue(childBounds.Height > 0, childText + " child item should have height.");
+            Assert.IsTrue(childBounds.Top >= parentRowBounds.Bottom - 1, childText + " child item should be below its expanded parent row.");
+            Assert.IsTrue(childBounds.Top - parentRowBounds.Bottom <= 48, childText + " child item should stay close to its expanded parent row.");
+            Assert.IsTrue(childBounds.Bottom <= followingBounds.Top + 1, childText + " child item should be above the following top-level row.");
+
+            var titleText = FindVisualChildren<TextBlock>(child)
+                .SingleOrDefault(text => string.Equals(text.Text, childText, StringComparison.Ordinal));
+            Assert.IsNotNull(titleText, childText + " child text");
+
+            var textBounds = GetElementBounds(root, titleText);
+            Assert.IsTrue(titleText.IsVisible, childText + " child text should be visible.");
+            Assert.IsTrue(textBounds.Width > 0, childText + " child text should have width.");
+            Assert.IsTrue(textBounds.Height > 0, childText + " child text should have height.");
+            Assert.IsTrue(textBounds.Bottom <= followingBounds.Top + 1, childText + " child text should not be hidden behind the following row.");
+        }
+
         private static Border FindNavigationItemLayoutRoot(NavigationViewItem item, string context)
         {
             var layoutRoot = FindVisualChildren<Border>(item)
@@ -1627,6 +1739,15 @@ namespace ModernWpf.Gallery.Tests
             var navigation = root.Children.OfType<NavigationView>().Single();
             Assert.AreEqual(string.Empty, navigation.Name);
             return navigation;
+        }
+
+        private static void InvokeNavigationViewItem(NavigationView navigation, NavigationViewItem item)
+        {
+            var method = typeof(NavigationView).GetMethod(
+                "OnNavigationViewItemInvoked",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            Assert.IsNotNull(method, "NavigationView.OnNavigationViewItemInvoked should remain available for shell interaction coverage.");
+            method.Invoke(navigation, new object[] { item });
         }
 
         private static NavigationRootPage GetNavigationRootPage(MainWindow window)

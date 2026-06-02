@@ -116,7 +116,11 @@ internal static class Program
     private static bool IsShellNavigationPage(string page)
     {
         return string.Equals(page, "ShellNavigation", StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(page, "ShellHomeNavigation", StringComparison.OrdinalIgnoreCase);
+            string.Equals(page, "ShellHomeNavigation", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(page, "ShellDesignGuidance", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(page, "ShellClickDesignGuidance", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(page, "ShellClickSamples", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(page, "ShellSamples", StringComparison.OrdinalIgnoreCase);
     }
 
     private static Window CreateShellNavigationWindow(Application app, HostOptions options)
@@ -138,16 +142,35 @@ internal static class Program
                 DispatcherPriority.ApplicationIdle,
                 new Action(() =>
                 {
-                    navigationService.NavigateTo(
-                        string.Equals(options.Page, "ShellNavigation", StringComparison.OrdinalIgnoreCase)
-                            ? typeof(MenuPage)
-                            : typeof(DashboardPage));
+                    navigationService.NavigateTo(GetShellNavigationPageType(options.Page));
                     window.UpdateLayout();
                     WriteShellNavigationArtifact(window, options.ArtifactDirectory);
                 }));
         };
 
         return window;
+    }
+
+    private static Type GetShellNavigationPageType(string page)
+    {
+        if (string.Equals(page, "ShellNavigation", StringComparison.OrdinalIgnoreCase))
+        {
+            return typeof(MenuPage);
+        }
+
+        if (string.Equals(page, "ShellDesignGuidance", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(page, "ShellClickDesignGuidance", StringComparison.OrdinalIgnoreCase))
+        {
+            return typeof(DesignGuidancePage);
+        }
+
+        if (string.Equals(page, "ShellSamples", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(page, "ShellClickSamples", StringComparison.OrdinalIgnoreCase))
+        {
+            return typeof(SamplesPage);
+        }
+
+        return typeof(DashboardPage);
     }
 
     private static Assembly LoadOfficialAssembly(string officialOutput)
@@ -944,7 +967,9 @@ internal static class Program
             return serviceType.Name switch
             {
                 nameof(DashboardPage) => CreatePage("Home"),
+                nameof(DesignGuidancePage) => CreatePage("DesignGuidance"),
                 nameof(MenuPage) => CreatePage("Menu"),
+                nameof(SamplesPage) => CreatePage("Samples"),
                 nameof(SettingsPage) => CreatePage("Settings"),
                 _ => null
             };

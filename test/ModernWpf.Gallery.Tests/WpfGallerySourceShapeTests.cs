@@ -2734,8 +2734,14 @@ namespace ModernWpf.Gallery.Tests
 
             StringAssert.Contains(source, "ReadyRoute = $readyRoute");
             StringAssert.Contains(source, "$_.ReadyRoute -eq $caseId");
-            StringAssert.Contains(source, "Ready:$($case.ReadyRoute)");
+            StringAssert.Contains(source, "function Wait-ModernWpfRouteReady");
+            StringAssert.Contains(source, "Ready:$route");
+            StringAssert.Contains(source, "$case.ReadyRoute");
             StringAssert.Contains(source, "New-Case \"ShellHomeNavigation\" \"home\" @(\"Home\") \"\" \"home\"");
+            StringAssert.Contains(source, "New-Case \"ShellDesignGuidance\" \"category/Design Guidance\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\"");
+            StringAssert.Contains(source, "New-Case \"ShellClickDesignGuidance\" \"home\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\" @(\"Design Guidance\") \"home\"");
+            StringAssert.Contains(source, "New-Case \"ShellSamples\" \"category/Samples\" @(\"Samples\")");
+            StringAssert.Contains(source, "New-Case \"ShellClickSamples\" \"home\" @(\"Samples\") \"\" \"category/Samples\" @(\"Samples\") \"home\"");
             StringAssert.Contains(source, "New-Case \"AllControls\" \"All Controls\" @(\"All Controls\") \"\" \"AllControls\"");
             StringAssert.Contains(source, "New-Case \"DesignGuidance\" \"category/Design Guidance\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\"");
             StringAssert.Contains(source, "New-Case \"Color\" \"item/Colors\" @(\"Design Guidance\", \"Colors\") \"\" \"item/Color\"");

@@ -582,6 +582,7 @@ namespace ModernWpf.Gallery.Shell
             navigation.Resources["NavigationViewItemSeparatorForeground"] = paneBackground;
             AlignNavigationItemMarginsWithWpfGalleryTreeView();
             AlignNavigationItemContentLayoutWithWpfGalleryTreeView();
+            AlignNavigationItemTemplateLayoutWithWpfGalleryTreeView();
             AlignNavigationViewShellChromeWithWpfGallery(paneBackground);
             if (_currentTarget != null)
             {
@@ -619,6 +620,14 @@ namespace ModernWpf.Gallery.Shell
                             textBlock.Margin.Bottom);
                     }
                 }
+            }
+        }
+
+        private void AlignNavigationItemTemplateLayoutWithWpfGalleryTreeView()
+        {
+            foreach (var item in GetNavigationItems(GetNavigationView().MenuItems))
+            {
+                AlignNavigationItemTemplateWithWpfGalleryTreeView(item);
             }
         }
 
@@ -812,7 +821,7 @@ namespace ModernWpf.Gallery.Shell
             var target = container == null ? null : container.Tag as NavigationTarget;
             if (target != null)
             {
-                Navigate(target, true);
+                Navigate(target, true, expandNavigationPath: target.Kind != NavigationTargetKind.Group);
             }
         }
 
@@ -841,7 +850,7 @@ namespace ModernWpf.Gallery.Shell
             }
         }
 
-        private void Navigate(NavigationTarget target, bool addBackEntry, bool preserveForwardStack = false)
+        private void Navigate(NavigationTarget target, bool addBackEntry, bool preserveForwardStack = false, bool expandNavigationPath = true)
         {
             var route = FormatRoute(target);
             SetVisualTestState(route, "Navigating:" + route);
@@ -865,7 +874,7 @@ namespace ModernWpf.Gallery.Shell
                 _currentTarget = target;
                 var contentHost = GetContentHost();
                 contentHost.Content = CreatePage(target);
-                SelectNavigationItem(target);
+                SelectNavigationItem(target, expandNavigationPath);
                 UpdateBackButton();
 
                 Dispatcher.BeginInvoke(
@@ -945,7 +954,7 @@ namespace ModernWpf.Gallery.Shell
             return root.Children.OfType<NavigationView>().Single();
         }
 
-        private void SelectNavigationItem(NavigationTarget target)
+        private void SelectNavigationItem(NavigationTarget target, bool expandNavigationPath = true)
         {
             NavigationViewItem selectedItem = null;
             if (target.Kind == NavigationTargetKind.Home)
@@ -966,7 +975,10 @@ namespace ModernWpf.Gallery.Shell
             }
 
             _isProgrammaticNavigation = true;
-            ExpandNavigationPath(target);
+            if (expandNavigationPath)
+            {
+                ExpandNavigationPath(target);
+            }
             var navigation = GetNavigationView();
             if (target.Kind == NavigationTargetKind.Item)
             {
@@ -981,6 +993,7 @@ namespace ModernWpf.Gallery.Shell
         {
             navigation.SelectedItem = null;
             ClearNavigationSelection(navigation.MenuItems);
+            AlignNavigationItemTemplateLayoutWithWpfGalleryTreeView();
             if (selectedItem == null)
             {
                 return;
@@ -999,6 +1012,8 @@ namespace ModernWpf.Gallery.Shell
 
         private static void AlignSelectionIndicatorWithWpfGalleryTreeView(NavigationViewItem selectedItem)
         {
+            AlignNavigationItemTemplateWithWpfGalleryTreeView(selectedItem);
+
             var indicator = FindVisualChild<FrameworkElement>(
                 selectedItem,
                 element => string.Equals(element.Name, "SelectionIndicator", StringComparison.Ordinal));
@@ -1015,6 +1030,15 @@ namespace ModernWpf.Gallery.Shell
 
             AlignSelectedNavigationItemBackgroundWithWpfGalleryTreeView(selectedItem);
             AlignSelectedNavigationItemContentWithWpfGalleryTreeView(selectedItem);
+        }
+
+        private static void AlignNavigationItemTemplateWithWpfGalleryTreeView(NavigationViewItem item)
+        {
+            var rootGrid = GetNavigationItemRootGrid(item);
+            if (rootGrid?.RowDefinitions.Count > 0)
+            {
+                rootGrid.RowDefinitions[0].Height = GridLength.Auto;
+            }
         }
 
         private static void AlignSelectedNavigationItemBackgroundWithWpfGalleryTreeView(NavigationViewItem selectedItem)
@@ -1086,6 +1110,13 @@ namespace ModernWpf.Gallery.Shell
             return FindVisualChild<Border>(
                 item,
                 border => string.Equals(border.Name, "LayoutRoot", StringComparison.Ordinal));
+        }
+
+        private static Grid GetNavigationItemRootGrid(NavigationViewItem item)
+        {
+            return FindVisualChild<Grid>(
+                item,
+                grid => string.Equals(grid.Name, "NVIRootGrid", StringComparison.Ordinal));
         }
 
         private static T FindVisualChild<T>(DependencyObject element, Func<T, bool> predicate)
