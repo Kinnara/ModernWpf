@@ -3235,6 +3235,7 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(source, "New-Case \"ShellHomeNavigation\" \"home\" @(\"Home\") \"\" \"home\"");
             StringAssert.Contains(source, "New-Case \"ShellDesignGuidance\" \"category/Design Guidance\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\"");
             StringAssert.Contains(source, "New-Case \"ShellClickDesignGuidance\" \"home\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\" @(\"Design Guidance\") \"home\"");
+            StringAssert.Contains(source, "New-Case \"ShellClickDesignGuidanceAfterSamples\" \"home\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\" @(\"Samples\", \"Design Guidance\") \"home\"");
             StringAssert.Contains(source, "New-Case \"ShellClickDesignGuidanceCollapse\" \"home\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\" @(\"Design Guidance\", \"Design Guidance\") \"home\"");
             StringAssert.Contains(source, "New-Case \"ShellSamples\" \"category/Samples\" @(\"Samples\")");
             StringAssert.Contains(source, "New-Case \"ShellClickSamples\" \"home\" @(\"Samples\") \"\" \"category/Samples\" @(\"Samples\") \"home\"");
@@ -3265,11 +3266,15 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "function Get-ModernShellExpectedNavigationStates($case)",
                 "\"ShellClickDesignGuidance\"",
-                "@{ Name = \"Design Guidance\"; State = \"Expanded\"; MinimumHeight = 80; MaximumHeight = 0 }",
+                "ChildNames = @(\"Colors\", \"Typography\", \"Spacing\", \"Geometry\", \"Icons\")",
+                "FollowingName = \"Samples\"",
+                "\"ShellClickDesignGuidanceAfterSamples\"",
+                "MaximumHeight = 300",
                 "\"ShellClickDesignGuidanceCollapse\"",
-                "@{ Name = \"Design Guidance\"; State = \"Collapsed\"; MinimumHeight = 0; MaximumHeight = 64 }",
+                "HiddenChildNames = @(\"Colors\", \"Typography\", \"Spacing\", \"Geometry\", \"Icons\")",
                 "\"ShellClickSamples\"",
-                "@{ Name = \"Samples\"; State = \"Expanded\"; MinimumHeight = 80; MaximumHeight = 0 }");
+                "ChildNames = @(\"User Dashboard\")",
+                "FollowingName = \"All Controls\"");
             AssertContainsInOrder(
                 source,
                 "function Click-ModernNavigationItemChevron($item)",
@@ -3284,6 +3289,10 @@ namespace ModernWpf.Gallery.Tests
                 "$actualState -ne $expected.State",
                 "$rect = $item.Current.BoundingRectangle",
                 "$expected.MaximumHeight -gt 0 -and $rect.Height -gt $expected.MaximumHeight",
+                "$expected.Contains(\"ChildNames\")",
+                "Find-DescendantByNameAndType $item $childName ([System.Windows.Automation.ControlType]::ListItem)",
+                "$expected.Contains(\"FollowingName\")",
+                "$followingGap = $followingRect.Top - $rect.Bottom",
                 "return $failures -join \" \"");
             AssertContainsInOrder(
                 source,
@@ -3306,6 +3315,27 @@ namespace ModernWpf.Gallery.Tests
                 "if ([string]::IsNullOrWhiteSpace($lastException)) {",
                 "$lastException = Test-ModernShellNavigationState $window $case",
                 "Status = $(if (($windowNonBlank -or $contentCrop.NonBlank) -and $contentCrop.NonBlank -and [string]::IsNullOrWhiteSpace($lastException)) { \"Passed\" } else { \"Failed\" })");
+        }
+
+        [TestMethod]
+        public void NavigationViewItemTemplateKeepsExpandableHeaderRowAuto()
+        {
+            var xaml = ReadRepoFile(
+                "ModernWpf.Controls",
+                "NavigationView",
+                "NavigationView.xaml");
+
+            AssertContainsInOrder(
+                xaml,
+                "<Grid x:Name=\"NVIRootGrid\">",
+                "<Grid.RowDefinitions>",
+                "<RowDefinition Height=\"Auto\"/>",
+                "<RowDefinition Height=\"Auto\"/>",
+                "</Grid.RowDefinitions>",
+                "<primitives:NavigationViewItemPresenter",
+                "<local:ItemsRepeater",
+                "Grid.Row=\"1\"",
+                "x:Name=\"NavigationViewItemMenuItemsHost\">");
         }
 
         [TestMethod]

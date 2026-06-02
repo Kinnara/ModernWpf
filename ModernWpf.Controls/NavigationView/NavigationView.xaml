@@ -1727,7 +1727,7 @@
                 <ControlTemplate TargetType="local:NavigationViewItem">
                     <Grid x:Name="NVIRootGrid">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 

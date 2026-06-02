@@ -23,6 +23,7 @@ Find and fix WPF Gallery issues that appear during real user interaction, with e
 | Fixed in round 4 | Visual-check harness crops | `SplitView` and `PersonPicture` passed route readiness and rendered correct sample artifacts, but the visual check failed because their ModernWpf primary crops were taken from blank full-window screenshots. | ModernWpf primary crop mappings used inner option names instead of rendered `GallerySample_*` artifact IDs, so full-window capture failures looked like sample failures. |
 | Fixed in round 5 | Click-open visual checks | `ContentDialog`, `Flyout`, `Popup`, `MenuFlyout`, and `DropDownButton` had stable static rendering checks but no actual open-state verification under `-IncludeInteractions`. | The harness only opened `TeachingTip` and `CommandBarFlyout`; static route checks could not catch broken click/open paths for common popup controls. |
 | Fixed in round 6 | SplitButton and ToggleSplitButton click-open checks | Opening the secondary flyout target needs a dedicated path; a naive center click invokes the primary action, while recursive UIA popup searches hang. | Round 5 intentionally left these out; round 6 uses a bounded secondary-segment click and visual-delta verification without walking the popup UIA tree. |
+| Fixed in round 20 | Gallery shell NavigationView expanded layout | Repeated click sequences could still leave an expanded parent consuming a large blank pane area while child rows were missing or pushed away. | Earlier shell checks asserted expansion state and a loose minimum height, but did not require visible child rows, bounded expanded height, or bounded sibling spacing. |
 
 ## Round 1: NavigationView Click Expansion
 
@@ -554,3 +555,31 @@ Tighten visual interaction proof for open controls whose content renders in a po
   - False-pass evidence from the combined Round 18 sweep, where `MenuFlyout` and `DropDownButton` passed with bad interaction crops: `artifacts/visual-checks/20260602-073855-817-32676/report.md`
   - Focused passing popup-window proof run for `MenuFlyout` and `DropDownButton`: `artifacts/visual-checks/20260602-074624-748-98168/report.md`
   - Passing combined open-control sweep for `MenuBar`, `MenuFlyout`, `DropDownButton`, and `ComboBox`: `artifacts/visual-checks/20260602-074753-187-12924/report.md`
+
+## Round 20: NavigationView Expanded Child Layout Guard
+
+### Scope
+
+Tighten the WPF Gallery shell NavigationView click audit and fix the expandable item template:
+
+- `ShellClickDesignGuidance`
+- `ShellClickDesignGuidanceAfterSamples`
+- `ShellClickDesignGuidanceCollapse`
+- `ShellClickSamples`
+
+### Current Findings
+
+- The previous shell click audit could pass when a parent item reported `Expanded` and had a large enough bounding rectangle, even if the rectangle was mostly blank and child rows were missing.
+- The expandable `NavigationViewItem` template kept the header presenter in a star-sized row above the child repeater. Under finite on-screen measure paths, that row can absorb the available pane height and push child or following rows far below the clicked item.
+- Fixed the template by making the header row `Auto`, so the selected parent row keeps its content-sized height and the child repeater owns only its actual child extent.
+- Hardened `Run-WpfGalleryVisualAudit.ps1` so expanded shell cases require visible child list items in order, bounded expanded parent height, and bounded spacing to the following top-level row. Collapsed shell cases now also reject retained visible child rows.
+- Added a repeated click case that expands `Samples` first and then expands `Design Guidance`, covering state transitions beyond a clean one-click launch.
+
+### Verification
+
+- Focused tests:
+  - `WpfGallerySourceShapeTests` shell NavigationView source-shape slice: 2 passed on net8 and net10
+  - `GalleryNavigationRuntimeTests.ShellNavigationGroupRowsToggleExpansionWhenInvoked`: passed on net8
+- Visual audit:
+  - Dark shell click sweep for `ShellClickDesignGuidance`, `ShellClickDesignGuidanceAfterSamples`, `ShellClickDesignGuidanceCollapse`, and `ShellClickSamples`: `artifacts/wpf-gallery-visual-audit/20260602-080545-294-96776/report.md`
+  - Light shell click sweep for the same cases: `artifacts/wpf-gallery-visual-audit/20260602-080723-627-96556/report.md`

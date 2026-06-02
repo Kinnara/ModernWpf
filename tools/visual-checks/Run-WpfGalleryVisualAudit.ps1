@@ -70,6 +70,7 @@ $CaseCatalog = @(
     New-Case "ShellHomeNavigation" "home" @("Home") "" "home"
     New-Case "ShellDesignGuidance" "category/Design Guidance" @("Design Guidance") "" "category/DesignGuidance"
     New-Case "ShellClickDesignGuidance" "home" @("Design Guidance") "" "category/DesignGuidance" @("Design Guidance") "home"
+    New-Case "ShellClickDesignGuidanceAfterSamples" "home" @("Design Guidance") "" "category/DesignGuidance" @("Samples", "Design Guidance") "home"
     New-Case "ShellClickDesignGuidanceCollapse" "home" @("Design Guidance") "" "category/DesignGuidance" @("Design Guidance", "Design Guidance") "home"
     New-Case "WhatsNew" "What's New" @("What's New") "" "WhatsNew"
     New-Case "AllControls" "All Controls" @("All Controls") "" "AllControls"
@@ -143,6 +144,7 @@ function Test-ShellNavigationCase($case) {
             $case.Id -eq "ShellHomeNavigation" -or
             $case.Id -eq "ShellDesignGuidance" -or
             $case.Id -eq "ShellClickDesignGuidance" -or
+            $case.Id -eq "ShellClickDesignGuidanceAfterSamples" -or
             $case.Id -eq "ShellClickDesignGuidanceCollapse" -or
             $case.Id -eq "ShellClickSamples" -or
             $case.Id -eq "ShellSamples")
@@ -153,6 +155,7 @@ $OfficialDirectReferenceCaseIds = @(
     "ShellHomeNavigation",
     "ShellDesignGuidance",
     "ShellClickDesignGuidance",
+    "ShellClickDesignGuidanceAfterSamples",
     "ShellClickDesignGuidanceCollapse",
     "ShellClickSamples",
     "ShellSamples",
@@ -760,15 +763,51 @@ function Get-ModernShellExpectedNavigationStates($case) {
     switch ($case.Id) {
         "ShellClickDesignGuidance" {
             return @(
-                [ordered]@{ Name = "Design Guidance"; State = "Expanded"; MinimumHeight = 80; MaximumHeight = 0 })
+                [ordered]@{
+                    Name = "Design Guidance"
+                    State = "Expanded"
+                    MinimumHeight = 220
+                    MaximumHeight = 300
+                    ChildNames = @("Colors", "Typography", "Spacing", "Geometry", "Icons")
+                    FollowingName = "Samples"
+                    MaximumFollowingGap = 48
+                })
+        }
+        "ShellClickDesignGuidanceAfterSamples" {
+            return @(
+                [ordered]@{
+                    Name = "Design Guidance"
+                    State = "Expanded"
+                    MinimumHeight = 220
+                    MaximumHeight = 300
+                    ChildNames = @("Colors", "Typography", "Spacing", "Geometry", "Icons")
+                    FollowingName = "Samples"
+                    MaximumFollowingGap = 48
+                })
         }
         "ShellClickDesignGuidanceCollapse" {
             return @(
-                [ordered]@{ Name = "Design Guidance"; State = "Collapsed"; MinimumHeight = 0; MaximumHeight = 64 })
+                [ordered]@{
+                    Name = "Design Guidance"
+                    State = "Collapsed"
+                    MinimumHeight = 0
+                    MaximumHeight = 64
+                    HiddenChildNames = @("Colors", "Typography", "Spacing", "Geometry", "Icons")
+                    FollowingName = "Samples"
+                    MaximumFollowingGap = 48
+                })
         }
         "ShellClickSamples" {
             return @(
-                [ordered]@{ Name = "Samples"; State = "Expanded"; MinimumHeight = 80; MaximumHeight = 0 })
+                [ordered]@{
+                    Name = "Samples"
+                    State = "Expanded"
+                    MinimumHeight = 80
+                    MaximumHeight = 130
+                    ChildNames = @("User Dashboard")
+                    FollowingName = "All Controls"
+                    MaximumFollowingGap = 48
+                })
         }
         default {
             return @()
@@ -818,7 +857,64 @@ function Test-ModernShellNavigationState($window, $case) {
         }
 
         if ($expected.MaximumHeight -gt 0 -and $rect.Height -gt $expected.MaximumHeight) {
-            $failures.Add("Navigation item '$($expected.Name)' expected collapsed height <= $($expected.MaximumHeight), observed $([int][Math]::Round($rect.Height)).")
+            $failures.Add("Navigation item '$($expected.Name)' expected height <= $($expected.MaximumHeight), observed $([int][Math]::Round($rect.Height)).")
+        }
+
+        if ($expected.Contains("ChildNames")) {
+            $previousChildBottom = 0.0
+            foreach ($childName in $expected.ChildNames) {
+                $child = Find-DescendantByNameAndType $item $childName ([System.Windows.Automation.ControlType]::ListItem)
+                if ($null -eq $child) {
+                    $failures.Add("Expanded navigation item '$($expected.Name)' did not expose child '$childName'.")
+                    continue
+                }
+
+                $childRect = $child.Current.BoundingRectangle
+                if ($childRect.Width -le 0 -or $childRect.Height -le 0) {
+                    $failures.Add("Expanded navigation child '$childName' had an empty rectangle.")
+                    continue
+                }
+
+                if ($childRect.Top -lt ($rect.Top + 20)) {
+                    $failures.Add("Expanded navigation child '$childName' was not below parent '$($expected.Name)'.")
+                }
+
+                if ($childRect.Bottom -gt ($rect.Bottom + 2)) {
+                    $failures.Add("Expanded navigation child '$childName' extended below parent '$($expected.Name)' bounds.")
+                }
+
+                if ($previousChildBottom -gt 0 -and $childRect.Top -lt ($previousChildBottom - 1)) {
+                    $failures.Add("Expanded navigation child '$childName' was not arranged after the previous child.")
+                }
+
+                $previousChildBottom = $childRect.Bottom
+            }
+        }
+
+        if ($expected.Contains("HiddenChildNames")) {
+            foreach ($childName in $expected.HiddenChildNames) {
+                $child = Find-DescendantByNameAndType $item $childName ([System.Windows.Automation.ControlType]::ListItem)
+                if ($null -ne $child) {
+                    $childRect = $child.Current.BoundingRectangle
+                    if ($childRect.Width -gt 0 -and $childRect.Height -gt 0) {
+                        $failures.Add("Collapsed navigation item '$($expected.Name)' still exposed visible child '$childName'.")
+                    }
+                }
+            }
+        }
+
+        if ($expected.Contains("FollowingName")) {
+            $following = Find-ModernNavigationItemByName $window $expected.FollowingName
+            if ($null -eq $following) {
+                $failures.Add("Navigation item '$($expected.FollowingName)' following '$($expected.Name)' was not found.")
+            }
+            else {
+                $followingRect = $following.Current.BoundingRectangle
+                $followingGap = $followingRect.Top - $rect.Bottom
+                if ($expected.MaximumFollowingGap -gt 0 -and $followingGap -gt $expected.MaximumFollowingGap) {
+                    $failures.Add("Navigation item '$($expected.FollowingName)' was too far below '$($expected.Name)'. Gap=$([int][Math]::Round($followingGap)).")
+                }
+            }
         }
     }
 
