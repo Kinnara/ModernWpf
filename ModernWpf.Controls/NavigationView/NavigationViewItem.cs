@@ -676,6 +676,7 @@ namespace ModernWpf.Controls
                 bool shouldShowChildren = IsExpanded;
                 var visibility = shouldShowChildren ? Visibility.Visible : Visibility.Collapsed;
                 repeater.Visibility = visibility;
+                InvalidateMeasure();
 
                 if (ShouldRepeaterShowInFlyout())
                 {

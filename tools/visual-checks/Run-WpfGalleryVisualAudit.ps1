@@ -70,6 +70,7 @@ $CaseCatalog = @(
     New-Case "ShellHomeNavigation" "home" @("Home") "" "home"
     New-Case "ShellDesignGuidance" "category/Design Guidance" @("Design Guidance") "" "category/DesignGuidance"
     New-Case "ShellClickDesignGuidance" "home" @("Design Guidance") "" "category/DesignGuidance" @("Design Guidance") "home"
+    New-Case "ShellClickDesignGuidanceCollapse" "home" @("Design Guidance") "" "category/DesignGuidance" @("Design Guidance", "Design Guidance") "home"
     New-Case "WhatsNew" "What's New" @("What's New") "" "WhatsNew"
     New-Case "AllControls" "All Controls" @("All Controls") "" "AllControls"
     New-Case "DesignGuidance" "category/Design Guidance" @("Design Guidance") "" "category/DesignGuidance"
@@ -142,6 +143,7 @@ function Test-ShellNavigationCase($case) {
             $case.Id -eq "ShellHomeNavigation" -or
             $case.Id -eq "ShellDesignGuidance" -or
             $case.Id -eq "ShellClickDesignGuidance" -or
+            $case.Id -eq "ShellClickDesignGuidanceCollapse" -or
             $case.Id -eq "ShellClickSamples" -or
             $case.Id -eq "ShellSamples")
 }
@@ -151,6 +153,7 @@ $OfficialDirectReferenceCaseIds = @(
     "ShellHomeNavigation",
     "ShellDesignGuidance",
     "ShellClickDesignGuidance",
+    "ShellClickDesignGuidanceCollapse",
     "ShellClickSamples",
     "ShellSamples",
     "WhatsNew",

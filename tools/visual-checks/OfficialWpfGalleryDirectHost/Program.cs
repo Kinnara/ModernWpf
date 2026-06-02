@@ -119,6 +119,7 @@ internal static class Program
             string.Equals(page, "ShellHomeNavigation", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(page, "ShellDesignGuidance", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(page, "ShellClickDesignGuidance", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(page, "ShellClickDesignGuidanceCollapse", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(page, "ShellClickSamples", StringComparison.OrdinalIgnoreCase) ||
             string.Equals(page, "ShellSamples", StringComparison.OrdinalIgnoreCase);
     }
@@ -159,7 +160,8 @@ internal static class Program
         }
 
         if (string.Equals(page, "ShellDesignGuidance", StringComparison.OrdinalIgnoreCase) ||
-            string.Equals(page, "ShellClickDesignGuidance", StringComparison.OrdinalIgnoreCase))
+            string.Equals(page, "ShellClickDesignGuidance", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(page, "ShellClickDesignGuidanceCollapse", StringComparison.OrdinalIgnoreCase))
         {
             return typeof(DesignGuidancePage);
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
@@ -370,6 +371,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(designGuidanceItem.IsSelected, "Collapsing the selected group should not clear its page selection.");
                     Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
                     AssertNavigationItemLayoutRootHeight(page, designGuidanceItem, 36d, "Collapsed selected group row background");
+                    AssertCollapsedNavigationChildrenReleased(page, designGuidanceItem, designGuidanceChildItem, samplesItem, "Colors");
                     Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(DesignGuidancePage));
 
                     InvokeNavigationViewItem(navigation, samplesItem);
@@ -1391,6 +1393,28 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsTrue(textBounds.Width > 0, childText + " child text should have width.");
             Assert.IsTrue(textBounds.Height > 0, childText + " child text should have height.");
             Assert.IsTrue(textBounds.Bottom <= followingBounds.Top + 1, childText + " child text should not be hidden behind the following row.");
+        }
+
+        private static void AssertCollapsedNavigationChildrenReleased(
+            FrameworkElement root,
+            NavigationViewItem parent,
+            NavigationViewItem child,
+            NavigationViewItem followingItem,
+            string childText)
+        {
+            var parentLayoutRoot = FindNavigationItemLayoutRoot(parent, childText + " collapsed parent row");
+            var parentRowBounds = GetElementBounds(root, parentLayoutRoot);
+            var followingBounds = GetElementBounds(root, followingItem);
+
+            Assert.IsFalse(child.IsVisible, childText + " child item should not be visible after collapse.");
+            Assert.IsTrue(
+                followingBounds.Top - parentRowBounds.Bottom <= 48,
+                childText + " collapsed child area should not keep a large blank gap before the following row. " +
+                "Gap=" + (followingBounds.Top - parentRowBounds.Bottom).ToString("F1", CultureInfo.InvariantCulture) +
+                ", parentRow=" + parentRowBounds.ToString(CultureInfo.InvariantCulture) +
+                ", parentActual=" + parent.ActualHeight.ToString("F1", CultureInfo.InvariantCulture) +
+                ", childActual=" + child.ActualHeight.ToString("F1", CultureInfo.InvariantCulture) +
+                ", following=" + followingBounds.ToString(CultureInfo.InvariantCulture));
         }
 
         private static Border FindNavigationItemLayoutRoot(NavigationViewItem item, string context)

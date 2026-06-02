@@ -15,9 +15,10 @@ Find and fix WPF Gallery issues that appear during real user interaction, with e
 
 | Status | Area | Symptom | Reproduction Gap |
 | --- | --- | --- | --- |
-| Fixed in round 1 | Gallery shell NavigationView | Clicking an expandable group can show a selected group row with a large blank gap before children/following items. | Existing visual parity cases used initial routes, not real clicks. |
+| Fixed in round 1 | Gallery shell NavigationView | Clicking an expandable group did not reliably expand and place its children directly under the selected group row. | Existing visual parity cases used initial routes, not real clicks. |
 | Fixed in round 1 | Gallery shell NavigationView | Clicking `Samples` can hide the `User Dashboard` child or push it out of the expected position above `All Controls`. | Existing tests did not assert child visibility through a real clicked expansion path. |
 | Fixed in round 1 | NavigationView control automation | `NavigationViewItemAutomationPeer` implemented `IInvokeProvider` but did not expose `PatternInterface.Invoke`, so UI Automation could not invoke nav items. | Existing NavigationView API test explicitly expected no Invoke pattern. |
+| Fixed in round 2 | NavigationView control layout | Clicking an expanded group again collapsed the child repeater visually, but the parent item kept the old expanded height as a large blank gap before the next row. | Round 1 checked expansion and selected row height, but did not assert that collapsed child layout space was released. |
 
 ## Round 1: NavigationView Click Expansion
 
@@ -52,3 +53,31 @@ Fix gallery shell group expansion through actual user-style clicks:
 - Visual audit:
   - Dark `ShellClickDesignGuidance`, `ShellClickSamples`: `artifacts/wpf-gallery-visual-audit/20260602-013810-532-52600/report.md`
   - Light `ShellClickDesignGuidance`, `ShellClickSamples`: `artifacts/wpf-gallery-visual-audit/20260602-013908-551-21820/report.md`
+
+## Round 2: NavigationView Collapse Layout
+
+### Scope
+
+Fix the second-click collapse state for expandable gallery navigation groups:
+
+- `Design Guidance` expands and selects on the first user invocation.
+- A second invocation collapses the children without leaving the old child area as blank space.
+- The selected group page remains displayed after collapse.
+
+### Current Findings
+
+- The collapsed child item was already not visible, so this was not a catalog, selection, or route bug.
+- The selected row background was row-sized, but the parent `NavigationViewItem` still reported the previous expanded height, so the following top-level row was arranged hundreds of pixels lower.
+- `NavigationViewItem.ShowHideChildren` changed the nested repeater visibility but did not invalidate the item measure.
+- The owning `ItemsRepeater` also needed a measure invalidation so its `StackLayout` stopped using the previous expanded extent.
+- Added `ShellClickDesignGuidanceCollapse`: launches at Home, clicks `Design Guidance` twice, waits for `category/DesignGuidance`, then captures the collapsed selected group state.
+
+### Verification
+
+- Focused tests:
+  - `GalleryNavigationRuntimeTests.ShellNavigationGroupRowsToggleExpansionWhenInvoked`
+  - `WpfGallerySourceShapeTests.WpfGalleryVisualAuditLaunchesOfficialDisplayRoutesWithCanonicalReadyRoutes`
+  - `NavigationViewApiTests`: 48 passed
+- Visual audit:
+  - Dark `ShellClickDesignGuidanceCollapse`: `artifacts/wpf-gallery-visual-audit/20260602-020044-354-88816/report.md`
+  - Light `ShellClickDesignGuidanceCollapse`: `artifacts/wpf-gallery-visual-audit/20260602-020120-506-22984/report.md`

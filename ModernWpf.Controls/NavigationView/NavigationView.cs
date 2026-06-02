@@ -5604,6 +5604,9 @@ namespace ModernWpf.Controls
             var nviImpl = nvi;
 
             nviImpl.ShowHideChildren();
+            // The nested repeater visibility changes the item desired height; refresh the
+            // owner repeater so its StackLayout drops the previous expanded extent.
+            GetParentItemsRepeaterForContainer(nvi)?.InvalidateMeasure();
 
             if (nviImpl.ShouldRepeaterShowInFlyout())
             {

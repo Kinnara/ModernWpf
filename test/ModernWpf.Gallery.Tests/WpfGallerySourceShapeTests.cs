@@ -2740,6 +2740,7 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(source, "New-Case \"ShellHomeNavigation\" \"home\" @(\"Home\") \"\" \"home\"");
             StringAssert.Contains(source, "New-Case \"ShellDesignGuidance\" \"category/Design Guidance\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\"");
             StringAssert.Contains(source, "New-Case \"ShellClickDesignGuidance\" \"home\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\" @(\"Design Guidance\") \"home\"");
+            StringAssert.Contains(source, "New-Case \"ShellClickDesignGuidanceCollapse\" \"home\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\" @(\"Design Guidance\", \"Design Guidance\") \"home\"");
             StringAssert.Contains(source, "New-Case \"ShellSamples\" \"category/Samples\" @(\"Samples\")");
             StringAssert.Contains(source, "New-Case \"ShellClickSamples\" \"home\" @(\"Samples\") \"\" \"category/Samples\" @(\"Samples\") \"home\"");
             StringAssert.Contains(source, "New-Case \"AllControls\" \"All Controls\" @(\"All Controls\") \"\" \"AllControls\"");
