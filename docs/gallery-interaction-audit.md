@@ -287,3 +287,34 @@ Also add runtime click coverage for `SelectorBar`, which exposed an ambiguous vi
   - Selection sweep after scoped-target/pattern-invocation fixes, with `Pivot` passing and `PipsPager`/`SelectorBar` still failing: `artifacts/visual-checks/20260602-034618-480-30884/report.md`
   - Selection sweep after switching `PipsPager` to `Page 2` and adding native-click fallback, with only `SelectorBar` still failing: `artifacts/visual-checks/20260602-034950-835-56632/report.md`
   - Dark supported selection sweep for `PipsPager` and `Pivot`: `artifacts/visual-checks/20260602-035247-913-16492/report.md`
+
+## Round 10: GridView Item Activation Coverage
+
+### Scope
+
+Expand visual interaction coverage for the Gallery `GridView` sample so it proves activating the first item exposes the expected click output:
+
+- `GridView`
+
+### Current Findings
+
+- The Gallery runtime tests already verified the sample's `ItemClick` handler through an internal helper, but the visual pass did not activate any `GridView` item.
+- Initial visual attempts exposed the same coverage gap in multiple forms:
+  - UIA `SelectionItemPattern.Select()` selected the first tile but did not fire `ItemClick`.
+  - Native coordinate clicks were not reliable enough in the visual runner to use as the proof path.
+  - UIA focus plus Space selected the item but still did not expose the click output.
+- The underlying automation gap was that `ListViewBase` used WPF's stock selector-owned item peers, which expose selection but not `Invoke`.
+- Added `ListViewBaseAutomationPeer` and selector-owned `ListViewBaseItemAutomationPeer` so `ListView`/`GridView` items expose `InvokePattern`; invoking the item now routes through `ListViewBase.NotifyListItemClicked`.
+- Added a focused WinUI test for `GridViewItem` automation invoke and kept a direct own-container content regression for `NotifyListItemClicked`.
+- Extended the visual harness so `GridView` selection interaction selects `Item 1`, invokes it through UIA, and verifies the rendered Gallery output text `You clicked Item 1.` appears.
+
+### Verification
+
+- Focused tests:
+  - `ListViewApiTests.ItemClickUsesOwnContainerContent`, `ListViewApiTests.ItemClickUsesOwnGridContainerContent`, and `ListViewApiTests.GridViewItemAutomationInvokeRaisesItemClick`: passed on net8
+  - `ModernWpf.WinUI.Tests` is net8-only in this repo, so there is no net10 slice for these tests.
+  - `WpfGallerySourceShapeTests` `FullyQualifiedName~GalleryVisualChecks`: 8 passed on net8 and net10
+- Visual audit:
+  - First failing `GridView` selection run using selection without activation: `artifacts/visual-checks/20260602-035757-449-71644/report.md`
+  - Passing focused `GridView` visual activation run after adding item Invoke automation: `artifacts/visual-checks/20260602-042327-414-39708/report.md`
+  - Passing combined selection sweep for `GridView`, `PipsPager`, and `Pivot`: `artifacts/visual-checks/20260602-042541-677-12876/report.md`

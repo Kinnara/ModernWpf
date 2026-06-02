@@ -711,6 +711,7 @@ function Test-ControlSupportsStateInteraction([string]$control) {
 
 function Test-ControlSupportsSelectionInteraction([string]$control) {
     switch ($control) {
+        "GridView" { return $true }
         "PipsPager" { return $true }
         "Pivot" { return $true }
         default { return $false }
@@ -719,6 +720,7 @@ function Test-ControlSupportsSelectionInteraction([string]$control) {
 
 function Get-SelectionInteractionTriggerName([string]$control) {
     switch ($control) {
+        "GridView" { return "Item 1" }
         "PipsPager" { return "Page 2" }
         "Pivot" { return "Unread" }
         default { return "" }
@@ -727,6 +729,7 @@ function Get-SelectionInteractionTriggerName([string]$control) {
 
 function Get-SelectionInteractionExpectedName([string]$control) {
     switch ($control) {
+        "GridView" { return "You clicked Item 1." }
         "Pivot" { return "unread emails go here." }
         default { return "" }
     }
@@ -734,6 +737,7 @@ function Get-SelectionInteractionExpectedName([string]$control) {
 
 function Get-SelectionInteractionCropAutomationId([string]$control) {
     switch ($control) {
+        "GridView" { return "GallerySample_GridView_Root" }
         "PipsPager" { return "GallerySample_PipsPager_Root" }
         "Pivot" { return "GallerySample_Pivot_Pivot" }
         default { return "" }
@@ -1980,6 +1984,45 @@ function Invoke-SelectionElementOnce($window, $element) {
     return Invoke-ElementOnce $window $target
 }
 
+function Invoke-GridViewItemClickOnce([string]$app, $window) {
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+
+    $item = Find-ElementByNameInProcess $window.Current.ProcessId @("Item 1")
+    if ($null -eq $item) {
+        return $false
+    }
+
+    $target = Find-SelectionInvokeTarget $item
+    if ($null -eq $target) {
+        return $false
+    }
+
+    $invoked = $false
+    try {
+        $pattern = $target.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Select()
+            $invoked = $true
+            Start-Sleep -Milliseconds 80
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $target.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            $invoked = $true
+            Start-Sleep -Milliseconds 80
+        }
+    }
+    catch {
+    }
+
+    return $invoked
+}
+
 function Expand-ElementPatternOnce($window, $element) {
     if ($null -eq $element) {
         return $false
@@ -2398,7 +2441,12 @@ function Capture-SelectionInteraction([string]$app, [string]$control, [string]$c
     if ($null -eq $trigger) {
         $trigger = Find-ElementByNameInProcess $window.Current.ProcessId @($triggerName)
     }
-    $invoked = Invoke-SelectionElementOnce $window $trigger
+    $invoked = if ($control -eq "GridView") {
+        Invoke-GridViewItemClickOnce $app $window
+    }
+    else {
+        Invoke-SelectionElementOnce $window $trigger
+    }
     Start-Sleep -Milliseconds 250
 
     $afterPath = Join-Path $caseDir ("{0}-{1}-selection-after.png" -f $app.ToLowerInvariant(), $control)

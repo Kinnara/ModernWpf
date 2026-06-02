@@ -2792,20 +2792,24 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Test-ControlSupportsSelectionInteraction([string]$control)",
+                "\"GridView\" { return $true }",
                 "\"PipsPager\" { return $true }",
                 "\"Pivot\" { return $true }");
             AssertContainsInOrder(
                 source,
                 "function Get-SelectionInteractionTriggerName([string]$control)",
+                "\"GridView\" { return \"Item 1\" }",
                 "\"PipsPager\" { return \"Page 2\" }",
                 "\"Pivot\" { return \"Unread\" }");
             AssertContainsInOrder(
                 source,
                 "function Get-SelectionInteractionExpectedName([string]$control)",
+                "\"GridView\" { return \"You clicked Item 1.\" }",
                 "\"Pivot\" { return \"unread emails go here.\" }");
             AssertContainsInOrder(
                 source,
                 "function Get-SelectionInteractionCropAutomationId([string]$control)",
+                "\"GridView\" { return \"GallerySample_GridView_Root\" }",
                 "\"PipsPager\" { return \"GallerySample_PipsPager_Root\" }",
                 "\"Pivot\" { return \"GallerySample_Pivot_Pivot\" }");
             AssertContainsInOrder(
@@ -2822,12 +2826,23 @@ namespace ModernWpf.Gallery.Tests
                 "$pattern.Invoke()");
             AssertContainsInOrder(
                 source,
+                "function Invoke-GridViewItemClickOnce([string]$app, $window)",
+                "$item = Find-ElementByNameInProcess $window.Current.ProcessId @(\"Item 1\")",
+                "$target = Find-SelectionInvokeTarget $item",
+                "$pattern = $target.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)",
+                "$pattern.Select()",
+                "$pattern = $target.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)",
+                "$pattern.Invoke()");
+            AssertContainsInOrder(
+                source,
                 "function Capture-SelectionInteraction([string]$app, [string]$control, [string]$caseDir, $window, $sampleElement)",
                 "if (!$IncludeInteractions -or !(Test-ControlSupportsSelectionInteraction $control))",
                 "$triggerName = Get-SelectionInteractionTriggerName $control",
                 "$trigger = if ($null -ne $cropElement) { Find-DescendantByName $cropElement $triggerName } else { $null }",
                 "$trigger = Find-DescendantByName $window $triggerName",
-                "$invoked = Invoke-SelectionElementOnce $window $trigger",
+                "$invoked = if ($control -eq \"GridView\")",
+                "Invoke-GridViewItemClickOnce $app $window",
+                "Invoke-SelectionElementOnce $window $trigger",
                 "$selectionDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot",
                 "$expectedName = Get-SelectionInteractionExpectedName $control",
                 "$visualChanged = $null -ne $selectionDelta -and $selectionDelta.Comparable -and $selectionDelta.MeanDelta -gt 0.5");

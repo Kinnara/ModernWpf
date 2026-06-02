@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -145,6 +147,62 @@ public class ListViewApiTests
     }
 
     [TestMethod]
+    public void ItemClickUsesOwnGridContainerContent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            object? clickedItem = null;
+            var item = new MuxGridViewItem { Content = "Own grid item content" };
+            var gridView = new MuxGridView
+            {
+                IsItemClickEnabled = true
+            };
+            gridView.Items.Add(item);
+            gridView.ItemClick += (_, args) => clickedItem = args.ClickedItem;
+
+            using var host = new TestWindowHost(gridView, width: 260, height: 140);
+            host.UpdateLayout();
+
+            gridView.NotifyListItemClicked(item);
+
+            Assert.AreEqual("Own grid item content", clickedItem);
+        });
+    }
+
+    [TestMethod]
+    public void GridViewItemAutomationInvokeRaisesItemClick()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            object? clickedItem = null;
+            var item = new MuxGridViewItem { Content = "Automation grid item content" };
+            var gridView = new MuxGridView
+            {
+                IsItemClickEnabled = true
+            };
+            gridView.Items.Add(item);
+            gridView.ItemClick += (_, args) => clickedItem = args.ClickedItem;
+
+            using var host = new TestWindowHost(gridView, width: 260, height: 140);
+            host.UpdateLayout();
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(gridView);
+            var itemPeer = peer.GetChildren().Single();
+            var invokeProvider = itemPeer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+
+            Assert.IsNotNull(invokeProvider);
+
+            invokeProvider!.Invoke();
+
+            Assert.AreEqual("Automation grid item content", clickedItem);
+        });
+    }
+
+    [TestMethod]
     public void FocusVisualBrushPropertiesUseBrushTypes()
     {
         WpfTestHost.Run(() =>
@@ -228,4 +286,5 @@ public class ListViewApiTests
 
         element.RaiseEvent(args);
     }
+
 }

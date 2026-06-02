@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using ModernWpf.Controls.Primitives;
 
@@ -17,6 +18,11 @@ namespace ModernWpf.Controls
         protected ListViewBase()
         {
             UpdateMultiSelectEnabled();
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ListViewBaseAutomationPeer(this);
         }
 
         #region IsSelectionEnabled
