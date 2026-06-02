@@ -529,3 +529,28 @@ Expand visual interaction coverage for the Gallery MenuBar sample and fix the re
   - Correct failing MenuBar runs after stricter open verification: `artifacts/visual-checks/20260602-065246-846-29844/report.md`, `artifacts/visual-checks/20260602-070806-234-72688/report.md`, and `artifacts/visual-checks/20260602-072652-671-51660/report.md`
   - Focused passing MenuBar open run with popup-window crop proof: `artifacts/visual-checks/20260602-073526-505-34772/report.md`
   - Passing combined open-control sweep for `MenuBar`, `MenuFlyout`, `DropDownButton`, and `ComboBox`: `artifacts/visual-checks/20260602-073855-817-32676/report.md`
+
+## Round 19: Popup Window Proof for Flyout Open Checks
+
+### Scope
+
+Tighten visual interaction proof for open controls whose content renders in a popup window:
+
+- `MenuFlyout`
+- `DropDownButton`
+
+### Current Findings
+
+- The combined Round 18 open-control sweep still showed weak passes for `MenuFlyout` and `DropDownButton`: both exposed expected UIA menu items, but the interaction crops were blank or off-target rather than visible popup content.
+- The default open-interaction status accepted `OpenElementFound` without requiring a visible crop. That meant a popup could be present in UIA while the visual artifact failed to prove what the user would see.
+- Added a popup-window proof classifier for `MenuFlyout` and `DropDownButton`. These controls now pass only when the opened UIA item is found and the popup's native window capture is nonblank.
+- The generic popup proof records `OpenPopupScreenshot`, `OpenPopupNonBlank`, and `OpenPopupSize`, and uses the popup bitmap as the interaction crop. The verified artifacts now show the expected menu entries rather than blank/off-target window crops.
+
+### Verification
+
+- Focused tests:
+  - `WpfGallerySourceShapeTests` `FullyQualifiedName~GalleryVisualChecks` slice: 11 passed on net8 and net10
+- Visual audit:
+  - False-pass evidence from the combined Round 18 sweep, where `MenuFlyout` and `DropDownButton` passed with bad interaction crops: `artifacts/visual-checks/20260602-073855-817-32676/report.md`
+  - Focused passing popup-window proof run for `MenuFlyout` and `DropDownButton`: `artifacts/visual-checks/20260602-074624-748-98168/report.md`
+  - Passing combined open-control sweep for `MenuBar`, `MenuFlyout`, `DropDownButton`, and `ComboBox`: `artifacts/visual-checks/20260602-074753-187-12924/report.md`

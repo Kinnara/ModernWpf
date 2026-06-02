@@ -2386,6 +2386,14 @@ function Test-ControlPrefersScreenOpenCapture([string]$control) {
     }
 }
 
+function Test-ControlRequiresPopupWindowOpenProof([string]$control) {
+    switch ($control) {
+        "MenuFlyout" { return $true }
+        "DropDownButton" { return $true }
+        default { return $false }
+    }
+}
+
 function Get-ElementNativeWindowHandle($element) {
     $candidate = $element
     for ($depth = 0; $depth -lt 16 -and $null -ne $candidate; $depth++) {
@@ -3029,6 +3037,9 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     $menuBarPopupNonBlank = $false
     $menuBarPopupScreenshot = ""
     $menuBarPopupSize = $null
+    $openPopupNonBlank = $false
+    $openPopupScreenshot = ""
+    $openPopupSize = $null
     $skipOpenUiaSearch = $control -eq "SplitButton" -or $control -eq "ToggleSplitButton"
     $openElement = if ($skipOpenUiaSearch) { $null } else { Find-OpenInteractionElement $window $showButton $openNames $control }
     if ($null -ne $openElement) {
@@ -3075,6 +3086,32 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
                     $menuBarPopupScreenshot = ""
                     $menuBarPopupNonBlank = $false
                     $menuBarPopupSize = $null
+                }
+            }
+        }
+        elseif (Test-ControlRequiresPopupWindowOpenProof $control) {
+            $popupHandle = Get-ElementNativeWindowHandle $openElement
+            if ($popupHandle -ne [IntPtr]::Zero -and $popupHandle -ne $window.Current.NativeWindowHandle) {
+                $openPopupScreenshot = Join-Path $caseDir ("{0}-{1}-popup-window.png" -f $app.ToLowerInvariant(), $control)
+                try {
+                    Capture-Window $popupHandle $openPopupScreenshot -SkipActivate
+                    $openPopupNonBlank = Test-ImageNotBlank $openPopupScreenshot
+                    if (!$openPopupNonBlank) {
+                        Capture-ScreenRect $popupHandle $openPopupScreenshot
+                        $openPopupNonBlank = Test-ImageNotBlank $openPopupScreenshot
+                    }
+
+                    if ($openPopupNonBlank) {
+                        $openPopupSize = Get-ImageSize $openPopupScreenshot
+                    }
+                    else {
+                        $openPopupScreenshot = ""
+                    }
+                }
+                catch {
+                    $openPopupScreenshot = ""
+                    $openPopupNonBlank = $false
+                    $openPopupSize = $null
                 }
             }
         }
@@ -3217,6 +3254,28 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
                 }
             }
         }
+        elseif (Test-ControlRequiresPopupWindowOpenProof $control) {
+            $visualOpened = $openPopupNonBlank
+            if ($openPopupNonBlank) {
+                $crop = [ordered]@{
+                    Found = $true
+                    Screenshot = $openPopupScreenshot
+                    Bounds = [ordered]@{
+                        Found = $true
+                        Reason = ""
+                        X = 0
+                        Y = 0
+                        Width = $openPopupSize.Width
+                        Height = $openPopupSize.Height
+                        ChangedSamples = 0
+                    }
+                    Width = $openPopupSize.Width
+                    Height = $openPopupSize.Height
+                    ChangedSamples = 0
+                    Source = "PopupWindow"
+                }
+            }
+        }
     }
 
     if ($app -eq "ModernWpf" -and $null -eq $crop) {
@@ -3248,6 +3307,10 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     elseif ($control -eq "MenuBar") {
         $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
         $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose an opened menu item." } elseif (!$visualOpened) { "$control exposed opened menu UIA but no nonblank popup item pixels were captured." } else { "" }
+    }
+    elseif (Test-ControlRequiresPopupWindowOpenProof $control) {
+        $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
+        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose opened popup content." } elseif (!$visualOpened) { "$control exposed opened popup UIA but no nonblank popup window was captured." } else { "" }
     }
     else {
         $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -or $visualOpened) { "Passed" } else { "Failed" }
@@ -3285,6 +3348,9 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         MenuBarPopupScreenshot = $menuBarPopupScreenshot
         MenuBarPopupNonBlank = $menuBarPopupNonBlank
         MenuBarPopupSize = $menuBarPopupSize
+        OpenPopupScreenshot = $openPopupScreenshot
+        OpenPopupNonBlank = $openPopupNonBlank
+        OpenPopupSize = $openPopupSize
         SelectedFrameDelayMs = $(if ($null -ne $selectedFrame) { $selectedFrame.DelayMs } else { $null })
         SelectedFrameScreenshot = $(if ($null -ne $selectedFrame) { $selectedFrame.Screenshot } else { "" })
         Notes = $notes
