@@ -1655,11 +1655,14 @@ namespace ModernWpf.Gallery.Tests
                     StringAssert.Contains(page.Examples[2].XamlCode, "ContentGridView_SelectionChanged");
 
                     var basicGridView = (Mux.GridView)FindByAutomationId(page, "GallerySample_GridView_BasicGridView");
+                    var automatedClickOutput0 = (TextBlock)FindByAutomationId(page, "GallerySample_GridView_ClickOutput0");
                     var namedBasicGridView = FindNamedDescendant<Mux.GridView>(page, "BasicGridView");
                     var clickOutput0 = FindNamedDescendant<TextBlock>(page, "ClickOutput0");
                     Assert.IsNotNull(basicGridView);
+                    Assert.IsNotNull(automatedClickOutput0);
                     Assert.AreSame(basicGridView, namedBasicGridView);
                     Assert.IsNotNull(clickOutput0);
+                    Assert.AreSame(clickOutput0, automatedClickOutput0);
                     Assert.AreEqual(8, basicGridView.Items.Count);
                     Assert.IsTrue(basicGridView.IsItemClickEnabled);
                     Assert.AreEqual(SelectionMode.Single, basicGridView.SelectionMode);

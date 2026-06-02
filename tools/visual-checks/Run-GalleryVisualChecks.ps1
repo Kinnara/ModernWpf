@@ -1027,7 +1027,7 @@ function Get-SelectionInteractionExpectedName([string]$control) {
 
 function Get-SelectionInteractionCropAutomationId([string]$control) {
     switch ($control) {
-        "GridView" { return "GallerySample_GridView_Root" }
+        "GridView" { return "GallerySample_GridView_ClickOutput0" }
         "PipsPager" { return "GallerySample_PipsPager_Root" }
         "Pivot" { return "GallerySample_Pivot_Pivot" }
         default { return "" }
@@ -3616,6 +3616,13 @@ function Capture-SelectionInteraction([string]$app, [string]$control, [string]$c
     }
     else {
         $null
+    }
+    if (($null -eq $baselineCrop -or !$baselineCrop.Found) -and
+        $null -ne $afterCrop -and $afterCrop.Found -and
+        $null -ne $afterCrop.Bounds -and $afterCrop.Bounds.Found -and
+        (Test-Path $baselinePath)) {
+        $savedBounds = Save-Crop $baselinePath $afterCrop.Bounds $baselineCropPath 0
+        $baselineCrop = New-RenderedArtifactCrop $baselineCropPath "UIA" $savedBounds
     }
 
     $selectionDelta = $null

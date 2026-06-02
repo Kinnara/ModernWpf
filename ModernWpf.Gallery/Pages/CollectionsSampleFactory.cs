@@ -285,6 +285,7 @@ private void InitializeData()
 
             var output = CreateOutput("");
             output.Name = "ClickOutput0";
+            GalleryAutomation.WithAutomationId(output, GalleryAutomation.SampleElementId("GridView", "ClickOutput0"));
 
             var gridView = CreateSourceGridView("BasicGridView", CreateGridViewImageTemplate(), CreateGridViewItems());
             gridView.Width = 657;

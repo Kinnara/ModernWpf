@@ -638,3 +638,31 @@ Tighten state-interaction visual proof after the full sweep exposed a bad Toggle
   - Focused dark ToggleSwitch artifact-refresh run: `artifacts/visual-checks/20260602-085024-202-98128/report.md`
   - Focused light ToggleSwitch artifact-refresh run: `artifacts/visual-checks/20260602-085239-501-98052/report.md`
   - Full dark interaction sweep after the fix, all configured ModernWpf controls passed: `artifacts/visual-checks/20260602-085331-566-97620/report.md`
+
+## Round 23: GridView Selection Crop Precision
+
+### Scope
+
+Tighten GridView click visual proof after the light-theme sweep exposed a diluted selection crop:
+
+- `GridView`
+- Shared selection-interaction crop path
+
+### Current Findings
+
+- The light-theme interaction sweep reached `GridView` and failed even though the click was invoked and UIA exposed the expected `You clicked Item 1.` output.
+- The harness was cropping `GallerySample_GridView_Root`, a large sample region containing mostly unchanged image tiles. The actual output text changed near the bottom, but the mean delta was diluted below the strict visual threshold.
+- Added a stable automation id for the basic GridView click output: `GallerySample_GridView_ClickOutput0`.
+- Pointed the GridView selection crop at that output element instead of the whole sample root.
+- Hardened selection cropping for output elements that are zero-size before interaction: when the before crop is unavailable but the after-click element has real bounds, the harness crops the same after bounds from the before screenshot and compares those matching rectangles.
+
+### Verification
+
+- Focused tests:
+  - `GalleryAutomationHookTests.GridViewSampleMatchesWinUIGalleryExamples` and `WpfGallerySourceShapeTests.GalleryVisualChecksClicksCommonSelectionInteractionControls`: passed on net8 and net10
+- Visual audit:
+  - Focused light GridView run: `artifacts/visual-checks/20260602-094144-938-99184/report.md` (`GridView` passed; selection crop `810x38`; interaction delta `1.24`)
+  - Focused dark GridView run: `artifacts/visual-checks/20260602-094234-129-39556/report.md` (`GridView` passed; selection crop `810x38`; interaction delta `1.81`)
+  - Light remainder batch for `GridView`, `ItemsRepeater`, `BreadcrumbBar`, `Pivot`, `SelectorBar`, and `NavigationView`: `artifacts/visual-checks/20260602-094314-620-98676/report.md`
+  - Light remainder batch for `ContentDialog`, `Flyout`, `Popup`, `MenuBar`, `MenuFlyout`, and `SwipeControl`: `artifacts/visual-checks/20260602-094401-344-38352/report.md`
+  - Light remainder batch for `AppBarButton`, `AppBarSeparator`, `AppBarToggleButton`, `CommandBar`, and `CommandBarFlyout`: `artifacts/visual-checks/20260602-094455-938-96068/report.md`

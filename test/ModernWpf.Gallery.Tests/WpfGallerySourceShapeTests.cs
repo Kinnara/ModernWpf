@@ -2975,9 +2975,15 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Get-SelectionInteractionCropAutomationId([string]$control)",
-                "\"GridView\" { return \"GallerySample_GridView_Root\" }",
+                "\"GridView\" { return \"GallerySample_GridView_ClickOutput0\" }",
                 "\"PipsPager\" { return \"GallerySample_PipsPager_Root\" }",
                 "\"Pivot\" { return \"GallerySample_Pivot_Pivot\" }");
+            AssertContainsInOrder(
+                source,
+                "$afterCrop = if (Test-Path $afterPath)",
+                "$savedBounds = Save-Crop $baselinePath $afterCrop.Bounds $baselineCropPath 0",
+                "$baselineCrop = New-RenderedArtifactCrop $baselineCropPath \"UIA\" $savedBounds",
+                "$selectionDelta = $null");
             AssertContainsInOrder(
                 source,
                 "function Find-SelectionInvokeTarget($element)",
