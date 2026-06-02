@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "ComboBox", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "PullToRefresh", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "PullToRefresh", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -658,6 +658,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
 
 function Get-ReferencePrimaryName([string]$control) {
     switch ($control) {
+        "CheckBox" { return "Two-state CheckBox" }
         "DropDownButton" { return "Email" }
         "MenuFlyout" { return "Sort" }
         "Popup" { return "Show Popup (using Offset)" }
@@ -695,6 +696,16 @@ function Get-OpenInteractionNames([string]$control) {
         "ToggleSplitButton" { return @("Bulleted list", "Roman numerals list") }
         "CommandBarFlyout" { return @("Share", "Save", "Delete", "Resize", "Move") }
         default { return @() }
+    }
+}
+
+function Test-ControlSupportsStateInteraction([string]$control) {
+    switch ($control) {
+        "CheckBox" { return $true }
+        "ToggleButton" { return $true }
+        "ToggleSwitch" { return $true }
+        "AppBarToggleButton" { return $true }
+        default { return $false }
     }
 }
 
@@ -2131,6 +2142,110 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     }
 }
 
+function Capture-StateInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsStateInteraction $control)) {
+        return $null
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 250
+
+    $baselineState = Get-ToggleStateName $element
+    $desiredState = if ($baselineState -eq "On") { "Off" } else { "On" }
+    $baselinePath = Join-Path $caseDir ("{0}-{1}-state-before.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $baselinePath
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    }
+
+    $baselineCropPath = Join-Path $caseDir ("{0}-{1}-state-before-crop.png" -f $app.ToLowerInvariant(), $control)
+    $baselineCrop = if (Test-Path $baselinePath) {
+        Save-ElementCrop $window $baselinePath $baselineCropPath $element "UIA" 10
+    }
+    else {
+        $null
+    }
+
+    $invoked = $false
+    if (![string]::IsNullOrEmpty($baselineState)) {
+        $invoked = Set-ToggleElementState $window $element $desiredState
+    }
+    Start-Sleep -Milliseconds 180
+
+    $afterState = Get-ToggleStateName $element
+    $afterPath = Join-Path $caseDir ("{0}-{1}-state-after.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $afterPath
+    }
+
+    $afterCropPath = Join-Path $caseDir ("{0}-{1}-state-after-crop.png" -f $app.ToLowerInvariant(), $control)
+    $afterCrop = if (Test-Path $afterPath) {
+        Save-ElementCrop $window $afterPath $afterCropPath $element "UIA" 10
+    }
+    else {
+        $null
+    }
+
+    $stateDelta = $null
+    if ($null -ne $baselineCrop -and $null -ne $afterCrop -and
+        $baselineCrop.Found -and $afterCrop.Found -and
+        ![string]::IsNullOrEmpty($baselineCrop.Screenshot) -and
+        ![string]::IsNullOrEmpty($afterCrop.Screenshot)) {
+        $stateDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot
+    }
+
+    $stateChanged = ![string]::IsNullOrEmpty($baselineState) -and
+        ![string]::IsNullOrEmpty($afterState) -and
+        $baselineState -ne $afterState -and
+        $afterState -eq $desiredState
+    $visualChanged = $null -ne $stateDelta -and $stateDelta.Comparable -and $stateDelta.MeanDelta -gt 0.5
+    $status = if (!$invoked) { "Failed" } elseif (!$stateChanged) { "Failed" } elseif (!$visualChanged) { "Failed" } else { "Passed" }
+    $notes = if ([string]::IsNullOrEmpty($baselineState)) {
+        "$control did not expose a UIA TogglePattern state."
+    }
+    elseif (!$invoked) {
+        "Could not toggle the $control sample from $baselineState to $desiredState."
+    }
+    elseif (!$stateChanged) {
+        "$control toggle state did not change from $baselineState to $desiredState; observed '$afterState'."
+    }
+    elseif (!$visualChanged) {
+        "$control toggle state changed, but the cropped control image did not visibly change."
+    }
+    else {
+        ""
+    }
+
+    return [ordered]@{
+        Status = $status
+        Kind = "State"
+        Invoked = $invoked
+        BaselineState = $baselineState
+        DesiredState = $desiredState
+        StateAfter = $afterState
+        BaselineScreenshot = $baselinePath
+        Frames = @(
+            [ordered]@{
+                DelayMs = 180
+                Screenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+                NonBlank = $(if (Test-Path $afterPath) { Test-ImageNotBlank $afterPath } else { $false })
+                Error = ""
+            }
+        )
+        StateDelta = $stateDelta
+        Crop = $afterCrop
+        BaselineCrop = $baselineCrop
+        SelectedFrameDelayMs = 180
+        SelectedFrameScreenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+        Notes = $notes
+    }
+}
+
 function Close-AutomationWindow($window) {
     try {
         $pattern = $window.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
@@ -2177,10 +2292,14 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $requiredSampleAutomationId = Get-RequiredSampleAutomationId $control
         $requiredSampleArtifact = Join-Path $artifactDir ($requiredSampleAutomationId + ".png")
         $requiredSampleArtifactFound = Test-Path $requiredSampleArtifact
-        $needsSampleElement = $IncludeInteractions -and (Test-ControlSupportsOpenInteraction $control)
+        $needsSampleElement = $IncludeInteractions -and (
+            (Test-ControlSupportsOpenInteraction $control) -or
+            (Test-ControlSupportsStateInteraction $control))
         $sample = if ($requiredSampleArtifactFound -and !$needsSampleElement) { $null } else { TryFind-DescendantByAutomationId $window $requiredSampleAutomationId }
         $openNames = Get-OpenInteractionNames $control
-        $interaction = Capture-OpenInteraction "ModernWpf" $control $caseDir $window $sample $openNames
+        $openInteraction = Capture-OpenInteraction "ModernWpf" $control $caseDir $window $sample $openNames
+        $stateInteraction = Capture-StateInteraction "ModernWpf" $control $caseDir $window $sample
+        $interaction = if ($null -ne $openInteraction) { $openInteraction } else { $stateInteraction }
         $screenshot = Join-Path $caseDir "modernwpf-$control.png"
         $treePath = Join-Path $caseDir "modernwpf-$control.uia.txt"
 
@@ -2288,7 +2407,9 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
 
         $showButton = Find-ReferenceInteractionTrigger $window $control
         $openNames = Get-OpenInteractionNames $control
-        $interaction = Capture-OpenInteraction "WinUI3" $control $caseDir $window $showButton $openNames
+        $openInteraction = Capture-OpenInteraction "WinUI3" $control $caseDir $window $showButton $openNames
+        $stateInteraction = Capture-StateInteraction "WinUI3" $control $caseDir $window $showButton
+        $interaction = if ($null -ne $openInteraction) { $openInteraction } else { $stateInteraction }
         $screenshot = Join-Path $caseDir "winui3-$control.png"
         $treePath = Join-Path $caseDir "winui3-$control.uia.txt"
         Write-UiaTree $window $treePath 6

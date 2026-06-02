@@ -226,3 +226,34 @@ Fix stale Basic Input runtime/source-shape assertions after the visual-anchor wo
 - Broader guard slice:
   - `ModernWpf.Gallery.Tests` filter `FullyQualifiedName~BasicInput`: 9 passed on net8
   - `ModernWpf.Gallery.Tests` filter `FullyQualifiedName~BasicInput`: 9 passed on net10
+
+## Round 8: Toggle State Interaction Coverage
+
+### Scope
+
+Expand `Run-GalleryVisualChecks.ps1 -IncludeInteractions` to cover click-state controls, not only controls that open flyouts/popups:
+
+- `CheckBox`
+- `ToggleButton`
+- `ToggleSwitch`
+- `AppBarToggleButton`
+
+### Current Findings
+
+- The harness already had UIA toggle helpers, but they were only used for setup flows such as resetting ProgressRing animation phase.
+- The interaction pass therefore still allowed these controls to pass from static render readiness alone; a broken user click or a missing visual state change would not have been caught.
+- Added state-interaction capture that records the initial toggle state, toggles the target to the opposite state, verifies the UIA state changed, and verifies the cropped control image visibly changed.
+- Kept this separate from open-state interactions so flyouts still use the popup/open-content proof path and toggle-pattern controls use state-change proof.
+- Found and fixed a related default-sweep gap: `CheckBox`, `RadioButton`, and `Slider` had direct-page visual anchors, but the script's default `Controls` list still omitted them.
+
+### Verification
+
+- Focused tests:
+  - `WpfGallerySourceShapeTests.GalleryVisualChecksTogglesCommonStateInteractionControls`: passed on net8 and net10
+  - `WpfGallerySourceShapeTests.GalleryVisualChecksOpensCommonClickInteractionControls`: passed on net8 and net10
+  - Full `WpfGallerySourceShapeTests` `FullyQualifiedName~GalleryVisualChecks` slice: 7 passed on net8 and net10
+- Visual audit:
+  - Dark state sweep for `CheckBox`, `ToggleButton`, `ToggleSwitch`, `AppBarToggleButton`: `artifacts/visual-checks/20260602-033206-677-83284/report.md`
+  - Light state sweep for `CheckBox`, `ToggleButton`, `ToggleSwitch`, `AppBarToggleButton`: `artifacts/visual-checks/20260602-033258-522-13052/report.md`
+  - Dark combined interaction sweep for the four state controls plus `ContentDialog`, `Flyout`, `Popup`, `MenuFlyout`, `DropDownButton`, `SplitButton`, `ToggleSplitButton`, `CommandBarFlyout`, and `TeachingTip`: `artifacts/visual-checks/20260602-033344-262-37720/report.md`
+  - Dark sanity sweep for newly defaulted direct Basic Input controls `CheckBox`, `RadioButton`, and `Slider`: `artifacts/visual-checks/20260602-033759-115-35152/report.md`

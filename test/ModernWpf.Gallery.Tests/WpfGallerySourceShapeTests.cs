@@ -2725,9 +2725,56 @@ namespace ModernWpf.Gallery.Tests
                 "$cropElement = $showButton");
             AssertContainsInOrder(
                 source,
-                "$needsSampleElement = $IncludeInteractions -and (Test-ControlSupportsOpenInteraction $control)",
+                "$needsSampleElement = $IncludeInteractions -and (",
+                "(Test-ControlSupportsOpenInteraction $control) -or",
+                "(Test-ControlSupportsStateInteraction $control))",
                 "$openNames = Get-OpenInteractionNames $control",
-                "$interaction = Capture-OpenInteraction \"ModernWpf\" $control $caseDir $window $sample $openNames");
+                "$openInteraction = Capture-OpenInteraction \"ModernWpf\" $control $caseDir $window $sample $openNames",
+                "$stateInteraction = Capture-StateInteraction \"ModernWpf\" $control $caseDir $window $sample",
+                "$interaction = if ($null -ne $openInteraction) { $openInteraction } else { $stateInteraction }");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksTogglesCommonStateInteractionControls()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "[string[]]$Controls = @(",
+                "\"Button\", \"CheckBox\", \"ComboBox\", \"RadioButton\", \"Slider\"");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsStateInteraction([string]$control)",
+                "\"CheckBox\" { return $true }",
+                "\"ToggleButton\" { return $true }",
+                "\"ToggleSwitch\" { return $true }",
+                "\"AppBarToggleButton\" { return $true }");
+            AssertContainsInOrder(
+                source,
+                "function Get-ReferencePrimaryName([string]$control)",
+                "\"CheckBox\" { return \"Two-state CheckBox\" }",
+                "\"ToggleSwitch\" { return \"simple ToggleSwitch\" }");
+            AssertContainsInOrder(
+                source,
+                "function Capture-StateInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element)",
+                "if (!$IncludeInteractions -or !(Test-ControlSupportsStateInteraction $control))",
+                "$baselineState = Get-ToggleStateName $element",
+                "$desiredState = if ($baselineState -eq \"On\") { \"Off\" } else { \"On\" }",
+                "$invoked = Set-ToggleElementState $window $element $desiredState",
+                "$afterState = Get-ToggleStateName $element",
+                "$stateDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot",
+                "$stateChanged = ![string]::IsNullOrEmpty($baselineState)",
+                "$visualChanged = $null -ne $stateDelta -and $stateDelta.Comparable -and $stateDelta.MeanDelta -gt 0.5");
+            AssertContainsInOrder(
+                source,
+                "$openInteraction = Capture-OpenInteraction \"WinUI3\" $control $caseDir $window $showButton $openNames",
+                "$stateInteraction = Capture-StateInteraction \"WinUI3\" $control $caseDir $window $showButton",
+                "$interaction = if ($null -ne $openInteraction) { $openInteraction } else { $stateInteraction }");
         }
 
         [TestMethod]
