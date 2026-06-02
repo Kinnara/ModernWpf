@@ -723,3 +723,31 @@ Tighten the next Gallery click-interaction batch after Round 24:
   - Focused light `SplitButton`/`ToggleSplitButton` run after the timeout fix: `artifacts/visual-checks/20260602-122345-763-98084/report.md`
   - Light five-control batch for `RepeatButton`, `ToggleButton`, `DropDownButton`, `SplitButton`, and `ToggleSplitButton`: `artifacts/visual-checks/20260602-123759-584-99056/report.md`
   - Dark five-control batch for the same controls: `artifacts/visual-checks/20260602-124109-882-62108/report.md`
+
+## Round 26: Full Interaction and Shell Closure Sweep
+
+### Scope
+
+Verify the current tree after the Round 25 fixes across the full Gallery interaction set and the shell NavigationView expansion cases:
+
+- Default `Run-GalleryVisualChecks.ps1` control set with `-IncludeInteractions`
+- `ShellClickDesignGuidance`
+- `ShellClickDesignGuidanceAfterSamples`
+- `ShellClickDesignGuidanceCollapse`
+- `ShellClickSamples`
+
+### Current Findings
+
+- The focused post-fix batches found no additional failures in `ToggleSwitch`, `NumberBox`, `AutoSuggestBox`, static/low-interaction controls, selection/navigation controls, popup controls, or command-bar controls.
+- Full end-to-end Gallery interaction sweeps now pass all 46 configured ModernWpf controls in both light and dark themes.
+- The focused shell NavigationView click audit still passes the expanded, collapse, and expand-after-other-group cases against the current tree. These cases verify visible child rows and bounded parent row height/spacing, not just UIA expanded state.
+- No additional code fixes were needed after Round 25.
+
+### Verification
+
+- Full visual audit:
+  - Full light Gallery interaction sweep: `artifacts/visual-checks/20260602-125353-028-4852/report.md`
+  - Full dark Gallery interaction sweep: `artifacts/visual-checks/20260602-130009-620-45304/report.md`
+- Focused shell NavigationView audit:
+  - Light shell click sweep: `artifacts/wpf-gallery-visual-audit/20260602-130641-621-91832/report.md`
+  - Dark shell click sweep: `artifacts/wpf-gallery-visual-audit/20260602-130721-965-74900/report.md`
