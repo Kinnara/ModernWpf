@@ -425,3 +425,28 @@ Expand visual interaction coverage for the Gallery NumberBox spin-button sample:
   - Native click/topmost and long-hold attempts that still did not advance value in the runner: `artifacts/visual-checks/20260602-061130-411-25500/report.md`, `artifacts/visual-checks/20260602-061438-728-37496/report.md`, and `artifacts/visual-checks/20260602-061514-741-95296/report.md`
   - Focused passing NumberBox UIA value activation run: `artifacts/visual-checks/20260602-061624-801-78892/report.md`
   - Passing combined interaction sweep for `ComboBox`, `AutoSuggestBox`, and `NumberBox`: `artifacts/visual-checks/20260602-061845-816-91420/report.md`
+
+## Round 15: RepeatButton Output Coverage
+
+### Scope
+
+Expand visual interaction coverage for the Gallery RepeatButton sample:
+
+- `RepeatButton`
+
+### Current Findings
+
+- The visual harness required `GallerySample_RepeatButton_RepeatButton`, but `-IncludeInteractions` did not activate the button or prove the sample output changed.
+- The existing hook test raised `ButtonBase.ClickEvent` directly and verified `Number of clicks: 1`, but that did not cover the live Gallery visual path.
+- Added an output interaction path that captures the sample root, activates the configured trigger, and requires a visible before/after crop delta.
+- The first implementation produced a false positive: trigger lookup chose the child text element named `Click and hold`, and the baseline crop was blank white, so the run passed on render-vs-blank instead of output text.
+- Fixed the proof so trigger lookup prefers the sample element when its UIA name matches, rejects blank before/after crops, and only passes when the cropped sample changes from an empty output to `Number of clicks: 1`.
+
+### Verification
+
+- Focused tests:
+  - `WpfGallerySourceShapeTests` `FullyQualifiedName~GalleryVisualChecks` slice: 11 passed on net8 and net10
+- Visual audit:
+  - Initial false-positive RepeatButton output run with blank baseline crop and no output text: `artifacts/visual-checks/20260602-062507-224-48504/report.md`
+  - Focused passing RepeatButton output run after trigger/crop fixes: `artifacts/visual-checks/20260602-062723-364-14564/report.md`
+  - Passing combined interaction sweep for `RepeatButton`, `NumberBox`, `ComboBox`, and `AutoSuggestBox`: `artifacts/visual-checks/20260602-062812-475-96036/report.md`

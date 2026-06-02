@@ -2791,14 +2791,16 @@ namespace ModernWpf.Gallery.Tests
                 "(Test-ControlSupportsStateInteraction $control) -or",
                 "(Test-ControlSupportsSelectionInteraction $control) -or",
                 "(Test-ControlSupportsValueInteraction $control) -or",
+                "(Test-ControlSupportsOutputInteraction $control) -or",
                 "(Test-ControlSupportsTextInteraction $control))",
                 "$openNames = Get-OpenInteractionNames $control",
                 "$openInteraction = Capture-OpenInteraction \"ModernWpf\" $control $caseDir $window $sample $openNames",
                 "$stateInteraction = Capture-StateInteraction \"ModernWpf\" $control $caseDir $window $sample",
                 "$selectionInteraction = Capture-SelectionInteraction \"ModernWpf\" $control $caseDir $window $sample",
                 "$valueInteraction = Capture-ValueInteraction \"ModernWpf\" $control $caseDir $window $sample",
+                "$outputInteraction = Capture-OutputInteraction \"ModernWpf\" $control $caseDir $window $sample",
                 "$textInteraction = Capture-TextInteraction \"ModernWpf\" $control $caseDir $window $sample",
-                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } else { $textInteraction }");
+                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } elseif ($null -ne $outputInteraction) { $outputInteraction } else { $textInteraction }");
         }
 
         [TestMethod]
@@ -2843,8 +2845,9 @@ namespace ModernWpf.Gallery.Tests
                 "$stateInteraction = Capture-StateInteraction \"WinUI3\" $control $caseDir $window $showButton",
                 "$selectionInteraction = Capture-SelectionInteraction \"WinUI3\" $control $caseDir $window $showButton",
                 "$valueInteraction = Capture-ValueInteraction \"WinUI3\" $control $caseDir $window $showButton",
+                "$outputInteraction = Capture-OutputInteraction \"WinUI3\" $control $caseDir $window $showButton",
                 "$textInteraction = Capture-TextInteraction \"WinUI3\" $control $caseDir $window $showButton",
-                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } else { $textInteraction }");
+                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } elseif ($null -ne $outputInteraction) { $outputInteraction } else { $textInteraction }");
         }
 
         [TestMethod]
@@ -2965,6 +2968,45 @@ namespace ModernWpf.Gallery.Tests
                 "Kind = \"Value\"",
                 "ExpectedValue = $expectedValue",
                 "ValueAfter = $afterValue");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksActivatesRepeatButtonOutputInteraction()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsOutputInteraction([string]$control)",
+                "\"RepeatButton\" { return $true }",
+                "function Get-OutputInteractionTriggerNames([string]$control)",
+                "\"RepeatButton\" { return @(\"Click and hold\") }",
+                "function Get-OutputInteractionCropAutomationId([string]$control)",
+                "\"RepeatButton\" { return \"GallerySample_RepeatButton_Root\" }",
+                "function Get-OutputInteractionMinimumDelta([string]$control)",
+                "\"RepeatButton\" { return 0.5 }");
+            AssertContainsInOrder(
+                source,
+                "function Capture-OutputInteraction([string]$app, [string]$control, [string]$caseDir, $window, $sampleElement)",
+                "if (!$IncludeInteractions -or !(Test-ControlSupportsOutputInteraction $control))",
+                "$triggerNames = Get-OutputInteractionTriggerNames $control",
+                "$cropAutomationId = Get-OutputInteractionCropAutomationId $control",
+                "TryFind-DescendantByAutomationId $window $cropAutomationId",
+                "$trigger = if (Test-ElementNameMatches $sampleElement $triggerNames) { $sampleElement } else { $null }",
+                "$trigger = Find-DescendantByAnyName $sampleElement $triggerNames",
+                "$invoked = Invoke-ElementPatternOnce $window $trigger",
+                "$outputDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot",
+                "$minimumDelta = Get-OutputInteractionMinimumDelta $control",
+                "$visualChanged = $null -ne $outputDelta -and $outputDelta.Comparable -and $outputDelta.MeanDelta -gt $minimumDelta",
+                "$baselineNonBlank = $null -ne $baselineCrop -and $baselineCrop.Contains(\"NonBlank\") -and $baselineCrop.NonBlank",
+                "$afterNonBlank = $null -ne $afterCrop -and $afterCrop.Contains(\"NonBlank\") -and $afterCrop.NonBlank",
+                "Kind = \"Output\"",
+                "OutputDelta = $outputDelta",
+                "VisualChanged = $visualChanged");
         }
 
         [TestMethod]

@@ -361,6 +361,19 @@ function Find-DescendantByAnyName($root, [string[]]$names) {
     return $null
 }
 
+function Test-ElementNameMatches($element, [string[]]$names) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        return $names -contains $element.Current.Name
+    }
+    catch {
+        return $false
+    }
+}
+
 function Find-ElementByNameInProcess([int]$processId, [string[]]$names) {
     $condition = New-Object System.Windows.Automation.PropertyCondition(
         [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
@@ -819,6 +832,34 @@ function Test-ControlSupportsValueInteraction([string]$control) {
     switch ($control) {
         "NumberBox" { return $true }
         default { return $false }
+    }
+}
+
+function Test-ControlSupportsOutputInteraction([string]$control) {
+    switch ($control) {
+        "RepeatButton" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-OutputInteractionTriggerNames([string]$control) {
+    switch ($control) {
+        "RepeatButton" { return @("Click and hold") }
+        default { return @() }
+    }
+}
+
+function Get-OutputInteractionCropAutomationId([string]$control) {
+    switch ($control) {
+        "RepeatButton" { return "GallerySample_RepeatButton_Root" }
+        default { return "" }
+    }
+}
+
+function Get-OutputInteractionMinimumDelta([string]$control) {
+    switch ($control) {
+        "RepeatButton" { return 0.5 }
+        default { return 0.5 }
     }
 }
 
@@ -3313,6 +3354,147 @@ function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseD
     }
 }
 
+function Capture-OutputInteraction([string]$app, [string]$control, [string]$caseDir, $window, $sampleElement) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsOutputInteraction $control)) {
+        return $null
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 250
+
+    $triggerNames = Get-OutputInteractionTriggerNames $control
+    $cropAutomationId = Get-OutputInteractionCropAutomationId $control
+    $cropElement = if (![string]::IsNullOrWhiteSpace($cropAutomationId)) {
+        TryFind-DescendantByAutomationId $window $cropAutomationId
+    }
+    else {
+        $null
+    }
+    if ($null -eq $cropElement) {
+        $cropElement = $sampleElement
+    }
+
+    $trigger = if (Test-ElementNameMatches $sampleElement $triggerNames) { $sampleElement } else { $null }
+    if ($null -eq $trigger -and $null -ne $sampleElement) {
+        $trigger = Find-DescendantByAnyName $sampleElement $triggerNames
+    }
+    if ($null -eq $trigger) {
+        $trigger = Find-DescendantByAnyName $window $triggerNames
+    }
+    if ($null -eq $trigger -and $triggerNames.Count -gt 0) {
+        $trigger = Find-ElementByNameInProcess $window.Current.ProcessId $triggerNames
+    }
+
+    $baselinePath = Join-Path $caseDir ("{0}-{1}-output-before.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $baselinePath
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    }
+
+    $baselineCropPath = Join-Path $caseDir ("{0}-{1}-output-before-crop.png" -f $app.ToLowerInvariant(), $control)
+    $baselineCrop = if (Test-Path $baselinePath) {
+        Save-ElementCrop $window $baselinePath $baselineCropPath $cropElement "UIA" 20
+    }
+    else {
+        $null
+    }
+    if ($null -ne $baselineCrop -and $baselineCrop.Contains("NonBlank") -and !$baselineCrop.NonBlank) {
+        Start-Sleep -Milliseconds 300
+        try {
+            Capture-Window $window.Current.NativeWindowHandle $baselinePath
+            $baselineCrop = Save-ElementCrop $window $baselinePath $baselineCropPath $cropElement "UIA" 20
+        }
+        catch {
+        }
+    }
+
+    $invoked = Invoke-ElementPatternOnce $window $trigger
+    Start-Sleep -Milliseconds 250
+
+    $afterPath = Join-Path $caseDir ("{0}-{1}-output-after.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $afterPath
+    }
+
+    $afterCropPath = Join-Path $caseDir ("{0}-{1}-output-after-crop.png" -f $app.ToLowerInvariant(), $control)
+    $afterCrop = if (Test-Path $afterPath) {
+        Save-ElementCrop $window $afterPath $afterCropPath $cropElement "UIA" 20
+    }
+    else {
+        $null
+    }
+    if ($null -ne $afterCrop -and $afterCrop.Contains("NonBlank") -and !$afterCrop.NonBlank) {
+        Start-Sleep -Milliseconds 300
+        try {
+            Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
+            $afterCrop = Save-ElementCrop $window $afterPath $afterCropPath $cropElement "UIA" 20
+        }
+        catch {
+        }
+    }
+
+    $outputDelta = $null
+    if ($null -ne $baselineCrop -and $null -ne $afterCrop -and
+        $baselineCrop.Found -and $afterCrop.Found -and
+        ![string]::IsNullOrEmpty($baselineCrop.Screenshot) -and
+        ![string]::IsNullOrEmpty($afterCrop.Screenshot)) {
+        $outputDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot
+    }
+
+    $minimumDelta = Get-OutputInteractionMinimumDelta $control
+    $visualChanged = $null -ne $outputDelta -and $outputDelta.Comparable -and $outputDelta.MeanDelta -gt $minimumDelta
+    $baselineNonBlank = $null -ne $baselineCrop -and $baselineCrop.Contains("NonBlank") -and $baselineCrop.NonBlank
+    $afterNonBlank = $null -ne $afterCrop -and $afterCrop.Contains("NonBlank") -and $afterCrop.NonBlank
+    $status = if ($null -eq $trigger) { "Failed" } elseif (!$invoked) { "Failed" } elseif (!$baselineNonBlank -or !$afterNonBlank) { "Failed" } elseif (!$visualChanged) { "Failed" } else { "Passed" }
+    $notes = if ($null -eq $trigger) {
+        "$control output trigger '$($triggerNames -join "', '")' was not found."
+    }
+    elseif (!$invoked) {
+        "Could not invoke the $control output trigger '$($triggerNames[0])'."
+    }
+    elseif (!$baselineNonBlank -or !$afterNonBlank) {
+        "$control output interaction crop was blank before or after activation."
+    }
+    elseif (!$visualChanged) {
+        "$control output interaction did not visibly change the cropped sample image."
+    }
+    else {
+        ""
+    }
+
+    return [ordered]@{
+        Status = $status
+        Kind = "Output"
+        Invoked = $invoked
+        TriggerFound = $null -ne $trigger
+        TriggerName = $(if ($null -ne $trigger) { $trigger.Current.Name } else { "" })
+        TriggerAutomationId = $(if ($null -ne $trigger) { $trigger.Current.AutomationId } else { "" })
+        CropAutomationId = $cropAutomationId
+        BaselineScreenshot = $baselinePath
+        Frames = @(
+            [ordered]@{
+                DelayMs = 250
+                Screenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+                NonBlank = $(if (Test-Path $afterPath) { Test-ImageNotBlank $afterPath } else { $false })
+                Error = ""
+            }
+        )
+        OutputDelta = $outputDelta
+        MinimumDelta = $minimumDelta
+        VisualChanged = $visualChanged
+        Crop = $afterCrop
+        BaselineCrop = $baselineCrop
+        SelectedFrameDelayMs = 250
+        SelectedFrameScreenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+        Notes = $notes
+    }
+}
+
 function Capture-TextInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element) {
     if (!$IncludeInteractions -or !(Test-ControlSupportsTextInteraction $control)) {
         return $null
@@ -3500,6 +3682,7 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
             (Test-ControlSupportsStateInteraction $control) -or
             (Test-ControlSupportsSelectionInteraction $control) -or
             (Test-ControlSupportsValueInteraction $control) -or
+            (Test-ControlSupportsOutputInteraction $control) -or
             (Test-ControlSupportsTextInteraction $control))
         $sample = if ($requiredSampleArtifactFound -and !$needsSampleElement) { $null } else { TryFind-DescendantByAutomationId $window $requiredSampleAutomationId }
         $openNames = Get-OpenInteractionNames $control
@@ -3507,8 +3690,9 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $stateInteraction = Capture-StateInteraction "ModernWpf" $control $caseDir $window $sample
         $selectionInteraction = Capture-SelectionInteraction "ModernWpf" $control $caseDir $window $sample
         $valueInteraction = Capture-ValueInteraction "ModernWpf" $control $caseDir $window $sample
+        $outputInteraction = Capture-OutputInteraction "ModernWpf" $control $caseDir $window $sample
         $textInteraction = Capture-TextInteraction "ModernWpf" $control $caseDir $window $sample
-        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } else { $textInteraction }
+        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } elseif ($null -ne $outputInteraction) { $outputInteraction } else { $textInteraction }
         $screenshot = Join-Path $caseDir "modernwpf-$control.png"
         $treePath = Join-Path $caseDir "modernwpf-$control.uia.txt"
 
@@ -3620,8 +3804,9 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         $stateInteraction = Capture-StateInteraction "WinUI3" $control $caseDir $window $showButton
         $selectionInteraction = Capture-SelectionInteraction "WinUI3" $control $caseDir $window $showButton
         $valueInteraction = Capture-ValueInteraction "WinUI3" $control $caseDir $window $showButton
+        $outputInteraction = Capture-OutputInteraction "WinUI3" $control $caseDir $window $showButton
         $textInteraction = Capture-TextInteraction "WinUI3" $control $caseDir $window $showButton
-        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } else { $textInteraction }
+        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } elseif ($null -ne $outputInteraction) { $outputInteraction } else { $textInteraction }
         $screenshot = Join-Path $caseDir "winui3-$control.png"
         $treePath = Join-Path $caseDir "winui3-$control.uia.txt"
         Write-UiaTree $window $treePath 6
