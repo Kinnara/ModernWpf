@@ -96,6 +96,9 @@ public static class GalleryVisualNative
     [DllImport("user32.dll")]
     private static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, UIntPtr extraInfo);
 
+    [DllImport("user32.dll")]
+    private static extern short VkKeyScan(char ch);
+
     public static bool Move(IntPtr hWnd, int x, int y, int width, int height)
     {
         ShowWindow(hWnd, 9);
@@ -128,6 +131,43 @@ public static class GalleryVisualNative
     {
         keybd_event(0x20, 0, 0, UIntPtr.Zero);
         keybd_event(0x20, 0, 0x0002, UIntPtr.Zero);
+    }
+
+    public static void PressCtrlA()
+    {
+        keybd_event(0x11, 0, 0, UIntPtr.Zero);
+        keybd_event(0x41, 0, 0, UIntPtr.Zero);
+        keybd_event(0x41, 0, 0x0002, UIntPtr.Zero);
+        keybd_event(0x11, 0, 0x0002, UIntPtr.Zero);
+    }
+
+    public static void TypeText(string text)
+    {
+        foreach (char ch in text ?? string.Empty)
+        {
+            short key = VkKeyScan(ch);
+            if (key == -1)
+            {
+                continue;
+            }
+
+            byte virtualKey = (byte)(key & 0xff);
+            bool shift = (key & 0x0100) != 0;
+            if (shift)
+            {
+                keybd_event(0x10, 0, 0, UIntPtr.Zero);
+            }
+
+            keybd_event(virtualKey, 0, 0, UIntPtr.Zero);
+            keybd_event(virtualKey, 0, 0x0002, UIntPtr.Zero);
+
+            if (shift)
+            {
+                keybd_event(0x10, 0, 0x0002, UIntPtr.Zero);
+            }
+
+            System.Threading.Thread.Sleep(25);
+        }
     }
 
     public static RECT GetRect(IntPtr hWnd)
@@ -276,6 +316,13 @@ function Find-DescendantButtonByName($root, [string]$name) {
         [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
         [System.Windows.Automation.ControlType]::Button)
     $condition = New-Object System.Windows.Automation.AndCondition($nameCondition, $buttonCondition)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-DescendantByControlType($root, $controlType) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        $controlType)
     return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
 }
 
@@ -745,6 +792,34 @@ function Test-ControlSupportsSelectionInteraction([string]$control) {
         "PipsPager" { return $true }
         "Pivot" { return $true }
         default { return $false }
+    }
+}
+
+function Test-ControlSupportsTextInteraction([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-TextInteractionInput([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" { return "ae" }
+        default { return "" }
+    }
+}
+
+function Get-TextInteractionSuggestionNames([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" { return @("Aegean") }
+        default { return @() }
+    }
+}
+
+function Get-TextInteractionExpectedOutputName([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" { return "Aegean" }
+        default { return "" }
     }
 }
 
@@ -2158,6 +2233,161 @@ function Get-ElementNativeWindowHandle($element) {
     return [IntPtr]::Zero
 }
 
+function Find-EditableDescendant($element) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    try {
+        if ($element.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit) {
+            return $element
+        }
+    }
+    catch {
+    }
+
+    return Find-DescendantByControlType $element ([System.Windows.Automation.ControlType]::Edit)
+}
+
+function Set-EditableElementText($window, $element, [string]$text) {
+    $edit = Find-EditableDescendant $element
+    if ($null -eq $edit) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $edit.SetFocus()
+        Start-Sleep -Milliseconds 50
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $edit.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.SetValue("")
+            Start-Sleep -Milliseconds 50
+            $pattern.SetValue($text)
+            Start-Sleep -Milliseconds 250
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $rect = $edit.Current.BoundingRectangle
+        if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+            [GalleryVisualNative]::Click(
+                [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+                [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+            Start-Sleep -Milliseconds 50
+            [GalleryVisualNative]::PressCtrlA()
+            Start-Sleep -Milliseconds 50
+            [GalleryVisualNative]::TypeText($text)
+            Start-Sleep -Milliseconds 250
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Find-ListItemOutsideElementBounds($window, $element, [string[]]$names) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    $anchorRect = $element.Current.BoundingRectangle
+    if ($anchorRect.Width -le 0 -or $anchorRect.Height -le 0) {
+        return $null
+    }
+
+    $matches = Find-ElementsByNameInProcess $window.Current.ProcessId $names
+    foreach ($match in $matches) {
+        try {
+            if ($match.Current.ControlType -ne [System.Windows.Automation.ControlType]::ListItem) {
+                continue
+            }
+
+            $rect = $match.Current.BoundingRectangle
+            if ($rect.Width -le 0 -or $rect.Height -le 0) {
+                continue
+            }
+
+            $overlapsHorizontally = $rect.Right -gt $anchorRect.X -and $rect.X -lt $anchorRect.Right
+            $outsideAnchor = $rect.Y -ge ($anchorRect.Bottom - 1) -or $rect.Bottom -le ($anchorRect.Y + 1)
+            if ($overlapsHorizontally -and $outsideAnchor) {
+                return $match
+            }
+        }
+        catch {
+        }
+    }
+
+    return $null
+}
+
+function Wait-ForListItemOutsideElementBounds($window, $element, [string[]]$names, [int]$timeoutMs = 2500) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMs)
+    do {
+        $match = Find-ListItemOutsideElementBounds $window $element $names
+        if ($null -ne $match) {
+            return $match
+        }
+
+        Start-Sleep -Milliseconds 100
+    } while ((Get-Date) -lt $deadline)
+
+    return $null
+}
+
+function Find-OutputTextOutsideElementBounds($window, $element, [string]$name) {
+    if ($null -eq $element -or [string]::IsNullOrEmpty($name)) {
+        return $null
+    }
+
+    $anchorRect = $element.Current.BoundingRectangle
+    $matches = Find-ElementsByNameInProcess $window.Current.ProcessId @($name)
+    foreach ($match in $matches) {
+        try {
+            if ($match.Current.ControlType -ne [System.Windows.Automation.ControlType]::Text) {
+                continue
+            }
+
+            $rect = $match.Current.BoundingRectangle
+            if ($rect.Width -le 0 -or $rect.Height -le 0) {
+                continue
+            }
+
+            if ($rect.X -ge ($anchorRect.Right - 2) -or $rect.Y -gt ($anchorRect.Bottom + 2)) {
+                return $match
+            }
+        }
+        catch {
+        }
+    }
+
+    return $null
+}
+
+function Wait-ForOutputTextOutsideElementBounds($window, $element, [string]$name, [int]$timeoutMs = 2500) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMs)
+    do {
+        $match = Find-OutputTextOutsideElementBounds $window $element $name
+        if ($null -ne $match) {
+            return $match
+        }
+
+        Start-Sleep -Milliseconds 100
+    } while ((Get-Date) -lt $deadline)
+
+    return $null
+}
+
 function Capture-OpenInteractionFrame($window, [string]$path, [bool]$preferScreenCapture, [switch]$SkipActivate) {
     if (!$SkipActivate) {
         [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
@@ -2775,6 +3005,142 @@ function Capture-SelectionInteraction([string]$app, [string]$control, [string]$c
     }
 }
 
+function Capture-TextInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsTextInteraction $control)) {
+        return $null
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 250
+
+    $inputText = Get-TextInteractionInput $control
+    $suggestionNames = Get-TextInteractionSuggestionNames $control
+    $expectedOutputName = Get-TextInteractionExpectedOutputName $control
+
+    $baselinePath = Join-Path $caseDir ("{0}-{1}-text-before.png" -f $app.ToLowerInvariant(), $control)
+    [void](Capture-OpenInteractionFrame $window $baselinePath $false)
+
+    $typed = Set-EditableElementText $window $element $inputText
+    Start-Sleep -Milliseconds 400
+
+    $suggestionElement = if ($typed) {
+        Wait-ForListItemOutsideElementBounds $window $element $suggestionNames 3000
+    }
+    else {
+        $null
+    }
+
+    $popupScreenshot = ""
+    $popupNonBlank = $false
+    $popupSize = $null
+    $treePath = ""
+    if ($null -ne $suggestionElement) {
+        $treePath = Join-Path $caseDir ("{0}-{1}-text-suggestions.uia.txt" -f $app.ToLowerInvariant(), $control)
+        Write-UiaTree $suggestionElement $treePath 3
+
+        $popupHandle = Get-ElementNativeWindowHandle $suggestionElement
+        if ($popupHandle -ne [IntPtr]::Zero -and $popupHandle -ne $window.Current.NativeWindowHandle) {
+            $popupScreenshot = Join-Path $caseDir ("{0}-{1}-text-popup-window.png" -f $app.ToLowerInvariant(), $control)
+            try {
+                Capture-Window $popupHandle $popupScreenshot -SkipActivate
+                $popupNonBlank = Test-ImageNotBlank $popupScreenshot
+                if ($popupNonBlank) {
+                    $popupSize = Get-ImageSize $popupScreenshot
+                }
+            }
+            catch {
+                $popupScreenshot = ""
+                $popupNonBlank = $false
+                $popupSize = $null
+            }
+        }
+    }
+
+    $suggestionInvoked = $false
+    if ($null -ne $suggestionElement) {
+        $suggestionInvoked = Invoke-ElementOnce $window $suggestionElement
+        Start-Sleep -Milliseconds 500
+    }
+
+    $outputElement = if ($suggestionInvoked) {
+        Wait-ForOutputTextOutsideElementBounds $window $element $expectedOutputName 3000
+    }
+    else {
+        $null
+    }
+
+    $afterPath = Join-Path $caseDir ("{0}-{1}-text-after.png" -f $app.ToLowerInvariant(), $control)
+    [void](Capture-OpenInteractionFrame $window $afterPath $false -SkipActivate)
+
+    $crop = if ($popupNonBlank) {
+        [ordered]@{
+            Found = $true
+            Screenshot = $popupScreenshot
+            Bounds = [ordered]@{
+                Found = $true
+                Reason = ""
+                X = 0
+                Y = 0
+                Width = $popupSize.Width
+                Height = $popupSize.Height
+                ChangedSamples = 0
+            }
+            Width = $popupSize.Width
+            Height = $popupSize.Height
+            ChangedSamples = 0
+            Source = "PopupWindow"
+        }
+    }
+    else {
+        [ordered]@{
+            Found = $false
+            Screenshot = ""
+            Bounds = [ordered]@{
+                Found = $false
+                Reason = "Suggestion popup window was not captured."
+                X = 0
+                Y = 0
+                Width = 0
+                Height = 0
+                ChangedSamples = 0
+            }
+            Width = 0
+            Height = 0
+            ChangedSamples = 0
+            Source = "None"
+        }
+    }
+
+    $status = if (!$typed) { "Failed" } elseif ($null -eq $suggestionElement) { "Failed" } elseif (!$popupNonBlank) { "Failed" } elseif (!$suggestionInvoked) { "Failed" } elseif ($null -eq $outputElement) { "Failed" } else { "Passed" }
+    $notes = if (!$typed) { "Could not type '$inputText' into the $control sample." } elseif ($null -eq $suggestionElement) { "$control did not expose expected suggestions for '$inputText'." } elseif (!$popupNonBlank) { "$control exposed suggestions in UIA but the popup window was not captured." } elseif (!$suggestionInvoked) { "Could not invoke the $control suggestion '$($suggestionNames[0])'." } elseif ($null -eq $outputElement) { "$control suggestion '$expectedOutputName' did not update the sample output." } else { "" }
+
+    return [ordered]@{
+        Status = $status
+        Typed = $typed
+        InputText = $inputText
+        SuggestionElementFound = $null -ne $suggestionElement
+        SuggestionElementName = $(if ($null -ne $suggestionElement) { $suggestionElement.Current.Name } else { "" })
+        SuggestionInvoked = $suggestionInvoked
+        OutputElementFound = $null -ne $outputElement
+        OutputElementName = $(if ($null -ne $outputElement) { $outputElement.Current.Name } else { "" })
+        BaselineScreenshot = $baselinePath
+        UiaTree = $treePath
+        Frames = @([ordered]@{
+            DelayMs = 0
+            Screenshot = $(if (![string]::IsNullOrEmpty($popupScreenshot)) { $popupScreenshot } else { $afterPath })
+            NonBlank = $(if (![string]::IsNullOrEmpty($popupScreenshot) -and (Test-Path $popupScreenshot)) { Test-ImageNotBlank $popupScreenshot } elseif (Test-Path $afterPath) { Test-ImageNotBlank $afterPath } else { $false })
+            Error = ""
+        })
+        Crop = $crop
+        PopupScreenshot = $popupScreenshot
+        PopupNonBlank = $popupNonBlank
+        PopupSize = $popupSize
+        SelectedFrameDelayMs = 0
+        SelectedFrameScreenshot = $(if (![string]::IsNullOrEmpty($popupScreenshot)) { $popupScreenshot } else { $afterPath })
+        Notes = $notes
+    }
+}
+
 function Close-AutomationWindow($window) {
     try {
         $pattern = $window.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
@@ -2824,13 +3190,15 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $needsSampleElement = $IncludeInteractions -and (
             (Test-ControlSupportsOpenInteraction $control) -or
             (Test-ControlSupportsStateInteraction $control) -or
-            (Test-ControlSupportsSelectionInteraction $control))
+            (Test-ControlSupportsSelectionInteraction $control) -or
+            (Test-ControlSupportsTextInteraction $control))
         $sample = if ($requiredSampleArtifactFound -and !$needsSampleElement) { $null } else { TryFind-DescendantByAutomationId $window $requiredSampleAutomationId }
         $openNames = Get-OpenInteractionNames $control
         $openInteraction = Capture-OpenInteraction "ModernWpf" $control $caseDir $window $sample $openNames
         $stateInteraction = Capture-StateInteraction "ModernWpf" $control $caseDir $window $sample
         $selectionInteraction = Capture-SelectionInteraction "ModernWpf" $control $caseDir $window $sample
-        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } else { $selectionInteraction }
+        $textInteraction = Capture-TextInteraction "ModernWpf" $control $caseDir $window $sample
+        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } else { $textInteraction }
         $screenshot = Join-Path $caseDir "modernwpf-$control.png"
         $treePath = Join-Path $caseDir "modernwpf-$control.uia.txt"
 
@@ -2941,7 +3309,8 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         $openInteraction = Capture-OpenInteraction "WinUI3" $control $caseDir $window $showButton $openNames
         $stateInteraction = Capture-StateInteraction "WinUI3" $control $caseDir $window $showButton
         $selectionInteraction = Capture-SelectionInteraction "WinUI3" $control $caseDir $window $showButton
-        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } else { $selectionInteraction }
+        $textInteraction = Capture-TextInteraction "WinUI3" $control $caseDir $window $showButton
+        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } else { $textInteraction }
         $screenshot = Join-Path $caseDir "winui3-$control.png"
         $treePath = Join-Path $caseDir "winui3-$control.uia.txt"
         Write-UiaTree $window $treePath 6

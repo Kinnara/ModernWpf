@@ -2789,12 +2789,14 @@ namespace ModernWpf.Gallery.Tests
                 "$needsSampleElement = $IncludeInteractions -and (",
                 "(Test-ControlSupportsOpenInteraction $control) -or",
                 "(Test-ControlSupportsStateInteraction $control) -or",
-                "(Test-ControlSupportsSelectionInteraction $control))",
+                "(Test-ControlSupportsSelectionInteraction $control) -or",
+                "(Test-ControlSupportsTextInteraction $control))",
                 "$openNames = Get-OpenInteractionNames $control",
                 "$openInteraction = Capture-OpenInteraction \"ModernWpf\" $control $caseDir $window $sample $openNames",
                 "$stateInteraction = Capture-StateInteraction \"ModernWpf\" $control $caseDir $window $sample",
                 "$selectionInteraction = Capture-SelectionInteraction \"ModernWpf\" $control $caseDir $window $sample",
-                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } else { $selectionInteraction }");
+                "$textInteraction = Capture-TextInteraction \"ModernWpf\" $control $caseDir $window $sample",
+                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } else { $textInteraction }");
         }
 
         [TestMethod]
@@ -2838,7 +2840,8 @@ namespace ModernWpf.Gallery.Tests
                 "$openInteraction = Capture-OpenInteraction \"WinUI3\" $control $caseDir $window $showButton $openNames",
                 "$stateInteraction = Capture-StateInteraction \"WinUI3\" $control $caseDir $window $showButton",
                 "$selectionInteraction = Capture-SelectionInteraction \"WinUI3\" $control $caseDir $window $showButton",
-                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } else { $selectionInteraction }");
+                "$textInteraction = Capture-TextInteraction \"WinUI3\" $control $caseDir $window $showButton",
+                "$interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } else { $textInteraction }");
         }
 
         [TestMethod]
@@ -2907,6 +2910,63 @@ namespace ModernWpf.Gallery.Tests
                 "$selectionDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot",
                 "$expectedName = Get-SelectionInteractionExpectedName $control",
                 "$visualChanged = $null -ne $selectionDelta -and $selectionDelta.Comparable -and $selectionDelta.MeanDelta -gt 0.5");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksTypesAutoSuggestBoxAndChoosesSuggestion()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "private static extern short VkKeyScan(char ch)",
+                "public static void PressCtrlA()",
+                "public static void TypeText(string text)");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsTextInteraction([string]$control)",
+                "\"AutoSuggestBox\" { return $true }",
+                "function Get-TextInteractionInput([string]$control)",
+                "\"AutoSuggestBox\" { return \"ae\" }",
+                "function Get-TextInteractionSuggestionNames([string]$control)",
+                "\"AutoSuggestBox\" { return @(\"Aegean\") }",
+                "function Get-TextInteractionExpectedOutputName([string]$control)",
+                "\"AutoSuggestBox\" { return \"Aegean\" }");
+            AssertContainsInOrder(
+                source,
+                "function Find-EditableDescendant($element)",
+                "[System.Windows.Automation.ControlType]::Edit",
+                "function Set-EditableElementText($window, $element, [string]$text)",
+                "[System.Windows.Automation.ValuePattern]::Pattern",
+                "$pattern.SetValue($text)",
+                "[GalleryVisualNative]::PressCtrlA()",
+                "[GalleryVisualNative]::TypeText($text)");
+            AssertContainsInOrder(
+                source,
+                "function Find-ListItemOutsideElementBounds($window, $element, [string[]]$names)",
+                "$match.Current.ControlType -ne [System.Windows.Automation.ControlType]::ListItem",
+                "$outsideAnchor = $rect.Y -ge ($anchorRect.Bottom - 1) -or $rect.Bottom -le ($anchorRect.Y + 1)",
+                "function Wait-ForListItemOutsideElementBounds($window, $element, [string[]]$names, [int]$timeoutMs = 2500)",
+                "function Find-OutputTextOutsideElementBounds($window, $element, [string]$name)",
+                "$match.Current.ControlType -ne [System.Windows.Automation.ControlType]::Text",
+                "function Wait-ForOutputTextOutsideElementBounds($window, $element, [string]$name, [int]$timeoutMs = 2500)");
+            AssertContainsInOrder(
+                source,
+                "function Capture-TextInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element)",
+                "if (!$IncludeInteractions -or !(Test-ControlSupportsTextInteraction $control))",
+                "$typed = Set-EditableElementText $window $element $inputText",
+                "Wait-ForListItemOutsideElementBounds $window $element $suggestionNames 3000",
+                "Capture-Window $popupHandle $popupScreenshot -SkipActivate",
+                "$popupNonBlank = Test-ImageNotBlank $popupScreenshot",
+                "$suggestionInvoked = Invoke-ElementOnce $window $suggestionElement",
+                "Wait-ForOutputTextOutsideElementBounds $window $element $expectedOutputName 3000",
+                "Source = \"PopupWindow\"",
+                "SuggestionElementFound = $null -ne $suggestionElement",
+                "OutputElementFound = $null -ne $outputElement");
         }
 
         [TestMethod]

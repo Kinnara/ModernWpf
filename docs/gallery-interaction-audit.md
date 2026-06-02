@@ -374,3 +374,27 @@ Expand visual interaction coverage for the Gallery ComboBox sample:
   - Screen-capture trust failure proving occluded pixels were no longer accepted: `artifacts/visual-checks/20260602-053439-210-96032/report.md`
   - Focused passing ComboBox popup-window run: `artifacts/visual-checks/20260602-054018-863-25296/report.md`
   - Passing broader open-interaction sweep for `ComboBox`, `ContentDialog`, `Flyout`, `Popup`, `MenuFlyout`, `DropDownButton`, `SplitButton`, `ToggleSplitButton`, `CommandBarFlyout`, and `TeachingTip`: `artifacts/visual-checks/20260602-054112-544-90000/report.md`
+
+## Round 13: AutoSuggestBox Typing and Suggestion Selection Coverage
+
+### Scope
+
+Expand visual interaction coverage for the Gallery AutoSuggestBox sample:
+
+- `AutoSuggestBox`
+
+### Current Findings
+
+- The visual harness required `GallerySample_AutoSuggestBox_AutoSuggestBox`, but `-IncludeInteractions` did not type into it, open suggestions, choose a suggestion, or verify the sample output.
+- The static capture could report success with no interaction object at all, so regressions in TextBox input, suggestion popup placement/rendering, list item selection, or the sample's `SuggestionChosen` output would not have failed the visual run.
+- Added a text interaction path that focuses the embedded edit control, sets/enters the query text `ae`, waits for the `Aegean` suggestion outside the closed control bounds, captures the suggestions popup native window, invokes the suggestion, and verifies the output TextBlock also reports `Aegean`.
+- Kept the proof independent from the unreliable main-window screenshot path by using the popup window bitmap as the interaction crop.
+
+### Verification
+
+- Focused tests:
+  - `WpfGallerySourceShapeTests` `FullyQualifiedName~GalleryVisualChecks` slice: 9 passed on net8 and net10
+- Visual audit:
+  - Static-only AutoSuggestBox baseline showing `Interaction: null`: `artifacts/visual-checks/20260602-054753-493-73932/report.md`
+  - Focused passing AutoSuggestBox typing/suggestion run: `artifacts/visual-checks/20260602-055316-223-61868/report.md`
+  - Passing combined popup interaction sweep for `AutoSuggestBox` and `ComboBox`: `artifacts/visual-checks/20260602-055556-530-69372/report.md`
