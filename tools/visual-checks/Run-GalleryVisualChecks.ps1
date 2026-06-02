@@ -389,6 +389,30 @@ function Find-ElementByNameInProcess([int]$processId, [string[]]$names) {
     return $null
 }
 
+function Find-ElementByNameInPopupWindows($window, [string[]]$names) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $window.Current.ProcessId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($candidateWindow in $windows) {
+        try {
+            if ($candidateWindow.Current.NativeWindowHandle -eq $window.Current.NativeWindowHandle) {
+                continue
+            }
+        }
+        catch {
+            continue
+        }
+
+        $match = Find-DescendantByAnyName $candidateWindow $names
+        if ($null -ne $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
 function Find-ElementsByNameInProcess([int]$processId, [string[]]$names) {
     $matches = New-Object System.Collections.Generic.List[object]
     $condition = New-Object System.Windows.Automation.PropertyCondition(
@@ -2376,6 +2400,10 @@ function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [s
         return Find-ComboBoxOpenElement $window $element $openNames
     }
 
+    if ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") {
+        return Find-ElementByNameInPopupWindows $window $openNames
+    }
+
     return Find-ElementByNameInProcess $window.Current.ProcessId $openNames
 }
 
@@ -2390,6 +2418,8 @@ function Test-ControlRequiresPopupWindowOpenProof([string]$control) {
     switch ($control) {
         "MenuFlyout" { return $true }
         "DropDownButton" { return $true }
+        "SplitButton" { return $true }
+        "ToggleSplitButton" { return $true }
         default { return $false }
     }
 }
@@ -2803,7 +2833,15 @@ function Invoke-SplitButtonSecondaryOnce($window, $element) {
 
 function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames, [string]$control = "") {
     if ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") {
-        return Invoke-SplitButtonSecondaryOnce $window $element
+        $invoked = Invoke-SplitButtonSecondaryOnce $window $element
+        Start-Sleep -Milliseconds 150
+        if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
+            return $invoked
+        }
+
+        $invoked = (Expand-ElementPatternOnce $window $element) -or $invoked
+        Start-Sleep -Milliseconds 150
+        return $invoked
     }
 
     if ($control -eq "MenuBar") {
@@ -3040,8 +3078,7 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     $openPopupNonBlank = $false
     $openPopupScreenshot = ""
     $openPopupSize = $null
-    $skipOpenUiaSearch = $control -eq "SplitButton" -or $control -eq "ToggleSplitButton"
-    $openElement = if ($skipOpenUiaSearch) { $null } else { Find-OpenInteractionElement $window $showButton $openNames $control }
+    $openElement = Find-OpenInteractionElement $window $showButton $openNames $control
     if ($null -ne $openElement) {
         $treePath = Join-Path $caseDir ("{0}-{1}-open.uia.txt" -f $app.ToLowerInvariant(), $control)
         Write-UiaTree $openElement $treePath 3
@@ -3125,14 +3162,9 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     }
     else {
         $treePath = ""
-        if ($skipOpenUiaSearch) {
-            $cropElement = $showButton
-        }
-        else {
-            $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GalleryItemPageRoot"
-            if ($null -eq $cropElement) {
-                $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "ContentRootGrid"
-            }
+        $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GalleryItemPageRoot"
+        if ($null -eq $cropElement) {
+            $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "ContentRootGrid"
         }
     }
 

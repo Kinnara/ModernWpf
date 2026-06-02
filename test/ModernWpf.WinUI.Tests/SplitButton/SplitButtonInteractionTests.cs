@@ -157,12 +157,13 @@ public class SplitButtonInteractionTests
     {
         WpfTestHost.Run(() =>
         {
+            var flyout = CreateCountingFlyout("ToggleFlyout");
             var toggleSplitButton = new ToggleSplitButton
             {
                 Content = "ToggleSplitButton",
                 Width = 220,
                 Height = 40,
-                Flyout = CreateCountingFlyout("ToggleFlyout").Flyout
+                Flyout = flyout.Flyout
             };
 
             var changedCount = 0;
@@ -187,6 +188,12 @@ public class SplitButtonInteractionTests
             InvokeButton(GetSecondaryButton(toggleSplitButton));
             Assert.IsFalse(toggleSplitButton.IsChecked);
             Assert.AreEqual(2, changedCount);
+            Assert.AreEqual(1, flyout.OpenedCount);
+            Assert.IsTrue(flyout.Flyout.IsOpen);
+
+            GetExpandCollapseProvider(toggleSplitButton).Collapse();
+            WpfTestHost.DoEvents();
+            Assert.AreEqual(1, flyout.ClosedCount);
         });
     }
 
@@ -213,6 +220,41 @@ public class SplitButtonInteractionTests
 
             Assert.IsTrue(toggleSplitButton.IsChecked);
             Assert.AreEqual(ToggleState.On, toggleProvider.ToggleState);
+        });
+    }
+
+    [TestMethod]
+    public void ToggleExpandCollapseAutomationOpensFlyoutWithoutToggling()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var flyout = CreateCountingFlyout("ToggleFlyout");
+            var toggleSplitButton = new ToggleSplitButton
+            {
+                Content = "ToggleSplitButton",
+                Width = 220,
+                Height = 40,
+                Flyout = flyout.Flyout
+            };
+
+            using var host = new TestWindowHost(toggleSplitButton, width: 360, height: 180);
+
+            var expandCollapseProvider = GetExpandCollapseProvider(toggleSplitButton);
+            Assert.AreEqual(ExpandCollapseState.Collapsed, expandCollapseProvider.ExpandCollapseState);
+            Assert.IsFalse(toggleSplitButton.IsChecked);
+
+            expandCollapseProvider.Expand();
+            WpfTestHost.DoEvents();
+            Assert.AreEqual(1, flyout.OpenedCount);
+            Assert.IsTrue(flyout.Flyout.IsOpen);
+            Assert.AreEqual(ExpandCollapseState.Expanded, expandCollapseProvider.ExpandCollapseState);
+            Assert.IsFalse(toggleSplitButton.IsChecked);
+
+            expandCollapseProvider.Collapse();
+            WpfTestHost.DoEvents();
+            Assert.AreEqual(1, flyout.ClosedCount);
+            Assert.AreEqual(ExpandCollapseState.Collapsed, expandCollapseProvider.ExpandCollapseState);
+            Assert.IsFalse(toggleSplitButton.IsChecked);
         });
     }
 

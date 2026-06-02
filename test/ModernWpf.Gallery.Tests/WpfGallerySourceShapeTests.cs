@@ -2744,6 +2744,12 @@ namespace ModernWpf.Gallery.Tests
                 "[System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)");
             AssertContainsInOrder(
                 source,
+                "function Find-ElementByNameInPopupWindows($window, [string[]]$names)",
+                "$candidateWindow.Current.NativeWindowHandle -eq $window.Current.NativeWindowHandle",
+                "Find-DescendantByAnyName $candidateWindow $names",
+                "return $null");
+            AssertContainsInOrder(
+                source,
                 "function Find-ComboBoxOpenElement($window, $element, [string[]]$openNames)",
                 "Get-ExpandCollapseStateName $element",
                 "Find-ElementsByNameInProcess $window.Current.ProcessId $openNames",
@@ -2752,12 +2758,17 @@ namespace ModernWpf.Gallery.Tests
                 "function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [string]$control)",
                 "if ($control -eq \"ComboBox\")",
                 "return Find-ComboBoxOpenElement $window $element $openNames",
+                "if ($control -eq \"SplitButton\" -or $control -eq \"ToggleSplitButton\")",
+                "return Find-ElementByNameInPopupWindows $window $openNames",
+                "return Find-ElementByNameInProcess $window.Current.ProcessId $openNames",
                 "function Test-ControlPrefersScreenOpenCapture([string]$control)",
                 "\"MenuBar\" { return $true }",
                 "default { return $false }",
                 "function Test-ControlRequiresPopupWindowOpenProof([string]$control)",
                 "\"MenuFlyout\" { return $true }",
                 "\"DropDownButton\" { return $true }",
+                "\"SplitButton\" { return $true }",
+                "\"ToggleSplitButton\" { return $true }",
                 "function Get-ElementNativeWindowHandle($element)",
                 "$handle = [int]$candidate.Current.NativeWindowHandle",
                 "return [IntPtr]$handle",
@@ -2840,10 +2851,13 @@ namespace ModernWpf.Gallery.Tests
                 "$x = [int][Math]::Round($rect.Right - [Math]::Min(12.0, [Math]::Max(6.0, $rect.Width * 0.18)))",
                 "[GalleryVisualNative]::Click($x, $y)",
                 "if ($control -eq \"SplitButton\" -or $control -eq \"ToggleSplitButton\")",
-                "return Invoke-SplitButtonSecondaryOnce $window $element",
-                "$skipOpenUiaSearch = $control -eq \"SplitButton\" -or $control -eq \"ToggleSplitButton\"",
-                "$openElement = if ($skipOpenUiaSearch) { $null } else { Find-OpenInteractionElement $window $showButton $openNames $control }",
-                "$cropElement = $showButton");
+                "$invoked = Invoke-SplitButtonSecondaryOnce $window $element",
+                "if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control))",
+                "$invoked = (Expand-ElementPatternOnce $window $element) -or $invoked",
+                "$openElement = Find-OpenInteractionElement $window $showButton $openNames $control");
+            Assert.IsFalse(
+                source.Contains("$skipOpenUiaSearch = $control -eq \"SplitButton\"", StringComparison.Ordinal),
+                "SplitButton open checks must not bypass opened-content UIA.");
             AssertContainsInOrder(
                 source,
                 "$needsSampleElement = $IncludeInteractions -and (",

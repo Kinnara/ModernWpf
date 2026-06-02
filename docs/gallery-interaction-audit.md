@@ -583,3 +583,31 @@ Tighten the WPF Gallery shell NavigationView click audit and fix the expandable 
 - Visual audit:
   - Dark shell click sweep for `ShellClickDesignGuidance`, `ShellClickDesignGuidanceAfterSamples`, `ShellClickDesignGuidanceCollapse`, and `ShellClickSamples`: `artifacts/wpf-gallery-visual-audit/20260602-080545-294-96776/report.md`
   - Light shell click sweep for the same cases: `artifacts/wpf-gallery-visual-audit/20260602-080723-627-96556/report.md`
+
+## Round 21: SplitButton Flyout Proof
+
+### Scope
+
+Tighten Gallery click-interaction coverage for popup-backed split buttons:
+
+- `SplitButton`
+- `ToggleSplitButton`
+
+### Current Findings
+
+- The full dark Gallery interaction sweep after Round 20 failed on `SplitButton` and `ToggleSplitButton`: both were invoked, but the audit saw no UIA or visual proof that the flyout opened.
+- The old check clicked near the right edge once, then deliberately skipped opened-content UIA lookup for these controls. That missed the public `ExpandCollapsePattern` open path and could not distinguish a real closed flyout from a weak test harness.
+- Removed the SplitButton UIA skip. The harness now attempts the secondary-side click, falls back to the public ExpandCollapse pattern when needed, and requires both an opened flyout item in UIA and a nonblank popup-window capture.
+- Limited SplitButton flyout item lookup to popup windows so the audit does not traverse the whole Gallery page/RichTextBox tree while searching for flyout items.
+- Added `ToggleSplitButton` interaction coverage proving the secondary side and the public ExpandCollapse provider open the flyout without toggling the primary checked state.
+
+### Verification
+
+- Focused tests:
+  - `SplitButtonInteractionTests` slice: 7 passed on net8
+  - `WpfGallerySourceShapeTests.GalleryVisualChecksOpensCommonClickInteractionControls`: passed on net8 and net10
+- Visual audit:
+  - Initial full dark sweep exposing the SplitButton/ToggleSplitButton failures: `artifacts/visual-checks/20260602-080924-298-95828/report.md`
+  - Focused dark passing popup-window proof run for `SplitButton` and `ToggleSplitButton`: `artifacts/visual-checks/20260602-082948-602-86820/report.md`
+  - Focused light passing popup-window proof run for `SplitButton` and `ToggleSplitButton`: `artifacts/visual-checks/20260602-083753-391-100968/report.md`
+  - Follow-up full dark sweep now reaches the next issue: `ToggleSwitch` changes UIA state but the cropped control image does not visibly change. Report: `artifacts/visual-checks/20260602-083136-521-22692/report.md`
