@@ -110,6 +110,13 @@ public static class GalleryVisualNative
         SetWindowPos(hWnd, new IntPtr(-2), 0, 0, 0, 0, 0x0043);
     }
 
+    public static void SetTopMost(IntPtr hWnd, bool topMost)
+    {
+        ShowWindow(hWnd, 9);
+        SetWindowPos(hWnd, topMost ? new IntPtr(-1) : new IntPtr(-2), 0, 0, 0, 0, 0x0043);
+        SetForegroundWindow(hWnd);
+    }
+
     public static void Click(int x, int y)
     {
         SetCursorPos(x, y);
@@ -307,6 +314,27 @@ function Find-ElementByNameInProcess([int]$processId, [string[]]$names) {
     }
 
     return $null
+}
+
+function Find-ElementsByNameInProcess([int]$processId, [string[]]$names) {
+    $matches = New-Object System.Collections.Generic.List[object]
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        foreach ($name in $names) {
+            $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+                [System.Windows.Automation.AutomationElement]::NameProperty,
+                $name)
+            $found = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, $nameCondition)
+            foreach ($element in $found) {
+                $matches.Add($element)
+            }
+        }
+    }
+
+    return $matches.ToArray()
 }
 
 function Find-ElementByAutomationIdInProcess([int]$processId, [string]$automationId) {
@@ -672,6 +700,7 @@ function Get-ReferencePrimaryName([string]$control) {
 function Test-ControlSupportsOpenInteraction([string]$control) {
     switch ($control) {
         "TeachingTip" { return $true }
+        "ComboBox" { return $true }
         "ContentDialog" { return $true }
         "Flyout" { return $true }
         "Popup" { return $true }
@@ -687,6 +716,7 @@ function Test-ControlSupportsOpenInteraction([string]$control) {
 function Get-OpenInteractionNames([string]$control) {
     switch ($control) {
         "TeachingTip" { return @("This is the title", "Try compact mode", "And this is the subtitle") }
+        "ComboBox" { return @("Blue", "Green", "Red", "Yellow") }
         "ContentDialog" { return @("Save your work?", "Upload your content to the cloud.", "Save", "Don't Save", "Cancel") }
         "Flyout" { return @("All items will be removed. Do you want to continue?", "Yes, empty my cart") }
         "Popup" { return @("Simple Popup", "Close") }
@@ -2043,6 +2073,130 @@ function Expand-ElementPatternOnce($window, $element) {
     return $false
 }
 
+function Get-ExpandCollapseStateName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return $pattern.Current.ExpandCollapseState.ToString()
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Find-ComboBoxOpenElement($window, $element, [string[]]$openNames) {
+    if ($null -eq $element -or (Get-ExpandCollapseStateName $element) -ne "Expanded") {
+        return $null
+    }
+
+    $comboRect = $element.Current.BoundingRectangle
+    if ($comboRect.Width -le 0 -or $comboRect.Height -le 0) {
+        return $null
+    }
+
+    $matches = Find-ElementsByNameInProcess $window.Current.ProcessId $openNames
+    foreach ($match in $matches) {
+        try {
+            if ($match.Current.ControlType -ne [System.Windows.Automation.ControlType]::ListItem) {
+                continue
+            }
+
+            $rect = $match.Current.BoundingRectangle
+            if ($rect.Width -le 0 -or $rect.Height -le 0) {
+                continue
+            }
+
+            $overlapsHorizontally = $rect.Right -gt $comboRect.X -and $rect.X -lt $comboRect.Right
+            $outsideClosedCombo = $rect.Y -ge ($comboRect.Bottom - 1) -or $rect.Bottom -le ($comboRect.Y + 1)
+            if ($overlapsHorizontally -and $outsideClosedCombo) {
+                return $match
+            }
+        }
+        catch {
+        }
+    }
+
+    return $null
+}
+
+function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [string]$control) {
+    if ($control -eq "ComboBox") {
+        return Find-ComboBoxOpenElement $window $element $openNames
+    }
+
+    return Find-ElementByNameInProcess $window.Current.ProcessId $openNames
+}
+
+function Test-ControlPrefersScreenOpenCapture([string]$control) {
+    switch ($control) {
+        default { return $false }
+    }
+}
+
+function Get-ElementNativeWindowHandle($element) {
+    $candidate = $element
+    for ($depth = 0; $depth -lt 16 -and $null -ne $candidate; $depth++) {
+        try {
+            $handle = [int]$candidate.Current.NativeWindowHandle
+            if ($handle -ne 0) {
+                return [IntPtr]$handle
+            }
+
+            $candidate = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+        }
+        catch {
+            return [IntPtr]::Zero
+        }
+    }
+
+    return [IntPtr]::Zero
+}
+
+function Capture-OpenInteractionFrame($window, [string]$path, [bool]$preferScreenCapture, [switch]$SkipActivate) {
+    if (!$SkipActivate) {
+        [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+        Start-Sleep -Milliseconds 100
+    }
+
+    if ($preferScreenCapture) {
+        try {
+            Capture-ScreenRect $window.Current.NativeWindowHandle $path
+            return ""
+        }
+        catch {
+            $screenError = $_.Exception.Message
+            try {
+                Capture-Window $window.Current.NativeWindowHandle $path -SkipActivate:$SkipActivate
+                return ""
+            }
+            catch {
+                return $screenError + "; fallback Capture-Window failed: " + $_.Exception.Message
+            }
+        }
+    }
+
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $path -SkipActivate:$SkipActivate
+        return ""
+    }
+    catch {
+        $windowError = $_.Exception.Message
+        try {
+            Capture-ScreenRect $window.Current.NativeWindowHandle $path
+            return ""
+        }
+        catch {
+            return $windowError + "; fallback Capture-ScreenRect failed: " + $_.Exception.Message
+        }
+    }
+}
+
 function Invoke-SplitButtonSecondaryOnce($window, $element) {
     if ($null -eq $element) {
         return $false
@@ -2066,21 +2220,45 @@ function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames, [strin
         return Invoke-SplitButtonSecondaryOnce $window $element
     }
 
+    if ($control -eq "ComboBox") {
+        $invoked = Expand-ElementPatternOnce $window $element
+        Start-Sleep -Milliseconds 150
+        if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
+            return $invoked
+        }
+
+        try {
+            $element.SetFocus()
+            [GalleryVisualNative]::PressSpace()
+            $invoked = $true
+            Start-Sleep -Milliseconds 150
+            if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
+                return $invoked
+            }
+        }
+        catch {
+        }
+
+        $invoked = (Invoke-ElementPatternOnce $window $element) -or $invoked
+        Start-Sleep -Milliseconds 150
+        return $invoked
+    }
+
     $invoked = Invoke-ElementOnce $window $element
     Start-Sleep -Milliseconds 150
-    if ($null -ne (Find-ElementByNameInProcess $window.Current.ProcessId $openNames)) {
+    if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
         return $invoked
     }
 
     $invoked = (Expand-ElementPatternOnce $window $element) -or $invoked
     Start-Sleep -Milliseconds 150
-    if ($null -ne (Find-ElementByNameInProcess $window.Current.ProcessId $openNames)) {
+    if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
         return $invoked
     }
 
     $invoked = (Invoke-ElementPatternOnce $window $element) -or $invoked
     Start-Sleep -Milliseconds 150
-    if ($null -ne (Find-ElementByNameInProcess $window.Current.ProcessId $openNames)) {
+    if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
         return $invoked
     }
 
@@ -2104,11 +2282,30 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
     Start-Sleep -Milliseconds 250
     $baselinePath = Join-Path $caseDir ("{0}-{1}-closed.png" -f $app.ToLowerInvariant(), $control)
-    try {
-        Capture-Window $window.Current.NativeWindowHandle $baselinePath
+    $preferScreenOpenCapture = Test-ControlPrefersScreenOpenCapture $control
+    if ($preferScreenOpenCapture) {
+        [GalleryVisualNative]::SetTopMost($window.Current.NativeWindowHandle, $true)
+        Start-Sleep -Milliseconds 100
     }
-    catch {
-        Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    $screenCaptureTrustReference = ""
+    $screenCaptureTrustDelta = $null
+    $screenCaptureTrusted = $true
+    if ($preferScreenOpenCapture) {
+        $screenCaptureTrustReference = Join-Path $caseDir ("{0}-{1}-screen-trust-reference.png" -f $app.ToLowerInvariant(), $control)
+        try {
+            Capture-Window $window.Current.NativeWindowHandle $screenCaptureTrustReference
+        }
+        catch {
+            $screenCaptureTrustReference = ""
+        }
+    }
+    [void](Capture-OpenInteractionFrame $window $baselinePath $preferScreenOpenCapture)
+    if ($preferScreenOpenCapture -and
+        ![string]::IsNullOrEmpty($screenCaptureTrustReference) -and
+        (Test-Path $screenCaptureTrustReference) -and
+        (Test-Path $baselinePath)) {
+        $screenCaptureTrustDelta = Compare-Images $screenCaptureTrustReference $baselinePath
+        $screenCaptureTrusted = $screenCaptureTrustDelta.Comparable -and $screenCaptureTrustDelta.MeanDelta -lt 25.0
     }
     $invoked = Invoke-ElementUntilOpen $window $showButton $openNames $control
     $frames = New-Object System.Collections.Generic.List[object]
@@ -2122,20 +2319,7 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         $previousDelay = $delay
 
         $framePath = Join-Path $caseDir ("{0}-{1}-open-{2:D3}ms.png" -f $app.ToLowerInvariant(), $control, $delay)
-        $frameError = ""
-        try {
-            Capture-Window $window.Current.NativeWindowHandle $framePath -SkipActivate
-        }
-        catch {
-            $frameError = $_.Exception.Message
-            try {
-                Capture-ScreenRect $window.Current.NativeWindowHandle $framePath
-                $frameError = ""
-            }
-            catch {
-                $frameError = $frameError + "; fallback Capture-ScreenRect failed: " + $_.Exception.Message
-            }
-        }
+        $frameError = Capture-OpenInteractionFrame $window $framePath $preferScreenOpenCapture -SkipActivate
         $frames.Add([ordered]@{
             DelayMs = $delay
             Screenshot = $(if (Test-Path $framePath) { $framePath } else { "" })
@@ -2148,11 +2332,34 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     $visualOpened = $false
     $crop = $null
     $selectedFrame = $null
+    $comboBoxOpenVisualDelta = $null
+    $comboBoxOpenBaselineCrop = ""
+    $comboBoxPopupScreenshot = ""
+    $comboBoxPopupNonBlank = $false
+    $comboBoxPopupSize = $null
     $skipOpenUiaSearch = $control -eq "SplitButton" -or $control -eq "ToggleSplitButton"
-    $openElement = if ($skipOpenUiaSearch) { $null } else { Find-ElementByNameInProcess $window.Current.ProcessId $openNames }
+    $openElement = if ($skipOpenUiaSearch) { $null } else { Find-OpenInteractionElement $window $showButton $openNames $control }
     if ($null -ne $openElement) {
         $treePath = Join-Path $caseDir ("{0}-{1}-open.uia.txt" -f $app.ToLowerInvariant(), $control)
         Write-UiaTree $openElement $treePath 3
+        if ($control -eq "ComboBox") {
+            $popupHandle = Get-ElementNativeWindowHandle $openElement
+            if ($popupHandle -ne [IntPtr]::Zero -and $popupHandle -ne $window.Current.NativeWindowHandle) {
+                $comboBoxPopupScreenshot = Join-Path $caseDir ("{0}-{1}-popup-window.png" -f $app.ToLowerInvariant(), $control)
+                try {
+                    Capture-Window $popupHandle $comboBoxPopupScreenshot -SkipActivate
+                    $comboBoxPopupNonBlank = Test-ImageNotBlank $comboBoxPopupScreenshot
+                    if ($comboBoxPopupNonBlank) {
+                        $comboBoxPopupSize = Get-ImageSize $comboBoxPopupScreenshot
+                    }
+                }
+                catch {
+                    $comboBoxPopupScreenshot = ""
+                    $comboBoxPopupNonBlank = $false
+                    $comboBoxPopupSize = $null
+                }
+            }
+        }
         $cropElement = Find-DescendantByAutomationId $openElement "GalleryItemPageRoot"
         if ($null -eq $cropElement) {
             $cropElement = Find-DescendantByAutomationId $openElement "ContentRootGrid"
@@ -2196,6 +2403,11 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         if ($elementBoundsUsable) {
             $cropPath = Join-Path $caseDir ("{0}-{1}-open-crop.png" -f $app.ToLowerInvariant(), $control)
             $expandedBounds = Save-Crop $selectedFrame.Screenshot $elementBounds $cropPath
+            if ($control -eq "ComboBox") {
+                $comboBoxOpenBaselineCrop = Join-Path $caseDir ("{0}-{1}-open-baseline-crop.png" -f $app.ToLowerInvariant(), $control)
+                [void](Save-Crop $baselinePath $elementBounds $comboBoxOpenBaselineCrop)
+                $comboBoxOpenVisualDelta = Compare-ImagesNormalized $comboBoxOpenBaselineCrop $cropPath
+            }
             $crop = [ordered]@{
                 Found = $true
                 Screenshot = $cropPath
@@ -2239,6 +2451,32 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         $deltaOpened = $null -ne $openDelta -and $openDelta.Comparable -and $openDelta.MeanDelta -gt 1.0
         $visualOpened = $deltaOpened -or
             ($null -ne $crop -and $crop.Found -and $crop.Source -eq "Difference" -and $crop.ChangedSamples -gt 0)
+        if ($control -eq "ComboBox") {
+            $visualOpened = $comboBoxPopupNonBlank -or
+                ($screenCaptureTrusted -and
+                    $null -ne $comboBoxOpenVisualDelta -and
+                    $comboBoxOpenVisualDelta.Comparable -and
+                    $comboBoxOpenVisualDelta.MeanDelta -gt 5.0)
+            if ($comboBoxPopupNonBlank) {
+                $crop = [ordered]@{
+                    Found = $true
+                    Screenshot = $comboBoxPopupScreenshot
+                    Bounds = [ordered]@{
+                        Found = $true
+                        Reason = ""
+                        X = 0
+                        Y = 0
+                        Width = $comboBoxPopupSize.Width
+                        Height = $comboBoxPopupSize.Height
+                        ChangedSamples = 0
+                    }
+                    Width = $comboBoxPopupSize.Width
+                    Height = $comboBoxPopupSize.Height
+                    ChangedSamples = 0
+                    Source = "PopupWindow"
+                }
+            }
+        }
     }
 
     if ($app -eq "ModernWpf" -and $null -eq $crop) {
@@ -2263,8 +2501,18 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         }
     }
 
-    $status = if (!$invoked) { "Failed" } elseif ($null -ne $openElement -or $visualOpened) { "Passed" } else { "Failed" }
-    $notes = if (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement -and !$visualOpened) { "$control did not produce UIA or visual evidence of opening." } elseif ($null -eq $openElement -and $null -ne $crop -and ($crop.Source -eq "GalleryItemPageRoot" -or $crop.Source -eq "ContentRootGrid")) { "$control open content was verified from the in-app rendered artifact." } elseif ($null -eq $openElement) { "$control open content was not found in UIA; visual delta verified." } else { "" }
+    if ($control -eq "ComboBox") {
+        $status = if (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
+        $notes = if (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose an expanded dropdown item." } elseif (!$screenCaptureTrusted -and !$comboBoxPopupNonBlank) { "$control screen capture did not match the Gallery window, and the popup window could not be captured." } elseif (!$visualOpened) { "$control exposed dropdown UIA but no changed dropdown pixels were captured." } else { "" }
+    }
+    else {
+        $status = if (!$invoked) { "Failed" } elseif ($null -ne $openElement -or $visualOpened) { "Passed" } else { "Failed" }
+        $notes = if (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement -and !$visualOpened) { "$control did not produce UIA or visual evidence of opening." } elseif ($null -eq $openElement -and $null -ne $crop -and ($crop.Source -eq "GalleryItemPageRoot" -or $crop.Source -eq "ContentRootGrid")) { "$control open content was verified from the in-app rendered artifact." } elseif ($null -eq $openElement) { "$control open content was not found in UIA; visual delta verified." } else { "" }
+    }
+
+    if ($preferScreenOpenCapture) {
+        [GalleryVisualNative]::SetTopMost($window.Current.NativeWindowHandle, $false)
+    }
 
     return [ordered]@{
         Status = $status
@@ -2276,6 +2524,14 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         Frames = $frames.ToArray()
         OpenDelta = $openDelta
         Crop = $crop
+        ScreenCaptureTrustReference = $screenCaptureTrustReference
+        ScreenCaptureTrustDelta = $screenCaptureTrustDelta
+        ScreenCaptureTrusted = $screenCaptureTrusted
+        ComboBoxOpenBaselineCrop = $comboBoxOpenBaselineCrop
+        ComboBoxOpenVisualDelta = $comboBoxOpenVisualDelta
+        ComboBoxPopupScreenshot = $comboBoxPopupScreenshot
+        ComboBoxPopupNonBlank = $comboBoxPopupNonBlank
+        ComboBoxPopupSize = $comboBoxPopupSize
         SelectedFrameDelayMs = $(if ($null -ne $selectedFrame) { $selectedFrame.DelayMs } else { $null })
         SelectedFrameScreenshot = $(if ($null -ne $selectedFrame) { $selectedFrame.Screenshot } else { "" })
         Notes = $notes

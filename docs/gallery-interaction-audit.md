@@ -346,3 +346,31 @@ Tighten the WPF Gallery shell click audit around NavigationView parent items:
   - Initial strengthened audit failure proving the old false pass: `artifacts/wpf-gallery-visual-audit/20260602-043405-461-63352/report.md`
   - Focused passing collapse state run: `artifacts/wpf-gallery-visual-audit/20260602-051527-032-94560/report.md`
   - Passing combined shell click run for expand, collapse, and Samples: `artifacts/wpf-gallery-visual-audit/20260602-051552-177-28404/report.md`
+
+## Round 12: ComboBox Dropdown Interaction Coverage
+
+### Scope
+
+Expand visual interaction coverage for the Gallery ComboBox sample:
+
+- `ComboBox`
+
+### Current Findings
+
+- The visual harness rendered the ComboBox page and required `GallerySample_ComboBox_ComboBox`, but `-IncludeInteractions` did not open the dropdown.
+- A first pass at adding ComboBox to open interactions exposed two false-pass paths:
+  - UIA name lookup matched the already-visible selected `Blue` item instead of proving a dropdown was open.
+  - Main-window screen capture could grab an occluding desktop surface, producing unrelated pixels that looked like an interaction delta.
+- Fixed the open proof so ComboBox requires an expanded dropdown list item outside the closed control bounds.
+- Added popup-window capture through the dropdown item's native window handle. The resulting artifact now records the actual dropdown bitmap and uses it as the visual proof instead of relying on stale UIA or an occluded screen frame.
+
+### Verification
+
+- Focused tests:
+  - `WpfGallerySourceShapeTests.GalleryVisualChecksOpensCommonClickInteractionControls`: passed on net8 and net10
+  - `WpfGallerySourceShapeTests` `FullyQualifiedName~GalleryVisualChecks` slice: 8 passed on net8 and net10
+- Visual audit:
+  - Initial ComboBox run with false UIA pass: `artifacts/visual-checks/20260602-052151-742-12528/report.md`
+  - Screen-capture trust failure proving occluded pixels were no longer accepted: `artifacts/visual-checks/20260602-053439-210-96032/report.md`
+  - Focused passing ComboBox popup-window run: `artifacts/visual-checks/20260602-054018-863-25296/report.md`
+  - Passing broader open-interaction sweep for `ComboBox`, `ContentDialog`, `Flyout`, `Popup`, `MenuFlyout`, `DropDownButton`, `SplitButton`, `ToggleSplitButton`, `CommandBarFlyout`, and `TeachingTip`: `artifacts/visual-checks/20260602-054112-544-90000/report.md`
