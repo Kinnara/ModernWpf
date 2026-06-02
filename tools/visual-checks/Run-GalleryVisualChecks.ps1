@@ -2454,6 +2454,7 @@ function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [s
 
 function Test-ControlPrefersScreenOpenCapture([string]$control) {
     switch ($control) {
+        "TeachingTip" { return $true }
         "MenuBar" { return $true }
         default { return $false }
     }
@@ -2466,6 +2467,27 @@ function Test-ControlRequiresPopupWindowOpenProof([string]$control) {
         "SplitButton" { return $true }
         "ToggleSplitButton" { return $true }
         default { return $false }
+    }
+}
+
+function Close-PreparedOpenInteractionState($window, [string]$control) {
+    if ($control -ne "TeachingTip") {
+        return
+    }
+
+    $tip = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GallerySample_TeachingTip_TeachingTip"
+    if ($null -eq $tip) {
+        return
+    }
+
+    try {
+        $pattern = $tip.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Close()
+            Start-Sleep -Milliseconds 250
+        }
+    }
+    catch {
     }
 }
 
@@ -3010,6 +3032,7 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     catch {
         Set-Content -Path $triggerTreePath -Value ("Open trigger UIA tree capture failed: " + $_.Exception.Message) -Encoding UTF8
     }
+    Close-PreparedOpenInteractionState $window $control
     $screenCaptureTrustReference = ""
     $screenCaptureTrustDelta = $null
     $screenCaptureTrusted = $true

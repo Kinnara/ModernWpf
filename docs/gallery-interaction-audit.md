@@ -666,3 +666,30 @@ Tighten GridView click visual proof after the light-theme sweep exposed a dilute
   - Light remainder batch for `GridView`, `ItemsRepeater`, `BreadcrumbBar`, `Pivot`, `SelectorBar`, and `NavigationView`: `artifacts/visual-checks/20260602-094314-620-98676/report.md`
   - Light remainder batch for `ContentDialog`, `Flyout`, `Popup`, `MenuBar`, `MenuFlyout`, and `SwipeControl`: `artifacts/visual-checks/20260602-094401-344-38352/report.md`
   - Light remainder batch for `AppBarButton`, `AppBarSeparator`, `AppBarToggleButton`, `CommandBar`, and `CommandBarFlyout`: `artifacts/visual-checks/20260602-094455-938-96068/report.md`
+
+## Round 24: TeachingTip Popup Screen Proof
+
+### Scope
+
+Tighten open-interaction proof for the `TeachingTip` popup path exposed by the next light-theme click batch:
+
+- `TeachingTip`
+- Shared open-interaction baseline and screen-capture path
+
+### Current Findings
+
+- The first light-theme interaction batch after Round 23 failed on `TeachingTip`: the button was invoked, but the main-window capture did not show the popup and UIA did not expose the title/subtitle as normal bounded elements.
+- A real desktop capture after invoking `GallerySample_TeachingTip_ShowButton` showed the TeachingTip visibly opened. The failure was the harness: `Capture-Window` excludes this popup surface, while the TeachingTip automation peer only exposes the control with unusable infinite bounds.
+- Routed `TeachingTip` open checks through the trusted screen-rect capture path so the visible popup pixels are included.
+- Closed the Gallery's `--open-interactions` prepared TeachingTip state through `WindowPattern.Close()` before taking the closed baseline. Without that, the closed baseline already contained the popup and the visual delta was near zero.
+- Strengthened the sample test so `TeachingTipSampleButtonOpensTip` proves the automation-peer invoke path, not only direct WPF `ClickEvent` raising.
+
+### Verification
+
+- Focused tests:
+  - `GalleryAutomationHookTests.TeachingTipSampleButtonOpensTip` and `WpfGallerySourceShapeTests.GalleryVisualChecksOpensCommonClickInteractionControls`: passed on net8 and net10
+- Visual audit:
+  - Initial failing light batch for `TeachingTip`, `Button`, `CheckBox`, `ComboBox`, `RadioButton`, `Slider`, `ColorPicker`, `HyperlinkButton`, and `RatingControl`: `artifacts/visual-checks/20260602-094646-548-80976/report.md`
+  - Focused light `TeachingTip` run after the fix: `artifacts/visual-checks/20260602-095758-710-85796/report.md` (`TeachingTip` passed with a `248x82` difference crop)
+  - Focused dark `TeachingTip` run after the fix: `artifacts/visual-checks/20260602-095837-804-79284/report.md` (`TeachingTip` passed with a `248x86` difference crop)
+  - Rerun of the first light interaction batch, all listed controls passed: `artifacts/visual-checks/20260602-100025-041-75000/report.md`

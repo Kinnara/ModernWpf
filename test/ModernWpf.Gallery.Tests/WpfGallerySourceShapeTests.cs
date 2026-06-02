@@ -2713,6 +2713,7 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Test-ControlSupportsOpenInteraction([string]$control)",
+                "\"TeachingTip\" { return $true }",
                 "\"ComboBox\" { return $true }",
                 "\"ContentDialog\" { return $true }",
                 "\"Flyout\" { return $true }",
@@ -2725,7 +2726,13 @@ namespace ModernWpf.Gallery.Tests
                 "\"CommandBarFlyout\" { return $true }");
             AssertContainsInOrder(
                 source,
+                "function Test-ControlPrefersScreenOpenCapture([string]$control)",
+                "\"TeachingTip\" { return $true }",
+                "\"MenuBar\" { return $true }");
+            AssertContainsInOrder(
+                source,
                 "function Get-OpenInteractionNames([string]$control)",
+                "\"TeachingTip\" { return @(\"This is the title\", \"Try compact mode\", \"And this is the subtitle\") }",
                 "\"ComboBox\" { return @(\"Blue\", \"Green\", \"Red\", \"Yellow\") }",
                 "\"ContentDialog\" { return @(\"Save your work?\", \"Upload your content to the cloud.\", \"Save\", \"Don't Save\", \"Cancel\") }",
                 "\"Flyout\" { return @(\"All items will be removed. Do you want to continue?\", \"Yes, empty my cart\") }",
@@ -2767,6 +2774,7 @@ namespace ModernWpf.Gallery.Tests
                 "return Find-ElementByNameInPopupWindows $window $openNames",
                 "return Find-ElementByNameInProcess $window.Current.ProcessId $openNames",
                 "function Test-ControlPrefersScreenOpenCapture([string]$control)",
+                "\"TeachingTip\" { return $true }",
                 "\"MenuBar\" { return $true }",
                 "default { return $false }",
                 "function Test-ControlRequiresPopupWindowOpenProof([string]$control)",
@@ -2774,6 +2782,11 @@ namespace ModernWpf.Gallery.Tests
                 "\"DropDownButton\" { return $true }",
                 "\"SplitButton\" { return $true }",
                 "\"ToggleSplitButton\" { return $true }",
+                "function Close-PreparedOpenInteractionState($window, [string]$control)",
+                "$control -ne \"TeachingTip\"",
+                "GallerySample_TeachingTip_TeachingTip",
+                "[System.Windows.Automation.WindowPattern]::Pattern",
+                "$pattern.Close()",
                 "function Get-ElementNativeWindowHandle($element)",
                 "$handle = [int]$candidate.Current.NativeWindowHandle",
                 "return [IntPtr]$handle",
@@ -2788,6 +2801,7 @@ namespace ModernWpf.Gallery.Tests
                 "if ($preferScreenOpenCapture)",
                 "[GalleryVisualNative]::SetTopMost($window.Current.NativeWindowHandle, $true)",
                 "$triggerElement = Get-OpenInteractionTriggerElement $window $control $showButton",
+                "Close-PreparedOpenInteractionState $window $control",
                 "$screenCaptureTrustReference = \"\"",
                 "$screenCaptureTrustDelta = $null",
                 "$screenCaptureTrusted = $true",

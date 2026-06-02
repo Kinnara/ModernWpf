@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
@@ -224,6 +225,15 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Sunset", AutomationProperties.GetName(heroTeachingTip.HeroContent));
 
                     button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsTrue(teachingTip.IsOpen);
+                    teachingTip.IsOpen = false;
+                    WpfTestHost.DoEvents();
+
+                    var buttonPeer = UIElementAutomationPeer.CreatePeerForElement(button) as IInvokeProvider;
+                    Assert.IsNotNull(buttonPeer);
+                    buttonPeer.Invoke();
                     WpfTestHost.DoEvents();
 
                     Assert.IsTrue(teachingTip.IsOpen);
