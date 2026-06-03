@@ -60,7 +60,7 @@ record the Windows background instead of the Gallery window.
 | Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-034734-786/ToggleSplitButton/dark-togglesplitbutton.mp4` | Rendered MP4 frame shows the compact two-button flyout; full-frame delta is small, so the manifest also requires expanded-state and open-element proof on both opens. |
 | Basic input | ToggleSwitch | `item/ToggleSwitch` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/ToggleSwitch/dark-toggleswitch.mp4` | Manifest records `Off` to `On`; reviewed frame shows switch and `Working` state on. |
 | Text | NumberBox | `item/NumberBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/NumberBox/dark-numberbox.mp4` | Manifest records `10` to `20`; reviewed frame shows spin-button value `20`. |
-| Text | AutoSuggestBox | `item/AutoSuggestBox` | Pending | Pending |  | Text entry and suggestion popup required. |
+| Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed | `artifacts/gallery-recordings/20260603-055524-741/AutoSuggestBox/dark-autosuggestbox.mp4` | Manifest records typed input `ae`, suggestion `Aegean`, and output `Aegean`. Recorder still falls back to UIA selection for output proof; `AutoSuggestBoxInteractionTests` covers item-click submit/close behavior. |
 | Layout | SplitView | `item/SplitView` | Pending | Pending |  | Pane toggle required after first static pass. |
 | Media | PersonPicture | `item/PersonPicture` | Pending | Pending |  | Static route. |
 | Motion | ParallaxView | `item/ParallaxView` | Pending | Pending |  | Scroll interaction required after first static pass. |
@@ -70,13 +70,13 @@ record the Windows background instead of the Gallery window.
 | Status & info | InfoBadge | `item/InfoBadge` | Pending | Pending |  | Static route. |
 | Status & info | InfoBar | `item/InfoBar` | Pending | Pending |  | Close/action interaction required after first static pass. |
 | Status & info | ProgressRing | `item/ProgressRing` | Pending | Pending |  | Animated recording required. |
-| Scrolling | PipsPager | `item/PipsPager` | Pending | Pending |  | Page selection required. |
+| Scrolling | PipsPager | `item/PipsPager` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/PipsPager/dark-pipspager.mp4` | Manifest records page selection and pager item status changing to `LandscapeImage2.jpg`; reviewed frame `t7500.png` shows the second gallery image. |
 | Scrolling | AnnotatedScrollBar | `item/AnnotatedScrollBar` | Pending | Pending |  | Scroll interaction required after first static pass. |
 | Collections | PullToRefresh | `item/PullToRefresh` | Pending | Pending |  | Pull/refresh gesture required after first static pass. |
-| Collections | GridView | `item/GridView` | Pending | Pending |  | Item selection required. |
+| Collections | GridView | `item/GridView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/GridView/dark-gridview.mp4` | Manifest records `You clicked Item 1.` after item activation; reviewed frame `t7500.png` shows the output text. |
 | Collections | ItemsRepeater | `item/ItemsRepeater` | Pending | Pending |  | Scroll/virtualization interaction required after first static pass. |
 | Navigation | BreadcrumbBar | `item/BreadcrumbBar` | Pending | Pending |  | Ellipsis/flyout interaction required after first static pass. |
-| Navigation | Pivot | `item/Pivot` | Pending | Pending |  | Tab selection required. |
+| Navigation | Pivot | `item/Pivot` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/Pivot/dark-pivot.mp4` | Manifest records `Unread` selected and expected content `unread emails go here.`; reviewed frame `t7500.png` shows the selected tab/content. |
 | Navigation | SelectorBar | `item/SelectorBar` | Pending | Pending |  | Selection required after first static pass. |
 | Navigation | NavigationView | `item/NavigationView` | Pending | Pending |  | Sample nav interaction required; shell pane tracked separately. |
 | Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Pending | Pending |  | Open, close, second open required. |

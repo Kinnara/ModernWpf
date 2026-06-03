@@ -52,6 +52,11 @@ try {
 catch {
     Add-Type -AssemblyName System.Drawing
 }
+try {
+    Add-Type -AssemblyName System.Windows.Forms
+}
+catch {
+}
 
 if (-not ("GalleryRecordingNative" -as [type])) {
     Add-Type -TypeDefinition @"
@@ -92,11 +97,18 @@ public static class GalleryRecordingNative
     [DllImport("user32.dll")]
     private static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, UIntPtr extraInfo);
 
+    [DllImport("user32.dll")]
+    private static extern short VkKeyScan(char ch);
+
     private const int SW_RESTORE = 9;
     private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
     private const uint MOUSEEVENTF_LEFTUP = 0x0004;
     private const uint KEYEVENTF_KEYUP = 0x0002;
+    private const byte VK_CONTROL = 0x11;
+    private const byte VK_SHIFT = 0x10;
     private const byte VK_ESCAPE = 0x1B;
+    private const byte VK_RETURN = 0x0D;
+    private const byte VK_DOWN = 0x28;
     private const byte VK_SPACE = 0x20;
     private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
     private static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
@@ -157,6 +169,62 @@ public static class GalleryRecordingNative
     {
         keybd_event(VK_SPACE, 0, 0, UIntPtr.Zero);
         keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+    }
+
+    public static void Down()
+    {
+        KeyPress(VK_DOWN);
+    }
+
+    public static void Enter()
+    {
+        KeyPress(VK_RETURN);
+    }
+
+    private static void KeyPress(byte virtualKey)
+    {
+        keybd_event(virtualKey, 0, 0, UIntPtr.Zero);
+        keybd_event(virtualKey, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+    }
+
+    public static void PressCtrlA()
+    {
+        keybd_event(VK_CONTROL, 0, 0, UIntPtr.Zero);
+        KeyPress(0x41);
+        keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+    }
+
+    public static void TypeText(string text)
+    {
+        if (text == null)
+        {
+            return;
+        }
+
+        foreach (char ch in text)
+        {
+            short scan = VkKeyScan(ch);
+            if (scan == -1)
+            {
+                continue;
+            }
+
+            byte virtualKey = (byte)(scan & 0xff);
+            bool shift = (scan & 0x0100) != 0;
+            if (shift)
+            {
+                keybd_event(VK_SHIFT, 0, 0, UIntPtr.Zero);
+            }
+
+            KeyPress(virtualKey);
+
+            if (shift)
+            {
+                keybd_event(VK_SHIFT, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+            }
+
+            System.Threading.Thread.Sleep(15);
+        }
     }
 }
 "@
@@ -255,6 +323,17 @@ function Find-DescendantButtonByAnyName($root, [string[]]$names) {
     }
 
     return $null
+}
+
+function Find-DescendantByControlType($root, $controlType) {
+    if ($null -eq $root) {
+        return $null
+    }
+
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        $controlType)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
 }
 
 function Find-ElementByAutomationIdInProcess([int]$processId, [string]$automationId) {
@@ -523,6 +602,22 @@ function Get-SelectionInteractionTriggerName([string]$control) {
     }
 }
 
+function Get-SelectionInteractionExpectedOutputName([string]$control) {
+    switch ($control) {
+        "GridView" { return "You clicked Item 1." }
+        "PipsPager" { return "LandscapeImage2.jpg" }
+        "Pivot" { return "unread emails go here." }
+        default { return "" }
+    }
+}
+
+function Get-SelectionInteractionOutputAutomationId([string]$control) {
+    switch ($control) {
+        "GridView" { return "GallerySample_GridView_ClickOutput0" }
+        default { return "" }
+    }
+}
+
 function Get-ControlInteractionKind([string]$control) {
     if (Test-ControlSupportsOpenInteraction $control) { return "OpenRepeat" }
     if (Test-ControlSupportsStateInteraction $control) { return "State" }
@@ -610,6 +705,38 @@ function Get-SelectionItemStateName($element) {
     return ""
 }
 
+function Test-ElementSupportsPattern($element, $pattern) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        return $null -ne $element.GetCurrentPattern($pattern)
+    }
+    catch {
+        return $false
+    }
+}
+
+function Find-SelectionInvokeTarget($element) {
+    $candidate = $element
+    for ($depth = 0; $depth -lt 8 -and $null -ne $candidate; $depth++) {
+        if ((Test-ElementSupportsPattern $candidate ([System.Windows.Automation.SelectionItemPattern]::Pattern)) -or
+            (Test-ElementSupportsPattern $candidate ([System.Windows.Automation.InvokePattern]::Pattern))) {
+            return $candidate
+        }
+
+        try {
+            $candidate = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+        }
+        catch {
+            return $null
+        }
+    }
+
+    return $element
+}
+
 function Get-IsEnabledStateName($element) {
     if ($null -eq $element) {
         return ""
@@ -695,6 +822,23 @@ function Get-ElementText($element) {
     }
 }
 
+function Get-ElementItemStatus($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $value = $element.GetCurrentPropertyValue([System.Windows.Automation.AutomationElement]::ItemStatusProperty)
+        if ($null -ne $value) {
+            return [string]$value
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
 function Invoke-SplitButtonSecondaryOnce($window, $element) {
     if ($null -eq $element) {
         return $false
@@ -776,19 +920,61 @@ function Select-ElementOnce($window, $element) {
 
     [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
     Start-Sleep -Milliseconds 80
+    $target = Find-SelectionInvokeTarget $element
+    if ($null -eq $target) {
+        $target = $element
+    }
 
     try {
-        $pattern = $element.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+        $pattern = $target.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
         if ($null -ne $pattern) {
             $pattern.Select()
             Start-Sleep -Milliseconds 150
+            [void](Invoke-ElementOnce $window $target)
             return $true
         }
     }
     catch {
     }
 
-    return Invoke-ElementOnce $window $element
+    return Invoke-ElementOnce $window $target
+}
+
+function Click-ElementOnce($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    $center = Get-ElementCenter $element
+    if ($null -ne $center) {
+        [GalleryRecordingNative]::Click($center.X, $center.Y)
+        Start-Sleep -Milliseconds 250
+        return $true
+    }
+
+    return $false
+}
+
+function Click-FirstSuggestionBelowEdit($edit) {
+    if ($null -eq $edit) {
+        return $false
+    }
+
+    try {
+        $rect = $edit.Current.BoundingRectangle
+        if ($rect.Width -le 0 -or $rect.Height -le 0) {
+            return $false
+        }
+
+        $x = [int][Math]::Round($rect.X + [Math]::Min(48.0, [Math]::Max(24.0, $rect.Width * 0.15)))
+        $y = [int][Math]::Round($rect.Y + $rect.Height + 28.0)
+        [GalleryRecordingNative]::Click($x, $y)
+        Start-Sleep -Milliseconds 350
+        return $true
+    }
+    catch {
+        return $false
+    }
 }
 
 function Invoke-OptionElementOnce($window, $element) {
@@ -1030,10 +1216,61 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
     }
 }
 
+function Invoke-GridViewItemClickOnce($window) {
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+
+    $item = Find-ElementByNameInProcess $window.Current.ProcessId @("Item 1")
+    if ($null -eq $item) {
+        return $false
+    }
+
+    $target = Find-SelectionInvokeTarget $item
+    if ($null -eq $target) {
+        return $false
+    }
+
+    $invoked = $false
+    try {
+        $pattern = $target.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Select()
+            $invoked = $true
+            Start-Sleep -Milliseconds 80
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $target.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            $invoked = $true
+            Start-Sleep -Milliseconds 120
+        }
+    }
+    catch {
+    }
+
+    if (!$invoked) {
+        $invoked = Invoke-ElementOnce $window $target
+    }
+
+    return $invoked
+}
+
 function Invoke-SelectionInteraction($window, [string]$control, $sampleElement) {
     $name = Get-SelectionInteractionTriggerName $control
+    $expectedOutputName = Get-SelectionInteractionExpectedOutputName $control
+    $outputAutomationId = Get-SelectionInteractionOutputAutomationId $control
     $target = if (![string]::IsNullOrWhiteSpace($name)) {
         Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
+    }
+    else {
+        $null
+    }
+    $outputElement = if (![string]::IsNullOrWhiteSpace($outputAutomationId)) {
+        Find-ElementByAutomationIdInProcess $window.Current.ProcessId $outputAutomationId
     }
     else {
         $null
@@ -1041,21 +1278,55 @@ function Invoke-SelectionInteraction($window, [string]$control, $sampleElement) 
 
     $beforeSampleState = Get-SelectionItemStateName $sampleElement
     $beforeTargetState = Get-SelectionItemStateName $target
-    $invoked = Select-ElementOnce $window $target
+    $beforeSampleStatus = Get-ElementItemStatus $sampleElement
+    $beforeOutput = Get-ElementText $outputElement
+    $invoked = if ($control -eq "GridView") {
+        Invoke-GridViewItemClickOnce $window
+    }
+    else {
+        Select-ElementOnce $window $target
+    }
     Start-Sleep -Milliseconds 200
     $afterSampleState = Get-SelectionItemStateName $sampleElement
     $afterTargetState = Get-SelectionItemStateName $target
+    $afterSampleStatus = Get-ElementItemStatus $sampleElement
+    $outputElement = if (![string]::IsNullOrWhiteSpace($outputAutomationId)) {
+        Find-ElementByAutomationIdInProcess $window.Current.ProcessId $outputAutomationId
+    }
+    else {
+        $null
+    }
+    $afterOutput = Get-ElementText $outputElement
+    $outputMatched = (![string]::IsNullOrWhiteSpace($expectedOutputName) -and $afterOutput -eq $expectedOutputName)
+    if (!$outputMatched -and ![string]::IsNullOrWhiteSpace($expectedOutputName) -and $afterSampleStatus -eq $expectedOutputName) {
+        $outputMatched = $true
+    }
+
+    if (!$outputMatched -and ![string]::IsNullOrWhiteSpace($expectedOutputName) -and [string]::IsNullOrWhiteSpace($outputAutomationId)) {
+        $outputMatched = $null -ne (Find-ElementByNameInProcess $window.Current.ProcessId @($expectedOutputName))
+    }
 
     return [ordered]@{
         Invoked = $invoked
         TargetName = $name
+        ExpectedOutputName = $expectedOutputName
+        OutputAutomationId = $outputAutomationId
         BeforeSampleSelection = $beforeSampleState
         AfterSampleSelection = $afterSampleState
         BeforeTargetSelection = $beforeTargetState
         AfterTargetSelection = $afterTargetState
+        BeforeSampleStatus = $beforeSampleStatus
+        AfterSampleStatus = $afterSampleStatus
+        BeforeOutput = $beforeOutput
+        AfterOutput = $afterOutput
+        OutputChanged = ($beforeOutput -ne $afterOutput) -or ($beforeSampleStatus -ne $afterSampleStatus)
+        OutputMatched = $outputMatched
         SelectionChanged = (
             (![string]::IsNullOrWhiteSpace($beforeSampleState) -and $beforeSampleState -ne $afterSampleState) -or
-            (![string]::IsNullOrWhiteSpace($beforeTargetState) -and $beforeTargetState -ne $afterTargetState))
+            (![string]::IsNullOrWhiteSpace($beforeTargetState) -and $beforeTargetState -ne $afterTargetState) -or
+            ($beforeOutput -ne $afterOutput) -or
+            ($beforeSampleStatus -ne $afterSampleStatus) -or
+            $outputMatched)
     }
 }
 
@@ -1096,24 +1367,232 @@ function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
     }
 }
 
-function Invoke-TextInteraction($window, $sampleElement) {
-    if ($null -eq $sampleElement) {
-        return [ordered]@{ Invoked = $false }
+function Get-TextInteractionInput([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" { return "ae" }
+        default { return "" }
+    }
+}
+
+function Get-TextInteractionSuggestionNames([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" { return @("Aegean") }
+        default { return @() }
+    }
+}
+
+function Get-TextInteractionExpectedOutputName([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" { return "Aegean" }
+        default { return "" }
+    }
+}
+
+function Get-TextInteractionOutputAutomationId([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_SuggestionOutput" }
+        default { return "" }
+    }
+}
+
+function Find-EditableDescendant($element) {
+    if ($null -eq $element) {
+        return $null
     }
 
-    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
     try {
-        $pattern = $sampleElement.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
-        if ($null -ne $pattern) {
-            $pattern.SetValue("Ae")
-            Start-Sleep -Milliseconds 500
-            return [ordered]@{ Invoked = $true }
+        if ($element.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit) {
+            return $element
         }
     }
     catch {
     }
 
-    return [ordered]@{ Invoked = $false }
+    return Find-DescendantByControlType $element ([System.Windows.Automation.ControlType]::Edit)
+}
+
+function Set-EditableElementText($window, $element, [string]$text) {
+    $edit = Find-EditableDescendant $element
+    if ($null -eq $edit) {
+        return $false
+    }
+
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $edit.SetFocus()
+        Start-Sleep -Milliseconds 50
+    }
+    catch {
+    }
+
+    try {
+        $rect = $edit.Current.BoundingRectangle
+        if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+            [GalleryRecordingNative]::Click(
+                [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+                [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+            Start-Sleep -Milliseconds 80
+            [GalleryRecordingNative]::PressCtrlA()
+            Start-Sleep -Milliseconds 50
+            if ("System.Windows.Forms.SendKeys" -as [type]) {
+                [System.Windows.Forms.SendKeys]::SendWait($text)
+                Start-Sleep -Milliseconds 250
+                if ((Get-ElementText $edit) -eq $text) {
+                    return $true
+                }
+            }
+
+            [GalleryRecordingNative]::TypeText($text)
+            Start-Sleep -Milliseconds 350
+            if ((Get-ElementText $edit) -eq $text) {
+                return $true
+            }
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $edit.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.SetValue("")
+            Start-Sleep -Milliseconds 50
+            $pattern.SetValue($text)
+            Start-Sleep -Milliseconds 350
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Wait-ForInteractiveElementByNameInProcess([int]$processId, [string[]]$names, [int]$timeoutMilliseconds) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
+    do {
+        $element = Find-InteractiveElementByNameInProcess $processId $names
+        if ($null -ne $element) {
+            return $element
+        }
+
+        Start-Sleep -Milliseconds 100
+    } while ((Get-Date) -lt $deadline)
+
+    return $null
+}
+
+function Wait-ForTextOutput([int]$processId, [string]$automationId, [string]$expectedText, [int]$timeoutMilliseconds) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
+    do {
+        $element = Find-ElementByAutomationIdInProcess $processId $automationId
+        $text = Get-ElementText $element
+        if ($text -eq $expectedText) {
+            return $element
+        }
+
+        Start-Sleep -Milliseconds 100
+    } while ((Get-Date) -lt $deadline)
+
+    return $null
+}
+
+function Invoke-TextInteraction($window, [string]$control, $sampleElement) {
+    if ($null -eq $sampleElement) {
+        return [ordered]@{ Invoked = $false }
+    }
+
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    $inputText = Get-TextInteractionInput $control
+    $suggestionNames = Get-TextInteractionSuggestionNames $control
+    $expectedOutput = Get-TextInteractionExpectedOutputName $control
+    $outputAutomationId = Get-TextInteractionOutputAutomationId $control
+    $outputElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId $outputAutomationId
+    $beforeOutput = Get-ElementText $outputElement
+
+    $typed = Set-EditableElementText $window $sampleElement $inputText
+    $editElement = Find-EditableDescendant $sampleElement
+    $suggestionElement = if ($typed) {
+        Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId $suggestionNames 2500
+    }
+    else {
+        $null
+    }
+
+    $suggestionInvoked = $false
+    $suggestionInvokeMethod = ""
+    $outputElement = $null
+    if ($null -ne $suggestionElement) {
+        $suggestionInvoked = Click-FirstSuggestionBelowEdit $editElement
+        $suggestionInvokeMethod = "GeometryClick"
+        $outputElement = Wait-ForTextOutput $window.Current.ProcessId $outputAutomationId $expectedOutput 1200
+
+        if ($null -eq $outputElement) {
+            [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+            $sentKeys = $false
+            try {
+                if ("System.Windows.Forms.SendKeys" -as [type]) {
+                    [System.Windows.Forms.SendKeys]::SendWait("{DOWN}{DOWN}{ENTER}")
+                    $sentKeys = $true
+                }
+            }
+            catch {
+                $sentKeys = $false
+            }
+
+            if (!$sentKeys) {
+                [GalleryRecordingNative]::Down()
+                Start-Sleep -Milliseconds 100
+                [GalleryRecordingNative]::Down()
+                Start-Sleep -Milliseconds 100
+                [GalleryRecordingNative]::Enter()
+            }
+            Start-Sleep -Milliseconds 400
+            $suggestionInvoked = $true
+            $suggestionInvokeMethod = "Keyboard"
+            $outputElement = Wait-ForTextOutput $window.Current.ProcessId $outputAutomationId $expectedOutput 1200
+        }
+
+        if ($null -eq $outputElement) {
+            $suggestionInvoked = Click-ElementOnce $suggestionElement
+            $suggestionInvokeMethod = "Click"
+            $outputElement = Wait-ForTextOutput $window.Current.ProcessId $outputAutomationId $expectedOutput 1200
+        }
+
+        if ($null -eq $outputElement) {
+            $suggestionInvoked = Select-ElementOnce $window $suggestionElement
+            $suggestionInvokeMethod = "SelectionItem"
+            Start-Sleep -Milliseconds 400
+            $outputElement = Wait-ForTextOutput $window.Current.ProcessId $outputAutomationId $expectedOutput 1200
+        }
+    }
+
+    $outputElement = if ($suggestionInvoked -and $null -eq $outputElement) {
+        Wait-ForTextOutput $window.Current.ProcessId $outputAutomationId $expectedOutput 2500
+    }
+    else {
+        $outputElement
+    }
+    if ($null -eq $outputElement) {
+        $outputElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId $outputAutomationId
+    }
+    $afterOutput = Get-ElementText $outputElement
+
+    return [ordered]@{
+        Invoked = $typed -and $null -ne $suggestionElement -and $suggestionInvoked
+        Typed = $typed
+        InputText = $inputText
+        SuggestionNames = $suggestionNames
+        SuggestionFound = $null -ne $suggestionElement
+        SuggestionName = $(if ($null -ne $suggestionElement) { $suggestionElement.Current.Name } else { "" })
+        SuggestionInvoked = $suggestionInvoked
+        SuggestionInvokeMethod = $suggestionInvokeMethod
+        OutputAutomationId = $outputAutomationId
+        BeforeOutput = $beforeOutput
+        AfterOutput = $afterOutput
+        ExpectedOutput = $expectedOutput
+        OutputMatched = $afterOutput -eq $expectedOutput
+    }
 }
 
 function Invoke-OutputInteraction($window, $sampleElement) {
@@ -1155,7 +1634,7 @@ function Invoke-RecordedInteraction($window, [string]$control, $sampleElement) {
         "Value" { return Invoke-ValueInteraction $window $control $sampleElement }
         "Selection" { return Invoke-SelectionInteraction $window $control $sampleElement }
         "Option" { return Invoke-OptionInteraction $window $control $sampleElement }
-        "Text" { return Invoke-TextInteraction $window $sampleElement }
+        "Text" { return Invoke-TextInteraction $window $control $sampleElement }
         "Output" { return Invoke-OutputInteraction $window $sampleElement }
         default { return [ordered]@{ Invoked = $true } }
     }
@@ -1467,6 +1946,14 @@ function Test-OutputEvidence($interactionResult) {
     return [bool]$interactionResult.OutputChanged
 }
 
+function Test-TextEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("OutputMatched")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.OutputMatched
+}
+
 function Format-RelativePath([string]$path) {
     if ([string]::IsNullOrWhiteSpace($path)) {
         return ""
@@ -1628,6 +2115,17 @@ foreach ($control in $Controls) {
     $selectionEvidence = Test-SelectionEvidence $interactionResult
     $optionEvidence = Test-OptionEvidence $interactionResult
     $outputEvidence = Test-OutputEvidence $interactionResult
+    $textEvidence = if ($interactionKind -eq "Text") { Test-TextEvidence $interactionResult } else { $false }
+    if ($status -eq "Passed" -and $interactionKind -eq "Selection" -and !$selectionEvidence) {
+        $status = "NeedsReview"
+        $notes.Add("Machine-readable selection or output evidence did not change; manual frame review is required.")
+    }
+
+    if ($status -eq "Passed" -and $interactionKind -eq "Text" -and !$textEvidence) {
+        $status = "Failed"
+        $notes.Add("Text interaction did not expose the expected output.")
+    }
+
     if ($status -eq "Passed" -and $interactionKind -eq "Output" -and !$outputEvidence) {
         $status = "NeedsReview"
         $notes.Add("Machine-readable output text did not change; manual frame review is required.")
@@ -1647,13 +2145,16 @@ foreach ($control in $Controls) {
             $notes.Add("Target value was reached despite low full-frame delta.")
         }
         elseif ($interactionKind -eq "Selection" -and $selectionEvidence) {
-            $notes.Add("Selection state changed despite low full-frame delta.")
+            $notes.Add("Selection or output evidence changed despite low full-frame delta.")
         }
         elseif ($interactionKind -eq "Option" -and $optionEvidence) {
             $notes.Add("Option state changed despite low full-frame delta.")
         }
         elseif ($interactionKind -eq "Output" -and $outputEvidence) {
             $notes.Add("Output text changed despite low full-frame delta.")
+        }
+        elseif ($interactionKind -eq "Text" -and $textEvidence) {
+            $notes.Add("Expected text output was detected despite low full-frame delta.")
         }
         else {
             $status = "NeedsReview"
@@ -1677,6 +2178,7 @@ foreach ($control in $Controls) {
         SelectionEvidence = $selectionEvidence
         OptionEvidence = $optionEvidence
         OutputEvidence = $outputEvidence
+        TextEvidence = $textEvidence
         InteractionResult = $interactionResult
         Notes = ($notes.ToArray() -join " ")
     }

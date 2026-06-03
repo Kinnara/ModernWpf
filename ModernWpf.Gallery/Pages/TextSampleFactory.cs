@@ -244,6 +244,7 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
                 Name = "SuggestionOutput",
                 FontFamily = new FontFamily("Global User Interface")
             };
+            GalleryAutomation.WithAutomationId(output, GalleryAutomation.SampleElementId("AutoSuggestBox", "SuggestionOutput"));
 
             var box = new Mux.AutoSuggestBox
             {

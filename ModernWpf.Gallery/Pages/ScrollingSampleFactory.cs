@@ -305,6 +305,7 @@ namespace ModernWpf.Gallery.Pages
                 MaxWidth = 400,
                 HorizontalAlignment = HorizontalAlignment.Left
             };
+            GalleryAutomation.WithAutomationId(gallery, GalleryAutomation.SampleElementId("PipsPager", "Gallery"));
 
             var pipsPager = new Mux.PipsPager
             {
@@ -312,17 +313,20 @@ namespace ModernWpf.Gallery.Pages
                 HorizontalAlignment = HorizontalAlignment.Center,
                 NumberOfPages = pictures.Count
             };
+            GalleryAutomation.WithAutomationId(pipsPager, GalleryAutomation.SampleElementId("PipsPager", "PipsPager"));
             var pipsPagerHost = new Border
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 12, 0, 0),
                 Child = pipsPager
             };
-            GalleryAutomation.WithAutomationId(pipsPagerHost, GalleryAutomation.SampleElementId("PipsPager", "PipsPager"));
 
             Action updatePicture = delegate
             {
-                gallery.Content = CreatePipsPagerImage(pictures[pipsPager.SelectedPageIndex]);
+                var picture = pictures[pipsPager.SelectedPageIndex];
+                gallery.Content = CreatePipsPagerImage(picture);
+                AutomationProperties.SetName(gallery, picture);
+                AutomationProperties.SetItemStatus(pipsPager, picture);
             };
             pipsPager.SelectedIndexChanged += delegate
             {

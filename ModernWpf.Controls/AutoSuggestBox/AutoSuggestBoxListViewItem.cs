@@ -38,8 +38,9 @@ namespace ModernWpf.Controls.Primitives
 
         private void HandleMouseUp(MouseButton mouseButton)
         {
-            if (m_isPressed && SelectorHelper.UiGetIsSelectable(this) && Focus())
+            if (m_isPressed && SelectorHelper.UiGetIsSelectable(this))
             {
+                Focus();
                 ParentListView?.NotifyListItemClicked(this, mouseButton);
             }
         }
@@ -50,8 +51,9 @@ namespace ModernWpf.Controls.Primitives
 
             if (e.Key == Key.Enter || (e.Key == Key.Space && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control))
             {
-                if (SelectorHelper.UiGetIsSelectable(this) && Focus())
+                if (SelectorHelper.UiGetIsSelectable(this))
                 {
+                    Focus();
                     ParentListView?.NotifyListItemClicked(this, isSecondaryGesture: e.Key == Key.Space);
                     e.Handled = true;
                 }

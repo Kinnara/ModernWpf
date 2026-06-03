@@ -1000,3 +1000,61 @@ Expand the recording-first audit to the next Basic Input controls:
   - `artifacts/gallery-recordings/20260603-050244-858/RadioButton/frames/t3000.png`
   - `artifacts/gallery-recordings/20260603-050244-858/ColorPicker/frames/t4000.png`
   - `artifacts/gallery-recordings/20260603-050244-858/HyperlinkButton/frames/t1500.png`
+
+## Round 34: Text and Selection Recording Proof
+
+### Scope
+
+Expand recording-first coverage for text, collection, scrolling, and navigation
+controls that older visual checks covered but the video recorder could not prove:
+
+- `AutoSuggestBox`
+- `GridView`
+- `PipsPager`
+- `Pivot`
+
+### Current Findings
+
+- The recorder was behind the screenshot visual harness. It typed
+  `AutoSuggestBox` text without proving suggestions/output, selected `GridView`
+  without invoking item click, targeted a non-UIA `PipsPager` border, and had no
+  explicit output/status evidence for low-delta selection clips.
+- The `AutoSuggestBox` sample lacked a stable automation id for its suggestion
+  output TextBlock, so the recording manifest could not bind output proof to the
+  sample.
+- The `PipsPager` sample placed the pager automation id on a `Border`, which is
+  not reliable UIA proof, and did not expose the selected gallery image through a
+  machine-readable state.
+- `AutoSuggestBoxListViewItem` gated mouse/key activation on `Focus()`. The
+  control should still notify the owning suggestion list when the item is
+  selectable; focus is useful but should not veto the click.
+
+### Changes
+
+- Added real text-entry/suggestion evidence to
+  `Record-GalleryControlInteractions.ps1`, including typed input, suggestion
+  lookup, output automation id matching, and text-specific pass/fail evidence.
+- Added selection/output evidence for `GridView`, `PipsPager`, and `Pivot`,
+  including GridView item invoke, expected output matching, and PipsPager
+  selected-image item status.
+- Added stable Gallery automation hooks for `AutoSuggestBox` output and
+  `PipsPager` pager/gallery state.
+- Relaxed `AutoSuggestBoxListViewItem` activation so item click/key handling
+  attempts focus but does not require it before notifying the suggestion list.
+- Added a focused AutoSuggestBox interaction regression proving suggestion item
+  click submits the chosen item and closes the popup.
+
+### Verification
+
+- `dotnet test test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter "FullyQualifiedName~AutoSuggestBoxInteractionTests"`: passed, 2 tests.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj -f net8.0-windows7.0 -c Debug --no-restore`: passed.
+- Final focused recording report:
+  `artifacts/gallery-recordings/20260603-055524-741/report.md`
+- Reviewed poster frames:
+  - `artifacts/gallery-recordings/20260603-055524-741/GridView/frames/t7500.png`
+  - `artifacts/gallery-recordings/20260603-055524-741/PipsPager/frames/t7500.png`
+  - `artifacts/gallery-recordings/20260603-055524-741/Pivot/frames/t7500.png`
+- AutoSuggestBox caveat: the final video clip records typing and suggestions,
+  and the manifest records output `Aegean`, but the recorder still uses a UIA
+  selection fallback for output proof. The item-click close behavior is covered
+  by the focused regression above.
