@@ -8,6 +8,7 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using ModernWpf.Controls;
@@ -25,6 +26,7 @@ namespace ModernWpf.Gallery.Shell
         private readonly Stack<NavigationTarget> _forwardStack = new Stack<NavigationTarget>();
         private readonly Dictionary<string, NavigationViewItem> _itemContainers = new Dictionary<string, NavigationViewItem>(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, NavigationViewItem> _parentContainers = new Dictionary<string, NavigationViewItem>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<NavigationViewItem, bool> _pendingGroupExpansionStates = new Dictionary<NavigationViewItem, bool>();
         private static readonly ISet<string> WpfGalleryGroupIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "DesignGuidance",
@@ -331,7 +333,7 @@ namespace ModernWpf.Gallery.Shell
             }
         }
 
-        private static NavigationViewItem CreateNavigationItem(string title, NavigationTarget target, IconElement icon)
+        private NavigationViewItem CreateNavigationItem(string title, NavigationTarget target, IconElement icon)
         {
             var item = new NavigationViewItem
             {
@@ -340,7 +342,40 @@ namespace ModernWpf.Gallery.Shell
                 Tag = target
             };
             AutomationProperties.SetName(item, title);
+            if (target.Kind == NavigationTargetKind.Group)
+            {
+                item.PreviewMouseLeftButtonDown += OnGroupNavigationItemPreviewMouseLeftButtonDown;
+                item.AddHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnGroupNavigationItemMouseLeftButtonUp), true);
+            }
+
             return item;
+        }
+
+        private void OnGroupNavigationItemPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is NavigationViewItem item && e.ChangedButton == MouseButton.Left)
+            {
+                _pendingGroupExpansionStates[item] = !item.IsExpanded;
+            }
+        }
+
+        private void OnGroupNavigationItemMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is not NavigationViewItem item ||
+                !_pendingGroupExpansionStates.TryGetValue(item, out var desiredIsExpanded))
+            {
+                return;
+            }
+
+            _pendingGroupExpansionStates.Remove(item);
+            Dispatcher.BeginInvoke(
+                DispatcherPriority.Input,
+                new Action(() =>
+                {
+                    item.IsExpanded = desiredIsExpanded;
+                    item.Focus();
+                }));
+            e.Handled = true;
         }
 
         private static Thickness GetNavigationItemMargin(NavigationTarget target)

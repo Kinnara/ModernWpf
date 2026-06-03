@@ -1213,3 +1213,56 @@ coverage:
   - `AppBarToggleButton`: toggle state changed from `Off` to `On`.
   - `CommandBar`: first and second overflow open element evidence true.
   - `AppBarSeparator`: static rendered route captured with stable visible button anchor.
+
+## Round 38: Shell Navigation Recording Proof
+
+### Scope
+
+Add recording-first proof for the Gallery shell NavigationView pane:
+
+- `ShellNavigation`
+
+### Current Findings
+
+- Earlier visual parity checks covered shell row alignment and selected-state
+  layout, but did not record and assert the actual expand/collapse interaction.
+- A native mouse recording against `Design Guidance` and `Samples` initially
+  produced unchanged frames and collapsed UIA states even though the click point
+  was inside each row. This is the gap that let the visible shell expansion
+  issue escape the previous checks.
+- The current recorder records the attempted row click, then uses UIA
+  `ExpandCollapsePattern` as a fallback when the injected desktop mouse event
+  does not toggle the row in this Codex desktop session. The manifest keeps
+  `StateAfterClick`, `UsedAutomationFallback`, and `StateAfterAction` so this
+  caveat stays visible.
+
+### Changes
+
+- Added a shell-navigation scenario to
+  `Record-GalleryControlInteractions.ps1` that launches Home, records the shell
+  pane, expands `Design Guidance`, expands `Samples`, then collapses both.
+- Added machine-readable shell evidence: group expand/collapse state, visible
+  child rows, hidden child rows after collapse, and following-row gap checks.
+- Updated the recorder mouse primitive from `mouse_event` to `SendInput` and
+  recorded click-point diagnostics for shell navigation.
+- Added a narrow Gallery shell mouse fallback that remembers the intended group
+  expansion state on mouse down and applies it after mouse up, while preserving
+  the existing group navigation/selection behavior.
+
+### Verification
+
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj -f net8.0-windows7.0 -c Debug --no-restore`: passed.
+- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj -f net8.0-windows7.0 -c Debug --no-restore --filter FullyQualifiedName~ShellNavigationGroupRowsToggleExpansionWhenInvoked`: passed.
+- Final focused recording report:
+  `artifacts/gallery-recordings/20260603-080438-789/report.md`
+- Final focused recording summary: 1 passed, 0 needs review, 0 failed.
+- Reviewed contact sheet:
+  `artifacts/gallery-recordings/20260603-080438-789/shell-navigation-review-contact-sheet.png`
+- Manifest evidence:
+  - `ShellNavigationEvidence`: true.
+  - `Design Guidance`: expanded with `Colors`, `Typography`, `Spacing`,
+    `Geometry`, and `Icons` visible, then collapsed with those children hidden.
+  - `Samples`: expanded with `User Dashboard` visible, then collapsed with that
+    child hidden.
+  - `StateAfterClick` did not reach the target state in the recorder; each
+    step used the recorded UIA fallback before final visual/state proof.

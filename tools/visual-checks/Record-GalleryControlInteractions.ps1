@@ -94,6 +94,27 @@ public static class GalleryRecordingNative
     [DllImport("user32.dll")]
     private static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extraInfo);
 
+    [StructLayout(LayoutKind.Sequential)]
+    private struct INPUT
+    {
+        public uint type;
+        public MOUSEINPUT mi;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MOUSEINPUT
+    {
+        public int dx;
+        public int dy;
+        public uint mouseData;
+        public uint dwFlags;
+        public uint time;
+        public IntPtr dwExtraInfo;
+    }
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern uint SendInput(uint inputCount, INPUT[] inputs, int inputSize);
+
     [DllImport("user32.dll")]
     private static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, UIntPtr extraInfo);
 
@@ -101,6 +122,7 @@ public static class GalleryRecordingNative
     private static extern short VkKeyScan(char ch);
 
     private const int SW_RESTORE = 9;
+    private const uint INPUT_MOUSE = 0;
     private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
     private const uint MOUSEEVENTF_LEFTUP = 0x0004;
     private const uint MOUSEEVENTF_WHEEL = 0x0800;
@@ -147,17 +169,23 @@ public static class GalleryRecordingNative
 
     public static void Click(int x, int y)
     {
-        SetCursorPos(x, y);
-        mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
-        mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
+        HoldClick(x, y, 0);
     }
 
     public static void HoldClick(int x, int y, int holdMilliseconds)
     {
         SetCursorPos(x, y);
-        mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
+        SendMouseInput(MOUSEEVENTF_LEFTDOWN);
         System.Threading.Thread.Sleep(holdMilliseconds);
-        mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
+        SendMouseInput(MOUSEEVENTF_LEFTUP);
+    }
+
+    private static void SendMouseInput(uint flags)
+    {
+        var inputs = new INPUT[1];
+        inputs[0].type = INPUT_MOUSE;
+        inputs[0].mi.dwFlags = flags;
+        SendInput(1, inputs, Marshal.SizeOf(typeof(INPUT)));
     }
 
     public static void Wheel(int x, int y, int delta)
@@ -292,6 +320,21 @@ function Find-DescendantByName($root, [string]$name) {
     $condition = New-Object System.Windows.Automation.PropertyCondition(
         [System.Windows.Automation.AutomationElement]::NameProperty,
         $name)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-DescendantByNameAndType($root, [string]$name, $controlType) {
+    if ($null -eq $root -or [string]::IsNullOrWhiteSpace($name)) {
+        return $null
+    }
+
+    $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::NameProperty,
+        $name)
+    $typeCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        $controlType)
+    $condition = New-Object System.Windows.Automation.AndCondition($nameCondition, $typeCondition)
     return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
 }
 
@@ -468,8 +511,17 @@ function Wait-ModernWpfReady($window, [string]$route, [string]$artifactDir) {
     }
 }
 
+function Get-ControlRoute([string]$control) {
+    if ($control -eq "ShellNavigation") {
+        return "home"
+    }
+
+    return "item/$control"
+}
+
 function Get-RequiredSampleAutomationId([string]$control) {
     switch ($control) {
+        "ShellNavigation" { return "GalleryNavigationView" }
         "TeachingTip" { return "GallerySample_TeachingTip_ShowButton" }
         "Button" { return "GallerySample_Button_PrimaryButton" }
         "CheckBox" { return "GallerySample_CheckBox_CheckBox" }
@@ -643,6 +695,7 @@ function Get-SelectionInteractionOutputAutomationId([string]$control) {
 }
 
 function Get-ControlInteractionKind([string]$control) {
+    if ($control -eq "ShellNavigation") { return "ShellNavigation" }
     if (Test-ControlSupportsOpenInteraction $control) { return "OpenRepeat" }
     if (Test-ControlSupportsStateInteraction $control) { return "State" }
     if (Test-ControlSupportsValueInteraction $control) { return "Value" }
@@ -652,6 +705,276 @@ function Get-ControlInteractionKind([string]$control) {
     if (Test-ControlSupportsOutputInteraction $control) { return "Output" }
     if (Test-ControlSupportsScrollInteraction $control) { return "Scroll" }
     return "Static"
+}
+
+function Find-ShellNavigationItem($navigationView, [string]$name) {
+    $item = Find-DescendantByNameAndType $navigationView $name ([System.Windows.Automation.ControlType]::ListItem)
+    if ($null -ne $item) {
+        return $item
+    }
+
+    return Find-DescendantByName $navigationView $name
+}
+
+function Test-ElementVisible($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $rect = $element.Current.BoundingRectangle
+        return !$element.Current.IsOffscreen -and $rect.Width -gt 0 -and $rect.Height -gt 0
+    }
+    catch {
+        return $false
+    }
+}
+
+function Get-ShellNavigationClickPoint($item) {
+    try {
+        $point = New-Object System.Windows.Point
+        if ($item.TryGetClickablePoint([ref]$point)) {
+            return [ordered]@{
+                X = [int][Math]::Round($point.X)
+                Y = [int][Math]::Round($point.Y)
+                Source = "ClickablePoint"
+            }
+        }
+    }
+    catch {
+    }
+
+    $rect = $item.Current.BoundingRectangle
+    return [ordered]@{
+        X = [int][Math]::Round($rect.X + ($rect.Width / 2.0))
+        Y = [int][Math]::Round($rect.Y + ($rect.Height / 2.0))
+        Source = "BoundsCenter"
+    }
+}
+
+function Invoke-ShellNavigationExpandCollapsePattern($item, [string]$targetState) {
+    try {
+        $patternObject = $null
+        if (!$item.TryGetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern, [ref]$patternObject)) {
+            return $false
+        }
+
+        $pattern = [System.Windows.Automation.ExpandCollapsePattern]$patternObject
+        if ($targetState -eq "Expanded") {
+            $pattern.Expand()
+            return $true
+        }
+
+        if ($targetState -eq "Collapsed") {
+            $pattern.Collapse()
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Invoke-ShellNavigationDisclosure($window, $navigationView, [string]$name, [string]$targetState) {
+    $item = Find-ShellNavigationItem $navigationView $name
+    if ($null -eq $item) {
+        return [ordered]@{ Clicked = $false; Name = $name; Failure = "Navigation item was not found." }
+    }
+
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $rect = $item.Current.BoundingRectangle
+        if ($rect.Width -le 0 -or $rect.Height -le 0) {
+            return [ordered]@{ Clicked = $false; Name = $name; Failure = "Navigation item had empty bounds." }
+        }
+
+        $point = Get-ShellNavigationClickPoint $item
+        [GalleryRecordingNative]::HoldClick($point.X, $point.Y, 120)
+        Start-Sleep -Milliseconds 250
+        $stateAfterClick = Get-ExpandCollapseStateName $item
+        $usedAutomationFallback = $false
+        if ($targetState -and $stateAfterClick -ne $targetState) {
+            $usedAutomationFallback = Invoke-ShellNavigationExpandCollapsePattern $item $targetState
+        }
+
+        Start-Sleep -Milliseconds 650
+        return [ordered]@{
+            Clicked = $true
+            Name = $name
+            X = $point.X
+            Y = $point.Y
+            Source = $point.Source
+            Bounds = "{0},{1},{2},{3}" -f [Math]::Round($rect.X, 1), [Math]::Round($rect.Y, 1), [Math]::Round($rect.Width, 1), [Math]::Round($rect.Height, 1)
+            TargetState = $targetState
+            StateAfterClick = $stateAfterClick
+            UsedAutomationFallback = $usedAutomationFallback
+            StateAfterAction = Get-ExpandCollapseStateName $item
+        }
+    }
+    catch {
+        return [ordered]@{ Clicked = $false; Name = $name; Failure = $_.Exception.Message }
+    }
+}
+
+function Get-ShellNavigationSnapshot(
+    $navigationView,
+    [string]$name,
+    [string]$expectedState,
+    [string[]]$childNames,
+    [string[]]$hiddenChildNames,
+    [string]$followingName,
+    [double]$maximumFollowingGap) {
+    $failures = New-Object System.Collections.Generic.List[string]
+    $item = Find-ShellNavigationItem $navigationView $name
+    $height = 0.0
+    $followingGap = $null
+    $visibleChildren = New-Object System.Collections.Generic.List[string]
+    $hiddenChildren = New-Object System.Collections.Generic.List[string]
+    $unexpectedVisibleChildren = New-Object System.Collections.Generic.List[string]
+    $state = ""
+
+    if ($null -eq $item) {
+        $failures.Add("Navigation item '$name' was not found.")
+    }
+    else {
+        $state = Get-ExpandCollapseStateName $item
+        if ($state -ne $expectedState) {
+            $failures.Add("Navigation item '$name' expected $expectedState, observed '$state'.")
+        }
+
+        try {
+            $rect = $item.Current.BoundingRectangle
+            $height = [Math]::Round($rect.Height, 1)
+            if ($followingName) {
+                $following = Find-ShellNavigationItem $navigationView $followingName
+                if ($null -ne $following) {
+                    $followingRect = $following.Current.BoundingRectangle
+                    $followingGap = [Math]::Round($followingRect.Y - ($rect.Y + $rect.Height), 1)
+                    if ($null -ne $maximumFollowingGap -and $followingGap -gt $maximumFollowingGap) {
+                        $failures.Add("Navigation item '$name' had gap $followingGap before '$followingName'.")
+                    }
+                }
+                else {
+                    $failures.Add("Following navigation item '$followingName' was not found.")
+                }
+            }
+        }
+        catch {
+            $failures.Add("Navigation item '$name' bounds were unavailable.")
+        }
+
+        foreach ($childName in $childNames) {
+            $child = Find-DescendantByNameAndType $item $childName ([System.Windows.Automation.ControlType]::ListItem)
+            if (Test-ElementVisible $child) {
+                $visibleChildren.Add($childName)
+            }
+            else {
+                $failures.Add("Expanded navigation item '$name' did not expose visible child '$childName'.")
+            }
+        }
+
+        foreach ($childName in $hiddenChildNames) {
+            $child = Find-DescendantByNameAndType $item $childName ([System.Windows.Automation.ControlType]::ListItem)
+            if (Test-ElementVisible $child) {
+                $unexpectedVisibleChildren.Add($childName)
+                $failures.Add("Collapsed navigation item '$name' still exposed visible child '$childName'.")
+            }
+            else {
+                $hiddenChildren.Add($childName)
+            }
+        }
+    }
+
+    return [ordered]@{
+        Name = $name
+        ExpectedState = $expectedState
+        State = $state
+        Height = $height
+        FollowingName = $followingName
+        FollowingGap = $followingGap
+        VisibleChildren = $visibleChildren.ToArray()
+        HiddenChildren = $hiddenChildren.ToArray()
+        UnexpectedVisibleChildren = $unexpectedVisibleChildren.ToArray()
+        Success = $failures.Count -eq 0
+        Failures = $failures.ToArray()
+    }
+}
+
+function Invoke-ShellNavigationInteraction($window, $navigationView) {
+    if ($null -eq $navigationView) {
+        return [ordered]@{ Invoked = $false; ShellNavigationChanged = $false; Failures = @("GalleryNavigationView was not found.") }
+    }
+
+    $steps = New-Object System.Collections.Generic.List[object]
+    $failures = New-Object System.Collections.Generic.List[string]
+    $homeItem = Find-ShellNavigationItem $navigationView "Home"
+    if (!(Test-ElementVisible $homeItem)) {
+        $failures.Add("Home navigation item was not visible before shell interaction.")
+    }
+
+    $designExpandedClick = Invoke-ShellNavigationDisclosure $window $navigationView "Design Guidance" "Expanded"
+    $designExpanded = Get-ShellNavigationSnapshot `
+        $navigationView `
+        "Design Guidance" `
+        "Expanded" `
+        @("Colors", "Typography", "Spacing", "Geometry", "Icons") `
+        @() `
+        "Samples" `
+        48.0
+    $steps.Add($designExpanded)
+
+    $samplesExpandedClick = Invoke-ShellNavigationDisclosure $window $navigationView "Samples" "Expanded"
+    $samplesExpanded = Get-ShellNavigationSnapshot `
+        $navigationView `
+        "Samples" `
+        "Expanded" `
+        @("User Dashboard") `
+        @() `
+        "All Controls" `
+        48.0
+    $steps.Add($samplesExpanded)
+
+    $designCollapsedClick = Invoke-ShellNavigationDisclosure $window $navigationView "Design Guidance" "Collapsed"
+    $designCollapsed = Get-ShellNavigationSnapshot `
+        $navigationView `
+        "Design Guidance" `
+        "Collapsed" `
+        @() `
+        @("Colors", "Typography", "Spacing", "Geometry", "Icons") `
+        "Samples" `
+        48.0
+    $steps.Add($designCollapsed)
+
+    $samplesCollapsedClick = Invoke-ShellNavigationDisclosure $window $navigationView "Samples" "Collapsed"
+    $samplesCollapsed = Get-ShellNavigationSnapshot `
+        $navigationView `
+        "Samples" `
+        "Collapsed" `
+        @() `
+        @("User Dashboard") `
+        "All Controls" `
+        48.0
+    $steps.Add($samplesCollapsed)
+
+    if (!$designExpandedClick.Clicked) { $failures.Add("Could not click Design Guidance to expand.") }
+    if (!$samplesExpandedClick.Clicked) { $failures.Add("Could not click Samples to expand.") }
+    if (!$designCollapsedClick.Clicked) { $failures.Add("Could not click Design Guidance to collapse.") }
+    if (!$samplesCollapsedClick.Clicked) { $failures.Add("Could not click Samples to collapse.") }
+    foreach ($step in $steps) {
+        foreach ($failure in $step.Failures) {
+            $failures.Add($failure)
+        }
+    }
+
+    return [ordered]@{
+        Invoked = $designExpandedClick.Clicked -and $samplesExpandedClick.Clicked -and $designCollapsedClick.Clicked -and $samplesCollapsedClick.Clicked
+        HomeVisible = Test-ElementVisible $homeItem
+        Clicks = @($designExpandedClick, $samplesExpandedClick, $designCollapsedClick, $samplesCollapsedClick)
+        Steps = $steps.ToArray()
+        ShellNavigationChanged = $failures.Count -eq 0
+        Failures = $failures.ToArray()
+    }
 }
 
 function Get-ElementCenter($element) {
@@ -1822,6 +2145,7 @@ function Invoke-OutputInteraction($window, [string]$control, $sampleElement) {
 function Invoke-RecordedInteraction($window, [string]$control, $sampleElement) {
     $kind = Get-ControlInteractionKind $control
     switch ($kind) {
+        "ShellNavigation" { return Invoke-ShellNavigationInteraction $window $sampleElement }
         "OpenRepeat" { return Invoke-OpenRepeatInteraction $window $control $sampleElement }
         "State" { return Invoke-StateInteraction $window $sampleElement }
         "Value" { return Invoke-ValueInteraction $window $control $sampleElement }
@@ -2163,6 +2487,14 @@ function Test-ScrollEvidence($interactionResult) {
     return [bool]$interactionResult.ScrollChanged
 }
 
+function Test-ShellNavigationEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("ShellNavigationChanged")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.ShellNavigationChanged
+}
+
 function Format-RelativePath([string]$path) {
     if ([string]::IsNullOrWhiteSpace($path)) {
         return ""
@@ -2221,7 +2553,7 @@ foreach ($control in $Controls) {
     $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
     New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
 
-    $route = "item/$control"
+    $route = Get-ControlRoute $control
     $process = $null
     $recordingJob = $null
     $notes = New-Object System.Collections.Generic.List[string]
@@ -2326,6 +2658,7 @@ foreach ($control in $Controls) {
     $outputEvidence = Test-OutputEvidence $interactionResult
     $textEvidence = if ($interactionKind -eq "Text") { Test-TextEvidence $interactionResult } else { $false }
     $scrollEvidence = Test-ScrollEvidence $interactionResult
+    $shellNavigationEvidence = Test-ShellNavigationEvidence $interactionResult
     if ($status -eq "Passed" -and $interactionKind -eq "Selection" -and !$selectionEvidence) {
         $status = "NeedsReview"
         $notes.Add("Machine-readable selection or output evidence did not change; manual frame review is required.")
@@ -2361,6 +2694,17 @@ foreach ($control in $Controls) {
         $notes.Add("Scroll interaction did not change the target scroll percent.")
     }
 
+    if ($status -eq "Passed" -and $interactionKind -eq "ShellNavigation" -and !$shellNavigationEvidence) {
+        $status = "Failed"
+        $failures = if ($null -ne $interactionResult -and $interactionResult.Contains("Failures")) {
+            @($interactionResult.Failures) -join " "
+        }
+        else {
+            "Shell navigation interaction did not expose the expected expanded/collapsed child states."
+        }
+        $notes.Add($failures)
+    }
+
     if ($status -eq "Passed" -and
         $interactionKind -ne "Static" -and
         $null -ne $maxFrameDelta -and
@@ -2389,6 +2733,9 @@ foreach ($control in $Controls) {
         elseif ($interactionKind -eq "Scroll" -and $scrollEvidence) {
             $notes.Add("Scroll percent changed despite low full-frame delta.")
         }
+        elseif ($interactionKind -eq "ShellNavigation" -and $shellNavigationEvidence) {
+            $notes.Add("Shell navigation expand/collapse evidence changed despite low full-frame delta.")
+        }
         else {
             $status = "NeedsReview"
             $notes.Add("Interactive recording produced low poster-frame delta.")
@@ -2413,6 +2760,7 @@ foreach ($control in $Controls) {
         OutputEvidence = $outputEvidence
         TextEvidence = $textEvidence
         ScrollEvidence = $scrollEvidence
+        ShellNavigationEvidence = $shellNavigationEvidence
         InteractionResult = $interactionResult
         Notes = ($notes.ToArray() -join " ")
     }
