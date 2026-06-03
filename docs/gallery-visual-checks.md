@@ -64,11 +64,10 @@ Record a short repro clip when a failure only shows up during interaction:
 .\tools\visual-checks\Record-Window.ps1 -Left 60 -Top 60 -Width 1180 -Height 820 -DurationSeconds 8 -FrameRate 10
 ```
 
-The recorder writes uncompressed 24-bit AVI files under
-`artifacts/window-recordings/` by default. Keep clips short because raw files
-are large. The script uses Win32 GDI capture and does not require `ffmpeg`.
-If `ffmpeg` is available on a machine, its `gdigrab` input is still the better
-path for longer or compressed recordings.
+The recorder writes under `artifacts/window-recordings/` by default. With
+`ffmpeg` on `PATH`, `-Recorder Auto` writes compressed MP4 files through
+FFmpeg's `gdigrab` input. Without `ffmpeg`, it falls back to the dependency-free
+raw AVI writer. Pass `-Recorder Avi` explicitly when testing the fallback path.
 
 The WPF audit script defaults the official reference executable to
 `D:\repos\WPF-Samples\Sample Applications\WPFGallery\bin\Debug\net10.0-windows\WPFGallery.exe`.

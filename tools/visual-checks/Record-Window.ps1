@@ -2,6 +2,8 @@ param(
     [string]$Output = "",
     [int]$DurationSeconds = 5,
     [int]$FrameRate = 10,
+    [ValidateSet("Auto", "Ffmpeg", "Avi")]
+    [string]$Recorder = "Auto",
     [string]$ProcessName = "",
     [string]$WindowTitle = "",
     [IntPtr]$WindowHandle = [IntPtr]::Zero,
@@ -639,6 +641,73 @@ if ($FrameRate -le 0) {
     throw "FrameRate must be greater than zero."
 }
 
+function Get-FfmpegPath {
+    $command = Get-Command ffmpeg -ErrorAction SilentlyContinue
+    if ($null -eq $command) {
+        return $null
+    }
+
+    return $command.Source
+}
+
+function Invoke-FfmpegRecorder {
+    param(
+        [string]$FfmpegPath,
+        [int]$CaptureLeft,
+        [int]$CaptureTop,
+        [int]$CaptureWidth,
+        [int]$CaptureHeight,
+        [string]$CaptureOutput,
+        [int]$CaptureDurationSeconds,
+        [int]$CaptureFrameRate
+    )
+
+    $fullOutput = [IO.Path]::GetFullPath($CaptureOutput)
+    $outputDirectory = Split-Path -Parent $fullOutput
+    if (![string]::IsNullOrWhiteSpace($outputDirectory)) {
+        New-Item -ItemType Directory -Path $outputDirectory -Force | Out-Null
+    }
+
+    $videoSize = "{0}x{1}" -f $CaptureWidth, $CaptureHeight
+    $arguments = @(
+        "-hide_banner",
+        "-loglevel", "error",
+        "-nostdin",
+        "-y",
+        "-f", "gdigrab",
+        "-draw_mouse", "1",
+        "-framerate", $CaptureFrameRate.ToString([Globalization.CultureInfo]::InvariantCulture),
+        "-offset_x", $CaptureLeft.ToString([Globalization.CultureInfo]::InvariantCulture),
+        "-offset_y", $CaptureTop.ToString([Globalization.CultureInfo]::InvariantCulture),
+        "-video_size", $videoSize,
+        "-i", "desktop",
+        "-t", $CaptureDurationSeconds.ToString([Globalization.CultureInfo]::InvariantCulture),
+        "-an",
+        "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2",
+        "-c:v", "libx264",
+        "-preset", "veryfast",
+        "-crf", "23",
+        "-pix_fmt", "yuv420p",
+        "-movflags", "+faststart",
+        $fullOutput
+    )
+
+    $ffmpegOutput = & $FfmpegPath @arguments 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        $message = ($ffmpegOutput | Select-Object -Last 20) -join [Environment]::NewLine
+        throw "ffmpeg recording failed with exit code $LASTEXITCODE.$([Environment]::NewLine)$message"
+    }
+
+    [pscustomobject]@{
+        Output = $fullOutput
+        Frames = $CaptureDurationSeconds * $CaptureFrameRate
+        FrameRate = $CaptureFrameRate
+        Rect = "{0},{1},{2},{3}" -f $CaptureLeft, $CaptureTop, $CaptureWidth, $CaptureHeight
+        Bytes = (Get-Item -LiteralPath $fullOutput).Length
+        Recorder = "Ffmpeg"
+    }
+}
+
 if ($ListWindows) {
     [ModernWpfGalleryRecorder.Native]::ListWindows() |
         Sort-Object ProcessName, Title |
@@ -682,16 +751,51 @@ if ($Width -le 0 -or $Height -le 0) {
     throw "Capture rectangle must have positive width and height."
 }
 
-if ([string]::IsNullOrWhiteSpace($Output)) {
-    $stamp = Get-Date -Format "yyyyMMdd-HHmmss-fff"
-    $Output = Join-Path (Join-Path (Get-Location) "artifacts\window-recordings") ("recording-$stamp.avi")
+$ffmpegPath = Get-FfmpegPath
+$outputWasProvided = ![string]::IsNullOrWhiteSpace($Output)
+$effectiveRecorder = $Recorder
+if ($effectiveRecorder -eq "Auto") {
+    $requestedExtension = if ($outputWasProvided) { [IO.Path]::GetExtension($Output) } else { "" }
+    if ($requestedExtension -ieq ".avi") {
+        $effectiveRecorder = "Avi"
+    }
+    elseif (![string]::IsNullOrWhiteSpace($ffmpegPath)) {
+        $effectiveRecorder = "Ffmpeg"
+    }
+    else {
+        $effectiveRecorder = "Avi"
+    }
 }
 
-$result = [ModernWpfGalleryRecorder.Recorder]::RecordRect($Left, $Top, $Width, $Height, $Output, $DurationSeconds, $FrameRate)
-[pscustomobject]@{
-    Output = $result.Output
-    Frames = $result.Frames
-    FrameRate = $result.FrameRate
-    Rect = "{0},{1},{2},{3}" -f $result.Left, $result.Top, $result.Width, $result.Height
-    Bytes = $result.Bytes
+if ([string]::IsNullOrWhiteSpace($Output)) {
+    $stamp = Get-Date -Format "yyyyMMdd-HHmmss-fff"
+    $extension = if ($effectiveRecorder -eq "Ffmpeg") { ".mp4" } else { ".avi" }
+    $Output = Join-Path (Join-Path (Get-Location) "artifacts\window-recordings") ("recording-$stamp$extension")
+}
+
+$outputExtension = [IO.Path]::GetExtension($Output)
+if ($effectiveRecorder -eq "Ffmpeg") {
+    if ([string]::IsNullOrWhiteSpace($ffmpegPath)) {
+        throw "ffmpeg was not found on PATH. Use -Recorder Avi or install ffmpeg."
+    }
+    if ($outputExtension -and $outputExtension -ine ".mp4") {
+        throw "The FFmpeg recorder writes .mp4 files. Use a .mp4 output path or -Recorder Avi."
+    }
+
+    Invoke-FfmpegRecorder -FfmpegPath $ffmpegPath -CaptureLeft $Left -CaptureTop $Top -CaptureWidth $Width -CaptureHeight $Height -CaptureOutput $Output -CaptureDurationSeconds $DurationSeconds -CaptureFrameRate $FrameRate
+}
+else {
+    if ($outputExtension -and $outputExtension -ine ".avi") {
+        throw "The raw recorder writes .avi files. Use a .avi output path or -Recorder Ffmpeg."
+    }
+
+    $result = [ModernWpfGalleryRecorder.Recorder]::RecordRect($Left, $Top, $Width, $Height, $Output, $DurationSeconds, $FrameRate)
+    [pscustomobject]@{
+        Output = $result.Output
+        Frames = $result.Frames
+        FrameRate = $result.FrameRate
+        Rect = "{0},{1},{2},{3}" -f $result.Left, $result.Top, $result.Width, $result.Height
+        Bytes = $result.Bytes
+        Recorder = "Avi"
+    }
 }
