@@ -553,7 +553,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "PullToRefresh" { return "GallerySample_PullToRefresh_RefreshContainer" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
-        "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
+        "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_TemplateBreadcrumbBar" }
         "Pivot" { return "GallerySample_Pivot_Pivot" }
         "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
@@ -624,6 +624,8 @@ function Test-ControlSupportsSelectionInteraction([string]$control) {
         "GridView" { return $true }
         "PipsPager" { return $true }
         "Pivot" { return $true }
+        "SelectorBar" { return $true }
+        "NavigationView" { return $true }
         default { return $false }
     }
 }
@@ -674,6 +676,15 @@ function Get-SelectionInteractionTriggerName([string]$control) {
         "GridView" { return "Item 1" }
         "PipsPager" { return "Page 2" }
         "Pivot" { return "Unread" }
+        "SelectorBar" { return "Shared" }
+        "NavigationView" { return "Menu Item2" }
+        default { return "" }
+    }
+}
+
+function Get-SelectionInteractionTriggerAutomationId([string]$control) {
+    switch ($control) {
+        "SelectorBar" { return "GallerySample_SelectorBar_SelectorBarItemShared" }
         default { return "" }
     }
 }
@@ -683,6 +694,7 @@ function Get-SelectionInteractionExpectedOutputName([string]$control) {
         "GridView" { return "You clicked Item 1." }
         "PipsPager" { return "LandscapeImage2.jpg" }
         "Pivot" { return "unread emails go here." }
+        "NavigationView" { return "Sample Page 2" }
         default { return "" }
     }
 }
@@ -696,6 +708,7 @@ function Get-SelectionInteractionOutputAutomationId([string]$control) {
 
 function Get-ControlInteractionKind([string]$control) {
     if ($control -eq "ShellNavigation") { return "ShellNavigation" }
+    if ($control -eq "BreadcrumbBar") { return "Breadcrumb" }
     if (Test-ControlSupportsOpenInteraction $control) { return "OpenRepeat" }
     if (Test-ControlSupportsStateInteraction $control) { return "State" }
     if (Test-ControlSupportsValueInteraction $control) { return "Value" }
@@ -1076,6 +1089,24 @@ function Find-SelectionInvokeTarget($element) {
 
         try {
             $candidate = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+        }
+        catch {
+            return $null
+        }
+    }
+
+    return $element
+}
+
+function Find-RawInvokeTarget($element) {
+    $candidate = $element
+    for ($depth = 0; $depth -lt 8 -and $null -ne $candidate; $depth++) {
+        if (Test-ElementSupportsPattern $candidate ([System.Windows.Automation.InvokePattern]::Pattern)) {
+            return $candidate
+        }
+
+        try {
+            $candidate = [System.Windows.Automation.TreeWalker]::RawViewWalker.GetParent($candidate)
         }
         catch {
             return $null
@@ -1637,9 +1668,13 @@ function Invoke-GridViewItemClickOnce($window) {
 
 function Invoke-SelectionInteraction($window, [string]$control, $sampleElement) {
     $name = Get-SelectionInteractionTriggerName $control
+    $triggerAutomationId = Get-SelectionInteractionTriggerAutomationId $control
     $expectedOutputName = Get-SelectionInteractionExpectedOutputName $control
     $outputAutomationId = Get-SelectionInteractionOutputAutomationId $control
-    $target = if (![string]::IsNullOrWhiteSpace($name)) {
+    $target = if (![string]::IsNullOrWhiteSpace($triggerAutomationId)) {
+        Find-ElementByAutomationIdInProcess $window.Current.ProcessId $triggerAutomationId
+    }
+    elseif (![string]::IsNullOrWhiteSpace($name)) {
         Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
     }
     else {
@@ -1685,6 +1720,7 @@ function Invoke-SelectionInteraction($window, [string]$control, $sampleElement) 
     return [ordered]@{
         Invoked = $invoked
         TargetName = $name
+        TargetAutomationId = $triggerAutomationId
         ExpectedOutputName = $expectedOutputName
         OutputAutomationId = $outputAutomationId
         BeforeSampleSelection = $beforeSampleState
@@ -2142,10 +2178,34 @@ function Invoke-OutputInteraction($window, [string]$control, $sampleElement) {
     }
 }
 
+function Invoke-BreadcrumbInteraction($window, $sampleElement) {
+    $target = Find-DescendantByName $sampleElement "Folder1"
+    $invokeTarget = Find-RawInvokeTarget $target
+    $beforeFolder2 = $null -ne (Find-DescendantByName $sampleElement "Folder2")
+    $beforeFolder3 = $null -ne (Find-DescendantByName $sampleElement "Folder3")
+    $invoked = Invoke-ElementOnce $window $invokeTarget
+    Start-Sleep -Milliseconds 500
+    $afterFolder2 = $null -ne (Find-DescendantByName $sampleElement "Folder2")
+    $afterFolder3 = $null -ne (Find-DescendantByName $sampleElement "Folder3")
+
+    return [ordered]@{
+        Invoked = $invoked
+        TargetName = "Folder1"
+        TargetControlType = if ($null -ne $invokeTarget) { $invokeTarget.Current.ControlType.ProgrammaticName } else { "" }
+        TargetAutomationId = if ($null -ne $invokeTarget) { $invokeTarget.Current.AutomationId } else { "" }
+        BeforeFolder2Visible = $beforeFolder2
+        BeforeFolder3Visible = $beforeFolder3
+        AfterFolder2Visible = $afterFolder2
+        AfterFolder3Visible = $afterFolder3
+        BreadcrumbChanged = $beforeFolder2 -and $beforeFolder3 -and !$afterFolder2 -and !$afterFolder3
+    }
+}
+
 function Invoke-RecordedInteraction($window, [string]$control, $sampleElement) {
     $kind = Get-ControlInteractionKind $control
     switch ($kind) {
         "ShellNavigation" { return Invoke-ShellNavigationInteraction $window $sampleElement }
+        "Breadcrumb" { return Invoke-BreadcrumbInteraction $window $sampleElement }
         "OpenRepeat" { return Invoke-OpenRepeatInteraction $window $control $sampleElement }
         "State" { return Invoke-StateInteraction $window $sampleElement }
         "Value" { return Invoke-ValueInteraction $window $control $sampleElement }
@@ -2495,6 +2555,14 @@ function Test-ShellNavigationEvidence($interactionResult) {
     return [bool]$interactionResult.ShellNavigationChanged
 }
 
+function Test-BreadcrumbEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("BreadcrumbChanged")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.BreadcrumbChanged
+}
+
 function Format-RelativePath([string]$path) {
     if ([string]::IsNullOrWhiteSpace($path)) {
         return ""
@@ -2588,6 +2656,7 @@ foreach ($control in $Controls) {
         $sampleElement = Find-DescendantByAutomationId $window $sampleId
         if ($null -eq $sampleElement) {
             $notes.Add("Sample '$sampleId' not found; recording still captured route.")
+            $status = "Failed"
         }
 
         $recordingJob = Start-RecordingJob $window.Current.ProcessId ([IntPtr]$window.Current.NativeWindowHandle) $recordingPath $CaptureMode
@@ -2659,6 +2728,7 @@ foreach ($control in $Controls) {
     $textEvidence = if ($interactionKind -eq "Text") { Test-TextEvidence $interactionResult } else { $false }
     $scrollEvidence = Test-ScrollEvidence $interactionResult
     $shellNavigationEvidence = Test-ShellNavigationEvidence $interactionResult
+    $breadcrumbEvidence = Test-BreadcrumbEvidence $interactionResult
     if ($status -eq "Passed" -and $interactionKind -eq "Selection" -and !$selectionEvidence) {
         $status = "NeedsReview"
         $notes.Add("Machine-readable selection or output evidence did not change; manual frame review is required.")
@@ -2705,6 +2775,11 @@ foreach ($control in $Controls) {
         $notes.Add($failures)
     }
 
+    if ($status -eq "Passed" -and $interactionKind -eq "Breadcrumb" -and !$breadcrumbEvidence) {
+        $status = "Failed"
+        $notes.Add("Breadcrumb interaction did not remove the trailing folders after clicking Folder1.")
+    }
+
     if ($status -eq "Passed" -and
         $interactionKind -ne "Static" -and
         $null -ne $maxFrameDelta -and
@@ -2736,6 +2811,9 @@ foreach ($control in $Controls) {
         elseif ($interactionKind -eq "ShellNavigation" -and $shellNavigationEvidence) {
             $notes.Add("Shell navigation expand/collapse evidence changed despite low full-frame delta.")
         }
+        elseif ($interactionKind -eq "Breadcrumb" -and $breadcrumbEvidence) {
+            $notes.Add("Breadcrumb item collection changed despite low full-frame delta.")
+        }
         else {
             $status = "NeedsReview"
             $notes.Add("Interactive recording produced low poster-frame delta.")
@@ -2761,6 +2839,7 @@ foreach ($control in $Controls) {
         TextEvidence = $textEvidence
         ScrollEvidence = $scrollEvidence
         ShellNavigationEvidence = $shellNavigationEvidence
+        BreadcrumbEvidence = $breadcrumbEvidence
         InteractionResult = $interactionResult
         Notes = ($notes.ToArray() -join " ")
     }

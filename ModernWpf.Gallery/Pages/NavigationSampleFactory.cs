@@ -335,6 +335,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 ItemsSource = folders,
                 ItemTemplate = CreateBreadcrumbFolderTemplate()
             };
+            GalleryAutomation.WithAutomationId(breadcrumbBar, GalleryAutomation.SampleElementId("BreadcrumbBar", "TemplateBreadcrumbBar"));
             breadcrumbBar.ItemClicked += delegate(Mux.BreadcrumbBar sender, Mux.BreadcrumbBarItemClickedEventArgs args)
             {
                 if (!(sender.ItemsSource is ObservableCollection<BreadcrumbFolder> items))
@@ -793,6 +794,14 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             selectorBar.Items.Add(CreateSelectorBarItem("SelectorBarItemRecent", "Recent", Mux.Symbol.Clock, false));
             selectorBar.Items.Add(CreateSelectorBarItem("SelectorBarItemShared", "Shared", Mux.Symbol.Share, false));
             selectorBar.Items.Add(CreateSelectorBarItem("SelectorBarItemFavorites", "Favorites", Mux.Symbol.Favorite, false));
+            Action updateSelectionStatus = delegate
+            {
+                var selectedItem = selectorBar.SelectedItem as Mux.SelectorBarItem;
+                AutomationProperties.SetItemStatus(selectorBar, selectedItem == null ? "" : selectedItem.Text);
+            };
+            selectorBar.SelectionChanged += delegate { updateSelectionStatus(); };
+            selectorBar.SelectedItem = selectorBar.Items[0];
+            updateSelectionStatus();
 
             root.Children.Add(selectorBar);
             return root;
@@ -899,6 +908,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 Foreground = CreateSelectorBarItemForeground(),
                 IsSelected = isSelected
             };
+            GalleryAutomation.WithAutomationId(item, GalleryAutomation.SampleElementId("SelectorBar", name));
             item.Template = CreateSelectorBarItemTemplate();
             if (symbol.HasValue)
             {

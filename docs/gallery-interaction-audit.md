@@ -1310,3 +1310,52 @@ proof:
 - Manifest/report evidence:
   - All five recordings are nonblank rendered MP4s.
   - The report has no `sample not found` notes after the anchor changes.
+
+## Round 40: Navigation Control Interaction Proof
+
+### Scope
+
+Record and review navigation controls that still had pending interaction proof:
+
+- `BreadcrumbBar`
+- `SelectorBar`
+- `NavigationView`
+
+### Current Findings
+
+- Static page captures could not prove that `BreadcrumbBar` item clicks mutate
+  the item trail, `SelectorBar` changes selection, or `NavigationView` changes
+  the selected page.
+- The first navigation recording pass exposed two recorder gaps:
+  - `BreadcrumbBar` text elements were visible but not invokable; the real
+    invokable surface is the raw-view parent `PART_ItemButton`.
+  - `SelectorBarItem` was visible and clickable, but the control did not expose
+    selection state through UIA, so the manifest could not prove the change.
+
+### Changes
+
+- Added a templated `BreadcrumbBar` automation anchor and a recorder-specific
+  breadcrumb interaction that invokes the raw parent button for `Folder1`, then
+  asserts that `Folder2` and `Folder3` are removed.
+- Added stable automation ids for `SelectorBarItem` samples and a nonvisual
+  automation item status on the basic `SelectorBar` sample so the recorder can
+  assert `Recent` to `Shared`.
+- Extended selection recording to cover `SelectorBar` and `NavigationView`, and
+  made missing required sample anchors fail the recording instead of passing
+  with a note.
+
+### Verification
+
+- Recorder script parsed successfully with PowerShell parser.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj -f net8.0-windows7.0 -c Debug --no-restore`: passed.
+- Final focused recording report:
+  `artifacts/gallery-recordings/20260603-091005-125/report.md`
+- Final focused recording summary: 3 passed, 0 needs review, 0 failed.
+- Reviewed contact sheet:
+  `artifacts/gallery-recordings/20260603-091005-125/navigation-control-review-contact-sheet.png`
+- Manifest evidence:
+  - `BreadcrumbBar`: `Folder2` and `Folder3` visible before click, hidden after
+    invoking `Folder1`.
+  - `SelectorBar`: sample item status changed from `Recent` to `Shared`.
+  - `NavigationView`: `Menu Item2` changed from unselected to selected, and
+    `Sample Page 2` was found.
