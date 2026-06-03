@@ -949,3 +949,54 @@ Close the remaining basic-input recording gap for `RepeatButton`.
 - Focused report: `artifacts/gallery-recordings/20260603-041754-728/report.md`
 - Reviewed poster frame:
   `artifacts/gallery-recordings/20260603-041754-728/RepeatButton/frames/t4000.png`
+
+## Round 33: Basic Input Recording Proof
+
+### Scope
+
+Expand the recording-first audit to the next Basic Input controls:
+
+- `Button`
+- `RadioButton`
+- `ColorPicker`
+- `HyperlinkButton`
+
+### Current Findings
+
+- The recording harness treated these controls too statically. `RadioButton`
+  selection and page option checkboxes did not have machine-readable evidence,
+  and the interactive-name finder filtered out `RadioButton` and `CheckBox`
+  targets.
+- `ColorPicker` exposed a recorder-specific failure: rendered capture returned
+  a white MP4 under the old visual-test rendering mode, while screen capture
+  recorded the desktop background in this Codex session and is not acceptable
+  proof.
+- The `Button` sample exposed a real accessibility/automation bug: toggling the
+  `Disable button` checkbox via UIA changed the checkbox but did not update the
+  primary button state because the sample only handled the command path.
+
+### Changes
+
+- Added selection and option interaction evidence to
+  `Record-GalleryControlInteractions.ps1`, including `SelectionItemPattern`
+  selection for `RadioButton` and option-toggle proof for `Button` and
+  `ColorPicker`.
+- Allowed `CheckBox` and `RadioButton` as named interactive targets, and
+  recorded selection/option evidence in the manifest so low full-frame deltas
+  are not accepted without state proof.
+- Forced WPF software rendering only in Gallery visual-test mode so rendered
+  recordings capture `ColorPicker` instead of a blank white frame.
+- Updated the WPF Gallery `Button` sample to handle `Checked`/`Unchecked` for
+  its disable checkbox, keeping UIA, keyboard, and mouse activation paths in
+  sync with the primary button's enabled state.
+
+### Verification
+
+- Gallery build through the recorder `-Build` path: succeeded.
+- Final focused recording report:
+  `artifacts/gallery-recordings/20260603-050244-858/report.md`
+- Reviewed poster frames:
+  - `artifacts/gallery-recordings/20260603-050244-858/Button/frames/t3000.png`
+  - `artifacts/gallery-recordings/20260603-050244-858/RadioButton/frames/t3000.png`
+  - `artifacts/gallery-recordings/20260603-050244-858/ColorPicker/frames/t4000.png`
+  - `artifacts/gallery-recordings/20260603-050244-858/HyperlinkButton/frames/t1500.png`

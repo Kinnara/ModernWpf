@@ -97,6 +97,7 @@ public static class GalleryRecordingNative
     private const uint MOUSEEVENTF_LEFTUP = 0x0004;
     private const uint KEYEVENTF_KEYUP = 0x0002;
     private const byte VK_ESCAPE = 0x1B;
+    private const byte VK_SPACE = 0x20;
     private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
     private static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
     private const uint SWP_NOMOVE = 0x0002;
@@ -150,6 +151,12 @@ public static class GalleryRecordingNative
     {
         keybd_event(VK_ESCAPE, 0, 0, UIntPtr.Zero);
         keybd_event(VK_ESCAPE, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+    }
+
+    public static void Space()
+    {
+        keybd_event(VK_SPACE, 0, 0, UIntPtr.Zero);
+        keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
     }
 }
 "@
@@ -295,8 +302,10 @@ function Find-InteractiveElementByNameInProcess([int]$processId, [string[]]$name
                 try {
                     $controlType = $element.Current.ControlType
                     if ($controlType -ne [System.Windows.Automation.ControlType]::Button -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::CheckBox -and
                         $controlType -ne [System.Windows.Automation.ControlType]::MenuItem -and
                         $controlType -ne [System.Windows.Automation.ControlType]::ListItem -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::RadioButton -and
                         $controlType -ne [System.Windows.Automation.ControlType]::TabItem) {
                         continue
                     }
@@ -379,7 +388,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "Button" { return "GallerySample_Button_PrimaryButton" }
         "CheckBox" { return "GallerySample_CheckBox_CheckBox" }
         "ComboBox" { return "GallerySample_ComboBox_ComboBox" }
-        "ColorPicker" { return "GallerySample_ColorPicker_ColorPicker" }
+        "ColorPicker" { return "GallerySample_ColorPicker_Root" }
         "HyperlinkButton" { return "GallerySample_HyperlinkButton_HyperlinkButton" }
         "RatingControl" { return "GallerySample_RatingControl_RatingControl" }
         "RepeatButton" { return "GallerySample_RepeatButton_RepeatButton" }
@@ -471,9 +480,18 @@ function Test-ControlSupportsStateInteraction([string]$control) {
 
 function Test-ControlSupportsSelectionInteraction([string]$control) {
     switch ($control) {
+        "RadioButton" { return $true }
         "GridView" { return $true }
         "PipsPager" { return $true }
         "Pivot" { return $true }
+        default { return $false }
+    }
+}
+
+function Test-ControlSupportsOptionInteraction([string]$control) {
+    switch ($control) {
+        "Button" { return $true }
+        "ColorPicker" { return $true }
         default { return $false }
     }
 }
@@ -497,6 +515,7 @@ function Test-ControlSupportsOutputInteraction([string]$control) {
 
 function Get-SelectionInteractionTriggerName([string]$control) {
     switch ($control) {
+        "RadioButton" { return "Default Radio Option 2" }
         "GridView" { return "Item 1" }
         "PipsPager" { return "Page 2" }
         "Pivot" { return "Unread" }
@@ -509,6 +528,7 @@ function Get-ControlInteractionKind([string]$control) {
     if (Test-ControlSupportsStateInteraction $control) { return "State" }
     if (Test-ControlSupportsValueInteraction $control) { return "Value" }
     if (Test-ControlSupportsSelectionInteraction $control) { return "Selection" }
+    if (Test-ControlSupportsOptionInteraction $control) { return "Option" }
     if (Test-ControlSupportsTextInteraction $control) { return "Text" }
     if (Test-ControlSupportsOutputInteraction $control) { return "Output" }
     return "Static"
@@ -562,6 +582,45 @@ function Get-ToggleStateName($element) {
         if ($null -ne $pattern) {
             return $pattern.Current.ToggleState.ToString()
         }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Get-SelectionItemStateName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+        if ($null -ne $pattern) {
+            if ($pattern.Current.IsSelected) {
+                return "Selected"
+            }
+
+            return "Unselected"
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Get-IsEnabledStateName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        if ($element.Current.IsEnabled) {
+            return "Enabled"
+        }
+
+        return "Disabled"
     }
     catch {
     }
@@ -708,6 +767,78 @@ function Invoke-ElementOnce($window, $element) {
     }
 
     return $false
+}
+
+function Select-ElementOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 80
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Select()
+            Start-Sleep -Milliseconds 150
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return Invoke-ElementOnce $window $element
+}
+
+function Invoke-OptionElementOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 80
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Toggle()
+            Start-Sleep -Milliseconds 250
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            Start-Sleep -Milliseconds 250
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $element.SetFocus()
+        Start-Sleep -Milliseconds 100
+        [GalleryRecordingNative]::Space()
+        Start-Sleep -Milliseconds 250
+        return $true
+    }
+    catch {
+    }
+
+    $center = Get-ElementCenter $element
+    if ($null -ne $center) {
+        [GalleryRecordingNative]::Click($center.X, $center.Y)
+        Start-Sleep -Milliseconds 250
+        return $true
+    }
+
+    return Invoke-ElementOnce $window $element
 }
 
 function Invoke-OpenElementOnce($window, [string]$control, $element) {
@@ -899,7 +1030,7 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
     }
 }
 
-function Invoke-SelectionInteraction($window, [string]$control) {
+function Invoke-SelectionInteraction($window, [string]$control, $sampleElement) {
     $name = Get-SelectionInteractionTriggerName $control
     $target = if (![string]::IsNullOrWhiteSpace($name)) {
         Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
@@ -908,9 +1039,60 @@ function Invoke-SelectionInteraction($window, [string]$control) {
         $null
     }
 
+    $beforeSampleState = Get-SelectionItemStateName $sampleElement
+    $beforeTargetState = Get-SelectionItemStateName $target
+    $invoked = Select-ElementOnce $window $target
+    Start-Sleep -Milliseconds 200
+    $afterSampleState = Get-SelectionItemStateName $sampleElement
+    $afterTargetState = Get-SelectionItemStateName $target
+
     return [ordered]@{
-        Invoked = Invoke-ElementOnce $window $target
+        Invoked = $invoked
         TargetName = $name
+        BeforeSampleSelection = $beforeSampleState
+        AfterSampleSelection = $afterSampleState
+        BeforeTargetSelection = $beforeTargetState
+        AfterTargetSelection = $afterTargetState
+        SelectionChanged = (
+            (![string]::IsNullOrWhiteSpace($beforeSampleState) -and $beforeSampleState -ne $afterSampleState) -or
+            (![string]::IsNullOrWhiteSpace($beforeTargetState) -and $beforeTargetState -ne $afterTargetState))
+    }
+}
+
+function Get-OptionInteractionTriggerName([string]$control) {
+    switch ($control) {
+        "Button" { return "Disable button" }
+        "ColorPicker" { return "IsMoreButtonVisible" }
+        default { return "" }
+    }
+}
+
+function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
+    $name = Get-OptionInteractionTriggerName $control
+    $target = if (![string]::IsNullOrWhiteSpace($name)) {
+        Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
+    }
+    else {
+        $null
+    }
+
+    $beforeState = Get-ToggleStateName $target
+    $beforeSampleEnabled = Get-IsEnabledStateName $sampleElement
+    $invoked = Invoke-OptionElementOnce $window $target
+    Start-Sleep -Milliseconds 300
+    $afterState = Get-ToggleStateName $target
+    $afterSampleEnabled = Get-IsEnabledStateName $sampleElement
+
+    return [ordered]@{
+        Invoked = $invoked
+        OptionName = $name
+        BeforeState = $beforeState
+        AfterState = $afterState
+        BeforeSampleEnabled = $beforeSampleEnabled
+        AfterSampleEnabled = $afterSampleEnabled
+        OptionChanged = (
+            (![string]::IsNullOrWhiteSpace($beforeState) -and $beforeState -ne $afterState) -or
+            (![string]::IsNullOrWhiteSpace($beforeSampleEnabled) -and $beforeSampleEnabled -ne $afterSampleEnabled))
     }
 }
 
@@ -971,7 +1153,8 @@ function Invoke-RecordedInteraction($window, [string]$control, $sampleElement) {
         "OpenRepeat" { return Invoke-OpenRepeatInteraction $window $control $sampleElement }
         "State" { return Invoke-StateInteraction $window $sampleElement }
         "Value" { return Invoke-ValueInteraction $window $control $sampleElement }
-        "Selection" { return Invoke-SelectionInteraction $window $control }
+        "Selection" { return Invoke-SelectionInteraction $window $control $sampleElement }
+        "Option" { return Invoke-OptionInteraction $window $control $sampleElement }
         "Text" { return Invoke-TextInteraction $window $sampleElement }
         "Output" { return Invoke-OutputInteraction $window $sampleElement }
         default { return [ordered]@{ Invoked = $true } }
@@ -1260,6 +1443,22 @@ function Test-ValueEvidence($interactionResult) {
     return [bool]$interactionResult.TargetReached
 }
 
+function Test-SelectionEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("SelectionChanged")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.SelectionChanged
+}
+
+function Test-OptionEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("OptionChanged")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.OptionChanged
+}
+
 function Test-OutputEvidence($interactionResult) {
     if ($null -eq $interactionResult -or !$interactionResult.Contains("OutputChanged")) {
         return $false
@@ -1426,6 +1625,8 @@ foreach ($control in $Controls) {
     $openRepeatEvidence = Test-OpenRepeatEvidence $interactionResult
     $stateEvidence = Test-StateEvidence $interactionResult
     $valueEvidence = Test-ValueEvidence $interactionResult
+    $selectionEvidence = Test-SelectionEvidence $interactionResult
+    $optionEvidence = Test-OptionEvidence $interactionResult
     $outputEvidence = Test-OutputEvidence $interactionResult
     if ($status -eq "Passed" -and $interactionKind -eq "Output" -and !$outputEvidence) {
         $status = "NeedsReview"
@@ -1444,6 +1645,12 @@ foreach ($control in $Controls) {
         }
         elseif ($interactionKind -eq "Value" -and $valueEvidence) {
             $notes.Add("Target value was reached despite low full-frame delta.")
+        }
+        elseif ($interactionKind -eq "Selection" -and $selectionEvidence) {
+            $notes.Add("Selection state changed despite low full-frame delta.")
+        }
+        elseif ($interactionKind -eq "Option" -and $optionEvidence) {
+            $notes.Add("Option state changed despite low full-frame delta.")
         }
         elseif ($interactionKind -eq "Output" -and $outputEvidence) {
             $notes.Add("Output text changed despite low full-frame delta.")
@@ -1467,6 +1674,8 @@ foreach ($control in $Controls) {
         OpenRepeatEvidence = $openRepeatEvidence
         StateEvidence = $stateEvidence
         ValueEvidence = $valueEvidence
+        SelectionEvidence = $selectionEvidence
+        OptionEvidence = $optionEvidence
         OutputEvidence = $outputEvidence
         InteractionResult = $interactionResult
         Notes = ($notes.ToArray() -join " ")

@@ -1,3 +1,4 @@
+using System.Windows;
 using System.Windows.Controls;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
@@ -14,6 +15,14 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
+        }
+
+        private void DisableSimpleButtonCheckBox_CheckedChanged(object sender, RoutedEventArgs e)
+        {
+            if (sender is CheckBox checkBox)
+            {
+                ViewModel.IsSimpleButtonEnabled = !(checkBox.IsChecked ?? false);
+            }
         }
     }
 }

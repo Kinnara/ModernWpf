@@ -20,6 +20,8 @@ namespace ModernWpf.Gallery
             GalleryDiagnostics.Configure(options);
             if (options.VisualTestMode)
             {
+                System.Windows.Media.RenderOptions.ProcessRenderMode =
+                    System.Windows.Interop.RenderMode.SoftwareOnly;
                 AttachVisualTestExceptionLogging();
             }
 

@@ -40,9 +40,11 @@
                             IsEnabled="{Binding ViewModel.IsSimpleButtonEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ButtonPage}, Mode=OneWay}" />
                         <CheckBox
                             Grid.Column="1"
+                            Checked="DisableSimpleButtonCheckBox_CheckedChanged"
                             Command="{Binding ViewModel.SimpleButtonCheckboxCheckedCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ButtonPage}, Mode=OneWay}"
                             CommandParameter="{Binding RelativeSource={RelativeSource Self}, Mode=OneWay}"
-                            Content="Disable button" />
+                            Content="Disable button"
+                            Unchecked="DisableSimpleButtonCheckBox_CheckedChanged" />
                     </Grid>
                 </controls:ControlExample>
 
