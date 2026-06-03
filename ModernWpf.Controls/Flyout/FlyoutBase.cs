@@ -155,6 +155,12 @@ namespace ModernWpf.Controls.Primitives
 
         protected virtual FrameworkElement PointerMoveAwayBoundsElement => m_presenter;
 
+        protected virtual bool ShouldRecreatePresenterAfterClose => false;
+
+        protected virtual void OnPresenterReleased()
+        {
+        }
+
         internal void ShowAsContextFlyout(FrameworkElement placementTarget)
         {
             if (placementTarget is null)
@@ -470,6 +476,7 @@ namespace ModernWpf.Controls.Primitives
                 return;
             }
 
+            m_suppressNextOpened = false;
             m_popup.ClearValue(Popup.PlacementProperty);
             m_popup.ClearValue(Popup.PlacementTargetProperty);
             m_popup.ClearValue(Popup.PlacementRectangleProperty);
@@ -482,11 +489,33 @@ namespace ModernWpf.Controls.Primitives
             RemoveRootPointerMovedHandler();
 
             OnClosed();
+
+            if (ShouldRecreatePresenterAfterClose)
+            {
+                ReleasePopupAndPresenter();
+            }
         }
 
         private void OnPopupIsOpenChanged(object sender, EventArgs e)
         {
             UpdateIsOpen();
+        }
+
+        private void ReleasePopupAndPresenter()
+        {
+            if (m_popup != null)
+            {
+                m_popup.Opened -= OnPopupOpened;
+                m_popup.Closing -= OnPopupClosing;
+                m_popup.Closed -= OnPopupClosed;
+                m_popup.IsOpenChanged -= OnPopupIsOpenChanged;
+                m_popup.CustomPopupPlacementCallback = null;
+                m_popup.Child = null;
+                m_popup = null;
+            }
+
+            m_presenter = null;
+            OnPresenterReleased();
         }
 
         private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)

@@ -246,6 +246,15 @@ namespace ModernWpf.Controls
             return presenter;
         }
 
+        protected override bool ShouldRecreatePresenterAfterClose => true;
+
+        protected override void OnPresenterReleased()
+        {
+            m_commandBar?.ReleaseCommandElements();
+            m_commandBar = null;
+            m_presenter = null;
+        }
+
         private void SetSecondaryCommandsToCloseWhenExecuted()
         {
             RevokeAndClear(m_secondaryButtonClickRevokerByElementMap);

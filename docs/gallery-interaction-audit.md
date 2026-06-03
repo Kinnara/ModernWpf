@@ -778,3 +778,35 @@ Use the FFmpeg-backed recorder to inspect the live `CommandBarFlyout` interactio
   - Right-click expanded state: `artifacts/window-recordings/commandbarflyout-rightclick-repro.mp4`
 - Visual audit:
   - Focused dark `CommandBarFlyout` run after the fix: `artifacts/visual-checks/20260603-011916-279-99044/report.md` (`OpenElementName = Resize`, `OpenPopupNonBlank = true`, `CommandBarFlyoutSecondaryExpanded = true`, crop source `PopupWindow`)
+
+## Round 28: CommandBarFlyout Repeat Open Stability
+
+### Scope
+
+Fix user-visible CommandBarFlyout control issues seen during real Gallery interaction:
+
+- Opening flicker from the command bar layout being hidden before the overflow popup is ready.
+- Expanded overflow misalignment relative to the primary command strip.
+- Closing flicker from close animation completion leaving the layout opacity at zero.
+- Crash/hang on a second open after an expanded close.
+
+### Current Findings
+
+- The previous visual checks sampled the final open frame and did not exercise close/reopen timing, so they could not catch opening/closing flicker or stale presenter state.
+- `CommandBarFlyoutCommandBar.PlayOpenAnimation()` hid the layout while waiting for the secondary popup, which made WPF show a blank/flicker during open.
+- `ClosingStoryboardCompleted` left both layout and overflow roots at opacity `0`; a later open reused that visual state.
+- The expanded overflow popup used WPF's centered `Bottom` placement without compensating for the wider overflow content, so the secondary menu right edge drifted away from the primary strip.
+- Recreating the CommandBarFlyout presenter after close avoids reusing stale nested popup HWND state, but the old command bar had to release its logical child commands first; otherwise the second presenter crashed because the same `AppBarButton` instances were still parented.
+
+### Verification
+
+- Focused regression added:
+  - `CommandBarFlyoutApiTests.ExpandedFlyoutOverflowAlignsAndSurvivesSecondOpen`
+- Focused test runs:
+  - New regression failed before the fix with `PrimaryRight=182, OverflowRight=192`.
+  - `CommandBarFlyoutApiTests`: 25 passed after the fix.
+- Visual audit:
+  - Focused ModernWpf-only `CommandBarFlyout` interaction run: `artifacts/visual-checks/20260603-015940-482-114856/report.md`
+- Recorder evidence:
+  - Static open recording: `artifacts/window-recordings/commandbarflyout-open.mp4`
+  - Repeat open recording driven through UI Automation: `artifacts/window-recordings/commandbarflyout-repeat-open.mp4`

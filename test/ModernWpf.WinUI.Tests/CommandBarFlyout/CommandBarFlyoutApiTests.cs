@@ -377,6 +377,57 @@ public class CommandBarFlyoutApiTests
     }
 
     [TestMethod]
+    public void ExpandedFlyoutOverflowAlignsAndSurvivesSecondOpen()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right,
+                ShowMode = FlyoutShowMode.Standard
+            };
+
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Copy), Label = "Copy" });
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Save), Label = "Save" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Resize image" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Move to another folder" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 720, height: 420);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            var commandBar = GetCommandBar(commandBarFlyout);
+            commandBar.ApplyTemplate();
+            WaitForExpandedOverflow(commandBar, host);
+            AssertOverflowRightEdgesAligned(commandBar);
+            AssertLayoutOpacity(commandBar, 1.0);
+
+            HideAndWait(commandBarFlyout);
+            AssertLayoutOpacity(commandBar, 1.0);
+            Assert.IsFalse(FindTemplateChild<Popup>(commandBar, "OverflowPopup").IsOpen);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            commandBar = GetCommandBar(commandBarFlyout);
+            commandBar.ApplyTemplate();
+            WaitForExpandedOverflow(commandBar, host);
+            AssertOverflowRightEdgesAligned(commandBar);
+            AssertLayoutOpacity(commandBar, 1.0);
+
+            HideAndWait(commandBarFlyout);
+        });
+    }
+
+    [TestMethod]
     public void PresenterShadowFollowsWinUISource()
     {
         WpfTestHost.Run(() =>
@@ -402,9 +453,11 @@ public class CommandBarFlyoutApiTests
             commandBarFlyout.ShowAt(target);
             WpfTestHost.DoEvents();
 
+            FlyoutPresenter? presenter = null;
+
             try
             {
-                var presenter = commandBarFlyout.GetPresenter();
+                presenter = commandBarFlyout.GetPresenter();
                 Assert.IsNotNull(presenter);
                 presenter!.ApplyTemplate();
                 host.UpdateLayout();
@@ -437,7 +490,8 @@ public class CommandBarFlyoutApiTests
                 HideAndWait(commandBarFlyout);
             }
 
-            Assert.IsFalse(commandBarFlyout.GetPresenter()?.IsDefaultShadowEnabled ?? true);
+            Assert.IsFalse(presenter?.IsDefaultShadowEnabled ?? true);
+            Assert.IsNull(commandBarFlyout.GetPresenter());
         });
     }
 
@@ -980,6 +1034,50 @@ public class CommandBarFlyoutApiTests
 
         commandBarFlyout.Hide();
         WaitFor(() => !commandBarFlyout.IsOpen, "CommandBarFlyout did not close.");
+    }
+
+    private static void WaitForExpandedOverflow(CommandBarFlyoutCommandBar commandBar, TestWindowHost host)
+    {
+        var overflowPopup = FindTemplateChild<Popup>(commandBar, "OverflowPopup");
+        var primaryItemsRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "PrimaryItemsRoot");
+        var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OuterOverflowContentRoot");
+
+        commandBar.IsOpen = true;
+        host.UpdateLayout();
+        WpfTestHost.DoEvents();
+        host.UpdateLayout();
+
+        WaitFor(
+            () => commandBar.IsOpen &&
+                  overflowPopup.IsOpen &&
+                  primaryItemsRoot.ActualWidth > 0 &&
+                  overflowContentRoot.ActualWidth > 0 &&
+                  overflowContentRoot.IsVisible,
+            "CommandBarFlyout overflow did not open with measurable layout.");
+    }
+
+    private static void AssertOverflowRightEdgesAligned(CommandBarFlyoutCommandBar commandBar)
+    {
+        var primaryItemsRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "PrimaryItemsRoot");
+        var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OuterOverflowContentRoot");
+
+        var primaryRight = primaryItemsRoot.PointToScreen(new Point(primaryItemsRoot.ActualWidth, 0)).X;
+        var overflowRight = overflowContentRoot.PointToScreen(new Point(overflowContentRoot.ActualWidth, 0)).X;
+
+        Assert.AreEqual(
+            primaryRight,
+            overflowRight,
+            1.0,
+            $"Expected expanded CommandBarFlyout overflow to align to the primary command strip right edge. PrimaryRight={primaryRight}, OverflowRight={overflowRight}.");
+    }
+
+    private static void AssertLayoutOpacity(CommandBarFlyoutCommandBar commandBar, double expected)
+    {
+        var layoutRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "LayoutRoot");
+        var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OverflowContentRoot");
+
+        Assert.AreEqual(expected, layoutRoot.Opacity, 0.001, "CommandBarFlyout layout root opacity was not reset.");
+        Assert.AreEqual(expected, overflowContentRoot.Opacity, 0.001, "CommandBarFlyout overflow content opacity was not reset.");
     }
 
     private static void VerifyCommandBarSizing(CommandBarSizingOptions sizingOptions)

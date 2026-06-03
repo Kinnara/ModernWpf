@@ -97,6 +97,7 @@ namespace ModernWpf.Controls.Primitives
             Unloaded += delegate
             {
                 CancelAsyncSizeChangeUpdate();
+                StopCloseAnimation();
                 StopOpenAnimation();
                 SetOpacity(1);
             };
@@ -127,6 +128,8 @@ namespace ModernWpf.Controls.Primitives
         {
             if (isOpen)
             {
+                StopCloseAnimation();
+                SetOpacity(1);
                 UpdateInputDeviceTypeUsedToOpen();
                 Opening?.Invoke(this, null);
             }
@@ -135,6 +138,7 @@ namespace ModernWpf.Controls.Primitives
                 Closing?.Invoke(this, null);
                 m_inputModeUsedToOpen = AppBarButtonInputMode.Default;
                 m_secondaryItemsRootSized = false;
+                StopCloseAnimation();
                 StopOpenAnimation();
 
                 if (PrimaryCommands.Count > 0)
@@ -320,6 +324,7 @@ namespace ModernWpf.Controls.Primitives
 
             if (m_closingStoryboard != null)
             {
+                StopCloseAnimation();
                 m_closingStoryboard.Completed -= ClosingStoryboardCompleted;
                 m_closingStoryboard.CurrentStateInvalidated -= ClosingStoryboardCurrentStateInvalidated;
                 m_closingStoryboardState = null;
@@ -378,6 +383,12 @@ namespace ModernWpf.Controls.Primitives
                     AppBarElementProperties.SetIsInOverflow(element, isInOverflow);
                 }
             }
+        }
+
+        internal void ReleaseCommandElements()
+        {
+            ClearPanelChildren(m_primaryItemsPanel);
+            ClearPanelChildren(m_secondaryItemsPanel);
         }
 
         private void UpdateCommandDefaultLabelPositions()
@@ -514,14 +525,15 @@ namespace ModernWpf.Controls.Primitives
 
         internal void PlayOpenAnimation()
         {
+            StopCloseAnimation();
             StopOpenAnimation();
+            SetOpacity(1);
 
             if (m_openingStoryboard != null && m_openingStoryboardState != ClockState.Active)
             {
                 if (IsOpen)
                 {
                     m_openAnimationPending = true;
-                    SetOpacity(0);
                 }
                 else
                 {
@@ -551,13 +563,21 @@ namespace ModernWpf.Controls.Primitives
         internal void PlayCloseAnimation(Action onCompleteFunc)
         {
             StopOpenAnimation();
+            StopCloseAnimation();
 
-            if (m_closingStoryboard != null && m_closingStoryboardState != ClockState.Active)
+            if (m_closingStoryboard != null)
             {
-                m_closingStoryboard.Completed += closingStoryboardCompletedCallback;
+                m_closingStoryboardCompletedCallback = closingStoryboardCompletedCallback;
+                m_closingStoryboard.Completed += m_closingStoryboardCompletedCallback;
+
                 void closingStoryboardCompletedCallback(object sender, EventArgs e)
                 {
-                    m_closingStoryboard.Completed -= closingStoryboardCompletedCallback;
+                    if (m_closingStoryboardCompletedCallback != null)
+                    {
+                        m_closingStoryboard.Completed -= m_closingStoryboardCompletedCallback;
+                        m_closingStoryboardCompletedCallback = null;
+                    }
+
                     onCompleteFunc();
                 }
 
@@ -854,6 +874,7 @@ namespace ModernWpf.Controls.Primitives
                 flyoutTemplateSettings.WidthExpansionAnimationEndPosition = -flyoutTemplateSettings.WidthExpansionDelta;
                 flyoutTemplateSettings.ContentClipRect = new Rect(0, 0, expandedWidth, primaryItemsRootDesiredSize.Height);
                 flyoutTemplateSettings.CurrentWidth = IsOpen ? expandedWidth : collapsedWidth;
+                UpdateOverflowPopupHorizontalOffset(collapsedWidth, expandedWidth);
 
                 bool isPlayingCloseAnimation = m_closingStoryboard != null && m_closingStoryboardState == ClockState.Active;
 
@@ -886,6 +907,29 @@ namespace ModernWpf.Controls.Primitives
                     flyoutTemplateSettings.ExpandDownOverflowVerticalPosition = 0;
                 }
             }
+        }
+
+        private void UpdateOverflowPopupHorizontalOffset(double collapsedWidth, double expandedWidth)
+        {
+            if (m_overflowPopup == null)
+            {
+                return;
+            }
+
+            if (PrimaryCommands.Count > 0)
+            {
+                m_overflowPopup.HorizontalOffset = (collapsedWidth - expandedWidth) / 2.0 - GetOverflowPopupAlignmentCorrection();
+            }
+            else
+            {
+                m_overflowPopup.HorizontalOffset = 0;
+            }
+        }
+
+        private double GetOverflowPopupAlignmentCorrection()
+        {
+            // The visible overflow root is inset by the command bar border and the overflow presenter border.
+            return BorderThickness.Left + BorderThickness.Right + BorderThickness.Right;
         }
 
 #if NET48_OR_NEWER
@@ -1267,12 +1311,15 @@ namespace ModernWpf.Controls.Primitives
         private void OpeningStoryboardCompleted(object sender, EventArgs e)
         {
             m_openingStoryboard.Stop(m_layoutRoot);
+            m_openingStoryboardState = null;
+            SetOpacity(1);
         }
 
         private void ClosingStoryboardCompleted(object sender, EventArgs e)
         {
             m_closingStoryboard.Stop(m_layoutRoot);
-            SetOpacity(0);
+            m_closingStoryboardState = null;
+            SetOpacity(1);
         }
 
         private void OpeningStoryboardCurrentStateInvalidated(object sender, EventArgs e)
@@ -1319,6 +1366,22 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_openingStoryboard.Stop(m_layoutRoot);
             }
+        }
+
+        private void StopCloseAnimation()
+        {
+            if (m_closingStoryboardCompletedCallback != null && m_closingStoryboard != null)
+            {
+                m_closingStoryboard.Completed -= m_closingStoryboardCompletedCallback;
+                m_closingStoryboardCompletedCallback = null;
+            }
+
+            if (m_closingStoryboard != null && m_closingStoryboardState == ClockState.Active)
+            {
+                m_closingStoryboard.Stop(m_layoutRoot);
+            }
+
+            m_closingStoryboardState = null;
         }
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e)
@@ -1402,6 +1465,7 @@ namespace ModernWpf.Controls.Primitives
         private Storyboard m_closingStoryboard;
         private ClockState? m_openingStoryboardState;
         private ClockState? m_closingStoryboardState;
+        private EventHandler m_closingStoryboardCompletedCallback;
         private Storyboard m_collapsedToExpandedUpStoryboard;
         private Storyboard m_collapsedToExpandedDownStoryboard;
         private Storyboard m_expandedUpToCollapsedStoryboard;
