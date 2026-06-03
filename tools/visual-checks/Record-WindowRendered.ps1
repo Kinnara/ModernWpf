@@ -201,7 +201,7 @@ namespace ModernWpfRenderedRecorder
 
                 if (mainHandle != IntPtr.Zero)
                 {
-                    DrawWindow(graphics, mainHandle, left, top);
+                    DrawWindow(graphics, mainHandle, left, top, false);
                 }
 
                 ArrayList windows = GetProcessWindows(processId, mainHandle);
@@ -209,7 +209,7 @@ namespace ModernWpfRenderedRecorder
                 foreach (object item in windows)
                 {
                     IntPtr window = (IntPtr)item;
-                    DrawWindow(graphics, window, left, top);
+                    DrawWindow(graphics, window, left, top, true);
                 }
 
                 canvas.Save(outputPath, ImageFormat.Png);
@@ -246,7 +246,7 @@ namespace ModernWpfRenderedRecorder
             return windows;
         }
 
-        private static void DrawWindow(Graphics canvas, IntPtr hWnd, int captureLeft, int captureTop)
+        private static void DrawWindow(Graphics canvas, IntPtr hWnd, int captureLeft, int captureTop, bool clearEdgeTransparentBlack)
         {
             RECT rect;
             if (!GetWindowRect(hWnd, out rect))
@@ -289,8 +289,92 @@ namespace ModernWpfRenderedRecorder
                     return;
                 }
 
+                if (clearEdgeTransparentBlack)
+                {
+                    ClearEdgeTransparentBlack(windowBitmap);
+                }
+
                 canvas.DrawImageUnscaled(windowBitmap, rect.Left - captureLeft, rect.Top - captureTop);
             }
+        }
+
+        private static void ClearEdgeTransparentBlack(Bitmap bitmap)
+        {
+            int width = bitmap.Width;
+            int height = bitmap.Height;
+            if (width <= 0 || height <= 0)
+            {
+                return;
+            }
+
+            bool[] visited = new bool[width * height];
+            int[] pending = new int[width * height];
+            int pendingCount = 0;
+
+            for (int x = 0; x < width; x++)
+            {
+                AddTransparentBlackPixel(bitmap, visited, pending, ref pendingCount, x, 0);
+                AddTransparentBlackPixel(bitmap, visited, pending, ref pendingCount, x, height - 1);
+            }
+
+            for (int y = 1; y < height - 1; y++)
+            {
+                AddTransparentBlackPixel(bitmap, visited, pending, ref pendingCount, 0, y);
+                AddTransparentBlackPixel(bitmap, visited, pending, ref pendingCount, width - 1, y);
+            }
+
+            while (pendingCount > 0)
+            {
+                int index = pending[--pendingCount];
+                int x = index % width;
+                int y = index / width;
+
+                Color pixel = bitmap.GetPixel(x, y);
+                if (!IsTransparentBlackPixel(pixel))
+                {
+                    continue;
+                }
+
+                bitmap.SetPixel(x, y, Color.FromArgb(0, pixel.R, pixel.G, pixel.B));
+
+                if (x > 0)
+                {
+                    AddTransparentBlackPixel(bitmap, visited, pending, ref pendingCount, x - 1, y);
+                }
+
+                if (x + 1 < width)
+                {
+                    AddTransparentBlackPixel(bitmap, visited, pending, ref pendingCount, x + 1, y);
+                }
+
+                if (y > 0)
+                {
+                    AddTransparentBlackPixel(bitmap, visited, pending, ref pendingCount, x, y - 1);
+                }
+
+                if (y + 1 < height)
+                {
+                    AddTransparentBlackPixel(bitmap, visited, pending, ref pendingCount, x, y + 1);
+                }
+            }
+        }
+
+        private static void AddTransparentBlackPixel(Bitmap bitmap, bool[] visited, int[] pending, ref int pendingCount, int x, int y)
+        {
+            int width = bitmap.Width;
+            int index = y * width + x;
+            if (!visited[index] &&
+                pendingCount < pending.Length &&
+                IsTransparentBlackPixel(bitmap.GetPixel(x, y)))
+            {
+                visited[index] = true;
+                pending[pendingCount++] = index;
+            }
+        }
+
+        private static bool IsTransparentBlackPixel(Color pixel)
+        {
+            return pixel.A > 16 && pixel.R <= 4 && pixel.G <= 4 && pixel.B <= 4;
         }
 
         private static bool BitmapHasVisiblePixels(Bitmap bitmap)

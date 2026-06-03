@@ -37,9 +37,11 @@ For broad sweeps, run in batches and review `report.md` plus the MP4 clips under
 `artifacts/gallery-recordings/<stamp>/`.
 
 The default recorder is rendered `PrintWindow` composition for the Gallery
-process plus popup HWNDs. `-CaptureMode Screen` is available for diagnostics but
-is not accepted as proof in the current Codex desktop session because it can
-record the Windows background instead of the Gallery window.
+process plus popup HWNDs. Popup HWND captures strip edge-connected near-black
+pixels because layered-window transparency can otherwise show up as black
+backplates in rendered recordings. `-CaptureMode Screen` is available for
+diagnostics but is not accepted as proof in the current Codex desktop session
+because it can record the Windows background instead of the Gallery window.
 
 ## Control Matrix
 
@@ -89,4 +91,4 @@ record the Windows background instead of the Gallery window.
 | Menus & toolbars | AppBarSeparator | `item/AppBarSeparator` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarSeparator/dark-appbarseparator.mp4` | Static rendered route with stable button anchors; reviewed contact sheet shows separated command buttons. |
 | Menus & toolbars | AppBarToggleButton | `item/AppBarToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarToggleButton/dark-appbartogglebutton.mp4` | Manifest records toggle state from `Off` to `On`; reviewed contact sheet shows the selected toggle output. |
 | Menus & toolbars | CommandBar | `item/CommandBar` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260603-070433-922/CommandBar/dark-commandbar.mp4` | Manifest records first and second overflow opens despite low full-frame delta; reviewed contact sheet shows the overflow menu. |
-| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Fixed | `artifacts/gallery-recordings/20260603-025616-794/CommandBarFlyout/dark-commandbarflyout.mp4` | Rendered MP4 shows open, MoreButton expansion, and `Resize` / `Move` secondary commands. |
+| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260603-180656-836/CommandBarFlyout/dark-commandbarflyout.mp4` | Rendered MP4 shows first open, MoreButton expansion, second open, and `Resize` / `Move` secondary commands without the previous recorder-only black popup backplate. |
