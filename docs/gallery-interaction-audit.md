@@ -1445,3 +1445,24 @@ recorder default list.
   - `artifacts/gallery-recordings/20260603-214032-634/report.md`: 11 passed, 0 needs review, 0 failed.
   - `artifacts/gallery-recordings/20260603-214413-419/report.md`: 11 passed, 0 needs review, 0 failed.
 - Aggregate official WPF static proof in dark theme: 33 passed, 0 needs review, 0 failed.
+
+## Round 44: Light Official WPF Static Recording Sweep
+
+### Scope
+
+Re-run the official WPF All Controls static page expansion in light theme.
+
+### Current Findings
+
+- All 33 official WPF static pages passed in light theme using the same
+  rendered page artifact fallback introduced in Round 43.
+- Manifests record nonblank `ContentPagePaneRenderedArtifact` or
+  `GalleryItemPageRootRenderedArtifact` anchors for these pages.
+
+### Verification
+
+- Light official WPF static batches:
+  - `artifacts/gallery-recordings/20260603-215102-800/report.md`: 11 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-215446-052/report.md`: 11 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-215823-516/report.md`: 11 passed, 0 needs review, 0 failed.
+- Aggregate official WPF static proof in light theme: 33 passed, 0 needs review, 0 failed.
