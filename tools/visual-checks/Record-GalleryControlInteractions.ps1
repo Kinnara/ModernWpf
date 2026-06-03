@@ -643,6 +643,7 @@ function Test-ControlSupportsScrollInteraction([string]$control) {
     switch ($control) {
         "ParallaxView" { return $true }
         "AnnotatedScrollBar" { return $true }
+        "ItemsRepeater" { return $true }
         default { return $false }
     }
 }
@@ -1798,6 +1799,7 @@ function Get-ScrollInteractionTargetAutomationId([string]$control) {
     switch ($control) {
         "ParallaxView" { return "GallerySample_ParallaxView_ListView" }
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_ScrollViewer" }
+        "ItemsRepeater" { return "GallerySample_ItemsRepeater_VirtualizingScrollViewer" }
         default { return "" }
     }
 }

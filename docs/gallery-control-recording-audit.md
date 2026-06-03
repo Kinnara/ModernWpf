@@ -19,7 +19,7 @@ path and the recording has been reviewed or decoded into nonblank poster frames.
 
 ## Scope
 
-Initial scope is the 46-control ModernWpf visual-check inventory from
+Initial scope is the current ModernWpf visual-check inventory from
 `tools/visual-checks/Run-GalleryVisualChecks.ps1`, plus the Gallery shell
 NavigationView pane because earlier user-reported failures were in the shell.
 The broader official WPF Gallery page catalog is a separate expansion and is not
@@ -77,7 +77,7 @@ because it can record the Windows background instead of the Gallery window.
 | Scrolling | PipsPager | `item/PipsPager` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/PipsPager/dark-pipspager.mp4` | Manifest records page selection and pager item status changing to `LandscapeImage2.jpg`; reviewed frame `t7500.png` shows the second gallery image. |
 | Scrolling | AnnotatedScrollBar | `item/AnnotatedScrollBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-062558-459/AnnotatedScrollBar/dark-annotatedscrollbar.mp4` | Manifest records the linked ScrollViewer vertical scroll percent from `0` to `55`; reviewed contact sheet shows the list scrolled to the magenta section. |
 | Collections | GridView | `item/GridView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/GridView/dark-gridview.mp4` | Manifest records `You clicked Item 1.` after item activation; reviewed frame `t7500.png` shows the output text. |
-| Collections | ItemsRepeater | `item/ItemsRepeater` | Pending | Pending |  | Scroll/virtualization interaction required after first static pass. |
+| Collections | ItemsRepeater | `item/ItemsRepeater` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260603-181238-897/ItemsRepeater/dark-itemsrepeater.mp4` | Manifest records the virtualizing `ScrollViewer` vertical scroll percent from `0` to `55`; reviewed contact sheet shows the visible item range move from `0`-`9` to `265`-`279`. |
 | Navigation | BreadcrumbBar | `item/BreadcrumbBar` | Recorded | Recorder/sample anchor fixed | `artifacts/gallery-recordings/20260603-091005-125/BreadcrumbBar/dark-breadcrumbbar.mp4` | Manifest proves clicking `Folder1` in the templated breadcrumb removed `Folder2` and `Folder3`; reviewed contact sheet shows the before/after item collection. |
 | Navigation | Pivot | `item/Pivot` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/Pivot/dark-pivot.mp4` | Manifest records `Unread` selected and expected content `unread emails go here.`; reviewed frame `t7500.png` shows the selected tab/content. |
 | Navigation | SelectorBar | `item/SelectorBar` | Recorded | Sample automation status fixed | `artifacts/gallery-recordings/20260603-091005-125/SelectorBar/dark-selectorbar.mp4` | Manifest proves selection status changed from `Recent` to `Shared`; reviewed contact sheet shows the selected indicator moving to `Shared`. |
