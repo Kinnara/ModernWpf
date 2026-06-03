@@ -82,6 +82,10 @@ this environment. `-CaptureMode Screen` exists for local diagnostics, but runs
 from this Codex desktop session must be manually rejected if the decoded frames
 show the Windows background instead of the Gallery app.
 
+Small state/value interactions can have low full-frame delta. The recorder only
+passes those cases when the manifest also proves the control-level change, such
+as before/after toggle state or a reached numeric target value.
+
 The recorder writes under `artifacts/window-recordings/` by default. With
 `ffmpeg` on `PATH`, `-Recorder Auto` writes compressed MP4 files through
 FFmpeg's `gdigrab` input. Without `ffmpeg`, it falls back to the dependency-free

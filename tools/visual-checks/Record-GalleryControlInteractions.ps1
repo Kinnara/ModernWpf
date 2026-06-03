@@ -552,6 +552,56 @@ function Get-ExpandCollapseStateName($element) {
     return ""
 }
 
+function Get-ToggleStateName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return $pattern.Current.ToggleState.ToString()
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Get-NumericValue($element) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return [double]$pattern.Current.Value
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $value = 0.0
+            if ([double]::TryParse(
+                    $pattern.Current.Value,
+                    [System.Globalization.NumberStyles]::Float,
+                    [System.Globalization.CultureInfo]::InvariantCulture,
+                    [ref]$value)) {
+                return $value
+            }
+        }
+    }
+    catch {
+    }
+
+    return $null
+}
+
 function Invoke-SplitButtonSecondaryOnce($window, $element) {
     if ($null -eq $element) {
         return $false
@@ -750,8 +800,15 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
 }
 
 function Invoke-StateInteraction($window, $sampleElement) {
+    $before = Get-ToggleStateName $sampleElement
+    $invoked = Invoke-ElementOnce $window $sampleElement
+    Start-Sleep -Milliseconds 150
+    $after = Get-ToggleStateName $sampleElement
     return [ordered]@{
-        Invoked = Invoke-ElementOnce $window $sampleElement
+        Invoked = $invoked
+        BeforeState = $before
+        AfterState = $after
+        StateChanged = ![string]::IsNullOrWhiteSpace($before) -and $before -ne $after
     }
 }
 
@@ -761,6 +818,7 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
     }
 
     [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    $before = Get-NumericValue $sampleElement
     try {
         $pattern = $sampleElement.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
         if ($null -ne $pattern) {
@@ -771,9 +829,13 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
             }
             $pattern.SetValue($target)
             Start-Sleep -Milliseconds 250
+            $after = Get-NumericValue $sampleElement
             return [ordered]@{
                 Invoked = $true
+                BeforeValue = $before
+                AfterValue = $after
                 TargetValue = $target
+                TargetReached = $null -ne $after -and [Math]::Abs(([double]$after) - ([double]$target)) -lt 0.001
             }
         }
     }
@@ -782,12 +844,25 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
 
     if ($control -eq "NumberBox") {
         $increase = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Increase", "Increase value", "Up")
+        $invoked = Invoke-ElementOnce $window $increase
+        Start-Sleep -Milliseconds 150
+        $after = Get-NumericValue $sampleElement
         return [ordered]@{
-            Invoked = Invoke-ElementOnce $window $increase
+            Invoked = $invoked
+            BeforeValue = $before
+            AfterValue = $after
+            TargetValue = $null
+            TargetReached = $null -ne $before -and $null -ne $after -and [double]$after -ne [double]$before
         }
     }
 
-    return [ordered]@{ Invoked = $false }
+    return [ordered]@{
+        Invoked = $false
+        BeforeValue = $before
+        AfterValue = $null
+        TargetValue = $null
+        TargetReached = $false
+    }
 }
 
 function Invoke-SelectionInteraction($window, [string]$control) {
@@ -1110,6 +1185,22 @@ function Test-OpenRepeatEvidence($interactionResult) {
     return $interactionResult.FirstOpenElementFound -and $interactionResult.SecondOpenElementFound
 }
 
+function Test-StateEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("StateChanged")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.StateChanged
+}
+
+function Test-ValueEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("TargetReached")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.TargetReached
+}
+
 function Format-RelativePath([string]$path) {
     if ([string]::IsNullOrWhiteSpace($path)) {
         return ""
@@ -1266,12 +1357,20 @@ foreach ($control in $Controls) {
 
     $maxFrameDelta = Get-MaxFrameDelta $frames
     $openRepeatEvidence = Test-OpenRepeatEvidence $interactionResult
+    $stateEvidence = Test-StateEvidence $interactionResult
+    $valueEvidence = Test-ValueEvidence $interactionResult
     if ($status -eq "Passed" -and
         $interactionKind -ne "Static" -and
         $null -ne $maxFrameDelta -and
         $maxFrameDelta -lt 0.35) {
         if ($interactionKind -eq "OpenRepeat" -and $openRepeatEvidence) {
             $notes.Add("Expected open elements were detected on both opens despite low full-frame delta.")
+        }
+        elseif ($interactionKind -eq "State" -and $stateEvidence) {
+            $notes.Add("Before/after toggle state changed despite low full-frame delta.")
+        }
+        elseif ($interactionKind -eq "Value" -and $valueEvidence) {
+            $notes.Add("Target value was reached despite low full-frame delta.")
         }
         else {
             $status = "NeedsReview"
@@ -1290,6 +1389,8 @@ foreach ($control in $Controls) {
         Frames = $frames
         MaxFrameDelta = $maxFrameDelta
         OpenRepeatEvidence = $openRepeatEvidence
+        StateEvidence = $stateEvidence
+        ValueEvidence = $valueEvidence
         InteractionResult = $interactionResult
         Notes = ($notes.ToArray() -join " ")
     }

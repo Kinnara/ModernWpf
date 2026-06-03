@@ -46,20 +46,20 @@ record the Windows background instead of the Gallery window.
 | Shell | Navigation pane | Home, Design Guidance, Samples expand/collapse | Pending | Fixed earlier, needs new recording pass |  | Must cover repeated expand/collapse and child visibility. |
 | Dialogs & flyouts | TeachingTip | `item/TeachingTip` | Pending | Pending |  | Open, close, second open required. |
 | Basic input | Button | `item/Button` | Pending | Pending |  | Static route plus primary button click review. |
-| Basic input | CheckBox | `item/CheckBox` | Pending | Pending |  | Toggle state required. |
+| Basic input | CheckBox | `item/CheckBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/CheckBox/dark-checkbox.mp4` | Manifest records `Off` to `On`; reviewed frame shows checked state. |
 | Basic input | ComboBox | `item/ComboBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-030922-916/ComboBox/dark-combobox.mp4` | Rendered MP4 shows dropdown open and second-open path. |
 | Basic input | RadioButton | `item/RadioButton` | Pending | Pending |  | Selection state required. |
-| Basic input | Slider | `item/Slider` | Pending | Pending |  | Value change required. |
+| Basic input | Slider | `item/Slider` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/Slider/dark-slider.mp4` | Manifest records `0` to `50`; reviewed frame shows output `50`. |
 | Basic input | ColorPicker | `item/ColorPicker` | Pending | Pending |  | Static first pass, then More/color interaction expansion. |
 | Basic input | HyperlinkButton | `item/HyperlinkButton` | Pending | Pending |  | Static first pass; avoid external navigation during automation. |
-| Basic input | RatingControl | `item/RatingControl` | Pending | Pending |  | Value change required. |
-| Basic input | RepeatButton | `item/RepeatButton` | Pending | Pending |  | Hold interaction required. |
-| Basic input | ToggleButton | `item/ToggleButton` | Pending | Pending |  | Toggle state required. |
+| Basic input | RatingControl | `item/RatingControl` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/RatingControl/dark-ratingcontrol.mp4` | Manifest records `0` to `3`; reviewed frame shows three selected stars and value `3`. |
+| Basic input | RepeatButton | `item/RepeatButton` | NeedsReview | Pending | `artifacts/gallery-recordings/20260603-040311-639/RepeatButton/dark-repeatbutton.mp4` | Hold was invoked, but decoded frames show no strong visual/output proof; keep unverified until the recorder captures pressed-state or output evidence. |
+| Basic input | ToggleButton | `item/ToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/ToggleButton/dark-togglebutton.mp4` | Manifest records `Off` to `On`; reviewed frame shows `On`. |
 | Basic input | DropDownButton | `item/DropDownButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-031922-773/DropDownButton/dark-dropdownbutton.mp4` | Rendered MP4 frame shows `Send`, `Reply`, and `Reply All` flyout on repeat-open path. |
 | Basic input | SplitButton | `item/SplitButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-034734-786/SplitButton/dark-splitbutton.mp4` | Rendered MP4 frame shows color flyout; manifest verifies both opens reached `Expanded`. |
 | Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-034734-786/ToggleSplitButton/dark-togglesplitbutton.mp4` | Rendered MP4 frame shows the compact two-button flyout; full-frame delta is small, so the manifest also requires expanded-state and open-element proof on both opens. |
-| Basic input | ToggleSwitch | `item/ToggleSwitch` | Pending | Pending |  | Toggle state required. |
-| Text | NumberBox | `item/NumberBox` | Pending | Pending |  | Value/spin change required. |
+| Basic input | ToggleSwitch | `item/ToggleSwitch` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/ToggleSwitch/dark-toggleswitch.mp4` | Manifest records `Off` to `On`; reviewed frame shows switch and `Working` state on. |
+| Text | NumberBox | `item/NumberBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/NumberBox/dark-numberbox.mp4` | Manifest records `10` to `20`; reviewed frame shows spin-button value `20`. |
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Pending | Pending |  | Text entry and suggestion popup required. |
 | Layout | SplitView | `item/SplitView` | Pending | Pending |  | Pane toggle required after first static pass. |
 | Media | PersonPicture | `item/PersonPicture` | Pending | Pending |  | Static route. |

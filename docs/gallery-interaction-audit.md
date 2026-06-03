@@ -888,3 +888,39 @@ Tighten the recording-first audit for the split/dropdown button family:
   - `artifacts/gallery-recordings/20260603-031922-773/DropDownButton/frames/t4000.png`
   - `artifacts/gallery-recordings/20260603-034734-786/SplitButton/frames/t4000.png`
   - `artifacts/gallery-recordings/20260603-034734-786/ToggleSplitButton/frames/t4000.png`
+
+## Round 31: Basic State and Value Recording Proof
+
+### Scope
+
+Record and review the basic state/value controls that have deterministic UIA
+state or numeric-value evidence:
+
+- `CheckBox`
+- `ToggleButton`
+- `ToggleSwitch`
+- `RatingControl`
+- `Slider`
+- `NumberBox`
+- `RepeatButton`
+
+### Current Findings
+
+- The first batch produced six false `NeedsReview` statuses because state and
+  value changes are small relative to the full Gallery frame.
+- The recorder now stores before/after `TogglePattern` state and numeric
+  `RangeValuePattern`/`ValuePattern` values. Low full-frame delta can pass only
+  when this stronger control-state evidence proves the interaction happened.
+- `CheckBox`, `ToggleButton`, and `ToggleSwitch` record `Off` to `On`.
+- `RatingControl`, `Slider`, and `NumberBox` record target values reached.
+- `RepeatButton` remains unverified. The hold was invoked, but decoded frames
+  did not show a meaningful pressed-state or output change, so it stays
+  `NeedsReview` in the matrix.
+
+### Verification
+
+- Batch report: `artifacts/gallery-recordings/20260603-040311-639/report.md`
+- Reviewed poster frames:
+  - `artifacts/gallery-recordings/20260603-040311-639/CheckBox/frames/t3000.png`
+  - `artifacts/gallery-recordings/20260603-040311-639/ToggleSwitch/frames/t3000.png`
+  - `artifacts/gallery-recordings/20260603-040311-639/NumberBox/frames/t3000.png`
