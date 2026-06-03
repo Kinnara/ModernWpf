@@ -1167,3 +1167,49 @@ same failure-prone open, close, and second-open flow as `CommandBarFlyout`:
   - `Popup`: first and second open element evidence true.
   - `MenuBar`: first and second open element evidence true.
   - `MenuFlyout`: first and second open element evidence true with `Expanded` state.
+
+## Round 37: AppBar and CommandBar Proof
+
+### Scope
+
+Record command-surface controls that previously had static or insufficient
+coverage:
+
+- `AppBarButton`
+- `AppBarSeparator`
+- `AppBarToggleButton`
+- `CommandBar`
+
+### Current Findings
+
+- `AppBarButton` had only static coverage even though its sample exposes a
+  click output. The recorder needed to prove the button command path.
+- `CommandBar` initially failed before interaction: the recorder unwrapped the
+  single expected open name (`Settings`) to a scalar, and the CommandBar control
+  itself was not a reliable UIA sample anchor.
+- `AppBarSeparator` similarly needed visible command-button anchors because the
+  containing CommandBar was not reliable as the primary UIA sample element.
+
+### Changes
+
+- Added stable automation ids for AppBarButton/AppBarToggleButton output
+  TextBlocks and CommandBar output/command buttons.
+- Added stable automation ids for visible buttons in the AppBarSeparator sample.
+- Extended the recorder so `AppBarButton` requires output text proof and
+  `CommandBar` opens the sample overflow button twice.
+- Fixed single-item open-name handling by wrapping open-name results in an array
+  before evaluating `.Count`.
+
+### Verification
+
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj -f net8.0-windows7.0 -c Debug --no-restore`: passed.
+- Final focused recording report:
+  `artifacts/gallery-recordings/20260603-070433-922/report.md`
+- Final focused recording summary: 4 passed, 0 needs review, 0 failed.
+- Reviewed contact sheet:
+  `artifacts/gallery-recordings/20260603-070433-922/command-surface-review-contact-sheet.png`
+- Manifest evidence:
+  - `AppBarButton`: output changed to `You clicked: Button1`.
+  - `AppBarToggleButton`: toggle state changed from `Off` to `On`.
+  - `CommandBar`: first and second overflow open element evidence true.
+  - `AppBarSeparator`: static rendered route captured with stable visible button anchor.

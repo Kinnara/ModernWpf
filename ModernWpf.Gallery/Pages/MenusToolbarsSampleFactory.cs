@@ -564,12 +564,20 @@ namespace ModernWpf.Gallery.Pages
                 HorizontalAlignment = HorizontalAlignment.Left
             };
             GalleryAutomation.WithAutomationId(bar, GalleryAutomation.SampleElementId("AppBarSeparator", "CommandBar"));
-            bar.PrimaryCommands.Add(CreateAppBarSeparatorButton(Mux.Symbol.AttachCamera, "Attach Camera"));
+            var attachCameraButton = CreateAppBarSeparatorButton(Mux.Symbol.AttachCamera, "Attach Camera");
+            GalleryAutomation.WithAutomationId(attachCameraButton, GalleryAutomation.SampleElementId("AppBarSeparator", "AttachCameraButton"));
+            bar.PrimaryCommands.Add(attachCameraButton);
             bar.PrimaryCommands.Add(new Mux.AppBarSeparator());
-            bar.PrimaryCommands.Add(CreateAppBarSeparatorButton(Mux.Symbol.Like, "Like"));
-            bar.PrimaryCommands.Add(CreateAppBarSeparatorButton(Mux.Symbol.Dislike, "Dislike"));
+            var likeButton = CreateAppBarSeparatorButton(Mux.Symbol.Like, "Like");
+            GalleryAutomation.WithAutomationId(likeButton, GalleryAutomation.SampleElementId("AppBarSeparator", "LikeButton"));
+            bar.PrimaryCommands.Add(likeButton);
+            var dislikeButton = CreateAppBarSeparatorButton(Mux.Symbol.Dislike, "Dislike");
+            GalleryAutomation.WithAutomationId(dislikeButton, GalleryAutomation.SampleElementId("AppBarSeparator", "DislikeButton"));
+            bar.PrimaryCommands.Add(dislikeButton);
             bar.PrimaryCommands.Add(new Mux.AppBarSeparator());
-            bar.PrimaryCommands.Add(CreateAppBarSeparatorButton(Mux.Symbol.Orientation, "Orientation"));
+            var orientationButton = CreateAppBarSeparatorButton(Mux.Symbol.Orientation, "Orientation");
+            GalleryAutomation.WithAutomationId(orientationButton, GalleryAutomation.SampleElementId("AppBarSeparator", "OrientationButton"));
+            bar.PrimaryCommands.Add(orientationButton);
 
             scrollViewer.Content = bar;
             panel.Children.Add(scrollViewer);
@@ -709,6 +717,7 @@ namespace ModernWpf.Gallery.Pages
                 Padding = new Thickness(0, 8, 0, 0),
                 TextWrapping = TextWrapping.Wrap
             };
+            GalleryAutomation.WithAutomationId(output, GalleryAutomation.SampleElementId("CommandBar", "Output"));
 
             var commandBar = new Mux.CommandBar
             {
@@ -721,16 +730,20 @@ namespace ModernWpf.Gallery.Pages
 
             var addButton = CreateCommandBarAppBarButton(Mux.Symbol.Add, "Add", output, "Ctrl+A");
             addButton.Name = "addButton";
+            GalleryAutomation.WithAutomationId(addButton, GalleryAutomation.SampleElementId("CommandBar", "AddButton"));
             var editButton = CreateCommandBarAppBarButton(Mux.Symbol.Edit, "Edit", output, "Ctrl+E");
             editButton.Name = "editButton";
+            GalleryAutomation.WithAutomationId(editButton, GalleryAutomation.SampleElementId("CommandBar", "EditButton"));
             var shareButton = CreateCommandBarAppBarButton(Mux.Symbol.Share, "Share", output, "F4");
             shareButton.Name = "shareButton";
+            GalleryAutomation.WithAutomationId(shareButton, GalleryAutomation.SampleElementId("CommandBar", "ShareButton"));
             commandBar.PrimaryCommands.Add(addButton);
             commandBar.PrimaryCommands.Add(editButton);
             commandBar.PrimaryCommands.Add(shareButton);
 
             var settingsButton = CreateCommandBarAppBarButton(Mux.Symbol.Setting, "Settings", output, "Ctrl+I");
             settingsButton.Name = "settingsButton";
+            GalleryAutomation.WithAutomationId(settingsButton, GalleryAutomation.SampleElementId("CommandBar", "SettingsButton"));
             commandBar.SecondaryCommands.Add(settingsButton);
 
             samplePanel.Children.Add(commandBar);
@@ -751,15 +764,16 @@ namespace ModernWpf.Gallery.Pages
             {
                 Orientation = Orientation.Horizontal
             };
+            var controlName = button is Mux.AppBarToggleButton ? "AppBarToggleButton" : "AppBarButton";
             if (assignRootAutomationId)
             {
-                var controlName = button is Mux.AppBarToggleButton ? "AppBarToggleButton" : "AppBarButton";
                 GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId(controlName));
             }
 
             panel.Children.Add(button);
             if (output != null)
             {
+                GalleryAutomation.WithAutomationId(output, GalleryAutomation.SampleElementId(controlName, "Output"));
                 panel.Children.Add(output);
             }
 

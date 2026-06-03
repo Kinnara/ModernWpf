@@ -512,9 +512,9 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "MenuFlyout" { return "GallerySample_MenuFlyout_AppBarButton" }
         "SwipeControl" { return "GallerySample_SwipeControl_SwipeControl" }
         "AppBarButton" { return "GallerySample_AppBarButton_AppBarButton" }
-        "AppBarSeparator" { return "GallerySample_AppBarSeparator_CommandBar" }
+        "AppBarSeparator" { return "GallerySample_AppBarSeparator_AttachCameraButton" }
         "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }
-        "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
+        "CommandBar" { return "GallerySample_CommandBar_AddButton" }
         "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
         default { return "GallerySample_${control}_Root" }
     }
@@ -532,6 +532,7 @@ function Test-ControlSupportsOpenInteraction([string]$control) {
         "DropDownButton" { return $true }
         "SplitButton" { return $true }
         "ToggleSplitButton" { return $true }
+        "CommandBar" { return $true }
         "CommandBarFlyout" { return $true }
         default { return $false }
     }
@@ -549,6 +550,7 @@ function Get-OpenInteractionNames([string]$control) {
         "DropDownButton" { return @("Send", "Reply", "Reply All") }
         "SplitButton" { return @("Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Gray") }
         "ToggleSplitButton" { return @("Bulleted list", "Roman numerals list") }
+        "CommandBar" { return @("Settings") }
         "CommandBarFlyout" { return @("Share", "Save", "Delete", "Resize", "Move") }
         default { return @() }
     }
@@ -607,7 +609,11 @@ function Test-ControlSupportsValueInteraction([string]$control) {
 }
 
 function Test-ControlSupportsOutputInteraction([string]$control) {
-    return $control -eq "RepeatButton"
+    switch ($control) {
+        "RepeatButton" { return $true }
+        "AppBarButton" { return $true }
+        default { return $false }
+    }
 }
 
 function Get-SelectionInteractionTriggerName([string]$control) {
@@ -1102,6 +1108,18 @@ function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleEle
         }
     }
 
+    if ($control -eq "CommandBar") {
+        $trigger = Find-DescendantByAutomationId $sampleElement "MoreButton"
+        if ($null -eq $trigger) {
+            $trigger = Find-DescendantButtonByAnyName $sampleElement @("More")
+        }
+        if ($null -eq $trigger) {
+            $trigger = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "MoreButton"
+        }
+
+        return $trigger
+    }
+
     return $sampleElement
 }
 
@@ -1151,7 +1169,7 @@ function Open-CommandBarFlyoutSecondaryCommands($window) {
 
 function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement) {
     $trigger = Get-OpenInteractionTriggerElement $window $control $sampleElement
-    $openNames = Get-OpenInteractionNames $control
+    $openNames = @(Get-OpenInteractionNames $control)
     $firstOpen = Invoke-OpenElementOnce $window $control $trigger
     Start-Sleep -Milliseconds 650
     $firstOpenExpandState = Get-ExpandCollapseStateName $trigger
@@ -1745,10 +1763,32 @@ function Invoke-TextInteraction($window, [string]$control, $sampleElement) {
     }
 }
 
-function Invoke-OutputInteraction($window, $sampleElement) {
-    $output = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GallerySample_RepeatButton_Output"
+function Get-OutputInteractionOutputAutomationId([string]$control) {
+    switch ($control) {
+        "RepeatButton" { return "GallerySample_RepeatButton_Output" }
+        "AppBarButton" { return "GallerySample_AppBarButton_Output" }
+        default { return "" }
+    }
+}
+
+function Get-OutputInteractionExpectedOutput([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return "You clicked: Button1" }
+        default { return "" }
+    }
+}
+
+function Invoke-OutputInteraction($window, [string]$control, $sampleElement) {
+    $outputAutomationId = Get-OutputInteractionOutputAutomationId $control
+    $expectedOutput = Get-OutputInteractionExpectedOutput $control
+    $output = Find-ElementByAutomationIdInProcess $window.Current.ProcessId $outputAutomationId
     $before = Get-ElementText $output
-    $invoked = Hold-Element $window $sampleElement 700
+    $invoked = if ($control -eq "RepeatButton") {
+        Hold-Element $window $sampleElement 700
+    }
+    else {
+        Invoke-ElementOnce $window $sampleElement
+    }
     Start-Sleep -Milliseconds 250
     $after = Get-ElementText $output
 
@@ -1770,8 +1810,11 @@ function Invoke-OutputInteraction($window, $sampleElement) {
 
     return [ordered]@{
         Invoked = $invoked
+        OutputAutomationId = $outputAutomationId
         BeforeOutput = $before
         AfterOutput = $after
+        ExpectedOutput = $expectedOutput
+        OutputMatched = ([string]::IsNullOrWhiteSpace($expectedOutput) -or $after -eq $expectedOutput)
         OutputChanged = $before -ne $after
     }
 }
@@ -1785,7 +1828,7 @@ function Invoke-RecordedInteraction($window, [string]$control, $sampleElement) {
         "Selection" { return Invoke-SelectionInteraction $window $control $sampleElement }
         "Option" { return Invoke-OptionInteraction $window $control $sampleElement }
         "Text" { return Invoke-TextInteraction $window $control $sampleElement }
-        "Output" { return Invoke-OutputInteraction $window $sampleElement }
+        "Output" { return Invoke-OutputInteraction $window $control $sampleElement }
         "Scroll" { return Invoke-ScrollInteraction $window $control $sampleElement }
         default { return [ordered]@{ Invoked = $true } }
     }
@@ -2091,6 +2134,13 @@ function Test-OptionEvidence($interactionResult) {
 
 function Test-OutputEvidence($interactionResult) {
     if ($null -eq $interactionResult -or !$interactionResult.Contains("OutputChanged")) {
+        return $false
+    }
+
+    if ($interactionResult.Contains("ExpectedOutput") -and
+        ![string]::IsNullOrWhiteSpace($interactionResult.ExpectedOutput) -and
+        $interactionResult.Contains("OutputMatched") -and
+        !$interactionResult.OutputMatched) {
         return $false
     }
 
