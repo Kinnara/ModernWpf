@@ -34,6 +34,11 @@ Use the per-control recorder:
 For broad sweeps, run in batches and review `report.md` plus the MP4 clips under
 `artifacts/gallery-recordings/<stamp>/`.
 
+The default recorder is rendered `PrintWindow` composition for the Gallery
+process plus popup HWNDs. `-CaptureMode Screen` is available for diagnostics but
+is not accepted as proof in the current Codex desktop session because it can
+record the Windows background instead of the Gallery window.
+
 ## Control Matrix
 
 | Area | Control | Route or Scenario | Recording Status | Fix Status | Latest Evidence | Notes |
@@ -50,9 +55,9 @@ For broad sweeps, run in batches and review `report.md` plus the MP4 clips under
 | Basic input | RatingControl | `item/RatingControl` | Pending | Pending |  | Value change required. |
 | Basic input | RepeatButton | `item/RepeatButton` | Pending | Pending |  | Hold interaction required. |
 | Basic input | ToggleButton | `item/ToggleButton` | Pending | Pending |  | Toggle state required. |
-| Basic input | DropDownButton | `item/DropDownButton` | Pending | Pending |  | Open, close, second open required. |
-| Basic input | SplitButton | `item/SplitButton` | Pending | Pending |  | Open, close, second open required. |
-| Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Pending | Pending |  | Open, close, second open required. |
+| Basic input | DropDownButton | `item/DropDownButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-031922-773/DropDownButton/dark-dropdownbutton.mp4` | Rendered MP4 frame shows `Send`, `Reply`, and `Reply All` flyout on repeat-open path. |
+| Basic input | SplitButton | `item/SplitButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-034734-786/SplitButton/dark-splitbutton.mp4` | Rendered MP4 frame shows color flyout; manifest verifies both opens reached `Expanded`. |
+| Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-034734-786/ToggleSplitButton/dark-togglesplitbutton.mp4` | Rendered MP4 frame shows the compact two-button flyout; full-frame delta is small, so the manifest also requires expanded-state and open-element proof on both opens. |
 | Basic input | ToggleSwitch | `item/ToggleSwitch` | Pending | Pending |  | Toggle state required. |
 | Text | NumberBox | `item/NumberBox` | Pending | Pending |  | Value/spin change required. |
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Pending | Pending |  | Text entry and suggestion popup required. |

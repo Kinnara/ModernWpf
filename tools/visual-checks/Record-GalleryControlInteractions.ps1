@@ -14,6 +14,8 @@ param(
     [int]$FrameRate = 10,
     [ValidateSet("Auto", "Ffmpeg", "Avi")]
     [string]$Recorder = "Auto",
+    [ValidateSet("Rendered", "Screen")]
+    [string]$CaptureMode = "Rendered",
     [switch]$Build,
     [switch]$SkipFrameExtraction
 )
@@ -299,6 +301,10 @@ function Find-InteractiveElementByNameInProcess([int]$processId, [string[]]$name
                         continue
                     }
 
+                    if ($element.Current.IsOffscreen) {
+                        continue
+                    }
+
                     $rect = $element.Current.BoundingRectangle
                     if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
                         return $element
@@ -436,6 +442,23 @@ function Test-ControlSupportsOpenInteraction([string]$control) {
     }
 }
 
+function Get-OpenInteractionNames([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return @("This is the title", "Try compact mode", "And this is the subtitle") }
+        "ComboBox" { return @("Blue", "Green", "Red", "Yellow") }
+        "ContentDialog" { return @("Save your work?", "Upload your content to the cloud.", "Save", "Don't Save", "Cancel") }
+        "Flyout" { return @("All items will be removed. Do you want to continue?", "Yes, empty my cart") }
+        "Popup" { return @("Simple Popup", "Close") }
+        "MenuBar" { return @("New", "Open...", "Save", "Exit") }
+        "MenuFlyout" { return @("By rating", "By match", "By distance") }
+        "DropDownButton" { return @("Send", "Reply", "Reply All") }
+        "SplitButton" { return @("Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Gray") }
+        "ToggleSplitButton" { return @("Bulleted list", "Roman numerals list") }
+        "CommandBarFlyout" { return @("Share", "Save", "Delete", "Resize", "Move") }
+        default { return @() }
+    }
+}
+
 function Test-ControlSupportsStateInteraction([string]$control) {
     switch ($control) {
         "CheckBox" { return $true }
@@ -512,6 +535,46 @@ function Get-ElementCenter($element) {
     }
 }
 
+function Get-ExpandCollapseStateName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return $pattern.Current.ExpandCollapseState.ToString()
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Invoke-SplitButtonSecondaryOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $rect = $element.Current.BoundingRectangle
+        if ($rect.Width -le 0 -or $rect.Height -le 0) {
+            return $false
+        }
+
+        $x = [int][Math]::Round($rect.Right - [Math]::Min(12.0, [Math]::Max(6.0, $rect.Width * 0.18)))
+        $y = [int][Math]::Round($rect.Y + ($rect.Height / 2.0))
+        [GalleryRecordingNative]::Click($x, $y)
+        Start-Sleep -Milliseconds 150
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
+
 function Invoke-ElementOnce($window, $element) {
     if ($null -eq $element) {
         return $false
@@ -563,6 +626,29 @@ function Invoke-ElementOnce($window, $element) {
     return $false
 }
 
+function Invoke-OpenElementOnce($window, [string]$control, $element) {
+    if ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") {
+        $invoked = Invoke-SplitButtonSecondaryOnce $window $element
+        Start-Sleep -Milliseconds 150
+        if ((Get-ExpandCollapseStateName $element) -ne "Expanded") {
+            try {
+                $pattern = $element.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+                if ($null -ne $pattern) {
+                    $pattern.Expand()
+                    $invoked = $true
+                    Start-Sleep -Milliseconds 150
+                }
+            }
+            catch {
+            }
+        }
+
+        return $invoked
+    }
+
+    return Invoke-ElementOnce $window $element
+}
+
 function Hold-Element($window, $element, [int]$milliseconds) {
     if ($null -eq $element) {
         return $false
@@ -599,6 +685,20 @@ function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleEle
     return $sampleElement
 }
 
+function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [string]$control) {
+    if ($openNames.Count -eq 0) {
+        return $null
+    }
+
+    if ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") {
+        if ($null -eq $element -or (Get-ExpandCollapseStateName $element) -ne "Expanded") {
+            return $null
+        }
+    }
+
+    return Find-InteractiveElementByNameInProcess $window.Current.ProcessId $openNames
+}
+
 function Open-CommandBarFlyoutSecondaryCommands($window) {
     $moreButton = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "MoreButton"
     if ($null -eq $moreButton) {
@@ -615,8 +715,11 @@ function Open-CommandBarFlyoutSecondaryCommands($window) {
 
 function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement) {
     $trigger = Get-OpenInteractionTriggerElement $window $control $sampleElement
-    $firstOpen = Invoke-ElementOnce $window $trigger
+    $openNames = Get-OpenInteractionNames $control
+    $firstOpen = Invoke-OpenElementOnce $window $control $trigger
     Start-Sleep -Milliseconds 650
+    $firstOpenExpandState = Get-ExpandCollapseStateName $trigger
+    $firstOpenElementFound = $openNames.Count -eq 0 -or $null -ne (Find-OpenInteractionElement $window $trigger $openNames $control)
     $secondaryExpanded = $false
     if ($control -eq "CommandBarFlyout") {
         $secondaryExpanded = Open-CommandBarFlyoutSecondaryCommands $window
@@ -625,17 +728,23 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
 
     [GalleryRecordingNative]::Escape()
     Start-Sleep -Milliseconds 650
-    $secondOpen = Invoke-ElementOnce $window $trigger
+    $secondOpen = Invoke-OpenElementOnce $window $control $trigger
     Start-Sleep -Milliseconds 650
+    $secondOpenExpandState = Get-ExpandCollapseStateName $trigger
+    $secondOpenElementFound = $openNames.Count -eq 0 -or $null -ne (Find-OpenInteractionElement $window $trigger $openNames $control)
     if ($control -eq "CommandBarFlyout") {
         $secondaryExpanded = (Open-CommandBarFlyoutSecondaryCommands $window) -or $secondaryExpanded
         Start-Sleep -Milliseconds 450
     }
 
     return [ordered]@{
-        Invoked = $firstOpen -and $secondOpen
+        Invoked = $firstOpen -and $secondOpen -and $firstOpenElementFound -and $secondOpenElementFound
         FirstOpen = $firstOpen
         SecondOpen = $secondOpen
+        FirstOpenElementFound = $firstOpenElementFound
+        SecondOpenElementFound = $secondOpenElementFound
+        FirstOpenExpandState = $firstOpenExpandState
+        SecondOpenExpandState = $secondOpenExpandState
         CommandBarFlyoutSecondaryExpanded = $secondaryExpanded
     }
 }
@@ -749,13 +858,13 @@ function Get-ExpandedCaptureRect([IntPtr]$windowHandle) {
     }
 }
 
-function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$outputPath) {
+function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$outputPath, [string]$captureMode) {
     $captureRect = Get-ExpandedCaptureRect $windowHandle
     Start-Job -ScriptBlock {
-        param($scriptPath, $targetProcessId, $handleValue, $left, $top, $width, $height, $output, $duration, $frameRate)
+        param($scriptPath, $targetProcessId, $handleValue, $left, $top, $width, $height, $output, $duration, $frameRate, $mode)
         $handle = [IntPtr]::new([int64]$handleValue)
-        & $scriptPath -ProcessId $targetProcessId -WindowHandle $handle -Left $left -Top $top -Width $width -Height $height -Output $output -DurationSeconds $duration -FrameRate $frameRate
-    } -ArgumentList $RecordWindowRenderedScript, $processId, ([int64]$windowHandle), $captureRect.Left, $captureRect.Top, $captureRect.Width, $captureRect.Height, $outputPath, $DurationSeconds, $FrameRate
+        & $scriptPath -ProcessId $targetProcessId -WindowHandle $handle -Left $left -Top $top -Width $width -Height $height -Output $output -DurationSeconds $duration -FrameRate $frameRate -CaptureMode $mode
+    } -ArgumentList $RecordWindowRenderedScript, $processId, ([int64]$windowHandle), $captureRect.Left, $captureRect.Top, $captureRect.Width, $captureRect.Height, $outputPath, $DurationSeconds, $FrameRate, $captureMode
 }
 
 function Wait-RecordingJob($job) {
@@ -988,6 +1097,19 @@ function Get-NonBlankFrameCount($frames) {
     return $count
 }
 
+function Test-OpenRepeatEvidence($interactionResult) {
+    if ($null -eq $interactionResult) {
+        return $false
+    }
+
+    if (!$interactionResult.Contains("FirstOpenElementFound") -or
+        !$interactionResult.Contains("SecondOpenElementFound")) {
+        return $false
+    }
+
+    return $interactionResult.FirstOpenElementFound -and $interactionResult.SecondOpenElementFound
+}
+
 function Format-RelativePath([string]$path) {
     if ([string]::IsNullOrWhiteSpace($path)) {
         return ""
@@ -1007,7 +1129,17 @@ function Write-Report([string]$runDir, $results) {
     $lines.Add("")
     $lines.Add(("Generated: {0:yyyy-MM-dd HH:mm:ss zzz}" -f (Get-Date)))
     $lines.Add(("Theme: ``{0}``" -f $Theme))
-    $lines.Add('Recorder: `RenderedFfmpeg`')
+    $recorders = @($results | ForEach-Object {
+            if ($null -ne $_.RecorderResult -and ![string]::IsNullOrWhiteSpace($_.RecorderResult.Recorder)) {
+                $_.RecorderResult.Recorder
+            }
+        } | Sort-Object -Unique)
+    if ($recorders.Count -eq 0) {
+        $lines.Add('Recorder: `Unknown`')
+    }
+    else {
+        $lines.Add(("Recorder: ``{0}``" -f ($recorders -join ", ")))
+    }
     $lines.Add(("Duration: ``{0}s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
     $lines.Add("")
     $lines.Add("| Control | Status | Interaction | Recording | Max frame delta | Notes |")
@@ -1073,7 +1205,7 @@ foreach ($control in $Controls) {
             $notes.Add("Sample '$sampleId' not found; recording still captured route.")
         }
 
-        $recordingJob = Start-RecordingJob $window.Current.ProcessId ([IntPtr]$window.Current.NativeWindowHandle) $recordingPath
+        $recordingJob = Start-RecordingJob $window.Current.ProcessId ([IntPtr]$window.Current.NativeWindowHandle) $recordingPath $CaptureMode
         Start-Sleep -Milliseconds 1500
         $interactionResult = Invoke-RecordedInteraction $window $control $sampleElement
         $process.Refresh()
@@ -1133,12 +1265,18 @@ foreach ($control in $Controls) {
     }
 
     $maxFrameDelta = Get-MaxFrameDelta $frames
+    $openRepeatEvidence = Test-OpenRepeatEvidence $interactionResult
     if ($status -eq "Passed" -and
         $interactionKind -ne "Static" -and
         $null -ne $maxFrameDelta -and
         $maxFrameDelta -lt 0.35) {
-        $status = "NeedsReview"
-        $notes.Add("Interactive recording produced low poster-frame delta.")
+        if ($interactionKind -eq "OpenRepeat" -and $openRepeatEvidence) {
+            $notes.Add("Expected open elements were detected on both opens despite low full-frame delta.")
+        }
+        else {
+            $status = "NeedsReview"
+            $notes.Add("Interactive recording produced low poster-frame delta.")
+        }
     }
 
     $result = [ordered]@{
@@ -1151,6 +1289,7 @@ foreach ($control in $Controls) {
         RecorderResult = $recordingResult
         Frames = $frames
         MaxFrameDelta = $maxFrameDelta
+        OpenRepeatEvidence = $openRepeatEvidence
         InteractionResult = $interactionResult
         Notes = ($notes.ToArray() -join " ")
     }

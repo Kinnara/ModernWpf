@@ -78,7 +78,9 @@ the primary interaction, extracts poster frames with FFmpeg, and writes
 `recording-manifest.json` plus `report.md` under
 `artifacts/gallery-recordings/<stamp>/`. It does not rely on desktop `gdigrab`
 because that can capture the desktop background instead of the Gallery window in
-this environment.
+this environment. `-CaptureMode Screen` exists for local diagnostics, but runs
+from this Codex desktop session must be manually rejected if the decoded frames
+show the Windows background instead of the Gallery app.
 
 The recorder writes under `artifacts/window-recordings/` by default. With
 `ffmpeg` on `PATH`, `-Recorder Auto` writes compressed MP4 files through

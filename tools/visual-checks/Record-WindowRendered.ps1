@@ -8,6 +8,8 @@ param(
     [int]$Top = 0,
     [int]$Width = 0,
     [int]$Height = 0,
+    [ValidateSet("Rendered", "Screen")]
+    [string]$CaptureMode = "Rendered",
     [switch]$KeepFrames
 )
 
@@ -118,6 +120,15 @@ namespace ModernWpfRenderedRecorder
         [DllImport("user32.dll")]
         private static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, uint flags);
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetDC(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern int ReleaseDC(IntPtr hWnd, IntPtr hdc);
+
+        [DllImport("gdi32.dll")]
+        private static extern bool BitBlt(IntPtr hdcDest, int xDest, int yDest, int width, int height, IntPtr hdcSrc, int xSrc, int ySrc, int rop);
+
         public static RECT GetRect(IntPtr hWnd)
         {
             RECT rect;
@@ -134,6 +145,51 @@ namespace ModernWpfRenderedRecorder
             int processId;
             GetWindowThreadProcessId(hWnd, out processId);
             return processId;
+        }
+
+        public static void CaptureScreenRect(int left, int top, int width, int height, string outputPath)
+        {
+            using (Bitmap canvas = new Bitmap(width, height, PixelFormat.Format32bppArgb))
+            using (Graphics graphics = Graphics.FromImage(canvas))
+            {
+                bool copied = false;
+                try
+                {
+                    graphics.CopyFromScreen(left, top, 0, 0, new Size(width, height));
+                    copied = true;
+                }
+                catch
+                {
+                    graphics.Clear(Color.Transparent);
+                    IntPtr hdcDest = graphics.GetHdc();
+                    try
+                    {
+                        IntPtr hdcSource = GetDC(IntPtr.Zero);
+                        if (hdcSource != IntPtr.Zero)
+                        {
+                            try
+                            {
+                                copied = BitBlt(hdcDest, 0, 0, width, height, hdcSource, left, top, 0x00CC0020);
+                            }
+                            finally
+                            {
+                                ReleaseDC(IntPtr.Zero, hdcSource);
+                            }
+                        }
+                    }
+                    finally
+                    {
+                        graphics.ReleaseHdc(hdcDest);
+                    }
+                }
+
+                if (!copied)
+                {
+                    graphics.Clear(Color.Transparent);
+                }
+
+                canvas.Save(outputPath, ImageFormat.Png);
+            }
         }
 
         public static void CaptureProcessWindows(int processId, IntPtr mainHandle, int left, int top, int width, int height, string outputPath)
@@ -274,7 +330,12 @@ $intervalMs = 1000.0 / $FrameRate
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 for ($index = 0; $index -lt $frameCount; $index++) {
     $framePath = Join-Path $frameRoot ("frame-{0:00000}.png" -f $index)
-    [ModernWpfRenderedRecorder.Capture]::CaptureProcessWindows($ProcessId, $WindowHandle, $Left, $Top, $Width, $Height, $framePath)
+    if ($CaptureMode -eq "Screen") {
+        [ModernWpfRenderedRecorder.Capture]::CaptureScreenRect($Left, $Top, $Width, $Height, $framePath)
+    }
+    else {
+        [ModernWpfRenderedRecorder.Capture]::CaptureProcessWindows($ProcessId, $WindowHandle, $Left, $Top, $Width, $Height, $framePath)
+    }
 
     $nextDue = ($index + 1) * $intervalMs
     $sleepMs = [int][Math]::Floor($nextDue - $stopwatch.Elapsed.TotalMilliseconds)
@@ -317,6 +378,6 @@ if (!$KeepFrames) {
     FrameRate = $FrameRate
     Rect = "{0},{1},{2},{3}" -f $Left, $Top, $Width, $Height
     Bytes = (Get-Item -LiteralPath $fullOutput).Length
-    Recorder = "RenderedFfmpeg"
+    Recorder = if ($CaptureMode -eq "Screen") { "ScreenFfmpeg" } else { "RenderedFfmpeg" }
     FrameDirectory = if ($KeepFrames) { $frameRoot } else { "" }
 }

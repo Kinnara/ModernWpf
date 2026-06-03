@@ -853,3 +853,38 @@ now `docs/gallery-control-recording-audit.md`.
 - Representative poster frames show the Gallery page, primary flyout, and
   secondary `Resize` / `Move` commands for `CommandBarFlyout`, and the opened
   dropdown list for `ComboBox`.
+
+## Round 30: Split Button Recording Proof
+
+### Scope
+
+Tighten the recording-first audit for the split/dropdown button family:
+
+- `DropDownButton`
+- `SplitButton`
+- `ToggleSplitButton`
+
+### Current Findings
+
+- The first split-button recorder pass produced weak evidence: invoking the
+  primary split-button action could change page content without opening the
+  flyout, so a frame-delta-only pass could be false.
+- The recorder now targets the secondary split-button hit target, records the
+  split control's expand/collapse state, requires expected open elements on
+  both opens, and ignores offscreen UIA matches.
+- Compact flyouts such as `ToggleSplitButton` can have a very small full-frame
+  delta. The run can still pass when decoded frames are reviewed and the
+  manifest shows `Expanded` plus expected open elements on both opens.
+- Screen-backed FFmpeg capture was tested as a diagnostic path, but it captured
+  the Windows background instead of the Gallery window in this Codex desktop
+  session. It is not accepted as proof here; rendered Gallery/popup HWND
+  recordings remain the valid evidence source.
+
+### Verification
+
+- `DropDownButton`: `artifacts/gallery-recordings/20260603-031922-773/DropDownButton/dark-dropdownbutton.mp4`
+- `SplitButton` / `ToggleSplitButton`: `artifacts/gallery-recordings/20260603-034734-786/report.md`
+- Reviewed poster frames:
+  - `artifacts/gallery-recordings/20260603-031922-773/DropDownButton/frames/t4000.png`
+  - `artifacts/gallery-recordings/20260603-034734-786/SplitButton/frames/t4000.png`
+  - `artifacts/gallery-recordings/20260603-034734-786/ToggleSplitButton/frames/t4000.png`
