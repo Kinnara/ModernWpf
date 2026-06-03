@@ -2500,6 +2500,7 @@ function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [s
 function Test-ControlPrefersScreenOpenCapture([string]$control) {
     switch ($control) {
         "TeachingTip" { return $true }
+        "CommandBarFlyout" { return $true }
         "MenuBar" { return $true }
         default { return $false }
     }
@@ -2507,6 +2508,7 @@ function Test-ControlPrefersScreenOpenCapture([string]$control) {
 
 function Test-ControlRequiresPopupWindowOpenProof([string]$control) {
     switch ($control) {
+        "CommandBarFlyout" { return $true }
         "MenuFlyout" { return $true }
         "DropDownButton" { return $true }
         "SplitButton" { return $true }
@@ -2534,6 +2536,20 @@ function Close-PreparedOpenInteractionState($window, [string]$control) {
     }
     catch {
     }
+}
+
+function Open-CommandBarFlyoutSecondaryCommands($window) {
+    $moreButton = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "MoreButton"
+    if ($null -eq $moreButton) {
+        return $false
+    }
+
+    if (Invoke-ElementPatternOnce $window $moreButton) {
+        Start-Sleep -Milliseconds 250
+        return $null -ne (Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move"))
+    }
+
+    return $false
 }
 
 function Get-ElementNativeWindowHandle($element) {
@@ -3154,6 +3170,11 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         $screenCaptureTrusted = $screenCaptureTrustDelta.Comparable -and $screenCaptureTrustDelta.MeanDelta -lt 25.0
     }
     $invoked = Invoke-ElementUntilOpen $window $triggerElement $openNames $control
+    $commandBarFlyoutSecondaryExpanded = $false
+    if ($control -eq "CommandBarFlyout" -and $invoked) {
+        $commandBarFlyoutSecondaryExpanded = Open-CommandBarFlyoutSecondaryCommands $window
+    }
+
     $frames = New-Object System.Collections.Generic.List[object]
     $frameDelays = @(0, 150, 300, 450)
     $previousDelay = 0
@@ -3189,7 +3210,15 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     $openPopupNonBlank = $false
     $openPopupScreenshot = ""
     $openPopupSize = $null
-    $openElement = Find-OpenInteractionElement $window $showButton $openNames $control
+    $openElement = if ($control -eq "CommandBarFlyout") {
+        Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move")
+    }
+    else {
+        Find-OpenInteractionElement $window $showButton $openNames $control
+    }
+    if ($null -eq $openElement) {
+        $openElement = Find-OpenInteractionElement $window $showButton $openNames $control
+    }
     if ($null -ne $openElement) {
         $treePath = Join-Path $caseDir ("{0}-{1}-open.uia.txt" -f $app.ToLowerInvariant(), $control)
         Write-UiaTree $openElement $treePath 3
@@ -3456,6 +3485,10 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
         $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose an opened menu item." } elseif (!$visualOpened) { "$control exposed opened menu UIA but no nonblank popup item pixels were captured." } else { "" }
     }
+    elseif ($control -eq "CommandBarFlyout") {
+        $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif (!$commandBarFlyoutSecondaryExpanded) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
+        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif (!$commandBarFlyoutSecondaryExpanded) { "$control primary flyout opened, but the MoreButton did not expose Resize/Move secondary commands." } elseif ($null -eq $openElement) { "$control did not expose secondary command UIA after opening MoreButton." } elseif (!$visualOpened) { "$control exposed secondary command UIA but no nonblank popup pixels were captured." } else { "" }
+    }
     elseif (Test-ControlRequiresPopupWindowOpenProof $control) {
         $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
         $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose opened popup content." } elseif (!$visualOpened) { "$control exposed opened popup UIA but no nonblank popup window was captured." } else { "" }
@@ -3499,6 +3532,7 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         OpenPopupScreenshot = $openPopupScreenshot
         OpenPopupNonBlank = $openPopupNonBlank
         OpenPopupSize = $openPopupSize
+        CommandBarFlyoutSecondaryExpanded = $commandBarFlyoutSecondaryExpanded
         SelectedFrameDelayMs = $(if ($null -ne $selectedFrame) { $selectedFrame.DelayMs } else { $null })
         SelectedFrameScreenshot = $(if ($null -ne $selectedFrame) { $selectedFrame.Screenshot } else { "" })
         Notes = $notes

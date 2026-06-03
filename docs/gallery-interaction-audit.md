@@ -24,6 +24,7 @@ Find and fix WPF Gallery issues that appear during real user interaction, with e
 | Fixed in round 5 | Click-open visual checks | `ContentDialog`, `Flyout`, `Popup`, `MenuFlyout`, and `DropDownButton` had stable static rendering checks but no actual open-state verification under `-IncludeInteractions`. | The harness only opened `TeachingTip` and `CommandBarFlyout`; static route checks could not catch broken click/open paths for common popup controls. |
 | Fixed in round 6 | SplitButton and ToggleSplitButton click-open checks | Opening the secondary flyout target needs a dedicated path; a naive center click invokes the primary action, while recursive UIA popup searches hang. | Round 5 intentionally left these out; round 6 uses a bounded secondary-segment click and visual-delta verification without walking the popup UIA tree. |
 | Fixed in round 20 | Gallery shell NavigationView expanded layout | Repeated click sequences could still leave an expanded parent consuming a large blank pane area while child rows were missing or pushed away. | Earlier shell checks asserted expansion state and a loose minimum height, but did not require visible child rows, bounded expanded height, or bounded sibling spacing. |
+| Fixed in round 27 | CommandBarFlyout interaction visual check | The harness reported CommandBarFlyout open interaction as passed while its saved open crop contained no popup pixels and did not prove the ellipsis secondary commands. | Main-window captures miss WPF popup HWNDs, and the old check accepted primary command UIA like `Share` without opening `MoreButton` or capturing the popup window. |
 
 ## Round 1: NavigationView Click Expansion
 
@@ -751,3 +752,29 @@ Verify the current tree after the Round 25 fixes across the full Gallery interac
 - Focused shell NavigationView audit:
   - Light shell click sweep: `artifacts/wpf-gallery-visual-audit/20260602-130641-621-91832/report.md`
   - Dark shell click sweep: `artifacts/wpf-gallery-visual-audit/20260602-130721-965-74900/report.md`
+
+## Round 27: CommandBarFlyout Popup Proof
+
+### Scope
+
+Use the FFmpeg-backed recorder to inspect the live `CommandBarFlyout` interaction, then tighten the automated proof for:
+
+- `CommandBarFlyout`
+- Shared popup-window open-interaction capture
+
+### Current Findings
+
+- Live MP4 recordings showed the sample can open the primary command strip, the ellipsis button, and the secondary `Resize` / `Move` commands.
+- The focused visual check still gave a false pass before this round: `artifacts/visual-checks/20260603-010527-061-123604/report.md` recorded `OpenElementName = Share` and `OpenDelta.MeanDelta = 0.0`, while the saved open crop was blank.
+- The gap was in the harness. `Capture-Window` only captured the main Gallery HWND, so WPF popup HWND pixels were excluded. The check also did not click `MoreButton`, so it could not catch broken secondary command expansion.
+- `CommandBarFlyout` now uses screen capture for open frames, requires popup-window proof, invokes `MoreButton`, and only passes when `Resize` or `Move` is exposed and the popup HWND capture is nonblank.
+- The report now records `CommandBarFlyoutSecondaryExpanded` so the ellipsis expansion proof is visible in JSON.
+
+### Verification
+
+- Recorder evidence:
+  - Primary strip: `artifacts/window-recordings/commandbarflyout-repro.mp4`
+  - Ellipsis secondary commands: `artifacts/window-recordings/commandbarflyout-more-repro.mp4`
+  - Right-click expanded state: `artifacts/window-recordings/commandbarflyout-rightclick-repro.mp4`
+- Visual audit:
+  - Focused dark `CommandBarFlyout` run after the fix: `artifacts/visual-checks/20260603-011916-279-99044/report.md` (`OpenElementName = Resize`, `OpenPopupNonBlank = true`, `CommandBarFlyoutSecondaryExpanded = true`, crop source `PopupWindow`)
