@@ -1117,3 +1117,53 @@ static rendering:
   - `InfoBar`: `Is Open` changed from `On` to `Off`.
   - `ProgressRing`: `Progress Options` changed from `On` to `Off`.
   - `AnnotatedScrollBar`: linked `ScrollViewer` vertical scroll percent changed from `0` to `55`.
+
+## Round 36: Dialog, Flyout, and Menu Repeat-Open Proof
+
+### Scope
+
+Record repeat-open coverage for the dialog/flyout/menu controls that use the
+same failure-prone open, close, and second-open flow as `CommandBarFlyout`:
+
+- `TeachingTip`
+- `ContentDialog`
+- `Flyout`
+- `Popup`
+- `MenuBar`
+- `MenuFlyout`
+
+### Current Findings
+
+- The first batch passed `ContentDialog`, `Flyout`, `Popup`, `MenuBar`, and
+  `MenuFlyout`, but failed `TeachingTip` even though the decoded frames showed
+  the tip opening. That was a recorder false negative.
+- `TeachingTip` exposes its visible title/subtitle as text, not as an
+  interactive element, and the recorder also expected a `Try compact mode`
+  action that is not present in the targeted sample.
+- The reviewed clips/frames did not show repeat-open crashes or missing second
+  opens for this batch. Low full-frame deltas for popup/menu controls are backed
+  by first-open and second-open UIA evidence in the manifest.
+
+### Changes
+
+- Updated `Record-GalleryControlInteractions.ps1` so `TeachingTip` evidence
+  uses the actual targeted-sample title/subtitle/close text.
+- Added a TeachingTip-specific open-evidence path that accepts the TeachingTip
+  automation id or visible noninteractive text instead of requiring an
+  interactive menu/button element.
+
+### Verification
+
+- Batch recording report for the five already-passing controls:
+  `artifacts/gallery-recordings/20260603-063825-551/report.md`
+- Focused TeachingTip rerun after the recorder fix:
+  `artifacts/gallery-recordings/20260603-064740-962/report.md`
+- Reviewed contact sheet:
+  `artifacts/gallery-recordings/20260603-063825-551/dialog-flyout-menu-review-contact-sheet.png`
+- Manifest evidence:
+  - `TeachingTip`: first and second open element evidence true after the focused rerun.
+  - `ContentDialog`: first and second open element evidence true.
+  - `Flyout`: first and second open element evidence true.
+  - `Popup`: first and second open element evidence true.
+  - `MenuBar`: first and second open element evidence true.
+  - `MenuFlyout`: first and second open element evidence true with `Expanded` state.

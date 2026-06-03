@@ -44,7 +44,7 @@ record the Windows background instead of the Gallery window.
 | Area | Control | Route or Scenario | Recording Status | Fix Status | Latest Evidence | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | Shell | Navigation pane | Home, Design Guidance, Samples expand/collapse | Pending | Fixed earlier, needs new recording pass |  | Must cover repeated expand/collapse and child visibility. |
-| Dialogs & flyouts | TeachingTip | `item/TeachingTip` | Pending | Pending |  | Open, close, second open required. |
+| Dialogs & flyouts | TeachingTip | `item/TeachingTip` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260603-064740-962/TeachingTip/dark-teachingtip.mp4` | Manifest records first and second open evidence; reviewed contact sheet shows the TeachingTip visible after repeat open. |
 | Basic input | Button | `item/Button` | Recorded | Fixed | `artifacts/gallery-recordings/20260603-050244-858/Button/dark-button.mp4` | Recorder toggles `Disable button`; manifest records the primary button changing from `Enabled` to `Disabled`, and reviewed frame `t3000.png` shows the disabled button. |
 | Basic input | CheckBox | `item/CheckBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/CheckBox/dark-checkbox.mp4` | Manifest records `Off` to `On`; reviewed frame shows checked state. |
 | Basic input | ComboBox | `item/ComboBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-030922-916/ComboBox/dark-combobox.mp4` | Rendered MP4 shows dropdown open and second-open path. |
@@ -79,11 +79,11 @@ record the Windows background instead of the Gallery window.
 | Navigation | Pivot | `item/Pivot` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/Pivot/dark-pivot.mp4` | Manifest records `Unread` selected and expected content `unread emails go here.`; reviewed frame `t7500.png` shows the selected tab/content. |
 | Navigation | SelectorBar | `item/SelectorBar` | Pending | Pending |  | Selection required after first static pass. |
 | Navigation | NavigationView | `item/NavigationView` | Pending | Pending |  | Sample nav interaction required; shell pane tracked separately. |
-| Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Pending | Pending |  | Open, close, second open required. |
-| Dialogs & flyouts | Flyout | `item/Flyout` | Pending | Pending |  | Open, close, second open required. |
-| Dialogs & flyouts | Popup | `item/Popup` | Pending | Pending |  | Open, close, second open required. |
-| Menus & toolbars | MenuBar | `item/MenuBar` | Pending | Pending |  | Open, close, second open required. |
-| Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Pending | Pending |  | Open, close, second open required. |
+| Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/ContentDialog/dark-contentdialog.mp4` | Manifest records first and second dialog opens; reviewed contact sheet shows the dialog visible on sampled frames. |
+| Dialogs & flyouts | Flyout | `item/Flyout` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/Flyout/dark-flyout.mp4` | Manifest records first and second flyout opens; reviewed contact sheet shows the confirmation flyout on sampled frames. |
+| Dialogs & flyouts | Popup | `item/Popup` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/Popup/dark-popup.mp4` | Manifest records first and second popup opens despite low full-frame delta; reviewed contact sheet shows `Simple Popup`. |
+| Menus & toolbars | MenuBar | `item/MenuBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/MenuBar/dark-menubar.mp4` | Manifest records first and second menu opens despite low full-frame delta; reviewed contact sheet shows the `File` menu. |
+| Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/MenuFlyout/dark-menuflyout.mp4` | Manifest records first and second flyout opens with `Expanded` state; reviewed contact sheet shows the sort menu. |
 | Menus & toolbars | SwipeControl | `item/SwipeControl` | Pending | Pending |  | Swipe gesture required after first static pass. |
 | Menus & toolbars | AppBarButton | `item/AppBarButton` | Pending | Pending |  | Static route plus primary click review. |
 | Menus & toolbars | AppBarSeparator | `item/AppBarSeparator` | Pending | Pending |  | Static route. |

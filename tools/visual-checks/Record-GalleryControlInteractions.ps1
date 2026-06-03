@@ -539,7 +539,7 @@ function Test-ControlSupportsOpenInteraction([string]$control) {
 
 function Get-OpenInteractionNames([string]$control) {
     switch ($control) {
-        "TeachingTip" { return @("This is the title", "Try compact mode", "And this is the subtitle") }
+        "TeachingTip" { return @("This is the title", "And this is the subtitle", "Close") }
         "ComboBox" { return @("Blue", "Green", "Red", "Yellow") }
         "ContentDialog" { return @("Save your work?", "Upload your content to the cloud.", "Save", "Don't Save", "Cancel") }
         "Flyout" { return @("All items will be removed. Do you want to continue?", "Yes, empty my cart") }
@@ -1108,6 +1108,22 @@ function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleEle
 function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [string]$control) {
     if ($openNames.Count -eq 0) {
         return $null
+    }
+
+    if ($control -eq "TeachingTip") {
+        $tip = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GallerySample_TeachingTip_TeachingTip"
+        if ($null -ne $tip) {
+            try {
+                $rect = $tip.Current.BoundingRectangle
+                if (!$tip.Current.IsOffscreen -and $rect.Width -gt 0 -and $rect.Height -gt 0) {
+                    return $tip
+                }
+            }
+            catch {
+            }
+        }
+
+        return Find-ElementByNameInProcess $window.Current.ProcessId $openNames
     }
 
     if ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") {
