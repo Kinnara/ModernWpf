@@ -333,6 +333,7 @@ namespace ModernWpf.Gallery.Pages
             {
                 clicks += 1;
                 output.Text = "Number of clicks: " + clicks;
+                AutomationProperties.SetHelpText(output, output.Text);
 
 #if !NET462
                 var peer = FrameworkElementAutomationPeer.FromElement(output) ??

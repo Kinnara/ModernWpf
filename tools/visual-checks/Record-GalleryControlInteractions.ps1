@@ -1200,6 +1200,23 @@ function Get-ElementText($element) {
     }
 }
 
+function Get-ElementHelpText($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $value = $element.GetCurrentPropertyValue([System.Windows.Automation.AutomationElement]::HelpTextProperty)
+        if ($null -ne $value) {
+            return [string]$value
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
 function Get-ElementItemStatus($element) {
     if ($null -eq $element) {
         return ""
@@ -2132,24 +2149,36 @@ function Get-OutputInteractionOutputAutomationId([string]$control) {
 
 function Get-OutputInteractionExpectedOutput([string]$control) {
     switch ($control) {
+        "RepeatButton" { return "Number of clicks: 1" }
         "AppBarButton" { return "You clicked: Button1" }
         default { return "" }
     }
+}
+
+function Get-OutputInteractionElementText($element, [string]$control) {
+    if ($control -eq "RepeatButton") {
+        $helpText = Get-ElementHelpText $element
+        if (![string]::IsNullOrWhiteSpace($helpText)) {
+            return $helpText
+        }
+    }
+
+    return Get-ElementText $element
 }
 
 function Invoke-OutputInteraction($window, [string]$control, $sampleElement) {
     $outputAutomationId = Get-OutputInteractionOutputAutomationId $control
     $expectedOutput = Get-OutputInteractionExpectedOutput $control
     $output = Find-ElementByAutomationIdInProcess $window.Current.ProcessId $outputAutomationId
-    $before = Get-ElementText $output
+    $before = Get-OutputInteractionElementText $output $control
     $invoked = if ($control -eq "RepeatButton") {
-        Hold-Element $window $sampleElement 700
+        Invoke-ElementOnce $window $sampleElement
     }
     else {
         Invoke-ElementOnce $window $sampleElement
     }
     Start-Sleep -Milliseconds 250
-    $after = Get-ElementText $output
+    $after = Get-OutputInteractionElementText $output $control
 
     if ($before -eq $after) {
         try {
@@ -2159,7 +2188,7 @@ function Invoke-OutputInteraction($window, [string]$control, $sampleElement) {
                     $pattern.Invoke()
                     $invoked = $true
                     Start-Sleep -Milliseconds 150
-                    $after = Get-ElementText $output
+                    $after = Get-OutputInteractionElementText $output $control
                 }
             }
         }

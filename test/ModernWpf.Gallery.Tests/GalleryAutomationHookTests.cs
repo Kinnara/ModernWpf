@@ -2634,8 +2634,10 @@ namespace ModernWpf.Gallery.Tests
 
                     button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, button));
                     Assert.AreEqual("Number of clicks: 1", output.Text);
+                    Assert.AreEqual("Number of clicks: 1", AutomationProperties.GetHelpText(output));
                     button.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, button));
                     Assert.AreEqual("Number of clicks: 2", output.Text);
+                    Assert.AreEqual("Number of clicks: 2", AutomationProperties.GetHelpText(output));
                 }
                 finally
                 {

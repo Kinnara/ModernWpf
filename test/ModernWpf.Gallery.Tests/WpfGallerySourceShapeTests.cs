@@ -3182,6 +3182,36 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryInteractionRecorderReadsRepeatButtonOutputFromHelpText()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Get-ElementHelpText($element)",
+                "[System.Windows.Automation.AutomationElement]::HelpTextProperty",
+                "function Get-OutputInteractionExpectedOutput([string]$control)",
+                "\"RepeatButton\" { return \"Number of clicks: 1\" }",
+                "function Get-OutputInteractionElementText($element, [string]$control)",
+                "if ($control -eq \"RepeatButton\")",
+                "$helpText = Get-ElementHelpText $element",
+                "return $helpText",
+                "return Get-ElementText $element");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-OutputInteraction($window, [string]$control, $sampleElement)",
+                "$expectedOutput = Get-OutputInteractionExpectedOutput $control",
+                "$before = Get-OutputInteractionElementText $output $control",
+                "Invoke-ElementOnce $window $sampleElement",
+                "$after = Get-OutputInteractionElementText $output $control",
+                "OutputMatched = ([string]::IsNullOrWhiteSpace($expectedOutput) -or $after -eq $expectedOutput)");
+        }
+
+        [TestMethod]
         public void GalleryVisualChecksTypesAutoSuggestBoxAndChoosesSuggestion()
         {
             var source = File.ReadAllText(Path.Combine(
