@@ -3819,6 +3819,76 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void VisualArtifactsCanPreserveIndeterminateProgressRingAnimation()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var artifactDirectory = Path.Combine(Path.GetTempPath(), "ModernWpfGalleryTests", Path.GetRandomFileName());
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--preserve-animated-visuals", "--visual-artifact-dir", artifactDirectory }));
+
+                var progressRing = new Mux.ProgressRing
+                {
+                    Width = 48,
+                    Height = 48,
+                    IsActive = true,
+                    IsIndeterminate = true
+                };
+
+                var contentHost = new Grid
+                {
+                    Width = 120,
+                    Height = 120,
+                    Background = Brushes.White
+                };
+                AutomationProperties.SetAutomationId(contentHost, "GalleryContentHost");
+                contentHost.Children.Add(progressRing);
+
+                var window = new Window
+                {
+                    Width = 160,
+                    Height = 160,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = contentHost
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    GalleryDiagnostics.WriteVisualArtifacts(contentHost);
+
+                    progressRing.ApplyTemplate();
+                    var ring = progressRing.Template.FindName("Ring", progressRing) as ProgressRingIndicator;
+                    Assert.IsNotNull(ring);
+
+                    var valueSource = DependencyPropertyHelper.GetValueSource(ring, ProgressRingIndicator.IndeterminateStartAngleProperty);
+                    Assert.IsTrue(valueSource.IsAnimated, "ProgressRing animation should stay active when --preserve-animated-visuals is set.");
+
+                    var contentHostArtifact = Path.Combine(artifactDirectory, "GalleryContentHost.png");
+                    Assert.IsTrue(File.Exists(contentHostArtifact), contentHostArtifact + " was not written.");
+                    Assert.IsTrue(HasVisibleRgbPixels(contentHostArtifact), contentHostArtifact + " has no visible RGB content.");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    if (Directory.Exists(artifactDirectory))
+                    {
+                        Directory.Delete(artifactDirectory, recursive: true);
+                    }
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void TopLevelPagesWriteContentRootPaneVisualArtifacts()
         {
             WpfTestHost.Run(() =>

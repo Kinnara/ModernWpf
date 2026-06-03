@@ -22,6 +22,7 @@ namespace ModernWpf.Gallery.Tests
             {
                 "--visual-test",
                 "--open-interactions",
+                "--preserve-animated-visuals",
                 "--route", "category/DialogsAndFlyouts",
                 "--theme=Dark",
                 "--color-subpage", "HighContrast",
@@ -30,6 +31,7 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.IsTrue(options.VisualTestMode);
             Assert.IsTrue(options.OpenInteractions);
+            Assert.IsTrue(options.PreserveAnimatedVisuals);
             Assert.AreEqual("category/DialogsAndFlyouts", options.InitialRoute);
             Assert.AreEqual("Dark", options.Theme);
             Assert.AreEqual("HighContrast", options.ColorSubpage);

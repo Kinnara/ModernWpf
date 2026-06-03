@@ -10,6 +10,7 @@ namespace ModernWpf.Gallery.Testing
 
         public bool VisualTestMode { get; private set; }
         public bool OpenInteractions { get; private set; }
+        public bool PreserveAnimatedVisuals { get; private set; }
         public string ArtifactDirectory { get; private set; }
         public string InitialRoute { get; private set; }
         public string Theme { get; private set; }
@@ -41,6 +42,12 @@ namespace ModernWpf.Gallery.Testing
                 if (IsFlag(arg, "--open-interactions"))
                 {
                     options.OpenInteractions = true;
+                    continue;
+                }
+
+                if (IsFlag(arg, "--preserve-animated-visuals"))
+                {
+                    options.PreserveAnimatedVisuals = true;
                     continue;
                 }
 

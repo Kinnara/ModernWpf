@@ -21,6 +21,7 @@ namespace ModernWpf.Gallery.Testing
 
         public static bool IsEnabled { get; private set; }
         public static bool OpenInteractions { get; private set; }
+        public static bool PreserveAnimatedVisuals { get; private set; }
         public static string ArtifactDirectory { get; private set; }
         public static string Theme { get; private set; }
         public static string ColorSubpage { get; private set; }
@@ -39,6 +40,7 @@ namespace ModernWpf.Gallery.Testing
             {
                 IsEnabled = options.VisualTestMode;
                 OpenInteractions = options.OpenInteractions;
+                PreserveAnimatedVisuals = options.PreserveAnimatedVisuals;
                 ArtifactDirectory = options.ArtifactDirectory;
                 Theme = options.Theme;
                 ColorSubpage = options.ColorSubpage;
@@ -56,6 +58,7 @@ namespace ModernWpf.Gallery.Testing
             {
                 IsEnabled = false;
                 OpenInteractions = false;
+                PreserveAnimatedVisuals = false;
                 ArtifactDirectory = null;
                 Theme = null;
                 ColorSubpage = null;
@@ -151,7 +154,11 @@ namespace ModernWpf.Gallery.Testing
             try
             {
                 Directory.CreateDirectory(ArtifactDirectory);
-                StabilizeAnimatedVisualState(root);
+                if (!PreserveAnimatedVisuals)
+                {
+                    StabilizeAnimatedVisualState(root);
+                }
+
                 WriteVisualArtifactsCore(root);
             }
             catch (Exception ex)

@@ -42,6 +42,9 @@ pixels because layered-window transparency can otherwise show up as black
 backplates in rendered recordings. `-CaptureMode Screen` is available for
 diagnostics but is not accepted as proof in the current Codex desktop session
 because it can record the Windows background instead of the Gallery window.
+Controls that require motion proof can opt into preserved animations and record
+`AnimationEvidence` in the manifest while the normal visual-test artifact path
+keeps indeterminate visuals stabilized.
 
 ## Control Matrix
 
@@ -73,7 +76,7 @@ because it can record the Windows background instead of the Gallery window.
 | Windowing | TitleBar | `item/TitleBar` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260603-082547-581/TitleBar/dark-titlebar.mp4` | Added and required `GallerySample_TitleBar_SearchBox`; reviewed contact sheet shows the preview title bar and options. |
 | Status & info | InfoBadge | `item/InfoBadge` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260603-082547-581/InfoBadge/dark-infobadge.mp4` | Added and required `GallerySample_InfoBadge_NavigationView`; reviewed contact sheet shows the NavigationView badge and style samples. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-062558-459/InfoBar/dark-infobar.mp4` | Manifest records `Is Open` from `On` to `Off`; reviewed contact sheet shows the first InfoBar closed. |
-| Status & info | ProgressRing | `item/ProgressRing` | Recorded (active toggle) | Animation proof pending | `artifacts/gallery-recordings/20260603-062558-459/ProgressRing/dark-progressring.mp4` | Manifest records `Progress Options` from `On` to `Off`; reviewed contact sheet shows the indeterminate ring hidden after deactivation. Rendered frames did not prove pre-toggle animation, and screen capture diagnostics recorded the desktop background instead of Gallery. |
+| Status & info | ProgressRing | `item/ProgressRing` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260603-182335-320/ProgressRing/dark-progressring.mp4` | Manifest records `AnimationEvidence: true` with early-frame delta `0.069`, plus `Progress Options` from `On` to `Off`; reviewed frames show the indeterminate arc at different angles before deactivation. |
 | Scrolling | PipsPager | `item/PipsPager` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/PipsPager/dark-pipspager.mp4` | Manifest records page selection and pager item status changing to `LandscapeImage2.jpg`; reviewed frame `t7500.png` shows the second gallery image. |
 | Scrolling | AnnotatedScrollBar | `item/AnnotatedScrollBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-062558-459/AnnotatedScrollBar/dark-annotatedscrollbar.mp4` | Manifest records the linked ScrollViewer vertical scroll percent from `0` to `55`; reviewed contact sheet shows the list scrolled to the magenta section. |
 | Collections | GridView | `item/GridView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/GridView/dark-gridview.mp4` | Manifest records `You clicked Item 1.` after item activation; reviewed frame `t7500.png` shows the output text. |

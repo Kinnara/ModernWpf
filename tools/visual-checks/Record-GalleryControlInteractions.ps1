@@ -648,6 +648,10 @@ function Test-ControlSupportsScrollInteraction([string]$control) {
     }
 }
 
+function Test-ControlRequiresAnimatedVisualProof([string]$control) {
+    return $control -eq "ProgressRing"
+}
+
 function Test-ControlSupportsTextInteraction([string]$control) {
     return $control -eq "AutoSuggestBox"
 }
@@ -2460,6 +2464,43 @@ function Get-MaxFrameDelta($frames) {
     return [Math]::Round(($deltas | Measure-Object -Maximum).Maximum, 3)
 }
 
+function Get-EarlyFrameDelta($frames) {
+    $paths = @(
+        $frames |
+            Where-Object { $_.Extracted } |
+            Sort-Object Name |
+            Select-Object -First 4 |
+            ForEach-Object { $_.Path }
+    )
+    if ($paths.Count -lt 2) {
+        return $null
+    }
+
+    $deltas = New-Object System.Collections.Generic.List[double]
+    for ($i = 0; $i -lt $paths.Count; $i++) {
+        for ($j = $i + 1; $j -lt $paths.Count; $j++) {
+            $delta = Compare-ImageMeanDelta $paths[$i] $paths[$j]
+            if ($null -ne $delta) {
+                $deltas.Add([double]$delta)
+            }
+        }
+    }
+
+    if ($deltas.Count -eq 0) {
+        return $null
+    }
+
+    return [Math]::Round(($deltas | Measure-Object -Maximum).Maximum, 3)
+}
+
+function Test-AnimationEvidence([string]$control, $earlyFrameDelta) {
+    if (!(Test-ControlRequiresAnimatedVisualProof $control) -or $null -eq $earlyFrameDelta) {
+        return $false
+    }
+
+    return [double]$earlyFrameDelta -ge 0.02
+}
+
 function Get-NonBlankFrameCount($frames) {
     $count = 0
     foreach ($frame in $frames) {
@@ -2636,6 +2677,10 @@ foreach ($control in $Controls) {
 
     try {
         $args = @("--visual-test", "--route", $route, "--theme", $Theme, "--visual-artifact-dir", $artifactDir)
+        if (Test-ControlRequiresAnimatedVisualProof $control) {
+            $args += "--preserve-animated-visuals"
+        }
+
         $process = Start-Process -FilePath $GalleryExe -ArgumentList $args -PassThru
         $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf Gallery window for $control" -Probe {
             $process.Refresh()
@@ -2719,6 +2764,8 @@ foreach ($control in $Controls) {
     }
 
     $maxFrameDelta = Get-MaxFrameDelta $frames
+    $animationFrameDelta = if (Test-ControlRequiresAnimatedVisualProof $control) { Get-EarlyFrameDelta $frames } else { $null }
+    $animationEvidence = Test-AnimationEvidence $control $animationFrameDelta
     $openRepeatEvidence = Test-OpenRepeatEvidence $interactionResult
     $stateEvidence = Test-StateEvidence $interactionResult
     $valueEvidence = Test-ValueEvidence $interactionResult
@@ -2780,6 +2827,15 @@ foreach ($control in $Controls) {
         $notes.Add("Breadcrumb interaction did not remove the trailing folders after clicking Folder1.")
     }
 
+    if ($status -eq "Passed" -and (Test-ControlRequiresAnimatedVisualProof $control) -and !$animationEvidence) {
+        $status = "NeedsReview"
+        $notes.Add("Animated visual proof was not detected in early poster frames.")
+    }
+
+    if ($status -eq "Passed" -and $animationEvidence) {
+        $notes.Add(("Animated visual proof delta {0} was detected in early poster frames." -f $animationFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture)))
+    }
+
     if ($status -eq "Passed" -and
         $interactionKind -ne "Static" -and
         $null -ne $maxFrameDelta -and
@@ -2830,6 +2886,8 @@ foreach ($control in $Controls) {
         RecorderResult = $recordingResult
         Frames = $frames
         MaxFrameDelta = $maxFrameDelta
+        AnimationFrameDelta = $animationFrameDelta
+        AnimationEvidence = $animationEvidence
         OpenRepeatEvidence = $openRepeatEvidence
         StateEvidence = $stateEvidence
         ValueEvidence = $valueEvidence
