@@ -443,6 +443,24 @@ function Find-InteractiveElementByNameInProcess([int]$processId, [string[]]$name
     return $null
 }
 
+function Test-AutomationElementUsable($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        if ($element.Current.IsOffscreen) {
+            return $false
+        }
+
+        $rect = $element.Current.BoundingRectangle
+        return $rect.Width -gt 0 -and $rect.Height -gt 0
+    }
+    catch {
+        return $false
+    }
+}
+
 function Find-ElementsByNameInProcess([int]$processId, [string[]]$names) {
     $matches = New-Object System.Collections.Generic.List[object]
     $condition = New-Object System.Windows.Automation.PropertyCondition(
@@ -475,6 +493,94 @@ function Find-ElementByAutomationIdInProcess([int]$processId, [string]$automatio
             return $match
         }
     }
+
+    return $null
+}
+
+function Find-TopLevelElementByNativeWindowHandleInProcess([int]$processId, [int]$nativeWindowHandle) {
+    if ($nativeWindowHandle -eq 0) {
+        return $null
+    }
+
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($candidateWindow in $windows) {
+        try {
+            if ([int]$candidateWindow.Current.NativeWindowHandle -eq $nativeWindowHandle) {
+                return $candidateWindow
+            }
+        }
+        catch {
+        }
+    }
+
+    return $null
+}
+
+function Find-ElementByAutomationIdInPopupWindows($window, [string]$automationId) {
+    if ($null -eq $window) {
+        return $null
+    }
+
+    $mainHandle = [int]$window.Current.NativeWindowHandle
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $window.Current.ProcessId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($candidateWindow in $windows) {
+        try {
+            if ([int]$candidateWindow.Current.NativeWindowHandle -eq $mainHandle) {
+                continue
+            }
+        }
+        catch {
+            continue
+        }
+
+        $match = Find-DescendantByAutomationId $candidateWindow $automationId
+        if (Test-AutomationElementUsable $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
+function Find-CommandBarFlyoutMoreButton($window) {
+    $primaryCommand = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Share", "Save", "Delete")
+    if ($null -ne $primaryCommand) {
+        $popupHandle = Get-ElementNativeWindowHandle $primaryCommand
+        if ($popupHandle -ne [IntPtr]::Zero -and [int]$popupHandle -ne [int]$window.Current.NativeWindowHandle) {
+            $popupWindow = Find-TopLevelElementByNativeWindowHandleInProcess $window.Current.ProcessId ([int]$popupHandle)
+            if ($null -ne $popupWindow) {
+                $moreButton = Find-DescendantByAutomationId $popupWindow "MoreButton"
+                if (Test-AutomationElementUsable $moreButton) {
+                    return $moreButton
+                }
+            }
+        }
+    }
+
+    $moreButton = Find-ElementByAutomationIdInPopupWindows $window "MoreButton"
+    if (Test-AutomationElementUsable $moreButton) {
+        return $moreButton
+    }
+
+    return Find-ElementByAutomationIdInProcess $window.Current.ProcessId "MoreButton"
+}
+
+function Wait-ForInteractiveElementByNameInProcess([int]$processId, [string[]]$names, [int]$timeoutMilliseconds) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
+    do {
+        $element = Find-InteractiveElementByNameInProcess $processId $names
+        if ($null -ne $element) {
+            return $element
+        }
+
+        Start-Sleep -Milliseconds 50
+    } while ((Get-Date) -lt $deadline)
 
     return $null
 }
@@ -2493,14 +2599,13 @@ function Close-PreparedOpenInteractionState($window, [string]$control) {
 }
 
 function Open-CommandBarFlyoutSecondaryCommands($window) {
-    $moreButton = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "MoreButton"
+    $moreButton = Find-CommandBarFlyoutMoreButton $window
     if ($null -eq $moreButton) {
         return $false
     }
 
     if (Invoke-ElementPatternOnce $window $moreButton) {
-        Start-Sleep -Milliseconds 250
-        return $null -ne (Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move"))
+        return $null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 1000)
     }
 
     return $false
@@ -3386,7 +3491,13 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
             }
         }
         elseif (Test-ControlRequiresPopupWindowOpenProof $control) {
-            $visualOpened = $openPopupNonBlank
+            $referencePopupCropNonBlank =
+                $app -ne "ModernWpf" -and
+                $null -ne $crop -and
+                $crop.Found -and
+                ![string]::IsNullOrEmpty($crop.Screenshot) -and
+                (Test-ImageNotBlank $crop.Screenshot)
+            $visualOpened = $openPopupNonBlank -or $referencePopupCropNonBlank
             if ($openPopupNonBlank) {
                 $crop = [ordered]@{
                     Found = $true

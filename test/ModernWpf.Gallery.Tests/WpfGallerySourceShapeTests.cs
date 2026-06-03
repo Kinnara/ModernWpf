@@ -2771,6 +2771,20 @@ namespace ModernWpf.Gallery.Tests
                 "return $element");
             AssertContainsInOrder(
                 source,
+                "function Test-AutomationElementUsable($element)",
+                "$element.Current.IsOffscreen",
+                "function Find-ElementByAutomationIdInPopupWindows($window, [string]$automationId)",
+                "$candidateWindow.Current.NativeWindowHandle -eq $mainHandle",
+                "Find-DescendantByAutomationId $candidateWindow $automationId",
+                "function Find-CommandBarFlyoutMoreButton($window)",
+                "Find-InteractiveElementByNameInProcess $window.Current.ProcessId @(\"Share\", \"Save\", \"Delete\")",
+                "$popupHandle = Get-ElementNativeWindowHandle $primaryCommand",
+                "Find-TopLevelElementByNativeWindowHandleInProcess $window.Current.ProcessId ([int]$popupHandle)",
+                "Find-DescendantByAutomationId $popupWindow \"MoreButton\"",
+                "Find-ElementByAutomationIdInPopupWindows $window \"MoreButton\"",
+                "function Wait-ForInteractiveElementByNameInProcess([int]$processId, [string[]]$names, [int]$timeoutMilliseconds)");
+            AssertContainsInOrder(
+                source,
                 "function Find-ComboBoxOpenElement($window, $element, [string[]]$openNames)",
                 "Get-ExpandCollapseStateName $element",
                 "Find-ElementsByNameInProcess $window.Current.ProcessId $openNames",
@@ -2800,9 +2814,9 @@ namespace ModernWpf.Gallery.Tests
                 "[System.Windows.Automation.WindowPattern]::Pattern",
                 "$pattern.Close()",
                 "function Open-CommandBarFlyoutSecondaryCommands($window)",
-                "Find-ElementByAutomationIdInProcess $window.Current.ProcessId \"MoreButton\"",
+                "Find-CommandBarFlyoutMoreButton $window",
                 "Invoke-ElementPatternOnce $window $moreButton",
-                "Find-InteractiveElementByNameInProcess $window.Current.ProcessId @(\"Resize\", \"Move\")",
+                "Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @(\"Resize\", \"Move\") 1000",
                 "function Get-ElementNativeWindowHandle($element)",
                 "$handle = [int]$candidate.Current.NativeWindowHandle",
                 "return [IntPtr]$handle",
@@ -2857,7 +2871,9 @@ namespace ModernWpf.Gallery.Tests
                 "$comboBoxOpenVisualDelta.MeanDelta -gt 5.0",
                 "Source = \"PopupWindow\"",
                 "elseif (Test-ControlRequiresPopupWindowOpenProof $control)",
-                "$visualOpened = $openPopupNonBlank",
+                "$referencePopupCropNonBlank =",
+                "$app -ne \"ModernWpf\" -and",
+                "$visualOpened = $openPopupNonBlank -or $referencePopupCropNonBlank",
                 "$status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { \"Failed\" } elseif (!$invoked) { \"Failed\" } elseif ($null -ne $openElement -and $visualOpened) { \"Passed\" } else { \"Failed\" }",
                 "\"$control screen capture did not match the Gallery window, and the popup window could not be captured.\"",
                 "\"$control exposed dropdown UIA but no changed dropdown pixels were captured.\"",
@@ -3206,6 +3222,33 @@ namespace ModernWpf.Gallery.Tests
                 "Invoke-ElementOnce $window $sampleElement",
                 "$after = Get-OutputInteractionElementText $output $control",
                 "OutputMatched = ([string]::IsNullOrWhiteSpace($expectedOutput) -or $after -eq $expectedOutput)");
+        }
+
+        [TestMethod]
+        public void GalleryInteractionRecorderScopesCommandBarFlyoutMoreButtonToPopup()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Get-ElementNativeWindowHandle($element)",
+                "$handle = [int]$candidate.Current.NativeWindowHandle",
+                "function Find-ElementByAutomationIdInPopupWindows($window, [string]$automationId)",
+                "$candidateWindow.Current.NativeWindowHandle -eq $mainHandle",
+                "Find-DescendantByAutomationId $candidateWindow $automationId",
+                "function Find-CommandBarFlyoutMoreButton($window)",
+                "Find-InteractiveElementByNameInProcess $window.Current.ProcessId @(\"Share\", \"Save\", \"Delete\")",
+                "$popupHandle = Get-ElementNativeWindowHandle $primaryCommand",
+                "Find-TopLevelElementByNativeWindowHandleInProcess $window.Current.ProcessId ([int]$popupHandle)",
+                "Find-ElementByAutomationIdInPopupWindows $window \"MoreButton\"",
+                "function Wait-ForInteractiveElementByNameInProcess([int]$processId, [string[]]$names, [int]$timeoutMilliseconds)",
+                "function Open-CommandBarFlyoutSecondaryCommands($window)",
+                "Find-CommandBarFlyoutMoreButton $window",
+                "Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @(\"Resize\", \"Move\") 1000");
         }
 
         [TestMethod]

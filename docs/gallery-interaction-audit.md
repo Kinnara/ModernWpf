@@ -1454,3 +1454,47 @@ Re-run the official WPF All Controls static page expansion in light theme.
   - `artifacts/gallery-recordings/20260603-215446-052/report.md`: 11 passed, 0 needs review, 0 failed.
   - `artifacts/gallery-recordings/20260603-215823-516/report.md`: 11 passed, 0 needs review, 0 failed.
 - Aggregate official WPF static proof in light theme: 33 passed, 0 needs review, 0 failed.
+
+## Round 45: CommandBarFlyout Scoped MoreButton Proof
+
+### Scope
+
+Re-check `CommandBarFlyout` after a focused parity run exposed a harness
+regression where ModernWpf could open the primary command strip, but the visual
+checker invoked a process-global `MoreButton` instead of the ellipsis inside the
+live flyout popup.
+
+### Current Findings
+
+- The initial focused parity run failed ModernWpf with `OpenElementName=Share`
+  and `CommandBarFlyoutSecondaryExpanded=false`, while the standalone recorder
+  still showed the secondary `Resize` / `Move` commands. That mismatch meant
+  the proof harness, not the control implementation, needed the first fix.
+- Both `Run-GalleryVisualChecks.ps1` and `Record-GalleryControlInteractions.ps1`
+  now locate the `CommandBarFlyout` ellipsis by first finding the popup HWND
+  containing `Share`, `Save`, or `Delete`, then searching that popup for
+  `MoreButton`. They only fall back to the old process-wide lookup if popup
+  scoping is unavailable.
+- The visual checker still requires nonblank popup-window pixels for ModernWpf.
+  The installed WinUI 3 Gallery reference can pass from a nonblank UIA crop when
+  its separate popup HWND capture is blank, because the reference row already
+  exposed `Resize` through UIA and the saved crop contains the visible command.
+
+### Verification
+
+- Parser checks passed for both visual-check scripts.
+- Focused parity run:
+  `artifacts/visual-checks/20260603-225526-026-197228/report.md`
+  - ModernWpf passed with `OpenElementName=Resize`,
+    `CommandBarFlyoutSecondaryExpanded=true`, `OpenPopupNonBlank=true`, and
+    interaction crop delta `19.95`.
+  - Installed WinUI 3 Gallery passed with `OpenElementName=Resize` and
+    `CommandBarFlyoutSecondaryExpanded=true`; its popup HWND capture remained
+    blank, but the UIA crop was nonblank.
+- Focused recording run:
+  `artifacts/gallery-recordings/20260603-225807-882/report.md`
+  - Passed with `OpenRepeatEvidence=true`, both first and second open elements
+    found, and `CommandBarFlyoutSecondaryExpanded=true`.
+  - Reviewed poster frames `t3500.png`, `t5500.png`, and `t7500.png` show the
+    primary command strip and the expanded `Resize` / `Move` secondary menu on
+    the repeat-open path.
