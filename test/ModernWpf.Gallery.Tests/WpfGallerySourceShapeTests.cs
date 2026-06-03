@@ -3212,6 +3212,41 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryInteractionRecorderAcceptsOfficialWpfRenderedPageArtifacts()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsRenderedPageArtifactAnchor([string]$control)",
+                "\"Calendar\" { return $true }",
+                "\"DataGrid\" { return $true }",
+                "\"ListBox\" { return $true }",
+                "\"MessageBox\" { return $true }",
+                "\"TextBox\" { return $true }",
+                "\"TreeView\" { return $true }",
+                "default { return $false }");
+            AssertContainsInOrder(
+                source,
+                "function Get-RenderedPageArtifactAnchor([string]$artifactDir)",
+                "FileName = \"ContentPagePane.png\"; Source = \"ContentPagePaneRenderedArtifact\"",
+                "FileName = \"GalleryItemPageRoot.png\"; Source = \"GalleryItemPageRootRenderedArtifact\"",
+                "$stats = Get-ImageStats $path",
+                "Stats = $stats");
+            AssertContainsInOrder(
+                source,
+                "if ($null -eq $sampleElement)",
+                "if (Test-ControlSupportsRenderedPageArtifactAnchor $control)",
+                "$renderedPageArtifactAnchor = Get-RenderedPageArtifactAnchor $artifactDir",
+                "accepted nonblank",
+                "RenderedPageArtifactAnchor = $renderedPageArtifactAnchor");
+        }
+
+        [TestMethod]
         public void GalleryVisualChecksTypesAutoSuggestBoxAndChoosesSuggestion()
         {
             var source = File.ReadAllText(Path.Combine(

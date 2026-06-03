@@ -569,6 +569,45 @@ function Get-RequiredSampleAutomationId([string]$control) {
     }
 }
 
+function Test-ControlSupportsRenderedPageArtifactAnchor([string]$control) {
+    switch ($control) {
+        "Border" { return $true }
+        "Calendar" { return $true }
+        "Clipboard" { return $true }
+        "Color" { return $true }
+        "DataGrid" { return $true }
+        "DatePicker" { return $true }
+        "Expander" { return $true }
+        "FileAndFolderDialogs" { return $true }
+        "Frame" { return $true }
+        "Geometry" { return $true }
+        "Grid" { return $true }
+        "GridSplitter" { return $true }
+        "GroupBox" { return $true }
+        "Hyperlink" { return $true }
+        "Iconography" { return $true }
+        "Label" { return $true }
+        "ListBox" { return $true }
+        "ListView" { return $true }
+        "Menu" { return $true }
+        "MessageBox" { return $true }
+        "NavigationWindow" { return $true }
+        "PasswordBox" { return $true }
+        "ProgressBar" { return $true }
+        "ResizeGrip" { return $true }
+        "RichTextEdit" { return $true }
+        "Spacing" { return $true }
+        "StackPanel" { return $true }
+        "TabControl" { return $true }
+        "TextBlock" { return $true }
+        "TextBox" { return $true }
+        "ToolTip" { return $true }
+        "TreeView" { return $true }
+        "Typography" { return $true }
+        default { return $false }
+    }
+}
+
 function Test-ControlSupportsOpenInteraction([string]$control) {
     switch ($control) {
         "TeachingTip" { return $true }
@@ -2537,6 +2576,32 @@ function Get-NonBlankFrameCount($frames) {
     return $count
 }
 
+function Get-RenderedPageArtifactAnchor([string]$artifactDir) {
+    $candidates = @(
+        @{ FileName = "ContentPagePane.png"; Source = "ContentPagePaneRenderedArtifact" },
+        @{ FileName = "GalleryItemPageRoot.png"; Source = "GalleryItemPageRootRenderedArtifact" }
+    )
+
+    foreach ($candidate in $candidates) {
+        $path = Join-Path $artifactDir $candidate.FileName
+        if (!(Test-Path -LiteralPath $path)) {
+            continue
+        }
+
+        $stats = Get-ImageStats $path
+        if ($null -ne $stats -and $stats.NonBlank) {
+            return [ordered]@{
+                FileName = $candidate.FileName
+                Source = $candidate.Source
+                Path = (Resolve-Path -LiteralPath $path).Path
+                Stats = $stats
+            }
+        }
+    }
+
+    return $null
+}
+
 function Test-OpenRepeatEvidence($interactionResult) {
     if ($null -eq $interactionResult) {
         return $false
@@ -2695,6 +2760,7 @@ foreach ($control in $Controls) {
     $recordingResult = $null
     $frames = @()
     $status = "Passed"
+    $renderedPageArtifactAnchor = $null
     $recordingPath = Join-Path $caseDir ("{0}-{1}{2}" -f $Theme.ToLowerInvariant(), $control.ToLowerInvariant(), $extension)
     $interactionKind = Get-ControlInteractionKind $control
 
@@ -2725,8 +2791,20 @@ foreach ($control in $Controls) {
         $sampleId = Get-RequiredSampleAutomationId $control
         $sampleElement = Find-DescendantByAutomationId $window $sampleId
         if ($null -eq $sampleElement) {
-            $notes.Add("Sample '$sampleId' not found; recording still captured route.")
-            $status = "Failed"
+            if (Test-ControlSupportsRenderedPageArtifactAnchor $control) {
+                $renderedPageArtifactAnchor = Get-RenderedPageArtifactAnchor $artifactDir
+                if ($null -ne $renderedPageArtifactAnchor) {
+                    $notes.Add(("Sample '{0}' not found; accepted nonblank {1}." -f $sampleId, $renderedPageArtifactAnchor.Source))
+                }
+                else {
+                    $notes.Add("Sample '$sampleId' not found and no nonblank rendered page artifact was produced.")
+                    $status = "Failed"
+                }
+            }
+            else {
+                $notes.Add("Sample '$sampleId' not found; recording still captured route.")
+                $status = "Failed"
+            }
         }
 
         $recordingJob = Start-RecordingJob $window.Current.ProcessId ([IntPtr]$window.Current.NativeWindowHandle) $recordingPath $CaptureMode
@@ -2923,6 +3001,7 @@ foreach ($control in $Controls) {
         ScrollEvidence = $scrollEvidence
         ShellNavigationEvidence = $shellNavigationEvidence
         BreadcrumbEvidence = $breadcrumbEvidence
+        RenderedPageArtifactAnchor = $renderedPageArtifactAnchor
         InteractionResult = $interactionResult
         Notes = ($notes.ToArray() -join " ")
     }

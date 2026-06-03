@@ -1407,3 +1407,41 @@ split as the dark current-state sweep.
   - `artifacts/gallery-recordings/20260603-205311-406/report.md`: 5 passed, 0 needs review, 0 failed.
   - `artifacts/gallery-recordings/20260603-205913-779/report.md`: 5 passed, 0 needs review, 0 failed.
 - Aggregate light-theme proof: 43 passed, 0 needs review, 0 failed.
+
+## Round 43: Official WPF Catalog Static Recording Expansion
+
+### Scope
+
+Expand recording coverage from the ModernWpf visual-check inventory to the
+active official WPF Gallery All Controls catalog pages that were not in the
+recorder default list.
+
+### Current Findings
+
+- The active All Controls catalog had 33 official WPF item IDs outside the
+  ModernWpf recorder inventory.
+- These pages generally do not expose page-specific `GallerySample_*` anchors.
+  A probe of `DataGrid` failed before this round even though the routed page
+  recorded successfully, because the recorder required `GallerySample_DataGrid_Root`.
+
+### Changes
+
+- Added a recorder allow-list for official WPF static pages that may use the
+  generic rendered page artifacts.
+- Added `ContentPagePane.png` / `GalleryItemPageRoot.png` artifact validation
+  as the accepted static anchor for that allow-list. The manifest records the
+  chosen `RenderedPageArtifactAnchor`.
+- Kept the existing strict sample-specific anchor requirement for ModernWpf
+  controls so missing automation hooks still fail those recordings.
+
+### Verification
+
+- PowerShell parser accepted `Record-GalleryControlInteractions.ps1`.
+- `WpfGallerySourceShapeTests.GalleryInteractionRecorderAcceptsOfficialWpfRenderedPageArtifacts`: passed on net8 and net10.
+- Focused `DataGrid` probe after the fix:
+  `artifacts/gallery-recordings/20260603-213542-207/report.md` passed.
+- Dark official WPF static batches:
+  - `artifacts/gallery-recordings/20260603-213649-600/report.md`: 11 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-214032-634/report.md`: 11 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-214413-419/report.md`: 11 passed, 0 needs review, 0 failed.
+- Aggregate official WPF static proof in dark theme: 33 passed, 0 needs review, 0 failed.

@@ -19,11 +19,13 @@ path and the recording has been reviewed or decoded into nonblank poster frames.
 
 ## Scope
 
-Initial scope is the current ModernWpf visual-check inventory from
-`tools/visual-checks/Run-GalleryVisualChecks.ps1`, plus the Gallery shell
-NavigationView pane because earlier user-reported failures were in the shell.
-The broader official WPF Gallery page catalog is a separate expansion and is not
-silently included in this matrix yet.
+Scope now includes the current ModernWpf visual-check inventory from
+`tools/visual-checks/Run-GalleryVisualChecks.ps1`, the Gallery shell
+NavigationView pane because earlier user-reported failures were in the shell,
+and the active official WPF Gallery All Controls catalog pages. Official WPF
+catalog pages without page-specific `GallerySample_*` anchors are accepted for
+static route proof only when the recorder captures a nonblank rendered
+`ContentPagePane` or `GalleryItemPageRoot` artifact.
 
 ## Recorder
 
@@ -79,6 +81,19 @@ tree. All 43 controls in the current recorder inventory passed with no
 | `artifacts/gallery-recordings/20260603-204521-233/report.md` | PipsPager, AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, SelectorBar, NavigationView | 7 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260603-205311-406/report.md` | ContentDialog, Flyout, Popup, MenuBar, MenuFlyout | 5 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260603-205913-779/report.md` | AppBarButton, AppBarSeparator, AppBarToggleButton, CommandBar, CommandBarFlyout | 5 passed, 0 needs review, 0 failed |
+
+## Official WPF All Controls Static Sweep
+
+The ModernWpf recorder now accepts nonblank rendered page artifacts for official
+WPF Gallery pages that do not expose page-specific `GallerySample_*` anchors.
+The initial dark-theme expansion covered the 33 official All Controls catalog
+pages that were missing from the ModernWpf control recorder inventory.
+
+| Run | Controls | Result |
+| --- | --- | --- |
+| `artifacts/gallery-recordings/20260603-213649-600/report.md` | Color, Typography, Spacing, Geometry, Iconography, DataGrid, ListBox, ListView, TreeView, Calendar, DatePicker | 11 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-214032-634/report.md` | Expander, Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border, Menu, TabControl, Frame, NavigationWindow | 11 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-214413-419/report.md` | ProgressBar, ToolTip, Label, TextBox, TextBlock, RichTextEdit, PasswordBox, Hyperlink, FileAndFolderDialogs, MessageBox, Clipboard | 11 passed, 0 needs review, 0 failed |
 
 ## Control Matrix
 
