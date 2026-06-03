@@ -1,6 +1,6 @@
 # WPF Gallery Milestone 1 Tracker
 
-Last updated: 2026-06-01
+Last updated: 2026-06-03
 
 ## Non-Negotiable Execution Gate
 
@@ -40,6 +40,12 @@ Hard order:
 13. P2 row 6 and final closeout cleanup.
 
 ## Immediate Status and Next Selection
+
+2026-06-03 touch-oriented control retirement: `PipsPager`, `ParallaxView`,
+`TwoPaneView`, and the gallery-only `FlipView` / `SemanticZoom` surfaces are
+retired from active ModernWpf/Gallery scope. Historical notes below may mention
+prior ports and recordings, but they are not active control obligations unless
+the controls are intentionally reintroduced.
 
 Milestone 1 is complete for the current branch tip after the final row 6 audit.
 The visual, real OS High Contrast, high-drift, asset, measurement,
@@ -2463,11 +2469,10 @@ actual ModernWpf controls or explicitly retained WPF implementations:
 `TeachingTip`, `CommandBar`, `CommandBarFlyout`, `AppBarButton`,
 `AppBarToggleButton`, `AppBarSeparator`, `DropDownButton`, `SplitButton`,
 `ToggleSplitButton`, `RepeatButton`, `ToggleButton`, `MenuBar`, `MenuFlyout`,
-`ItemsRepeater`, `PipsPager`, `RatingControl`, `ToggleSwitch`, `ColorPicker`,
+`ItemsRepeater`, `RatingControl`, `ToggleSwitch`, `ColorPicker`,
 `HyperlinkButton`, `ProgressRing`, `InfoBadge`, `Flyout`, `Popup`,
 `BreadcrumbBar`, `SelectorBar`, `SplitView`, `AnnotatedScrollBar`,
-`ParallaxView`, `GridView`, `PersonPicture`,
-`IconElement`, `ThemeShadow`, and `TitleBar`.
+`GridView`, `PersonPicture`, `IconElement`, `ThemeShadow`, and `TitleBar`.
 Do not keep WinUI alias pages for `CalendarDatePicker`, `CalendarView`,
 `TimePicker`, `TabView`, `RichEditBox`, `RichTextBlock`, `ScrollViewer`,
 `ScrollView`, `FlipView`, or `ItemsView`; retained WPF pages and retained

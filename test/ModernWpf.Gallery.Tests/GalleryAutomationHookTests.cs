@@ -24,7 +24,6 @@ using ModernWpf.Gallery.Testing;
 using ModernWpf.Gallery.ViewModels;
 using Mux = ModernWpf.Controls;
 using TeachingTipControl = ModernWpf.Controls.TeachingTip;
-using WpfShapes = System.Windows.Shapes;
 
 namespace ModernWpf.Gallery.Tests
 {
@@ -72,11 +71,9 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "InfoBadge", "GallerySample_InfoBadge_Root", "GallerySample_InfoBadge_InfoBadge" };
             yield return new object[] { "InfoBar", "GallerySample_InfoBar_Root", "GallerySample_InfoBar_InfoBar" };
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
-            yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "AnnotatedScrollBar", "GallerySample_AnnotatedScrollBar_Root", "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" };
             yield return new object[] { "SplitView", "GallerySample_SplitView_Root", "GallerySample_SplitView_SplitView" };
             yield return new object[] { "PersonPicture", "GallerySample_PersonPicture_Root", "GallerySample_PersonPicture_PersonPicture" };
-            yield return new object[] { "ParallaxView", "GallerySample_ParallaxView_Root", "GallerySample_ParallaxView_ParallaxView" };
             yield return new object[] { "IconElement", "GallerySample_IconElement_Root", "GallerySample_IconElement_SlicesIcon" };
             yield return new object[] { "ThemeShadow", "GallerySample_ThemeShadow_Root", "GallerySample_ThemeShadow_ShadowRect" };
             yield return new object[] { "TitleBar", "GallerySample_TitleBar_Root", "GallerySample_TitleBar_TitleBarControl" };
@@ -1154,100 +1151,6 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void PipsPagerSampleMatchesWinUIGalleryExamples()
-        {
-            WpfTestHost.Run(() =>
-            {
-                var page = new ItemPage(GalleryCatalog.FindItem("PipsPager"));
-                var window = new Window
-                {
-                    Width = 1024,
-                    Height = 768,
-                    Left = -32000,
-                    Top = -32000,
-                    ShowInTaskbar = false,
-                    WindowStartupLocation = WindowStartupLocation.Manual,
-                    Content = page
-                };
-
-                try
-                {
-                    window.Show();
-                    WpfTestHost.DoEvents();
-                    window.UpdateLayout();
-                    WpfTestHost.DoEvents();
-
-                    Assert.AreEqual(2, page.Examples.Count);
-                    Assert.AreEqual("PipsPager controlling a WPF content gallery", page.Examples[0].HeaderText);
-                    Assert.AreEqual("PipsPager with options to change its orientation and button visibility.", page.Examples[1].HeaderText);
-                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
-                    StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"GalleryPipsPager\"");
-                    StringAssert.Contains(page.Examples[0].XamlCode, "NumberOfPages=\"{x:Bind Pictures.Count}\"");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "Orientation=\"$(Orientation)\"");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "PreviousButtonVisibility=\"$(PrevButton)\"");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "NextButtonVisibility=\"$(NextButton)\"");
-                    Assert.IsNull(page.Examples[0].CSharpCode);
-                    Assert.IsNull(page.Examples[1].CSharpCode);
-
-                    var galleryPipsPagerHost = (Border)FindByAutomationId(page, "GallerySample_PipsPager_PipsPager");
-                    var galleryPipsPager = FindNamedDescendant<Mux.PipsPager>(page, "GalleryPipsPager");
-                    var gallery = FindNamedDescendant<ContentControl>(page, "Gallery");
-                    var optionsPipsPager = FindNamedDescendant<Mux.PipsPager>(page, "TestPipsPager2");
-                    var orientationComboBox = FindNamedDescendant<ComboBox>(page, "OrientationComboBox");
-                    var previousButtonComboBox = FindNamedDescendant<ComboBox>(page, "PrevButtonComboBox");
-                    var nextButtonComboBox = FindNamedDescendant<ComboBox>(page, "NextButtonComboBox");
-                    Assert.IsNotNull(galleryPipsPagerHost);
-                    Assert.IsNotNull(galleryPipsPager);
-                    Assert.IsNotNull(gallery);
-                    Assert.IsNotNull(optionsPipsPager);
-                    Assert.IsNotNull(orientationComboBox);
-                    Assert.IsNotNull(previousButtonComboBox);
-                    Assert.IsNotNull(nextButtonComboBox);
-
-                    Assert.AreEqual("GalleryPipsPager", galleryPipsPager.Name);
-                    Assert.AreEqual(8, galleryPipsPager.NumberOfPages);
-                    Assert.AreEqual(0, galleryPipsPager.SelectedPageIndex);
-                    Assert.AreEqual(HorizontalAlignment.Center, galleryPipsPager.HorizontalAlignment);
-                    Assert.AreEqual(HorizontalAlignment.Center, galleryPipsPagerHost.HorizontalAlignment);
-                    Assert.AreEqual(new Thickness(0, 12, 0, 0), galleryPipsPagerHost.Margin);
-                    Assert.AreSame(galleryPipsPager, galleryPipsPagerHost.Child);
-                    Assert.AreEqual("Gallery", gallery.Name);
-                    Assert.AreEqual(400.0, gallery.Width);
-                    Assert.AreEqual(270.0, gallery.Height);
-                    AssertPipsPagerImage(gallery, "LandscapeImage1.jpg");
-
-                    galleryPipsPager.SelectedPageIndex = 2;
-                    WpfTestHost.DoEvents();
-                    AssertPipsPagerImage(gallery, "LandscapeImage3.jpg");
-
-                    Assert.AreEqual("TestPipsPager2", optionsPipsPager.Name);
-                    Assert.AreEqual(10, optionsPipsPager.NumberOfPages);
-                    Assert.AreEqual(Orientation.Horizontal, optionsPipsPager.Orientation);
-                    Assert.AreEqual(Mux.PipsPagerButtonVisibility.Visible, optionsPipsPager.PreviousButtonVisibility);
-                    Assert.AreEqual(Mux.PipsPagerButtonVisibility.Visible, optionsPipsPager.NextButtonVisibility);
-                    AssertPipsPagerComboBox(orientationComboBox, "Orientation", "Horizontal", "Vertical");
-                    AssertPipsPagerComboBox(previousButtonComboBox, "Previous Button Visibility", "Visible", "VisibleOnPointerOver", "Collapsed");
-                    AssertPipsPagerComboBox(nextButtonComboBox, "Next Button Visibility", "Visible", "VisibleOnPointerOver", "Collapsed");
-
-                    orientationComboBox.SelectedItem = "Vertical";
-                    previousButtonComboBox.SelectedItem = "Collapsed";
-                    nextButtonComboBox.SelectedItem = "VisibleOnPointerOver";
-                    WpfTestHost.DoEvents();
-
-                    Assert.AreEqual(Orientation.Vertical, optionsPipsPager.Orientation);
-                    Assert.AreEqual(Mux.PipsPagerButtonVisibility.Collapsed, optionsPipsPager.PreviousButtonVisibility);
-                    Assert.AreEqual(Mux.PipsPagerButtonVisibility.VisibleOnPointerOver, optionsPipsPager.NextButtonVisibility);
-                }
-                finally
-                {
-                    window.Content = null;
-                    window.Close();
-                    WpfTestHost.DoEvents();
-                }
-            });
-        }
-
-        [TestMethod]
         public void AnnotatedScrollBarSampleMatchesWinUIGalleryExample()
         {
             WpfTestHost.Run(() =>
@@ -1383,103 +1286,6 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(250.0, heightSlider.SelectionEnd);
                     Assert.AreEqual(250.0, annotatedScrollBar.MaxHeight);
                     Assert.AreEqual(5, annotatedScrollBar.Labels.Count);
-                }
-                finally
-                {
-                    window.Content = null;
-                    window.Close();
-                    WpfTestHost.DoEvents();
-                }
-            });
-        }
-
-        [TestMethod]
-        public void ParallaxViewSampleMatchesWinUIGalleryExamples()
-        {
-            WpfTestHost.Run(() =>
-            {
-                var page = new ItemPage(GalleryCatalog.FindItem("ParallaxView"));
-                var window = new Window
-                {
-                    Width = 1024,
-                    Height = 768,
-                    Left = -32000,
-                    Top = -32000,
-                    ShowInTaskbar = false,
-                    WindowStartupLocation = WindowStartupLocation.Manual,
-                    Content = page
-                };
-
-                try
-                {
-                    window.Show();
-                    WpfTestHost.DoEvents();
-                    window.UpdateLayout();
-                    WpfTestHost.DoEvents();
-
-                    Assert.AreEqual(2, page.Examples.Count);
-                    Assert.AreEqual("Parallax on a ListView", page.Examples[0].HeaderText);
-                    Assert.AreEqual("Parallax with a ScrollViewer", page.Examples[1].HeaderText);
-                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
-                    StringAssert.Contains(page.Examples[0].XamlCode, "Source=\"{Binding ElementName=listView}\"");
-                    StringAssert.Contains(page.Examples[0].XamlCode, "VerticalShift=\"500\"");
-                    StringAssert.Contains(page.Examples[0].XamlCode, "AutomationProperties.Name=\"all samples\"");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "<ScrollViewer x:Name=\"scrollViewer\" Width=\"150\"");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "<Rectangle Fill=\"AliceBlue\" Height=\"150\"/>");
-                    Assert.IsNull(page.Examples[0].CSharpCode);
-                    Assert.IsNull(page.Examples[1].CSharpCode);
-
-                    var sampleRoot = FindByAutomationId(page, "GallerySample_ParallaxView_Root") as UIElement;
-                    Assert.IsNotNull(sampleRoot);
-                    var sampleRootPeer = UIElementAutomationPeer.CreatePeerForElement(sampleRoot);
-                    Assert.IsNotNull(sampleRootPeer);
-                    Assert.IsTrue(sampleRootPeer.IsControlElement());
-                    Assert.AreEqual(AutomationControlType.Group, sampleRootPeer.GetAutomationControlType());
-
-                    var parallaxView = (Mux.ParallaxView)FindByAutomationId(page, "GallerySample_ParallaxView_ParallaxView");
-                    var listView = FindNamedDescendant<ListView>(page, "listView");
-                    Assert.IsNotNull(parallaxView);
-                    Assert.AreEqual("parallaxView", parallaxView.Name);
-                    Assert.AreEqual(500.0, parallaxView.VerticalShift);
-                    Assert.AreSame(listView, parallaxView.Source);
-                    Assert.IsInstanceOfType(parallaxView.Child, typeof(Image));
-                    StringAssert.Contains(((BitmapImage)((Image)parallaxView.Child).Source).UriSource.ToString(), "cliff.jpg");
-
-                    Assert.IsNotNull(listView);
-                    Assert.AreEqual("all samples", AutomationProperties.GetName(listView));
-                    Assert.AreEqual(475.0, listView.Height);
-                    Assert.AreEqual(new Thickness(0, 76, 0, 0), listView.Margin);
-                    Assert.AreEqual(Colors.Transparent, ((SolidColorBrush)listView.Background).Color);
-                    var overlay = FindNamedDescendant<Border>(page, "ParallaxOverlay");
-                    Assert.IsNotNull(overlay);
-                    Assert.AreEqual(Color.FromArgb(0x80, 0x00, 0x00, 0x00), ((SolidColorBrush)overlay.Background).Color);
-                    var itemTitles = listView.Items.Cast<string>().ToArray();
-                    Assert.IsTrue(itemTitles.Length > 60);
-                    CollectionAssert.AreEqual(itemTitles.OrderBy(title => title).ToArray(), itemTitles);
-                    CollectionAssert.Contains(itemTitles, "NavigationView");
-                    CollectionAssert.Contains(itemTitles, "ParallaxView");
-
-                    var headerTexts = FindDescendants<TextBlock>(page).Select(textBlock => textBlock.Text).ToArray();
-                    CollectionAssert.Contains(headerTexts, "Scroll the list to see parallaxing of image");
-                    CollectionAssert.Contains(headerTexts, "Scroll the rectangles to see parallaxing of image");
-
-                    var scrollViewer = FindNamedDescendant<ScrollViewer>(page, "scrollViewer");
-                    Assert.IsNotNull(scrollViewer);
-                    Assert.AreEqual(150.0, scrollViewer.Width);
-                    Assert.AreEqual(551.0, scrollViewer.Height);
-                    Assert.AreEqual(HorizontalAlignment.Left, scrollViewer.HorizontalAlignment);
-                    Assert.AreEqual(ScrollBarVisibility.Disabled, scrollViewer.HorizontalScrollBarVisibility);
-                    Assert.AreEqual(ScrollBarVisibility.Auto, scrollViewer.VerticalScrollBarVisibility);
-                    var secondParallaxView = FindDescendants<Mux.ParallaxView>(page).Single(view => ReferenceEquals(view.Source, scrollViewer));
-                    Assert.AreEqual(500.0, secondParallaxView.VerticalShift);
-                    Assert.IsInstanceOfType(secondParallaxView.Child, typeof(Image));
-                    StringAssert.Contains(((BitmapImage)((Image)secondParallaxView.Child).Source).UriSource.ToString(), "cliff.jpg");
-
-                    var rectangles = ((StackPanel)scrollViewer.Content).Children.OfType<WpfShapes.Rectangle>().ToArray();
-                    Assert.AreEqual(19, rectangles.Length);
-                    Assert.AreEqual(150.0, rectangles[0].Height);
-                    Assert.AreEqual(Colors.AliceBlue, ((SolidColorBrush)rectangles[0].Fill).Color);
-                    Assert.AreEqual(Colors.Cyan, ((SolidColorBrush)rectangles[18].Fill).Color);
                 }
                 finally
                 {
@@ -4586,15 +4392,6 @@ namespace ModernWpf.Gallery.Tests
             return null;
         }
 
-        private static void AssertPipsPagerImage(ContentControl gallery, string fileName)
-        {
-            var image = gallery.Content as Image;
-            Assert.IsNotNull(image);
-            var bitmapImage = image.Source as BitmapImage;
-            Assert.IsNotNull(bitmapImage);
-            StringAssert.Contains(bitmapImage.UriSource.ToString(), fileName);
-        }
-
         private static void AssertBreadcrumbItems(object itemsSource, params string[] expectedItems)
         {
             var enumerable = itemsSource as System.Collections.IEnumerable;
@@ -4703,20 +4500,6 @@ namespace ModernWpf.Gallery.Tests
 
             return count;
         }
-
-        private static void AssertPipsPagerComboBox(ComboBox comboBox, string header, params string[] expectedItems)
-        {
-            Assert.AreEqual(header, ModernWpf.Controls.Primitives.ControlHelper.GetHeader(comboBox));
-            Assert.AreEqual(220.0, comboBox.Width);
-            Assert.AreEqual(new Thickness(0, 0, 0, 12), comboBox.Margin);
-            Assert.AreEqual(expectedItems[0], comboBox.SelectedItem);
-            Assert.AreEqual(expectedItems.Length, comboBox.Items.Count);
-            for (var i = 0; i < expectedItems.Length; i++)
-            {
-                Assert.AreEqual(expectedItems[i], comboBox.Items[i]);
-            }
-        }
-
 
         private static void AssertAnnotatedColorItem(WrapPanel itemsRepeater, int index, Color expectedColor)
         {

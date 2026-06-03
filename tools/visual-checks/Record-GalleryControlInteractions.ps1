@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [string]$GalleryExe,
@@ -541,14 +541,12 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "Slider" { return "GallerySample_Slider_Slider" }
         "SplitView" { return "GallerySample_SplitView_IsPaneOpenToggle" }
         "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
-        "ParallaxView" { return "GallerySample_ParallaxView_Root" }
         "IconElement" { return "GallerySample_IconElement_ExampleButton1" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_TranslationSlider" }
         "TitleBar" { return "GallerySample_TitleBar_SearchBox" }
         "InfoBadge" { return "GallerySample_InfoBadge_NavigationView" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
-        "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_ScrollViewer" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
@@ -658,7 +656,6 @@ function Test-ControlSupportsSelectionInteraction([string]$control) {
     switch ($control) {
         "RadioButton" { return $true }
         "GridView" { return $true }
-        "PipsPager" { return $true }
         "SelectorBar" { return $true }
         "NavigationView" { return $true }
         default { return $false }
@@ -678,7 +675,6 @@ function Test-ControlSupportsOptionInteraction([string]$control) {
 
 function Test-ControlSupportsScrollInteraction([string]$control) {
     switch ($control) {
-        "ParallaxView" { return $true }
         "AnnotatedScrollBar" { return $true }
         "ItemsRepeater" { return $true }
         default { return $false }
@@ -714,7 +710,6 @@ function Get-SelectionInteractionTriggerName([string]$control) {
     switch ($control) {
         "RadioButton" { return "Default Radio Option 2" }
         "GridView" { return "Item 1" }
-        "PipsPager" { return "Page 2" }
         "SelectorBar" { return "Shared" }
         "NavigationView" { return "Menu Item2" }
         default { return "" }
@@ -731,7 +726,6 @@ function Get-SelectionInteractionTriggerAutomationId([string]$control) {
 function Get-SelectionInteractionExpectedOutputName([string]$control) {
     switch ($control) {
         "GridView" { return "You clicked Item 1." }
-        "PipsPager" { return "LandscapeImage2.jpg" }
         "NavigationView" { return "Sample Page 2" }
         default { return "" }
     }
@@ -1853,7 +1847,6 @@ function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
 
 function Get-ScrollInteractionTargetAutomationId([string]$control) {
     switch ($control) {
-        "ParallaxView" { return "GallerySample_ParallaxView_ListView" }
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_ScrollViewer" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_VirtualizingScrollViewer" }
         default { return "" }

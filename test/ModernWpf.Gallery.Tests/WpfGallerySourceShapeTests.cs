@@ -3004,13 +3004,11 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Test-ControlSupportsSelectionInteraction([string]$control)",
-                "\"GridView\" { return $true }",
-                "\"PipsPager\" { return $true }");
+                "\"GridView\" { return $true }");
             AssertContainsInOrder(
                 source,
                 "function Get-SelectionInteractionTriggerName([string]$control)",
-                "\"GridView\" { return \"Item 1\" }",
-                "\"PipsPager\" { return \"Page 2\" }");
+                "\"GridView\" { return \"Item 1\" }");
             AssertContainsInOrder(
                 source,
                 "function Get-SelectionInteractionExpectedName([string]$control)",
@@ -3018,8 +3016,7 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Get-SelectionInteractionCropAutomationId([string]$control)",
-                "\"GridView\" { return \"GallerySample_GridView_ClickOutput0\" }",
-                "\"PipsPager\" { return \"GallerySample_PipsPager_Root\" }");
+                "\"GridView\" { return \"GallerySample_GridView_ClickOutput0\" }");
             AssertContainsInOrder(
                 source,
                 "$afterCrop = if (Test-Path $afterPath)",

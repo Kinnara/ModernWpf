@@ -38,7 +38,6 @@ public class SyncMatrixTests
         AssertControlStatus(matrix, "CommandBar / AppBarButton / AppBarToggleButton / AppBarSeparator", "Source-backed WPF port");
         AssertControlStatus(matrix, "ContentDialog", "Source-backed WPF port");
         AssertControlStatus(matrix, "WrapPanel", "Source-backed WPF port");
-        AssertControlStatus(matrix, "ParallaxView", "Source-backed WPF port");
         AssertControlStatus(matrix, "RadioMenuFlyoutItem", "Source-backed WPF port");
         AssertControlStatus(matrix, "LayoutPanel", "Source-backed WPF port");
         AssertControlStatus(matrix, "ProgressBar resources", "Source-backed WPF port");

@@ -27,7 +27,6 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/NumberBox/NumberBox.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/PagerControl/PagerControl.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/PersonPicture/PersonPicture.xaml" />
-        <ResourceDictionary Source="/ModernWpf.Controls;component/PipsPager/PipsPager.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ProgressRing/ProgressRing.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/RatingControl/RatingControl.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/SelectorBar/SelectorBar.xaml" />
@@ -37,7 +36,6 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/RadioButtons/RadioButtons.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/RadioMenuItem/RadioMenuItem.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ToggleSwitch/ToggleSwitch.xaml" />
-        <ResourceDictionary Source="/ModernWpf.Controls;component/TwoPaneView/TwoPaneView.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

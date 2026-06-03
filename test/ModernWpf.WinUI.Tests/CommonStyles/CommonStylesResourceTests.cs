@@ -97,7 +97,7 @@ public class CommonStylesResourceTests
     }
 
     [TestMethod]
-    public void ThemeResourcesUseWinUI2DateTimeAndFlipViewHighContrastTokens()
+    public void ThemeResourcesUseWinUI2DateTimeHighContrastTokens()
     {
         WpfTestHost.Run(() =>
         {
@@ -109,10 +109,6 @@ public class CommonStylesResourceTests
                 AssertThemeResourceValue(themeName, "DateTimeFlyoutBorderThickness", new Thickness(1));
                 AssertThemeResourceValue(themeName, "DateTimeFlyoutBorderPadding", new Thickness(0));
                 AssertThemeResourceValue(themeName, "DateTimeFlyoutButtonBorderThickness", new Thickness(0));
-                AssertThemeResourceValue(themeName, "FlipViewButtonBorderThemeThickness", new Thickness(0));
-                AssertThemeResourceReference(themeName, "FlipViewNextPreviousButtonBackground", "AcrylicInAppFillColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "FlipViewNextPreviousButtonBackgroundPointerOver", "AcrylicInAppFillColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "FlipViewNextPreviousButtonBackgroundPressed", "AcrylicInAppFillColorDefaultBrush");
             }
 
             foreach (var themeName in new[] { "Light", "Dark" })
@@ -125,14 +121,6 @@ public class CommonStylesResourceTests
                 AssertThemeResourceReference(themeName, "DateTimePickerFlyoutButtonBorderBrushPressed", "ControlStrokeColorDefaultBrush");
                 AssertThemeResourceReference(themeName, "DateTimePickerFlyoutButtonForegroundPointerOver", "TextFillColorPrimaryBrush");
                 AssertThemeResourceReference(themeName, "DateTimePickerFlyoutButtonForegroundPressed", "TextFillColorPrimaryBrush");
-                AssertThemeResourceReference(themeName, "FlipViewBackground", "SolidBackgroundFillColorBaseBrush");
-                AssertThemeResourceReference(themeName, "FlipViewNextPreviousArrowForeground", "ControlStrongFillColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "FlipViewNextPreviousArrowForegroundPointerOver", "TextFillColorSecondaryBrush");
-                AssertThemeResourceReference(themeName, "FlipViewNextPreviousArrowForegroundPressed", "TextFillColorSecondaryBrush");
-                AssertThemeResourceReference(themeName, "FlipViewNextPreviousButtonBorderBrush", "ControlStrokeColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "FlipViewNextPreviousButtonBorderBrushPointerOver", "ControlStrokeColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "FlipViewNextPreviousButtonBorderBrushPressed", "ControlStrokeColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "FlipViewItemBackground", "SubtleFillColorTransparentBrush");
             }
 
             AssertThemeResourceReference("HighContrast", "DateTimePickerFlyoutButtonBackground", "SystemControlTransparentBrush");
@@ -143,14 +131,6 @@ public class CommonStylesResourceTests
             AssertThemeResourceReference("HighContrast", "DateTimePickerFlyoutButtonBorderBrushPressed", "SystemControlHighlightTransparentBrush");
             AssertThemeResourceReference("HighContrast", "DateTimePickerFlyoutButtonForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush");
             AssertThemeResourceReference("HighContrast", "DateTimePickerFlyoutButtonForegroundPressed", "SystemControlHighlightAltBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "FlipViewBackground", "SystemControlPageBackgroundListLowBrush");
-            AssertThemeResourceReference("HighContrast", "FlipViewNextPreviousArrowForeground", "SystemControlForegroundAltMediumHighBrush");
-            AssertThemeResourceReference("HighContrast", "FlipViewNextPreviousArrowForegroundPointerOver", "SystemControlHighlightAltAltMediumHighBrush");
-            AssertThemeResourceReference("HighContrast", "FlipViewNextPreviousArrowForegroundPressed", "SystemControlHighlightAltAltMediumHighBrush");
-            AssertThemeResourceReference("HighContrast", "FlipViewNextPreviousButtonBorderBrush", "SystemControlForegroundTransparentBrush");
-            AssertThemeResourceReference("HighContrast", "FlipViewNextPreviousButtonBorderBrushPointerOver", "SystemControlForegroundTransparentBrush");
-            AssertThemeResourceReference("HighContrast", "FlipViewNextPreviousButtonBorderBrushPressed", "SystemControlForegroundTransparentBrush");
-            AssertThemeResourceReference("HighContrast", "FlipViewItemBackground", "SystemControlTransparentBrush");
         });
     }
 

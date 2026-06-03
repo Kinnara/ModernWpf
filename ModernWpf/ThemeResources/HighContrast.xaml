@@ -1043,20 +1043,6 @@
     <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
     <m:StaticResource x:Key="DateTimePickerFlyoutButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
 
-    <!-- Resources for FlipView -->
-    <Thickness x:Key="FlipViewButtonBorderThemeThickness">0</Thickness>
-    <m:StaticResource x:Key="FlipViewBackground" ResourceKey="SystemControlPageBackgroundListLowBrush" />
-    <m:StaticResource x:Key="FlipViewNextPreviousButtonBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-    <m:StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPointerOver" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-    <m:StaticResource x:Key="FlipViewNextPreviousButtonBackgroundPressed" ResourceKey="AcrylicInAppFillColorDefaultBrush" />
-    <m:StaticResource x:Key="FlipViewNextPreviousArrowForeground" ResourceKey="SystemControlForegroundAltMediumHighBrush" />
-    <m:StaticResource x:Key="FlipViewNextPreviousArrowForegroundPointerOver" ResourceKey="SystemControlHighlightAltAltMediumHighBrush" />
-    <m:StaticResource x:Key="FlipViewNextPreviousArrowForegroundPressed" ResourceKey="SystemControlHighlightAltAltMediumHighBrush" />
-    <m:StaticResource x:Key="FlipViewNextPreviousButtonBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush" />
-    <m:StaticResource x:Key="FlipViewNextPreviousButtonBorderBrushPointerOver" ResourceKey="SystemControlForegroundTransparentBrush" />
-    <m:StaticResource x:Key="FlipViewNextPreviousButtonBorderBrushPressed" ResourceKey="SystemControlForegroundTransparentBrush" />
-    <m:StaticResource x:Key="FlipViewItemBackground" ResourceKey="SystemControlTransparentBrush" />
-
     <!-- Resources for FlyoutPresenter -->
     <sys:Double x:Key="FlyoutThemeMaxHeight">758</sys:Double>
     <sys:Double x:Key="FlyoutThemeMaxWidth">456</sys:Double>
@@ -1431,35 +1417,6 @@
     <m:StaticResource x:Key="ProgressRingForegroundThemeBrush" ResourceKey="SystemControlHighlightAccentBrush" />
     <m:StaticResource x:Key="ProgressRingBackgroundThemeBrush" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <sys:Double x:Key="ProgressRingStrokeThickness">4</sys:Double>
-
-    <!-- Resources for PipsPager -->
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundSelected" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundDisabled" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrush" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrushPressed" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrushSelected" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorBorderBrushDisabled" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForeground" ResourceKey="SystemColorButtonTextColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForegroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForegroundPressed" ResourceKey="SystemColorHighlightTextColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForegroundSelected" ResourceKey="SystemColorHighlightTextColorBrush" />
-    <m:StaticResource x:Key="PipsPagerSelectionIndicatorForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
-    <m:StaticResource x:Key="PipsPagerNavigationButtonBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <m:StaticResource x:Key="PipsPagerNavigationButtonBackgroundPointerOver" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <m:StaticResource x:Key="PipsPagerNavigationButtonBackgroundPressed" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <m:StaticResource x:Key="PipsPagerNavigationButtonBackgroundDisabled" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <m:StaticResource x:Key="PipsPagerNavigationButtonBorderBrush" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <m:StaticResource x:Key="PipsPagerNavigationButtonBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="PipsPagerNavigationButtonBorderBrushPressed" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="PipsPagerNavigationButtonBorderBrushDisabled" ResourceKey="SystemColorButtonFaceColorBrush" />
-    <m:StaticResource x:Key="PipsPagerNavigationButtonForeground" ResourceKey="SystemColorButtonTextColorBrush" />
-    <m:StaticResource x:Key="PipsPagerNavigationButtonForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="PipsPagerNavigationButtonForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
-    <m:StaticResource x:Key="PipsPagerNavigationButtonForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
 
     <!-- Resources for RadioButton -->
     <sys:Double x:Key="RadioButtonBorderThemeThickness">1</sys:Double>

@@ -232,7 +232,6 @@ namespace ModernWpf.Gallery.Pages
                 ?? MediaSampleFactory.Create(uniqueId)
                 ?? StylesSampleFactory.Create(uniqueId)
                 ?? TextSampleFactory.Create(uniqueId)
-                ?? MotionSampleFactory.Create(uniqueId)
                 ?? WindowingSampleFactory.Create(uniqueId);
         }
 
@@ -317,12 +316,6 @@ namespace ModernWpf.Gallery.Pages
             if (stylesExamples.Count != 0)
             {
                 return stylesExamples;
-            }
-
-            var motionExamples = MotionSampleFactory.CreateExamples(uniqueId);
-            if (motionExamples.Count != 0)
-            {
-                return motionExamples;
             }
 
             var sampleContent = CreateWorkingSampleContent(uniqueId);

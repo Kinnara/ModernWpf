@@ -105,7 +105,6 @@ public class TemplateParityTests
             Path.Combine("ModernWpf.Controls", "NumberBox", "NumberBox.xaml"),
             Path.Combine("ModernWpf.Controls", "PagerControl", "PagerControl.xaml"),
             Path.Combine("ModernWpf.Controls", "PersonPicture", "PersonPicture.xaml"),
-            Path.Combine("ModernWpf.Controls", "PipsPager", "PipsPager.xaml"),
             Path.Combine("ModernWpf.Controls", "ProgressRing", "ProgressRing.xaml"),
             Path.Combine("ModernWpf.Controls", "RadioButtons", "RadioButtons.xaml"),
             Path.Combine("ModernWpf.Controls", "RadioMenuItem", "RadioMenuItem.xaml"),
@@ -113,8 +112,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf.Controls", "SplitButton", "SplitButton.xaml"),
             Path.Combine("ModernWpf.Controls", "SplitView", "SplitView.xaml"),
             Path.Combine("ModernWpf.Controls", "TeachingTip", "TeachingTip.xaml"),
-            Path.Combine("ModernWpf.Controls", "ToggleSwitch", "ToggleSwitch.xaml"),
-            Path.Combine("ModernWpf.Controls", "TwoPaneView", "TwoPaneView.xaml")
+            Path.Combine("ModernWpf.Controls", "ToggleSwitch", "ToggleSwitch.xaml")
         };
 
         var offenders = convertedTemplateFiles

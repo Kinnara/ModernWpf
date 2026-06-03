@@ -161,7 +161,6 @@ namespace ModernWpf.Gallery.Tests
                 ?? MediaSampleFactory.Create(uniqueId)
                 ?? StylesSampleFactory.Create(uniqueId)
                 ?? TextSampleFactory.Create(uniqueId)
-                ?? MotionSampleFactory.Create(uniqueId)
                 ?? WindowingSampleFactory.Create(uniqueId);
         }
 

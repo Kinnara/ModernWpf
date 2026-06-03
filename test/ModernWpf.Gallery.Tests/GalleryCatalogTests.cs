@@ -35,7 +35,6 @@ namespace ModernWpf.Gallery.Tests
             "MenuBar",
             "MenuFlyout",
             "ItemsRepeater",
-            "PipsPager",
             "RatingControl",
             "ToggleSwitch",
             "ColorPicker",
@@ -48,7 +47,6 @@ namespace ModernWpf.Gallery.Tests
             "SelectorBar",
             "SplitView",
             "AnnotatedScrollBar",
-            "ParallaxView",
             "GridView",
             "PersonPicture",
             "IconElement",
@@ -67,6 +65,7 @@ namespace ModernWpf.Gallery.Tests
             "ScrollViewer",
             "ScrollView",
             "FlipView",
+            "PipsPager",
             "ItemsView",
             "EasingFunction",
             "PageTransition",
@@ -74,6 +73,8 @@ namespace ModernWpf.Gallery.Tests
             "ImplicitTransition",
             "ConnectedAnimation",
             "SemanticZoom",
+            "ParallaxView",
+            "TwoPaneView",
             "StandardUICommand",
             "XamlUICommand",
             "RadialGradientBrush",
@@ -860,7 +861,7 @@ namespace ModernWpf.Gallery.Tests
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(12, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(79, GalleryCatalog.Items.Count);
+            Assert.AreEqual(77, GalleryCatalog.Items.Count);
         }
 
         [TestMethod]

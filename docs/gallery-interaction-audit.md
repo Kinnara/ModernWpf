@@ -263,15 +263,11 @@ Expand `Run-GalleryVisualChecks.ps1 -IncludeInteractions` to cover click-state c
 
 ### Scope
 
-Expand visual interaction coverage for selection-style controls with stable visible before/after states:
-
-- `PipsPager`
-
-Also add runtime click coverage for `SelectorBar`, which exposed an ambiguous visual-check target during this round.
+Add runtime click coverage for `SelectorBar`, which exposed an ambiguous
+visual-check target during this round.
 
 ### Current Findings
 
-- The first `PipsPager` sample does not show previous/next buttons, so the reliable click target is the visible `Page 2` pip rather than `Next Page`.
 - `SelectorBar` click behavior is now covered by an in-process runtime mouse down/up regression. The visual harness attempt remains tracked separately because the basic sample has no initially selected item and the visual proof did not show a reliable before/after delta.
 
 ### Verification
@@ -281,7 +277,7 @@ Also add runtime click coverage for `SelectorBar`, which exposed an ambiguous vi
   - Full `WpfGallerySourceShapeTests` `FullyQualifiedName~GalleryVisualChecks` slice: 8 passed on net8 and net10
   - `GalleryAutomationHookTests.SelectorBarSampleMatchesWinUIGalleryExamples`: passed on net8 and net10
 - Visual audit:
-  - Selection sweep after switching `PipsPager` to `Page 2` and adding native-click fallback, with only `SelectorBar` still failing: `artifacts/visual-checks/20260602-034950-835-56632/report.md`
+  - Selection sweep with only `SelectorBar` still failing: `artifacts/visual-checks/20260602-034950-835-56632/report.md`
 
 ## Round 10: GridView Item Activation Coverage
 
@@ -1001,20 +997,16 @@ controls that older visual checks covered but the video recorder could not prove
 
 - `AutoSuggestBox`
 - `GridView`
-- `PipsPager`
 
 ### Current Findings
 
 - The recorder was behind the screenshot visual harness. It typed
   `AutoSuggestBox` text without proving suggestions/output, selected `GridView`
-  without invoking item click, targeted a non-UIA `PipsPager` border, and had no
-  explicit output/status evidence for low-delta selection clips.
+  without invoking item click, and had no explicit output/status evidence for
+  low-delta selection clips.
 - The `AutoSuggestBox` sample lacked a stable automation id for its suggestion
   output TextBlock, so the recording manifest could not bind output proof to the
   sample.
-- The `PipsPager` sample placed the pager automation id on a `Border`, which is
-  not reliable UIA proof, and did not expose the selected gallery image through a
-  machine-readable state.
 - `AutoSuggestBoxListViewItem` gated mouse/key activation on `Focus()`. The
   control should still notify the owning suggestion list when the item is
   selectable; focus is useful but should not veto the click.
@@ -1024,10 +1016,9 @@ controls that older visual checks covered but the video recorder could not prove
 - Added real text-entry/suggestion evidence to
   `Record-GalleryControlInteractions.ps1`, including typed input, suggestion
   lookup, output automation id matching, and text-specific pass/fail evidence.
-  including GridView item invoke, expected output matching, and PipsPager
-  selected-image item status.
+  including GridView item invoke and expected output matching.
 - Added stable Gallery automation hooks for `AutoSuggestBox` output and
-  `PipsPager` pager/gallery state.
+  collection item output.
 - Relaxed `AutoSuggestBoxListViewItem` activation so item click/key handling
   attempts focus but does not require it before notifying the suggestion list.
 - Added a focused AutoSuggestBox interaction regression proving suggestion item
@@ -1041,7 +1032,6 @@ controls that older visual checks covered but the video recorder could not prove
   `artifacts/gallery-recordings/20260603-055524-741/report.md`
 - Reviewed poster frames:
   - `artifacts/gallery-recordings/20260603-055524-741/GridView/frames/t7500.png`
-  - `artifacts/gallery-recordings/20260603-055524-741/PipsPager/frames/t7500.png`
 - AutoSuggestBox caveat: the final video clip records typing and suggestions,
   and the manifest records output `Aegean`, but the recorder still uses a UIA
   selection fallback for output proof. The item-click close behavior is covered
@@ -1055,7 +1045,6 @@ Expand recording-first coverage for controls where the earlier pass only proved
 static rendering:
 
 - `SplitView`
-- `ParallaxView`
 - `InfoBar`
 - `ProgressRing`
 - `AnnotatedScrollBar`
@@ -1094,14 +1083,13 @@ static rendering:
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj -f net8.0-windows7.0 -c Debug --no-restore`: passed.
 - Final focused recording report:
   `artifacts/gallery-recordings/20260603-062558-459/report.md`
-- Final focused recording summary: 5 passed, 0 needs review, 0 failed. The
+- Final focused recording summary: 4 passed, 0 needs review, 0 failed. The
   `ProgressRing` pass is active-toggle proof only; animation proof remains
   pending.
 - Reviewed contact sheet:
   `artifacts/gallery-recordings/20260603-062558-459/review-contact-sheet.png`
 - Manifest evidence:
   - `SplitView`: `IsPaneOpen` changed from `On` to `Off`.
-  - `ParallaxView`: `GallerySample_ParallaxView_ListView` vertical scroll percent changed from `0` to `55`.
   - `InfoBar`: `Is Open` changed from `On` to `Off`.
   - `ProgressRing`: `Progress Options` changed from `On` to `Off`.
   - `AnnotatedScrollBar`: linked `ScrollViewer` vertical scroll percent changed from `0` to `55`.

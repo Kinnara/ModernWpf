@@ -92,10 +92,10 @@ files are manifest-backed: `AnnotatedScrollBar`, `AppBarButton`,
 `MenuBarItem`, `MenuFlyout`, `MenuFlyoutPresenter`, `NavigationView`,
 `NavigationViewItem`, `NavigationViewItemBase`,
 `NavigationViewItemPresenter`, `NumberBox`, `PagerControl`,
-`ParallaxView`, `PersonPicture`, `PipsPager`, `ProgressRing`,
+`PersonPicture`, `ProgressRing`,
 `RadioButtons`, `RadioMenuItem`, `RatingControl`, `RatingItemImageInfo`,
 `SelectorBar`, `SelectorBarItem`, `SplitButton`, `SplitView`, `TeachingTip`,
-`ToggleSplitButton`, `ToggleSwitch`, `TwoPaneView`, and `WrapPanel`.
+`ToggleSplitButton`, `ToggleSwitch`, and `WrapPanel`.
 
 The template-settings dependency properties are also manifest-backed:
 `AppBarButtonTemplateSettings`, `AppBarToggleButtonTemplateSettings`,

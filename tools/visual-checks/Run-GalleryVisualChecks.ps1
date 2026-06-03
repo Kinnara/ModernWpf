@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -683,14 +683,12 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "Slider" { return "GallerySample_Slider_Slider" }
         "SplitView" { return "GallerySample_SplitView_SplitView" }
         "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
-        "ParallaxView" { return "GallerySample_ParallaxView_Root" }
         "IconElement" { return "GallerySample_IconElement_SlicesIcon" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_ShadowRect" }
         "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
-        "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
@@ -742,13 +740,11 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "Slider" { return "GallerySample_Slider_Slider" }
         "SplitView" { return "GallerySample_SplitView_SplitView" }
         "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
-        "ParallaxView" { return "GallerySample_ParallaxView_Root" }
         "IconElement" { return "GallerySample_IconElement_Root" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_Root" }
         "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
-        "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_Root" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
@@ -791,12 +787,10 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "AutoSuggestBox" { return "Control1" }
         "SplitView" { return "NavLinksList" }
         "PersonPicture" { return "ProfileImageRadio" }
-        "ParallaxView" { return "listView" }
         "IconElement" { return "svPanel" }
         "ThemeShadow" { return "svPanel" }
         "TitleBar" { return "TitleBarControl" }
         "ProgressRing" { return "ProgressRing1" }
-        "PipsPager" { return "FlipViewPipsPager" }
         "AnnotatedScrollBar" { return "svPanel" }
         "GridView" { return "BasicGridView" }
         "BreadcrumbBar" { return "BreadcrumbBar1" }
@@ -923,7 +917,6 @@ function Test-ControlSupportsStateInteraction([string]$control) {
 function Test-ControlSupportsSelectionInteraction([string]$control) {
     switch ($control) {
         "GridView" { return $true }
-        "PipsPager" { return $true }
         default { return $false }
     }
 }
@@ -1040,7 +1033,6 @@ function Get-TextInteractionExpectedOutputName([string]$control) {
 function Get-SelectionInteractionTriggerName([string]$control) {
     switch ($control) {
         "GridView" { return "Item 1" }
-        "PipsPager" { return "Page 2" }
         default { return "" }
     }
 }
@@ -1055,7 +1047,6 @@ function Get-SelectionInteractionExpectedName([string]$control) {
 function Get-SelectionInteractionCropAutomationId([string]$control) {
     switch ($control) {
         "GridView" { return "GallerySample_GridView_ClickOutput0" }
-        "PipsPager" { return "GallerySample_PipsPager_Root" }
         default { return "" }
     }
 }
@@ -1904,28 +1895,6 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             $progressRingPrimary = New-ProgressRingModernPrimaryCrop $caseDir $primaryCrop.Width $primaryCrop.Height
             if ($null -ne $progressRingPrimary -and $progressRingPrimary.NonBlank) {
                 $primaryCrop = $progressRingPrimary
-            }
-        }
-
-        if ($control -eq "PipsPager" -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank -and (Test-Path $sampleArtifact)) {
-            $sampleSize = Get-ImageSize $sampleArtifact
-            $fallbackBounds = [ordered]@{
-                Found = $true
-                Reason = "Cropped PipsPager from the rendered sample root because the control-only VisualBrush crop is blank."
-                X = [Math]::Max(0, [int](($sampleSize.Width - $primaryCrop.Width) / 2))
-                Y = [Math]::Max(0, $sampleSize.Height - $primaryCrop.Height)
-                Width = $primaryCrop.Width
-                Height = $primaryCrop.Height
-                ChangedSamples = 0
-            }
-            $fallbackPath = Join-Path $artifactDir ($primarySource + "_fromRoot.png")
-            $savedBounds = Save-Crop $sampleArtifact $fallbackBounds $fallbackPath 0
-            $fallbackCrop = New-RenderedArtifactCrop $fallbackPath $primarySource $savedBounds
-            if ($null -ne $fallbackCrop -and $fallbackCrop.NonBlank) {
-                $primaryCrop = $fallbackCrop
-            }
-            else {
-                $primaryCrop = $null
             }
         }
 

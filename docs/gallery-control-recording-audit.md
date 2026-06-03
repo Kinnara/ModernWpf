@@ -53,7 +53,7 @@ keeps indeterminate visuals stabilized.
 The one-shot all-control recorder command exceeded the 15-minute runner timeout
 after `SplitButton` before it could write a top-level report. The accepted
 current-state proof uses smaller dark-theme batches against the same built
-tree. All 43 controls in the current recorder inventory passed with no
+tree. All 41 controls in the current recorder inventory passed with no
 `NeedsReview` or failed results.
 
 ### Dark Theme
@@ -63,9 +63,9 @@ tree. All 43 controls in the current recorder inventory passed with no
 | `artifacts/gallery-recordings/20260603-192050-001/report.md` | TeachingTip, Button, CheckBox, ComboBox, RadioButton | 5 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260603-192616-247/report.md` | Slider, ColorPicker, HyperlinkButton, RatingControl, RepeatButton | 5 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260603-193146-788/report.md` | ToggleButton, DropDownButton, SplitButton, ToggleSplitButton, ToggleSwitch | 5 passed, 0 needs review, 0 failed |
-| `artifacts/gallery-recordings/20260603-194020-526/report.md` | NumberBox, AutoSuggestBox, SplitView, PersonPicture, ParallaxView | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-194020-526/report.md` | NumberBox, AutoSuggestBox, SplitView, PersonPicture | 4 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260603-194548-087/report.md` | IconElement, ThemeShadow, TitleBar, InfoBadge, InfoBar, ProgressRing | 6 passed, 0 needs review, 0 failed |
-| `artifacts/gallery-recordings/20260603-195228-523/report.md` | PipsPager, AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, SelectorBar, NavigationView | 7 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-195228-523/report.md` | AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, SelectorBar, NavigationView | 6 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260603-200011-932/report.md` | ContentDialog, Flyout, Popup, MenuBar, MenuFlyout | 5 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260603-200545-017/report.md` | AppBarButton, AppBarSeparator, AppBarToggleButton, CommandBar, CommandBarFlyout | 5 passed, 0 needs review, 0 failed |
 
@@ -76,9 +76,9 @@ tree. All 43 controls in the current recorder inventory passed with no
 | `artifacts/gallery-recordings/20260603-201449-823/report.md` | TeachingTip, Button, CheckBox, ComboBox, RadioButton | 5 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260603-202011-935/report.md` | Slider, ColorPicker, HyperlinkButton, RatingControl, RepeatButton | 5 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260603-202523-730/report.md` | ToggleButton, DropDownButton, SplitButton, ToggleSplitButton, ToggleSwitch | 5 passed, 0 needs review, 0 failed |
-| `artifacts/gallery-recordings/20260603-203341-290/report.md` | NumberBox, AutoSuggestBox, SplitView, PersonPicture, ParallaxView | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-203341-290/report.md` | NumberBox, AutoSuggestBox, SplitView, PersonPicture | 4 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260603-203857-905/report.md` | IconElement, ThemeShadow, TitleBar, InfoBadge, InfoBar, ProgressRing | 6 passed, 0 needs review, 0 failed |
-| `artifacts/gallery-recordings/20260603-204521-233/report.md` | PipsPager, AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, SelectorBar, NavigationView | 7 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-204521-233/report.md` | AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, SelectorBar, NavigationView | 6 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260603-205311-406/report.md` | ContentDialog, Flyout, Popup, MenuBar, MenuFlyout | 5 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260603-205913-779/report.md` | AppBarButton, AppBarSeparator, AppBarToggleButton, CommandBar, CommandBarFlyout | 5 passed, 0 needs review, 0 failed |
 
@@ -129,14 +129,12 @@ missing from the ModernWpf control recorder inventory.
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed | `artifacts/gallery-recordings/20260603-055524-741/AutoSuggestBox/dark-autosuggestbox.mp4` | Manifest records typed input `ae`, suggestion `Aegean`, and output `Aegean`. Recorder still falls back to UIA selection for output proof; `AutoSuggestBoxInteractionTests` covers item-click submit/close behavior. |
 | Layout | SplitView | `item/SplitView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-062558-459/SplitView/dark-splitview.mp4` | Manifest records `IsPaneOpen` from `On` to `Off`; reviewed contact sheet shows the pane collapsed after the option toggle. |
 | Media | PersonPicture | `item/PersonPicture` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-082547-581/PersonPicture/dark-personpicture.mp4` | Static rendered route with `GallerySample_PersonPicture_PersonPicture` anchor; reviewed contact sheet shows the portrait options and API/catalog content. |
-| Motion | ParallaxView | `item/ParallaxView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-062558-459/ParallaxView/dark-parallaxview.mp4` | Manifest records the ListView vertical scroll percent from `0` to `55`; reviewed contact sheet shows the scrolled parallax content. |
 | Styles | IconElement | `item/IconElement` | Recorded | Recorder anchor fixed | `artifacts/gallery-recordings/20260603-082547-581/IconElement/dark-iconelement.mp4` | Static rendered route now requires the exposed `GallerySample_IconElement_ExampleButton1` anchor; reviewed contact sheet shows bitmap, font, and image icon samples. |
 | Styles | ThemeShadow | `item/ThemeShadow` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260603-082547-581/ThemeShadow/dark-themeshadow.mp4` | Added and required `GallerySample_ThemeShadow_TranslationSlider`; reviewed contact sheet shows the shadow surface and slider. |
 | Windowing | TitleBar | `item/TitleBar` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260603-082547-581/TitleBar/dark-titlebar.mp4` | Added and required `GallerySample_TitleBar_SearchBox`; reviewed contact sheet shows the preview title bar and options. |
 | Status & info | InfoBadge | `item/InfoBadge` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260603-082547-581/InfoBadge/dark-infobadge.mp4` | Added and required `GallerySample_InfoBadge_NavigationView`; reviewed contact sheet shows the NavigationView badge and style samples. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-062558-459/InfoBar/dark-infobar.mp4` | Manifest records `Is Open` from `On` to `Off`; reviewed contact sheet shows the first InfoBar closed. |
 | Status & info | ProgressRing | `item/ProgressRing` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260603-182335-320/ProgressRing/dark-progressring.mp4` | Manifest records `AnimationEvidence: true` with early-frame delta `0.069`, plus `Progress Options` from `On` to `Off`; reviewed frames show the indeterminate arc at different angles before deactivation. |
-| Scrolling | PipsPager | `item/PipsPager` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/PipsPager/dark-pipspager.mp4` | Manifest records page selection and pager item status changing to `LandscapeImage2.jpg`; reviewed frame `t7500.png` shows the second gallery image. |
 | Scrolling | AnnotatedScrollBar | `item/AnnotatedScrollBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-062558-459/AnnotatedScrollBar/dark-annotatedscrollbar.mp4` | Manifest records the linked ScrollViewer vertical scroll percent from `0` to `55`; reviewed contact sheet shows the list scrolled to the magenta section. |
 | Collections | GridView | `item/GridView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/GridView/dark-gridview.mp4` | Manifest records `You clicked Item 1.` after item activation; reviewed frame `t7500.png` shows the output text. |
 | Collections | ItemsRepeater | `item/ItemsRepeater` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260603-181238-897/ItemsRepeater/dark-itemsrepeater.mp4` | Manifest records the virtualizing `ScrollViewer` vertical scroll percent from `0` to `55`; reviewed contact sheet shows the visible item range move from `0`-`9` to `265`-`279`. |

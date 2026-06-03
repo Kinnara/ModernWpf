@@ -892,35 +892,6 @@
             }
           ],
           "RelatedControls": []
-        },
-        {
-          "UniqueId": "PipsPager",
-          "Title": "PipsPager",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A control to let the user navigate through a paginated collection when the page numbers do not need to be visually known.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/PipsPager.png",
-          "Description": "A PipsPager allows the user to navigate through a paginated collection and is independent of the content shown. Use this control when the content in the layout is not explicitly ordered by relevancy or you desire a glyph-based representation of numbered pages. PipsPagers are commonly used in photo viewers, app lists, carousels, and when display space is limited.",
-          "SourcePath": "/PipsPager",
-          "Docs": [
-            {
-              "Title": "PipsPager - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.pipspager"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/pipspager"
-            }
-          ],
-          "RelatedControls": [
-            "ItemsRepeater"
-          ]
         }
       ]
     },
@@ -1053,8 +1024,7 @@
             }
           ],
           "RelatedControls": [
-            "NavigationView",
-            "PipsPager"
+            "NavigationView"
           ]
         }
       ]
@@ -1225,39 +1195,6 @@
             {
               "Title": "Guidelines",
               "Uri": "https://learn.microsoft.com/windows/apps/design/controls/number-box"
-            }
-          ],
-          "RelatedControls": []
-        }
-      ]
-    },
-    {
-      "UniqueId": "Motion",
-      "Title": "Motion",
-      "IconGlyph": "",
-      "Items": [
-        {
-          "UniqueId": "ParallaxView",
-          "Title": "ParallaxView",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "A container control that provides the parallax effect when scrolling.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/ParallaxView.png",
-          "Description": "A container control that provides the parallax effect when scrolling.",
-          "SourcePath": "/ParallaxView",
-          "Docs": [
-            {
-              "Title": "ParallaxView - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.Parallaxview"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/motion/parallax"
             }
           ],
           "RelatedControls": []

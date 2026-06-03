@@ -368,19 +368,6 @@ namespace ModernWpf.Gallery.Models
                         new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
                         new GalleryDocLink[] { new GalleryDocLink("AnnotatedScrollBar - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.annotatedscrollbar") },
                         new string[] { "ItemsRepeater" }),
-                    new GalleryItem(
-                        "Scrolling",
-                        "PipsPager",
-                        "PipsPager",
-                        "A control to let the user navigate through a paginated collection when the page numbers do not need to be visually known.",
-                        "ms-appx:///Assets/ControlImages/PipsPager.png",
-                        "A PipsPager allows the user to navigate through a paginated collection and is independent of the content shown. Use this control when the content in the layout is not explicitly ordered by relevancy or you desire a glyph-based representation of numbered pages. PipsPagers are commonly used in photo viewers, app lists, carousels, and when display space is limited.",
-                        "Microsoft.UI.Xaml.Controls",
-                        false,
-                        false,
-                        new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
-                        new GalleryDocLink[] { new GalleryDocLink("PipsPager - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.pipspager"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/pipspager") },
-                        new string[] { "ItemsRepeater" }),
                 }),
                 new GalleryGroup("Layout", "Layout", "", "pack://application:,,,/Assets/ControlImages/Placeholder.png", false, new GalleryItem[]
                 {
@@ -438,7 +425,7 @@ namespace ModernWpf.Gallery.Models
                         false,
                         new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
                         new GalleryDocLink[] { new GalleryDocLink("SelectorBar - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.selectorbar"), new GalleryDocLink("SelectorBarItem - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.selectorbaritem") },
-                        new string[] { "NavigationView", "PipsPager" }),
+                        new string[] { "NavigationView" }),
                 }),
                 new GalleryGroup("Media", "Media", "", "pack://application:,,,/Assets/ControlImages/Placeholder.png", false, new GalleryItem[]
                 {
@@ -512,22 +499,6 @@ namespace ModernWpf.Gallery.Models
                         false,
                         new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
                         new GalleryDocLink[] { new GalleryDocLink("NumberBox - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.numberbox"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/number-box") },
-                        new string[] { "" }),
-                }),
-                new GalleryGroup("Motion", "Motion", "", "pack://application:,,,/Assets/ControlImages/Placeholder.png", false, new GalleryItem[]
-                {
-                    new GalleryItem(
-                        "Motion",
-                        "ParallaxView",
-                        "ParallaxView",
-                        "A container control that provides the parallax effect when scrolling.",
-                        "ms-appx:///Assets/ControlImages/ParallaxView.png",
-                        "A container control that provides the parallax effect when scrolling.",
-                        "Microsoft.UI.Xaml.Controls",
-                        false,
-                        false,
-                        new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement" },
-                        new GalleryDocLink[] { new GalleryDocLink("ParallaxView - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.Parallaxview"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/motion/parallax") },
                         new string[] { "" }),
                 }),
                 new GalleryGroup("MultipleWindows", "Windowing", "", "pack://application:,,,/Assets/ControlImages/Placeholder.png", false, new GalleryItem[]

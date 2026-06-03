@@ -46,7 +46,6 @@ control resource cannot bypass source-parity review.
 | `NumberBox/NumberBox.xaml` | WinUI 3 source-backed WPF port | `docs\numberbox-winui3-source-audit.md` |
 | `PagerControl/PagerControl.xaml` | WinUI 3 source-backed WPF port | `docs\pagercontrol-winui3-source-audit.md` |
 | `PersonPicture/PersonPicture.xaml` | WinUI 3 source-backed WPF port | `docs\personpicture-winui3-source-audit.md` |
-| `PipsPager/PipsPager.xaml` | WinUI 3 source-backed WPF port | `docs\pipspager-winui3-source-audit.md` |
 | `ProgressRing/ProgressRing.xaml` | WinUI 3 source-backed WPF port | `docs\progressring-winui3-source-audit.md` |
 | `RatingControl/RatingControl.xaml` | WinUI 3 source-backed WPF port | `docs\ratingcontrol-winui3-source-audit.md` |
 | `SelectorBar/SelectorBar.xaml` | WinUI 3 source-backed WPF port | `docs\selectorbar-winui3-source-audit.md` |
@@ -56,4 +55,3 @@ control resource cannot bypass source-parity review.
 | `RadioButtons/RadioButtons.xaml` | WinUI 3 source-backed WPF port | `docs\radiobuttons-winui3-source-audit.md` |
 | `RadioMenuItem/RadioMenuItem.xaml` | WinUI 3 source-backed WPF port | `docs\radiomenuflyoutitem-winui3-source-audit.md` |
 | `ToggleSwitch/ToggleSwitch.xaml` | WinUI 3 source-backed WPF port | `docs\toggleswitch-winui3-source-audit.md` |
-| `TwoPaneView/TwoPaneView.xaml` | WinUI 3 source-backed WPF port | `docs\twopaneview-winui3-source-audit.md` |
