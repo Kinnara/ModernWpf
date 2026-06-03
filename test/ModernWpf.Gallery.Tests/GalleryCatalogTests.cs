@@ -50,9 +50,7 @@ namespace ModernWpf.Gallery.Tests
             "SplitView",
             "AnnotatedScrollBar",
             "ParallaxView",
-            "PullToRefresh",
             "GridView",
-            "SwipeControl",
             "PersonPicture",
             "IconElement",
             "ThemeShadow",
@@ -864,7 +862,7 @@ namespace ModernWpf.Gallery.Tests
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(12, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(82, GalleryCatalog.Items.Count);
+            Assert.AreEqual(80, GalleryCatalog.Items.Count);
         }
 
         [TestMethod]

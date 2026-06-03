@@ -1,4 +1,4 @@
-﻿// This file is auto generated using MuxBaselineResourceGenerator. please do not edit or modify.
+// This file is auto generated using MuxBaselineResourceGenerator. please do not edit or modify.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -419,13 +419,6 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 "SystemControlAccentAcrylicElementAccentMediumHighBrush",
 "SystemChromeMediumHighColor",
 "SystemChromeAltMediumHighColor",
-"SwipeItemPreThresholdExecuteForeground",
-"SwipeItemPreThresholdExecuteBackground",
-"SwipeItemPostThresholdExecuteForeground",
-"SwipeItemPostThresholdExecuteBackground",
-"SwipeItemForeground",
-"SwipeItemBackground",
-"SwipeItemBackgroundPressed",
 "SplitViewRightBorderThemeThickness",
 "SplitViewPaneAnimationOpenPreDuration",
 "SplitViewPaneAnimationOpenDuration",
@@ -598,10 +591,6 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 "RepeatButtonBackgroundPressed",
 "RepeatButtonBackgroundPointerOver",
 "RepeatButtonBackgroundDisabled",
-"RefreshVisualizerForeground",
-"RefreshVisualizerBackground",
-"RefreshContainerForegroundBrush",
-"RefreshContainerBackgroundBrush",
 "RatingControlUnselectedForeground",
 "RatingControlSelectedForeground",
 "RatingControlPointerOverUnselectedForeground",
@@ -1721,7 +1710,6 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 "TabViewItemHeaderCloseFontSize",
 "TabViewItemHeaderCloseButtonSize",
 "TabViewHeaderPadding",
-"SwipeItemStyle",
 "SplitButtonSecondaryButtonSize",
 "SplitButtonRevealStyle",
 "SplitButtonPrimaryButtonSize",

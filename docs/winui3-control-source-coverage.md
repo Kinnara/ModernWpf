@@ -48,12 +48,10 @@ control resource cannot bypass source-parity review.
 | `PersonPicture/PersonPicture.xaml` | WinUI 3 source-backed WPF port | `docs\personpicture-winui3-source-audit.md` |
 | `PipsPager/PipsPager.xaml` | WinUI 3 source-backed WPF port | `docs\pipspager-winui3-source-audit.md` |
 | `ProgressRing/ProgressRing.xaml` | WinUI 3 source-backed WPF port | `docs\progressring-winui3-source-audit.md` |
-| `PullToRefresh/PullToRefresh.xaml` | WinUI 3 source-backed WPF family | `docs\pulltorefresh-winui3-source-audit.md` |
 | `RatingControl/RatingControl.xaml` | WinUI 3 source-backed WPF port | `docs\ratingcontrol-winui3-source-audit.md` |
 | `SelectorBar/SelectorBar.xaml` | WinUI 3 source-backed WPF port | `docs\selectorbar-winui3-source-audit.md` |
 | `SplitButton/SplitButton.xaml` | WinUI 3 source-backed WPF family | `docs\splitbutton-winui3-source-audit.md` |
 | `SplitView/SplitView.xaml` | WinUI 3 source-backed WPF port | `docs\splitview-winui3-source-audit.md` |
-| `SwipeControl/SwipeControl.xaml` | WinUI 3 source-backed WPF port | `docs\swipecontrol-winui3-source-audit.md` |
 | `TeachingTip/TeachingTip.xaml` | WinUI 3 source-backed WPF port | `docs\teachingtip-winui3-source-audit.md` |
 | `RadioButtons/RadioButtons.xaml` | WinUI 3 source-backed WPF port | `docs\radiobuttons-winui3-source-audit.md` |
 | `RadioMenuItem/RadioMenuItem.xaml` | WinUI 3 source-backed WPF port | `docs\radiomenuflyoutitem-winui3-source-audit.md` |

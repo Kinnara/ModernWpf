@@ -74,7 +74,6 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "ProgressRing", "GallerySample_ProgressRing_Root", "GallerySample_ProgressRing_ProgressRing" };
             yield return new object[] { "PipsPager", "GallerySample_PipsPager_Root", "GallerySample_PipsPager_PipsPager" };
             yield return new object[] { "AnnotatedScrollBar", "GallerySample_AnnotatedScrollBar_Root", "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" };
-            yield return new object[] { "PullToRefresh", "GallerySample_PullToRefresh_Root", "GallerySample_PullToRefresh_RefreshContainer" };
             yield return new object[] { "SplitView", "GallerySample_SplitView_Root", "GallerySample_SplitView_SplitView" };
             yield return new object[] { "PersonPicture", "GallerySample_PersonPicture_Root", "GallerySample_PersonPicture_PersonPicture" };
             yield return new object[] { "ParallaxView", "GallerySample_ParallaxView_Root", "GallerySample_ParallaxView_ParallaxView" };
@@ -103,7 +102,6 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "AutoSuggestBox", "GallerySample_AutoSuggestBox_Root", "GallerySample_AutoSuggestBox_AutoSuggestBox" };
             yield return new object[] { "MenuBar", "GallerySample_MenuBar_Root", "GallerySample_MenuBar_MenuBar" };
             yield return new object[] { "MenuFlyout", "GallerySample_MenuFlyout_Root", "GallerySample_MenuFlyout_AppBarButton" };
-            yield return new object[] { "SwipeControl", "GallerySample_SwipeControl_Root", "GallerySample_SwipeControl_SwipeControl" };
             yield return new object[] { "AppBarButton", "GallerySample_AppBarButton_Root", "GallerySample_AppBarButton_AppBarButton" };
             yield return new object[] { "AppBarSeparator", "GallerySample_AppBarSeparator_Root", "GallerySample_AppBarSeparator_CommandBar" };
             yield return new object[] { "AppBarToggleButton", "GallerySample_AppBarToggleButton_Root", "GallerySample_AppBarToggleButton_AppBarToggleButton" };
@@ -1548,84 +1546,6 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void PullToRefreshSampleMatchesWinUIGalleryExamples()
-        {
-            WpfTestHost.Run(() =>
-            {
-                var page = new ItemPage(GalleryCatalog.FindItem("PullToRefresh"));
-                var window = new Window
-                {
-                    Width = 1024,
-                    Height = 768,
-                    Left = -32000,
-                    Top = -32000,
-                    ShowInTaskbar = false,
-                    WindowStartupLocation = WindowStartupLocation.Manual,
-                    Content = page
-                };
-
-                try
-                {
-                    window.Show();
-                    WpfTestHost.DoEvents();
-                    window.UpdateLayout();
-                    WpfTestHost.DoEvents();
-
-                    Assert.AreEqual(2, page.Examples.Count);
-                    Assert.AreEqual("Basic PullToRefresh", page.Examples[0].HeaderText);
-                    Assert.AreEqual("Custom Icon PullToRefresh", page.Examples[1].HeaderText);
-                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
-                    StringAssert.Contains(page.Examples[0].XamlCode, "<RefreshContainer x:Name=\"rc\" RefreshRequested=\"rc_RefreshRequested\">");
-                    StringAssert.Contains(page.Examples[0].CSharpCode, "RefreshCompletionDeferral.Complete()");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "<RefreshVisualizer RefreshStateChanged=\"rv2_RefreshStateChanged\">");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "<SymbolIcon Symbol=\"AddFriend\"/>");
-                    StringAssert.Contains(page.Examples[1].CSharpCode, "ElementCompositionPreview.GetElementVisual(rv2.Content)");
-
-                    var refreshContainer = (Mux.RefreshContainer)FindByAutomationId(page, "GallerySample_PullToRefresh_RefreshContainer");
-                    var listView = FindNamedDescendant<ListView>(page, "lv");
-                    var customRefreshContainer = FindNamedDescendant<Mux.RefreshContainer>(page, "rc2");
-                    var customListView = FindNamedDescendant<ListView>(page, "lv2");
-                    var visualizer = FindNamedDescendant<Mux.RefreshVisualizer>(page, "rv2");
-                    Assert.IsNotNull(refreshContainer);
-                    Assert.IsNotNull(listView);
-                    Assert.IsNotNull(customRefreshContainer);
-                    Assert.IsNotNull(customListView);
-                    Assert.IsNotNull(visualizer);
-                    Assert.IsInstanceOfType(visualizer.Content, typeof(Image));
-
-                    Assert.AreEqual("rc", refreshContainer.Name);
-                    Assert.AreEqual(HorizontalAlignment.Center, refreshContainer.HorizontalAlignment);
-                    Assert.AreEqual(VerticalAlignment.Center, refreshContainer.VerticalAlignment);
-                    Assert.AreEqual("lv", listView.Name);
-                    Assert.AreEqual(200.0, listView.Height);
-                    Assert.AreEqual(200.0, listView.MinWidth);
-                    Assert.AreEqual(9, listView.Items.Count);
-                    Assert.AreEqual("AutoSuggestBox", listView.Items[0]);
-
-                    refreshContainer.RequestRefresh();
-                    WaitFor(() => listView.Items.Count == 10);
-                    Assert.AreEqual("NewControl", listView.Items[0]);
-
-                    Assert.AreEqual("rc2", customRefreshContainer.Name);
-                    Assert.AreEqual("rv2", visualizer.Name);
-                    Assert.AreEqual("lv2", customListView.Name);
-                    Assert.AreEqual(8, customListView.Items.Count);
-                    Assert.AreEqual("Mike", customListView.Items[0]);
-
-                    customRefreshContainer.RequestRefresh();
-                    WaitFor(() => customListView.Items.Count == 9);
-                    Assert.AreEqual("New Friend", customListView.Items[0]);
-                }
-                finally
-                {
-                    window.Content = null;
-                    window.Close();
-                    WpfTestHost.DoEvents();
-                }
-            });
-        }
-
-        [TestMethod]
         public void GridViewSampleMatchesWinUIGalleryExamples()
         {
             WpfTestHost.Run(() =>
@@ -1966,100 +1886,6 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(portrait.IsChecked);
                     Assert.AreEqual("SizeGroup", mediumIcons.GroupName);
                     Assert.IsTrue(mediumIcons.IsChecked);
-                }
-                finally
-                {
-                    window.Content = null;
-                    window.Close();
-                    WpfTestHost.DoEvents();
-                }
-            });
-        }
-
-        [TestMethod]
-        public void SwipeControlSampleMatchesWinUIGalleryExamples()
-        {
-            WpfTestHost.Run(() =>
-            {
-                var page = new ItemPage(GalleryCatalog.FindItem("SwipeControl"));
-                var window = new Window
-                {
-                    Width = 1024,
-                    Height = 768,
-                    Left = -32000,
-                    Top = -32000,
-                    ShowInTaskbar = false,
-                    WindowStartupLocation = WindowStartupLocation.Manual,
-                    Content = page
-                };
-
-                try
-                {
-                    window.Show();
-                    WpfTestHost.DoEvents();
-                    window.UpdateLayout();
-                    WpfTestHost.DoEvents();
-
-                    Assert.AreEqual(5, page.Examples.Count);
-                    Assert.AreEqual("Swipe right to reveal actions", page.Examples[0].HeaderText);
-                    Assert.AreEqual("Swipe left to invoke an execute", page.Examples[1].HeaderText);
-                    Assert.AreEqual("Custom Swipe in a ListView", page.Examples[2].HeaderText);
-                    Assert.AreEqual("Gradient Background", page.Examples[3].HeaderText);
-                    Assert.AreEqual("Custom icons", page.Examples[4].HeaderText);
-                    Assert.IsFalse(page.HasAdditionalSampleSnippets);
-                    StringAssert.Contains(page.Examples[0].XamlCode, "Accept_ItemInvoked");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "BehaviorOnInvoked=\"Close\"");
-                    StringAssert.Contains(page.Examples[2].XamlCode, "DeleteItem_ItemInvoked");
-                    StringAssert.Contains(page.Examples[3].XamlCode, "PurpleGradient");
-                    StringAssert.Contains(page.Examples[4].XamlCode, "CoffeeCup.png");
-
-                    var swipeRight = (Mux.SwipeControl)FindByAutomationId(page, "GallerySample_SwipeControl_SwipeControl");
-                    Assert.IsNotNull(swipeRight);
-                    Assert.AreEqual(2, swipeRight.LeftItems.Count);
-                    Assert.AreEqual(Mux.SwipeMode.Reveal, swipeRight.LeftItems.Mode);
-                    Assert.AreEqual("Accept", swipeRight.LeftItems[0].Text);
-                    Assert.AreEqual("Flag", swipeRight.LeftItems[1].Text);
-                    var swipeRightText = (TextBlock)swipeRight.Content;
-                    InvokeSwipeItem(swipeRight.LeftItems[0], swipeRight);
-                    Assert.AreEqual("Swipe Right - Accepted", swipeRightText.Text);
-                    Assert.AreEqual("Cancel", swipeRight.LeftItems[0].Text);
-                    InvokeSwipeItem(swipeRight.LeftItems[1], swipeRight);
-                    Assert.AreEqual("Swipe Right - Accepted & Flagged", swipeRightText.Text);
-                    Assert.AreEqual("Unmark", swipeRight.LeftItems[1].Text);
-
-                    var swipeControls = FindDescendants<Mux.SwipeControl>(page);
-                    Assert.IsTrue(swipeControls.Count >= 4);
-                    var swipeLeft = swipeControls[1];
-                    Assert.AreEqual(Mux.SwipeMode.Execute, swipeLeft.RightItems.Mode);
-                    Assert.AreEqual("Archive", swipeLeft.RightItems[0].Text);
-                    Assert.AreEqual(Mux.SwipeBehaviorOnInvoked.Close, swipeLeft.RightItems[0].BehaviorOnInvoked);
-                    var swipeLeftText = (TextBlock)swipeLeft.Content;
-                    InvokeSwipeItem(swipeLeft.RightItems[0], swipeLeft);
-                    Assert.AreEqual("Archived - Swipe Left", swipeLeftText.Text);
-
-                    var listView = (ListView)FindByAutomationId(page, "GallerySample_SwipeControl_ListView");
-                    Assert.IsNotNull(listView);
-                    Assert.AreEqual("lv", listView.Name);
-                    Assert.AreEqual(800.0, listView.Width);
-                    Assert.AreEqual(300.0, listView.Height);
-                    Assert.AreEqual(4, listView.Items.Count);
-                    var listSwipe = FindNamedDescendant<Mux.SwipeControl>(listView, "ListViewSwipeContainer");
-                    Assert.IsNotNull(listSwipe);
-                    Assert.AreEqual("Reply All", listSwipe.LeftItems[0].Text);
-                    Assert.AreEqual("Open", listSwipe.LeftItems[1].Text);
-                    Assert.AreEqual("Delete", listSwipe.RightItems[0].Text);
-                    InvokeSwipeItem(listSwipe.RightItems[0], listSwipe);
-                    Assert.AreEqual(3, listView.Items.Count);
-
-                    var gradientSwipe = swipeControls[swipeControls.Count - 2];
-                    Assert.AreEqual("Lock", gradientSwipe.RightItems[0].Text);
-                    Assert.IsInstanceOfType(gradientSwipe.RightItems[0].Background, typeof(LinearGradientBrush));
-
-                    var customIconSwipe = swipeControls[swipeControls.Count - 1];
-                    Assert.AreEqual("Coffee", customIconSwipe.LeftItems[0].Text);
-                    var bitmapIconSource = customIconSwipe.LeftItems[0].IconSource as Mux.BitmapIconSource;
-                    Assert.IsNotNull(bitmapIconSource);
-                    StringAssert.Contains(bitmapIconSource.UriSource.ToString(), "CoffeeCup.png");
                 }
                 finally
                 {
@@ -4677,15 +4503,6 @@ namespace ModernWpf.Gallery.Tests
             {
                 AddDescendants(VisualTreeHelper.GetChild(root, i), results);
             }
-        }
-
-        private static void InvokeSwipeItem(Mux.SwipeItem item, Mux.SwipeControl swipeControl)
-        {
-            var invokeMethod = typeof(Mux.SwipeItem).GetMethod(
-                "Invoke",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            Assert.IsNotNull(invokeMethod);
-            invokeMethod.Invoke(item, new object[] { swipeControl });
         }
 
         private static void InvokeListViewBaseItemClick(Mux.ListViewBase listViewBase, Mux.ListViewBaseItem item)

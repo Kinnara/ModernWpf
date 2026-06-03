@@ -106,19 +106,6 @@ namespace ModernWpf.Gallery.Models
                         new string[] { "Object", "DependencyObject", "FlyoutBase" },
                         new GalleryDocLink[] { new GalleryDocLink("MenuFlyout - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.menuflyout"), new GalleryDocLink("MenuFlyoutItem - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.menuflyoutitem"), new GalleryDocLink("MenuFlyoutSubItem - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.menuflyoutsubitem"), new GalleryDocLink("MenuFlyoutSeparator - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.menuflyoutseparator"), new GalleryDocLink("ToggleMenuFlyoutItem - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.togglemenuflyoutitem"), new GalleryDocLink("RadioMenuFlyoutItem - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.radiomenuflyoutitem"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/menus") },
                         new string[] { "Flyout", "ContentDialog", "AppBarButton" }),
-                    new GalleryItem(
-                        "MenusAndToolbars",
-                        "SwipeControl",
-                        "SwipeControl",
-                        "Touch gesture for quick menu actions on items.",
-                        "ms-appx:///Assets/ControlImages/SwipeControl.png",
-                        "Touch gesture for quick menu actions on items.",
-                        "Microsoft.UI.Xaml.Controls",
-                        false,
-                        false,
-                        new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control", "ContentControl" },
-                        new GalleryDocLink[] { new GalleryDocLink("SwipeControl - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.swipecontrol"), new GalleryDocLink("SwipeItems - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.swipeitems"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/swipe"), new GalleryDocLink("Gesture Actions", "https://learn.microsoft.com/windows/apps/design/controls/collection-commanding") },
-                        new string[] { "GridView" }),
                 }),
                 new GalleryGroup("Collections", "Collections", "", "pack://application:,,,/Assets/ControlImages/Placeholder.png", false, new GalleryItem[]
                 {
@@ -148,19 +135,6 @@ namespace ModernWpf.Gallery.Models
                         new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement" },
                         new GalleryDocLink[] { new GalleryDocLink("ItemsRepeater - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.itemsrepeater"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/items-repeater"), new GalleryDocLink("StackLayout - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.stacklayout"), new GalleryDocLink("UniformGridLayout - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.uniformgridlayout") },
                         new string[] { "GridView" }),
-                    new GalleryItem(
-                        "Collections",
-                        "PullToRefresh",
-                        "PullToRefresh",
-                        "Provides the ability to pull on a collection of items in a list/grid to refresh the contents of the collection.",
-                        "ms-appx:///Assets/ControlImages/PullToRefresh.png",
-                        "PullToRefresh lets a user pull down on a list of data using touch in order to retrieve more data. PullToRefresh is widely used on devices with a touch screen.",
-                        "Microsoft.UI.Xaml.Controls",
-                        false,
-                        false,
-                        new string[] { "" },
-                        new GalleryDocLink[] { new GalleryDocLink("RefreshContainer - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.RefreshContainer"), new GalleryDocLink("RefreshVisualizer - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.RefreshVisualizer"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/pull-to-refresh") },
-                        new string[] { "" }),
                 }),
                 new GalleryGroup("BasicInput", "Basic input", "", "pack://application:,,,/Assets/ControlImages/Placeholder.png", false, new GalleryItem[]
                 {

@@ -276,43 +276,6 @@
             "ContentDialog",
             "AppBarButton"
           ]
-        },
-        {
-          "UniqueId": "SwipeControl",
-          "Title": "SwipeControl",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ContentControl"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "Touch gesture for quick menu actions on items.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/SwipeControl.png",
-          "Description": "Touch gesture for quick menu actions on items.",
-          "Docs": [
-            {
-              "Title": "SwipeControl - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.swipecontrol"
-            },
-            {
-              "Title": "SwipeItems - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.swipeitems"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/swipe"
-            },
-            {
-              "Title": "Gesture Actions",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/collection-commanding"
-            }
-          ],
-          "RelatedControls": [
-            "GridView"
-          ]
         }
       ]
     },
@@ -385,30 +348,6 @@
           "RelatedControls": [
             "GridView"
           ]
-        },
-        {
-          "UniqueId": "PullToRefresh",
-          "Title": "PullToRefresh",
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "Provides the ability to pull on a collection of items in a list/grid to refresh the contents of the collection.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/PullToRefresh.png",
-          "Description": "PullToRefresh lets a user pull down on a list of data using touch in order to retrieve more data. PullToRefresh is widely used on devices with a touch screen.",
-          "SourcePath": "/PullToRefresh",
-          "Docs": [
-            {
-              "Title": "RefreshContainer - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.RefreshContainer"
-            },
-            {
-              "Title": "RefreshVisualizer - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.RefreshVisualizer"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/pull-to-refresh"
-            }
-          ],
-          "RelatedControls": []
         }
       ]
     },

@@ -113,7 +113,6 @@ public class TemplateParityTests
             Path.Combine("ModernWpf.Controls", "RatingControl", "RatingControl.xaml"),
             Path.Combine("ModernWpf.Controls", "SplitButton", "SplitButton.xaml"),
             Path.Combine("ModernWpf.Controls", "SplitView", "SplitView.xaml"),
-            Path.Combine("ModernWpf.Controls", "SwipeControl", "SwipeControl.xaml"),
             Path.Combine("ModernWpf.Controls", "TeachingTip", "TeachingTip.xaml"),
             Path.Combine("ModernWpf.Controls", "ToggleSwitch", "ToggleSwitch.xaml"),
             Path.Combine("ModernWpf.Controls", "TwoPaneView", "TwoPaneView.xaml")
@@ -949,21 +948,6 @@ public class TemplateParityTests
         Assert.IsFalse(
             offenders.Any(),
             "These simple shell template files should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
-    }
-
-    [TestMethod]
-    public void RefreshVisualizerTemplateUsesWinUIRootContentHosting()
-    {
-        var repoRoot = FindRepoRoot();
-        var templateFile = Path.Combine(repoRoot, "ModernWpf.Controls", "PullToRefresh", "RefreshVisualizer.xaml");
-
-        var offenders = FindPlainContentPresenterElementUses(repoRoot, templateFile)
-            .Concat(FindTextElementForegroundUses(repoRoot, templateFile))
-            .ToArray();
-
-        Assert.IsFalse(
-            offenders.Any(),
-            "RefreshVisualizer should keep content hosting in code like WinUI3, not in a template ContentPresenter. Offenders: " + string.Join("; ", offenders));
     }
 
     [TestMethod]

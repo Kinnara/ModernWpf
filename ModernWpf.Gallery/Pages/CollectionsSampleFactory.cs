@@ -18,72 +18,6 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class CollectionsSampleFactory
     {
-        private const string PullToRefreshBasicXaml =
-@"<RefreshContainer x:Name=""rc"" RefreshRequested=""rc_RefreshRequested"">
-    <ListView x:Name=""lv"" Width=""300"" Height=""300"" BorderThickness=""1"" BorderBrush=""Black""/>
-</RefreshContainer>";
-
-        private const string PullToRefreshBasicCSharp =
-@"ObservableCollection<string> items = new ObservableCollection<string>();
-listview.ItemsSource = items;
-
-private void rc_RefreshRequested(RefreshContainer sender, RefreshRequestedEventArgs args)
-{
-    //Do some work to show new Content! Once the work is done, call RefreshCompletionDeferral.Complete()
-    this.RefreshCompletionDeferral = args.GetDeferral();
-    this.DoWork();
-}
-
-private void WorkCompleted()
-{
-    items.Insert(0, ""NewControl"");
-    if (this.RefreshCompletionDeferral != null)
-    {
-        this.RefreshCompletionDeferral.Complete();
-        this.RefreshCompletionDeferral.Dispose();
-        this.RefreshCompletionDeferral = null;
-    }
-}";
-
-        private const string PullToRefreshCustomIconXaml =
-@"<RefreshContainer x:Name=""rc"" RefreshRequested=""rc_RefreshRequested"">
-    <RefreshContainer.Visualizer>
-        <RefreshVisualizer RefreshStateChanged=""rv2_RefreshStateChanged"">
-            <RefreshVisualizer.Content>
-                <SymbolIcon Symbol=""AddFriend""/>
-            </RefreshVisualizer.Content>
-        </RefreshVisualizer>
-    </RefreshContainer.Visualizer>
-    <ListView x:Name=""lv"" Width=""300"" Height=""300"" BorderThickness=""1"" BorderBrush=""Black""/>
-</RefreshContainer>";
-
-        private const string PullToRefreshCustomIconCSharp =
-@"ObservableCollection<string> items = new ObservableCollection<string>();
-listview.ItemsSource = items;
-
-private void rc_RefreshRequested(RefreshContainer sender, RefreshRequestedEventArgs args)
-{
-    //Do some work to show new Content! Once the work is done, call RefreshCompletionDeferral.Complete()
-    this.RefreshCompletionDeferral = args.GetDeferral();
-    this.DoWork();
-}
-
-private void WorkCompleted()
-{
-    items.Insert(0, ""NewControl"");
-    if (this.RefreshCompletionDeferral != null)
-    {
-        this.RefreshCompletionDeferral.Complete();
-        this.RefreshCompletionDeferral.Dispose();
-        this.RefreshCompletionDeferral = null;
-    }
-}
-private void rv2_RefreshStateChanged()
-{
-    var visualizerContentVisual = ElementCompositionPreview.GetElementVisual(rv2.Content);
-    visualizerContentVisual.StopAnimation(""RotationAngle"");
-}";
-
         private const string GridViewLayoutCustomizationXaml =
 @"<!-- The GridView used for this example is shown below. Setter properties are used to customize
 some parts of the GridViewItems (i.e. the margins). -->
@@ -218,8 +152,6 @@ private void InitializeData()
                     return CreateGridViewExamples(sampleSnippets);
                 case "ItemsRepeater":
                     return CreateItemsRepeaterExamples(sampleSnippets);
-                case "PullToRefresh":
-                    return CreatePullToRefreshExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -233,8 +165,6 @@ private void InitializeData()
                     return CreateGridViewSample();
                 case "ItemsRepeater":
                     return CreateItemsRepeaterSample();
-                case "PullToRefresh":
-                    return CreatePullToRefreshSample();
                 default:
                     return null;
             }
@@ -1026,6 +956,7 @@ private void InitializeData()
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                 Content = repeater
             };
+            GalleryAutomation.WithAutomationId(scrollViewer, GalleryAutomation.SampleElementId("ItemsRepeater", "VirtualizingScrollViewer"));
             layout.Children.Add(new Mux.ItemsRepeaterScrollHost { ScrollViewer = scrollViewer });
 
             var options = new StackPanel
@@ -1685,186 +1616,6 @@ private void InitializeData()
             {
                 get { return IngredientList.Count; }
             }
-        }
-
-        private static UIElement CreatePullToRefreshSample()
-        {
-            var root = new GallerySamplePanel
-            {
-                Margin = new Thickness(0, 0, 0, 12)
-            };
-            GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("PullToRefresh"));
-            root.Children.Add(CreateBasicPullToRefreshExampleContent(assignRootAutomationId: false));
-            return root;
-        }
-
-        private static IReadOnlyList<GalleryExample> CreatePullToRefreshExamples()
-        {
-            return new[]
-            {
-                new GalleryExample(
-                    "Basic PullToRefresh",
-                    CreateBasicPullToRefreshExampleContent(assignRootAutomationId: true),
-                    PullToRefreshBasicXaml,
-                    PullToRefreshBasicCSharp),
-                new GalleryExample(
-                    "Custom Icon PullToRefresh",
-                    CreateCustomIconPullToRefreshExampleContent(),
-                    PullToRefreshCustomIconXaml,
-                    PullToRefreshCustomIconCSharp)
-            };
-        }
-
-        private static GallerySamplePanel CreateBasicPullToRefreshExampleContent(bool assignRootAutomationId)
-        {
-            var root = CreatePullToRefreshExampleRoot(assignRootAutomationId);
-            var items = new ObservableCollection<string>(new[]
-            {
-                "AutoSuggestBox",
-                "ColorPicker",
-                "NavigationView",
-                "ParallaxView",
-                "PersonPicture",
-                "PullToRefresh",
-                "RatingControl",
-                "TeachingTip",
-                "TreeView"
-            });
-
-            var listView = CreatePullToRefreshListView("lv", items);
-            var host = CreatePullToRefreshHostGrid();
-            var refreshContainer = new Mux.RefreshContainer
-            {
-                Name = "rc",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Content = listView
-            };
-            GalleryAutomation.WithAutomationId(refreshContainer, GalleryAutomation.SampleElementId("PullToRefresh", "RefreshContainer"));
-            AttachRefreshHandler(refreshContainer, TimeSpan.FromMilliseconds(500), () => items.Insert(0, "NewControl"));
-            host.Children.Add(refreshContainer);
-            root.Children.Add(host);
-            return root;
-        }
-
-        private static GallerySamplePanel CreateCustomIconPullToRefreshExampleContent()
-        {
-            var root = CreatePullToRefreshExampleRoot(assignRootAutomationId: false);
-            var grid = CreatePullToRefreshHostGrid();
-            grid.Name = "Ex2Grid";
-            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            grid.RowDefinitions.Add(new RowDefinition());
-
-            var items = new ObservableCollection<string>(new[]
-            {
-                "Mike",
-                "Ben",
-                "Barbra",
-                "Claire",
-                "Justin",
-                "Shawn",
-                "Drew",
-                "Lili"
-            });
-
-            var refreshContainer = new Mux.RefreshContainer
-            {
-                Name = "rc2",
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Content = CreatePullToRefreshListView("lv2", items),
-                Visualizer = new Mux.RefreshVisualizer
-                {
-                    Name = "rv2",
-                    Content = CreatePullToRefreshSunImage()
-                }
-            };
-            refreshContainer.Visualizer.RefreshStateChanged += delegate { };
-            AttachRefreshHandler(refreshContainer, TimeSpan.FromMilliseconds(800), () => items.Insert(0, "New Friend"));
-
-            grid.Children.Add(refreshContainer);
-            Grid.SetRow(refreshContainer, 1);
-            root.Children.Add(grid);
-            return root;
-        }
-
-        private static GallerySamplePanel CreatePullToRefreshExampleRoot(bool assignRootAutomationId)
-        {
-            var root = new GallerySamplePanel
-            {
-                HorizontalAlignment = HorizontalAlignment.Stretch
-            };
-
-            if (assignRootAutomationId)
-            {
-                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("PullToRefresh"));
-            }
-
-            return root;
-        }
-
-        private static Grid CreatePullToRefreshHostGrid()
-        {
-            return new Grid
-            {
-                Height = 220,
-                HorizontalAlignment = HorizontalAlignment.Stretch
-            };
-        }
-
-        private static ListView CreatePullToRefreshListView(string name, ObservableCollection<string> items)
-        {
-            var listView = new ListView
-            {
-                Name = name,
-                Height = 200,
-                MinWidth = 200,
-                ItemsSource = items
-            };
-            listView.SetResourceReference(Control.BorderBrushProperty, "TextControlBorderBrush");
-            listView.BorderThickness = new Thickness(1);
-            return listView;
-        }
-
-        private static Image CreatePullToRefreshSunImage()
-        {
-            var image = new Image
-            {
-                Width = 35,
-                Height = 35
-            };
-            image.Loaded += delegate
-            {
-                var theme = ModernWpf.ThemeManager.GetActualTheme(image);
-                var fileName = theme == ModernWpf.ElementTheme.Light ? "SunBlack.png" : "SunWhite.png";
-                image.Source = new BitmapImage(new Uri(ResourceUri("Assets/SampleMedia/" + fileName), UriKind.Absolute));
-            };
-            return image;
-        }
-
-        private static void AttachRefreshHandler(Mux.RefreshContainer refreshContainer, TimeSpan delay, Action completeWork)
-        {
-            var timer = new DispatcherTimer { Interval = delay };
-            Mux.RefreshDeferral refreshCompletionDeferral = null;
-
-            timer.Tick += delegate
-            {
-                timer.Stop();
-                completeWork();
-                if (refreshCompletionDeferral != null)
-                {
-                    refreshCompletionDeferral.Complete();
-                    refreshCompletionDeferral = null;
-                }
-            };
-
-            refreshContainer.RefreshRequested += delegate(Mux.RefreshContainer sender, Mux.RefreshRequestedEventArgs args)
-            {
-                refreshCompletionDeferral = args.GetDeferral();
-                timer.Start();
-            };
-
-            refreshContainer.Unloaded += delegate { timer.Stop(); };
         }
 
         private static GridViewColumn CreateGridViewColumn(string header, string bindingPath, double width)

@@ -142,7 +142,7 @@ Fix visual-check false failures that appeared during the broader controls sweep:
 - Visual audit:
   - Initial failing broad sweep: `artifacts/visual-checks/20260602-021906-706-42352/report.md`
   - Focused `SplitView`, `PersonPicture` rerun: `artifacts/visual-checks/20260602-022318-767-63064/report.md`
-  - Broad rerun for `ColorPicker`, `HyperlinkButton`, `RatingControl`, `DropDownButton`, `SplitButton`, `ToggleSplitButton`, `SplitView`, `PersonPicture`, `ParallaxView`, `IconElement`, `ThemeShadow`, `TitleBar`, `InfoBadge`, `InfoBar`, `ProgressRing`, `PipsPager`, `AnnotatedScrollBar`, `PullToRefresh`, `GridView`, `ItemsRepeater`, `BreadcrumbBar`, `Pivot`, `SelectorBar`, and `NavigationView` with `Reference=None`: `artifacts/visual-checks/20260602-022401-170-82512/report.md`
+  - Broad rerun for `ColorPicker`, `HyperlinkButton`, `RatingControl`, `DropDownButton`, `SplitButton`, `ToggleSplitButton`, `SplitView`, `PersonPicture`, `ParallaxView`, `IconElement`, `ThemeShadow`, `TitleBar`, `InfoBadge`, `InfoBar`, `ProgressRing`, `PipsPager`, `AnnotatedScrollBar`, `GridView`, `ItemsRepeater`, `BreadcrumbBar`, `Pivot`, `SelectorBar`, and `NavigationView` with `Reference=None`: `artifacts/visual-checks/20260602-022401-170-82512/report.md`
 
 ## Round 5: Click-Open Interaction Coverage
 
@@ -665,7 +665,7 @@ Tighten GridView click visual proof after the light-theme sweep exposed a dilute
   - Focused light GridView run: `artifacts/visual-checks/20260602-094144-938-99184/report.md` (`GridView` passed; selection crop `810x38`; interaction delta `1.24`)
   - Focused dark GridView run: `artifacts/visual-checks/20260602-094234-129-39556/report.md` (`GridView` passed; selection crop `810x38`; interaction delta `1.81`)
   - Light remainder batch for `GridView`, `ItemsRepeater`, `BreadcrumbBar`, `Pivot`, `SelectorBar`, and `NavigationView`: `artifacts/visual-checks/20260602-094314-620-98676/report.md`
-  - Light remainder batch for `ContentDialog`, `Flyout`, `Popup`, `MenuBar`, `MenuFlyout`, and `SwipeControl`: `artifacts/visual-checks/20260602-094401-344-38352/report.md`
+  - Light remainder batch for `ContentDialog`, `Flyout`, `Popup`, `MenuBar`, and `MenuFlyout`: `artifacts/visual-checks/20260602-094401-344-38352/report.md`
   - Light remainder batch for `AppBarButton`, `AppBarSeparator`, `AppBarToggleButton`, `CommandBar`, and `CommandBarFlyout`: `artifacts/visual-checks/20260602-094455-938-96068/report.md`
 
 ## Round 24: TeachingTip Popup Screen Proof

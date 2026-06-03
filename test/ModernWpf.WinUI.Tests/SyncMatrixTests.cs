@@ -26,8 +26,6 @@ public class SyncMatrixTests
 
         AssertControlStatus(matrix, "AutoSuggestBox", "Source-backed WPF port");
         AssertControlStatus(matrix, "TeachingTip", "Source-backed WPF port");
-        AssertControlStatus(matrix, "SwipeControl", "Source-backed WPF port");
-        AssertControlStatus(matrix, "PullToRefresh / RefreshContainer", "Source-backed WPF port");
         AssertControlStatus(matrix, "ColorPicker / ColorSpectrum", "Source-backed WPF port");
         AssertControlStatus(matrix, "ComboBox", "Official WPF Fluent-backed stock control");
         AssertControlStatus(matrix, "DataGrid", "Official WPF Fluent-backed stock control");

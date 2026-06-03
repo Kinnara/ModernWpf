@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "PullToRefresh", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [string]$GalleryExe,
@@ -550,7 +550,6 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_ScrollViewer" }
-        "PullToRefresh" { return "GallerySample_PullToRefresh_RefreshContainer" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_TemplateBreadcrumbBar" }
@@ -562,7 +561,6 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
         "MenuFlyout" { return "GallerySample_MenuFlyout_AppBarButton" }
-        "SwipeControl" { return "GallerySample_SwipeControl_SwipeControl" }
         "AppBarButton" { return "GallerySample_AppBarButton_AppBarButton" }
         "AppBarSeparator" { return "GallerySample_AppBarSeparator_AttachCameraButton" }
         "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }

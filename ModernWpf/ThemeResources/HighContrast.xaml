@@ -1482,12 +1482,6 @@
     <m:StaticResource x:Key="ProgressRingBackgroundThemeBrush" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <sys:Double x:Key="ProgressRingStrokeThickness">4</sys:Double>
 
-    <!-- Resources for PullToRefresh / RefreshContainer -->
-    <m:StaticResource x:Key="RefreshContainerForegroundBrush" ResourceKey="SystemColorHighlightTextColorBrush" />
-    <SolidColorBrush x:Key="RefreshContainerBackgroundBrush" Color="Transparent" />
-    <m:StaticResource x:Key="RefreshVisualizerForeground" ResourceKey="SystemColorHighlightTextColorBrush" />
-    <SolidColorBrush x:Key="RefreshVisualizerBackground" Color="Transparent" />
-
     <!-- Resources for PipsPager -->
     <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
     <m:StaticResource x:Key="PipsPagerSelectionIndicatorBackgroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
