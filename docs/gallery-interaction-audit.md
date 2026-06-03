@@ -1347,3 +1347,35 @@ Record and review navigation controls that still had pending interaction proof:
   - `SelectorBar`: sample item status changed from `Recent` to `Shared`.
   - `NavigationView`: `Menu Item2` changed from unselected to selected, and
     `Sample Page 2` was found.
+
+## Round 41: Current Full-Inventory Recording Sweep
+
+### Scope
+
+Re-run the current recorder inventory against the latest tree after the
+touch-oriented control removal and later recorder-proof fixes.
+
+### Current Findings
+
+- The monolithic all-control recorder command built successfully, but exceeded
+  the 15-minute runner timeout after `SplitButton` and did not write a
+  top-level manifest/report. The work was re-run in smaller batches so every
+  accepted recording has a completed manifest.
+- The current inventory contains 43 controls. All 43 controls passed the
+  dark-theme recording batches with no `NeedsReview` and no failed results.
+- `CommandBarFlyout` passed the current repeat-open batch with both open
+  elements found and `CommandBarFlyoutSecondaryExpanded=true`, covering the
+  original flicker/misalignment/repeat-open failure path at the recorder level.
+
+### Verification
+
+- Batch reports:
+  - `artifacts/gallery-recordings/20260603-192050-001/report.md`: 5 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-192616-247/report.md`: 5 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-193146-788/report.md`: 5 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-194020-526/report.md`: 5 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-194548-087/report.md`: 6 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-195228-523/report.md`: 7 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-200011-932/report.md`: 5 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-200545-017/report.md`: 5 passed, 0 needs review, 0 failed.
+- Aggregate current-state proof: 43 passed, 0 needs review, 0 failed.

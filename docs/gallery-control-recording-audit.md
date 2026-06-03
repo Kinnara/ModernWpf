@@ -46,6 +46,25 @@ Controls that require motion proof can opt into preserved animations and record
 `AnimationEvidence` in the manifest while the normal visual-test artifact path
 keeps indeterminate visuals stabilized.
 
+## Current Full-Inventory Sweep
+
+The one-shot all-control recorder command exceeded the 15-minute runner timeout
+after `SplitButton` before it could write a top-level report. The accepted
+current-state proof uses smaller dark-theme batches against the same built
+tree. All 43 controls in the current recorder inventory passed with no
+`NeedsReview` or failed results.
+
+| Run | Controls | Result |
+| --- | --- | --- |
+| `artifacts/gallery-recordings/20260603-192050-001/report.md` | TeachingTip, Button, CheckBox, ComboBox, RadioButton | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-192616-247/report.md` | Slider, ColorPicker, HyperlinkButton, RatingControl, RepeatButton | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-193146-788/report.md` | ToggleButton, DropDownButton, SplitButton, ToggleSplitButton, ToggleSwitch | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-194020-526/report.md` | NumberBox, AutoSuggestBox, SplitView, PersonPicture, ParallaxView | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-194548-087/report.md` | IconElement, ThemeShadow, TitleBar, InfoBadge, InfoBar, ProgressRing | 6 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-195228-523/report.md` | PipsPager, AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, SelectorBar, NavigationView | 7 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-200011-932/report.md` | ContentDialog, Flyout, Popup, MenuBar, MenuFlyout | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-200545-017/report.md` | AppBarButton, AppBarSeparator, AppBarToggleButton, CommandBar, CommandBarFlyout | 5 passed, 0 needs review, 0 failed |
+
 ## Control Matrix
 
 | Area | Control | Route or Scenario | Recording Status | Fix Status | Latest Evidence | Notes |
