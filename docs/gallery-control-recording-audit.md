@@ -12,6 +12,8 @@ path and the recording has been reviewed or decoded into nonblank poster frames.
 - For popup and flyout controls, record open, close, and second open in the same
   clip so flicker, stale visual state, and repeat-open crashes are visible.
 - Extract poster frames from each recording and reject blank recordings.
+- Require a control-specific exposed automation anchor before accepting a route
+  capture as proof.
 - Fix issues in substantial rounds and record the post-fix interaction before
   committing.
 
@@ -62,12 +64,12 @@ record the Windows background instead of the Gallery window.
 | Text | NumberBox | `item/NumberBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/NumberBox/dark-numberbox.mp4` | Manifest records `10` to `20`; reviewed frame shows spin-button value `20`. |
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed | `artifacts/gallery-recordings/20260603-055524-741/AutoSuggestBox/dark-autosuggestbox.mp4` | Manifest records typed input `ae`, suggestion `Aegean`, and output `Aegean`. Recorder still falls back to UIA selection for output proof; `AutoSuggestBoxInteractionTests` covers item-click submit/close behavior. |
 | Layout | SplitView | `item/SplitView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-062558-459/SplitView/dark-splitview.mp4` | Manifest records `IsPaneOpen` from `On` to `Off`; reviewed contact sheet shows the pane collapsed after the option toggle. |
-| Media | PersonPicture | `item/PersonPicture` | Pending | Pending |  | Static route. |
+| Media | PersonPicture | `item/PersonPicture` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-082547-581/PersonPicture/dark-personpicture.mp4` | Static rendered route with `GallerySample_PersonPicture_PersonPicture` anchor; reviewed contact sheet shows the portrait options and API/catalog content. |
 | Motion | ParallaxView | `item/ParallaxView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-062558-459/ParallaxView/dark-parallaxview.mp4` | Manifest records the ListView vertical scroll percent from `0` to `55`; reviewed contact sheet shows the scrolled parallax content. |
-| Styles | IconElement | `item/IconElement` | Pending | Pending |  | Static route. |
-| Styles | ThemeShadow | `item/ThemeShadow` | Pending | Pending |  | Static route plus shadow visibility review. |
-| Windowing | TitleBar | `item/TitleBar` | Pending | Pending |  | Static route. |
-| Status & info | InfoBadge | `item/InfoBadge` | Pending | Pending |  | Static route. |
+| Styles | IconElement | `item/IconElement` | Recorded | Recorder anchor fixed | `artifacts/gallery-recordings/20260603-082547-581/IconElement/dark-iconelement.mp4` | Static rendered route now requires the exposed `GallerySample_IconElement_ExampleButton1` anchor; reviewed contact sheet shows bitmap, font, and image icon samples. |
+| Styles | ThemeShadow | `item/ThemeShadow` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260603-082547-581/ThemeShadow/dark-themeshadow.mp4` | Added and required `GallerySample_ThemeShadow_TranslationSlider`; reviewed contact sheet shows the shadow surface and slider. |
+| Windowing | TitleBar | `item/TitleBar` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260603-082547-581/TitleBar/dark-titlebar.mp4` | Added and required `GallerySample_TitleBar_SearchBox`; reviewed contact sheet shows the preview title bar and options. |
+| Status & info | InfoBadge | `item/InfoBadge` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260603-082547-581/InfoBadge/dark-infobadge.mp4` | Added and required `GallerySample_InfoBadge_NavigationView`; reviewed contact sheet shows the NavigationView badge and style samples. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-062558-459/InfoBar/dark-infobar.mp4` | Manifest records `Is Open` from `On` to `Off`; reviewed contact sheet shows the first InfoBar closed. |
 | Status & info | ProgressRing | `item/ProgressRing` | Recorded (active toggle) | Animation proof pending | `artifacts/gallery-recordings/20260603-062558-459/ProgressRing/dark-progressring.mp4` | Manifest records `Progress Options` from `On` to `Off`; reviewed contact sheet shows the indeterminate ring hidden after deactivation. Rendered frames did not prove pre-toggle animation, and screen capture diagnostics recorded the desktop background instead of Gallery. |
 | Scrolling | PipsPager | `item/PipsPager` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/PipsPager/dark-pipspager.mp4` | Manifest records page selection and pager item status changing to `LandscapeImage2.jpg`; reviewed frame `t7500.png` shows the second gallery image. |

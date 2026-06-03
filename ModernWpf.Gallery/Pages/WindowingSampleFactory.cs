@@ -226,6 +226,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 QueryIcon = new Mux.SymbolIcon(Mux.Symbol.Find),
                 Margin = new Thickness(0, 0, 16, 0)
             };
+            GalleryAutomation.WithAutomationId(searchBox, GalleryAutomation.SampleElementId("TitleBar", "SearchBox"));
             Grid.SetColumn(searchBox, 3);
             titleBarGrid.Children.Add(searchBox);
 

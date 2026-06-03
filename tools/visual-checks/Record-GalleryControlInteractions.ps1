@@ -542,10 +542,10 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "SplitView" { return "GallerySample_SplitView_IsPaneOpenToggle" }
         "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
-        "IconElement" { return "GallerySample_IconElement_SlicesIcon" }
-        "ThemeShadow" { return "GallerySample_ThemeShadow_ShadowRect" }
-        "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
-        "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
+        "IconElement" { return "GallerySample_IconElement_ExampleButton1" }
+        "ThemeShadow" { return "GallerySample_ThemeShadow_TranslationSlider" }
+        "TitleBar" { return "GallerySample_TitleBar_SearchBox" }
+        "InfoBadge" { return "GallerySample_InfoBadge_NavigationView" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }

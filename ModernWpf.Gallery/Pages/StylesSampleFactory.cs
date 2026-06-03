@@ -322,6 +322,7 @@ namespace ModernWpf.Gallery.Pages
                 Value = 32
             };
             AutomationProperties.SetName(translationSlider, "shadow intensity");
+            GalleryAutomation.WithAutomationId(translationSlider, GalleryAutomation.SampleElementId("ThemeShadow", "TranslationSlider"));
             ControlHelper.SetHeader(translationSlider, "Z-translation");
             translationSlider.ValueChanged += delegate
             {

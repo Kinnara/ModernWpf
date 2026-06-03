@@ -1266,3 +1266,47 @@ Add recording-first proof for the Gallery shell NavigationView pane:
     child hidden.
   - `StateAfterClick` did not reach the target state in the recorder; each
     step used the recorded UIA fallback before final visual/state proof.
+
+## Round 39: Static Visual Anchor Hardening
+
+### Scope
+
+Record and review static visual controls that still had no accepted recording
+proof:
+
+- `PersonPicture`
+- `IconElement`
+- `ThemeShadow`
+- `TitleBar`
+- `InfoBadge`
+
+### Current Findings
+
+- The first recording pass reached the pages, but `IconElement`,
+  `ThemeShadow`, `TitleBar`, and `InfoBadge` each reported that the intended
+  sample element was not found. Those runs were not accepted as proof because a
+  route-level capture can miss a broken or absent sample surface.
+- The missing anchors were assigned to elements that UI Automation does not
+  expose reliably, such as purely visual icon, border, or content host elements.
+
+### Changes
+
+- Updated the recorder to require exposed sample anchors for this batch:
+  `IconElement` uses the existing font-icon example button, while
+  `ThemeShadow`, `TitleBar`, and `InfoBadge` use new stable ids on visible
+  controls.
+- Added stable automation ids for the `ThemeShadow` translation slider, the
+  `TitleBar` preview search box, and the `InfoBadge` sample NavigationView.
+
+### Verification
+
+- Recorder script parsed successfully with PowerShell parser.
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj -f net8.0-windows7.0 -c Debug --no-restore`: passed.
+- Final focused recording report:
+  `artifacts/gallery-recordings/20260603-082547-581/report.md`
+- Final focused recording summary: 5 passed, 0 needs review, 0 failed.
+- Reviewed contact sheet:
+  `artifacts/gallery-recordings/20260603-082547-581/static-visual-review-contact-sheet.png`
+- Manifest/report evidence:
+  - All five recordings are nonblank rendered MP4s.
+  - The report has no `sample not found` notes after the anchor changes.

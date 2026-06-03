@@ -168,6 +168,7 @@ namespace ModernWpf.Gallery.Pages
                 IsPaneOpen = true,
                 Content = new Frame { Name = "contentFrame" }
             };
+            GalleryAutomation.WithAutomationId(navigationView, GalleryAutomation.SampleElementId("InfoBadge", "NavigationView"));
             var infoBadge = new Mux.InfoBadge
             {
                 Name = "infoBadge1",
