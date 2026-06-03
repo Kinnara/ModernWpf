@@ -1379,3 +1379,31 @@ touch-oriented control removal and later recorder-proof fixes.
   - `artifacts/gallery-recordings/20260603-200011-932/report.md`: 5 passed, 0 needs review, 0 failed.
   - `artifacts/gallery-recordings/20260603-200545-017/report.md`: 5 passed, 0 needs review, 0 failed.
 - Aggregate current-state proof: 43 passed, 0 needs review, 0 failed.
+
+## Round 42: Light Theme Full-Inventory Recording Sweep
+
+### Scope
+
+Re-run the current recorder inventory in the light theme, using the same batch
+split as the dark current-state sweep.
+
+### Current Findings
+
+- The current inventory contains 43 controls. All 43 controls passed the
+  light-theme recording batches with no `NeedsReview` and no failed results.
+- `CommandBarFlyout` passed the light repeat-open batch with both open elements
+  found and `CommandBarFlyoutSecondaryExpanded=true`, giving theme-specific
+  coverage for the original flicker/misalignment/repeat-open failure path.
+
+### Verification
+
+- Batch reports:
+  - `artifacts/gallery-recordings/20260603-201449-823/report.md`: 5 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-202011-935/report.md`: 5 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-202523-730/report.md`: 5 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-203341-290/report.md`: 5 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-203857-905/report.md`: 6 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-204521-233/report.md`: 7 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-205311-406/report.md`: 5 passed, 0 needs review, 0 failed.
+  - `artifacts/gallery-recordings/20260603-205913-779/report.md`: 5 passed, 0 needs review, 0 failed.
+- Aggregate light-theme proof: 43 passed, 0 needs review, 0 failed.
