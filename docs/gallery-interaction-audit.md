@@ -1058,3 +1058,62 @@ controls that older visual checks covered but the video recorder could not prove
   and the manifest records output `Aegean`, but the recorder still uses a UIA
   selection fallback for output proof. The item-click close behavior is covered
   by the focused regression above.
+
+## Round 35: Layout, Motion, Status, and Scroll Proof
+
+### Scope
+
+Expand recording-first coverage for controls where the earlier pass only proved
+static rendering:
+
+- `SplitView`
+- `ParallaxView`
+- `InfoBar`
+- `ProgressRing`
+- `AnnotatedScrollBar`
+
+### Current Findings
+
+- The first recording for this batch was too weak: it captured route rendering
+  but did not drive pane, scroll, or status interactions.
+- `SplitView` and `AnnotatedScrollBar` exposed weak sample anchors in the
+  recorder. Their intended controls were rendered, but the ids selected by the
+  recorder were not reliable UIA proof targets.
+- The option recorder initially leaked the UIA target element into the function
+  output stream, causing false failed manifests even though the option state
+  changed. The final pass rejects that class of harness bug by requiring a
+  single evidence object with explicit state or scroll proof.
+- `ProgressRing` is only proven for active-state toggling in this round. The
+  rendered MP4 frames did not prove pre-toggle animation, and a screen-mode
+  diagnostic captured the desktop background instead of the Gallery window, so
+  animation-specific proof remains pending.
+
+### Changes
+
+- Added scroll interaction support to
+  `Record-GalleryControlInteractions.ps1`, including `ScrollPattern` percent
+  changes, a native mouse-wheel fallback, and pass/fail evidence for scroll
+  movement.
+- Made `State`, `Value`, `Option`, `Text`, and `Scroll` interactions require
+  machine-readable evidence instead of accepting visual delta alone.
+- Extended option recording to `SplitView`, `InfoBar`, and `ProgressRing`, with
+  stable option automation-id lookup before name fallback.
+- Added stable Gallery sample automation ids for the SplitView pane toggle,
+  InfoBar `Is Open` checkbox, and ProgressRing active toggle.
+
+### Verification
+
+- `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj -f net8.0-windows7.0 -c Debug --no-restore`: passed.
+- Final focused recording report:
+  `artifacts/gallery-recordings/20260603-062558-459/report.md`
+- Final focused recording summary: 5 passed, 0 needs review, 0 failed. The
+  `ProgressRing` pass is active-toggle proof only; animation proof remains
+  pending.
+- Reviewed contact sheet:
+  `artifacts/gallery-recordings/20260603-062558-459/review-contact-sheet.png`
+- Manifest evidence:
+  - `SplitView`: `IsPaneOpen` changed from `On` to `Off`.
+  - `ParallaxView`: `GallerySample_ParallaxView_ListView` vertical scroll percent changed from `0` to `55`.
+  - `InfoBar`: `Is Open` changed from `On` to `Off`.
+  - `ProgressRing`: `Progress Options` changed from `On` to `Off`.
+  - `AnnotatedScrollBar`: linked `ScrollViewer` vertical scroll percent changed from `0` to `55`.

@@ -139,6 +139,7 @@ namespace ModernWpf.Gallery.Pages
                 Content = "IsPaneOpen",
                 IsChecked = splitView.IsPaneOpen
             };
+            GalleryAutomation.WithAutomationId(toggle, GalleryAutomation.SampleElementId("SplitView", "IsPaneOpenToggle"));
             toggle.Checked += delegate { splitView.IsPaneOpen = true; };
             toggle.Unchecked += delegate { splitView.IsPaneOpen = false; };
 

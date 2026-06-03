@@ -495,6 +495,7 @@ namespace ModernWpf.Gallery.Pages
 
             var isOpen = CreateOptionCheckBox("Is Open", isChecked: true);
             isOpen.Name = "InfoBarIsOpenCheckBox1";
+            GalleryAutomation.WithAutomationId(isOpen, GalleryAutomation.SampleElementId("InfoBar", "IsOpenCheckBox"));
             isOpen.Checked += delegate { infoBar.IsOpen = true; };
             isOpen.Unchecked += delegate { infoBar.IsOpen = false; };
 
@@ -748,6 +749,7 @@ namespace ModernWpf.Gallery.Pages
                 OnContent = "Working"
             };
             AutomationProperties.SetName(toggle, "Progress Options");
+            GalleryAutomation.WithAutomationId(toggle, GalleryAutomation.SampleElementId("ProgressRing", "ProgressToggle"));
             toggle.Toggled += delegate { progressRing.IsActive = toggle.IsOn; };
 
             var background = CreateBackgroundComboBox("BackgroundComboBox1");

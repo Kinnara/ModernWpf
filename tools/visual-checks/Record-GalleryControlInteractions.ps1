@@ -103,6 +103,7 @@ public static class GalleryRecordingNative
     private const int SW_RESTORE = 9;
     private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
     private const uint MOUSEEVENTF_LEFTUP = 0x0004;
+    private const uint MOUSEEVENTF_WHEEL = 0x0800;
     private const uint KEYEVENTF_KEYUP = 0x0002;
     private const byte VK_CONTROL = 0x11;
     private const byte VK_SHIFT = 0x10;
@@ -157,6 +158,12 @@ public static class GalleryRecordingNative
         mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
         System.Threading.Thread.Sleep(holdMilliseconds);
         mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
+    }
+
+    public static void Wheel(int x, int y, int delta)
+    {
+        SetCursorPos(x, y);
+        mouse_event(MOUSEEVENTF_WHEEL, 0, 0, unchecked((uint)delta), UIntPtr.Zero);
     }
 
     public static void Escape()
@@ -480,7 +487,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "RadioButton" { return "GallerySample_RadioButton_RadioButton" }
         "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
         "Slider" { return "GallerySample_Slider_Slider" }
-        "SplitView" { return "GallerySample_SplitView_SplitView" }
+        "SplitView" { return "GallerySample_SplitView_IsPaneOpenToggle" }
         "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
         "ParallaxView" { return "GallerySample_ParallaxView_Root" }
         "IconElement" { return "GallerySample_IconElement_SlicesIcon" }
@@ -490,7 +497,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
-        "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" }
+        "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_ScrollViewer" }
         "PullToRefresh" { return "GallerySample_PullToRefresh_RefreshContainer" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
@@ -571,6 +578,17 @@ function Test-ControlSupportsOptionInteraction([string]$control) {
     switch ($control) {
         "Button" { return $true }
         "ColorPicker" { return $true }
+        "SplitView" { return $true }
+        "InfoBar" { return $true }
+        "ProgressRing" { return $true }
+        default { return $false }
+    }
+}
+
+function Test-ControlSupportsScrollInteraction([string]$control) {
+    switch ($control) {
+        "ParallaxView" { return $true }
+        "AnnotatedScrollBar" { return $true }
         default { return $false }
     }
 }
@@ -626,6 +644,7 @@ function Get-ControlInteractionKind([string]$control) {
     if (Test-ControlSupportsOptionInteraction $control) { return "Option" }
     if (Test-ControlSupportsTextInteraction $control) { return "Text" }
     if (Test-ControlSupportsOutputInteraction $control) { return "Output" }
+    if (Test-ControlSupportsScrollInteraction $control) { return "Scroll" }
     return "Static"
 }
 
@@ -1334,17 +1353,33 @@ function Get-OptionInteractionTriggerName([string]$control) {
     switch ($control) {
         "Button" { return "Disable button" }
         "ColorPicker" { return "IsMoreButtonVisible" }
+        "SplitView" { return "IsPaneOpen" }
+        "InfoBar" { return "Is Open" }
+        "ProgressRing" { return "Progress Options" }
+        default { return "" }
+    }
+}
+
+function Get-OptionInteractionTriggerAutomationId([string]$control) {
+    switch ($control) {
+        "SplitView" { return "GallerySample_SplitView_IsPaneOpenToggle" }
+        "InfoBar" { return "GallerySample_InfoBar_IsOpenCheckBox" }
+        "ProgressRing" { return "GallerySample_ProgressRing_ProgressToggle" }
         default { return "" }
     }
 }
 
 function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
     $name = Get-OptionInteractionTriggerName $control
-    $target = if (![string]::IsNullOrWhiteSpace($name)) {
-        Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
+    $automationId = Get-OptionInteractionTriggerAutomationId $control
+    $target = if (![string]::IsNullOrWhiteSpace($automationId)) {
+        Find-ElementByAutomationIdInProcess $window.Current.ProcessId $automationId
     }
     else {
         $null
+    }
+    if ($null -eq $target -and ![string]::IsNullOrWhiteSpace($name)) {
+        $target = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
     }
 
     $beforeState = Get-ToggleStateName $target
@@ -1357,6 +1392,7 @@ function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
     return [ordered]@{
         Invoked = $invoked
         OptionName = $name
+        OptionAutomationId = $automationId
         BeforeState = $beforeState
         AfterState = $afterState
         BeforeSampleEnabled = $beforeSampleEnabled
@@ -1364,6 +1400,104 @@ function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
         OptionChanged = (
             (![string]::IsNullOrWhiteSpace($beforeState) -and $beforeState -ne $afterState) -or
             (![string]::IsNullOrWhiteSpace($beforeSampleEnabled) -and $beforeSampleEnabled -ne $afterSampleEnabled))
+    }
+}
+
+function Get-ScrollInteractionTargetAutomationId([string]$control) {
+    switch ($control) {
+        "ParallaxView" { return "GallerySample_ParallaxView_ListView" }
+        "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_ScrollViewer" }
+        default { return "" }
+    }
+}
+
+function Get-ScrollVerticalPercent($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $percent = $pattern.Current.VerticalScrollPercent
+            if ($percent -ne [System.Windows.Automation.ScrollPattern]::NoScroll) {
+                return [Math]::Round([double]$percent, 3).ToString([Globalization.CultureInfo]::InvariantCulture)
+            }
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Set-ScrollVerticalPercent($element, [double]$verticalPercent) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.SetScrollPercent([System.Windows.Automation.ScrollPattern]::NoScroll, $verticalPercent)
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Invoke-WheelScroll($window, $element, [int]$steps) {
+    $center = Get-ElementCenter $element
+    if ($null -eq $center) {
+        return $false
+    }
+
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    [GalleryRecordingNative]::Click($center.X, $center.Y)
+    Start-Sleep -Milliseconds 100
+    for ($i = 0; $i -lt $steps; $i++) {
+        [GalleryRecordingNative]::Wheel($center.X, $center.Y, -480)
+        Start-Sleep -Milliseconds 120
+    }
+
+    return $true
+}
+
+function Invoke-ScrollInteraction($window, [string]$control, $sampleElement) {
+    $targetId = Get-ScrollInteractionTargetAutomationId $control
+    $target = if (![string]::IsNullOrWhiteSpace($targetId)) {
+        Find-ElementByAutomationIdInProcess $window.Current.ProcessId $targetId
+    }
+    else {
+        $null
+    }
+    if ($null -eq $target) {
+        $target = $sampleElement
+    }
+
+    $beforePercent = Get-ScrollVerticalPercent $target
+    $patternInvoked = Set-ScrollVerticalPercent $target 55.0
+    Start-Sleep -Milliseconds 400
+    $afterPercent = Get-ScrollVerticalPercent $target
+
+    $wheelInvoked = $false
+    if ([string]::IsNullOrWhiteSpace($afterPercent) -or $beforePercent -eq $afterPercent) {
+        $wheelInvoked = Invoke-WheelScroll $window $target 5
+        Start-Sleep -Milliseconds 400
+        $afterPercent = Get-ScrollVerticalPercent $target
+    }
+
+    return [ordered]@{
+        Invoked = $patternInvoked -or $wheelInvoked
+        TargetAutomationId = $targetId
+        BeforeVerticalScrollPercent = $beforePercent
+        AfterVerticalScrollPercent = $afterPercent
+        PatternInvoked = $patternInvoked
+        WheelInvoked = $wheelInvoked
+        ScrollChanged = (![string]::IsNullOrWhiteSpace($beforePercent) -and $beforePercent -ne $afterPercent)
     }
 }
 
@@ -1636,6 +1770,7 @@ function Invoke-RecordedInteraction($window, [string]$control, $sampleElement) {
         "Option" { return Invoke-OptionInteraction $window $control $sampleElement }
         "Text" { return Invoke-TextInteraction $window $control $sampleElement }
         "Output" { return Invoke-OutputInteraction $window $sampleElement }
+        "Scroll" { return Invoke-ScrollInteraction $window $control $sampleElement }
         default { return [ordered]@{ Invoked = $true } }
     }
 }
@@ -1954,6 +2089,14 @@ function Test-TextEvidence($interactionResult) {
     return [bool]$interactionResult.OutputMatched
 }
 
+function Test-ScrollEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("ScrollChanged")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.ScrollChanged
+}
+
 function Format-RelativePath([string]$path) {
     if ([string]::IsNullOrWhiteSpace($path)) {
         return ""
@@ -2116,9 +2259,25 @@ foreach ($control in $Controls) {
     $optionEvidence = Test-OptionEvidence $interactionResult
     $outputEvidence = Test-OutputEvidence $interactionResult
     $textEvidence = if ($interactionKind -eq "Text") { Test-TextEvidence $interactionResult } else { $false }
+    $scrollEvidence = Test-ScrollEvidence $interactionResult
     if ($status -eq "Passed" -and $interactionKind -eq "Selection" -and !$selectionEvidence) {
         $status = "NeedsReview"
         $notes.Add("Machine-readable selection or output evidence did not change; manual frame review is required.")
+    }
+
+    if ($status -eq "Passed" -and $interactionKind -eq "State" -and !$stateEvidence) {
+        $status = "Failed"
+        $notes.Add("State interaction did not change the target toggle state.")
+    }
+
+    if ($status -eq "Passed" -and $interactionKind -eq "Value" -and !$valueEvidence) {
+        $status = "Failed"
+        $notes.Add("Value interaction did not reach the expected target value.")
+    }
+
+    if ($status -eq "Passed" -and $interactionKind -eq "Option" -and !$optionEvidence) {
+        $status = "Failed"
+        $notes.Add("Option interaction did not change the option or sample state.")
     }
 
     if ($status -eq "Passed" -and $interactionKind -eq "Text" -and !$textEvidence) {
@@ -2129,6 +2288,11 @@ foreach ($control in $Controls) {
     if ($status -eq "Passed" -and $interactionKind -eq "Output" -and !$outputEvidence) {
         $status = "NeedsReview"
         $notes.Add("Machine-readable output text did not change; manual frame review is required.")
+    }
+
+    if ($status -eq "Passed" -and $interactionKind -eq "Scroll" -and !$scrollEvidence) {
+        $status = "Failed"
+        $notes.Add("Scroll interaction did not change the target scroll percent.")
     }
 
     if ($status -eq "Passed" -and
@@ -2156,6 +2320,9 @@ foreach ($control in $Controls) {
         elseif ($interactionKind -eq "Text" -and $textEvidence) {
             $notes.Add("Expected text output was detected despite low full-frame delta.")
         }
+        elseif ($interactionKind -eq "Scroll" -and $scrollEvidence) {
+            $notes.Add("Scroll percent changed despite low full-frame delta.")
+        }
         else {
             $status = "NeedsReview"
             $notes.Add("Interactive recording produced low poster-frame delta.")
@@ -2179,6 +2346,7 @@ foreach ($control in $Controls) {
         OptionEvidence = $optionEvidence
         OutputEvidence = $outputEvidence
         TextEvidence = $textEvidence
+        ScrollEvidence = $scrollEvidence
         InteractionResult = $interactionResult
         Notes = ($notes.ToArray() -join " ")
     }
