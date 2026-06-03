@@ -1,0 +1,87 @@
+# Gallery Control Recording Audit
+
+This document tracks the recording-first Gallery audit. A control is not counted
+as verified here unless there is a live recording for the relevant interaction
+path and the recording has been reviewed or decoded into nonblank poster frames.
+
+## Acceptance Bar
+
+- Launch the Gallery route for each control in visual-test mode.
+- Record the live window while driving the primary interaction for interactive
+  controls.
+- For popup and flyout controls, record open, close, and second open in the same
+  clip so flicker, stale visual state, and repeat-open crashes are visible.
+- Extract poster frames from each recording and reject blank recordings.
+- Fix issues in substantial rounds and record the post-fix interaction before
+  committing.
+
+## Scope
+
+Initial scope is the 46-control ModernWpf visual-check inventory from
+`tools/visual-checks/Run-GalleryVisualChecks.ps1`, plus the Gallery shell
+NavigationView pane because earlier user-reported failures were in the shell.
+The broader official WPF Gallery page catalog is a separate expansion and is not
+silently included in this matrix yet.
+
+## Recorder
+
+Use the per-control recorder:
+
+```powershell
+.\tools\visual-checks\Record-GalleryControlInteractions.ps1 -Controls CommandBarFlyout -Theme Dark -DurationSeconds 8 -FrameRate 10 -Build
+```
+
+For broad sweeps, run in batches and review `report.md` plus the MP4 clips under
+`artifacts/gallery-recordings/<stamp>/`.
+
+## Control Matrix
+
+| Area | Control | Route or Scenario | Recording Status | Fix Status | Latest Evidence | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Shell | Navigation pane | Home, Design Guidance, Samples expand/collapse | Pending | Fixed earlier, needs new recording pass |  | Must cover repeated expand/collapse and child visibility. |
+| Dialogs & flyouts | TeachingTip | `item/TeachingTip` | Pending | Pending |  | Open, close, second open required. |
+| Basic input | Button | `item/Button` | Pending | Pending |  | Static route plus primary button click review. |
+| Basic input | CheckBox | `item/CheckBox` | Pending | Pending |  | Toggle state required. |
+| Basic input | ComboBox | `item/ComboBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-030922-916/ComboBox/dark-combobox.mp4` | Rendered MP4 shows dropdown open and second-open path. |
+| Basic input | RadioButton | `item/RadioButton` | Pending | Pending |  | Selection state required. |
+| Basic input | Slider | `item/Slider` | Pending | Pending |  | Value change required. |
+| Basic input | ColorPicker | `item/ColorPicker` | Pending | Pending |  | Static first pass, then More/color interaction expansion. |
+| Basic input | HyperlinkButton | `item/HyperlinkButton` | Pending | Pending |  | Static first pass; avoid external navigation during automation. |
+| Basic input | RatingControl | `item/RatingControl` | Pending | Pending |  | Value change required. |
+| Basic input | RepeatButton | `item/RepeatButton` | Pending | Pending |  | Hold interaction required. |
+| Basic input | ToggleButton | `item/ToggleButton` | Pending | Pending |  | Toggle state required. |
+| Basic input | DropDownButton | `item/DropDownButton` | Pending | Pending |  | Open, close, second open required. |
+| Basic input | SplitButton | `item/SplitButton` | Pending | Pending |  | Open, close, second open required. |
+| Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Pending | Pending |  | Open, close, second open required. |
+| Basic input | ToggleSwitch | `item/ToggleSwitch` | Pending | Pending |  | Toggle state required. |
+| Text | NumberBox | `item/NumberBox` | Pending | Pending |  | Value/spin change required. |
+| Text | AutoSuggestBox | `item/AutoSuggestBox` | Pending | Pending |  | Text entry and suggestion popup required. |
+| Layout | SplitView | `item/SplitView` | Pending | Pending |  | Pane toggle required after first static pass. |
+| Media | PersonPicture | `item/PersonPicture` | Pending | Pending |  | Static route. |
+| Motion | ParallaxView | `item/ParallaxView` | Pending | Pending |  | Scroll interaction required after first static pass. |
+| Styles | IconElement | `item/IconElement` | Pending | Pending |  | Static route. |
+| Styles | ThemeShadow | `item/ThemeShadow` | Pending | Pending |  | Static route plus shadow visibility review. |
+| Windowing | TitleBar | `item/TitleBar` | Pending | Pending |  | Static route. |
+| Status & info | InfoBadge | `item/InfoBadge` | Pending | Pending |  | Static route. |
+| Status & info | InfoBar | `item/InfoBar` | Pending | Pending |  | Close/action interaction required after first static pass. |
+| Status & info | ProgressRing | `item/ProgressRing` | Pending | Pending |  | Animated recording required. |
+| Scrolling | PipsPager | `item/PipsPager` | Pending | Pending |  | Page selection required. |
+| Scrolling | AnnotatedScrollBar | `item/AnnotatedScrollBar` | Pending | Pending |  | Scroll interaction required after first static pass. |
+| Collections | PullToRefresh | `item/PullToRefresh` | Pending | Pending |  | Pull/refresh gesture required after first static pass. |
+| Collections | GridView | `item/GridView` | Pending | Pending |  | Item selection required. |
+| Collections | ItemsRepeater | `item/ItemsRepeater` | Pending | Pending |  | Scroll/virtualization interaction required after first static pass. |
+| Navigation | BreadcrumbBar | `item/BreadcrumbBar` | Pending | Pending |  | Ellipsis/flyout interaction required after first static pass. |
+| Navigation | Pivot | `item/Pivot` | Pending | Pending |  | Tab selection required. |
+| Navigation | SelectorBar | `item/SelectorBar` | Pending | Pending |  | Selection required after first static pass. |
+| Navigation | NavigationView | `item/NavigationView` | Pending | Pending |  | Sample nav interaction required; shell pane tracked separately. |
+| Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Pending | Pending |  | Open, close, second open required. |
+| Dialogs & flyouts | Flyout | `item/Flyout` | Pending | Pending |  | Open, close, second open required. |
+| Dialogs & flyouts | Popup | `item/Popup` | Pending | Pending |  | Open, close, second open required. |
+| Menus & toolbars | MenuBar | `item/MenuBar` | Pending | Pending |  | Open, close, second open required. |
+| Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Pending | Pending |  | Open, close, second open required. |
+| Menus & toolbars | SwipeControl | `item/SwipeControl` | Pending | Pending |  | Swipe gesture required after first static pass. |
+| Menus & toolbars | AppBarButton | `item/AppBarButton` | Pending | Pending |  | Static route plus primary click review. |
+| Menus & toolbars | AppBarSeparator | `item/AppBarSeparator` | Pending | Pending |  | Static route. |
+| Menus & toolbars | AppBarToggleButton | `item/AppBarToggleButton` | Pending | Pending |  | Toggle state required. |
+| Menus & toolbars | CommandBar | `item/CommandBar` | Pending | Pending |  | Overflow interaction required after first static pass. |
+| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Fixed | `artifacts/gallery-recordings/20260603-025616-794/CommandBarFlyout/dark-commandbarflyout.mp4` | Rendered MP4 shows open, MoreButton expansion, and `Resize` / `Move` secondary commands. |

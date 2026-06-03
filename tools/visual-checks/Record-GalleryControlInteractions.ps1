@@ -1,0 +1,1172 @@
+param(
+    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "PullToRefresh", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "SwipeControl", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [ValidateSet("Light", "Dark", "Default")]
+    [string]$Theme = "Light",
+    [string]$GalleryExe,
+    [string]$OutputRoot = "artifacts\gallery-recordings",
+    [int]$WindowLeft = 220,
+    [int]$WindowTop = 180,
+    [int]$Width = 1180,
+    [int]$Height = 820,
+    [int]$CaptureMargin = 220,
+    [int]$TimeoutSeconds = 30,
+    [int]$DurationSeconds = 6,
+    [int]$FrameRate = 10,
+    [ValidateSet("Auto", "Ffmpeg", "Avi")]
+    [string]$Recorder = "Auto",
+    [switch]$Build,
+    [switch]$SkipFrameExtraction
+)
+
+Set-StrictMode -Version 2.0
+$ErrorActionPreference = "Stop"
+
+$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+if ([string]::IsNullOrWhiteSpace($GalleryExe)) {
+    $GalleryExe = Join-Path $RepoRoot "ModernWpf.Gallery\bin\Debug\net8.0-windows7.0\ModernWpf.Gallery.exe"
+}
+
+if ($Build) {
+    & dotnet build (Join-Path $RepoRoot "ModernWpf.Gallery\ModernWpf.Gallery.csproj") -f net8.0-windows7.0 -c Debug --no-restore
+    if ($LASTEXITCODE -ne 0) {
+        throw "ModernWpf.Gallery build failed."
+    }
+}
+
+if (!(Test-Path $GalleryExe)) {
+    throw "ModernWpf Gallery executable was not found at '$GalleryExe'. Build first or pass -GalleryExe."
+}
+
+$RecordWindowRenderedScript = Join-Path $PSScriptRoot "Record-WindowRendered.ps1"
+if (!(Test-Path $RecordWindowRenderedScript)) {
+    throw "Record-WindowRendered.ps1 was not found beside this script."
+}
+
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+try {
+    Add-Type -AssemblyName System.Drawing.Common
+}
+catch {
+    Add-Type -AssemblyName System.Drawing
+}
+
+if (-not ("GalleryRecordingNative" -as [type])) {
+    Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+
+public static class GalleryRecordingNative
+{
+    public struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+
+    [DllImport("user32.dll")]
+    private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
+
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int command);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr insertAfter, int x, int y, int cx, int cy, uint flags);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetCursorPos(int x, int y);
+
+    [DllImport("user32.dll")]
+    private static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extraInfo);
+
+    [DllImport("user32.dll")]
+    private static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, UIntPtr extraInfo);
+
+    private const int SW_RESTORE = 9;
+    private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
+    private const uint MOUSEEVENTF_LEFTUP = 0x0004;
+    private const uint KEYEVENTF_KEYUP = 0x0002;
+    private const byte VK_ESCAPE = 0x1B;
+    private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+    private static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
+    private const uint SWP_NOMOVE = 0x0002;
+    private const uint SWP_NOSIZE = 0x0001;
+    private const uint SWP_SHOWWINDOW = 0x0040;
+
+    public static bool Move(IntPtr hWnd, int x, int y, int width, int height)
+    {
+        ShowWindow(hWnd, SW_RESTORE);
+        return MoveWindow(hWnd, x, y, width, height, true);
+    }
+
+    public static RECT GetRect(IntPtr hWnd)
+    {
+        RECT rect;
+        if (!GetWindowRect(hWnd, out rect))
+        {
+            rect = new RECT();
+        }
+
+        return rect;
+    }
+
+    public static void Activate(IntPtr hWnd)
+    {
+        ShowWindow(hWnd, SW_RESTORE);
+        SetForegroundWindow(hWnd);
+    }
+
+    public static void SetTopMost(IntPtr hWnd, bool topMost)
+    {
+        SetWindowPos(hWnd, topMost ? HWND_TOPMOST : HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+    }
+
+    public static void Click(int x, int y)
+    {
+        SetCursorPos(x, y);
+        mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
+        mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
+    }
+
+    public static void HoldClick(int x, int y, int holdMilliseconds)
+    {
+        SetCursorPos(x, y);
+        mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
+        System.Threading.Thread.Sleep(holdMilliseconds);
+        mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
+    }
+
+    public static void Escape()
+    {
+        keybd_event(VK_ESCAPE, 0, 0, UIntPtr.Zero);
+        keybd_event(VK_ESCAPE, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+    }
+}
+"@
+}
+
+function Get-RootElement {
+    return [System.Windows.Automation.AutomationElement]::RootElement
+}
+
+function Wait-Until([scriptblock]$Probe, [int]$TimeoutSeconds, [string]$Description) {
+    $deadline = (Get-Date).AddSeconds($TimeoutSeconds)
+    do {
+        $value = & $Probe
+        if ($null -ne $value -and $false -ne $value) {
+            return $value
+        }
+
+        Start-Sleep -Milliseconds 250
+    } while ((Get-Date) -lt $deadline)
+
+    throw "Timed out waiting for $Description."
+}
+
+function Find-WindowByProcessId([int]$processId) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        try {
+            if ($window.Current.NativeWindowHandle -ne 0) {
+                return $window
+            }
+        }
+        catch {
+        }
+    }
+
+    return $null
+}
+
+function Find-DescendantByAutomationId($root, [string]$automationId) {
+    if ($null -eq $root -or [string]::IsNullOrWhiteSpace($automationId)) {
+        return $null
+    }
+
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::AutomationIdProperty,
+        $automationId)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-DescendantByName($root, [string]$name) {
+    if ($null -eq $root -or [string]::IsNullOrWhiteSpace($name)) {
+        return $null
+    }
+
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::NameProperty,
+        $name)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-DescendantByAnyName($root, [string[]]$names) {
+    foreach ($name in $names) {
+        $element = Find-DescendantByName $root $name
+        if ($null -ne $element) {
+            return $element
+        }
+    }
+
+    return $null
+}
+
+function Find-DescendantButtonByName($root, [string]$name) {
+    if ($null -eq $root -or [string]::IsNullOrWhiteSpace($name)) {
+        return $null
+    }
+
+    $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::NameProperty,
+        $name)
+    $buttonCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        [System.Windows.Automation.ControlType]::Button)
+    $condition = New-Object System.Windows.Automation.AndCondition($nameCondition, $buttonCondition)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-DescendantButtonByAnyName($root, [string[]]$names) {
+    foreach ($name in $names) {
+        $button = Find-DescendantButtonByName $root $name
+        if ($null -ne $button) {
+            return $button
+        }
+    }
+
+    return $null
+}
+
+function Find-ElementByAutomationIdInProcess([int]$processId, [string]$automationId) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        $match = Find-DescendantByAutomationId $window $automationId
+        if ($null -ne $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
+function Find-ElementByNameInProcess([int]$processId, [string[]]$names) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        $match = Find-DescendantByAnyName $window $names
+        if ($null -ne $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
+function Find-InteractiveElementByNameInProcess([int]$processId, [string[]]$names) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        foreach ($name in $names) {
+            $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+                [System.Windows.Automation.AutomationElement]::NameProperty,
+                $name)
+            $found = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, $nameCondition)
+            foreach ($element in $found) {
+                try {
+                    $controlType = $element.Current.ControlType
+                    if ($controlType -ne [System.Windows.Automation.ControlType]::Button -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::MenuItem -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::ListItem -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::TabItem) {
+                        continue
+                    }
+
+                    $rect = $element.Current.BoundingRectangle
+                    if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+                        return $element
+                    }
+                }
+                catch {
+                }
+            }
+        }
+    }
+
+    return $null
+}
+
+function Read-ModernWpfStatusFile([string]$artifactDir) {
+    $path = Join-Path $artifactDir "modernwpf-gallery-status.txt"
+    if (!(Test-Path $path)) {
+        return $null
+    }
+
+    try {
+        $lines = @(Get-Content -Path $path -ErrorAction Stop)
+        if ($lines.Count -lt 2) {
+            return $null
+        }
+
+        $lastException = ""
+        if ($lines.Count -ge 3 -and ![string]::IsNullOrEmpty($lines[2])) {
+            try {
+                $lastException = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($lines[2]))
+            }
+            catch {
+                $lastException = $lines[2]
+            }
+        }
+
+        return [ordered]@{
+            CurrentRoute = $lines[0]
+            ReadyState = $lines[1]
+            LastException = $lastException
+            Path = $path
+        }
+    }
+    catch {
+        return $null
+    }
+}
+
+function Wait-ModernWpfReady($window, [string]$route, [string]$artifactDir) {
+    return Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf route '$route' to become ready" -Probe {
+        $status = Read-ModernWpfStatusFile $artifactDir
+        if ($null -ne $status -and $status.ReadyState -eq "Ready:$route") {
+            return $status
+        }
+
+        $readyElement = Find-DescendantByAutomationId $window "GalleryVisualTestReadyState"
+        if ($null -eq $readyElement) {
+            return $null
+        }
+
+        if ($readyElement.Current.Name -eq "Ready:$route") {
+            return $readyElement
+        }
+
+        return $null
+    }
+}
+
+function Get-RequiredSampleAutomationId([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return "GallerySample_TeachingTip_ShowButton" }
+        "Button" { return "GallerySample_Button_PrimaryButton" }
+        "CheckBox" { return "GallerySample_CheckBox_CheckBox" }
+        "ComboBox" { return "GallerySample_ComboBox_ComboBox" }
+        "ColorPicker" { return "GallerySample_ColorPicker_ColorPicker" }
+        "HyperlinkButton" { return "GallerySample_HyperlinkButton_HyperlinkButton" }
+        "RatingControl" { return "GallerySample_RatingControl_RatingControl" }
+        "RepeatButton" { return "GallerySample_RepeatButton_RepeatButton" }
+        "ToggleButton" { return "GallerySample_ToggleButton_ToggleButton" }
+        "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
+        "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
+        "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
+        "ToggleSwitch" { return "GallerySample_ToggleSwitch_ToggleSwitch" }
+        "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
+        "RadioButton" { return "GallerySample_RadioButton_RadioButton" }
+        "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
+        "Slider" { return "GallerySample_Slider_Slider" }
+        "SplitView" { return "GallerySample_SplitView_SplitView" }
+        "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
+        "ParallaxView" { return "GallerySample_ParallaxView_Root" }
+        "IconElement" { return "GallerySample_IconElement_SlicesIcon" }
+        "ThemeShadow" { return "GallerySample_ThemeShadow_ShadowRect" }
+        "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
+        "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
+        "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
+        "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
+        "PipsPager" { return "GallerySample_PipsPager_PipsPager" }
+        "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" }
+        "PullToRefresh" { return "GallerySample_PullToRefresh_RefreshContainer" }
+        "GridView" { return "GallerySample_GridView_BasicGridView" }
+        "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
+        "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
+        "Pivot" { return "GallerySample_Pivot_Pivot" }
+        "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
+        "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
+        "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
+        "Flyout" { return "GallerySample_Flyout_Button" }
+        "Popup" { return "GallerySample_Popup_Button" }
+        "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
+        "MenuFlyout" { return "GallerySample_MenuFlyout_AppBarButton" }
+        "SwipeControl" { return "GallerySample_SwipeControl_SwipeControl" }
+        "AppBarButton" { return "GallerySample_AppBarButton_AppBarButton" }
+        "AppBarSeparator" { return "GallerySample_AppBarSeparator_CommandBar" }
+        "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }
+        "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
+        "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
+        default { return "GallerySample_${control}_Root" }
+    }
+}
+
+function Test-ControlSupportsOpenInteraction([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return $true }
+        "ComboBox" { return $true }
+        "ContentDialog" { return $true }
+        "Flyout" { return $true }
+        "Popup" { return $true }
+        "MenuBar" { return $true }
+        "MenuFlyout" { return $true }
+        "DropDownButton" { return $true }
+        "SplitButton" { return $true }
+        "ToggleSplitButton" { return $true }
+        "CommandBarFlyout" { return $true }
+        default { return $false }
+    }
+}
+
+function Test-ControlSupportsStateInteraction([string]$control) {
+    switch ($control) {
+        "CheckBox" { return $true }
+        "ToggleButton" { return $true }
+        "ToggleSwitch" { return $true }
+        "AppBarToggleButton" { return $true }
+        default { return $false }
+    }
+}
+
+function Test-ControlSupportsSelectionInteraction([string]$control) {
+    switch ($control) {
+        "GridView" { return $true }
+        "PipsPager" { return $true }
+        "Pivot" { return $true }
+        default { return $false }
+    }
+}
+
+function Test-ControlSupportsTextInteraction([string]$control) {
+    return $control -eq "AutoSuggestBox"
+}
+
+function Test-ControlSupportsValueInteraction([string]$control) {
+    switch ($control) {
+        "RatingControl" { return $true }
+        "Slider" { return $true }
+        "NumberBox" { return $true }
+        default { return $false }
+    }
+}
+
+function Test-ControlSupportsOutputInteraction([string]$control) {
+    return $control -eq "RepeatButton"
+}
+
+function Get-SelectionInteractionTriggerName([string]$control) {
+    switch ($control) {
+        "GridView" { return "Item 1" }
+        "PipsPager" { return "Page 2" }
+        "Pivot" { return "Unread" }
+        default { return "" }
+    }
+}
+
+function Get-ControlInteractionKind([string]$control) {
+    if (Test-ControlSupportsOpenInteraction $control) { return "OpenRepeat" }
+    if (Test-ControlSupportsStateInteraction $control) { return "State" }
+    if (Test-ControlSupportsValueInteraction $control) { return "Value" }
+    if (Test-ControlSupportsSelectionInteraction $control) { return "Selection" }
+    if (Test-ControlSupportsTextInteraction $control) { return "Text" }
+    if (Test-ControlSupportsOutputInteraction $control) { return "Output" }
+    return "Static"
+}
+
+function Get-ElementCenter($element) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    try {
+        $rect = $element.Current.BoundingRectangle
+        if ($rect.Width -le 0 -or $rect.Height -le 0) {
+            return $null
+        }
+
+        return [pscustomobject]@{
+            X = [int][Math]::Round($rect.X + ($rect.Width / 2.0))
+            Y = [int][Math]::Round($rect.Y + ($rect.Height / 2.0))
+        }
+    }
+    catch {
+        return $null
+    }
+}
+
+function Invoke-ElementOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 80
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+        if ($null -ne $pattern -and $pattern.Current.ExpandCollapseState -ne [System.Windows.Automation.ExpandCollapseState]::Expanded) {
+            $pattern.Expand()
+            Start-Sleep -Milliseconds 120
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            Start-Sleep -Milliseconds 120
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Toggle()
+            Start-Sleep -Milliseconds 120
+            return $true
+        }
+    }
+    catch {
+    }
+
+    $center = Get-ElementCenter $element
+    if ($null -ne $center) {
+        [GalleryRecordingNative]::Click($center.X, $center.Y)
+        Start-Sleep -Milliseconds 120
+        return $true
+    }
+
+    return $false
+}
+
+function Hold-Element($window, $element, [int]$milliseconds) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    $center = Get-ElementCenter $element
+    if ($null -eq $center) {
+        return $false
+    }
+
+    [GalleryRecordingNative]::HoldClick($center.X, $center.Y, $milliseconds)
+    Start-Sleep -Milliseconds 120
+    return $true
+}
+
+function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleElement) {
+    if ($control -eq "MenuBar") {
+        $trigger = Find-DescendantByAnyName $sampleElement @("File")
+        if ($null -eq $trigger) {
+            $trigger = Find-ElementByNameInProcess $window.Current.ProcessId @("File")
+        }
+
+        if ($null -ne $trigger) {
+            $button = Find-DescendantButtonByAnyName $trigger @("File")
+            if ($null -ne $button) {
+                return $button
+            }
+
+            return $trigger
+        }
+    }
+
+    return $sampleElement
+}
+
+function Open-CommandBarFlyoutSecondaryCommands($window) {
+    $moreButton = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "MoreButton"
+    if ($null -eq $moreButton) {
+        return $false
+    }
+
+    if (Invoke-ElementOnce $window $moreButton) {
+        Start-Sleep -Milliseconds 350
+        return $null -ne (Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move"))
+    }
+
+    return $false
+}
+
+function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement) {
+    $trigger = Get-OpenInteractionTriggerElement $window $control $sampleElement
+    $firstOpen = Invoke-ElementOnce $window $trigger
+    Start-Sleep -Milliseconds 650
+    $secondaryExpanded = $false
+    if ($control -eq "CommandBarFlyout") {
+        $secondaryExpanded = Open-CommandBarFlyoutSecondaryCommands $window
+        Start-Sleep -Milliseconds 450
+    }
+
+    [GalleryRecordingNative]::Escape()
+    Start-Sleep -Milliseconds 650
+    $secondOpen = Invoke-ElementOnce $window $trigger
+    Start-Sleep -Milliseconds 650
+    if ($control -eq "CommandBarFlyout") {
+        $secondaryExpanded = (Open-CommandBarFlyoutSecondaryCommands $window) -or $secondaryExpanded
+        Start-Sleep -Milliseconds 450
+    }
+
+    return [ordered]@{
+        Invoked = $firstOpen -and $secondOpen
+        FirstOpen = $firstOpen
+        SecondOpen = $secondOpen
+        CommandBarFlyoutSecondaryExpanded = $secondaryExpanded
+    }
+}
+
+function Invoke-StateInteraction($window, $sampleElement) {
+    return [ordered]@{
+        Invoked = Invoke-ElementOnce $window $sampleElement
+    }
+}
+
+function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
+    if ($null -eq $sampleElement) {
+        return [ordered]@{ Invoked = $false }
+    }
+
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $pattern = $sampleElement.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $target = switch ($control) {
+                "RatingControl" { 3.0 }
+                "Slider" { 50.0 }
+                default { [double]$pattern.Current.Value + 10.0 }
+            }
+            $pattern.SetValue($target)
+            Start-Sleep -Milliseconds 250
+            return [ordered]@{
+                Invoked = $true
+                TargetValue = $target
+            }
+        }
+    }
+    catch {
+    }
+
+    if ($control -eq "NumberBox") {
+        $increase = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Increase", "Increase value", "Up")
+        return [ordered]@{
+            Invoked = Invoke-ElementOnce $window $increase
+        }
+    }
+
+    return [ordered]@{ Invoked = $false }
+}
+
+function Invoke-SelectionInteraction($window, [string]$control) {
+    $name = Get-SelectionInteractionTriggerName $control
+    $target = if (![string]::IsNullOrWhiteSpace($name)) {
+        Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
+    }
+    else {
+        $null
+    }
+
+    return [ordered]@{
+        Invoked = Invoke-ElementOnce $window $target
+        TargetName = $name
+    }
+}
+
+function Invoke-TextInteraction($window, $sampleElement) {
+    if ($null -eq $sampleElement) {
+        return [ordered]@{ Invoked = $false }
+    }
+
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $pattern = $sampleElement.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.SetValue("Ae")
+            Start-Sleep -Milliseconds 500
+            return [ordered]@{ Invoked = $true }
+        }
+    }
+    catch {
+    }
+
+    return [ordered]@{ Invoked = $false }
+}
+
+function Invoke-OutputInteraction($window, $sampleElement) {
+    return [ordered]@{
+        Invoked = Hold-Element $window $sampleElement 700
+    }
+}
+
+function Invoke-RecordedInteraction($window, [string]$control, $sampleElement) {
+    $kind = Get-ControlInteractionKind $control
+    switch ($kind) {
+        "OpenRepeat" { return Invoke-OpenRepeatInteraction $window $control $sampleElement }
+        "State" { return Invoke-StateInteraction $window $sampleElement }
+        "Value" { return Invoke-ValueInteraction $window $control $sampleElement }
+        "Selection" { return Invoke-SelectionInteraction $window $control }
+        "Text" { return Invoke-TextInteraction $window $sampleElement }
+        "Output" { return Invoke-OutputInteraction $window $sampleElement }
+        default { return [ordered]@{ Invoked = $true } }
+    }
+}
+
+function Get-ExpandedCaptureRect([IntPtr]$windowHandle) {
+    $rect = [GalleryRecordingNative]::GetRect($windowHandle)
+    $left = [Math]::Max(0, $rect.Left - $CaptureMargin)
+    $top = [Math]::Max(0, $rect.Top - $CaptureMargin)
+    $right = $rect.Right + $CaptureMargin
+    $bottom = $rect.Bottom + $CaptureMargin
+    return [ordered]@{
+        Left = [int]$left
+        Top = [int]$top
+        Width = [int][Math]::Max(1, $right - $left)
+        Height = [int][Math]::Max(1, $bottom - $top)
+    }
+}
+
+function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$outputPath) {
+    $captureRect = Get-ExpandedCaptureRect $windowHandle
+    Start-Job -ScriptBlock {
+        param($scriptPath, $targetProcessId, $handleValue, $left, $top, $width, $height, $output, $duration, $frameRate)
+        $handle = [IntPtr]::new([int64]$handleValue)
+        & $scriptPath -ProcessId $targetProcessId -WindowHandle $handle -Left $left -Top $top -Width $width -Height $height -Output $output -DurationSeconds $duration -FrameRate $frameRate
+    } -ArgumentList $RecordWindowRenderedScript, $processId, ([int64]$windowHandle), $captureRect.Left, $captureRect.Top, $captureRect.Width, $captureRect.Height, $outputPath, $DurationSeconds, $FrameRate
+}
+
+function Wait-RecordingJob($job) {
+    $timeout = [Math]::Max($DurationSeconds + 20, 25)
+    $completed = Wait-Job -Job $job -Timeout $timeout
+    if ($null -eq $completed) {
+        Stop-Job -Job $job -ErrorAction SilentlyContinue
+        Remove-Job -Job $job -Force -ErrorAction SilentlyContinue
+        throw "Recorder did not finish within $timeout seconds."
+    }
+
+    try {
+        $result = Receive-Job -Job $job -ErrorAction Stop
+        return $result | Select-Object -Last 1
+    }
+    finally {
+        Remove-Job -Job $job -Force -ErrorAction SilentlyContinue
+    }
+}
+
+function Get-FfmpegPath {
+    $command = Get-Command ffmpeg -ErrorAction SilentlyContinue
+    if ($null -eq $command) {
+        return ""
+    }
+
+    return $command.Source
+}
+
+function Get-FfprobePath {
+    $command = Get-Command ffprobe -ErrorAction SilentlyContinue
+    if ($null -eq $command) {
+        return ""
+    }
+
+    return $command.Source
+}
+
+function Get-VideoDurationSeconds([string]$videoPath) {
+    $ffprobe = Get-FfprobePath
+    if ([string]::IsNullOrWhiteSpace($ffprobe) -or !(Test-Path $videoPath)) {
+        return $null
+    }
+
+    try {
+        $output = & $ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 $videoPath 2>$null
+        if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($output)) {
+            return $null
+        }
+
+        return [double]::Parse(($output | Select-Object -First 1), [Globalization.CultureInfo]::InvariantCulture)
+    }
+    catch {
+        return $null
+    }
+}
+
+function Get-RecordingExtension {
+    return ".mp4"
+}
+
+function Get-ImageStats([string]$path) {
+    if (!(Test-Path $path)) {
+        return $null
+    }
+
+    $bitmap = [System.Drawing.Bitmap]::FromFile((Resolve-Path $path).Path)
+    try {
+        $width = $bitmap.Width
+        $height = $bitmap.Height
+        $step = [Math]::Max(1, [int][Math]::Floor([Math]::Max($width, $height) / 220.0))
+        $count = 0
+        $sum = 0.0
+        $sumSquares = 0.0
+        for ($y = 0; $y -lt $height; $y += $step) {
+            for ($x = 0; $x -lt $width; $x += $step) {
+                $pixel = $bitmap.GetPixel($x, $y)
+                $luma = (0.2126 * $pixel.R) + (0.7152 * $pixel.G) + (0.0722 * $pixel.B)
+                $sum += $luma
+                $sumSquares += ($luma * $luma)
+                $count++
+            }
+        }
+
+        $mean = if ($count -gt 0) { $sum / $count } else { 0.0 }
+        $variance = if ($count -gt 0) { [Math]::Max(0.0, ($sumSquares / $count) - ($mean * $mean)) } else { 0.0 }
+        $stdDev = [Math]::Sqrt($variance)
+        return [ordered]@{
+            Width = $width
+            Height = $height
+            Mean = [Math]::Round($mean, 3)
+            StdDev = [Math]::Round($stdDev, 3)
+            NonBlank = ($mean -gt 2.0 -and $stdDev -gt 1.0) -or $stdDev -gt 4.0
+        }
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
+function Compare-ImageMeanDelta([string]$firstPath, [string]$secondPath) {
+    if (!(Test-Path $firstPath) -or !(Test-Path $secondPath)) {
+        return $null
+    }
+
+    $first = [System.Drawing.Bitmap]::FromFile((Resolve-Path $firstPath).Path)
+    $second = [System.Drawing.Bitmap]::FromFile((Resolve-Path $secondPath).Path)
+    try {
+        $width = [Math]::Min($first.Width, $second.Width)
+        $height = [Math]::Min($first.Height, $second.Height)
+        if ($width -le 0 -or $height -le 0) {
+            return $null
+        }
+
+        $step = [Math]::Max(1, [int][Math]::Floor([Math]::Max($width, $height) / 220.0))
+        $sum = 0.0
+        $count = 0
+        for ($y = 0; $y -lt $height; $y += $step) {
+            for ($x = 0; $x -lt $width; $x += $step) {
+                $a = $first.GetPixel($x, $y)
+                $b = $second.GetPixel($x, $y)
+                $la = (0.2126 * $a.R) + (0.7152 * $a.G) + (0.0722 * $a.B)
+                $lb = (0.2126 * $b.R) + (0.7152 * $b.G) + (0.0722 * $b.B)
+                $sum += [Math]::Abs($la - $lb)
+                $count++
+            }
+        }
+
+        if ($count -eq 0) {
+            return $null
+        }
+
+        return [Math]::Round($sum / $count, 3)
+    }
+    finally {
+        $first.Dispose()
+        $second.Dispose()
+    }
+}
+
+function Export-PosterFrames([string]$videoPath, [string]$caseDir) {
+    if ($SkipFrameExtraction) {
+        return @()
+    }
+
+    $ffmpeg = Get-FfmpegPath
+    if ([string]::IsNullOrWhiteSpace($ffmpeg)) {
+        return @()
+    }
+
+    $frameDir = Join-Path $caseDir "frames"
+    New-Item -ItemType Directory -Force -Path $frameDir | Out-Null
+    $actualDuration = Get-VideoDurationSeconds $videoPath
+    $effectiveDuration = if ($null -ne $actualDuration -and $actualDuration -gt 0.5) { $actualDuration } else { [double]$DurationSeconds }
+    $frameSpecs = New-Object System.Collections.Generic.List[object]
+    $sampleTime = 0.5
+    $index = 0
+    while ($sampleTime -lt ($effectiveDuration - 0.2)) {
+        $frameSpecs.Add(@{
+            Name = ("t{0:0000}" -f [int][Math]::Round($sampleTime * 1000.0))
+            Seconds = $sampleTime
+        })
+        $sampleTime += 0.5
+        $index++
+    }
+
+    if ($frameSpecs.Count -eq 0) {
+        $frameSpecs.Add(@{
+            Name = "t0000"
+            Seconds = [Math]::Max(0.1, $effectiveDuration / 2.0)
+        })
+    }
+    $frames = New-Object System.Collections.Generic.List[object]
+    foreach ($spec in $frameSpecs) {
+        $path = Join-Path $frameDir ($spec.Name + ".png")
+        $seconds = ([double]$spec.Seconds).ToString("0.###", [Globalization.CultureInfo]::InvariantCulture)
+        $output = & $ffmpeg -hide_banner -loglevel error -y -i $videoPath -ss $seconds -frames:v 1 $path 2>&1
+        if ($LASTEXITCODE -ne 0 -or !(Test-Path $path)) {
+            $frames.Add([ordered]@{
+                Name = $spec.Name
+                Path = $path
+                Extracted = $false
+                Error = ($output | Select-Object -Last 3) -join " "
+            })
+            continue
+        }
+
+        $frames.Add([ordered]@{
+            Name = $spec.Name
+            Path = $path
+            Extracted = $true
+            Stats = Get-ImageStats $path
+        })
+    }
+
+    return $frames.ToArray()
+}
+
+function Get-MaxFrameDelta($frames) {
+    $paths = @($frames | Where-Object { $_.Extracted } | ForEach-Object { $_.Path })
+    if ($paths.Count -lt 2) {
+        return $null
+    }
+
+    $deltas = New-Object System.Collections.Generic.List[double]
+    for ($i = 0; $i -lt $paths.Count; $i++) {
+        for ($j = $i + 1; $j -lt $paths.Count; $j++) {
+            $delta = Compare-ImageMeanDelta $paths[$i] $paths[$j]
+            if ($null -ne $delta) {
+                $deltas.Add([double]$delta)
+            }
+        }
+    }
+
+    if ($deltas.Count -eq 0) {
+        return $null
+    }
+
+    return [Math]::Round(($deltas | Measure-Object -Maximum).Maximum, 3)
+}
+
+function Get-NonBlankFrameCount($frames) {
+    $count = 0
+    foreach ($frame in $frames) {
+        if ($frame.Extracted -and $null -ne $frame.Stats -and $frame.Stats.NonBlank) {
+            $count++
+        }
+    }
+
+    return $count
+}
+
+function Format-RelativePath([string]$path) {
+    if ([string]::IsNullOrWhiteSpace($path)) {
+        return ""
+    }
+
+    $fullPath = [IO.Path]::GetFullPath($path)
+    if ($fullPath.StartsWith($RepoRoot, [StringComparison]::OrdinalIgnoreCase)) {
+        return $fullPath.Substring($RepoRoot.Length).TrimStart('\')
+    }
+
+    return $fullPath
+}
+
+function Write-Report([string]$runDir, $results) {
+    $lines = New-Object System.Collections.Generic.List[string]
+    $lines.Add("# Gallery Control Recording Audit")
+    $lines.Add("")
+    $lines.Add(("Generated: {0:yyyy-MM-dd HH:mm:ss zzz}" -f (Get-Date)))
+    $lines.Add(("Theme: ``{0}``" -f $Theme))
+    $lines.Add('Recorder: `RenderedFfmpeg`')
+    $lines.Add(("Duration: ``{0}s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
+    $lines.Add("")
+    $lines.Add("| Control | Status | Interaction | Recording | Max frame delta | Notes |")
+    $lines.Add("| --- | --- | --- | --- | ---: | --- |")
+    foreach ($result in $results) {
+        $recording = Format-RelativePath $result.Recording
+        $delta = if ($null -eq $result.MaxFrameDelta) { "" } else { $result.MaxFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture) }
+        $notes = ($result.Notes -replace "\|", "\|")
+        $lines.Add(("| {0} | {1} | {2} | ``{3}`` | {4} | {5} |" -f $result.Control, $result.Status, $result.InteractionKind, $recording, $delta, $notes))
+    }
+
+    $reportPath = Join-Path $runDir "report.md"
+    Set-Content -Path $reportPath -Value $lines -Encoding UTF8
+    return $reportPath
+}
+
+$stamp = Get-Date -Format "yyyyMMdd-HHmmss-fff"
+$runDir = Join-Path (Join-Path $RepoRoot $OutputRoot) $stamp
+New-Item -ItemType Directory -Force -Path $runDir | Out-Null
+
+$extension = Get-RecordingExtension
+$results = New-Object System.Collections.Generic.List[object]
+
+foreach ($control in $Controls) {
+    $caseDir = Join-Path $runDir $control
+    $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
+
+    $route = "item/$control"
+    $process = $null
+    $recordingJob = $null
+    $notes = New-Object System.Collections.Generic.List[string]
+    $interactionResult = $null
+    $recordingResult = $null
+    $frames = @()
+    $status = "Passed"
+    $recordingPath = Join-Path $caseDir ("{0}-{1}{2}" -f $Theme.ToLowerInvariant(), $control.ToLowerInvariant(), $extension)
+    $interactionKind = Get-ControlInteractionKind $control
+
+    Write-Host ("Recording {0} ({1})..." -f $control, $interactionKind)
+
+    try {
+        $args = @("--visual-test", "--route", $route, "--theme", $Theme, "--visual-artifact-dir", $artifactDir)
+        $process = Start-Process -FilePath $GalleryExe -ArgumentList $args -PassThru
+        $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf Gallery window for $control" -Probe {
+            $process.Refresh()
+            if ($process.HasExited) {
+                throw "ModernWpf Gallery exited while loading $control."
+            }
+
+            Find-WindowByProcessId $process.Id
+        }
+
+        [void][GalleryRecordingNative]::Move($window.Current.NativeWindowHandle, $WindowLeft, $WindowTop, $Width, $Height)
+        [GalleryRecordingNative]::SetTopMost($window.Current.NativeWindowHandle, $true)
+        [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+        Wait-ModernWpfReady $window $route $artifactDir | Out-Null
+        Start-Sleep -Milliseconds 700
+
+        $sampleId = Get-RequiredSampleAutomationId $control
+        $sampleElement = Find-DescendantByAutomationId $window $sampleId
+        if ($null -eq $sampleElement) {
+            $notes.Add("Sample '$sampleId' not found; recording still captured route.")
+        }
+
+        $recordingJob = Start-RecordingJob $window.Current.ProcessId ([IntPtr]$window.Current.NativeWindowHandle) $recordingPath
+        Start-Sleep -Milliseconds 1500
+        $interactionResult = Invoke-RecordedInteraction $window $control $sampleElement
+        $process.Refresh()
+        if ($process.HasExited) {
+            throw "ModernWpf Gallery exited during $control interaction."
+        }
+
+        $recordingResult = Wait-RecordingJob $recordingJob
+        $recordingJob = $null
+        if ($null -eq $recordingResult -or !(Test-Path $recordingPath)) {
+            throw "Recorder did not produce '$recordingPath'."
+        }
+
+        $frames = Export-PosterFrames $recordingPath $caseDir
+        $nonBlankFrameCount = Get-NonBlankFrameCount $frames
+        if ($nonBlankFrameCount -lt 2 -and !$SkipFrameExtraction) {
+            $status = "Failed"
+            $notes.Add("Fewer than two extracted poster frames were nonblank.")
+        }
+
+        if ($null -ne $interactionResult -and $interactionResult.Contains("Invoked") -and !$interactionResult.Invoked) {
+            $status = "Failed"
+            $notes.Add("Interaction could not be invoked.")
+        }
+
+        if ($control -eq "CommandBarFlyout" -and
+            $null -ne $interactionResult -and
+            $interactionResult.Contains("CommandBarFlyoutSecondaryExpanded") -and
+            !$interactionResult.CommandBarFlyoutSecondaryExpanded) {
+            $status = "Failed"
+            $notes.Add("CommandBarFlyout MoreButton did not expose secondary commands during recording.")
+        }
+    }
+    catch {
+        $status = "Failed"
+        $notes.Add($_.Exception.Message)
+        if ($null -ne $recordingJob) {
+            Stop-Job -Job $recordingJob -ErrorAction SilentlyContinue
+            Remove-Job -Job $recordingJob -Force -ErrorAction SilentlyContinue
+            $recordingJob = $null
+        }
+    }
+    finally {
+        try {
+            if ($null -ne $process) {
+                $process.Refresh()
+                if (!$process.HasExited) {
+                    $process.CloseMainWindow() | Out-Null
+                    if (!$process.WaitForExit(3000)) {
+                        $process.Kill()
+                    }
+                }
+            }
+        }
+        catch {
+        }
+    }
+
+    $maxFrameDelta = Get-MaxFrameDelta $frames
+    if ($status -eq "Passed" -and
+        $interactionKind -ne "Static" -and
+        $null -ne $maxFrameDelta -and
+        $maxFrameDelta -lt 0.35) {
+        $status = "NeedsReview"
+        $notes.Add("Interactive recording produced low poster-frame delta.")
+    }
+
+    $result = [ordered]@{
+        Control = $control
+        Theme = $Theme
+        Route = $route
+        Status = $status
+        InteractionKind = $interactionKind
+        Recording = if (Test-Path $recordingPath) { (Resolve-Path $recordingPath).Path } else { $recordingPath }
+        RecorderResult = $recordingResult
+        Frames = $frames
+        MaxFrameDelta = $maxFrameDelta
+        InteractionResult = $interactionResult
+        Notes = ($notes.ToArray() -join " ")
+    }
+    $results.Add($result)
+}
+
+$manifestPath = Join-Path $runDir "recording-manifest.json"
+$results | ConvertTo-Json -Depth 8 | Set-Content -Path $manifestPath -Encoding UTF8
+$reportPath = Write-Report $runDir $results
+
+[pscustomobject]@{
+    RunDirectory = $runDir
+    Manifest = $manifestPath
+    Report = $reportPath
+    Total = $results.Count
+    Passed = @($results | Where-Object { $_.Status -eq "Passed" }).Count
+    NeedsReview = @($results | Where-Object { $_.Status -eq "NeedsReview" }).Count
+    Failed = @($results | Where-Object { $_.Status -eq "Failed" }).Count
+}

@@ -64,6 +64,22 @@ Record a short repro clip when a failure only shows up during interaction:
 .\tools\visual-checks\Record-Window.ps1 -Left 60 -Top 60 -Width 1180 -Height 820 -DurationSeconds 8 -FrameRate 10
 ```
 
+Run a per-control recording audit when the interaction needs to be driven and
+checked in one pass:
+
+```powershell
+.\tools\visual-checks\Record-GalleryControlInteractions.ps1 -Controls CommandBarFlyout -Theme Dark -DurationSeconds 8 -FrameRate 10 -Build
+.\tools\visual-checks\Record-GalleryControlInteractions.ps1 -Controls TeachingTip,ComboBox,ContentDialog,Flyout,Popup,MenuFlyout -Theme Light -DurationSeconds 8 -FrameRate 10
+```
+
+The per-control recorder launches ModernWpf Gallery with `--visual-test`, records
+rendered `PrintWindow` frames for the Gallery process and popup HWNDs, drives
+the primary interaction, extracts poster frames with FFmpeg, and writes
+`recording-manifest.json` plus `report.md` under
+`artifacts/gallery-recordings/<stamp>/`. It does not rely on desktop `gdigrab`
+because that can capture the desktop background instead of the Gallery window in
+this environment.
+
 The recorder writes under `artifacts/window-recordings/` by default. With
 `ffmpeg` on `PATH`, `-Recorder Auto` writes compressed MP4 files through
 FFmpeg's `gdigrab` input. Without `ffmpeg`, it falls back to the dependency-free

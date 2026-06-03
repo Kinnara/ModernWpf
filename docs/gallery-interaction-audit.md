@@ -810,3 +810,46 @@ Fix user-visible CommandBarFlyout control issues seen during real Gallery intera
 - Recorder evidence:
   - Static open recording: `artifacts/window-recordings/commandbarflyout-open.mp4`
   - Repeat open recording driven through UI Automation: `artifacts/window-recordings/commandbarflyout-repeat-open.mp4`
+
+## Round 29: Recording-First Control Audit Goal
+
+### Scope
+
+Broaden the active Gallery audit so every ModernWpf control route has live
+recording evidence, not only still-frame visual proof. The tracking matrix is
+now `docs/gallery-control-recording-audit.md`.
+
+### Current Findings
+
+- The prior visual checker can still pass while missing timing defects because
+  it samples selected final frames and targeted crops.
+- The new acceptance bar requires MP4/AVI recordings for control interactions,
+  decoded nonblank poster frames, and explicit review before a control is marked
+  verified.
+- The first matrix scope is the 46-control ModernWpf visual-check inventory plus
+  the Gallery shell NavigationView pane scenario that produced earlier
+  user-visible expansion defects.
+
+### Tooling
+
+- Added `tools/visual-checks/Record-GalleryControlInteractions.ps1` and
+  `tools/visual-checks/Record-WindowRendered.ps1`.
+- The recorder launches `ModernWpf.Gallery.exe --visual-test --route`, records
+  rendered `PrintWindow` frames for the Gallery process plus popup HWNDs, drives
+  the primary interaction, extracts timeline poster frames with FFmpeg, and
+  writes `recording-manifest.json` plus `report.md`.
+- Popup and flyout controls use an open/close/second-open sequence so flicker,
+  stale visual state, and repeat-open crashes can be caught in the recording.
+- Desktop `gdigrab` capture is not acceptable for this audit because focused
+  attempts captured the desktop background instead of the Gallery window in this
+  environment.
+
+### Verification
+
+- Focused rendered `CommandBarFlyout` pass:
+  `artifacts/gallery-recordings/20260603-025616-794/report.md`
+- Focused rendered `ComboBox` pass:
+  `artifacts/gallery-recordings/20260603-030922-916/report.md`
+- Representative poster frames show the Gallery page, primary flyout, and
+  secondary `Resize` / `Move` commands for `CommandBarFlyout`, and the opened
+  dropdown list for `ComboBox`.
