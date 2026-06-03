@@ -23,8 +23,8 @@
         <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <StackPanel>
                 <controls:ControlExample
+                    x:Name="SimpleButtonExample"
                     Margin="10"
-                    AutomationProperties.AutomationId="GallerySample_Button_Root"
                     HeaderText="Simple Button"
                     XamlCode="&lt;Button Content=&quot;Standard WPF button&quot; /&gt;">
                     <Grid>
@@ -33,8 +33,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Button
+                            x:Name="SimpleButton"
                             Grid.Column="0"
-                            AutomationProperties.AutomationId="GallerySample_Button_PrimaryButton"
                             AutomationProperties.Name="Standard WPF"
                             Content="Standard WPF button"
                             IsEnabled="{Binding ViewModel.IsSimpleButtonEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:ButtonPage}, Mode=OneWay}" />

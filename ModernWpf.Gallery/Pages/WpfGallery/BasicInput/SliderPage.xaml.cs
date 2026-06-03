@@ -1,4 +1,5 @@
 using System.Windows.Controls;
+using ModernWpf.Gallery.Pages;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
@@ -15,6 +16,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
             DataContext = this;
 
             InitializeComponent();
+            GalleryAutomation.WithAutomationId(SimpleSliderExample, GalleryAutomation.SampleRootId("Slider"));
+            GalleryAutomation.WithAutomationId(SimpleSlider, GalleryAutomation.SampleElementId("Slider", "Slider"));
         }
     }
 }

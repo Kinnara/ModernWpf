@@ -1,4 +1,5 @@
 using System.Windows.Controls;
+using ModernWpf.Gallery.Pages;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
@@ -13,6 +14,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
+            GalleryAutomation.WithAutomationId(TwoStateCheckBoxExample, GalleryAutomation.SampleRootId("CheckBox"));
+            GalleryAutomation.WithAutomationId(TwoStateCheckBox, GalleryAutomation.SampleElementId("CheckBox", "CheckBox"));
         }
     }
 }

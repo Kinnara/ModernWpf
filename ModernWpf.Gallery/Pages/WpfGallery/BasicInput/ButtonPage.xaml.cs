@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using ModernWpf.Gallery.Pages;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
@@ -15,6 +16,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
+            GalleryAutomation.WithAutomationId(SimpleButtonExample, GalleryAutomation.SampleRootId("Button"));
+            GalleryAutomation.WithAutomationId(SimpleButton, GalleryAutomation.SampleElementId("Button", "PrimaryButton"));
         }
 
         private void DisableSimpleButtonCheckBox_CheckedChanged(object sender, RoutedEventArgs e)

@@ -1,5 +1,6 @@
 using System.Windows.Controls;
 using System.Windows.Input;
+using ModernWpf.Gallery.Pages;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
@@ -16,6 +17,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
             DataContext = this;
 
             InitializeComponent();
+            GalleryAutomation.WithAutomationId(StandardRadioButtonExample, GalleryAutomation.SampleRootId("RadioButton"));
+            GalleryAutomation.WithAutomationId(DefaultRadioButtonOption1, GalleryAutomation.SampleElementId("RadioButton", "RadioButton"));
         }
 
         private void RadioButton_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)

@@ -727,7 +727,6 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 AutomationProperties.SetItemStatus(selectorBar, selectedItem == null ? "" : selectedItem.Text);
             };
             selectorBar.SelectionChanged += delegate { updateSelectionStatus(); };
-            selectorBar.SelectedItem = selectorBar.Items[0];
             updateSelectionStatus();
 
             root.Children.Add(selectorBar);
@@ -879,7 +878,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
             var content = new FrameworkElementFactory(typeof(StackPanel));
             content.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
-            content.SetValue(FrameworkElement.MarginProperty, new Thickness(12, 10, 12, 10));
+            content.SetValue(FrameworkElement.MarginProperty, new Thickness(12, 10, 12, 7));
 
             var icon = new FrameworkElementFactory(typeof(ContentPresenter));
             icon.SetValue(ContentPresenter.ContentProperty, new TemplateBindingExtension(Mux.SelectorBarItem.IconProperty));
@@ -903,10 +902,10 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             selectionPill.SetValue(FrameworkElement.WidthProperty, 16.0);
             selectionPill.SetValue(FrameworkElement.HeightProperty, 3.0);
             selectionPill.SetValue(FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Center);
-            selectionPill.SetValue(UIElement.VisibilityProperty, Visibility.Collapsed);
             selectionPill.SetValue(Shape.FillProperty, CreateBrush("#0067C0"));
             selectionPill.SetValue(Rectangle.RadiusXProperty, 1.0);
             selectionPill.SetValue(Rectangle.RadiusYProperty, 1.0);
+            selectionPill.SetValue(UIElement.OpacityProperty, 0.0);
 
             root.AppendChild(content);
             root.AppendChild(selectionPill);
@@ -921,7 +920,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 Property = Mux.SelectorBarItem.IsSelectedProperty,
                 Value = true
             };
-            selectedTrigger.Setters.Add(new Setter(UIElement.VisibilityProperty, Visibility.Visible, "SelectionPill"));
+            selectedTrigger.Setters.Add(new Setter(UIElement.OpacityProperty, 1.0, "SelectionPill"));
             template.Triggers.Add(selectedTrigger);
             return template;
         }

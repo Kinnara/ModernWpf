@@ -1,4 +1,5 @@
 using System.Windows.Controls;
+using ModernWpf.Gallery.Pages;
 
 namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 {
@@ -15,6 +16,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
             DataContext = this;
 
             InitializeComponent();
+            GalleryAutomation.WithAutomationId(InlineComboBoxExample, GalleryAutomation.SampleRootId("ComboBox"));
+            GalleryAutomation.WithAutomationId(InlineComboBox, GalleryAutomation.SampleElementId("ComboBox", "ComboBox"));
         }
     }
 }

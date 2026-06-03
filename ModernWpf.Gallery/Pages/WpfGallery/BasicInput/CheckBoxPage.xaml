@@ -23,12 +23,12 @@
         <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <StackPanel Margin="0,0,0,24">
                 <controls:ControlExample
+                    x:Name="TwoStateCheckBoxExample"
                     Margin="10"
-                    AutomationProperties.AutomationId="GallerySample_CheckBox_Root"
                     HeaderText="A 2-state CheckBox."
                     XamlCode="&lt;CheckBox Content=&quot;Two-state CheckBox&quot; /&gt;">
                     <CheckBox
-                        AutomationProperties.AutomationId="GallerySample_CheckBox_CheckBox"
+                        x:Name="TwoStateCheckBox"
                         AutomationProperties.Name="Sample Two State"
                         Content="Two-state CheckBox" />
                 </controls:ControlExample>
