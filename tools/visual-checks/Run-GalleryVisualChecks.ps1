@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -340,10 +340,6 @@ function Find-DescendantByControlType($root, $controlType) {
 }
 
 function Find-ReferencePrimaryByName($root, [string]$control, [string]$name) {
-    if ($control -eq "Pivot") {
-        return Find-DescendantByName $root $name
-    }
-
     return Find-DescendantButtonByName $root $name
 }
 
@@ -699,7 +695,6 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
-        "Pivot" { return "GallerySample_Pivot_Pivot" }
         "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
@@ -758,7 +753,6 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
-        "Pivot" { return "GallerySample_Pivot_Pivot" }
         "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
         "Flyout" { return "GallerySample_Flyout_Button" }
         "Popup" { return "GallerySample_Popup_Button" }
@@ -817,7 +811,6 @@ function Get-ReferencePrimaryName([string]$control) {
         "DropDownButton" { return "Email" }
         "MenuFlyout" { return "Sort" }
         "Popup" { return "Show Popup (using Offset)" }
-        "Pivot" { return "EMAIL" }
         "RepeatButton" { return "Click and hold" }
         "ToggleSwitch" { return "simple ToggleSwitch" }
         default { return "" }
@@ -931,7 +924,6 @@ function Test-ControlSupportsSelectionInteraction([string]$control) {
     switch ($control) {
         "GridView" { return $true }
         "PipsPager" { return $true }
-        "Pivot" { return $true }
         default { return $false }
     }
 }
@@ -1049,7 +1041,6 @@ function Get-SelectionInteractionTriggerName([string]$control) {
     switch ($control) {
         "GridView" { return "Item 1" }
         "PipsPager" { return "Page 2" }
-        "Pivot" { return "Unread" }
         default { return "" }
     }
 }
@@ -1057,7 +1048,6 @@ function Get-SelectionInteractionTriggerName([string]$control) {
 function Get-SelectionInteractionExpectedName([string]$control) {
     switch ($control) {
         "GridView" { return "You clicked Item 1." }
-        "Pivot" { return "unread emails go here." }
         default { return "" }
     }
 }
@@ -1066,7 +1056,6 @@ function Get-SelectionInteractionCropAutomationId([string]$control) {
     switch ($control) {
         "GridView" { return "GallerySample_GridView_ClickOutput0" }
         "PipsPager" { return "GallerySample_PipsPager_Root" }
-        "Pivot" { return "GallerySample_Pivot_Pivot" }
         default { return "" }
     }
 }

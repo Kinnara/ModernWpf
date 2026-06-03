@@ -126,13 +126,4 @@
         </Setter>
     </Style>
 
-    <ControlTemplate x:Key="ScrollViewerScrollBarlessTemplate" TargetType="{x:Type ScrollViewer}">
-        <Grid Background="{TemplateBinding Background}">
-            <ScrollContentPresenter
-                x:Name="ScrollContentPresenter"
-                Margin="{TemplateBinding Padding}"
-                ContentTemplate="{TemplateBinding ContentTemplate}" />
-        </Grid>
-    </ControlTemplate>
-
 </ResourceDictionary>

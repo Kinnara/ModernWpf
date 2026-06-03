@@ -92,7 +92,6 @@ namespace ModernWpf.Gallery.Models
             "InfoBadge",
             "Flyout",
             "Popup",
-            "Pivot",
             "BreadcrumbBar",
             "SelectorBar",
             "SplitView",
@@ -550,7 +549,7 @@ namespace ModernWpf.Gallery.Models
                     "Menu",
                     "Menu",
                     "A classic menu, allowing the display of MenuItems containing MenuFlyoutItems.",
-                    "Pivot.png",
+                    "MenuBar.png",
                     "Menu provides top-level commands through MenuItem children, separators, and access keys.",
                     "System.Windows.Controls.Menu",
                     new[] { "Object", "DispatcherObject", "DependencyObject", "Visual", "UIElement", "FrameworkElement", "Control", "ItemsControl", "MenuBase", "Menu" },
@@ -564,7 +563,7 @@ namespace ModernWpf.Gallery.Models
                     "TabControl presents a set of TabItem pages with one active selection.",
                     "System.Windows.Controls.TabControl",
                     new[] { "Object", "DispatcherObject", "DependencyObject", "Visual", "UIElement", "FrameworkElement", "Control", "ItemsControl", "Selector", "TabControl" },
-                    new[] { "Pivot" }),
+                    new[] { "SelectorBar" }),
                 CreateWpfItem(
                     "Navigation",
                     "Frame",
@@ -818,7 +817,7 @@ namespace ModernWpf.Gallery.Models
                     "Navigation",
                     "Navigation",
                     "Menu, TabControl, Frame, NavigationWindow",
-                    "pack://application:,,,/Assets/ControlImages/Pivot.png",
+                    "pack://application:,,,/Assets/ControlImages/MenuBar.png",
                     new[]
                     {
                         "Menu",

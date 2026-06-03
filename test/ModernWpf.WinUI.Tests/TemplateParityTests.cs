@@ -88,7 +88,6 @@ public class TemplateParityTests
         {
             Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
-            Path.Combine("ModernWpf", "Styles", "Pivot.xaml"),
             Path.Combine("ModernWpf", "Styles", "NavigationBackButton.xaml"),
             Path.Combine("ModernWpf", "TitleBar", "TitleBarControl.xaml"),
             Path.Combine("ModernWpf.Controls", "BreadcrumbBar", "BreadcrumbBar.xaml"),
@@ -741,7 +740,6 @@ public class TemplateParityTests
         Assert.IsFalse(missingEvidence.Any(), "ModernWpf core control coverage rows should point at existing source-audit evidence: " + string.Join("; ", missingEvidence));
 
         AssertCoverageStatus(rows, "Styles/Common.xaml", "Shared WinUI resource compatibility layer");
-        AssertCoverageStatus(rows, "Styles/Pivot.xaml", "WinUI 3 source-backed WPF platform mapping");
         AssertCoverageStatus(rows, "Styles/NavigationView.xaml", "WinUI 3 source-backed WPF family");
     }
 
@@ -866,26 +864,6 @@ public class TemplateParityTests
         Assert.IsFalse(
             offenders.Any(),
             "Stock controls aligned to official WPF Fluent should use WPF presenters, not ContentPresenterEx. Offenders: " + string.Join("; ", offenders));
-    }
-
-    [TestMethod]
-    public void CoreNavigationHeaderPresenterSlotsUseWinUIPresenterShape()
-    {
-        var repoRoot = FindRepoRoot();
-        var sourceBackedTemplateFiles = new[]
-        {
-            Path.Combine("ModernWpf", "Styles", "Pivot.xaml")
-        };
-
-        var offenders = sourceBackedTemplateFiles
-            .Select(path => Path.Combine(repoRoot, path))
-            .SelectMany(path => FindPlainContentPresenterElementUses(repoRoot, path)
-                .Concat(FindTextElementForegroundUses(repoRoot, path)))
-            .ToArray();
-
-        Assert.IsFalse(
-            offenders.Any(),
-            "These core navigation header template files should use ContentPresenterEx and direct Foreground routing. Offenders: " + string.Join("; ", offenders));
     }
 
     [TestMethod]

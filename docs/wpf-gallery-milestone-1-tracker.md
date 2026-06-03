@@ -2289,8 +2289,6 @@ Row 7.1 backlog order:
    resource consumption. Covered at branch tip by `PipsPagerApiTests`.
 10. DropDownButton chevron aliases and direct style/live resource consumption.
     Covered at branch tip by `DropDownButtonApiTests`.
-11. Pivot style theme-resource aliases and direct style/live resource
-    consumption. Covered at branch tip by `PivotVisualStateTests`.
 12. FlyoutPresenter chrome/theme-resource aliases and direct style/live resource
     consumption. Covered at branch tip by `FlyoutPresenterApiTests`.
 13. Date/time flyout and FlipView common style theme-resource aliases.
@@ -2466,7 +2464,7 @@ actual ModernWpf controls or explicitly retained WPF implementations:
 `AppBarToggleButton`, `AppBarSeparator`, `DropDownButton`, `SplitButton`,
 `ToggleSplitButton`, `RepeatButton`, `ToggleButton`, `MenuBar`, `MenuFlyout`,
 `ItemsRepeater`, `PipsPager`, `RatingControl`, `ToggleSwitch`, `ColorPicker`,
-`HyperlinkButton`, `ProgressRing`, `InfoBadge`, `Flyout`, `Popup`, `Pivot`,
+`HyperlinkButton`, `ProgressRing`, `InfoBadge`, `Flyout`, `Popup`,
 `BreadcrumbBar`, `SelectorBar`, `SplitView`, `AnnotatedScrollBar`,
 `ParallaxView`, `GridView`, `PersonPicture`,
 `IconElement`, `ThemeShadow`, and `TitleBar`.
@@ -2492,7 +2490,6 @@ Adapt instead of raw-copying when the source depends on:
 - ModernWpf-specific routing, catalog aliases, test hooks, or automation IDs.
 - Pages where ModernWpf intentionally keeps a distinct WinUI/ModernWpf control
   page next to WPF Gallery pages because the control is actually implemented in
-  ModernWpf, such as retained `TitleBar`, `ThemeShadow`, `Pivot`, or
   `NavigationView` surfaces. Do not keep WinUI aliases for WPF-only pages such
   as `CalendarView` or `RichEditBox`.
 - Controls or interactions that WPF Gallery implements with app-local helpers
@@ -6908,10 +6905,6 @@ Latest local verification for the current branch tip:
   - Passed for `net8.0-windows7.0`: 14 tests. `PipsPager` now also pins the direct dictionary style shape for navigation buttons, pip buttons, selected/normal pip styles, implicit pager style wiring, live style consumption, and representative pointer-over/pressed/disabled visual-state dynamic resource references while retaining Light/Dark/HighContrast coverage for every selection-indicator and navigation-button background, border, foreground, selected, pointer-over, pressed, and disabled theme-resource alias; existing PipsPager default, property, automation, range update, orientation, button, wrap, and visual-state coverage still passes. Existing warning/output remains `NETSDK1137` and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~DropDownButtonApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Superseded by the current DropDownButton run below, which passes 8 tests after adding chevron-bounds coverage. This earlier run passed for `net8.0-windows7.0` with 7 tests and pinned the direct dictionary style shape for button background/foreground/border/padding/font/focus/corner resources, live root/content/chevron resource consumption, and representative pointer-over/pressed/disabled visual-state dynamic resource references while retaining Light/Dark/HighContrast secondary chevron alias, content-presenter, animated-chevron, flyout, and automation coverage. Existing warning/output remains `NETSDK1137` and the recurring `Failed to resolve WinRT.Runtime.dll` message.
-- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~PivotVisualStateTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
-  - Passed for `net8.0-windows7.0`: 6 tests. Retained Pivot styles now also pin the direct `TabControlPivotStyle` / `TabItemPivotStyle` resource setters, live title/header/selected-pipe/navigation-button resource consumption, and representative header/navigation pointer-over/pressed/disabled dynamic-resource visual-state setters while retaining title visibility, source visual-state shape, navigation-button state application, and Light/Dark/HighContrast theme-resource alias coverage. Existing warning/output remains `NETSDK1137` and the recurring `Failed to resolve WinRT.Runtime.dll` message.
-- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~DropDownButtonApiTests|FullyQualifiedName~PivotVisualStateTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
-  - Passed for `net8.0-windows7.0`: 11 tests. `DropDownButton` now has focused Light/Dark/HighContrast coverage for its secondary chevron foreground aliases, and retained Pivot styles now have focused coverage for the WinUI2 Pivot size/spacing/font constants, HighContrast navigation-button border thickness, navigation-button state aliases, header/item background aliases, foreground aliases, and focus/selected pipe aliases; existing DropDownButton template/flyout/automation and Pivot visual-state coverage still passes. Existing warning/output remains `NETSDK1137`, generated WinRT warnings, existing ModernWpf/ModernWpf.Controls warnings, and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~FlyoutPresenterApiTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
   - Passed for `net8.0-windows7.0`: 5 tests. `FlyoutPresenter` now also pins the direct dictionary style setters for font, background, foreground, border, padding, sizing, corner, shadow, and scrollbar resources plus live presenter/theme-resource consumption and template chrome/content propagation while retaining focused Light/Dark/HighContrast coverage for the WinUI2 flyout max/min/touch sizing constants, border/content padding and thickness constants, acrylic Light/Dark background/border aliases, HighContrast `SystemColorWindow*` background/border aliases, content-presenter shape, and ThemeShadow template coverage. Existing warning/output remains `NETSDK1137` and the recurring `Failed to resolve WinRT.Runtime.dll` message.
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --configuration Debug --no-restore --filter "FullyQualifiedName~CommonStylesResourceTests" -p:UseSharedCompilation=false --logger "console;verbosity=minimal"`
@@ -8091,14 +8084,7 @@ lock `ModernWpf.Gallery.dll`; rerun the same checks sequentially.
   - Passed at `artifacts/visual-checks/20260524-222600-931-104104/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_TabView_TabView` was found, primary crops match at `767x475`, TabView Dark primary delta is `31.2`, and whole-sample mean delta is `32.43`.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
   - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the TabView WinUI example alignment and visual harness mapping. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
-- `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.PivotSampleMatchesWinUIGalleryExample|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
-  - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 43 tests per target. The generated ModernWpf Pivot page follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PivotPage.xaml`: one `A basic pivot.` example with `Title="EMAIL"` and `All`, `Unread`, `Flagged`, and `Urgent` items. `NavigationSampleFactory.CreateExamples` covers Pivot as a source-backed Navigation WinUI extension page, exposes curated automation IDs `GallerySample_Pivot_Root` and `GallerySample_Pivot_Pivot`, preserves the source snippet text, and adapts WinUI `Pivot` / `PivotItem` to WPF `TabControl` / `TabItem` using ModernWpf's `TabControlPivotStyle`, `TabItemPivotStyle`, `PivotHelper.Title`, and a `721px` live-width cap so the WPF control crop matches the installed WinUI Gallery reference viewport. Current warning/output remains `NU1903`, recurring `Failed to resolve WinRT.Runtime.dll` messages, and existing ModernWpf warning noise.
-- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls Pivot -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
-  - Passed at `artifacts/visual-checks/20260524-220857-074-114788/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_Pivot_Pivot` was found, primary crops now match at `721x400`, Pivot Light primary delta is `7.11`, and whole-window mean delta is `141.1`. The visual harness now uses the installed WinUI Gallery `Tab` named `EMAIL` as Pivot's reference primary target.
-- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls Pivot -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 30`
-  - Passed at `artifacts/visual-checks/20260524-220932-952-102692/report.md`: ModernWpf and installed WinUI 3 Gallery both `Passed`, both apps were nonblank, the required ModernWpf element `GallerySample_Pivot_Pivot` was found, primary crops now match at `721x400`, Pivot Dark primary delta is `9.08`, and whole-window mean delta is `13.7`.
 - `dotnet build ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug -p:UseSharedCompilation=false`
-  - Passed for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` after the Pivot primary-crop mapping and live-width refinement. Current build output includes recurring `Failed to resolve WinRT.Runtime.dll` messages, existing ModernWpf/ModernWpf.Controls warnings, `19 Warning(s)`, and `0 Error(s)`.
 - `dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --configuration Debug --filter "FullyQualifiedName~GalleryAutomationHookTests.SelectorBarSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryAutomationHookTests.CuratedSamplesExposeStableAutomationIds" -p:UseSharedCompilation=false`
   - Passed for `net8.0-windows7.0` and `net10.0-windows7.0`: 43 tests per target. The generated ModernWpf SelectorBar page follows the local official WinUI Gallery source at `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SelectorBarPage.xaml` / `.xaml.cs`: `A Basic SelectorBar`, `SelectorBar with Frame Slide Transitions`, and `SelectorBar Displaying Different Collections Using ItemsView`. `NavigationSampleFactory.CreateExamples` covers SelectorBar as a source-backed Navigation WinUI extension page, exposes curated automation IDs `GallerySample_SelectorBar_Root` and `GallerySample_SelectorBar_SelectorBar`, keeps WinUI's `SelectorBar1`, `SelectorBar2`, `ContentFrame`, `SelectorBar3`, and `ItemsView3` source-facing names, preserves the sample snippets, and verifies selection-driven frame/content changes. The WPF adaptation uses real `ModernWpf.Controls.SelectorBar` / `SelectorBarItem` controls and a sample-specific item template because the default library template rendered blank in the visual capture despite the live tree having item text/icons; that local template now applies the same `0.8` icon scale used by ModernWpf's SelectorBar resources.
 - `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Controls SelectorBar -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 30`
@@ -9747,30 +9733,16 @@ Avoid reopening TabView's source structure unless a new WinUI source, runtime,
 or crop regression appears; a later round can separately investigate a native
 TabView abstraction, drag-rearrange parity, the remaining generic markup and
 item-source header add/close alignment, or deeper template drift.
-The generated ModernWpf Pivot extension page now uses the local official WinUI
 Gallery one-example structure from
-`D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\PivotPage.xaml`:
-`A basic pivot.` with `Title="EMAIL"` and `All`, `Unread`, `Flagged`, and
-`Urgent` items. `NavigationSampleFactory.CreateExamples` now covers Pivot as a
-source-backed Navigation WinUI example, exposes `GallerySample_Pivot_Root` /
-`GallerySample_Pivot_Pivot` for runtime and visual checks, and adapts WinUI
-`Pivot` / `PivotItem` to WPF `TabControl` / `TabItem` through ModernWpf's
-existing `TabControlPivotStyle`, `TabItemPivotStyle`, and `PivotHelper.Title`.
-The live WPF Pivot is capped to the installed WinUI Gallery's `721px` primary
 viewport so visual checks compare the control template/content instead of the
 different ModernWpf host width.
-Current Pivot WinUI-reference evidence is
 `artifacts/visual-checks/20260524-220857-074-114788/report.md` for Light and
 `artifacts/visual-checks/20260524-220932-952-102692/report.md` for Dark, both
 with ModernWpf and installed WinUI 3 Gallery `Passed`, nonblank app captures,
-required ModernWpf element `GallerySample_Pivot_Pivot` found, matching
 `721x400` primary crops, and primary deltas `7.11` / `9.08`. The visual harness
-uses the installed WinUI Gallery `Tab` named `EMAIL` as Pivot's reference
 primary target because the source page does not expose a stable AutomationId on
-the Pivot itself. Runtime coverage now also pins the direct Pivot style resource
 shape, live title/header/selected-pipe/navigation-button resource consumption,
 and representative header/navigation dynamic-resource visual-state setters.
-Avoid reopening Pivot's source shape unless a new WinUI source, runtime, or crop
 regression appears; a later round can separately investigate remaining
 font/glyph antialiasing drift.
 The generated ModernWpf SelectorBar extension page now uses the local official

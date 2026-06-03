@@ -10,13 +10,10 @@
         <ResourceDictionary Source="Styles/CommandBar.xaml" />
         <ResourceDictionary Source="Styles/NavigationBackButton.xaml" />
         <ResourceDictionary Source="Styles/NavigationView.xaml" />
-        <ResourceDictionary Source="Styles/Pivot.xaml" />
         <ResourceDictionary Source="Styles/RatingControl.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <m:StaticResource x:Key="ContentControlThemeFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
-    <m:StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
-    <m:StaticResource x:Key="PivotTitleFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
     <CornerRadius x:Key="PopupCornerRadius">8,8,8,8</CornerRadius>
     <sys:Double x:Key="ControlContentThemeFontSize">14</sys:Double>

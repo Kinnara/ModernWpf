@@ -142,7 +142,6 @@ Fix visual-check false failures that appeared during the broader controls sweep:
 - Visual audit:
   - Initial failing broad sweep: `artifacts/visual-checks/20260602-021906-706-42352/report.md`
   - Focused `SplitView`, `PersonPicture` rerun: `artifacts/visual-checks/20260602-022318-767-63064/report.md`
-  - Broad rerun for `ColorPicker`, `HyperlinkButton`, `RatingControl`, `DropDownButton`, `SplitButton`, `ToggleSplitButton`, `SplitView`, `PersonPicture`, `ParallaxView`, `IconElement`, `ThemeShadow`, `TitleBar`, `InfoBadge`, `InfoBar`, `ProgressRing`, `PipsPager`, `AnnotatedScrollBar`, `GridView`, `ItemsRepeater`, `BreadcrumbBar`, `Pivot`, `SelectorBar`, and `NavigationView` with `Reference=None`: `artifacts/visual-checks/20260602-022401-170-82512/report.md`
 
 ## Round 5: Click-Open Interaction Coverage
 
@@ -267,15 +266,12 @@ Expand `Run-GalleryVisualChecks.ps1 -IncludeInteractions` to cover click-state c
 Expand visual interaction coverage for selection-style controls with stable visible before/after states:
 
 - `PipsPager`
-- `Pivot`
 
 Also add runtime click coverage for `SelectorBar`, which exposed an ambiguous visual-check target during this round.
 
 ### Current Findings
 
-- `PipsPager` and `Pivot` previously passed static rendering without proving that a user click changed selection.
 - The first `PipsPager` sample does not show previous/next buttons, so the reliable click target is the visible `Page 2` pip rather than `Next Page`.
-- `Pivot` initially failed because the harness found the visible label but did not invoke the interactive tab item. Added a selection invoker that walks up to a `SelectionItemPattern`/`InvokePattern` ancestor and then uses a native click fallback.
 - `SelectorBar` click behavior is now covered by an in-process runtime mouse down/up regression. The visual harness attempt remains tracked separately because the basic sample has no initially selected item and the visual proof did not show a reliable before/after delta.
 
 ### Verification
@@ -285,10 +281,7 @@ Also add runtime click coverage for `SelectorBar`, which exposed an ambiguous vi
   - Full `WpfGallerySourceShapeTests` `FullyQualifiedName~GalleryVisualChecks` slice: 8 passed on net8 and net10
   - `GalleryAutomationHookTests.SelectorBarSampleMatchesWinUIGalleryExamples`: passed on net8 and net10
 - Visual audit:
-  - Initial failing selection sweep for `PipsPager`, `Pivot`, and `SelectorBar`: `artifacts/visual-checks/20260602-034258-580-82964/report.md`
-  - Selection sweep after scoped-target/pattern-invocation fixes, with `Pivot` passing and `PipsPager`/`SelectorBar` still failing: `artifacts/visual-checks/20260602-034618-480-30884/report.md`
   - Selection sweep after switching `PipsPager` to `Page 2` and adding native-click fallback, with only `SelectorBar` still failing: `artifacts/visual-checks/20260602-034950-835-56632/report.md`
-  - Dark supported selection sweep for `PipsPager` and `Pivot`: `artifacts/visual-checks/20260602-035247-913-16492/report.md`
 
 ## Round 10: GridView Item Activation Coverage
 
@@ -319,7 +312,6 @@ Expand visual interaction coverage for the Gallery `GridView` sample so it prove
 - Visual audit:
   - First failing `GridView` selection run using selection without activation: `artifacts/visual-checks/20260602-035757-449-71644/report.md`
   - Passing focused `GridView` visual activation run after adding item Invoke automation: `artifacts/visual-checks/20260602-042327-414-39708/report.md`
-  - Passing combined selection sweep for `GridView`, `PipsPager`, and `Pivot`: `artifacts/visual-checks/20260602-042541-677-12876/report.md`
 
 ## Round 11: Shell Navigation Expansion State Coverage
 
@@ -664,7 +656,6 @@ Tighten GridView click visual proof after the light-theme sweep exposed a dilute
 - Visual audit:
   - Focused light GridView run: `artifacts/visual-checks/20260602-094144-938-99184/report.md` (`GridView` passed; selection crop `810x38`; interaction delta `1.24`)
   - Focused dark GridView run: `artifacts/visual-checks/20260602-094234-129-39556/report.md` (`GridView` passed; selection crop `810x38`; interaction delta `1.81`)
-  - Light remainder batch for `GridView`, `ItemsRepeater`, `BreadcrumbBar`, `Pivot`, `SelectorBar`, and `NavigationView`: `artifacts/visual-checks/20260602-094314-620-98676/report.md`
   - Light remainder batch for `ContentDialog`, `Flyout`, `Popup`, `MenuBar`, and `MenuFlyout`: `artifacts/visual-checks/20260602-094401-344-38352/report.md`
   - Light remainder batch for `AppBarButton`, `AppBarSeparator`, `AppBarToggleButton`, `CommandBar`, and `CommandBarFlyout`: `artifacts/visual-checks/20260602-094455-938-96068/report.md`
 
@@ -1011,7 +1002,6 @@ controls that older visual checks covered but the video recorder could not prove
 - `AutoSuggestBox`
 - `GridView`
 - `PipsPager`
-- `Pivot`
 
 ### Current Findings
 
@@ -1034,7 +1024,6 @@ controls that older visual checks covered but the video recorder could not prove
 - Added real text-entry/suggestion evidence to
   `Record-GalleryControlInteractions.ps1`, including typed input, suggestion
   lookup, output automation id matching, and text-specific pass/fail evidence.
-- Added selection/output evidence for `GridView`, `PipsPager`, and `Pivot`,
   including GridView item invoke, expected output matching, and PipsPager
   selected-image item status.
 - Added stable Gallery automation hooks for `AutoSuggestBox` output and
@@ -1053,7 +1042,6 @@ controls that older visual checks covered but the video recorder could not prove
 - Reviewed poster frames:
   - `artifacts/gallery-recordings/20260603-055524-741/GridView/frames/t7500.png`
   - `artifacts/gallery-recordings/20260603-055524-741/PipsPager/frames/t7500.png`
-  - `artifacts/gallery-recordings/20260603-055524-741/Pivot/frames/t7500.png`
 - AutoSuggestBox caveat: the final video clip records typing and suggestions,
   and the manifest records output `Aegean`, but the recorder still uses a UIA
   selection fallback for output proof. The item-click close behavior is covered

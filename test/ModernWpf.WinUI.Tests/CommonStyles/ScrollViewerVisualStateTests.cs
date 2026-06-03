@@ -101,25 +101,6 @@ public class ScrollViewerVisualStateTests
     }
 
     [TestMethod]
-    public void ScrollViewerScrollBarlessTemplateRetainsPivotSupportTemplate()
-    {
-        WpfTestHost.Run(() =>
-        {
-            TestApplication.EnsureInitialized();
-
-            var template = (ControlTemplate)Application.Current.FindResource("ScrollViewerScrollBarlessTemplate");
-            Assert.AreEqual(typeof(ScrollViewer), template.TargetType);
-
-            var root = (Grid)template.LoadContent();
-            var presenter = VisualTreeTestHelper.EnumerateDescendants(root)
-                .OfType<ScrollContentPresenter>()
-                .Single();
-            Assert.AreEqual("ScrollContentPresenter", presenter.Name);
-            Assert.IsFalse(VisualTreeTestHelper.EnumerateDescendants(root).OfType<ScrollBar>().Any());
-        });
-    }
-
-    [TestMethod]
     public void ScrollViewerFileDeletesOldDefaultStyleGuesses()
     {
         var repoRoot = FindRepoRoot();

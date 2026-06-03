@@ -34,14 +34,12 @@ source for the stock `System.Windows.Controls.ScrollViewer` default style.
   `ComboBox`, `AutoSuggestBox`, `DatePicker`, and `NumberBox`.
 - `TextControlContentHostStyle` remains based on `DefaultScrollViewerStyle` but
   keeps its WPF text-host presenter-margin and corner-radius support.
-- `ScrollViewerScrollBarlessTemplate` is retained for the Pivot header scroller.
-  Official WPF Fluent does not provide this ModernWpf-specific helper template.
 
 ## Validation
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\ScrollViewerVisualStateTests.cs`
   covers the official WPF Fluent stock setter surface, template parts, removed
-  default-style guesses, and retained ModernWpf support templates.
+  default-style guesses, and retained ModernWpf text-control host support.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies
   `ModernWpf\Styles\ScrollViewer.xaml` as an official WPF Fluent stock template
   file that should not use `VisualStateEx`.

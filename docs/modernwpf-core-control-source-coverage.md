@@ -38,5 +38,4 @@ stock WPF controls come from official WPF Fluent.
 | `Styles/CommandBar.xaml` | WinUI 3 source-backed WPF family | `docs\commandbar-winui3-source-audit.md`, `docs\appbarbutton-winui3-source-audit.md`, `docs\commandbarflyout-winui3-source-audit.md` |
 | `Styles/NavigationBackButton.xaml` | WinUI 3 source-backed WPF family | `docs\navigationview-winui3-source-audit.md` |
 | `Styles/NavigationView.xaml` | WinUI 3 source-backed WPF family | `docs\navigationview-winui3-source-audit.md` |
-| `Styles/Pivot.xaml` | WinUI 3 source-backed WPF platform mapping | `docs\pivot-winui3-source-audit.md` |
 | `Styles/RatingControl.xaml` | WinUI 3 source-backed WPF port | `docs\ratingcontrol-winui3-source-audit.md` |

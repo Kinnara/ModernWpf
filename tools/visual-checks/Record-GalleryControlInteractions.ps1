@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "Pivot", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "ParallaxView", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "PipsPager", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [string]$GalleryExe,
@@ -553,7 +553,6 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_TemplateBreadcrumbBar" }
-        "Pivot" { return "GallerySample_Pivot_Pivot" }
         "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
@@ -621,7 +620,6 @@ function Test-ControlSupportsSelectionInteraction([string]$control) {
         "RadioButton" { return $true }
         "GridView" { return $true }
         "PipsPager" { return $true }
-        "Pivot" { return $true }
         "SelectorBar" { return $true }
         "NavigationView" { return $true }
         default { return $false }
@@ -678,7 +676,6 @@ function Get-SelectionInteractionTriggerName([string]$control) {
         "RadioButton" { return "Default Radio Option 2" }
         "GridView" { return "Item 1" }
         "PipsPager" { return "Page 2" }
-        "Pivot" { return "Unread" }
         "SelectorBar" { return "Shared" }
         "NavigationView" { return "Menu Item2" }
         default { return "" }
@@ -696,7 +693,6 @@ function Get-SelectionInteractionExpectedOutputName([string]$control) {
     switch ($control) {
         "GridView" { return "You clicked Item 1." }
         "PipsPager" { return "LandscapeImage2.jpg" }
-        "Pivot" { return "unread emails go here." }
         "NavigationView" { return "Sample Page 2" }
         default { return "" }
     }

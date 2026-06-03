@@ -992,7 +992,7 @@
           ],
           "RelatedControls": [
             "NavigationView",
-            "Pivot"
+            "SelectorBar"
           ]
         },
         {
@@ -1023,36 +1023,6 @@
           ],
           "RelatedControls": [
             "SplitView",
-            "Pivot"
-          ]
-        },
-        {
-          "UniqueId": "Pivot",
-          "Title": "Pivot",
-          "BaseClasses": [
-            "Object",
-            "DependencyObject",
-            "UIElement",
-            "FrameworkElement",
-            "Control",
-            "ItemsControl"
-          ],
-          "ApiNamespace": "Microsoft.UI.Xaml.Controls",
-          "Subtitle": "Presents information from different sources in a tabbed view.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Pivot.png",
-          "Description": "Pivot is not recommended for Windows 11 design patterns. Please use the SelectorBar and SelectorBarItem. A Pivot allows you to show a collection of items from different sources in a tabbed view.",
-          "SourcePath": "/CommonStyles/Pivot_themeresources.xaml",
-          "Docs": [
-            {
-              "Title": "Pivot - API",
-              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.pivot"
-            },
-            {
-              "Title": "Guidelines",
-              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/pivot"
-            }
-          ],
-          "RelatedControls": [
             "SelectorBar"
           ]
         },
@@ -1068,7 +1038,7 @@
           ],
           "ApiNamespace": "Microsoft.UI.Xaml.Controls",
           "Subtitle": "Presents information from a small set of different sources. The user can pick one of them.",
-          "ImagePath": "ms-appx:///Assets/ControlImages/Pivot.png",
+          "ImagePath": "ms-appx:///Assets/ControlImages/TabView.png",
           "Description": "SelectorBar is used to modify the content shown by allowing users to select and switch between a small, finite set of data.",
           "SourcePath": "/SelectorBar/SelectorBar_themeresources.xaml",
           "IsNew": true,
@@ -1084,8 +1054,7 @@
           ],
           "RelatedControls": [
             "NavigationView",
-            "PipsPager",
-            "Pivot"
+            "PipsPager"
           ]
         }
       ]

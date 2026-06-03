@@ -3005,25 +3005,21 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "function Test-ControlSupportsSelectionInteraction([string]$control)",
                 "\"GridView\" { return $true }",
-                "\"PipsPager\" { return $true }",
-                "\"Pivot\" { return $true }");
+                "\"PipsPager\" { return $true }");
             AssertContainsInOrder(
                 source,
                 "function Get-SelectionInteractionTriggerName([string]$control)",
                 "\"GridView\" { return \"Item 1\" }",
-                "\"PipsPager\" { return \"Page 2\" }",
-                "\"Pivot\" { return \"Unread\" }");
+                "\"PipsPager\" { return \"Page 2\" }");
             AssertContainsInOrder(
                 source,
                 "function Get-SelectionInteractionExpectedName([string]$control)",
-                "\"GridView\" { return \"You clicked Item 1.\" }",
-                "\"Pivot\" { return \"unread emails go here.\" }");
+                "\"GridView\" { return \"You clicked Item 1.\" }");
             AssertContainsInOrder(
                 source,
                 "function Get-SelectionInteractionCropAutomationId([string]$control)",
                 "\"GridView\" { return \"GallerySample_GridView_ClickOutput0\" }",
-                "\"PipsPager\" { return \"GallerySample_PipsPager_Root\" }",
-                "\"Pivot\" { return \"GallerySample_Pivot_Pivot\" }");
+                "\"PipsPager\" { return \"GallerySample_PipsPager_Root\" }");
             AssertContainsInOrder(
                 source,
                 "$afterCrop = if (Test-Path $afterPath)",

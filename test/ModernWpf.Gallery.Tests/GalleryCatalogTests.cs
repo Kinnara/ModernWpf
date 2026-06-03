@@ -44,7 +44,6 @@ namespace ModernWpf.Gallery.Tests
             "InfoBadge",
             "Flyout",
             "Popup",
-            "Pivot",
             "BreadcrumbBar",
             "SelectorBar",
             "SplitView",
@@ -271,7 +270,7 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void NavigationSectionCardsMatchOfficialWpfGalleryCatalog()
         {
-            AssertNavigationItem("Menu", "A classic menu, allowing the display of MenuItems containing MenuFlyoutItems.", "Pivot.png");
+            AssertNavigationItem("Menu", "A classic menu, allowing the display of MenuItems containing MenuFlyoutItems.", "MenuBar.png");
             AssertNavigationItem("TabControl", "A control that displays a collection of tabs.", "TabView.png");
             AssertNavigationItem("Frame", "A navigation control that allows displaying different Page content within an application.", "MenuBar.png");
             AssertNavigationItem("NavigationWindow", "A control that supports navigation between pages, similar to a web browser.", "NavigationWindow.png");
@@ -318,7 +317,7 @@ namespace ModernWpf.Gallery.Tests
                 new { UniqueId = "Border", ImageFileName = "Border.png" },
                 new { UniqueId = "Canvas", ImageFileName = "Canvas.png" },
                 new { UniqueId = "Image", ImageFileName = "Image.png" },
-                new { UniqueId = "Menu", ImageFileName = "Pivot.png" },
+                new { UniqueId = "Menu", ImageFileName = "MenuBar.png" },
                 new { UniqueId = "TabControl", ImageFileName = "TabView.png" },
                 new { UniqueId = "Frame", ImageFileName = "MenuBar.png" },
                 new { UniqueId = "NavigationWindow", ImageFileName = "NavigationWindow.png" },
@@ -349,7 +348,7 @@ namespace ModernWpf.Gallery.Tests
             AssertGroupCard("DateAndCalendar", "Date & Calendar", "Calendar, DatePicker", "CalendarView.png");
             AssertGroupCard("Layout", "Layout", "Expander,Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border", "Expander.png");
             AssertGroupCard("Media", "Media Controls", "Canvas, Image", "Image.png");
-            AssertGroupCard("Navigation", "Navigation", "Menu, TabControl, Frame, NavigationWindow", "Pivot.png");
+            AssertGroupCard("Navigation", "Navigation", "Menu, TabControl, Frame, NavigationWindow", "MenuBar.png");
             AssertGroupCard("StatusAndInfo", "Status & Info", "ProgressBar, ToolTip", "ProgressBar.png");
             AssertGroupCard("Text", "Text", "Label, TextBox, TextBlock, RichTextEdit, PasswordBox", "TextBlock.png");
             AssertGroupCard("System", "System", "File and Folder Dialogs, MessageBox, Clipboard", "FilePicker.png");
@@ -673,7 +672,6 @@ namespace ModernWpf.Gallery.Tests
                 Tuple.Create("assets/controlimages/stackpanel.png", "9CD682354BC22ECFEE16C6270CB1DDCA6269B12378357D3F03B581F801ECFBE6"),
                 Tuple.Create("assets/controlimages/canvas.png", "68C1C467062436415E86FEDD97702DE9FE37A85FF75483F23CFD91B48FA6DE58"),
                 Tuple.Create("assets/controlimages/image.png", "0A511A7E329AA9E9363787E807452B84CDF6ADC360216F1857ACB602DA1F2EB2"),
-                Tuple.Create("assets/controlimages/pivot.png", "D1D76DE9BA77C854BAC73B05931268219127C7F2AFD8958F9E4A407A88E8F90C"),
                 Tuple.Create("assets/controlimages/tabview.png", "56C00588E1821BDE2DCEF0587C7EB2866AB315896C697E2843AC17B82D340C8F"),
                 Tuple.Create("assets/controlimages/menubar.png", "C8B7C4866E6CD35AF1AB3ACE8AA63FCE4DE734E8661DA2D12D2D114A08F75C75"),
                 Tuple.Create("assets/controlimages/navigationwindow.png", "60AC153191E22954667188ABB96FF8AF3F777440F606BC6B10FF9DC3A0B1DD28"),
@@ -862,7 +860,7 @@ namespace ModernWpf.Gallery.Tests
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(12, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(80, GalleryCatalog.Items.Count);
+            Assert.AreEqual(79, GalleryCatalog.Items.Count);
         }
 
         [TestMethod]

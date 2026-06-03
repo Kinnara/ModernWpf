@@ -10,7 +10,6 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Testing;
 using Mux = ModernWpf.Controls;
@@ -144,24 +143,6 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
     }
 }";
 
-        private const string PivotBasicXaml =
-@"<Pivot Title=""EMAIL"">
-    <PivotItem Header=""All"">
-        <TextBlock Text=""all emails go here."" />
-    </PivotItem>
-    <PivotItem Header=""Unread"">
-        <TextBlock Text=""unread emails go here."" />
-    </PivotItem>
-    <PivotItem Header=""Flagged"">
-        <TextBlock Text=""flagged emails go here."" />
-    </PivotItem>
-    <PivotItem Header=""Urgent"">
-        <TextBlock Text=""urgent emails go here."" />
-    </PivotItem>
-</Pivot>";
-
-        private const double PivotReferenceWidth = 721.0;
-
         private const string NavigationViewApiXaml =
 @"<NavigationView x:Name=""nvSample""
     IsSettingsVisible=""$(SettingsVis)""
@@ -238,8 +219,6 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                     return CreateBreadcrumbBarSample();
                 case "NavigationView":
                     return CreateNavigationViewSample();
-                case "Pivot":
-                    return CreatePivotSample();
                 case "SelectorBar":
                     return CreateSelectorBarSample();
                 default:
@@ -260,8 +239,6 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                     return CreateBreadcrumbBarExamples();
                 case "NavigationView":
                     return CreateNavigationViewExamples(sampleSnippets);
-                case "Pivot":
-                    return CreatePivotExamples();
                 case "SelectorBar":
                     return CreateSelectorBarExamples();
                 default:
@@ -690,56 +667,6 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                     paneHyperlink,
                     footerStackPanel,
                     samplePage2Item));
-        }
-
-        private static UIElement CreatePivotSample()
-        {
-            var panel = new GallerySamplePanel
-            {
-                Margin = new Thickness(0, 0, 0, 12)
-            };
-            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("Pivot"));
-            panel.Children.Add(CreatePivotBasicExampleContent(false));
-            return panel;
-        }
-
-        private static IReadOnlyList<GalleryExample> CreatePivotExamples()
-        {
-            return new[]
-            {
-                new GalleryExample(
-                    "A basic pivot.",
-                    CreatePivotBasicExampleContent(true),
-                    PivotBasicXaml,
-                    null)
-            };
-        }
-
-        private static UIElement CreatePivotBasicExampleContent(bool assignRootAutomationId)
-        {
-            var root = new GallerySamplePanel();
-            if (assignRootAutomationId)
-            {
-                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("Pivot"));
-            }
-
-            var pivot = new TabControl
-            {
-                Name = "Pivot1",
-                MinHeight = 400,
-                MaxWidth = PivotReferenceWidth,
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Style = FindStyleResource("TabControlPivotStyle")
-            };
-            GalleryAutomation.WithAutomationId(pivot, GalleryAutomation.SampleElementId("Pivot", "Pivot"));
-            PivotHelper.SetTitle(pivot, "EMAIL");
-            pivot.Items.Add(CreatePivotItem("All", "all emails go here."));
-            pivot.Items.Add(CreatePivotItem("Unread", "unread emails go here."));
-            pivot.Items.Add(CreatePivotItem("Flagged", "flagged emails go here."));
-            pivot.Items.Add(CreatePivotItem("Urgent", "urgent emails go here."));
-            pivot.SelectedIndex = 0;
-            root.Children.Add(pivot);
-            return root;
         }
 
         private static UIElement CreateSelectorBarSample()
@@ -1512,20 +1439,6 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center
                     }
-                }
-            };
-        }
-
-        private static TabItem CreatePivotItem(string header, string text)
-        {
-            return new TabItem
-            {
-                Header = header,
-                Style = FindStyleResource("TabItemPivotStyle"),
-                Content = new TextBlock
-                {
-                    Text = text,
-                    TextWrapping = TextWrapping.Wrap
                 }
             };
         }

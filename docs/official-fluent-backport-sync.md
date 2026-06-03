@@ -607,7 +607,6 @@ Source inspected:
 | --- | --- | --- | --- |
 | Explicit style key | `DefaultScrollViewerStyle` is present in official WPF Fluent and retained | Same | Existing ModernWpf apps can continue to reference the public style key. |
 | `TextControlContentHostStyle` | No official WPF Fluent style in `ScrollViewer.xaml` | Retained as a support style based on `DefaultScrollViewerStyle` | Existing text-entry templates use this style for content-host presenter margin and ModernWpf corner-radius support. |
-| `ScrollViewerScrollBarlessTemplate` | No official WPF Fluent helper template | Retained | Pivot still uses this ModernWpf-specific scrollbarless scroller template. |
 
 ### Test Evidence
 
