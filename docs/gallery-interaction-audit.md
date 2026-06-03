@@ -924,3 +924,28 @@ state or numeric-value evidence:
   - `artifacts/gallery-recordings/20260603-040311-639/CheckBox/frames/t3000.png`
   - `artifacts/gallery-recordings/20260603-040311-639/ToggleSwitch/frames/t3000.png`
   - `artifacts/gallery-recordings/20260603-040311-639/NumberBox/frames/t3000.png`
+
+## Round 32: RepeatButton Output Recording Proof
+
+### Scope
+
+Close the remaining basic-input recording gap for `RepeatButton`.
+
+### Current Findings
+
+- `RepeatButton` was previously left `NeedsReview` because the hold operation
+  produced no strong proof in the decoded poster frames.
+- The recorder now attempts to capture before/after output text for output
+  controls and refuses to auto-pass an output control from broad frame delta
+  alone.
+- WPF UI Automation exposes the RepeatButton sample output TextBlock by its
+  fixed automation name (`Control output`) rather than its visible text, so the
+  focused run still reports `NeedsReview`.
+- Manual frame review is sufficient for this control: the decoded frame shows
+  the visible output changing to `Number of clicks: 1`.
+
+### Verification
+
+- Focused report: `artifacts/gallery-recordings/20260603-041754-728/report.md`
+- Reviewed poster frame:
+  `artifacts/gallery-recordings/20260603-041754-728/RepeatButton/frames/t4000.png`

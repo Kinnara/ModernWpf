@@ -86,6 +86,11 @@ Small state/value interactions can have low full-frame delta. The recorder only
 passes those cases when the manifest also proves the control-level change, such
 as before/after toggle state or a reached numeric target value.
 
+Output controls are stricter: broad frame delta is not enough for an automatic
+pass. If UI Automation cannot expose changed output text, keep the report at
+`NeedsReview` and cite reviewed poster frames before marking the control
+recorded in the matrix.
+
 The recorder writes under `artifacts/window-recordings/` by default. With
 `ffmpeg` on `PATH`, `-Recorder Auto` writes compressed MP4 files through
 FFmpeg's `gdigrab` input. Without `ffmpeg`, it falls back to the dependency-free

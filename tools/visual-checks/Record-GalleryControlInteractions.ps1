@@ -602,6 +602,40 @@ function Get-NumericValue($element) {
     return $null
 }
 
+function Get-ElementText($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.TextPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $text = $pattern.DocumentRange.GetText(-1)
+            if ($null -ne $text) {
+                return ($text -replace "[\r\n]+$", "")
+            }
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return $pattern.Current.Value
+        }
+    }
+    catch {
+    }
+
+    try {
+        return $element.Current.Name
+    }
+    catch {
+        return ""
+    }
+}
+
 function Invoke-SplitButtonSecondaryOnce($window, $element) {
     if ($null -eq $element) {
         return $false
@@ -901,8 +935,33 @@ function Invoke-TextInteraction($window, $sampleElement) {
 }
 
 function Invoke-OutputInteraction($window, $sampleElement) {
+    $output = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GallerySample_RepeatButton_Output"
+    $before = Get-ElementText $output
+    $invoked = Hold-Element $window $sampleElement 700
+    Start-Sleep -Milliseconds 250
+    $after = Get-ElementText $output
+
+    if ($before -eq $after) {
+        try {
+            $pattern = $sampleElement.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+            if ($null -ne $pattern) {
+                for ($i = 0; $i -lt 3 -and $before -eq $after; $i++) {
+                    $pattern.Invoke()
+                    $invoked = $true
+                    Start-Sleep -Milliseconds 150
+                    $after = Get-ElementText $output
+                }
+            }
+        }
+        catch {
+        }
+    }
+
     return [ordered]@{
-        Invoked = Hold-Element $window $sampleElement 700
+        Invoked = $invoked
+        BeforeOutput = $before
+        AfterOutput = $after
+        OutputChanged = $before -ne $after
     }
 }
 
@@ -1201,6 +1260,14 @@ function Test-ValueEvidence($interactionResult) {
     return [bool]$interactionResult.TargetReached
 }
 
+function Test-OutputEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("OutputChanged")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.OutputChanged
+}
+
 function Format-RelativePath([string]$path) {
     if ([string]::IsNullOrWhiteSpace($path)) {
         return ""
@@ -1359,6 +1426,12 @@ foreach ($control in $Controls) {
     $openRepeatEvidence = Test-OpenRepeatEvidence $interactionResult
     $stateEvidence = Test-StateEvidence $interactionResult
     $valueEvidence = Test-ValueEvidence $interactionResult
+    $outputEvidence = Test-OutputEvidence $interactionResult
+    if ($status -eq "Passed" -and $interactionKind -eq "Output" -and !$outputEvidence) {
+        $status = "NeedsReview"
+        $notes.Add("Machine-readable output text did not change; manual frame review is required.")
+    }
+
     if ($status -eq "Passed" -and
         $interactionKind -ne "Static" -and
         $null -ne $maxFrameDelta -and
@@ -1371,6 +1444,9 @@ foreach ($control in $Controls) {
         }
         elseif ($interactionKind -eq "Value" -and $valueEvidence) {
             $notes.Add("Target value was reached despite low full-frame delta.")
+        }
+        elseif ($interactionKind -eq "Output" -and $outputEvidence) {
+            $notes.Add("Output text changed despite low full-frame delta.")
         }
         else {
             $status = "NeedsReview"
@@ -1391,6 +1467,7 @@ foreach ($control in $Controls) {
         OpenRepeatEvidence = $openRepeatEvidence
         StateEvidence = $stateEvidence
         ValueEvidence = $valueEvidence
+        OutputEvidence = $outputEvidence
         InteractionResult = $interactionResult
         Notes = ($notes.ToArray() -join " ")
     }
