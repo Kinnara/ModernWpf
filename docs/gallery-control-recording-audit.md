@@ -19,6 +19,11 @@ harness defect as well as a control defect. The harness must be tightened so
 the same failure class is reviewable or rejected before the affected control is
 marked verified again.
 
+No control can move from `NeedsReview` to verified while a source clip for the
+same interaction contains an unmapped visible defect. Each visible defect must
+be linked to a product fix, a recorder/parity guard that fails on that class of
+issue, or an explicit remaining follow-up item in the audit.
+
 ## Acceptance Bar
 
 - Launch the Gallery route for each control in visual-test mode.
@@ -27,6 +32,9 @@ marked verified again.
 - When the user provides a recording, review it as source evidence and add the
   visible defects to the active control audit before accepting any automated
   pass.
+- For every user-video defect, record the detection plan: which frame sheet,
+  geometry check, crash check, or parity assertion would catch it on a rerun.
+  Unmapped defects block verification.
 - For popup and flyout controls, record open, close, and second open in the same
   clip so flicker, stale visual state, and repeat-open crashes are visible.
 - Extract poster frames from each recording and reject blank recordings.
@@ -77,6 +85,27 @@ because it can record the Windows background instead of the Gallery window.
 Controls that require motion proof can opt into preserved animations and record
 `AnimationEvidence` in the manifest while the normal visual-test artifact path
 keeps indeterminate visuals stabilized.
+
+## Current Focused Fix Round
+
+Round 48 tightened the recorder after manual review found failures that earlier
+passes accepted:
+
+- Mostly blank screen recordings are now rejected unless at least 75% of
+  extracted poster frames are nonblank.
+- Open/reopen popup, flyout, menu, and split-button interactions now record
+  trigger and opened-element bounds, and fail when the opened content is
+  detached from the trigger.
+- `MenuFlyout` and shared `FlyoutBase` popup HWNDs now receive explicit
+  absolute placement when WPF opens the underlying popup at screen origin.
+
+Latest focused evidence:
+
+| Run | Controls | Result |
+| --- | --- | --- |
+| `artifacts/gallery-recordings/20260604-034810-236/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-035722-075/report.md` | DropDownButton, MenuFlyout, SplitButton, ToggleSplitButton | 4 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-040103-946/report.md` | ContentDialog, Flyout, Popup, CommandBarFlyout | 4 passed, 0 needs review, 0 failed |
 
 ## Current Full-Inventory Sweep
 

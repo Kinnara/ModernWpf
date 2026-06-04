@@ -1,10 +1,13 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Interop;
+using System.Windows.Threading;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
@@ -38,6 +41,12 @@ namespace ModernWpf.Controls
         internal void SetOwningFlyout(MenuFlyout owningFlyout)
         {
             m_owningFlyout = new WeakReference<MenuFlyout>(owningFlyout);
+        }
+
+        internal void SetAbsolutePlacementPoint(Point? point)
+        {
+            m_absolutePlacementPoint = point;
+            ApplyAbsolutePlacementPoint();
         }
 
         internal void UpdatePopupAnimation()
@@ -99,6 +108,53 @@ namespace ModernWpf.Controls
                 _parentPopup.PreviewMouseRightButtonUp += HandlePopupMouseButtonEvent;
 
                 UpdatePopupAnimation();
+                ApplyAbsolutePlacementPoint();
+            }
+        }
+
+        private void ApplyAbsolutePlacementPoint()
+        {
+            if (_parentPopup == null)
+            {
+                return;
+            }
+
+            if (m_absolutePlacementPoint.HasValue)
+            {
+                _parentPopup.Placement = PlacementMode.AbsolutePoint;
+                _parentPopup.HorizontalOffset = m_absolutePlacementPoint.Value.X;
+                _parentPopup.VerticalOffset = m_absolutePlacementPoint.Value.Y;
+                _parentPopup.ClearValue(Popup.PlacementTargetProperty);
+                _parentPopup.ClearValue(Popup.PlacementRectangleProperty);
+                MovePopupWindowToAbsolutePlacementPoint();
+                Dispatcher.BeginInvoke(new Action(MovePopupWindowToAbsolutePlacementPoint), DispatcherPriority.Loaded);
+                Dispatcher.BeginInvoke(new Action(MovePopupWindowToAbsolutePlacementPoint), DispatcherPriority.ApplicationIdle);
+            }
+            else
+            {
+                _parentPopup.ClearValue(Popup.HorizontalOffsetProperty);
+                _parentPopup.ClearValue(Popup.VerticalOffsetProperty);
+            }
+        }
+
+        private void MovePopupWindowToAbsolutePlacementPoint()
+        {
+            if (!m_absolutePlacementPoint.HasValue)
+            {
+                return;
+            }
+
+            if (PresentationSource.FromVisual(this) is HwndSource source && source.Handle != IntPtr.Zero)
+            {
+                var point = m_absolutePlacementPoint.Value;
+                SetWindowPos(
+                    source.Handle,
+                    IntPtr.Zero,
+                    (int)Math.Round(point.X),
+                    (int)Math.Round(point.Y),
+                    0,
+                    0,
+                    SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
             }
         }
 
@@ -112,5 +168,14 @@ namespace ModernWpf.Controls
 
         private Popup _parentPopup;
         private WeakReference<MenuFlyout> m_owningFlyout;
+        private Point? m_absolutePlacementPoint;
+
+        [DllImport("user32.dll")]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr insertAfter, int x, int y, int cx, int cy, uint flags);
+
+        private const uint SWP_NOSIZE = 0x0001;
+        private const uint SWP_NOZORDER = 0x0004;
+        private const uint SWP_NOACTIVATE = 0x0010;
+        private const uint SWP_SHOWWINDOW = 0x0040;
     }
 }

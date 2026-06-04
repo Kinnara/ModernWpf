@@ -1,13 +1,15 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Threading;
 
 namespace ModernWpf.Controls.Primitives
@@ -312,6 +314,7 @@ namespace ModernWpf.Controls.Primitives
 
             if (showAsContextFlyout)
             {
+                m_absolutePopupPlacementPoint = null;
                 m_presenter.ClearValue(FrameworkElement.WidthProperty);
                 m_presenter.ClearValue(FrameworkElement.HeightProperty);
                 m_popup.Placement = PlacementMode.MousePoint;
@@ -375,6 +378,7 @@ namespace ModernWpf.Controls.Primitives
                 m_popup.Placement = PlacementMode.Center;
                 m_popup.PlacementTarget = placementTarget;
                 m_popup.ClearValue(Popup.PlacementRectangleProperty);
+                m_absolutePopupPlacementPoint = null;
             }
             else
             {
@@ -383,6 +387,9 @@ namespace ModernWpf.Controls.Primitives
                 m_popup.Placement = PlacementMode.Custom;
                 m_popup.PlacementTarget = placementTarget;
                 m_popup.PlacementRectangle = GetPlacementRectangle(placementTarget, effectivePlacement);
+                m_absolutePopupPlacementPoint = TryGetAbsolutePlacementPoint(placementTarget, effectivePlacement, out var absolutePlacementPoint)
+                    ? absolutePlacementPoint
+                    : null;
             }
         }
 
@@ -443,6 +450,9 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupOpened(object sender, EventArgs e)
         {
+            MovePopupWindowToAbsolutePlacementPoint();
+            Dispatcher.BeginInvoke(new Action(MovePopupWindowToAbsolutePlacementPoint), DispatcherPriority.Loaded);
+            Dispatcher.BeginInvoke(new Action(MovePopupWindowToAbsolutePlacementPoint), DispatcherPriority.ApplicationIdle);
             UpdatePointerMoveAwayTracking();
 
             if (m_suppressNextOpened)
@@ -482,6 +492,7 @@ namespace ModernWpf.Controls.Primitives
             m_popup.ClearValue(Popup.PlacementRectangleProperty);
             m_popup.ClearValue(FrameworkElement.WidthProperty);
             m_popup.ClearValue(FrameworkElement.HeightProperty);
+            m_absolutePopupPlacementPoint = null;
             ClearPlacementTargetTracking();
             Target = null;
             m_showingAsContextFlyout = false;
@@ -532,6 +543,95 @@ namespace ModernWpf.Controls.Primitives
                 offset,
                 child,
                 GetTargetPositionRelativeExclusionRect());
+        }
+
+        private bool TryGetAbsolutePlacementPoint(
+            FrameworkElement placementTarget,
+            FlyoutPlacementMode effectivePlacement,
+            out Point point)
+        {
+            point = default;
+
+            var placementRect = GetPlacementRectangle(placementTarget, effectivePlacement);
+            if (placementRect.IsEmpty)
+            {
+                return false;
+            }
+
+            var topLeft = placementTarget.PointToScreen(placementRect.TopLeft);
+            var bottomRight = placementTarget.PointToScreen(placementRect.BottomRight);
+            var targetRect = new Rect(topLeft, bottomRight);
+            var popupSize = GetPresenterDesiredScreenSize(placementTarget);
+
+            switch (effectivePlacement)
+            {
+                case FlyoutPlacementMode.Top:
+                case FlyoutPlacementMode.TopEdgeAlignedLeft:
+                    point = new Point(targetRect.Left, targetRect.Top - popupSize.Height);
+                    return true;
+                case FlyoutPlacementMode.TopEdgeAlignedRight:
+                    point = new Point(targetRect.Right - popupSize.Width, targetRect.Top - popupSize.Height);
+                    return true;
+                case FlyoutPlacementMode.Bottom:
+                case FlyoutPlacementMode.BottomEdgeAlignedLeft:
+                    point = new Point(targetRect.Left, targetRect.Bottom);
+                    return true;
+                case FlyoutPlacementMode.BottomEdgeAlignedRight:
+                    point = new Point(targetRect.Right - popupSize.Width, targetRect.Bottom);
+                    return true;
+                case FlyoutPlacementMode.Left:
+                case FlyoutPlacementMode.LeftEdgeAlignedTop:
+                    point = new Point(targetRect.Left - popupSize.Width, targetRect.Top);
+                    return true;
+                case FlyoutPlacementMode.LeftEdgeAlignedBottom:
+                    point = new Point(targetRect.Left - popupSize.Width, targetRect.Bottom - popupSize.Height);
+                    return true;
+                case FlyoutPlacementMode.Right:
+                case FlyoutPlacementMode.RightEdgeAlignedTop:
+                    point = new Point(targetRect.Right, targetRect.Top);
+                    return true;
+                case FlyoutPlacementMode.RightEdgeAlignedBottom:
+                    point = new Point(targetRect.Right, targetRect.Bottom - popupSize.Height);
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private Size GetPresenterDesiredScreenSize(FrameworkElement placementTarget)
+        {
+            m_presenter.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+            var desiredSize = m_presenter.DesiredSize;
+            var source = PresentationSource.FromVisual(placementTarget);
+            if (source?.CompositionTarget != null)
+            {
+                var transformed = source.CompositionTarget.TransformToDevice.Transform(
+                    new Vector(desiredSize.Width, desiredSize.Height));
+                return new Size(transformed.X, transformed.Y);
+            }
+
+            return desiredSize;
+        }
+
+        private void MovePopupWindowToAbsolutePlacementPoint()
+        {
+            if (!m_absolutePopupPlacementPoint.HasValue ||
+                m_popup?.Child == null ||
+                !(PresentationSource.FromVisual(m_popup.Child) is HwndSource source) ||
+                source.Handle == IntPtr.Zero)
+            {
+                return;
+            }
+
+            var point = m_absolutePopupPlacementPoint.Value;
+            SetWindowPos(
+                source.Handle,
+                IntPtr.Zero,
+                (int)Math.Round(point.X),
+                (int)Math.Round(point.Y),
+                0,
+                0,
+                SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_SHOWWINDOW);
         }
 
         protected void TrackPlacementTarget(FrameworkElement placementTarget)
@@ -886,6 +986,7 @@ namespace ModernWpf.Controls.Primitives
         private bool m_isTargetPositionSet;
         private Point m_targetPosition;
         private Rect? m_exclusionRect;
+        private Point? m_absolutePopupPlacementPoint;
         private bool m_hasPlacementOverride;
         private FlyoutPlacementMode m_placementOverride = FlyoutPlacementMode.Top;
         private WeakReference<IInputElement> m_weakRefToPreviousFocus;
@@ -899,6 +1000,14 @@ namespace ModernWpf.Controls.Primitives
         private DispatcherOperation m_asyncShow;
         private static FlyoutBase s_openFlyout;
         private static PendingFlyoutShow s_pendingFlyoutShow;
+
+        [DllImport("user32.dll")]
+        private static extern bool SetWindowPos(IntPtr hWnd, IntPtr insertAfter, int x, int y, int cx, int cy, uint flags);
+
+        private const uint SWP_NOSIZE = 0x0001;
+        private const uint SWP_NOZORDER = 0x0004;
+        private const uint SWP_NOACTIVATE = 0x0010;
+        private const uint SWP_SHOWWINDOW = 0x0040;
 
         private sealed class PendingFlyoutShow
         {

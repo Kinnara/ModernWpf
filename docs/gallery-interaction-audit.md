@@ -1577,6 +1577,10 @@ in a recording but were missed by the automated recorder or parity pass.
 - Fix rounds must include the user-visible defect fix, the recorder/parity
   tightening that would have caught it, focused tests for the new guard, and a
   post-fix recording before the control is marked verified.
+- A user-video defect inventory is now required when source clips are involved:
+  every visible issue must map to a product fix, an automated fail-fast check,
+  a dense frame review artifact, or a named follow-up. Any unmapped issue keeps
+  the affected control out of verified status.
 
 ### Tracking
 
@@ -1584,3 +1588,48 @@ The standing rule is now written into
 `docs/gallery-control-recording-audit.md` under `Active Goal` and the
 `Acceptance Bar`, so future control rounds have to explain both the visual fix
 and why the recording evidence would catch the reported failure class.
+
+## Round 48: Popup Placement Recorder Catch-Up
+
+### Scope
+
+Close the gap where recordings accepted popup/flyout/menu interactions even
+when the opened surface was visibly detached from its trigger or the recording
+was mostly blank.
+
+### Current Findings
+
+- Screen-mode recordings in this Codex desktop session can record the desktop
+  background and then black frames while still producing a valid MP4. The
+  recorder previously accepted this if two poster frames were nonblank.
+- Rendered recordings showed `DropDownButton`, `SplitButton`, and
+  `ToggleSplitButton` flyouts at screen origin while the trigger was inside the
+  Gallery window. Earlier passes accepted the runs because UIA open state and
+  open-item discovery succeeded.
+- `MenuFlyout` uses a WPF `ContextMenu`; `Flyout` and split-button flyouts use
+  `PopupEx`. Both paths could leave the underlying popup HWND at `(0,0)` under
+  automation-driven open.
+
+### Resolution
+
+- Recorder now rejects mostly blank recordings based on extracted-frame count
+  and requires at least 75% nonblank poster frames for normal runs.
+- Open-repeat evidence now records trigger/opened-element bounds and fails
+  detached opened content before marking a popup/flyout/menu control verified.
+- `MenuFlyout` computes an absolute anchored placement point and applies it to
+  the `ContextMenu` parent popup HWND.
+- `FlyoutBase` applies the same absolute HWND placement fallback to shared
+  `PopupEx` flyouts.
+
+### Verification
+
+- Diagnostic failing baseline:
+  `artifacts/gallery-recordings/20260604-032604-029/report.md` failed
+  `DropDownButton` with trigger `534,392,77,32` and opened item `1,3,94,35`.
+- Focused source-shape tests passed 6/6 on `net8.0-windows7.0`.
+- Fixed `DropDownButton` recording passed:
+  `artifacts/gallery-recordings/20260604-034810-236/report.md`.
+- Affected popup/flyout batch passed:
+  `artifacts/gallery-recordings/20260604-035722-075/report.md`.
+- Shared popup/flyout regression batch passed:
+  `artifacts/gallery-recordings/20260604-040103-946/report.md`.

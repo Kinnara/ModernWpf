@@ -475,6 +475,74 @@ function Test-AutomationElementUsable($element) {
     }
 }
 
+function Get-ElementBoundingRectangle($element) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    try {
+        $rect = $element.Current.BoundingRectangle
+        if ($rect.Width -le 0 -or $rect.Height -le 0) {
+            return $null
+        }
+
+        return $rect
+    }
+    catch {
+        return $null
+    }
+}
+
+function Format-BoundingRectangle($rect) {
+    if ($null -eq $rect) {
+        return ""
+    }
+
+    return "{0},{1},{2},{3}" -f `
+        [Math]::Round($rect.X, 1), `
+        [Math]::Round($rect.Y, 1), `
+        [Math]::Round($rect.Width, 1), `
+        [Math]::Round($rect.Height, 1)
+}
+
+function Get-BoundingRectangleGap($first, $second) {
+    if ($null -eq $first -or $null -eq $second) {
+        return [double]::PositiveInfinity
+    }
+
+    $horizontalGap = if (($first.X + $first.Width) -lt $second.X) {
+        $second.X - ($first.X + $first.Width)
+    }
+    elseif (($second.X + $second.Width) -lt $first.X) {
+        $first.X - ($second.X + $second.Width)
+    }
+    else {
+        0.0
+    }
+
+    $verticalGap = if (($first.Y + $first.Height) -lt $second.Y) {
+        $second.Y - ($first.Y + $first.Height)
+    }
+    elseif (($second.Y + $second.Height) -lt $first.Y) {
+        $first.Y - ($second.Y + $second.Height)
+    }
+    else {
+        0.0
+    }
+
+    return [Math]::Max([double]$horizontalGap, [double]$verticalGap)
+}
+
+function Test-OpenInteractionElementAnchored($trigger, $openElement) {
+    $triggerRect = Get-ElementBoundingRectangle $trigger
+    $openRect = Get-ElementBoundingRectangle $openElement
+    if ($null -eq $triggerRect -or $null -eq $openRect) {
+        return $false
+    }
+
+    return (Get-BoundingRectangleGap $triggerRect $openRect) -le 320.0
+}
+
 function Get-ElementNativeWindowHandle($element) {
     $candidate = $element
     for ($depth = 0; $depth -lt 16 -and $null -ne $candidate; $depth++) {
@@ -1750,10 +1818,14 @@ function Open-CommandBarFlyoutSecondaryCommands($window) {
 function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement) {
     $trigger = Get-OpenInteractionTriggerElement $window $control $sampleElement
     $openNames = @(Get-OpenInteractionNames $control)
+    $triggerBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $trigger)
     $firstOpen = Invoke-OpenElementOnce $window $control $trigger
     Start-Sleep -Milliseconds 650
     $firstOpenExpandState = Get-ExpandCollapseStateName $trigger
-    $firstOpenElementFound = $openNames.Count -eq 0 -or $null -ne (Find-OpenInteractionElement $window $trigger $openNames $control)
+    $firstOpenElement = if ($openNames.Count -eq 0) { $null } else { Find-OpenInteractionElement $window $trigger $openNames $control }
+    $firstOpenElementFound = $openNames.Count -eq 0 -or $null -ne $firstOpenElement
+    $firstOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $trigger $firstOpenElement)
+    $firstOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $firstOpenElement)
     $secondaryExpanded = $false
     if ($control -eq "CommandBarFlyout") {
         $secondaryExpanded = Open-CommandBarFlyoutSecondaryCommands $window
@@ -1765,18 +1837,26 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     $secondOpen = Invoke-OpenElementOnce $window $control $trigger
     Start-Sleep -Milliseconds 650
     $secondOpenExpandState = Get-ExpandCollapseStateName $trigger
-    $secondOpenElementFound = $openNames.Count -eq 0 -or $null -ne (Find-OpenInteractionElement $window $trigger $openNames $control)
+    $secondOpenElement = if ($openNames.Count -eq 0) { $null } else { Find-OpenInteractionElement $window $trigger $openNames $control }
+    $secondOpenElementFound = $openNames.Count -eq 0 -or $null -ne $secondOpenElement
+    $secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $trigger $secondOpenElement)
+    $secondOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $secondOpenElement)
     if ($control -eq "CommandBarFlyout") {
         $secondaryExpanded = (Open-CommandBarFlyoutSecondaryCommands $window) -or $secondaryExpanded
         Start-Sleep -Milliseconds 450
     }
 
     return [ordered]@{
-        Invoked = $firstOpen -and $secondOpen -and $firstOpenElementFound -and $secondOpenElementFound
+        Invoked = $firstOpen -and $secondOpen -and $firstOpenElementFound -and $secondOpenElementFound -and $firstOpenElementAnchored -and $secondOpenElementAnchored
         FirstOpen = $firstOpen
         SecondOpen = $secondOpen
         FirstOpenElementFound = $firstOpenElementFound
         SecondOpenElementFound = $secondOpenElementFound
+        FirstOpenElementAnchored = $firstOpenElementAnchored
+        SecondOpenElementAnchored = $secondOpenElementAnchored
+        TriggerBounds = $triggerBounds
+        FirstOpenElementBounds = $firstOpenElementBounds
+        SecondOpenElementBounds = $secondOpenElementBounds
         FirstOpenExpandState = $firstOpenExpandState
         SecondOpenExpandState = $secondOpenExpandState
         CommandBarFlyoutSecondaryExpanded = $secondaryExpanded
@@ -2782,6 +2862,29 @@ function Get-NonBlankFrameCount($frames) {
     return $count
 }
 
+function Get-ExtractedFrameCount($frames) {
+    $count = 0
+    foreach ($frame in $frames) {
+        if ($frame.Extracted) {
+            $count++
+        }
+    }
+
+    return $count
+}
+
+function Get-MinimumNonBlankFrameCount([int]$extractedFrameCount) {
+    if ($extractedFrameCount -le 0) {
+        return 0
+    }
+
+    if ($extractedFrameCount -le 3) {
+        return $extractedFrameCount
+    }
+
+    return [Math]::Max(2, [int][Math]::Ceiling($extractedFrameCount * 0.75))
+}
+
 function Get-RenderedPageArtifactAnchor([string]$artifactDir) {
     $candidates = @(
         @{ FileName = "ContentPagePane.png"; Source = "ContentPagePaneRenderedArtifact" },
@@ -2818,7 +2921,13 @@ function Test-OpenRepeatEvidence($interactionResult) {
         return $false
     }
 
-    return $interactionResult.FirstOpenElementFound -and $interactionResult.SecondOpenElementFound
+    $anchored = $true
+    if ($interactionResult.Contains("FirstOpenElementAnchored") -and
+        $interactionResult.Contains("SecondOpenElementAnchored")) {
+        $anchored = $interactionResult.FirstOpenElementAnchored -and $interactionResult.SecondOpenElementAnchored
+    }
+
+    return $interactionResult.FirstOpenElementFound -and $interactionResult.SecondOpenElementFound -and $anchored
 }
 
 function Test-StateEvidence($interactionResult) {
@@ -3047,12 +3156,25 @@ foreach ($control in $Controls) {
         }
 
         $nonBlankFrameCount = Get-NonBlankFrameCount $frames
-        if ($nonBlankFrameCount -lt 2 -and !$SkipFrameExtraction) {
+        $extractedFrameCount = Get-ExtractedFrameCount $frames
+        $minimumNonBlankFrameCount = Get-MinimumNonBlankFrameCount $extractedFrameCount
+        if ($nonBlankFrameCount -lt $minimumNonBlankFrameCount -and !$SkipFrameExtraction) {
             $status = "Failed"
-            $notes.Add("Fewer than two extracted poster frames were nonblank.")
+            $notes.Add(("Only {0} of {1} extracted poster frames were nonblank; at least {2} are required." -f $nonBlankFrameCount, $extractedFrameCount, $minimumNonBlankFrameCount))
         }
 
-        if ($null -ne $interactionResult -and $interactionResult.Contains("Invoked") -and !$interactionResult.Invoked) {
+        $openRepeatGeometryFailed =
+            $interactionKind -eq "OpenRepeat" -and
+            $null -ne $interactionResult -and
+            $interactionResult.Contains("FirstOpenElementAnchored") -and
+            $interactionResult.Contains("SecondOpenElementAnchored") -and
+            (!$interactionResult.FirstOpenElementAnchored -or !$interactionResult.SecondOpenElementAnchored)
+        if ($openRepeatGeometryFailed) {
+            $status = "Failed"
+            $notes.Add(("Opened element was detached from trigger. Trigger={0}; first={1}; second={2}." -f $interactionResult.TriggerBounds, $interactionResult.FirstOpenElementBounds, $interactionResult.SecondOpenElementBounds))
+        }
+
+        if ($null -ne $interactionResult -and $interactionResult.Contains("Invoked") -and !$interactionResult.Invoked -and !$openRepeatGeometryFailed) {
             $status = "Failed"
             $notes.Add("Interaction could not be invoked.")
         }

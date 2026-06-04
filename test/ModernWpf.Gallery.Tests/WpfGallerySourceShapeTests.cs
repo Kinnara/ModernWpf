@@ -3316,6 +3316,177 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryInteractionRecorderRejectsMostlyBlankRecordings()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Get-NonBlankFrameCount($frames)",
+                "function Get-ExtractedFrameCount($frames)",
+                "function Get-MinimumNonBlankFrameCount([int]$extractedFrameCount)",
+                "return [Math]::Max(2, [int][Math]::Ceiling($extractedFrameCount * 0.75))");
+            AssertContainsInOrder(
+                source,
+                "$nonBlankFrameCount = Get-NonBlankFrameCount $frames",
+                "$extractedFrameCount = Get-ExtractedFrameCount $frames",
+                "$minimumNonBlankFrameCount = Get-MinimumNonBlankFrameCount $extractedFrameCount",
+                "if ($nonBlankFrameCount -lt $minimumNonBlankFrameCount -and !$SkipFrameExtraction)",
+                "Only {0} of {1} extracted poster frames were nonblank; at least {2} are required.");
+        }
+
+        [TestMethod]
+        public void GalleryInteractionRecorderRejectsDetachedOpenRepeatPopups()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Get-ElementBoundingRectangle($element)",
+                "function Format-BoundingRectangle($rect)",
+                "function Get-BoundingRectangleGap($first, $second)",
+                "function Test-OpenInteractionElementAnchored($trigger, $openElement)",
+                "return (Get-BoundingRectangleGap $triggerRect $openRect) -le 320.0");
+            AssertContainsInOrder(
+                source,
+                "$triggerBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $trigger)",
+                "$firstOpenElement = if ($openNames.Count -eq 0) { $null } else { Find-OpenInteractionElement $window $trigger $openNames $control }",
+                "$firstOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $trigger $firstOpenElement)",
+                "$secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $trigger $secondOpenElement)",
+                "FirstOpenElementAnchored = $firstOpenElementAnchored",
+                "SecondOpenElementAnchored = $secondOpenElementAnchored",
+                "TriggerBounds = $triggerBounds",
+                "FirstOpenElementBounds = $firstOpenElementBounds",
+                "SecondOpenElementBounds = $secondOpenElementBounds");
+            AssertContainsInOrder(
+                source,
+                "$anchored = $true",
+                "$interactionResult.FirstOpenElementAnchored -and $interactionResult.SecondOpenElementAnchored",
+                "$openRepeatGeometryFailed =",
+                "Opened element was detached from trigger. Trigger={0}; first={1}; second={2}.");
+        }
+
+        [TestMethod]
+        public void MenuFlyoutCustomPlacementDoesNotSubtractContextMenuPresenterOffset()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "ModernWpf.Controls",
+                "MenuFlyout",
+                "MenuFlyout.cs"));
+
+            AssertContainsInOrder(
+                source,
+                "private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)",
+                "return PositionPopup(popupSize, targetSize, offset, null);");
+            Assert.IsFalse(
+                source.Contains("return PositionPopup(popupSize, targetSize, offset, m_presenter);", StringComparison.Ordinal),
+                "MenuFlyout uses ContextMenu as its popup presenter; passing it as the child offset source detaches ShowAt popups toward the screen origin.");
+        }
+
+        [TestMethod]
+        public void MenuFlyoutUsesAbsoluteContextMenuPlacementForAnchoredModes()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "ModernWpf.Controls",
+                "MenuFlyout",
+                "MenuFlyout.cs"));
+            var presenterSource = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "ModernWpf.Controls",
+                "MenuFlyout",
+                "MenuFlyoutPresenter.cs"));
+
+            AssertContainsInOrder(
+                source,
+                "var hasAbsolutePlacementPoint =",
+                "TryGetAbsolutePlacementPoint(placementTarget, effectivePlacement, out var absolutePlacementPoint);",
+                "m_presenter.SetAbsolutePlacementPoint(absolutePlacementPoint);",
+                "m_presenter.Placement = PlacementMode.AbsolutePoint;",
+                "m_presenter.HorizontalOffset = absolutePlacementPoint.X;",
+                "m_presenter.VerticalOffset = absolutePlacementPoint.Y;",
+                "m_presenter.ClearValue(ContextMenu.PlacementTargetProperty);",
+                "m_presenter.ClearValue(ContextMenu.PlacementRectangleProperty);",
+                "if (!hasAbsolutePlacementPoint && placement == PlacementMode.Custom)",
+                "m_presenter.ClearValue(ContextMenu.PlacementRectangleProperty);");
+            AssertContainsInOrder(
+                source,
+                "private bool TryGetAbsolutePlacementPoint(",
+                "var placementRect = GetPlacementRectangle(placementTarget, effectivePlacement);",
+                "var topLeft = placementTarget.PointToScreen(placementRect.TopLeft);",
+                "var bottomRight = placementTarget.PointToScreen(placementRect.BottomRight);",
+                "var targetRect = new Rect(topLeft, bottomRight);",
+                "var popupSize = GetPresenterDesiredScreenSize(placementTarget);",
+                "case FlyoutPlacementMode.TopEdgeAlignedLeft:",
+                "point = new Point(targetRect.Left, targetRect.Top - popupSize.Height);",
+                "case FlyoutPlacementMode.BottomEdgeAlignedLeft:",
+                "point = new Point(targetRect.Left, targetRect.Bottom);",
+                "case FlyoutPlacementMode.LeftEdgeAlignedTop:",
+                "point = new Point(targetRect.Left - popupSize.Width, targetRect.Top);",
+                "case FlyoutPlacementMode.RightEdgeAlignedTop:",
+                "point = new Point(targetRect.Right, targetRect.Top);",
+                "private Size GetPresenterDesiredScreenSize(FrameworkElement placementTarget)",
+                "m_presenter.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));",
+                "source.CompositionTarget.TransformToDevice.Transform(");
+            AssertContainsInOrder(
+                presenterSource,
+                "internal void SetAbsolutePlacementPoint(Point? point)",
+                "m_absolutePlacementPoint = point;",
+                "ApplyAbsolutePlacementPoint();",
+                "private void ApplyAbsolutePlacementPoint()",
+                "_parentPopup.Placement = PlacementMode.AbsolutePoint;",
+                "_parentPopup.HorizontalOffset = m_absolutePlacementPoint.Value.X;",
+                "_parentPopup.VerticalOffset = m_absolutePlacementPoint.Value.Y;",
+                "MovePopupWindowToAbsolutePlacementPoint();",
+                "Dispatcher.BeginInvoke(new Action(MovePopupWindowToAbsolutePlacementPoint), DispatcherPriority.Loaded);",
+                "private void MovePopupWindowToAbsolutePlacementPoint()",
+                "PresentationSource.FromVisual(this) is HwndSource source",
+                "SetWindowPos(",
+                "private static extern bool SetWindowPos(");
+        }
+
+        [TestMethod]
+        public void FlyoutBaseMovesPopupHwndToAbsolutePlacementForAnchoredModes()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "ModernWpf.Controls",
+                "Flyout",
+                "FlyoutBase.cs"));
+
+            AssertContainsInOrder(
+                source,
+                "m_popup.Placement = PlacementMode.Custom;",
+                "m_popup.PlacementTarget = placementTarget;",
+                "m_popup.PlacementRectangle = GetPlacementRectangle(placementTarget, effectivePlacement);",
+                "m_absolutePopupPlacementPoint = TryGetAbsolutePlacementPoint(placementTarget, effectivePlacement, out var absolutePlacementPoint)",
+                "private void OnPopupOpened(object sender, EventArgs e)",
+                "MovePopupWindowToAbsolutePlacementPoint();",
+                "Dispatcher.BeginInvoke(new Action(MovePopupWindowToAbsolutePlacementPoint), DispatcherPriority.Loaded);");
+            AssertContainsInOrder(
+                source,
+                "private bool TryGetAbsolutePlacementPoint(",
+                "var placementRect = GetPlacementRectangle(placementTarget, effectivePlacement);",
+                "var topLeft = placementTarget.PointToScreen(placementRect.TopLeft);",
+                "var bottomRight = placementTarget.PointToScreen(placementRect.BottomRight);",
+                "case FlyoutPlacementMode.BottomEdgeAlignedLeft:",
+                "point = new Point(targetRect.Left, targetRect.Bottom);",
+                "private void MovePopupWindowToAbsolutePlacementPoint()",
+                "PresentationSource.FromVisual(m_popup.Child) is HwndSource source",
+                "SetWindowPos(",
+                "private static extern bool SetWindowPos(");
+        }
+
+        [TestMethod]
         public void GalleryInteractionRecorderAcceptsOfficialWpfRenderedPageArtifacts()
         {
             var source = File.ReadAllText(Path.Combine(
