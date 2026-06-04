@@ -1633,3 +1633,74 @@ was mostly blank.
   `artifacts/gallery-recordings/20260604-035722-075/report.md`.
 - Shared popup/flyout regression batch passed:
   `artifacts/gallery-recordings/20260604-040103-946/report.md`.
+
+## Round 49: Official WPF Interaction Recorder Guard
+
+### Scope
+
+Make the recorder catch obvious interaction failures on official WPF Gallery
+pages instead of accepting route/static proof:
+
+- `Expander`
+- `TreeView`
+- `Menu`
+- `TabControl`
+- `DatePicker`
+- `TextBox`
+- `PasswordBox`
+
+### Current Findings
+
+- The official WPF static sweep could prove pages rendered, but it could not
+  prove that users could expand items, open menus/date pickers, select tabs, or
+  enter text.
+- A focused `Menu` recording initially failed with static frames and
+  `FirstOpenExpandState=Collapsed`, but the recorder still reported that the
+  first and second open attempts were invoked. The immediate cause was
+  `Invoke-ElementOnce`: it called `ExpandCollapsePattern.Expand()`, slept, and
+  returned `true` without checking whether the element actually expanded.
+- That no-op expand path masked the visible failure class: the recording had
+  no menu surface and no expected `New` / `Open` / `Save` items, yet the
+  interaction attempt was counted as successful until the later open-element
+  evidence failed.
+- The earlier window picker also accepted the first process-owned root HWND,
+  which can be a small input overlay instead of the real `WPF Gallery` window.
+
+### Resolution
+
+- `Find-WindowByProcessId` now scores process windows and chooses the real
+  Gallery window over small input overlays.
+- `Invoke-ElementOnce` now verifies `ExpandCollapseState == Expanded` after
+  `Expand()` before returning success. If expansion is a no-op, the recorder
+  falls through to invoke/toggle/click paths and then requires expected visual
+  open evidence.
+- Added official WPF interaction modes:
+  - expansion evidence for `Expander` and `TreeView`;
+  - repeat-open evidence and dense transition sheets for `Menu` and
+    `DatePicker`;
+  - selection evidence for `TabControl`;
+  - text-entry evidence for `TextBox` and `PasswordBox`.
+- Added source-shape guards for real Gallery window selection and no-op expand
+  rejection, plus a rendered WPF `MenuItem` automation test to keep the styled
+  menu path opening through UIA.
+
+### Verification
+
+- Focused `Menu` recording after the no-op expand fix passed:
+  `artifacts/gallery-recordings/20260604-044508-719/report.md`.
+  The manifest recorded `FirstOpenElementFound=true`,
+  `SecondOpenElementFound=true`, anchored bounds `539,438,106,35`, and
+  `FirstOpenExpandState=Expanded`.
+- Official WPF interaction batch passed 8/8:
+  `artifacts/gallery-recordings/20260604-044721-837/report.md`.
+  The manifest records expansion evidence for `Expander` / `TreeView`,
+  open-repeat evidence for `Menu` / `DatePicker`, selection evidence for
+  `TabControl`, and text evidence for `TextBox` / `PasswordBox`.
+- Dense sheets reviewed:
+  - `artifacts/gallery-recordings/20260604-044721-837/Menu/analysis/dense-transition-review.jpg`
+  - `artifacts/gallery-recordings/20260604-044721-837/DatePicker/analysis/dense-transition-review.jpg`
+- Focused source-shape tests passed for:
+  - `GalleryInteractionRecorderSelectsRealGalleryWindowOverInputOverlays`
+  - `GalleryInteractionRecorderDoesNotTreatNoOpExpandAsInvoked`
+- Focused rendered menu test passed:
+  `StyledWpfMenuItemCanOpenTopLevelSubmenuThroughAutomation`.

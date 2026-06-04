@@ -88,7 +88,7 @@ keeps indeterminate visuals stabilized.
 
 ## Current Focused Fix Round
 
-Round 48 tightened the recorder after manual review found failures that earlier
+Round 49 tightened the recorder after manual review found failures that earlier
 passes accepted:
 
 - Mostly blank screen recordings are now rejected unless at least 75% of
@@ -96,6 +96,13 @@ passes accepted:
 - Open/reopen popup, flyout, menu, and split-button interactions now record
   trigger and opened-element bounds, and fail when the opened content is
   detached from the trigger.
+- `ExpandCollapsePattern.Expand()` is no longer treated as proof by itself.
+  The recorder checks `ExpandCollapseState == Expanded` before returning
+  success; no-op expand attempts fall through to invoke/click paths and fail
+  if expected opened content is still missing.
+- Official WPF pages now have interaction coverage for high-risk route types:
+  `Expander` and `TreeView` expansion, `Menu` and `DatePicker` repeat-open,
+  `TabControl` selection, and `TextBox` / `PasswordBox` text entry.
 - `MenuFlyout` and shared `FlyoutBase` popup HWNDs now receive explicit
   absolute placement when WPF opens the underlying popup at screen origin.
 
@@ -106,6 +113,8 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260604-034810-236/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-035722-075/report.md` | DropDownButton, MenuFlyout, SplitButton, ToggleSplitButton | 4 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-040103-946/report.md` | ContentDialog, Flyout, Popup, CommandBarFlyout | 4 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-044508-719/report.md` | Menu | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-044721-837/report.md` | Expander, TreeView, Menu, TabControl, DatePicker, Calendar, TextBox, PasswordBox | 8 passed, 0 needs review, 0 failed |
 
 ## Current Full-Inventory Sweep
 

@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
@@ -7,6 +8,8 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -120,6 +123,71 @@ public class MenuFamilyVisualStateTests
             Assert.IsTrue(separatorStyle.Setters.OfType<Setter>()
                 .Any(item => item.Property == Control.OverridesDefaultStyleProperty && Equals(item.Value, true)));
         });
+    }
+
+    [TestMethod]
+    public void StyledWpfMenuItemCanOpenTopLevelSubmenuThroughAutomation()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var root = new StackPanel();
+            root.Resources.Add(
+                typeof(MenuItem),
+                new Style(typeof(MenuItem), (Style)Application.Current.FindResource("DefaultMenuItemStyle"))
+                {
+                    Setters =
+                    {
+                        new EventSetter(MenuItem.ClickEvent, new RoutedEventHandler(FocusClickedGalleryMenuItem))
+                    }
+                });
+
+            var menu = new Menu();
+            var fileItem = new MenuItem { Header = "File" };
+            var newItem = new MenuItem { Header = "New" };
+            fileItem.Items.Add(newItem);
+            menu.Items.Add(fileItem);
+            root.Children.Add(menu);
+
+            using var host = new TestWindowHost(root, width: 320, height: 160);
+            host.UpdateLayout();
+
+            Assert.AreEqual(MenuItemRole.TopLevelHeader, fileItem.Role);
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(fileItem);
+            Assert.IsNotNull(peer);
+
+            var provider = peer.GetPattern(PatternInterface.ExpandCollapse) as IExpandCollapseProvider;
+            Assert.IsNotNull(provider);
+
+            provider!.Expand();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(fileItem.IsSubmenuOpen, "The styled top-level MenuItem must open through UIA Expand.");
+            Assert.AreEqual(ExpandCollapseState.Expanded, provider.ExpandCollapseState);
+
+            provider.Collapse();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(fileItem.IsSubmenuOpen);
+            Assert.AreEqual(ExpandCollapseState.Collapsed, provider.ExpandCollapseState);
+        });
+    }
+
+    private static void FocusClickedGalleryMenuItem(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuItem menuItem)
+        {
+            if (menuItem.Parent is MenuItem parentMenuItem)
+            {
+                parentMenuItem.Focus();
+            }
+            else
+            {
+                menuItem.Focus();
+            }
+        }
     }
 
     [TestMethod]

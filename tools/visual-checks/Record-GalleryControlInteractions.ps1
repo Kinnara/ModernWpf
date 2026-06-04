@@ -288,17 +288,46 @@ function Find-WindowByProcessId([int]$processId) {
         [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
         $processId)
     $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    $bestWindow = $null
+    $bestScore = -1
+
     foreach ($window in $windows) {
         try {
-            if ($window.Current.NativeWindowHandle -ne 0) {
-                return $window
+            $handle = [IntPtr]$window.Current.NativeWindowHandle
+            if ($handle -eq [IntPtr]::Zero) {
+                continue
+            }
+
+            $rect = [GalleryRecordingNative]::GetRect($handle)
+            $width = $rect.Right - $rect.Left
+            $height = $rect.Bottom - $rect.Top
+            if ($width -lt 400 -or $height -lt 300) {
+                continue
+            }
+
+            $score = [int64]($width * $height)
+            if ($window.Current.Name -eq "WPF Gallery") {
+                $score += 1000000000
+            }
+
+            if ($window.Current.ClassName -eq "Window") {
+                $score += 100000000
+            }
+
+            if (!$window.Current.IsOffscreen) {
+                $score += 1000000
+            }
+
+            if ($score -gt $bestScore) {
+                $bestWindow = $window
+                $bestScore = $score
             }
         }
         catch {
         }
     }
 
-    return $null
+    return $bestWindow
 }
 
 function Find-DescendantByAutomationId($root, [string]$automationId) {
@@ -416,6 +445,21 @@ function Find-ElementByNameInProcess([int]$processId, [string[]]$names) {
     return $null
 }
 
+function Find-ElementByControlTypeInProcess([int]$processId, $controlType) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        $match = Find-DescendantByControlType $window $controlType
+        if ($null -ne $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
 function Find-InteractiveElementByNameInProcess([int]$processId, [string[]]$names) {
     $condition = New-Object System.Windows.Automation.PropertyCondition(
         [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
@@ -435,7 +479,8 @@ function Find-InteractiveElementByNameInProcess([int]$processId, [string[]]$name
                         $controlType -ne [System.Windows.Automation.ControlType]::MenuItem -and
                         $controlType -ne [System.Windows.Automation.ControlType]::ListItem -and
                         $controlType -ne [System.Windows.Automation.ControlType]::RadioButton -and
-                        $controlType -ne [System.Windows.Automation.ControlType]::TabItem) {
+                        $controlType -ne [System.Windows.Automation.ControlType]::TabItem -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::TreeItem) {
                         continue
                     }
 
@@ -823,6 +868,8 @@ function Test-ControlSupportsOpenInteraction([string]$control) {
     switch ($control) {
         "TeachingTip" { return $true }
         "ComboBox" { return $true }
+        "DatePicker" { return $true }
+        "Menu" { return $true }
         "ContentDialog" { return $true }
         "Flyout" { return $true }
         "Popup" { return $true }
@@ -841,6 +888,8 @@ function Get-OpenInteractionNames([string]$control) {
     switch ($control) {
         "TeachingTip" { return @("This is the title", "And this is the subtitle", "Close") }
         "ComboBox" { return @("Blue", "Green", "Red", "Yellow") }
+        "DatePicker" { return @("Calendar") }
+        "Menu" { return @("New", "New window", "Open", "Save", "Save As", "Exit") }
         "ContentDialog" { return @("Save your work?", "Upload your content to the cloud.", "Save", "Don't Save", "Cancel") }
         "Flyout" { return @("All items will be removed. Do you want to continue?", "Yes, empty my cart") }
         "Popup" { return @("Simple Popup", "Close") }
@@ -871,6 +920,15 @@ function Test-ControlSupportsSelectionInteraction([string]$control) {
         "GridView" { return $true }
         "SelectorBar" { return $true }
         "NavigationView" { return $true }
+        "TabControl" { return $true }
+        default { return $false }
+    }
+}
+
+function Test-ControlSupportsExpansionInteraction([string]$control) {
+    switch ($control) {
+        "Expander" { return $true }
+        "TreeView" { return $true }
         default { return $false }
     }
 }
@@ -910,6 +968,8 @@ function Test-ControlRequiresDenseTransitionReview([string]$control, [string]$in
     switch ($control) {
         "TeachingTip" { return $true }
         "ComboBox" { return $true }
+        "DatePicker" { return $true }
+        "Menu" { return $true }
         "ContentDialog" { return $true }
         "Flyout" { return $true }
         "Popup" { return $true }
@@ -925,7 +985,12 @@ function Test-ControlRequiresDenseTransitionReview([string]$control, [string]$in
 }
 
 function Test-ControlSupportsTextInteraction([string]$control) {
-    return $control -eq "AutoSuggestBox"
+    switch ($control) {
+        "AutoSuggestBox" { return $true }
+        "TextBox" { return $true }
+        "PasswordBox" { return $true }
+        default { return $false }
+    }
 }
 
 function Test-ControlSupportsValueInteraction([string]$control) {
@@ -951,6 +1016,7 @@ function Get-SelectionInteractionTriggerName([string]$control) {
         "GridView" { return "Item 1" }
         "SelectorBar" { return "Shared" }
         "NavigationView" { return "Menu Item2" }
+        "TabControl" { return "Hello Tab" }
         default { return "" }
     }
 }
@@ -966,6 +1032,7 @@ function Get-SelectionInteractionExpectedOutputName([string]$control) {
     switch ($control) {
         "GridView" { return "You clicked Item 1." }
         "NavigationView" { return "Sample Page 2" }
+        "TabControl" { return "World" }
         default { return "" }
     }
 }
@@ -977,11 +1044,28 @@ function Get-SelectionInteractionOutputAutomationId([string]$control) {
     }
 }
 
+function Get-ExpansionInteractionTriggerName([string]$control) {
+    switch ($control) {
+        "Expander" { return "This text is in the header" }
+        "TreeView" { return "Personal Documents" }
+        default { return "" }
+    }
+}
+
+function Get-ExpansionInteractionExpectedChildName([string]$control) {
+    switch ($control) {
+        "Expander" { return "This is in the content" }
+        "TreeView" { return "Contractor contact info" }
+        default { return "" }
+    }
+}
+
 function Get-ControlInteractionKind([string]$control) {
     if ($control -eq "ShellNavigation") { return "ShellNavigation" }
     if ($control -eq "BreadcrumbBar") { return "Breadcrumb" }
     if (Test-ControlSupportsOpenInteraction $control) { return "OpenRepeat" }
     if (Test-ControlSupportsStateInteraction $control) { return "State" }
+    if (Test-ControlSupportsExpansionInteraction $control) { return "Expansion" }
     if (Test-ControlSupportsValueInteraction $control) { return "Value" }
     if (Test-ControlSupportsSelectionInteraction $control) { return "Selection" }
     if (Test-ControlSupportsOptionInteraction $control) { return "Option" }
@@ -1369,6 +1453,24 @@ function Find-SelectionInvokeTarget($element) {
     return $element
 }
 
+function Find-ExpandCollapseTarget($element) {
+    $candidate = $element
+    for ($depth = 0; $depth -lt 8 -and $null -ne $candidate; $depth++) {
+        if (Test-ElementSupportsPattern $candidate ([System.Windows.Automation.ExpandCollapsePattern]::Pattern)) {
+            return $candidate
+        }
+
+        try {
+            $candidate = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+        }
+        catch {
+            return $null
+        }
+    }
+
+    return $null
+}
+
 function Find-RawInvokeTarget($element) {
     $candidate = $element
     for ($depth = 0; $depth -lt 8 -and $null -ne $candidate; $depth++) {
@@ -1541,8 +1643,10 @@ function Invoke-ElementOnce($window, $element) {
         $pattern = $element.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
         if ($null -ne $pattern -and $pattern.Current.ExpandCollapseState -ne [System.Windows.Automation.ExpandCollapseState]::Expanded) {
             $pattern.Expand()
-            Start-Sleep -Milliseconds 120
-            return $true
+            Start-Sleep -Milliseconds 180
+            if ($pattern.Current.ExpandCollapseState -eq [System.Windows.Automation.ExpandCollapseState]::Expanded) {
+                return $true
+            }
         }
     }
     catch {
@@ -1734,7 +1838,7 @@ function Hold-Element($window, $element, [int]$milliseconds) {
 }
 
 function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleElement) {
-    if ($control -eq "MenuBar") {
+    if ($control -eq "MenuBar" -or $control -eq "Menu") {
         $trigger = Find-DescendantByAnyName $sampleElement @("File")
         if ($null -eq $trigger) {
             $trigger = Find-ElementByNameInProcess $window.Current.ProcessId @("File")
@@ -1748,6 +1852,10 @@ function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleEle
 
             return $trigger
         }
+    }
+
+    if ($control -eq "DatePicker") {
+        return Find-ElementByNameInProcess $window.Current.ProcessId @("Pick a date")
     }
 
     if ($control -eq "CommandBar") {
@@ -1790,6 +1898,10 @@ function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [s
         if ($null -eq $element -or (Get-ExpandCollapseStateName $element) -ne "Expanded") {
             return $null
         }
+    }
+
+    if ($control -eq "DatePicker") {
+        return Find-ElementByControlTypeInProcess $window.Current.ProcessId ([System.Windows.Automation.ControlType]::Calendar)
     }
 
     return Find-InteractiveElementByNameInProcess $window.Current.ProcessId $openNames
@@ -1873,6 +1985,60 @@ function Invoke-StateInteraction($window, $sampleElement) {
         BeforeState = $before
         AfterState = $after
         StateChanged = ![string]::IsNullOrWhiteSpace($before) -and $before -ne $after
+    }
+}
+
+function Invoke-ExpansionInteraction($window, [string]$control) {
+    $name = Get-ExpansionInteractionTriggerName $control
+    $expectedChildName = Get-ExpansionInteractionExpectedChildName $control
+    $namedElement = Find-ElementByNameInProcess $window.Current.ProcessId @($name)
+    $target = Find-ExpandCollapseTarget $namedElement
+    $beforeState = Get-ExpandCollapseStateName $target
+    $beforeChild = if ([string]::IsNullOrWhiteSpace($expectedChildName)) {
+        $false
+    }
+    else {
+        $null -ne (Find-ElementByNameInProcess $window.Current.ProcessId @($expectedChildName))
+    }
+
+    $invoked = $false
+    try {
+        $pattern = $target.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Expand()
+            $invoked = $true
+        }
+    }
+    catch {
+    }
+
+    if (!$invoked) {
+        $invoked = Invoke-ElementOnce $window $target
+    }
+
+    Start-Sleep -Milliseconds 450
+    $afterState = Get-ExpandCollapseStateName $target
+    $afterChildElement = if ([string]::IsNullOrWhiteSpace($expectedChildName)) {
+        $null
+    }
+    else {
+        Find-ElementByNameInProcess $window.Current.ProcessId @($expectedChildName)
+    }
+    $afterChildVisible = Test-AutomationElementUsable $afterChildElement
+    $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $target)
+    $childBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $afterChildElement)
+
+    return [ordered]@{
+        Invoked = $invoked -and $afterState -eq "Expanded" -and $afterChildVisible
+        TargetName = $name
+        ExpectedChildName = $expectedChildName
+        BeforeExpandState = $beforeState
+        AfterExpandState = $afterState
+        BeforeChildVisible = $beforeChild
+        AfterChildVisible = $afterChildVisible
+        TargetBounds = $targetBounds
+        ChildBounds = $childBounds
+        ExpansionChanged = $afterState -eq "Expanded" -and $afterChildVisible
     }
 }
 
@@ -2203,6 +2369,16 @@ function Invoke-ScrollInteraction($window, [string]$control, $sampleElement) {
 function Get-TextInteractionInput([string]$control) {
     switch ($control) {
         "AutoSuggestBox" { return "ae" }
+        "TextBox" { return "ModernWpf text" }
+        "PasswordBox" { return "ModernWpf1!" }
+        default { return "" }
+    }
+}
+
+function Get-TextInteractionTargetName([string]$control) {
+    switch ($control) {
+        "TextBox" { return "simple TextBox" }
+        "PasswordBox" { return "Simple Password Box" }
         default { return "" }
     }
 }
@@ -2330,7 +2506,37 @@ function Wait-ForTextOutput([int]$processId, [string]$automationId, [string]$exp
     return $null
 }
 
+function Invoke-PlainTextInteraction($window, [string]$control) {
+    $targetName = Get-TextInteractionTargetName $control
+    $inputText = Get-TextInteractionInput $control
+    $target = Find-ElementByNameInProcess $window.Current.ProcessId @($targetName)
+    $editElement = Find-EditableDescendant $target
+    $before = Get-ElementText $editElement
+    $typed = Set-EditableElementText $window $target $inputText
+    Start-Sleep -Milliseconds 350
+    $after = Get-ElementText $editElement
+    $outputMatched = if ($control -eq "PasswordBox") {
+        $typed
+    }
+    else {
+        $after -eq $inputText
+    }
+
+    return [ordered]@{
+        Invoked = $typed -and $outputMatched
+        TargetName = $targetName
+        BeforeOutput = $before
+        AfterOutput = $after
+        ExpectedOutput = $inputText
+        OutputMatched = $outputMatched
+    }
+}
+
 function Invoke-TextInteraction($window, [string]$control, $sampleElement) {
+    if ($control -eq "TextBox" -or $control -eq "PasswordBox") {
+        return Invoke-PlainTextInteraction $window $control
+    }
+
     if ($null -eq $sampleElement) {
         return [ordered]@{ Invoked = $false }
     }
@@ -2526,6 +2732,7 @@ function Invoke-RecordedInteraction($window, [string]$control, $sampleElement) {
         "Breadcrumb" { return Invoke-BreadcrumbInteraction $window $sampleElement }
         "OpenRepeat" { return Invoke-OpenRepeatInteraction $window $control $sampleElement }
         "State" { return Invoke-StateInteraction $window $sampleElement }
+        "Expansion" { return Invoke-ExpansionInteraction $window $control }
         "Value" { return Invoke-ValueInteraction $window $control $sampleElement }
         "Selection" { return Invoke-SelectionInteraction $window $control $sampleElement }
         "Option" { return Invoke-OptionInteraction $window $control $sampleElement }
@@ -2938,6 +3145,14 @@ function Test-StateEvidence($interactionResult) {
     return [bool]$interactionResult.StateChanged
 }
 
+function Test-ExpansionEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("ExpansionChanged")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.ExpansionChanged
+}
+
 function Test-ValueEvidence($interactionResult) {
     if ($null -eq $interactionResult -or !$interactionResult.Contains("TargetReached")) {
         return $false
@@ -3217,6 +3432,7 @@ foreach ($control in $Controls) {
     $animationEvidence = Test-AnimationEvidence $control $animationFrameDelta
     $openRepeatEvidence = Test-OpenRepeatEvidence $interactionResult
     $stateEvidence = Test-StateEvidence $interactionResult
+    $expansionEvidence = Test-ExpansionEvidence $interactionResult
     $valueEvidence = Test-ValueEvidence $interactionResult
     $selectionEvidence = Test-SelectionEvidence $interactionResult
     $optionEvidence = Test-OptionEvidence $interactionResult
@@ -3233,6 +3449,11 @@ foreach ($control in $Controls) {
     if ($status -eq "Passed" -and $interactionKind -eq "State" -and !$stateEvidence) {
         $status = "Failed"
         $notes.Add("State interaction did not change the target toggle state.")
+    }
+
+    if ($status -eq "Passed" -and $interactionKind -eq "Expansion" -and !$expansionEvidence) {
+        $status = "Failed"
+        $notes.Add("Expansion interaction did not expose the expected expanded child content.")
     }
 
     if ($status -eq "Passed" -and $interactionKind -eq "Value" -and !$valueEvidence) {
@@ -3295,6 +3516,9 @@ foreach ($control in $Controls) {
         elseif ($interactionKind -eq "State" -and $stateEvidence) {
             $notes.Add("Before/after toggle state changed despite low full-frame delta.")
         }
+        elseif ($interactionKind -eq "Expansion" -and $expansionEvidence) {
+            $notes.Add("Expanded child content was detected despite low full-frame delta.")
+        }
         elseif ($interactionKind -eq "Value" -and $valueEvidence) {
             $notes.Add("Target value was reached despite low full-frame delta.")
         }
@@ -3340,6 +3564,7 @@ foreach ($control in $Controls) {
         AnimationEvidence = $animationEvidence
         OpenRepeatEvidence = $openRepeatEvidence
         StateEvidence = $stateEvidence
+        ExpansionEvidence = $expansionEvidence
         ValueEvidence = $valueEvidence
         SelectionEvidence = $selectionEvidence
         OptionEvidence = $optionEvidence

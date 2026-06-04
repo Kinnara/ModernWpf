@@ -3340,6 +3340,50 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryInteractionRecorderSelectsRealGalleryWindowOverInputOverlays()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Find-WindowByProcessId([int]$processId)",
+                "$bestWindow = $null",
+                "$bestScore = -1",
+                "$handle = [IntPtr]$window.Current.NativeWindowHandle",
+                "$rect = [GalleryRecordingNative]::GetRect($handle)",
+                "$width = $rect.Right - $rect.Left",
+                "$height = $rect.Bottom - $rect.Top",
+                "if ($width -lt 400 -or $height -lt 300)",
+                "if ($window.Current.Name -eq \"WPF Gallery\")",
+                "if ($window.Current.ClassName -eq \"Window\")",
+                "return $bestWindow");
+        }
+
+        [TestMethod]
+        public void GalleryInteractionRecorderDoesNotTreatNoOpExpandAsInvoked()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Invoke-ElementOnce($window, $element)",
+                "$pattern = $element.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)",
+                "$pattern.Expand()",
+                "Start-Sleep -Milliseconds 180",
+                "if ($pattern.Current.ExpandCollapseState -eq [System.Windows.Automation.ExpandCollapseState]::Expanded)",
+                "return $true",
+                "$pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)");
+        }
+
+        [TestMethod]
         public void GalleryInteractionRecorderRejectsDetachedOpenRepeatPopups()
         {
             var source = File.ReadAllText(Path.Combine(
