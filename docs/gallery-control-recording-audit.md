@@ -4,6 +4,21 @@ This document tracks the recording-first Gallery audit. A control is not counted
 as verified here unless there is a live recording for the relevant interaction
 path and the recording has been reviewed or decoded into nonblank poster frames.
 
+## Active Goal
+
+Find and fix obvious ModernWpf Gallery visual and interaction defects across
+the control inventory, with recordings as blocking evidence. The audit is not
+only proving that a route opens or UIA state changes; it must catch the
+user-visible failure classes shown in recordings, including open/close flicker,
+misaligned or clipped popups and menus, missing expanded content, blank or
+stale expanded regions, and repeat-open crashes.
+
+If a user-provided video or manual review exposes a visible defect that an
+automated run accepted, the next audit round treats that as a recorder/parity
+harness defect as well as a control defect. The harness must be tightened so
+the same failure class is reviewable or rejected before the affected control is
+marked verified again.
+
 ## Acceptance Bar
 
 - Launch the Gallery route for each control in visual-test mode.
@@ -20,6 +35,10 @@ path and the recording has been reviewed or decoded into nonblank poster frames.
   obvious transient defects such as clipped command strips, missing menu items,
   bad popup/menu alignment, stale pixels, blank expanded regions, app crashes,
   and open or close flicker.
+- A recording pass is invalid if its sampled poster frames, UIA state, or
+  parity checks would miss an obvious defect visible in the source clip. Add
+  dense transition evidence or a control-specific frame/geometry assertion
+  before accepting that control again.
 - UIA success alone is not accepted as visual proof for popup/flyout/menu
   interactions. The recording report must include either automated geometry or
   frame evidence, or the control remains `NeedsReview`.

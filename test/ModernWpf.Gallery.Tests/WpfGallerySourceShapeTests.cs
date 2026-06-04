@@ -3280,6 +3280,42 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryInteractionRecorderExportsDenseTransitionReviewSheets()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresDenseTransitionReview([string]$control, [string]$interactionKind)",
+                "$interactionKind -eq \"ShellNavigation\"",
+                "$interactionKind -ne \"OpenRepeat\"",
+                "\"ContentDialog\" { return $true }",
+                "\"MenuBar\" { return $true }",
+                "\"CommandBarFlyout\" { return $true }");
+            AssertContainsInOrder(
+                source,
+                "function Export-DenseTransitionReviewSheet([string]$videoPath, [string]$caseDir)",
+                "$analysisDir = Join-Path $caseDir \"analysis\"",
+                "$sheetPath = Join-Path $analysisDir \"dense-transition-review.jpg\"",
+                "$tileColumns = 8",
+                "$filter = \"fps=$reviewFps,scale=360:-1,tile=${tileColumns}x$tileRows\"",
+                "Path = $sheetPath",
+                "Generated = $true");
+            AssertContainsInOrder(
+                source,
+                "| Control | Status | Interaction | Recording | Dense review | Max frame delta | Notes |",
+                "DenseTransitionReview",
+                "if (Test-ControlRequiresDenseTransitionReview $control $interactionKind)",
+                "$denseTransitionReview = Export-DenseTransitionReviewSheet $recordingPath $caseDir",
+                "Dense transition review sheet generated",
+                "DenseTransitionReview = $denseTransitionReview");
+        }
+
+        [TestMethod]
         public void GalleryInteractionRecorderAcceptsOfficialWpfRenderedPageArtifacts()
         {
             var source = File.ReadAllText(Path.Combine(

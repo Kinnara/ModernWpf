@@ -1557,3 +1557,30 @@ Update the active Gallery control audit goal after
   `artifacts/gallery-recordings/20260604-020233-803/CommandBarFlyout/analysis/commandbarflyout-dense-crop-all.jpg`.
 - Focused dark parity check against installed WinUI Gallery passed:
   `artifacts/visual-checks/20260604-022655-002-138088/report.md`.
+
+## Round 47: Recording-Miss Goal Amendment
+
+### Scope
+
+Make the active Gallery control goal explicitly cover defects that are obvious
+in a recording but were missed by the automated recorder or parity pass.
+
+### Goal Update
+
+- The audit target is now both the control implementation and the evidence
+  harness. If a source recording shows visible flicker, misalignment, clipping,
+  missing expanded content, blank/stale regions, or repeat-open instability
+  that a run accepts, the accepted run is considered insufficient evidence.
+- Affected popup, flyout, menu, and navigation-pane controls remain
+  `NeedsReview` until a dense transition sheet or automated frame/geometry
+  check makes the same failure class visible to review or fail-fast.
+- Fix rounds must include the user-visible defect fix, the recorder/parity
+  tightening that would have caught it, focused tests for the new guard, and a
+  post-fix recording before the control is marked verified.
+
+### Tracking
+
+The standing rule is now written into
+`docs/gallery-control-recording-audit.md` under `Active Goal` and the
+`Acceptance Bar`, so future control rounds have to explain both the visual fix
+and why the recording evidence would catch the reported failure class.

@@ -830,6 +830,32 @@ function Test-ControlRequiresAnimatedVisualProof([string]$control) {
     return $control -eq "ProgressRing"
 }
 
+function Test-ControlRequiresDenseTransitionReview([string]$control, [string]$interactionKind) {
+    if ($interactionKind -eq "ShellNavigation") {
+        return $true
+    }
+
+    if ($interactionKind -ne "OpenRepeat") {
+        return $false
+    }
+
+    switch ($control) {
+        "TeachingTip" { return $true }
+        "ComboBox" { return $true }
+        "ContentDialog" { return $true }
+        "Flyout" { return $true }
+        "Popup" { return $true }
+        "MenuBar" { return $true }
+        "MenuFlyout" { return $true }
+        "DropDownButton" { return $true }
+        "SplitButton" { return $true }
+        "ToggleSplitButton" { return $true }
+        "CommandBar" { return $true }
+        "CommandBarFlyout" { return $true }
+        default { return $false }
+    }
+}
+
 function Test-ControlSupportsTextInteraction([string]$control) {
     return $control -eq "AutoSuggestBox"
 }
@@ -2649,6 +2675,42 @@ function Export-PosterFrames([string]$videoPath, [string]$caseDir) {
     return $frames.ToArray()
 }
 
+function Export-DenseTransitionReviewSheet([string]$videoPath, [string]$caseDir) {
+    if ($SkipFrameExtraction) {
+        return $null
+    }
+
+    $ffmpeg = Get-FfmpegPath
+    if ([string]::IsNullOrWhiteSpace($ffmpeg)) {
+        return $null
+    }
+
+    $analysisDir = Join-Path $caseDir "analysis"
+    New-Item -ItemType Directory -Force -Path $analysisDir | Out-Null
+
+    $sheetPath = Join-Path $analysisDir "dense-transition-review.jpg"
+    $reviewFps = [Math]::Min([Math]::Max(8, $FrameRate), 15)
+    $tileColumns = 8
+    $tileRows = [Math]::Max(4, [int][Math]::Ceiling(($DurationSeconds * $reviewFps) / [double]$tileColumns))
+    $filter = "fps=$reviewFps,scale=360:-1,tile=${tileColumns}x$tileRows"
+    $output = & $ffmpeg -hide_banner -loglevel error -y -i $videoPath -vf $filter -frames:v 1 $sheetPath 2>&1
+    if ($LASTEXITCODE -ne 0 -or !(Test-Path $sheetPath)) {
+        return [ordered]@{
+            Path = $sheetPath
+            Generated = $false
+            Error = ($output | Select-Object -Last 3) -join " "
+        }
+    }
+
+    return [ordered]@{
+        Path = $sheetPath
+        Generated = $true
+        Fps = $reviewFps
+        Tile = "${tileColumns}x$tileRows"
+        Stats = Get-ImageStats $sheetPath
+    }
+}
+
 function Get-MaxFrameDelta($frames) {
     $paths = @($frames | Where-Object { $_.Extracted } | ForEach-Object { $_.Path })
     if ($paths.Count -lt 2) {
@@ -2870,13 +2932,19 @@ function Write-Report([string]$runDir, $results) {
     }
     $lines.Add(("Duration: ``{0}s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
     $lines.Add("")
-    $lines.Add("| Control | Status | Interaction | Recording | Max frame delta | Notes |")
-    $lines.Add("| --- | --- | --- | --- | ---: | --- |")
+    $lines.Add("| Control | Status | Interaction | Recording | Dense review | Max frame delta | Notes |")
+    $lines.Add("| --- | --- | --- | --- | --- | ---: | --- |")
     foreach ($result in $results) {
         $recording = Format-RelativePath $result.Recording
+        $denseReview = if ($null -ne $result.DenseTransitionReview -and $result.DenseTransitionReview.Generated) {
+            Format-RelativePath $result.DenseTransitionReview.Path
+        }
+        else {
+            ""
+        }
         $delta = if ($null -eq $result.MaxFrameDelta) { "" } else { $result.MaxFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture) }
         $notes = ($result.Notes -replace "\|", "\|")
-        $lines.Add(("| {0} | {1} | {2} | ``{3}`` | {4} | {5} |" -f $result.Control, $result.Status, $result.InteractionKind, $recording, $delta, $notes))
+        $lines.Add(("| {0} | {1} | {2} | ``{3}`` | ``{4}`` | {5} | {6} |" -f $result.Control, $result.Status, $result.InteractionKind, $recording, $denseReview, $delta, $notes))
     }
 
     $reportPath = Join-Path $runDir "report.md"
@@ -2903,6 +2971,7 @@ foreach ($control in $Controls) {
     $interactionResult = $null
     $recordingResult = $null
     $frames = @()
+    $denseTransitionReview = $null
     $status = "Passed"
     $renderedPageArtifactAnchor = $null
     $recordingPath = Join-Path $caseDir ("{0}-{1}{2}" -f $Theme.ToLowerInvariant(), $control.ToLowerInvariant(), $extension)
@@ -2966,6 +3035,17 @@ foreach ($control in $Controls) {
         }
 
         $frames = Export-PosterFrames $recordingPath $caseDir
+        if (Test-ControlRequiresDenseTransitionReview $control $interactionKind) {
+            $denseTransitionReview = Export-DenseTransitionReviewSheet $recordingPath $caseDir
+            if ($null -eq $denseTransitionReview -or !$denseTransitionReview.Generated) {
+                $status = "NeedsReview"
+                $notes.Add("Dense transition review sheet was not generated.")
+            }
+            else {
+                $notes.Add(("Dense transition review sheet generated at {0}." -f (Format-RelativePath $denseTransitionReview.Path)))
+            }
+        }
+
         $nonBlankFrameCount = Get-NonBlankFrameCount $frames
         if ($nonBlankFrameCount -lt 2 -and !$SkipFrameExtraction) {
             $status = "Failed"
@@ -3132,6 +3212,7 @@ foreach ($control in $Controls) {
         Recording = if (Test-Path $recordingPath) { (Resolve-Path $recordingPath).Path } else { $recordingPath }
         RecorderResult = $recordingResult
         Frames = $frames
+        DenseTransitionReview = $denseTransitionReview
         MaxFrameDelta = $maxFrameDelta
         AnimationFrameDelta = $animationFrameDelta
         AnimationEvidence = $animationEvidence
