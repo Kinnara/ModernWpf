@@ -1908,3 +1908,68 @@ Close the SelectorBar recording gap found while continuing the control sweep:
   `artifacts/gallery-recordings/20260604-064455-670/SelectorBar/frames/t2000.png`
   shows no basic item selected before the click; `t3000.png` shows the blue
   selected pill under `Shared`.
+
+## Round 54: Local Visual Evidence for Low-Delta Interactions
+
+### Scope
+
+Close the remaining recorder false-pass class where a whole-window frame delta
+is too small to prove an obvious user-visible state change:
+
+- small selected indicators such as `SelectorBar`;
+- compact toggle and radio/check glyph changes;
+- text/value/output changes that can round to `MaxFrameDelta=0`;
+- shell navigation expansion rows where UIA state can change while the user
+  would still see a blank, stale, or oversized region.
+
+### Current Findings
+
+- The whole-window mean-delta metric can be effectively zero even when a
+  control visibly changes. In the focused run below, `NumberBox` changed from
+  `10` to `20` with `MaxFrameDelta=0`.
+- Previous low-delta passes were therefore still too dependent on UIA state:
+  a broken visual template or stale expanded region could pass if automation
+  changed while the rendered pixels did not.
+
+### Resolution
+
+- Interaction manifests now include screen-space bounds for state, value,
+  selection, option, text, output, scroll, breadcrumb, and shell navigation
+  interactions.
+- The recorder now translates those bounds into the captured video frame,
+  computes dense local frame deltas, and writes `LocalFrameDeltas`,
+  `MaxLocalFrameDelta`, and `LocalVisualEvidence` into the manifest.
+- Low whole-window delta passes for interactive controls now require local
+  rendered evidence inside the recorded interaction bounds. If UIA state
+  changes but the cropped control region does not, the result is downgraded to
+  `NeedsReview` instead of being accepted as verified.
+- Reports now include a `Max local delta` column so reviewers can see when the
+  pass was supported by cropped visual evidence rather than the whole frame.
+
+### Verification
+
+- PowerShell parser check passed for
+  `tools/visual-checks/Record-GalleryControlInteractions.ps1`.
+- Focused low-delta recording passed 8/8:
+  `artifacts/gallery-recordings/20260604-070253-402/report.md`.
+- The focused report proves the new local metric is active:
+  - `SelectorBar`: `MaxFrameDelta=0.003`, `MaxLocalFrameDelta=0.254`
+  - `ToggleSwitch`: `MaxFrameDelta=0.015`, `MaxLocalFrameDelta=7.114`
+  - `NumberBox`: `MaxFrameDelta=0`, `MaxLocalFrameDelta=0.381`
+  - `CheckBox`: `MaxFrameDelta=0.028`, `MaxLocalFrameDelta=3.172`
+  - `RadioButton`: `MaxFrameDelta=0.022`, `MaxLocalFrameDelta=3.87`
+  - `Slider`: `MaxFrameDelta=0.031`, `MaxLocalFrameDelta=2.422`
+  - `RepeatButton`: `MaxFrameDelta=0.035`, `MaxLocalFrameDelta=1.034`
+  - `AutoSuggestBox`: `MaxFrameDelta=0.116`, `MaxLocalFrameDelta=3.436`
+- Reviewed frames from the same run:
+  - `artifacts/gallery-recordings/20260604-070253-402/SelectorBar/frames/t2000.png`
+    and `t3000.png` show the `Shared` selection pill in the recorded control.
+  - `artifacts/gallery-recordings/20260604-070253-402/NumberBox/frames/t2000.png`
+    and `t3000.png` show the spin-button value changing from `10` to `20`.
+- Focused shell navigation recording passed 1/1:
+  `artifacts/gallery-recordings/20260604-071019-787/report.md`.
+- Shell navigation recorded `MaxFrameDelta=0.895`,
+  `MaxLocalFrameDelta=9.407`, `LocalVisualEvidence=true`, and step snapshots
+  show `Design Guidance` expanded to height `250` with child rows visible,
+  `Samples` expanded to height `82` with `User Dashboard` visible, and both
+  groups collapsed back to height `40` with a `2` pixel following gap.

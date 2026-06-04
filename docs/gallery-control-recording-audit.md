@@ -61,6 +61,10 @@ issue, or an explicit remaining follow-up item in the audit.
   parity checks would miss an obvious defect visible in the source clip. Add
   dense transition evidence or a control-specific frame/geometry assertion
   before accepting that control again.
+- Low-delta interactive recordings must include local rendered evidence inside
+  the recorded interaction bounds. UIA state changes can no longer make
+  state/value/selection/option/text/output/scroll/navigation interactions pass
+  when the cropped control region shows no pixel change.
 - A fix round is incomplete until the defect inventory says how each visible
   issue would now be caught: automated fail-fast check, dense frame sheet,
   geometry/parity assertion, crash detection, or explicit still-open follow-up.

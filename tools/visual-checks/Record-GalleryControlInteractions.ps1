@@ -613,6 +613,43 @@ function Format-BoundingRectangle($rect) {
         [Math]::Round($rect.Height, 1)
 }
 
+function ConvertFrom-BoundingRectangleString([string]$bounds) {
+    if ([string]::IsNullOrWhiteSpace($bounds)) {
+        return $null
+    }
+
+    $parts = $bounds -split ","
+    if ($parts.Count -ne 4) {
+        return $null
+    }
+
+    $values = New-Object double[] 4
+    for ($i = 0; $i -lt 4; $i++) {
+        try {
+            $values[$i] = [double]::Parse($parts[$i].Trim(), [Globalization.CultureInfo]::InvariantCulture)
+        }
+        catch {
+            try {
+                $values[$i] = [double]::Parse($parts[$i].Trim(), [Globalization.CultureInfo]::CurrentCulture)
+            }
+            catch {
+                return $null
+            }
+        }
+    }
+
+    if ($values[2] -le 0 -or $values[3] -le 0) {
+        return $null
+    }
+
+    return [pscustomobject]@{
+        X = $values[0]
+        Y = $values[1]
+        Width = $values[2]
+        Height = $values[3]
+    }
+}
+
 function Get-BoundingRectangleGap($first, $second) {
     if ($null -eq $first -or $null -eq $second) {
         return [double]::PositiveInfinity
@@ -1292,6 +1329,7 @@ function Get-ShellNavigationSnapshot(
     $failures = New-Object System.Collections.Generic.List[string]
     $item = Find-ShellNavigationItem $navigationView $name
     $height = 0.0
+    $bounds = ""
     $followingGap = $null
     $visibleChildren = New-Object System.Collections.Generic.List[string]
     $hiddenChildren = New-Object System.Collections.Generic.List[string]
@@ -1310,6 +1348,7 @@ function Get-ShellNavigationSnapshot(
         try {
             $rect = $item.Current.BoundingRectangle
             $height = [Math]::Round($rect.Height, 1)
+            $bounds = Format-BoundingRectangle $rect
             if ($followingName) {
                 $following = Find-ShellNavigationItem $navigationView $followingName
                 if ($null -ne $following) {
@@ -1355,6 +1394,7 @@ function Get-ShellNavigationSnapshot(
         ExpectedState = $expectedState
         State = $state
         Height = $height
+        Bounds = $bounds
         FollowingName = $followingName
         FollowingGap = $followingGap
         VisibleChildren = $visibleChildren.ToArray()
@@ -2193,11 +2233,13 @@ function Invoke-PreparedOpenInteraction($window, [string]$control, $sampleElemen
 
 function Invoke-StateInteraction($window, $sampleElement) {
     $before = Get-ToggleStateName $sampleElement
+    $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
     $invoked = Invoke-ElementOnce $window $sampleElement
     Start-Sleep -Milliseconds 150
     $after = Get-ToggleStateName $sampleElement
     return [ordered]@{
         Invoked = $invoked
+        TargetBounds = $targetBounds
         BeforeState = $before
         AfterState = $after
         StateChanged = ![string]::IsNullOrWhiteSpace($before) -and $before -ne $after
@@ -2265,6 +2307,7 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
 
     [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
     $before = Get-NumericValue $sampleElement
+    $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
     try {
         $pattern = $sampleElement.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
         if ($null -ne $pattern) {
@@ -2278,6 +2321,7 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
             $after = Get-NumericValue $sampleElement
             return [ordered]@{
                 Invoked = $true
+                TargetBounds = $targetBounds
                 BeforeValue = $before
                 AfterValue = $after
                 TargetValue = $target
@@ -2295,6 +2339,7 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
         $after = Get-NumericValue $sampleElement
         return [ordered]@{
             Invoked = $invoked
+            TargetBounds = $targetBounds
             BeforeValue = $before
             AfterValue = $after
             TargetValue = $null
@@ -2304,6 +2349,7 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
 
     return [ordered]@{
         Invoked = $false
+        TargetBounds = $targetBounds
         BeforeValue = $before
         AfterValue = $null
         TargetValue = $null
@@ -2381,6 +2427,8 @@ function Invoke-SelectionInteraction($window, [string]$control, $sampleElement) 
         $null
     }
 
+    $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $target)
+    $sampleBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
     $beforeSampleState = Get-SelectionItemStateName $sampleElement
     $beforeTargetState = Get-SelectionItemStateName $target
     $beforeContainerSelection = Get-SelectionContainerSelectedItemNames $container
@@ -2404,6 +2452,7 @@ function Invoke-SelectionInteraction($window, [string]$control, $sampleElement) 
         $null
     }
     $afterOutput = Get-ElementText $outputElement
+    $outputBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $outputElement)
     $outputMatched = (![string]::IsNullOrWhiteSpace($expectedOutputName) -and $afterOutput -eq $expectedOutputName)
     if (!$outputMatched -and ![string]::IsNullOrWhiteSpace($expectedOutputName) -and $afterSampleStatus -eq $expectedOutputName) {
         $outputMatched = $true
@@ -2419,8 +2468,11 @@ function Invoke-SelectionInteraction($window, [string]$control, $sampleElement) 
         TargetAutomationId = $triggerAutomationId
         ContainerName = $containerName
         ActualTargetName = Get-ElementText $target
+        TargetBounds = $targetBounds
+        SampleBounds = $sampleBounds
         ExpectedOutputName = $expectedOutputName
         OutputAutomationId = $outputAutomationId
+        OutputBounds = $outputBounds
         BeforeSampleSelection = $beforeSampleState
         AfterSampleSelection = $afterSampleState
         BeforeTargetSelection = $beforeTargetState
@@ -2478,6 +2530,8 @@ function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
 
     $beforeState = Get-ToggleStateName $target
     $beforeSampleEnabled = Get-IsEnabledStateName $sampleElement
+    $optionBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $target)
+    $sampleBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
     $invoked = Invoke-OptionElementOnce $window $target
     Start-Sleep -Milliseconds 300
     $afterState = Get-ToggleStateName $target
@@ -2487,6 +2541,8 @@ function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
         Invoked = $invoked
         OptionName = $name
         OptionAutomationId = $automationId
+        OptionBounds = $optionBounds
+        SampleBounds = $sampleBounds
         BeforeState = $beforeState
         AfterState = $afterState
         BeforeSampleEnabled = $beforeSampleEnabled
@@ -2572,6 +2628,7 @@ function Invoke-ScrollInteraction($window, [string]$control, $sampleElement) {
         $target = $sampleElement
     }
 
+    $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $target)
     $beforePercent = Get-ScrollVerticalPercent $target
     $patternInvoked = Set-ScrollVerticalPercent $target 55.0
     Start-Sleep -Milliseconds 400
@@ -2587,6 +2644,7 @@ function Invoke-ScrollInteraction($window, [string]$control, $sampleElement) {
     return [ordered]@{
         Invoked = $patternInvoked -or $wheelInvoked
         TargetAutomationId = $targetId
+        TargetBounds = $targetBounds
         BeforeVerticalScrollPercent = $beforePercent
         AfterVerticalScrollPercent = $afterPercent
         PatternInvoked = $patternInvoked
@@ -2782,6 +2840,8 @@ function Invoke-PlainTextInteraction($window, [string]$control) {
     $target = Find-ElementByNameInProcess $window.Current.ProcessId @($targetName)
     $editElement = Find-EditableDescendant $target
     $before = Get-ElementText $editElement
+    $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $target)
+    $editBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $editElement)
     $typed = Set-EditableElementText $window $target $inputText
     Start-Sleep -Milliseconds 350
     $after = Get-ElementText $editElement
@@ -2795,6 +2855,8 @@ function Invoke-PlainTextInteraction($window, [string]$control) {
     return [ordered]@{
         Invoked = $typed -and $outputMatched
         TargetName = $targetName
+        TargetBounds = $targetBounds
+        EditBounds = $editBounds
         BeforeOutput = $before
         AfterOutput = $after
         ExpectedOutput = $inputText
@@ -2807,11 +2869,13 @@ function Invoke-PreparedTextInteraction($window, [string]$control) {
     $expectedText = Get-TextInteractionInput $control
     $target = Find-ElementByNameInProcess $window.Current.ProcessId @($targetName)
     $actualText = Get-ElementText $target
+    $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $target)
     $outputMatched = $actualText -eq $expectedText
 
     return [ordered]@{
         Invoked = $outputMatched
         TargetName = $targetName
+        TargetBounds = $targetBounds
         ExpectedOutput = $expectedText
         AfterOutput = $actualText
         OutputMatched = $outputMatched
@@ -2834,9 +2898,11 @@ function Invoke-TextInteraction($window, [string]$control, $sampleElement) {
     $outputAutomationId = Get-TextInteractionOutputAutomationId $control
     $outputElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId $outputAutomationId
     $beforeOutput = Get-ElementText $outputElement
+    $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
 
     $typed = Set-EditableElementText $window $sampleElement $inputText
     $editElement = Find-EditableDescendant $sampleElement
+    $editBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $editElement)
     $suggestionElement = if ($typed) {
         Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId $suggestionNames 2500
     }
@@ -2902,17 +2968,23 @@ function Invoke-TextInteraction($window, [string]$control, $sampleElement) {
         $outputElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId $outputAutomationId
     }
     $afterOutput = Get-ElementText $outputElement
+    $suggestionBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $suggestionElement)
+    $outputBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $outputElement)
 
     return [ordered]@{
         Invoked = $typed -and $null -ne $suggestionElement -and $suggestionInvoked
         Typed = $typed
         InputText = $inputText
+        TargetBounds = $targetBounds
+        EditBounds = $editBounds
         SuggestionNames = $suggestionNames
         SuggestionFound = $null -ne $suggestionElement
         SuggestionName = $(if ($null -ne $suggestionElement) { $suggestionElement.Current.Name } else { "" })
+        SuggestionBounds = $suggestionBounds
         SuggestionInvoked = $suggestionInvoked
         SuggestionInvokeMethod = $suggestionInvokeMethod
         OutputAutomationId = $outputAutomationId
+        OutputBounds = $outputBounds
         BeforeOutput = $beforeOutput
         AfterOutput = $afterOutput
         ExpectedOutput = $expectedOutput
@@ -2952,6 +3024,8 @@ function Invoke-OutputInteraction($window, [string]$control, $sampleElement) {
     $expectedOutput = Get-OutputInteractionExpectedOutput $control
     $output = Find-ElementByAutomationIdInProcess $window.Current.ProcessId $outputAutomationId
     $before = Get-OutputInteractionElementText $output $control
+    $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
+    $outputBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $output)
     $invoked = if ($control -eq "RepeatButton") {
         Invoke-ElementOnce $window $sampleElement
     }
@@ -2979,7 +3053,9 @@ function Invoke-OutputInteraction($window, [string]$control, $sampleElement) {
 
     return [ordered]@{
         Invoked = $invoked
+        TargetBounds = $targetBounds
         OutputAutomationId = $outputAutomationId
+        OutputBounds = $outputBounds
         BeforeOutput = $before
         AfterOutput = $after
         ExpectedOutput = $expectedOutput
@@ -2991,6 +3067,8 @@ function Invoke-OutputInteraction($window, [string]$control, $sampleElement) {
 function Invoke-BreadcrumbInteraction($window, $sampleElement) {
     $target = Find-DescendantByName $sampleElement "Folder1"
     $invokeTarget = Find-RawInvokeTarget $target
+    $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $invokeTarget)
+    $sampleBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
     $beforeFolder2 = $null -ne (Find-DescendantByName $sampleElement "Folder2")
     $beforeFolder3 = $null -ne (Find-DescendantByName $sampleElement "Folder3")
     $invoked = Invoke-ElementOnce $window $invokeTarget
@@ -3003,6 +3081,8 @@ function Invoke-BreadcrumbInteraction($window, $sampleElement) {
         TargetName = "Folder1"
         TargetControlType = if ($null -ne $invokeTarget) { $invokeTarget.Current.ControlType.ProgrammaticName } else { "" }
         TargetAutomationId = if ($null -ne $invokeTarget) { $invokeTarget.Current.AutomationId } else { "" }
+        TargetBounds = $targetBounds
+        SampleBounds = $sampleBounds
         BeforeFolder2Visible = $beforeFolder2
         BeforeFolder3Visible = $beforeFolder3
         AfterFolder2Visible = $afterFolder2
@@ -3192,6 +3272,80 @@ function Compare-ImageMeanDelta([string]$firstPath, [string]$secondPath) {
     }
 }
 
+function ConvertTo-FrameRectangle($bounds, $captureRect, [int]$imageWidth, [int]$imageHeight, [int]$margin) {
+    if ($null -eq $bounds -or $null -eq $captureRect -or $imageWidth -le 0 -or $imageHeight -le 0) {
+        return $null
+    }
+
+    $left = [int][Math]::Floor($bounds.X - $captureRect.X - $margin)
+    $top = [int][Math]::Floor($bounds.Y - $captureRect.Y - $margin)
+    $right = [int][Math]::Ceiling(($bounds.X + $bounds.Width) - $captureRect.X + $margin)
+    $bottom = [int][Math]::Ceiling(($bounds.Y + $bounds.Height) - $captureRect.Y + $margin)
+
+    $left = [Math]::Max(0, [Math]::Min($imageWidth, $left))
+    $top = [Math]::Max(0, [Math]::Min($imageHeight, $top))
+    $right = [Math]::Max(0, [Math]::Min($imageWidth, $right))
+    $bottom = [Math]::Max(0, [Math]::Min($imageHeight, $bottom))
+
+    if (($right - $left) -le 1 -or ($bottom - $top) -le 1) {
+        return $null
+    }
+
+    return [pscustomobject]@{
+        X = $left
+        Y = $top
+        Width = $right - $left
+        Height = $bottom - $top
+    }
+}
+
+function Compare-ImageRegionMeanDelta([string]$firstPath, [string]$secondPath, [string]$boundsText, [string]$captureRectText) {
+    if (!(Test-Path $firstPath) -or !(Test-Path $secondPath)) {
+        return $null
+    }
+
+    $bounds = ConvertFrom-BoundingRectangleString $boundsText
+    $captureRect = ConvertFrom-BoundingRectangleString $captureRectText
+    if ($null -eq $bounds -or $null -eq $captureRect) {
+        return $null
+    }
+
+    $first = [System.Drawing.Bitmap]::FromFile((Resolve-Path $firstPath).Path)
+    $second = [System.Drawing.Bitmap]::FromFile((Resolve-Path $secondPath).Path)
+    try {
+        $width = [Math]::Min($first.Width, $second.Width)
+        $height = [Math]::Min($first.Height, $second.Height)
+        $region = ConvertTo-FrameRectangle $bounds $captureRect $width $height 20
+        if ($null -eq $region) {
+            return $null
+        }
+
+        $step = [Math]::Max(1, [int][Math]::Floor([Math]::Max($region.Width, $region.Height) / 120.0))
+        $sum = 0.0
+        $count = 0
+        for ($y = $region.Y; $y -lt ($region.Y + $region.Height); $y += $step) {
+            for ($x = $region.X; $x -lt ($region.X + $region.Width); $x += $step) {
+                $a = $first.GetPixel($x, $y)
+                $b = $second.GetPixel($x, $y)
+                $la = (0.2126 * $a.R) + (0.7152 * $a.G) + (0.0722 * $a.B)
+                $lb = (0.2126 * $b.R) + (0.7152 * $b.G) + (0.0722 * $b.B)
+                $sum += [Math]::Abs($la - $lb)
+                $count++
+            }
+        }
+
+        if ($count -eq 0) {
+            return $null
+        }
+
+        return [Math]::Round($sum / $count, 3)
+    }
+    finally {
+        $first.Dispose()
+        $second.Dispose()
+    }
+}
+
 function Export-PosterFrames([string]$videoPath, [string]$caseDir) {
     if ($SkipFrameExtraction) {
         return @()
@@ -3302,6 +3456,120 @@ function Get-MaxFrameDelta($frames) {
         }
     }
 
+    if ($deltas.Count -eq 0) {
+        return $null
+    }
+
+    return [Math]::Round(($deltas | Measure-Object -Maximum).Maximum, 3)
+}
+
+function Add-InteractionBoundsEntries($value, [string]$path, $entries) {
+    if ($null -eq $value) {
+        return
+    }
+
+    if ($value -is [System.Collections.IDictionary]) {
+        foreach ($key in $value.Keys) {
+            $keyText = [string]$key
+            $childPath = if ([string]::IsNullOrWhiteSpace($path)) { $keyText } else { "$path.$keyText" }
+            $childValue = $value[$key]
+            if (($keyText -eq "Bounds" -or $keyText.EndsWith("Bounds", [StringComparison]::Ordinal)) -and
+                $childValue -is [string] -and
+                $null -ne (ConvertFrom-BoundingRectangleString $childValue)) {
+                $entries.Add([ordered]@{
+                    Name = $childPath
+                    Bounds = $childValue
+                })
+            }
+
+            Add-InteractionBoundsEntries $childValue $childPath $entries
+        }
+
+        return
+    }
+
+    if ($value -is [pscustomobject]) {
+        foreach ($property in $value.PSObject.Properties) {
+            $childPath = if ([string]::IsNullOrWhiteSpace($path)) { $property.Name } else { "$path.$($property.Name)" }
+            if (($property.Name -eq "Bounds" -or $property.Name.EndsWith("Bounds", [StringComparison]::Ordinal)) -and
+                $property.Value -is [string] -and
+                $null -ne (ConvertFrom-BoundingRectangleString $property.Value)) {
+                $entries.Add([ordered]@{
+                    Name = $childPath
+                    Bounds = $property.Value
+                })
+            }
+
+            Add-InteractionBoundsEntries $property.Value $childPath $entries
+        }
+
+        return
+    }
+
+    if ($value -is [System.Collections.IEnumerable] -and !($value -is [string])) {
+        $index = 0
+        foreach ($item in $value) {
+            $childPath = if ([string]::IsNullOrWhiteSpace($path)) { "[{0}]" -f $index } else { "{0}[{1}]" -f $path, $index }
+            Add-InteractionBoundsEntries $item $childPath $entries
+            $index++
+        }
+    }
+}
+
+function Get-InteractionBoundsEntries($interactionResult) {
+    $entries = New-Object System.Collections.Generic.List[object]
+    Add-InteractionBoundsEntries $interactionResult "" $entries
+
+    $seen = @{}
+    $unique = New-Object System.Collections.Generic.List[object]
+    foreach ($entry in $entries) {
+        $key = "{0}|{1}" -f $entry.Name, $entry.Bounds
+        if (!$seen.ContainsKey($key)) {
+            $seen[$key] = $true
+            $unique.Add($entry)
+        }
+    }
+
+    return $unique.ToArray()
+}
+
+function Get-LocalFrameDeltas($frames, $recordingResult, $interactionResult) {
+    $paths = @($frames | Where-Object { $_.Extracted } | Sort-Object Name | ForEach-Object { $_.Path })
+    if ($paths.Count -lt 2 -or $null -eq $recordingResult -or [string]::IsNullOrWhiteSpace($recordingResult.Rect)) {
+        return @()
+    }
+
+    $boundsEntries = @(Get-InteractionBoundsEntries $interactionResult)
+    if ($boundsEntries.Count -eq 0) {
+        return @()
+    }
+
+    $localDeltas = New-Object System.Collections.Generic.List[object]
+    foreach ($entry in $boundsEntries) {
+        $deltas = New-Object System.Collections.Generic.List[double]
+        for ($i = 0; $i -lt $paths.Count; $i++) {
+            for ($j = $i + 1; $j -lt $paths.Count; $j++) {
+                $delta = Compare-ImageRegionMeanDelta $paths[$i] $paths[$j] $entry.Bounds $recordingResult.Rect
+                if ($null -ne $delta) {
+                    $deltas.Add([double]$delta)
+                }
+            }
+        }
+
+        if ($deltas.Count -gt 0) {
+            $localDeltas.Add([ordered]@{
+                Name = $entry.Name
+                Bounds = $entry.Bounds
+                MaxDelta = [Math]::Round(($deltas | Measure-Object -Maximum).Maximum, 3)
+            })
+        }
+    }
+
+    return $localDeltas.ToArray()
+}
+
+function Get-MaxLocalFrameDelta($localFrameDeltas) {
+    $deltas = @($localFrameDeltas | Where-Object { $null -ne $_.MaxDelta } | ForEach-Object { [double]$_.MaxDelta })
     if ($deltas.Count -eq 0) {
         return $null
     }
@@ -3469,6 +3737,30 @@ function Test-VisualSelectionEvidence([string]$control, [string]$interactionKind
     }
 }
 
+function Test-LocalVisualEvidence($maxLocalFrameDelta) {
+    if ($null -eq $maxLocalFrameDelta) {
+        return $false
+    }
+
+    return [double]$maxLocalFrameDelta -ge 0.05
+}
+
+function Test-InteractionRequiresLocalVisualEvidence([string]$interactionKind) {
+    switch ($interactionKind) {
+        "State" { return $true }
+        "Expansion" { return $true }
+        "Value" { return $true }
+        "Selection" { return $true }
+        "Option" { return $true }
+        "Text" { return $true }
+        "Output" { return $true }
+        "Scroll" { return $true }
+        "ShellNavigation" { return $true }
+        "Breadcrumb" { return $true }
+        default { return $false }
+    }
+}
+
 function Test-OptionEvidence($interactionResult) {
     if ($null -eq $interactionResult -or !$interactionResult.Contains("OptionChanged")) {
         return $false
@@ -3574,8 +3866,8 @@ function Write-Report([string]$runDir, $results) {
     }
     $lines.Add(("Duration: ``{0}s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
     $lines.Add("")
-    $lines.Add("| Control | Status | Interaction | Recording | Dense review | Max frame delta | Notes |")
-    $lines.Add("| --- | --- | --- | --- | --- | ---: | --- |")
+    $lines.Add("| Control | Status | Interaction | Recording | Dense review | Max frame delta | Max local delta | Notes |")
+    $lines.Add("| --- | --- | --- | --- | --- | ---: | ---: | --- |")
     foreach ($result in $results) {
         $recording = Format-RelativePath $result.Recording
         $denseReview = if ($null -ne $result.DenseTransitionReview -and $result.DenseTransitionReview.Generated) {
@@ -3585,8 +3877,9 @@ function Write-Report([string]$runDir, $results) {
             ""
         }
         $delta = if ($null -eq $result.MaxFrameDelta) { "" } else { $result.MaxFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture) }
+        $localDelta = if ($null -eq $result.MaxLocalFrameDelta) { "" } else { $result.MaxLocalFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture) }
         $notes = ($result.Notes -replace "\|", "\|")
-        $lines.Add(("| {0} | {1} | {2} | ``{3}`` | ``{4}`` | {5} | {6} |" -f $result.Control, $result.Status, $result.InteractionKind, $recording, $denseReview, $delta, $notes))
+        $lines.Add(("| {0} | {1} | {2} | ``{3}`` | ``{4}`` | {5} | {6} | {7} |" -f $result.Control, $result.Status, $result.InteractionKind, $recording, $denseReview, $delta, $localDelta, $notes))
     }
 
     $reportPath = Join-Path $runDir "report.md"
@@ -3749,6 +4042,9 @@ foreach ($control in $Controls) {
     }
 
     $maxFrameDelta = Get-MaxFrameDelta $frames
+    $localFrameDeltas = Get-LocalFrameDeltas $frames $recordingResult $interactionResult
+    $maxLocalFrameDelta = Get-MaxLocalFrameDelta $localFrameDeltas
+    $localVisualEvidence = Test-LocalVisualEvidence $maxLocalFrameDelta
     $animationFrameDelta = if (Test-ControlRequiresAnimatedVisualProof $control) { Get-EarlyFrameDelta $frames } else { $null }
     $animationEvidence = Test-AnimationEvidence $control $animationFrameDelta
     $openRepeatEvidence = Test-OpenRepeatEvidence $interactionResult
@@ -3765,6 +4061,19 @@ foreach ($control in $Controls) {
     $breadcrumbEvidence = Test-BreadcrumbEvidence $interactionResult
     $preparedOpenEvidence = Test-PreparedOpenEvidence $interactionResult
     $preparedTextEvidence = Test-PreparedTextEvidence $interactionResult
+    $interactionEvidenceForKind = $false
+    switch ($interactionKind) {
+        "State" { $interactionEvidenceForKind = $stateEvidence }
+        "Expansion" { $interactionEvidenceForKind = $expansionEvidence }
+        "Value" { $interactionEvidenceForKind = $valueEvidence }
+        "Selection" { $interactionEvidenceForKind = $selectionEvidence -or $visualSelectionEvidence }
+        "Option" { $interactionEvidenceForKind = $optionEvidence }
+        "Text" { $interactionEvidenceForKind = $textEvidence }
+        "Output" { $interactionEvidenceForKind = $outputEvidence }
+        "Scroll" { $interactionEvidenceForKind = $scrollEvidence }
+        "ShellNavigation" { $interactionEvidenceForKind = $shellNavigationEvidence }
+        "Breadcrumb" { $interactionEvidenceForKind = $breadcrumbEvidence }
+    }
     if ($status -eq "Passed" -and $interactionKind -eq "Selection" -and !$selectionEvidence -and !$visualSelectionEvidence) {
         $status = "Failed"
         $notes.Add("Selection interaction did not change machine-readable selection/output and no visual selection evidence was accepted.")
@@ -3853,48 +4162,58 @@ foreach ($control in $Controls) {
         $interactionKind -ne "Static" -and
         $null -ne $maxFrameDelta -and
         $maxFrameDelta -lt 0.35) {
-        if ($interactionKind -eq "OpenRepeat" -and $openRepeatEvidence) {
-            $notes.Add("Expected open elements were detected on both opens despite low full-frame delta.")
-        }
-        elseif ($interactionKind -eq "State" -and $stateEvidence) {
-            $notes.Add("Before/after toggle state changed despite low full-frame delta.")
-        }
-        elseif ($interactionKind -eq "Expansion" -and $expansionEvidence) {
-            $notes.Add("Expanded child content was detected despite low full-frame delta.")
-        }
-        elseif ($interactionKind -eq "Value" -and $valueEvidence) {
-            $notes.Add("Target value was reached despite low full-frame delta.")
-        }
-        elseif ($interactionKind -eq "Selection" -and $selectionEvidence) {
-            $notes.Add("Selection or output evidence changed despite low full-frame delta.")
-        }
-        elseif ($interactionKind -eq "Option" -and $optionEvidence) {
-            $notes.Add("Option state changed despite low full-frame delta.")
-        }
-        elseif ($interactionKind -eq "Output" -and $outputEvidence) {
-            $notes.Add("Output text changed despite low full-frame delta.")
-        }
-        elseif ($interactionKind -eq "Text" -and $textEvidence) {
-            $notes.Add("Expected text output was detected despite low full-frame delta.")
-        }
-        elseif ($interactionKind -eq "Scroll" -and $scrollEvidence) {
-            $notes.Add("Scroll percent changed despite low full-frame delta.")
-        }
-        elseif ($interactionKind -eq "ShellNavigation" -and $shellNavigationEvidence) {
-            $notes.Add("Shell navigation expand/collapse evidence changed despite low full-frame delta.")
-        }
-        elseif ($interactionKind -eq "Breadcrumb" -and $breadcrumbEvidence) {
-            $notes.Add("Breadcrumb item collection changed despite low full-frame delta.")
-        }
-        elseif ($interactionKind -eq "PreparedOpen" -and $preparedOpenEvidence) {
-            $notes.Add("Prepared opened content was visible and anchored despite low full-frame delta.")
-        }
-        elseif ($interactionKind -eq "PreparedText" -and $preparedTextEvidence) {
-            $notes.Add("Prepared text content matched despite low full-frame delta.")
-        }
-        else {
+        if ((Test-InteractionRequiresLocalVisualEvidence $interactionKind) -and $interactionEvidenceForKind -and !$localVisualEvidence) {
             $status = "NeedsReview"
-            $notes.Add("Interactive recording produced low poster-frame delta.")
+            $notes.Add("Interactive recording produced low poster-frame delta and no local rendered change inside recorded interaction bounds.")
+        }
+        elseif ($localVisualEvidence) {
+            $notes.Add(("Local visual delta {0} was detected inside recorded interaction bounds." -f $maxLocalFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture)))
+        }
+
+        if ($status -eq "Passed") {
+            if ($interactionKind -eq "OpenRepeat" -and $openRepeatEvidence) {
+                $notes.Add("Expected open elements were detected on both opens despite low full-frame delta.")
+            }
+            elseif ($interactionKind -eq "State" -and $stateEvidence) {
+                $notes.Add("Before/after toggle state changed despite low full-frame delta.")
+            }
+            elseif ($interactionKind -eq "Expansion" -and $expansionEvidence) {
+                $notes.Add("Expanded child content was detected despite low full-frame delta.")
+            }
+            elseif ($interactionKind -eq "Value" -and $valueEvidence) {
+                $notes.Add("Target value was reached despite low full-frame delta.")
+            }
+            elseif ($interactionKind -eq "Selection" -and $selectionEvidence) {
+                $notes.Add("Selection or output evidence changed despite low full-frame delta.")
+            }
+            elseif ($interactionKind -eq "Option" -and $optionEvidence) {
+                $notes.Add("Option state changed despite low full-frame delta.")
+            }
+            elseif ($interactionKind -eq "Output" -and $outputEvidence) {
+                $notes.Add("Output text changed despite low full-frame delta.")
+            }
+            elseif ($interactionKind -eq "Text" -and $textEvidence) {
+                $notes.Add("Expected text output was detected despite low full-frame delta.")
+            }
+            elseif ($interactionKind -eq "Scroll" -and $scrollEvidence) {
+                $notes.Add("Scroll percent changed despite low full-frame delta.")
+            }
+            elseif ($interactionKind -eq "ShellNavigation" -and $shellNavigationEvidence) {
+                $notes.Add("Shell navigation expand/collapse evidence changed despite low full-frame delta.")
+            }
+            elseif ($interactionKind -eq "Breadcrumb" -and $breadcrumbEvidence) {
+                $notes.Add("Breadcrumb item collection changed despite low full-frame delta.")
+            }
+            elseif ($interactionKind -eq "PreparedOpen" -and $preparedOpenEvidence) {
+                $notes.Add("Prepared opened content was visible and anchored despite low full-frame delta.")
+            }
+            elseif ($interactionKind -eq "PreparedText" -and $preparedTextEvidence) {
+                $notes.Add("Prepared text content matched despite low full-frame delta.")
+            }
+            else {
+                $status = "NeedsReview"
+                $notes.Add("Interactive recording produced low poster-frame delta.")
+            }
         }
     }
 
@@ -3909,6 +4228,9 @@ foreach ($control in $Controls) {
         Frames = $frames
         DenseTransitionReview = $denseTransitionReview
         MaxFrameDelta = $maxFrameDelta
+        LocalFrameDeltas = $localFrameDeltas
+        MaxLocalFrameDelta = $maxLocalFrameDelta
+        LocalVisualEvidence = $localVisualEvidence
         AnimationFrameDelta = $animationFrameDelta
         AnimationEvidence = $animationEvidence
         OpenRepeatEvidence = $openRepeatEvidence
