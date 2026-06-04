@@ -1973,3 +1973,68 @@ is too small to prove an obvious user-visible state change:
   show `Design Guidance` expanded to height `250` with child rows visible,
   `Samples` expanded to height `82` with `User Dashboard` visible, and both
   groups collapsed back to height `40` with a `2` pixel following gap.
+
+## Round 55: Hardened Dark Sweep Recovery
+
+### Scope
+
+Run the hardened recorder against the dark-theme Gallery inventory and fix
+recorder issues that prevented the sweep from distinguishing real visual
+defects from harness failures.
+
+### Current Findings
+
+- The first broad dark sweep with the local visual evidence gate stopped at
+  `HyperlinkButton` because static controls with no local bounds exposed a
+  PowerShell empty-array edge case in `Get-MaxLocalFrameDelta`.
+- A focused `HyperlinkButton` rerun then showed the rendered recorder could
+  exceed the old 25 second completion timeout at 30fps even though raw frames
+  had been captured.
+- After those fixes, the broad dark sweep completed 41 controls at
+  `artifacts/gallery-recordings/20260604-072957-918/report.md`: 23 passed,
+  17 needed review, and 1 failed. The 17 `NeedsReview` rows were caused by the
+  same max-local-delta dictionary handling bug, not by missing visual changes.
+- `CommandBar` was the single real triage item. The old process-wide lookup
+  matched the shell `Settings` navigation item as second-open overflow content;
+  scoped matching correctly rejects that false positive, but WPF UIA still
+  does not expose the second-open `Settings` overflow item even while the
+  recording shows the overflow rendered.
+
+### Resolution
+
+- Made `Get-MaxLocalFrameDelta` robust for empty arrays and for the ordered
+  dictionary entries produced by the local frame delta collector.
+- Increased the rendered recording completion timeout so high-framerate
+  captures are not reported as failed while FFmpeg encoding is still finishing.
+- Scoped `CommandBar` overflow lookup to anchored candidates near the More
+  button so the shell `Settings` item cannot satisfy CommandBar evidence.
+- Added a short wait for opened UIA content after first and second open, so
+  transient popup/flyout automation trees have time to appear.
+- When `CommandBar` has local/dense overflow visual evidence but UIA misses the
+  second-open overflow item, the recorder now reports `NeedsReview` instead of
+  a false detached-geometry failure. The dense frames must be reviewed before
+  the control is marked verified.
+
+### Verification
+
+- PowerShell parser check passed for
+  `tools/visual-checks/Record-GalleryControlInteractions.ps1`.
+- Focused static route check passed after the timeout fix:
+  `artifacts/gallery-recordings/20260604-072857-852/report.md` for
+  `HyperlinkButton`.
+- Focused low-delta recovery check passed 3/3 for the small controls and
+  isolated `CommandBar` separately:
+  `artifacts/gallery-recordings/20260604-080610-543/report.md`.
+- Final focused non-pass rerun passed 17/18 with 0 failed:
+  `artifacts/gallery-recordings/20260604-081958-937/report.md`.
+- The final rerun proves the recovered local-delta guard across the previously
+  affected controls, including:
+  - `Button`: `MaxLocalFrameDelta=4.268`
+  - `NumberBox`: `MaxLocalFrameDelta=0.381`
+  - `ProgressRing`: `MaxLocalFrameDelta=13.735`
+  - `SelectorBar`: `MaxLocalFrameDelta=0.254`
+  - `NavigationView`: `MaxLocalFrameDelta=5.708`
+- `CommandBar` remains `NeedsReview`, not verified:
+  `artifacts/gallery-recordings/20260604-081958-937/CommandBar/frames/t3000.png`
+  shows the overflow visually open near the More button, while the manifest
+  records `SecondOpenElementFound=false` and requires dense-frame review.

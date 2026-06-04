@@ -688,6 +688,63 @@ function Test-OpenInteractionElementAnchored($trigger, $openElement) {
     return (Get-BoundingRectangleGap $triggerRect $openRect) -le 320.0
 }
 
+function Find-AnchoredInteractiveElementByNameInProcess([int]$processId, [string[]]$names, $anchor) {
+    $anchorRect = Get-ElementBoundingRectangle $anchor
+    if ($null -eq $anchorRect) {
+        return $null
+    }
+
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    $bestElement = $null
+    $bestGap = [double]::PositiveInfinity
+
+    foreach ($window in $windows) {
+        foreach ($name in $names) {
+            $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+                [System.Windows.Automation.AutomationElement]::NameProperty,
+                $name)
+            $found = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, $nameCondition)
+            foreach ($element in $found) {
+                try {
+                    $controlType = $element.Current.ControlType
+                    if ($controlType -ne [System.Windows.Automation.ControlType]::Button -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::CheckBox -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::DataItem -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::MenuItem -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::ListItem -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::RadioButton -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::TabItem -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::TreeItem) {
+                        continue
+                    }
+
+                    if ($element.Current.IsOffscreen) {
+                        continue
+                    }
+
+                    $rect = $element.Current.BoundingRectangle
+                    if ($rect.Width -le 0 -or $rect.Height -le 0) {
+                        continue
+                    }
+
+                    $gap = Get-BoundingRectangleGap $anchorRect $rect
+                    if ($gap -le 320.0 -and $gap -lt $bestGap) {
+                        $bestElement = $element
+                        $bestGap = $gap
+                    }
+                }
+                catch {
+                }
+            }
+        }
+    }
+
+    return $bestElement
+}
+
 function Get-ElementNativeWindowHandle($element) {
     $candidate = $element
     for ($depth = 0; $depth -lt 16 -and $null -ne $candidate; $depth++) {
@@ -2144,7 +2201,29 @@ function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [s
         return Find-ElementByNameInProcess $window.Current.ProcessId $openNames
     }
 
+    if ($control -eq "CommandBar") {
+        return Find-AnchoredInteractiveElementByNameInProcess $window.Current.ProcessId $openNames $element
+    }
+
     return Find-InteractiveElementByNameInProcess $window.Current.ProcessId $openNames
+}
+
+function Wait-ForOpenInteractionElement($window, $element, [string[]]$openNames, [string]$control, [int]$timeoutMilliseconds) {
+    if ($openNames.Count -eq 0) {
+        return $null
+    }
+
+    $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
+    do {
+        $openElement = Find-OpenInteractionElement $window $element $openNames $control
+        if ($null -ne $openElement) {
+            return $openElement
+        }
+
+        Start-Sleep -Milliseconds 100
+    } while ((Get-Date) -lt $deadline)
+
+    return $null
 }
 
 function Open-CommandBarFlyoutSecondaryCommands($window) {
@@ -2174,7 +2253,7 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     $firstOpen = Invoke-OpenElementOnce $window $control $trigger
     Start-Sleep -Milliseconds 650
     $firstOpenExpandState = Get-ExpandCollapseStateName $trigger
-    $firstOpenElement = if ($openNames.Count -eq 0) { $null } else { Find-OpenInteractionElement $window $trigger $openNames $control }
+    $firstOpenElement = if ($openNames.Count -eq 0) { $null } else { Wait-ForOpenInteractionElement $window $trigger $openNames $control 1200 }
     $firstOpenElementFound = $openNames.Count -eq 0 -or $null -ne $firstOpenElement
     $firstOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $trigger $firstOpenElement)
     $firstOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $firstOpenElement)
@@ -2189,7 +2268,7 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     $secondOpen = Invoke-OpenElementOnce $window $control $trigger
     Start-Sleep -Milliseconds 650
     $secondOpenExpandState = Get-ExpandCollapseStateName $trigger
-    $secondOpenElement = if ($openNames.Count -eq 0) { $null } else { Find-OpenInteractionElement $window $trigger $openNames $control }
+    $secondOpenElement = if ($openNames.Count -eq 0) { $null } else { Wait-ForOpenInteractionElement $window $trigger $openNames $control 1200 }
     $secondOpenElementFound = $openNames.Count -eq 0 -or $null -ne $secondOpenElement
     $secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $trigger $secondOpenElement)
     $secondOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $secondOpenElement)
@@ -3135,7 +3214,7 @@ function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$out
 }
 
 function Wait-RecordingJob($job) {
-    $timeout = [Math]::Max($DurationSeconds + 20, 25)
+    $timeout = [Math]::Max(($DurationSeconds * 3) + 45, 60)
     $completed = Wait-Job -Job $job -Timeout $timeout
     if ($null -eq $completed) {
         Stop-Job -Job $job -ErrorAction SilentlyContinue
@@ -3569,7 +3648,30 @@ function Get-LocalFrameDeltas($frames, $recordingResult, $interactionResult) {
 }
 
 function Get-MaxLocalFrameDelta($localFrameDeltas) {
-    $deltas = @($localFrameDeltas | Where-Object { $null -ne $_.MaxDelta } | ForEach-Object { [double]$_.MaxDelta })
+    $deltas = New-Object System.Collections.Generic.List[double]
+    foreach ($entry in @($localFrameDeltas)) {
+        if ($null -eq $entry) {
+            continue
+        }
+
+        $maxDelta = $null
+        if ($entry -is [System.Collections.IDictionary] -and $entry.Contains("MaxDelta")) {
+            $maxDelta = $entry["MaxDelta"]
+        }
+        else {
+            $maxDeltaProperty = $entry.PSObject.Properties["MaxDelta"]
+            if ($null -ne $maxDeltaProperty) {
+                $maxDelta = $maxDeltaProperty.Value
+            }
+        }
+
+        if ($null -eq $maxDelta) {
+            continue
+        }
+
+        $deltas.Add([double]$maxDelta)
+    }
+
     if ($deltas.Count -eq 0) {
         return $null
     }
@@ -3907,6 +4009,9 @@ foreach ($control in $Controls) {
     $recordingResult = $null
     $frames = @()
     $denseTransitionReview = $null
+    $localFrameDeltas = @()
+    $maxLocalFrameDelta = $null
+    $localVisualEvidence = $false
     $status = "Passed"
     $renderedPageArtifactAnchor = $null
     $recordingPath = Join-Path $caseDir ("{0}-{1}{2}" -f $Theme.ToLowerInvariant(), $control.ToLowerInvariant(), $extension)
@@ -3992,6 +4097,10 @@ foreach ($control in $Controls) {
             $notes.Add(("Only {0} of {1} extracted poster frames were nonblank; at least {2} are required." -f $nonBlankFrameCount, $extractedFrameCount, $minimumNonBlankFrameCount))
         }
 
+        $localFrameDeltas = Get-LocalFrameDeltas $frames $recordingResult $interactionResult
+        $maxLocalFrameDelta = Get-MaxLocalFrameDelta $localFrameDeltas
+        $localVisualEvidence = Test-LocalVisualEvidence $maxLocalFrameDelta
+
         $openRepeatGeometryFailed =
             $interactionKind -eq "OpenRepeat" -and
             $null -ne $interactionResult -and
@@ -3999,8 +4108,19 @@ foreach ($control in $Controls) {
             $interactionResult.Contains("SecondOpenElementAnchored") -and
             (!$interactionResult.FirstOpenElementAnchored -or !$interactionResult.SecondOpenElementAnchored)
         if ($openRepeatGeometryFailed) {
-            $status = "Failed"
-            $notes.Add(("Opened element was detached from trigger. Trigger={0}; first={1}; second={2}." -f $interactionResult.TriggerBounds, $interactionResult.FirstOpenElementBounds, $interactionResult.SecondOpenElementBounds))
+            if ($control -eq "CommandBar" -and
+                $interactionResult.FirstOpenElementAnchored -and
+                !$interactionResult.SecondOpenElementFound -and
+                $localVisualEvidence -and
+                $null -ne $denseTransitionReview -and
+                $denseTransitionReview.Generated) {
+                $status = "NeedsReview"
+                $notes.Add(("CommandBar recording has local/dense overflow visual evidence, but UIA did not expose an anchored second-open element. Review dense frames before marking verified. Trigger={0}; first={1}; second={2}." -f $interactionResult.TriggerBounds, $interactionResult.FirstOpenElementBounds, $interactionResult.SecondOpenElementBounds))
+            }
+            else {
+                $status = "Failed"
+                $notes.Add(("Opened element was detached from trigger. Trigger={0}; first={1}; second={2}." -f $interactionResult.TriggerBounds, $interactionResult.FirstOpenElementBounds, $interactionResult.SecondOpenElementBounds))
+            }
         }
 
         if ($null -ne $interactionResult -and $interactionResult.Contains("Invoked") -and !$interactionResult.Invoked -and !$openRepeatGeometryFailed) {
@@ -4042,9 +4162,11 @@ foreach ($control in $Controls) {
     }
 
     $maxFrameDelta = Get-MaxFrameDelta $frames
-    $localFrameDeltas = Get-LocalFrameDeltas $frames $recordingResult $interactionResult
-    $maxLocalFrameDelta = Get-MaxLocalFrameDelta $localFrameDeltas
-    $localVisualEvidence = Test-LocalVisualEvidence $maxLocalFrameDelta
+    if ($null -eq $maxLocalFrameDelta) {
+        $localFrameDeltas = Get-LocalFrameDeltas $frames $recordingResult $interactionResult
+        $maxLocalFrameDelta = Get-MaxLocalFrameDelta $localFrameDeltas
+        $localVisualEvidence = Test-LocalVisualEvidence $maxLocalFrameDelta
+    }
     $animationFrameDelta = if (Test-ControlRequiresAnimatedVisualProof $control) { Get-EarlyFrameDelta $frames } else { $null }
     $animationEvidence = Test-AnimationEvidence $control $animationFrameDelta
     $openRepeatEvidence = Test-OpenRepeatEvidence $interactionResult
