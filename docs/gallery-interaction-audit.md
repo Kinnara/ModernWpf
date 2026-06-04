@@ -1704,3 +1704,65 @@ pages instead of accepting route/static proof:
   - `GalleryInteractionRecorderDoesNotTreatNoOpExpandAsInvoked`
 - Focused rendered menu test passed:
   `StyledWpfMenuItemCanOpenTopLevelSubmenuThroughAutomation`.
+
+## Round 50: Official WPF Selection/Text Coverage Expansion
+
+### Scope
+
+Extend official WPF Gallery recordings beyond static page proof for:
+
+- `ListBox`
+- `ListView`
+- `DataGrid`
+- `Calendar`
+- `ToolTip`
+- `RichTextEdit`
+
+### Current Findings
+
+- The previous official WPF static sweep could still pass `ListBox`,
+  `ListView`, `DataGrid`, `Calendar`, `ToolTip`, and `RichTextEdit` without
+  selecting, opening, hovering, or typing in the control.
+- The new interaction batch proved real selection changes for `ListBox`,
+  `ListView`, and `Calendar`.
+- `DataGrid` visually selected the first row, but WPF UIA kept the selected
+  row's `SelectionItemPattern.IsSelected` value stale. The recorder now keeps
+  that case narrow and accepts a high frame-delta visual selection signal only
+  for `DataGrid`.
+- `ToolTip` remains failing: the recorder can locate the button, but the
+  current synthetic hover/click path does not produce a tooltip popup or even
+  a visible hover-state delta in the dense transition sheet.
+- `RichTextEdit` remains failing: the recorder focuses the `RichTextBox`, but
+  the current clipboard, SendKeys, Unicode SendInput, and virtual-key fallback
+  paths do not produce visible or UIA-readable text.
+
+### Resolution
+
+- Added official WPF selection interactions for `ListBox`, `ListView`,
+  `DataGrid`, and `Calendar`.
+- Added container-based selection targeting for official WPF controls without
+  `GallerySample_*` anchors.
+- Added DataGrid-only visual selection evidence from recording frame delta so
+  visibly selected rows no longer sit in manual review solely because WPF UIA
+  keeps row selection stale.
+- Added preliminary `ToolTip` hover/click open-repeat coverage and
+  `RichTextEdit` text-entry coverage. These are intentionally left failing
+  until a recording proves the real interaction behavior.
+- Added source-shape tests guarding the new selection, tooltip, and
+  rich-text recorder paths.
+
+### Verification
+
+- Focused source-shape tests passed for:
+  - `GalleryInteractionRecorderExercisesOfficialWpfSelectionAndTextControls`
+  - `GalleryInteractionRecorderHoverOpensOfficialWpfToolTip`
+- Expanded interaction batch:
+  `artifacts/gallery-recordings/20260604-050301-561/report.md`.
+  `ListBox`, `ListView`, and `Calendar` passed. `DataGrid` needed review
+  before the visual-selection evidence path was added. `ToolTip` and
+  `RichTextEdit` failed and remain open.
+- Focused `DataGrid` verification passed with visual selection evidence:
+  `artifacts/gallery-recordings/20260604-051818-365/report.md`.
+- Known unresolved recordings:
+  - `artifacts/gallery-recordings/20260604-051414-648/ToolTip/analysis/dense-transition-review.jpg`
+  - `artifacts/gallery-recordings/20260604-051414-648/RichTextEdit/dark-richtextedit.mp4`

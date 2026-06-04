@@ -115,6 +115,15 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260604-040103-946/report.md` | ContentDialog, Flyout, Popup, CommandBarFlyout | 4 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-044508-719/report.md` | Menu | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-044721-837/report.md` | Expander, TreeView, Menu, TabControl, DatePicker, Calendar, TextBox, PasswordBox | 8 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-050301-561/report.md` | ListBox, ListView, DataGrid, Calendar, ToolTip, RichTextEdit | 3 passed, 1 needs review, 2 failed |
+| `artifacts/gallery-recordings/20260604-051818-365/report.md` | DataGrid | 1 passed, 0 needs review, 0 failed |
+
+The `20260604-050301-561` run is intentionally not treated as a green sweep:
+it exposed two remaining interaction gaps that the older static sweep missed.
+`ToolTip` did not open under the current synthetic hover/click path, and
+`RichTextEdit` focused but did not receive text input through the recorder.
+Those controls remain open follow-ups until a recording proves the actual
+interaction behavior.
 
 ## Current Full-Inventory Sweep
 
@@ -155,7 +164,10 @@ tree. All 41 controls in the current recorder inventory passed with no
 The ModernWpf recorder now accepts nonblank rendered page artifacts for official
 WPF Gallery pages that do not expose page-specific `GallerySample_*` anchors.
 The expansion covers the 33 official All Controls catalog pages that were
-missing from the ModernWpf control recorder inventory.
+missing from the ModernWpf control recorder inventory. This sweep is no longer
+accepted as sufficient by itself for controls where a user interaction is
+available; newer rounds add selection, open-repeat, expansion, and text-entry
+proof on top of these static route captures.
 
 ### Dark Theme
 

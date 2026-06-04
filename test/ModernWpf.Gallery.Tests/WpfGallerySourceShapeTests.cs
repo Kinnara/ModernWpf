@@ -3566,6 +3566,105 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryInteractionRecorderExercisesOfficialWpfSelectionAndTextControls()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsSelectionInteraction([string]$control)",
+                "\"Calendar\" { return $true }",
+                "\"DataGrid\" { return $true }",
+                "\"ListBox\" { return $true }",
+                "\"ListView\" { return $true }");
+            AssertContainsInOrder(
+                source,
+                "function Get-SelectionInteractionContainerName([string]$control)",
+                "\"Calendar\" { return \"Default\" }",
+                "\"DataGrid\" { return \"Sample Data Grid\" }",
+                "\"ListBox\" { return \"Color ListBox\" }",
+                "\"ListView\" { return \"Basic ListView\" }");
+            AssertContainsInOrder(
+                source,
+                "function Find-FirstSelectableDescendant($element, [bool]$preferUnselected = $true)",
+                "[System.Windows.Automation.SelectionItemPattern]::Pattern",
+                "if (!$preferUnselected -or !$pattern.Current.IsSelected)",
+                "return $candidate");
+            AssertContainsInOrder(
+                source,
+                "function Get-SelectionContainerSelectedItemNames($element)",
+                "[System.Windows.Automation.SelectionPattern]::Pattern",
+                "$pattern.Current.GetSelection()",
+                "AfterContainerSelection = $afterContainerSelection");
+            AssertContainsInOrder(
+                source,
+                "function Test-VisualSelectionEvidence([string]$control, [string]$interactionKind, $maxFrameDelta)",
+                "$control -ne \"DataGrid\"",
+                "return [double]$maxFrameDelta -ge 0.75",
+                "$visualSelectionEvidence = Test-VisualSelectionEvidence $control $interactionKind $maxFrameDelta",
+                "VisualSelectionEvidence = $visualSelectionEvidence");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsTextInteraction([string]$control)",
+                "\"RichTextEdit\" { return $true }",
+                "function Get-TextInteractionInput([string]$control)",
+                "\"RichTextEdit\" { return \"ModernWpf rich text\" }",
+                "function Get-TextInteractionTargetName([string]$control)",
+                "\"RichTextEdit\" { return \"simple rich text editor\" }");
+            AssertContainsInOrder(
+                source,
+                "public static void PressCtrlV()",
+                "KeyPress(0x56);",
+                "private static void TypeUnicodeChar(char ch)",
+                "KEYEVENTF_UNICODE",
+                "Set-Clipboard -Value $text",
+                "[GalleryRecordingNative]::PressCtrlV()",
+                "[GalleryRecordingNative]::TypeText($text)",
+                "[GalleryRecordingNative]::TypeVirtualKeyText($text)");
+        }
+
+        [TestMethod]
+        public void GalleryInteractionRecorderHoverOpensOfficialWpfToolTip()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "public static void MoveCursor(int x, int y)",
+                "SetCursorPos(x, y);",
+                "SendMouseInput(MOUSEEVENTF_MOVE);");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsOpenInteraction([string]$control)",
+                "\"ToolTip\" { return $true }",
+                "function Get-OpenInteractionNames([string]$control)",
+                "\"ToolTip\" { return @(\"Simple ToolTip\") }");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-OpenElementOnce($window, [string]$control, $element)",
+                "if ($control -eq \"ToolTip\")",
+                "[GalleryRecordingNative]::MoveCursor([Math]::Max(1, $center.X - 160), [Math]::Max(1, $center.Y - 160))",
+                "[GalleryRecordingNative]::MoveCursor($center.X, $center.Y)",
+                "[GalleryRecordingNative]::Click($center.X, $center.Y)");
+            AssertContainsInOrder(
+                source,
+                "function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleElement)",
+                "if ($control -eq \"ToolTip\")",
+                "return Find-ElementByNameInProcess $window.Current.ProcessId @(\"TooltipButton\")",
+                "function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [string]$control)",
+                "if ($control -eq \"ToolTip\")",
+                "return Find-ElementByNameInProcess $window.Current.ProcessId $openNames");
+        }
+
+        [TestMethod]
         public void GalleryVisualChecksTypesAutoSuggestBoxAndChoosesSuggestion()
         {
             var source = File.ReadAllText(Path.Combine(
