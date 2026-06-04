@@ -19,6 +19,20 @@ harness defect as well as a control defect. The harness must be tightened so
 the same failure class is reviewable or rejected before the affected control is
 marked verified again.
 
+User-provided recordings are authoritative regression evidence. When a supplied
+clip shows multiple visible problems, each problem must be enumerated in the
+round notes before implementation starts, then closed by product code,
+recorder/parity detection, or an explicit still-open defect. A green recording
+report that did not sample or analyze the visible failure window is a false
+pass, not verification.
+
+The effective goal is therefore stricter than "record and pass": every obvious
+issue visible during real interaction must either be fixed in the product or
+kept as an open tracked defect. A recording pass, parity pass, or UIA pass is
+not accepted when it misses visible flicker, wrong placement, missing content,
+blank/stale regions, broken navigation expansion, or a crash that can be seen
+in the source clip.
+
 No control can move from `NeedsReview` to verified while a source clip for the
 same interaction contains an unmapped visible defect. Each visible defect must
 be linked to a product fix, a recorder/parity guard that fails on that class of
@@ -47,6 +61,9 @@ issue, or an explicit remaining follow-up item in the audit.
   parity checks would miss an obvious defect visible in the source clip. Add
   dense transition evidence or a control-specific frame/geometry assertion
   before accepting that control again.
+- A fix round is incomplete until the defect inventory says how each visible
+  issue would now be caught: automated fail-fast check, dense frame sheet,
+  geometry/parity assertion, crash detection, or explicit still-open follow-up.
 - UIA success alone is not accepted as visual proof for popup/flyout/menu
   interactions. The recording report must include either automated geometry or
   frame evidence, or the control remains `NeedsReview`.
@@ -106,6 +123,20 @@ passes accepted:
 - `MenuFlyout` and shared `FlyoutBase` popup HWNDs now receive explicit
   absolute placement when WPF opens the underlying popup at screen origin.
 
+Round 53 closed the SelectorBar false-pass gap:
+
+- `SelectorBar` now exposes its item host through a `SelectorBarItemsControl`
+  automation peer, so external UIA can select the generated `SelectorBarItem`
+  peers by `SelectionItemPattern` and report `TabItem` control type.
+- The Gallery SelectorBar sample keeps its visible adapted item template; tests
+  assert the local template renders the icon, text, and selection pill instead
+  of relying on UIA state only.
+- SelectorBar selection recordings now fail if automation state changes but no
+  rendered poster-frame delta is detected. The earlier `NeedsReview` run had
+  `MaxFrameDelta=0`, empty before/after target selection, empty sample status,
+  and `SelectionChanged=false`; the hardened path converted that class to a
+  failed result before the product fix was accepted.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -119,6 +150,8 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260604-051818-365/report.md` | DataGrid | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-053726-512/report.md` | ToolTip, RichTextEdit | 2 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-054021-152/report.md` | CommandBarFlyout, MenuFlyout, Flyout, Popup, DropDownButton, SplitButton, ToggleSplitButton, Menu, DatePicker | 9 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-061652-261/report.md` | SelectorBar | 0 passed, 0 needs review, 1 failed |
+| `artifacts/gallery-recordings/20260604-064455-670/report.md` | SelectorBar | 1 passed, 0 needs review, 0 failed |
 
 The `20260604-050301-561` run is intentionally not treated as a green sweep:
 it exposed two remaining interaction gaps that the older static sweep missed.
@@ -224,7 +257,7 @@ proof on top of these static route captures.
 | Collections | GridView | `item/GridView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-055524-741/GridView/dark-gridview.mp4` | Manifest records `You clicked Item 1.` after item activation; reviewed frame `t7500.png` shows the output text. |
 | Collections | ItemsRepeater | `item/ItemsRepeater` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260603-181238-897/ItemsRepeater/dark-itemsrepeater.mp4` | Manifest records the virtualizing `ScrollViewer` vertical scroll percent from `0` to `55`; reviewed contact sheet shows the visible item range move from `0`-`9` to `265`-`279`. |
 | Navigation | BreadcrumbBar | `item/BreadcrumbBar` | Recorded | Recorder/sample anchor fixed | `artifacts/gallery-recordings/20260603-091005-125/BreadcrumbBar/dark-breadcrumbbar.mp4` | Manifest proves clicking `Folder1` in the templated breadcrumb removed `Folder2` and `Folder3`; reviewed contact sheet shows the before/after item collection. |
-| Navigation | SelectorBar | `item/SelectorBar` | Recorded | Sample automation status fixed | `artifacts/gallery-recordings/20260603-091005-125/SelectorBar/dark-selectorbar.mp4` | Manifest proves selection status changed from `Recent` to `Shared`; reviewed contact sheet shows the selected indicator moving to `Shared`. |
+| Navigation | SelectorBar | `item/SelectorBar` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260604-064455-670/SelectorBar/dark-selectorbar.mp4` | Manifest records `Shared` changing from `Unselected` to `Selected`, sample status changing to `Shared`, and `VisualSelectionEvidence=true` with frame delta `0.003`; reviewed `t2000.png`/`t3000.png` shows the selected pill moving from no basic item to `Shared`. |
 | Navigation | NavigationView | `item/NavigationView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-091005-125/NavigationView/dark-navigationview.mp4` | Manifest proves `Menu Item2` changed from unselected to selected and `Sample Page 2` appeared; reviewed contact sheet shows the selected item/header change. |
 | Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/ContentDialog/dark-contentdialog.mp4` | Manifest records first and second dialog opens; reviewed contact sheet shows the dialog visible on sampled frames. |
 | Dialogs & flyouts | Flyout | `item/Flyout` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/Flyout/dark-flyout.mp4` | Manifest records first and second flyout opens; reviewed contact sheet shows the confirmation flyout on sampled frames. |

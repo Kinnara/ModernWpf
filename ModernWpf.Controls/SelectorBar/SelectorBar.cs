@@ -12,7 +12,7 @@ using ModernWpf.Controls.Primitives;
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Items))]
-    [TemplatePart(Name = ItemsViewName, Type = typeof(ItemsControl))]
+    [TemplatePart(Name = ItemsViewName, Type = typeof(SelectorBarItemsControl))]
     public partial class SelectorBar : Control
     {
         private const string ItemsViewName = "PART_ItemsView";

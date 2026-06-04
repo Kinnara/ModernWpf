@@ -93,6 +93,8 @@ public class SelectorBarApiTests
             Assert.AreEqual(8.0, contentStack.Spacing);
             Assert.AreEqual(0.0, selectionVisual.Opacity);
             Assert.AreEqual(1.0, commonVisual.StrokeThickness);
+            Assert.IsTrue(root.Children.IndexOf(commonVisual) < root.Children.IndexOf(contentStack));
+            Assert.IsTrue(root.Children.IndexOf(commonVisual) < root.Children.IndexOf(selectionVisual));
         });
     }
 
@@ -240,6 +242,32 @@ public class SelectorBarApiTests
             AssertStateSetterDynamicResource(root, "DisabledStates", "Disabled", "PART_ContainerRoot.Background", "SelectorBarItemBackgroundDisabled");
             AssertStateSetterDynamicResource(root, "DisabledStates", "Disabled", "PART_TextVisual.Foreground", "SelectorBarItemForegroundDisabled");
             AssertStateSetterDynamicResource(root, "DisabledStates", "Disabled", "PART_SelectionVisual.Fill", "SelectorBarItemDisabledPillFill");
+        });
+    }
+
+    [TestMethod]
+    public void SelectorBarTemplateHostsItemsAsSelectorBarItemContainers()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var selectorBar = new ModernWpf.Controls.SelectorBar();
+            var recent = new SelectorBarItem { Text = "Recent" };
+            var shared = new SelectorBarItem { Text = "Shared" };
+            selectorBar.Items.Add(recent);
+            selectorBar.Items.Add(shared);
+
+            using var host = new TestWindowHost(selectorBar, width: 400, height: 120);
+
+            var itemsView = GetNamedDescendant<SelectorBarItemsControl>(selectorBar, "PART_ItemsView");
+            var itemsViewPeer = FrameworkElementAutomationPeer.CreatePeerForElement(itemsView);
+            var itemPeer = itemsViewPeer.GetChildren()
+                .OfType<ModernWpf.Controls.SelectorBarItemsControlItemAutomationPeer>()
+                .Single(peer => peer.GetName() == "Shared");
+            var selectionItemProvider = (ISelectionItemProvider)itemPeer.GetPattern(PatternInterface.SelectionItem);
+            selectionItemProvider.Select();
+
+            Assert.AreSame(shared, selectorBar.SelectedItem);
+            Assert.AreEqual(AutomationControlType.TabItem, itemPeer.GetAutomationControlType());
         });
     }
 

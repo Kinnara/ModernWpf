@@ -25,6 +25,7 @@ Find and fix WPF Gallery issues that appear during real user interaction, with e
 | Fixed in round 6 | SplitButton and ToggleSplitButton click-open checks | Opening the secondary flyout target needs a dedicated path; a naive center click invokes the primary action, while recursive UIA popup searches hang. | Round 5 intentionally left these out; round 6 uses a bounded secondary-segment click and visual-delta verification without walking the popup UIA tree. |
 | Fixed in round 20 | Gallery shell NavigationView expanded layout | Repeated click sequences could still leave an expanded parent consuming a large blank pane area while child rows were missing or pushed away. | Earlier shell checks asserted expansion state and a loose minimum height, but did not require visible child rows, bounded expanded height, or bounded sibling spacing. |
 | Fixed in round 27 | CommandBarFlyout interaction visual check | The harness reported CommandBarFlyout open interaction as passed while its saved open crop contained no popup pixels and did not prove the ellipsis secondary commands. | Main-window captures miss WPF popup HWNDs, and the old check accepted primary command UIA like `Share` without opening `MoreButton` or capturing the popup window. |
+| Fixed in round 53 | SelectorBar selection recording | SelectorBar could be accepted from automation state or left at `NeedsReview` while the visible item template was blank or no selection indicator changed in the recording. | The recorder did not require rendered frame evidence for SelectorBar selection, and the external UIA tree did not expose generated item peers as selectable `TabItem`s. |
 
 ## Round 1: NavigationView Click Expansion
 
@@ -1855,3 +1856,55 @@ success:
   - `artifacts/gallery-recordings/20260604-054021-152/ToggleSplitButton/analysis/dense-transition-review.jpg`
   - `artifacts/gallery-recordings/20260604-054021-152/Menu/analysis/dense-transition-review.jpg`
   - `artifacts/gallery-recordings/20260604-054021-152/DatePicker/analysis/dense-transition-review.jpg`
+
+## Round 53: SelectorBar Recording False Pass
+
+### Scope
+
+Close the SelectorBar recording gap found while continuing the control sweep:
+
+- the basic SelectorBar sample must remain visibly rendered;
+- selecting `Shared` must work through the same external UIA path used by the
+  recorder;
+- the recorder must fail a SelectorBar selection run if UIA state changes but
+  poster frames show no rendered selection change.
+
+### Current Findings
+
+- `artifacts/gallery-recordings/20260604-055110-572/report.md` left
+  `SelectorBar` at `NeedsReview` with `MaxFrameDelta=0`, empty target
+  selection fields, empty sample status, and `SelectionChanged=false`.
+- The first hardened repro,
+  `artifacts/gallery-recordings/20260604-061652-261/report.md`, correctly
+  failed the same no-change class instead of accepting a manual-review pass.
+- A temporary default-template direction exposed why UIA-only evidence is not
+  enough: automation could change selection while the Gallery SelectorBars were
+  visibly blank. This round restores the visible Gallery item template and
+  keeps the shared control automation fix.
+
+### Resolution
+
+- Added `SelectorBarItemsControl` so the template's internal items host exposes
+  item peers with `SelectionItemPattern`, `TabItem` control type, and the
+  sample item's automation ID.
+- Kept the Gallery SelectorBar sample's adapted visible item template and
+  covered it with runtime assertions for the rendered icon, text, and selection
+  pill.
+- Hardened `Record-GalleryControlInteractions.ps1` so `SelectorBar` selection
+  requires nonzero rendered poster-frame evidence in addition to machine
+  selection/output evidence.
+
+### Verification
+
+- Focused tests:
+  - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~SelectorBarApiTests" --no-restore`: 9 passed
+  - `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter "FullyQualifiedName~SelectorBarSampleMatchesWinUIGalleryExamples" --no-restore`: 1 passed on net8 and 1 passed on net10
+- Focused recording:
+  `artifacts/gallery-recordings/20260604-064455-670/report.md` passed with
+  `BeforeTargetSelection=Unselected`, `AfterTargetSelection=Selected`,
+  `AfterSampleStatus=Shared`, `VisualSelectionEvidence=true`, and
+  `MaxFrameDelta=0.003`.
+- Reviewed frames:
+  `artifacts/gallery-recordings/20260604-064455-670/SelectorBar/frames/t2000.png`
+  shows no basic item selected before the click; `t3000.png` shows the blue
+  selected pill under `Shared`.

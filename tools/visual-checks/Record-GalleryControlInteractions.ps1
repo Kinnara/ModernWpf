@@ -3458,11 +3458,15 @@ function Test-SelectionEvidence($interactionResult) {
 }
 
 function Test-VisualSelectionEvidence([string]$control, [string]$interactionKind, $maxFrameDelta) {
-    if ($control -ne "DataGrid" -or $interactionKind -ne "Selection" -or $null -eq $maxFrameDelta) {
+    if ($interactionKind -ne "Selection" -or $null -eq $maxFrameDelta) {
         return $false
     }
 
-    return [double]$maxFrameDelta -ge 0.75
+    switch ($control) {
+        "DataGrid" { return [double]$maxFrameDelta -ge 0.75 }
+        "SelectorBar" { return [double]$maxFrameDelta -gt 0.0 }
+        default { return $false }
+    }
 }
 
 function Test-OptionEvidence($interactionResult) {
@@ -3762,8 +3766,13 @@ foreach ($control in $Controls) {
     $preparedOpenEvidence = Test-PreparedOpenEvidence $interactionResult
     $preparedTextEvidence = Test-PreparedTextEvidence $interactionResult
     if ($status -eq "Passed" -and $interactionKind -eq "Selection" -and !$selectionEvidence -and !$visualSelectionEvidence) {
-        $status = "NeedsReview"
-        $notes.Add("Machine-readable selection or output evidence did not change; manual frame review is required.")
+        $status = "Failed"
+        $notes.Add("Selection interaction did not change machine-readable selection/output and no visual selection evidence was accepted.")
+    }
+
+    if ($status -eq "Passed" -and $interactionKind -eq "Selection" -and $control -eq "SelectorBar" -and !$visualSelectionEvidence) {
+        $status = "Failed"
+        $notes.Add("SelectorBar selection changed through automation but no rendered frame change was detected.")
     }
 
     if ($status -eq "Passed" -and $interactionKind -eq "Selection" -and !$selectionEvidence -and $visualSelectionEvidence) {

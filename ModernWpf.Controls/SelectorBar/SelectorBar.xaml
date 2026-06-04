@@ -66,19 +66,19 @@
                             HorizontalScrollBarVisibility="Auto"
                             VerticalScrollBarVisibility="Disabled"
                             Focusable="False">
-                            <ItemsControl
+                            <local:SelectorBarItemsControl
                                 x:Name="PART_ItemsView"
                                 ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Items}"
                                 MaxWidth="{TemplateBinding MaxWidth}"
                                 MaxHeight="{TemplateBinding MaxHeight}"
                                 Padding="{TemplateBinding Padding}"
                                 KeyboardNavigation.TabNavigation="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(KeyboardNavigation.TabNavigation)}">
-                                <ItemsControl.ItemsPanel>
+                                <local:SelectorBarItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <StackPanel Orientation="Horizontal" />
                                     </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                            </ItemsControl>
+                                </local:SelectorBarItemsControl.ItemsPanel>
+                            </local:SelectorBarItemsControl>
                         </ScrollViewer>
                     </ui:GridEx>
                 </ControlTemplate>
@@ -179,6 +179,19 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
+                        <Rectangle
+                            x:Name="PART_CommonVisual"
+                            Grid.RowSpan="2"
+                            Grid.ColumnSpan="2"
+                            Fill="{DynamicResource SelectorBarItemBackground}"
+                            Stroke="{DynamicResource SelectorBarItemBorderBrush}"
+                            StrokeThickness="{Binding Source={StaticResource SelectorBarSelectedInnerThickness}, Path=Left}"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            IsHitTestVisible="False"
+                            RadiusX="{Binding CornerRadius.TopLeft, RelativeSource={RelativeSource TemplatedParent}}"
+                            RadiusY="{Binding CornerRadius.BottomRight, RelativeSource={RelativeSource TemplatedParent}}" />
+
                         <ui:StackPanelEx
                             Grid.Column="1"
                             Orientation="Horizontal"
@@ -224,19 +237,6 @@
                                 <ScaleTransform x:Name="PillTransform" ScaleX="1" />
                             </Rectangle.RenderTransform>
                         </Rectangle>
-
-                        <Rectangle
-                            x:Name="PART_CommonVisual"
-                            Grid.RowSpan="2"
-                            Grid.ColumnSpan="2"
-                            Fill="{DynamicResource SelectorBarItemBackground}"
-                            Stroke="{DynamicResource SelectorBarItemBorderBrush}"
-                            StrokeThickness="{Binding Source={StaticResource SelectorBarSelectedInnerThickness}, Path=Left}"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            IsHitTestVisible="False"
-                            RadiusX="{Binding CornerRadius.TopLeft, RelativeSource={RelativeSource TemplatedParent}}"
-                            RadiusY="{Binding CornerRadius.BottomRight, RelativeSource={RelativeSource TemplatedParent}}" />
                     </ui:GridEx>
                 </ControlTemplate>
             </Setter.Value>

@@ -779,6 +779,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertSelectorBarItem(selectorBar1.Items[0], "SelectorBarItemRecent", "Recent", Mux.Symbol.Clock, false);
                     AssertSelectorBarItem(selectorBar1.Items[1], "SelectorBarItemShared", "Shared", Mux.Symbol.Share, false);
                     AssertSelectorBarItem(selectorBar1.Items[2], "SelectorBarItemFavorites", "Favorites", Mux.Symbol.OutlineStar, false);
+                    AssertSelectorBarItemUsesVisibleGalleryTemplate(selectorBar1.Items[1]);
                     RaiseSelectorBarItemClick(selectorBar1.Items[1]);
                     WpfTestHost.DoEvents();
                     Assert.AreSame(selectorBar1.Items[1], selectorBar1.SelectedItem);
@@ -4565,6 +4566,32 @@ namespace ModernWpf.Gallery.Tests
             {
                 Assert.IsNull(item.Icon);
             }
+        }
+
+        private static void AssertSelectorBarItemUsesVisibleGalleryTemplate(Mux.SelectorBarItem item)
+        {
+            Assert.AreEqual(
+                BaseValueSource.Local,
+                DependencyPropertyHelper.GetValueSource(item, Control.TemplateProperty).BaseValueSource,
+                "Gallery SelectorBar samples should keep their visible adapted item template.");
+            Assert.IsInstanceOfType(item.Foreground, typeof(SolidColorBrush));
+            Assert.IsTrue(((SolidColorBrush)item.Foreground).Color.A > 0, "Gallery SelectorBar foreground should be visible.");
+            item.ApplyTemplate();
+            item.UpdateLayout();
+
+            var itemPeer = FrameworkElementAutomationPeer.CreatePeerForElement(item);
+            Assert.IsNotNull(itemPeer);
+            Assert.IsNotNull(itemPeer.GetPattern(PatternInterface.SelectionItem));
+
+            var iconVisual = FindDescendants<ContentPresenter>(item).FirstOrDefault(presenter => ReferenceEquals(presenter.Content, item.Icon));
+            var textVisual = FindDescendants<TextBlock>(item).FirstOrDefault(textBlock => textBlock.Text == item.Text);
+            var selectionVisual = item.Template.FindName("SelectionPill", item) as System.Windows.Shapes.Rectangle;
+            Assert.IsNotNull(iconVisual, "SelectorBar item icon presenter should be rendered.");
+            Assert.IsNotNull(textVisual, "SelectorBar item text visual should be rendered.");
+            Assert.IsNotNull(selectionVisual, "SelectorBar item selection pill should be present.");
+            Assert.IsTrue(textVisual.ActualWidth > 0, "SelectorBar text visual should be rendered.");
+            Assert.IsTrue(iconVisual.ActualWidth > 0, "SelectorBar icon visual should be rendered.");
+            Assert.IsTrue(selectionVisual.ActualWidth > 0, "SelectorBar selection visual should be measured.");
         }
 
         private static void RaiseSelectorBarItemClick(Mux.SelectorBarItem item)
