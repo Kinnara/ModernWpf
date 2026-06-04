@@ -428,10 +428,10 @@
                                 x:Name="OverflowPopup"
                                 AllowsTransparency="true"
                                 Placement="Custom"
-                                IsOpen="{Binding Path=IsOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                IsOpen="{Binding Path=IsOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                 StaysOpen="True"
                                 Focusable="false"
-                                PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
+                                PopupAnimation="None">
                                 <Grid
                                     x:Name="OverflowContentRoot"
                                     MinWidth="{DynamicResource CommandBarOverflowMinWidth}"

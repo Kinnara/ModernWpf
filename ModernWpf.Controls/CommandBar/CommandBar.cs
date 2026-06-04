@@ -60,6 +60,7 @@ namespace ModernWpf.Controls
                 m_inputModeUsedToOpen = AppBarButtonInputMode.Default;
             }
 
+            UpdateOverflowPopupVisibility(isOpen);
             UpdateCommandOverflowStyleParams();
             UpdateTemplateSettings();
             UpdateOverflowPresenterVisualState(true);
@@ -158,6 +159,12 @@ namespace ModernWpf.Controls
             {
                 AutomationProperties.SetName(m_moreButton, Strings.AppBarMoreButtonName);
                 UpdateMoreButtonToolTip();
+
+                if (m_moreButton is ToggleButton moreToggleButton)
+                {
+                    moreToggleButton.Checked += OnMoreButtonChecked;
+                    moreToggleButton.Unchecked += OnMoreButtonUnchecked;
+                }
             }
 
             if (m_overflowPopup != null)
@@ -168,7 +175,13 @@ namespace ModernWpf.Controls
                 m_overflowPopup.Closed += OnOverflowPopupClosed;
             }
 
+            if (m_overflowContentRoot != null)
+            {
+                m_overflowContentRoot.PreviewKeyDown += OnOverflowContentRootPreviewKeyDown;
+            }
+
             AttachCommandElementsToPanels();
+            UpdateOverflowPopupVisibility(IsOpen);
             UpdateUI(false);
         }
 
@@ -227,6 +240,12 @@ namespace ModernWpf.Controls
         {
             if (m_moreButton != null)
             {
+                if (m_moreButton is ToggleButton moreToggleButton)
+                {
+                    moreToggleButton.Checked -= OnMoreButtonChecked;
+                    moreToggleButton.Unchecked -= OnMoreButtonUnchecked;
+                }
+
                 m_moreButton.ClearValue(ToolTipProperty);
             }
 
@@ -242,6 +261,11 @@ namespace ModernWpf.Controls
                 m_overflowPopup.ClearValue(CustomPopupPlacementHelper.PlacementProperty);
                 m_overflowPopup.Opened -= OnOverflowPopupOpened;
                 m_overflowPopup.Closed -= OnOverflowPopupClosed;
+            }
+
+            if (m_overflowContentRoot != null)
+            {
+                m_overflowContentRoot.PreviewKeyDown -= OnOverflowContentRootPreviewKeyDown;
             }
         }
 
@@ -608,9 +632,64 @@ namespace ModernWpf.Controls
 
         private void OnOverflowPopupClosed(object sender, EventArgs e)
         {
+            if (IsOpen)
+            {
+                SetCurrentValue(IsOpenProperty, false);
+            }
+
             UpdateTemplateSettings();
             UpdateOverflowPresenterVisualState(true);
             Closed?.Invoke(this, null);
+        }
+
+        private void OnMoreButtonChecked(object sender, RoutedEventArgs e)
+        {
+            if (!IsOpen)
+            {
+                SetCurrentValue(IsOpenProperty, true);
+            }
+        }
+
+        private void OnMoreButtonUnchecked(object sender, RoutedEventArgs e)
+        {
+            if (IsOpen)
+            {
+                SetCurrentValue(IsOpenProperty, false);
+            }
+        }
+
+        private void OnOverflowContentRootPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape && IsOpen)
+            {
+                SetCurrentValue(IsOpenProperty, false);
+                e.Handled = true;
+            }
+        }
+
+        private void UpdateOverflowPopupVisibility(bool isOpen)
+        {
+            if (m_overflowContentRoot != null)
+            {
+                m_overflowContentRoot.Visibility = isOpen ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            if (m_overflowPopup == null)
+            {
+                return;
+            }
+
+            if (isOpen)
+            {
+                if (!m_overflowPopup.IsOpen)
+                {
+                    m_overflowPopup.SetCurrentValue(Popup.IsOpenProperty, true);
+                }
+            }
+            else if (m_overflowPopup.IsOpen)
+            {
+                m_overflowPopup.SetCurrentValue(Popup.IsOpenProperty, false);
+            }
         }
 
         private CustomPopupPlacement[] PositionOverflowPopup(Size popupSize, Size targetSize, Point offset)

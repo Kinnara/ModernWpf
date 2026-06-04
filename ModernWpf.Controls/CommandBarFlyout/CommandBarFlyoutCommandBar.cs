@@ -126,6 +126,8 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnIsOpenChanged(bool isOpen)
         {
+            UpdateOverflowPopupVisibility(isOpen);
+
             if (isOpen)
             {
                 StopCloseAnimation();
@@ -210,6 +212,12 @@ namespace ModernWpf.Controls.Primitives
             if (m_moreButton != null)
             {
                 m_moreButton.SetBinding(System.Windows.Controls.Border.CornerRadiusProperty, new Binding(nameof(CornerRadius)) { Source = this, Mode = BindingMode.OneWay });
+
+                if (m_moreButton is ToggleButton moreToggleButton)
+                {
+                    moreToggleButton.Checked += MoreButtonChecked;
+                    moreToggleButton.Unchecked += MoreButtonUnchecked;
+                }
             }
 
             if (m_overflowPopup is PopupEx popupEx)
@@ -223,6 +231,7 @@ namespace ModernWpf.Controls.Primitives
             AttachItemEventHandlers();
             UpdateHasOverflowItems();
             UpdateFlowsFromAndFlowsTo();
+            UpdateOverflowPopupVisibility(IsOpen);
             UpdateUI(false);
         }
 
@@ -298,6 +307,12 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_secondaryItemsRoot.PreviewKeyDown -= SecondaryItemsRootPreviewKeyDown;
                 m_secondaryItemsRoot.SizeChanged -= SecondaryItemsRootSizeChanged;
+            }
+
+            if (m_moreButton is ToggleButton moreToggleButton)
+            {
+                moreToggleButton.Checked -= MoreButtonChecked;
+                moreToggleButton.Unchecked -= MoreButtonUnchecked;
             }
 
             if (m_secondaryItemsPanel is CommandBarFlyoutOverflowPanel overflowPanel &&
@@ -520,7 +535,7 @@ namespace ModernWpf.Controls.Primitives
 
         internal bool HasOpenAnimation()
         {
-            return m_openingStoryboard != null && SharedHelpers.IsAnimationsEnabled;
+            return m_openingStoryboard != null && AreCommandBarFlyoutAnimationsEnabled();
         }
 
         internal void PlayOpenAnimation()
@@ -548,12 +563,12 @@ namespace ModernWpf.Controls.Primitives
 
         internal bool HasCloseAnimation()
         {
-            return m_closingStoryboard != null && SharedHelpers.IsAnimationsEnabled;
+            return m_closingStoryboard != null && AreCommandBarFlyoutAnimationsEnabled();
         }
 
         internal bool HasSecondaryOpenCloseAnimations()
         {
-            return SharedHelpers.IsAnimationsEnabled &&
+            return AreCommandBarFlyoutAnimationsEnabled() &&
                    (m_collapsedToExpandedUpStoryboard != null ||
                     m_collapsedToExpandedDownStoryboard != null ||
                     m_expandedUpToCollapsedStoryboard != null ||
@@ -677,6 +692,8 @@ namespace ModernWpf.Controls.Primitives
 
         private void UpdateVisualState(bool useTransitions, bool isForSizeChange)
         {
+            useTransitions = useTransitions && AreCommandBarFlyoutAnimationsEnabled();
+
             if (IsOpen)
             {
                 if (!m_secondaryItemsRootSized)
@@ -1019,7 +1036,13 @@ namespace ModernWpf.Controls.Primitives
             switch (args.Key)
             {
                 case Key.Escape:
-                    IsOpen = false;
+                    SetCurrentValue(IsOpenProperty, false);
+
+                    if (TryGetOwningFlyout(out var owningFlyout))
+                    {
+                        owningFlyout.Hide();
+                    }
+
                     args.Handled = true;
                     break;
 
@@ -1283,6 +1306,8 @@ namespace ModernWpf.Controls.Primitives
             switch (args.Key)
             {
                 case Key.Escape:
+                    SetCurrentValue(IsOpenProperty, false);
+
                     if (TryGetOwningFlyout(out var owningFlyout))
                     {
                         owningFlyout.Hide();
@@ -1302,10 +1327,31 @@ namespace ModernWpf.Controls.Primitives
 
         private void OverflowPopupClosed(object sender, EventArgs e)
         {
+            if (IsOpen)
+            {
+                SetCurrentValue(IsOpenProperty, false);
+            }
+
             m_secondaryItemsRootSized = false;
             UpdateFlowsFromAndFlowsTo();
             UpdateUI();
             Closed?.Invoke(this, null);
+        }
+
+        private void MoreButtonChecked(object sender, RoutedEventArgs e)
+        {
+            if (!IsOpen)
+            {
+                SetCurrentValue(IsOpenProperty, true);
+            }
+        }
+
+        private void MoreButtonUnchecked(object sender, RoutedEventArgs e)
+        {
+            if (IsOpen)
+            {
+                SetCurrentValue(IsOpenProperty, false);
+            }
         }
 
         private void OpeningStoryboardCompleted(object sender, EventArgs e)
@@ -1405,6 +1451,40 @@ namespace ModernWpf.Controls.Primitives
 
             flyout = null;
             return false;
+        }
+
+        private bool AreCommandBarFlyoutAnimationsEnabled()
+        {
+            return SharedHelpers.IsAnimationsEnabled &&
+                   TryGetOwningFlyout(out var owningFlyout) &&
+                   owningFlyout.AreOpenCloseAnimationsEnabled;
+        }
+
+        private void UpdateOverflowPopupVisibility(bool isOpen)
+        {
+            bool shouldShowOverflow = isOpen && SecondaryCommands.Count > 0;
+
+            if (m_secondaryItemsRoot != null)
+            {
+                m_secondaryItemsRoot.Visibility = shouldShowOverflow ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            if (m_overflowPopup == null)
+            {
+                return;
+            }
+
+            if (shouldShowOverflow)
+            {
+                if (!m_overflowPopup.IsOpen)
+                {
+                    m_overflowPopup.SetCurrentValue(Popup.IsOpenProperty, true);
+                }
+            }
+            else if (m_overflowPopup.IsOpen)
+            {
+                m_overflowPopup.SetCurrentValue(Popup.IsOpenProperty, false);
+            }
         }
 
         private void SetOpacity(double value)

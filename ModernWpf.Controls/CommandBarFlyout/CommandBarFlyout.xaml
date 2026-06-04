@@ -982,10 +982,10 @@
                                     AllowsTransparency="true"
                                     Placement="Bottom"
                                     PlacementTarget="{Binding ElementName=PrimaryItemsRoot}"
-                                    IsOpen="{Binding Path=IsOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                                    IsOpen="{Binding Path=IsOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                                     StaysOpen="false"
                                     Focusable="false"
-                                    PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
+                                    PopupAnimation="None">
                                     <ui:ThemeShadowChrome
                                         x:Name="OuterOverflowContentRootShadowChrome"
                                         IsShadowEnabled="False"

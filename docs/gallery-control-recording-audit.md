@@ -141,6 +141,24 @@ Round 53 closed the SelectorBar false-pass gap:
   and `SelectionChanged=false`; the hardened path converted that class to a
   failed result before the product fix was accepted.
 
+Round 56 closes the CommandBar and CommandBarFlyout repeat-open gap:
+
+- Previous recordings missed obvious CommandBarFlyout defects because the
+  pass condition accepted UIA state or low-delta frames that did not actually
+  prove the expanded secondary menu. Runs such as
+  `artifacts/gallery-recordings/20260604-191251-778/report.md` and
+  `artifacts/gallery-recordings/20260604-192051-160/report.md` are treated as
+  superseded false positives for secondary-menu proof.
+- CommandBar and CommandBarFlyout now run for at least 24 seconds and must
+  prove first-open, closed, and second-open states from opened-content frame
+  regions. For CommandBarFlyout, the opened-content region is retargeted to
+  the `Resize` / `Move` secondary commands and both opens must expand the
+  secondary menu.
+- Product fixes keep the nested overflow popup state synchronized with
+  `IsOpen`, disable WPF `PopupAnimation`, suppress CommandBarFlyout
+  transitions when the owning flyout disables open/close animations, and hide
+  the owning flyout on Escape.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -156,6 +174,8 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260604-054021-152/report.md` | CommandBarFlyout, MenuFlyout, Flyout, Popup, DropDownButton, SplitButton, ToggleSplitButton, Menu, DatePicker | 9 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-061652-261/report.md` | SelectorBar | 0 passed, 0 needs review, 1 failed |
 | `artifacts/gallery-recordings/20260604-064455-670/report.md` | SelectorBar | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-183855-055/report.md` | CommandBar | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-194134-079/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed |
 
 The `20260604-050301-561` run is intentionally not treated as a green sweep:
 it exposed two remaining interaction gaps that the older static sweep missed.
@@ -170,10 +190,11 @@ external synthetic hover or keyboard injection works in this desktop session.
 ## Current Full-Inventory Sweep
 
 The one-shot all-control recorder command exceeded the 15-minute runner timeout
-after `SplitButton` before it could write a top-level report. The accepted
-current-state proof uses smaller dark-theme batches against the same built
-tree. All 41 controls in the current recorder inventory passed with no
-`NeedsReview` or failed results.
+after `SplitButton` before it could write a top-level report. The baseline
+inventory proof uses smaller dark-theme batches against the same built tree.
+Later recorder hardening supersedes any older pass that did not meet the
+current visible-evidence bar; the focused evidence table and Control Matrix
+are authoritative for controls retested after the broad batches.
 
 ### Dark Theme
 
@@ -271,5 +292,5 @@ proof on top of these static route captures.
 | Menus & toolbars | AppBarButton | `item/AppBarButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarButton/dark-appbarbutton.mp4` | Manifest records output changing to `You clicked: Button1`; reviewed contact sheet shows the click output. |
 | Menus & toolbars | AppBarSeparator | `item/AppBarSeparator` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarSeparator/dark-appbarseparator.mp4` | Static rendered route with stable button anchors; reviewed contact sheet shows separated command buttons. |
 | Menus & toolbars | AppBarToggleButton | `item/AppBarToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarToggleButton/dark-appbartogglebutton.mp4` | Manifest records toggle state from `Off` to `On`; reviewed contact sheet shows the selected toggle output. |
-| Menus & toolbars | CommandBar | `item/CommandBar` | Recorded | NeedsReview | `artifacts/gallery-recordings/20260604-081958-937/CommandBar/dark-commandbar.mp4` | Stricter recorder now scopes overflow matching to the More button so shell `Settings` cannot satisfy CommandBar evidence. Latest report has local/dense overflow evidence and `MaxLocalFrameDelta=9.895`, but UIA does not expose the second-open overflow item, so dense frames must be reviewed before verification. |
-| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Fixed | `artifacts/gallery-recordings/20260604-020233-803/CommandBarFlyout/dark-commandbarflyout.mp4` | 30fps FFmpeg recording passed first open, MoreButton expansion, close, and second open. Dense frame sheet `artifacts/gallery-recordings/20260604-020233-803/CommandBarFlyout/analysis/commandbarflyout-dense-crop-all.jpg` shows full primary commands and `Resize` / `Move` without clipped strips, blank expanded regions, or missing menu items. Focused parity report `artifacts/visual-checks/20260604-022655-002-138088/report.md` passed for both ModernWpf and installed WinUI Gallery. |
+| Menus & toolbars | CommandBar | `item/CommandBar` | Recorded | Fixed | `artifacts/gallery-recordings/20260604-183855-055/CommandBar/dark-commandbar.mp4` | Product popup state is now synchronized with `IsOpen` and the recorder no longer depends on UIA exposing the second-open overflow item. Manifest records `ClosedElementGone=true`, `CloseMethod=SampleCloseButton`, `OpenRepeatEvidence=true`, and visual open/closed/open frames `t0500` / `t5000` / `t7500` / `t11000` with deltas `9.921`, `0.001`, and `9.839`. |
+| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Fixed | `artifacts/gallery-recordings/20260604-194134-079/CommandBarFlyout/dark-commandbarflyout.mp4` | Product popup state is now synchronized with `IsOpen`, WPF popup animation is disabled, Escape hides the owning flyout, and secondary transitions respect the owning flyout animation gate. The latest 24s run requires both first and second secondary-menu expansions; reviewed frames `t3000`, `t4000`, and `t8000` show `Resize` / `Move`, closed state after `Resize`, and second-open `Resize` / `Move` with no repeat-open crash. |

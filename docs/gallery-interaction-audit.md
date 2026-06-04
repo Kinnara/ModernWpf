@@ -26,6 +26,8 @@ Find and fix WPF Gallery issues that appear during real user interaction, with e
 | Fixed in round 20 | Gallery shell NavigationView expanded layout | Repeated click sequences could still leave an expanded parent consuming a large blank pane area while child rows were missing or pushed away. | Earlier shell checks asserted expansion state and a loose minimum height, but did not require visible child rows, bounded expanded height, or bounded sibling spacing. |
 | Fixed in round 27 | CommandBarFlyout interaction visual check | The harness reported CommandBarFlyout open interaction as passed while its saved open crop contained no popup pixels and did not prove the ellipsis secondary commands. | Main-window captures miss WPF popup HWNDs, and the old check accepted primary command UIA like `Share` without opening `MoreButton` or capturing the popup window. |
 | Fixed in round 53 | SelectorBar selection recording | SelectorBar could be accepted from automation state or left at `NeedsReview` while the visible item template was blank or no selection indicator changed in the recording. | The recorder did not require rendered frame evidence for SelectorBar selection, and the external UIA tree did not expose generated item peers as selectable `TabItem`s. |
+| Fixed in round 56 | CommandBar open-repeat recording | CommandBar could remain `NeedsReview` because UIA did not expose the second-open overflow item even while the video showed the overflow open. | The recorder had no frame-region open/closed/open proof tied to the overflow item bounds, so dense review could not be promoted to verified evidence. |
+| Fixed in round 56 | CommandBarFlyout repeat-open and secondary menu recording | CommandBarFlyout could pass while the selected visual proof frame only showed the primary flyout, not the expanded `Resize` / `Move` secondary menu. | The recorder accepted low region deltas and UIA open state without requiring both first and second secondary-menu expansions to be visible in the proof frames. |
 
 ## Round 1: NavigationView Click Expansion
 
@@ -2038,3 +2040,78 @@ defects from harness failures.
   `artifacts/gallery-recordings/20260604-081958-937/CommandBar/frames/t3000.png`
   shows the overflow visually open near the More button, while the manifest
   records `SecondOpenElementFound=false` and requires dense-frame review.
+
+## Round 56: CommandBar and CommandBarFlyout Repeat-Open Proof
+
+### Scope
+
+Close the remaining toolbar/flyout false-pass class exposed by manual review:
+
+- `CommandBar` must prove first open, closed state, and second open from
+  recorded overflow-region pixels.
+- `CommandBarFlyout` must prove first open, expanded secondary commands,
+  closed state, second open, and expanded secondary commands again.
+- The product path must not depend on popup animations or stale one-way popup
+  state when visual-test mode disables open/close animations.
+
+### Current Findings
+
+- The old CommandBar recorder could show the overflow in dense frames but
+  still leave the control at `NeedsReview` because the second-open overflow
+  item was missing from UIA.
+- The old CommandBarFlyout recorder was even weaker: runs such as
+  `artifacts/gallery-recordings/20260604-191251-778/report.md` and
+  `artifacts/gallery-recordings/20260604-192051-160/report.md` reported
+  passed, but the accepted proof could be the primary command strip or a
+  primary-only frame. That would not catch the user-visible missing-secondary
+  and misalignment failures.
+- A failing CommandBarFlyout repro at
+  `artifacts/gallery-recordings/20260604-184704-855/report.md` showed the
+  opened element did not disappear between opens. Later partial runs still
+  showed the primary flyout remaining visible after close attempts.
+- The root product issue was stale popup state: the nested overflow popups
+  were not explicitly synchronized with `IsOpen`, and CommandBarFlyout visual
+  states could still transition while the owning flyout had disabled
+  open/close animations.
+
+### Resolution
+
+- `CommandBar` now keeps the overflow popup and More button in two-way sync
+  with `IsOpen`, closes on Escape, and forces `IsOpen=false` when the popup
+  closes.
+- `CommandBarFlyoutCommandBar` now explicitly opens or closes the secondary
+  popup from `IsOpen`, hides the owning flyout on Escape, and suppresses both
+  primary and secondary transition storyboards when the owning flyout disables
+  open/close animations.
+- Both toolbar popups disable WPF `PopupAnimation` so visual-test recordings
+  do not inherit menu animation flicker outside ModernWpf's animation gate.
+- The recorder now keeps 24-second CommandBar and CommandBarFlyout clips,
+  records closed-state proof between opens, and extracts visual proof from the
+  opened-content bounds rather than accepting UIA state alone.
+- CommandBarFlyout proof now requires both first and second secondary-menu
+  expansions, retargets the proof bounds to `Resize` / `Move`, dwells on the
+  expanded secondary state, and raises the secondary-menu open threshold so a
+  primary-only frame cannot satisfy verification.
+
+### Verification
+
+- PowerShell parser check passed for
+  `tools/visual-checks/Record-GalleryControlInteractions.ps1`.
+- `ModernWpf.Gallery` Debug `net8.0-windows7.0` build passed.
+- Focused CommandBar recording passed:
+  `artifacts/gallery-recordings/20260604-183855-055/report.md`.
+  The manifest records `ClosedElementGone=true`,
+  `CloseMethod=SampleCloseButton`, `OpenRepeatEvidence=true`, and visual
+  frames `t0500` -> `t5000` -> `t7500` -> `t11000` with deltas
+  `9.921`, `0.001`, and `9.839`.
+- Focused CommandBarFlyout recording passed:
+  `artifacts/gallery-recordings/20260604-194134-079/report.md`.
+  The manifest records `FirstCommandBarFlyoutSecondaryExpanded=true`,
+  `SecondCommandBarFlyoutSecondaryExpanded=true`,
+  `ClosedElementGone=true`, `CloseMethod=SecondaryCommand`, and visual frames
+  `t0500` -> `t3000` -> `t4000` -> `t8000` with secondary-menu deltas
+  `12.363`, `0.001`, and `12.361`.
+- Reviewed CommandBarFlyout frames:
+  `t3000.png` shows `Resize` / `Move` on first open, `t4000.png` shows the
+  flyout closed after `Resize`, and `t8000.png` shows the secondary menu open
+  again without a repeat-open crash.
