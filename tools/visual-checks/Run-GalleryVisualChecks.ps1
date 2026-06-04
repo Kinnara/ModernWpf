@@ -571,6 +571,26 @@ function Find-CommandBarFlyoutMoreButton($window) {
     return Find-ElementByAutomationIdInProcess $window.Current.ProcessId "MoreButton"
 }
 
+function Wait-ForCommandBarFlyoutPrimaryCommands($window, [int]$timeoutMilliseconds) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
+    do {
+        $shareButton = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Share")
+        $saveButton = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Save")
+        $deleteButton = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Delete")
+        $moreButton = Find-CommandBarFlyoutMoreButton $window
+        if ($null -ne $shareButton -and
+            $null -ne $saveButton -and
+            $null -ne $deleteButton -and
+            (Test-AutomationElementUsable $moreButton)) {
+            return $moreButton
+        }
+
+        Start-Sleep -Milliseconds 50
+    } while ((Get-Date) -lt $deadline)
+
+    return $null
+}
+
 function Wait-ForInteractiveElementByNameInProcess([int]$processId, [string[]]$names, [int]$timeoutMilliseconds) {
     $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
     do {
@@ -2364,6 +2384,56 @@ function Invoke-ElementPatternOnce($window, $element) {
     return $false
 }
 
+function Invoke-PopupElementFocusOnce($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $element.SetFocus()
+        Start-Sleep -Milliseconds 50
+        [GalleryVisualNative]::PressSpace()
+        Start-Sleep -Milliseconds 120
+        return $true
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Invoke-PopupElementClickOnce($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $rect = $element.Current.BoundingRectangle
+        if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+            [GalleryVisualNative]::Click(
+                [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+                [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+            Start-Sleep -Milliseconds 120
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            Start-Sleep -Milliseconds 120
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
 function Test-ElementSupportsPattern($element, $pattern) {
     if ($null -eq $element) {
         return $false
@@ -2489,6 +2559,26 @@ function Expand-ElementPatternOnce($window, $element) {
     return $false
 }
 
+function Toggle-ElementPatternOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Toggle()
+            Start-Sleep -Milliseconds 50
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
 function Get-ExpandCollapseStateName($element) {
     if ($null -eq $element) {
         return ""
@@ -2599,14 +2689,47 @@ function Close-PreparedOpenInteractionState($window, [string]$control) {
 }
 
 function Open-CommandBarFlyoutSecondaryCommands($window) {
-    $moreButton = Find-CommandBarFlyoutMoreButton $window
-    if ($null -eq $moreButton) {
-        return $false
-    }
+    $deadline = (Get-Date).AddMilliseconds(2500)
+    do {
+        $moreButton = Wait-ForCommandBarFlyoutPrimaryCommands $window 1200
+        if ($null -eq $moreButton) {
+            $moreButton = Find-CommandBarFlyoutMoreButton $window
+        }
 
-    if (Invoke-ElementPatternOnce $window $moreButton) {
-        return $null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 1000)
-    }
+        if ($null -ne $moreButton) {
+            if ((Invoke-ElementPatternOnce $window $moreButton) -and
+                ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 600))) {
+                return $true
+            }
+
+            if ((Expand-ElementPatternOnce $window $moreButton) -and
+                ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 600))) {
+                return $true
+            }
+
+            if ((Toggle-ElementPatternOnce $window $moreButton) -and
+                ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 600))) {
+                return $true
+            }
+
+            if ((Invoke-PopupElementFocusOnce $moreButton) -and
+                ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 600))) {
+                return $true
+            }
+
+            if ((Invoke-PopupElementClickOnce $moreButton) -and
+                ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 1200))) {
+                return $true
+            }
+
+            if ((Invoke-ElementOnce $window $moreButton) -and
+                ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 1200))) {
+                return $true
+            }
+        }
+
+        Start-Sleep -Milliseconds 100
+    } while ((Get-Date) -lt $deadline)
 
     return $false
 }

@@ -568,6 +568,26 @@ function Find-CommandBarFlyoutMoreButton($window) {
     return Find-ElementByAutomationIdInProcess $window.Current.ProcessId "MoreButton"
 }
 
+function Wait-ForCommandBarFlyoutPrimaryCommands($window, [int]$timeoutMilliseconds) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
+    do {
+        $shareButton = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Share")
+        $saveButton = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Save")
+        $deleteButton = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Delete")
+        $moreButton = Find-CommandBarFlyoutMoreButton $window
+        if ($null -ne $shareButton -and
+            $null -ne $saveButton -and
+            $null -ne $deleteButton -and
+            (Test-AutomationElementUsable $moreButton)) {
+            return $moreButton
+        }
+
+        Start-Sleep -Milliseconds 50
+    } while ((Get-Date) -lt $deadline)
+
+    return $null
+}
+
 function Wait-ForInteractiveElementByNameInProcess([int]$processId, [string[]]$names, [int]$timeoutMilliseconds) {
     $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
     do {
@@ -1682,14 +1702,21 @@ function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [s
 }
 
 function Open-CommandBarFlyoutSecondaryCommands($window) {
-    $moreButton = Find-CommandBarFlyoutMoreButton $window
-    if ($null -eq $moreButton) {
-        return $false
-    }
+    $deadline = (Get-Date).AddMilliseconds(2500)
+    do {
+        $moreButton = Wait-ForCommandBarFlyoutPrimaryCommands $window 1200
+        if ($null -eq $moreButton) {
+            $moreButton = Find-CommandBarFlyoutMoreButton $window
+        }
 
-    if (Invoke-ElementOnce $window $moreButton) {
-        return $null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 1000)
-    }
+        if ($null -ne $moreButton -and (Invoke-ElementOnce $window $moreButton)) {
+            if ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 1200)) {
+                return $true
+            }
+        }
+
+        Start-Sleep -Milliseconds 100
+    } while ((Get-Date) -lt $deadline)
 
     return $false
 }

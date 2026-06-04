@@ -1498,3 +1498,62 @@ live flyout popup.
   - Reviewed poster frames `t3500.png`, `t5500.png`, and `t7500.png` show the
     primary command strip and the expanded `Resize` / `Move` secondary menu on
     the repeat-open path.
+
+## Round 46: User-Video Visual Failure Catch-Up
+
+### Scope
+
+Update the active Gallery control audit goal after
+`D:\Videos\Recording 2026-06-04 011251.mp4` showed visible
+`CommandBarFlyout` defects that the Round 45 recorder accepted.
+
+### Current Findings
+
+- The prior recording caught route success, repeat open, and secondary-command
+  UIA state, but it did not fail on short-lived visual frames.
+- The user video shows defects that must be treated as blocking visual failures:
+  open/close flicker, secondary menu alignment defects, clipped command-strip
+  close frames, and repeat-open instability.
+- From this round forward, popup, flyout, menu, and navigation-pane results are
+  not accepted from UIA state alone. User-provided recordings must be reviewed
+  as source evidence, and automated recording proof must include dense
+  open/close frame evidence or automated frame/geometry checks for clipping,
+  missing items, stale pixels, blank expanded regions, app crashes, open/close
+  flicker, and obvious misalignment.
+
+### Required Follow-Up
+
+- Reproduce the reported `CommandBarFlyout` issues with dense frame extraction.
+- Fix the control defects and add regression coverage that would reject the
+  same failure class.
+- Re-run focused recordings and parity checks before committing the fix round.
+
+### Resolution
+
+- Removed the `CommandBarFlyout` template animations that clipped the visible
+  command surfaces during open, close, secondary-menu expand, and secondary-menu
+  collapse. The primary strip now appears as a complete surface instead of
+  sliding a clip across visible commands, and the secondary menu no longer hides
+  individual items or the ellipsis during collapse.
+- Added `FlyoutAnimationsDoNotClipVisibleCommandSurfaces` to lock the template
+  behavior: the open/close storyboards must not target the outer clip
+  transforms, and the secondary-menu storyboards must not target the MoreButton,
+  content, or overflow clip transforms.
+- Hardened the recording and parity helpers so `CommandBarFlyout` secondary
+  proof waits for the primary `Share` / `Save` / `Delete` / MoreButton surface,
+  then verifies `Resize` / `Move` after Invoke, ExpandCollapse, Toggle,
+  focus/Space, and click fallbacks. This addresses the gap where a primary UIA
+  success was accepted without proving the secondary menu.
+
+### Verification
+
+- User video source reviewed: `D:\Videos\Recording 2026-06-04 011251.mp4`.
+- Focused API test: `CommandBarFlyoutApiTests` passed 26/26.
+- Gallery source-shape tests: `WpfGallerySourceShapeTests` passed 102/102 on
+  `net8.0-windows7.0`.
+- Focused 30fps recording passed:
+  `artifacts/gallery-recordings/20260604-020233-803/report.md`.
+- Dense recording evidence reviewed:
+  `artifacts/gallery-recordings/20260604-020233-803/CommandBarFlyout/analysis/commandbarflyout-dense-crop-all.jpg`.
+- Focused dark parity check against installed WinUI Gallery passed:
+  `artifacts/visual-checks/20260604-022655-002-138088/report.md`.

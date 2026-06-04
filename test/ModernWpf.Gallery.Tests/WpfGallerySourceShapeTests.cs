@@ -2672,9 +2672,17 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "function Invoke-PopupElementFocusOnce($element)",
+                "$element.SetFocus()",
+                "[GalleryVisualNative]::PressSpace()",
+                "function Invoke-PopupElementClickOnce($element)",
+                "[GalleryVisualNative]::Click(",
                 "function Expand-ElementPatternOnce($window, $element)",
                 "[System.Windows.Automation.ExpandCollapsePattern]::Pattern",
                 "$pattern.Expand()",
+                "function Toggle-ElementPatternOnce($window, $element)",
+                "[System.Windows.Automation.TogglePattern]::Pattern",
+                "$pattern.Toggle()",
                 "function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames, [string]$control = \"\")",
                 "if ($control -eq \"MenuBar\")",
                 "$invoked = Invoke-MenuBarTriggerOnce $window $element",
@@ -2782,6 +2790,11 @@ namespace ModernWpf.Gallery.Tests
                 "Find-TopLevelElementByNativeWindowHandleInProcess $window.Current.ProcessId ([int]$popupHandle)",
                 "Find-DescendantByAutomationId $popupWindow \"MoreButton\"",
                 "Find-ElementByAutomationIdInPopupWindows $window \"MoreButton\"",
+                "function Wait-ForCommandBarFlyoutPrimaryCommands($window, [int]$timeoutMilliseconds)",
+                "Find-InteractiveElementByNameInProcess $window.Current.ProcessId @(\"Share\")",
+                "Find-InteractiveElementByNameInProcess $window.Current.ProcessId @(\"Save\")",
+                "Find-InteractiveElementByNameInProcess $window.Current.ProcessId @(\"Delete\")",
+                "Test-AutomationElementUsable $moreButton",
                 "function Wait-ForInteractiveElementByNameInProcess([int]$processId, [string[]]$names, [int]$timeoutMilliseconds)");
             AssertContainsInOrder(
                 source,
@@ -2814,9 +2827,17 @@ namespace ModernWpf.Gallery.Tests
                 "[System.Windows.Automation.WindowPattern]::Pattern",
                 "$pattern.Close()",
                 "function Open-CommandBarFlyoutSecondaryCommands($window)",
+                "$deadline = (Get-Date).AddMilliseconds(2500)",
+                "Wait-ForCommandBarFlyoutPrimaryCommands $window 1200",
                 "Find-CommandBarFlyoutMoreButton $window",
                 "Invoke-ElementPatternOnce $window $moreButton",
-                "Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @(\"Resize\", \"Move\") 1000",
+                "Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @(\"Resize\", \"Move\") 600",
+                "Expand-ElementPatternOnce $window $moreButton",
+                "Toggle-ElementPatternOnce $window $moreButton",
+                "Invoke-PopupElementFocusOnce $moreButton",
+                "Invoke-PopupElementClickOnce $moreButton",
+                "Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @(\"Resize\", \"Move\") 1200",
+                "Invoke-ElementOnce $window $moreButton",
                 "function Get-ElementNativeWindowHandle($element)",
                 "$handle = [int]$candidate.Current.NativeWindowHandle",
                 "return [IntPtr]$handle",
@@ -3245,10 +3266,17 @@ namespace ModernWpf.Gallery.Tests
                 "$popupHandle = Get-ElementNativeWindowHandle $primaryCommand",
                 "Find-TopLevelElementByNativeWindowHandleInProcess $window.Current.ProcessId ([int]$popupHandle)",
                 "Find-ElementByAutomationIdInPopupWindows $window \"MoreButton\"",
+                "function Wait-ForCommandBarFlyoutPrimaryCommands($window, [int]$timeoutMilliseconds)",
+                "Find-InteractiveElementByNameInProcess $window.Current.ProcessId @(\"Share\")",
+                "Find-InteractiveElementByNameInProcess $window.Current.ProcessId @(\"Save\")",
+                "Find-InteractiveElementByNameInProcess $window.Current.ProcessId @(\"Delete\")",
+                "Test-AutomationElementUsable $moreButton",
                 "function Wait-ForInteractiveElementByNameInProcess([int]$processId, [string[]]$names, [int]$timeoutMilliseconds)",
                 "function Open-CommandBarFlyoutSecondaryCommands($window)",
+                "$deadline = (Get-Date).AddMilliseconds(2500)",
+                "Wait-ForCommandBarFlyoutPrimaryCommands $window 1200",
                 "Find-CommandBarFlyoutMoreButton $window",
-                "Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @(\"Resize\", \"Move\") 1000");
+                "Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @(\"Resize\", \"Move\") 1200");
         }
 
         [TestMethod]

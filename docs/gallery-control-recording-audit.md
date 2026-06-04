@@ -9,9 +9,20 @@ path and the recording has been reviewed or decoded into nonblank poster frames.
 - Launch the Gallery route for each control in visual-test mode.
 - Record the live window while driving the primary interaction for interactive
   controls.
+- When the user provides a recording, review it as source evidence and add the
+  visible defects to the active control audit before accepting any automated
+  pass.
 - For popup and flyout controls, record open, close, and second open in the same
   clip so flicker, stale visual state, and repeat-open crashes are visible.
 - Extract poster frames from each recording and reject blank recordings.
+- For popup, flyout, menu, and navigation-pane interactions, dense frames around
+  open and close transitions must be reviewed or analyzed. A pass must reject
+  obvious transient defects such as clipped command strips, missing menu items,
+  bad popup/menu alignment, stale pixels, blank expanded regions, app crashes,
+  and open or close flicker.
+- UIA success alone is not accepted as visual proof for popup/flyout/menu
+  interactions. The recording report must include either automated geometry or
+  frame evidence, or the control remains `NeedsReview`.
 - Require a control-specific exposed automation anchor before accepting a route
   capture as proof.
 - Fix issues in substantial rounds and record the post-fix interaction before
@@ -150,4 +161,4 @@ missing from the ModernWpf control recorder inventory.
 | Menus & toolbars | AppBarSeparator | `item/AppBarSeparator` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarSeparator/dark-appbarseparator.mp4` | Static rendered route with stable button anchors; reviewed contact sheet shows separated command buttons. |
 | Menus & toolbars | AppBarToggleButton | `item/AppBarToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarToggleButton/dark-appbartogglebutton.mp4` | Manifest records toggle state from `Off` to `On`; reviewed contact sheet shows the selected toggle output. |
 | Menus & toolbars | CommandBar | `item/CommandBar` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260603-070433-922/CommandBar/dark-commandbar.mp4` | Manifest records first and second overflow opens despite low full-frame delta; reviewed contact sheet shows the overflow menu. |
-| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Harness fixed | `artifacts/gallery-recordings/20260603-225807-882/CommandBarFlyout/dark-commandbarflyout.mp4` | Rendered MP4 shows first open, popup-scoped MoreButton expansion, second open, and `Resize` / `Move` secondary commands. Focused parity report `artifacts/visual-checks/20260603-225526-026-197228/report.md` passed with ModernWpf `OpenPopupNonBlank=true`, `OpenElementName=Resize`, and `CommandBarFlyoutSecondaryExpanded=true`. |
+| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Fixed | `artifacts/gallery-recordings/20260604-020233-803/CommandBarFlyout/dark-commandbarflyout.mp4` | 30fps FFmpeg recording passed first open, MoreButton expansion, close, and second open. Dense frame sheet `artifacts/gallery-recordings/20260604-020233-803/CommandBarFlyout/analysis/commandbarflyout-dense-crop-all.jpg` shows full primary commands and `Resize` / `Move` without clipped strips, blank expanded regions, or missing menu items. Focused parity report `artifacts/visual-checks/20260604-022655-002-138088/report.md` passed for both ModernWpf and installed WinUI Gallery. |

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media.Animation;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf;
@@ -372,6 +373,83 @@ public class CommandBarFlyoutApiTests
                 WpfTestHost.DoEvents();
                 Assert.IsFalse(commandBarFlyout.IsOpen);
                 Assert.IsFalse(commandBar.IsOpen);
+            }
+        });
+    }
+
+    [TestMethod]
+    public void FlyoutAnimationsDoNotClipVisibleCommandSurfaces()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right,
+                ShowMode = FlyoutShowMode.Standard
+            };
+
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Share), Label = "Share" });
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Save), Label = "Save" });
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Delete), Label = "Delete" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Resize" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Move" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 720, height: 420);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            try
+            {
+                var commandBar = GetCommandBar(commandBarFlyout);
+                commandBar.ApplyTemplate();
+                host.UpdateLayout();
+
+                var layoutRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "LayoutRoot");
+                var openingStoryboard = layoutRoot.Resources["OpeningStoryboard"] as Storyboard;
+                var closingStoryboard = layoutRoot.Resources["ClosingStoryboard"] as Storyboard;
+                var collapsedToExpandedUpStoryboard = layoutRoot.Resources["CollapsedToExpandedUpStoryboard"] as Storyboard;
+                var expandedUpToCollapsedStoryboard = layoutRoot.Resources["ExpandedUpToCollapsedStoryboard"] as Storyboard;
+                var collapsedToExpandedDownStoryboard = layoutRoot.Resources["CollapsedToExpandedDownStoryboard"] as Storyboard;
+                var expandedDownToCollapsedStoryboard = layoutRoot.Resources["ExpandedDownToCollapsedStoryboard"] as Storyboard;
+
+                Assert.IsNotNull(openingStoryboard);
+                Assert.IsNotNull(closingStoryboard);
+                Assert.IsNotNull(collapsedToExpandedUpStoryboard);
+                Assert.IsNotNull(expandedUpToCollapsedStoryboard);
+                Assert.IsNotNull(collapsedToExpandedDownStoryboard);
+                Assert.IsNotNull(expandedDownToCollapsedStoryboard);
+
+                AssertStoryboardDoesNotTarget(openingStoryboard!, "OuterContentRootClipTransform");
+                AssertStoryboardDoesNotTarget(openingStoryboard!, "OuterOverflowContentRootClipTransform");
+                Assert.IsTrue(
+                    StoryboardTargets(openingStoryboard!, "LayoutRoot", "Opacity"),
+                    "CommandBarFlyout open animation should show the complete command surface instead of clipping commands.");
+
+                AssertStoryboardDoesNotTarget(closingStoryboard!, "OuterContentRootClipTransform");
+                AssertStoryboardDoesNotTarget(closingStoryboard!, "OuterOverflowContentRootClipTransform");
+                Assert.IsTrue(
+                    StoryboardTargets(closingStoryboard!, "LayoutRoot", "Opacity"),
+                    "CommandBarFlyout close animation should fade the full primary strip instead of clipping commands.");
+                Assert.IsTrue(
+                    StoryboardTargets(closingStoryboard!, "OuterOverflowContentRoot", "Opacity"),
+                    "CommandBarFlyout close animation should fade the overflow root instead of clipping commands.");
+
+                VerifySecondaryMenuStoryboard(collapsedToExpandedUpStoryboard!, shouldShow: true);
+                VerifySecondaryMenuStoryboard(expandedUpToCollapsedStoryboard!, shouldShow: false);
+                VerifySecondaryMenuStoryboard(collapsedToExpandedDownStoryboard!, shouldShow: true);
+                VerifySecondaryMenuStoryboard(expandedDownToCollapsedStoryboard!, shouldShow: false);
+            }
+            finally
+            {
+                HideAndWait(commandBarFlyout);
             }
         });
     }
@@ -1078,6 +1156,34 @@ public class CommandBarFlyoutApiTests
 
         Assert.AreEqual(expected, layoutRoot.Opacity, 0.001, "CommandBarFlyout layout root opacity was not reset.");
         Assert.AreEqual(expected, overflowContentRoot.Opacity, 0.001, "CommandBarFlyout overflow content opacity was not reset.");
+    }
+
+    private static bool StoryboardTargets(Storyboard storyboard, string targetName, string targetProperty)
+    {
+        return storyboard.Children.Any(timeline =>
+            Storyboard.GetTargetName(timeline) == targetName &&
+            (Storyboard.GetTargetProperty(timeline)?.Path?.Contains(targetProperty, StringComparison.Ordinal) ?? false));
+    }
+
+    private static void VerifySecondaryMenuStoryboard(Storyboard storyboard, bool shouldShow)
+    {
+        AssertStoryboardDoesNotTarget(storyboard, "MoreButtonTransform");
+        AssertStoryboardDoesNotTarget(storyboard, "ContentRootClipTransform");
+        AssertStoryboardDoesNotTarget(storyboard, "OverflowContentRootClipTransform");
+        Assert.IsTrue(
+            StoryboardTargets(storyboard, "OuterOverflowContentRoot", "Opacity"),
+            shouldShow
+                ? "CommandBarFlyout secondary menu open animation should show the complete menu instead of clipping menu items."
+                : "CommandBarFlyout secondary menu close animation should hide the complete menu instead of clipping menu items.");
+    }
+
+    private static void AssertStoryboardDoesNotTarget(Storyboard storyboard, string targetName)
+    {
+        var targets = storyboard.Children
+            .Select(Storyboard.GetTargetName)
+            .ToArray();
+
+        CollectionAssert.DoesNotContain(targets, targetName);
     }
 
     private static void VerifyCommandBarSizing(CommandBarSizingOptions sizingOptions)
