@@ -1812,3 +1812,46 @@ Close the two remaining official WPF interaction gaps from Round 50:
   `AfterOutput=ModernWpf rich text`; reviewed frame
   `artifacts/gallery-recordings/20260604-053726-512/RichTextEdit/frames/t2500.png`
   shows the text rendered in the editor.
+
+## Round 52: High-Risk Popup and Menu Recording Sweep
+
+### Scope
+
+Re-run the controls most likely to hide short-lived visual defects behind UIA
+success:
+
+- `CommandBarFlyout`
+- `MenuFlyout`
+- `Flyout`
+- `Popup`
+- `DropDownButton`
+- `SplitButton`
+- `ToggleSplitButton`
+- `Menu`
+- `DatePicker`
+
+### Current Findings
+
+- The batch passed 9/9 with rendered FFmpeg capture at 30fps.
+- Manual dense-frame review did not find detached popup surfaces, clipped menu
+  content, blank expanded regions, or repeat-open crashes in this run.
+- `CommandBarFlyout` still shows complete primary commands and the expanded
+  secondary command strip in the dense review sheet.
+- Official WPF `Menu` and `DatePicker` both show their opened surfaces in the
+  dense sheets, so this pass does not repeat the earlier no-op expand/static
+  route gap.
+
+### Verification
+
+- Focused recording report:
+  `artifacts/gallery-recordings/20260604-054021-152/report.md`.
+- Dense sheets reviewed:
+  - `artifacts/gallery-recordings/20260604-054021-152/CommandBarFlyout/analysis/dense-transition-review.jpg`
+  - `artifacts/gallery-recordings/20260604-054021-152/MenuFlyout/analysis/dense-transition-review.jpg`
+  - `artifacts/gallery-recordings/20260604-054021-152/Flyout/analysis/dense-transition-review.jpg`
+  - `artifacts/gallery-recordings/20260604-054021-152/Popup/analysis/dense-transition-review.jpg`
+  - `artifacts/gallery-recordings/20260604-054021-152/DropDownButton/analysis/dense-transition-review.jpg`
+  - `artifacts/gallery-recordings/20260604-054021-152/SplitButton/analysis/dense-transition-review.jpg`
+  - `artifacts/gallery-recordings/20260604-054021-152/ToggleSplitButton/analysis/dense-transition-review.jpg`
+  - `artifacts/gallery-recordings/20260604-054021-152/Menu/analysis/dense-transition-review.jpg`
+  - `artifacts/gallery-recordings/20260604-054021-152/DatePicker/analysis/dense-transition-review.jpg`
