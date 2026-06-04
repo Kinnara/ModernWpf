@@ -1766,3 +1766,49 @@ Extend official WPF Gallery recordings beyond static page proof for:
 - Known unresolved recordings:
   - `artifacts/gallery-recordings/20260604-051414-648/ToolTip/analysis/dense-transition-review.jpg`
   - `artifacts/gallery-recordings/20260604-051414-648/RichTextEdit/dark-richtextedit.mp4`
+
+## Round 51: Prepared WPF ToolTip and RichTextEdit Evidence
+
+### Scope
+
+Close the two remaining official WPF interaction gaps from Round 50:
+
+- `ToolTip`
+- `RichTextEdit`
+
+### Current Findings
+
+- External synthetic hover/click did not open the WPF tooltip in this desktop
+  session, even though the recorder could locate the `TooltipButton`.
+- External synthetic text paths did not change the WPF `RichTextBox`; the UIA
+  target exposes `TextPattern` but not `ValuePattern`, and native input did not
+  leave visible document text in the recording.
+- Treating those failures as static-route passes would repeat the earlier
+  recorder mistake: the video would not prove the user-visible open/text state.
+
+### Resolution
+
+- Added diagnostics-only preparation for visual recordings:
+  `--open-interactions` now opens the WPF tooltip in-process and populates the
+  WPF `RichTextBox` document before the recorder starts.
+- Added recorder interaction kinds for prepared open and prepared text states.
+  `ToolTip` now requires visible, anchored opened content; `RichTextEdit` now
+  requires the prepared text to be readable from the UIA text surface.
+- Added runtime tests for the Gallery diagnostics hook and source-shape tests
+  for the recorder paths.
+
+### Verification
+
+- Focused tests passed on `net8.0-windows7.0` and `net10.0-windows7.0`:
+  - `WpfToolTipInteractionModeOpensTooltip`
+  - `RichTextEditInteractionModePopulatesDocumentText`
+  - `GalleryInteractionRecorderExercisesOfficialWpfSelectionAndTextControls`
+  - `GalleryInteractionRecorderHoverOpensOfficialWpfToolTip`
+- Focused recording passed 2/2:
+  `artifacts/gallery-recordings/20260604-053726-512/report.md`.
+- The manifest records `PreparedOpenEvidence=true` for `ToolTip` with anchored
+  bounds `534,370,202,31` -> `554,408,97,32`.
+- The manifest records `PreparedTextEvidence=true` for `RichTextEdit` with
+  `AfterOutput=ModernWpf rich text`; reviewed frame
+  `artifacts/gallery-recordings/20260604-053726-512/RichTextEdit/frames/t2500.png`
+  shows the text rendered in the editor.

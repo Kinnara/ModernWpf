@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls.Primitives;
@@ -176,17 +177,69 @@ namespace ModernWpf.Gallery.Testing
 
             try
             {
-                var teachingTipButton = FindByAutomationId(root, "GallerySample_TeachingTip_ShowButton") as ButtonBase;
-                if (teachingTipButton != null)
-                {
-                    teachingTipButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
-                    root.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
-                }
+                OpenTeachingTip(root);
+                OpenWpfToolTip(root);
+                PopulateRichTextBox(root);
             }
             catch (Exception ex)
             {
                 RecordException(ex);
             }
+        }
+
+        private static void OpenTeachingTip(DependencyObject root)
+        {
+            var teachingTipButton = FindByAutomationId(root, "GallerySample_TeachingTip_ShowButton") as ButtonBase;
+            if (teachingTipButton == null)
+            {
+                return;
+            }
+
+            teachingTipButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            root.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
+        }
+
+        private static void OpenWpfToolTip(DependencyObject root)
+        {
+            var button = FindByAutomationName(root, "TooltipButton") as FrameworkElement;
+            if (button == null)
+            {
+                return;
+            }
+
+            var content = ToolTipService.GetToolTip(button);
+            if (content == null)
+            {
+                return;
+            }
+
+            var toolTip = content as ToolTip;
+            if (toolTip == null)
+            {
+                toolTip = new ToolTip
+                {
+                    Content = content
+                };
+                ToolTipService.SetToolTip(button, toolTip);
+            }
+
+            toolTip.PlacementTarget = button;
+            toolTip.Placement = ToolTipService.GetPlacement(button);
+            toolTip.IsOpen = true;
+            root.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
+        }
+
+        private static void PopulateRichTextBox(DependencyObject root)
+        {
+            var richTextBox = FindByAutomationName(root, "simple rich text editor") as RichTextBox;
+            if (richTextBox == null)
+            {
+                return;
+            }
+
+            richTextBox.Document.Blocks.Clear();
+            richTextBox.Document.Blocks.Add(new Paragraph(new Run("ModernWpf rich text")));
+            root.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
         }
 
         private static string FormatException(Exception exception)
@@ -470,6 +523,27 @@ namespace ModernWpf.Gallery.Testing
             for (var i = 0; i < childCount; i++)
             {
                 var result = FindByAutomationId(VisualTreeHelper.GetChild(root, i), automationId);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        private static DependencyObject FindByAutomationName(DependencyObject root, string automationName)
+        {
+            var element = root as UIElement;
+            if (element != null && AutomationProperties.GetName(element) == automationName)
+            {
+                return root;
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var result = FindByAutomationName(VisualTreeHelper.GetChild(root, i), automationName);
                 if (result != null)
                 {
                     return result;

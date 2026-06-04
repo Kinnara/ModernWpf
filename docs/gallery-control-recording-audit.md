@@ -117,13 +117,17 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260604-044721-837/report.md` | Expander, TreeView, Menu, TabControl, DatePicker, Calendar, TextBox, PasswordBox | 8 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-050301-561/report.md` | ListBox, ListView, DataGrid, Calendar, ToolTip, RichTextEdit | 3 passed, 1 needs review, 2 failed |
 | `artifacts/gallery-recordings/20260604-051818-365/report.md` | DataGrid | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-053726-512/report.md` | ToolTip, RichTextEdit | 2 passed, 0 needs review, 0 failed |
 
 The `20260604-050301-561` run is intentionally not treated as a green sweep:
 it exposed two remaining interaction gaps that the older static sweep missed.
 `ToolTip` did not open under the current synthetic hover/click path, and
 `RichTextEdit` focused but did not receive text input through the recorder.
-Those controls remain open follow-ups until a recording proves the actual
-interaction behavior.
+The `20260604-053726-512` follow-up closes those two controls with
+diagnostics-prepared visual evidence: `--open-interactions` opens the WPF
+tooltip in-process and populates the WPF `RichTextBox` before recording. This
+is accepted as visual proof of the rendered open/text states, not as proof that
+external synthetic hover or keyboard injection works in this desktop session.
 
 ## Current Full-Inventory Sweep
 

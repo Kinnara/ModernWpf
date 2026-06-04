@@ -1030,6 +1030,10 @@ function Test-ControlRequiresDenseTransitionReview([string]$control, [string]$in
         return $true
     }
 
+    if ($interactionKind -eq "PreparedOpen") {
+        return $control -eq "ToolTip"
+    }
+
     if ($interactionKind -ne "OpenRepeat") {
         return $false
     }
@@ -1145,6 +1149,8 @@ function Get-ExpansionInteractionExpectedChildName([string]$control) {
 function Get-ControlInteractionKind([string]$control) {
     if ($control -eq "ShellNavigation") { return "ShellNavigation" }
     if ($control -eq "BreadcrumbBar") { return "Breadcrumb" }
+    if ($control -eq "ToolTip") { return "PreparedOpen" }
+    if ($control -eq "RichTextEdit") { return "PreparedText" }
     if (Test-ControlSupportsOpenInteraction $control) { return "OpenRepeat" }
     if (Test-ControlSupportsStateInteraction $control) { return "State" }
     if (Test-ControlSupportsExpansionInteraction $control) { return "Expansion" }
@@ -1155,6 +1161,14 @@ function Get-ControlInteractionKind([string]$control) {
     if (Test-ControlSupportsOutputInteraction $control) { return "Output" }
     if (Test-ControlSupportsScrollInteraction $control) { return "Scroll" }
     return "Static"
+}
+
+function Test-ControlRequiresDiagnosticPreparation([string]$control) {
+    switch ($control) {
+        "RichTextEdit" { return $true }
+        "ToolTip" { return $true }
+        default { return $false }
+    }
 }
 
 function Find-ShellNavigationItem($navigationView, [string]$name) {
@@ -2161,6 +2175,22 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     }
 }
 
+function Invoke-PreparedOpenInteraction($window, [string]$control, $sampleElement) {
+    $trigger = Get-OpenInteractionTriggerElement $window $control $sampleElement
+    $openNames = @(Get-OpenInteractionNames $control)
+    $openElement = if ($openNames.Count -eq 0) { $null } else { Find-OpenInteractionElement $window $trigger $openNames $control }
+    $openElementFound = $openNames.Count -eq 0 -or $null -ne $openElement
+    $openElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $trigger $openElement)
+
+    return [ordered]@{
+        Invoked = $openElementFound -and $openElementAnchored
+        OpenElementFound = $openElementFound
+        OpenElementAnchored = $openElementAnchored
+        TriggerBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $trigger)
+        OpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $openElement)
+    }
+}
+
 function Invoke-StateInteraction($window, $sampleElement) {
     $before = Get-ToggleStateName $sampleElement
     $invoked = Invoke-ElementOnce $window $sampleElement
@@ -2772,6 +2802,22 @@ function Invoke-PlainTextInteraction($window, [string]$control) {
     }
 }
 
+function Invoke-PreparedTextInteraction($window, [string]$control) {
+    $targetName = Get-TextInteractionTargetName $control
+    $expectedText = Get-TextInteractionInput $control
+    $target = Find-ElementByNameInProcess $window.Current.ProcessId @($targetName)
+    $actualText = Get-ElementText $target
+    $outputMatched = $actualText -eq $expectedText
+
+    return [ordered]@{
+        Invoked = $outputMatched
+        TargetName = $targetName
+        ExpectedOutput = $expectedText
+        AfterOutput = $actualText
+        OutputMatched = $outputMatched
+    }
+}
+
 function Invoke-TextInteraction($window, [string]$control, $sampleElement) {
     if ($control -eq "TextBox" -or $control -eq "PasswordBox" -or $control -eq "RichTextEdit") {
         return Invoke-PlainTextInteraction $window $control
@@ -2970,6 +3016,8 @@ function Invoke-RecordedInteraction($window, [string]$control, $sampleElement) {
     switch ($kind) {
         "ShellNavigation" { return Invoke-ShellNavigationInteraction $window $sampleElement }
         "Breadcrumb" { return Invoke-BreadcrumbInteraction $window $sampleElement }
+        "PreparedOpen" { return Invoke-PreparedOpenInteraction $window $control $sampleElement }
+        "PreparedText" { return Invoke-PreparedTextInteraction $window $control }
         "OpenRepeat" { return Invoke-OpenRepeatInteraction $window $control $sampleElement }
         "State" { return Invoke-StateInteraction $window $sampleElement }
         "Expansion" { return Invoke-ExpansionInteraction $window $control }
@@ -3472,6 +3520,24 @@ function Test-BreadcrumbEvidence($interactionResult) {
     return [bool]$interactionResult.BreadcrumbChanged
 }
 
+function Test-PreparedOpenEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or
+        !$interactionResult.Contains("OpenElementFound") -or
+        !$interactionResult.Contains("OpenElementAnchored")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.OpenElementFound -and [bool]$interactionResult.OpenElementAnchored
+}
+
+function Test-PreparedTextEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("OutputMatched")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.OutputMatched
+}
+
 function Format-RelativePath([string]$path) {
     if ([string]::IsNullOrWhiteSpace($path)) {
         return ""
@@ -3555,6 +3621,9 @@ foreach ($control in $Controls) {
         $args = @("--visual-test", "--route", $route, "--theme", $Theme, "--visual-artifact-dir", $artifactDir)
         if (Test-ControlRequiresAnimatedVisualProof $control) {
             $args += "--preserve-animated-visuals"
+        }
+        if (Test-ControlRequiresDiagnosticPreparation $control) {
+            $args += "--open-interactions"
         }
 
         $process = Start-Process -FilePath $GalleryExe -ArgumentList $args -PassThru
@@ -3690,6 +3759,8 @@ foreach ($control in $Controls) {
     $scrollEvidence = Test-ScrollEvidence $interactionResult
     $shellNavigationEvidence = Test-ShellNavigationEvidence $interactionResult
     $breadcrumbEvidence = Test-BreadcrumbEvidence $interactionResult
+    $preparedOpenEvidence = Test-PreparedOpenEvidence $interactionResult
+    $preparedTextEvidence = Test-PreparedTextEvidence $interactionResult
     if ($status -eq "Passed" -and $interactionKind -eq "Selection" -and !$selectionEvidence -and !$visualSelectionEvidence) {
         $status = "NeedsReview"
         $notes.Add("Machine-readable selection or output evidence did not change; manual frame review is required.")
@@ -3750,6 +3821,16 @@ foreach ($control in $Controls) {
         $notes.Add("Breadcrumb interaction did not remove the trailing folders after clicking Folder1.")
     }
 
+    if ($status -eq "Passed" -and $interactionKind -eq "PreparedOpen" -and !$preparedOpenEvidence) {
+        $status = "Failed"
+        $notes.Add("Prepared opened content was not visible and anchored during recording.")
+    }
+
+    if ($status -eq "Passed" -and $interactionKind -eq "PreparedText" -and !$preparedTextEvidence) {
+        $status = "Failed"
+        $notes.Add("Prepared text content was not visible through UI Automation during recording.")
+    }
+
     if ($status -eq "Passed" -and (Test-ControlRequiresAnimatedVisualProof $control) -and !$animationEvidence) {
         $status = "NeedsReview"
         $notes.Add("Animated visual proof was not detected in early poster frames.")
@@ -3796,6 +3877,12 @@ foreach ($control in $Controls) {
         elseif ($interactionKind -eq "Breadcrumb" -and $breadcrumbEvidence) {
             $notes.Add("Breadcrumb item collection changed despite low full-frame delta.")
         }
+        elseif ($interactionKind -eq "PreparedOpen" -and $preparedOpenEvidence) {
+            $notes.Add("Prepared opened content was visible and anchored despite low full-frame delta.")
+        }
+        elseif ($interactionKind -eq "PreparedText" -and $preparedTextEvidence) {
+            $notes.Add("Prepared text content matched despite low full-frame delta.")
+        }
         else {
             $status = "NeedsReview"
             $notes.Add("Interactive recording produced low poster-frame delta.")
@@ -3827,6 +3914,8 @@ foreach ($control in $Controls) {
         ScrollEvidence = $scrollEvidence
         ShellNavigationEvidence = $shellNavigationEvidence
         BreadcrumbEvidence = $breadcrumbEvidence
+        PreparedOpenEvidence = $preparedOpenEvidence
+        PreparedTextEvidence = $preparedTextEvidence
         RenderedPageArtifactAnchor = $renderedPageArtifactAnchor
         InteractionResult = $interactionResult
         Notes = ($notes.ToArray() -join " ")

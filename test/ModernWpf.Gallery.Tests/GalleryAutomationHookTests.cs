@@ -4123,6 +4123,100 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
+        [TestMethod]
+        public void WpfToolTipInteractionModeOpensTooltip()
+        {
+            WpfTestHost.Run(() =>
+            {
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--open-interactions" }));
+                var page = new ItemPage(GalleryCatalog.FindItem("ToolTip"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var button = (Button)FindByAutomationName(page, "TooltipButton");
+                    Assert.IsNotNull(button);
+                    Assert.AreEqual("Simple ToolTip", ToolTipService.GetToolTip(button));
+
+                    GalleryDiagnostics.PrepareInteractiveVisualState(page);
+                    WpfTestHost.DoEvents();
+
+                    var toolTip = ToolTipService.GetToolTip(button) as ToolTip;
+                    Assert.IsNotNull(toolTip);
+                    Assert.AreEqual("Simple ToolTip", toolTip.Content);
+                    Assert.AreSame(button, toolTip.PlacementTarget);
+                    Assert.IsTrue(toolTip.IsOpen);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void RichTextEditInteractionModePopulatesDocumentText()
+        {
+            WpfTestHost.Run(() =>
+            {
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--open-interactions" }));
+                var page = new ItemPage(GalleryCatalog.FindItem("RichTextEdit"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var richTextBox = (RichTextBox)FindByAutomationName(page, "simple rich text editor");
+                    Assert.IsNotNull(richTextBox);
+
+                    GalleryDiagnostics.PrepareInteractiveVisualState(page);
+                    WpfTestHost.DoEvents();
+
+                    var text = new TextRange(
+                        richTextBox.Document.ContentStart,
+                        richTextBox.Document.ContentEnd).Text;
+                    Assert.AreEqual("ModernWpf rich text\r\n", text);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
         private static void WaitFor(Func<bool> condition)
         {
             var deadline = DateTime.UtcNow.AddSeconds(3);
@@ -4168,6 +4262,32 @@ namespace ModernWpf.Gallery.Tests
             for (var i = 0; i < childCount; i++)
             {
                 var result = FindByAutomationId(VisualTreeHelper.GetChild(root, i), automationId);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        private static DependencyObject FindByAutomationName(DependencyObject root, string automationName)
+        {
+            if (root == null)
+            {
+                return null;
+            }
+
+            var element = root as UIElement;
+            if (element != null && AutomationProperties.GetName(element) == automationName)
+            {
+                return root;
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var result = FindByAutomationName(VisualTreeHelper.GetChild(root, i), automationName);
                 if (result != null)
                 {
                     return result;

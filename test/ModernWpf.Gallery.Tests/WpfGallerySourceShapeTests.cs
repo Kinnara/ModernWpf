@@ -3617,6 +3617,21 @@ namespace ModernWpf.Gallery.Tests
                 "\"RichTextEdit\" { return \"simple rich text editor\" }");
             AssertContainsInOrder(
                 source,
+                "function Get-ControlInteractionKind([string]$control)",
+                "if ($control -eq \"ToolTip\") { return \"PreparedOpen\" }",
+                "if ($control -eq \"RichTextEdit\") { return \"PreparedText\" }",
+                "function Test-ControlRequiresDiagnosticPreparation([string]$control)",
+                "\"RichTextEdit\" { return $true }",
+                "\"ToolTip\" { return $true }");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-PreparedTextInteraction($window, [string]$control)",
+                "$targetName = Get-TextInteractionTargetName $control",
+                "$expectedText = Get-TextInteractionInput $control",
+                "$actualText = Get-ElementText $target",
+                "OutputMatched = $outputMatched");
+            AssertContainsInOrder(
+                source,
                 "public static void PressCtrlV()",
                 "KeyPress(0x56);",
                 "private static void TypeUnicodeChar(char ch)",
@@ -3647,6 +3662,19 @@ namespace ModernWpf.Gallery.Tests
                 "\"ToolTip\" { return $true }",
                 "function Get-OpenInteractionNames([string]$control)",
                 "\"ToolTip\" { return @(\"Simple ToolTip\") }");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-PreparedOpenInteraction($window, [string]$control, $sampleElement)",
+                "$trigger = Get-OpenInteractionTriggerElement $window $control $sampleElement",
+                "$openElement = if ($openNames.Count -eq 0) { $null } else { Find-OpenInteractionElement $window $trigger $openNames $control }",
+                "OpenElementAnchored = $openElementAnchored");
+            AssertContainsInOrder(
+                source,
+                "function Test-PreparedOpenEvidence($interactionResult)",
+                "$interactionResult.Contains(\"OpenElementFound\")",
+                "$interactionResult.Contains(\"OpenElementAnchored\")",
+                "function Test-PreparedTextEvidence($interactionResult)",
+                "$interactionResult.Contains(\"OutputMatched\")");
             AssertContainsInOrder(
                 source,
                 "function Invoke-OpenElementOnce($window, [string]$control, $element)",
