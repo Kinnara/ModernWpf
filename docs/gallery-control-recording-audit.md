@@ -384,6 +384,27 @@ static-pass gap:
   static MessageBox rows are therefore superseded for interaction proof until a
   recording proves the modal opens, closes, and reopens.
 
+Round 67 closes the MessageBox modal placement and recorder invocation gap:
+
+- The first MessageBox recorder fix made UIA invoke the real
+  `Simple MessageBox` button on the main automation thread and close the modal
+  from a separate runspace, which exposed that the product dialog could open on
+  another monitor. Failed runs such as
+  `artifacts/gallery-recordings/20260605-063128-457/report.md` and
+  `artifacts/gallery-recordings/20260605-063647-015/report.md` recorded
+  `FirstOpenElementBounds=2484,711,150,15` while the rendered capture rect was
+  `0,0,1620,1220`, so UIA success alone still did not prove a visible modal.
+- The Gallery MessageBox sample now routes every runtime dialog through an
+  owned WPF `MessageBox.Show(owner, ...)` wrapper and installs a current-thread
+  CBT hook to center the native dialog over the owner on activation. This keeps
+  the modal in the Gallery capture instead of accepting off-monitor placement.
+- Latest proof
+  `artifacts/gallery-recordings/20260605-064048-292/report.md` passed with
+  `OpenRepeatEvidence=true`, first/closed/second frames
+  `t2500` / `t6000` / `t9000`, deltas `204.626` / `0.052` / `204.639`, and
+  dialog text bounds `725,574,150,15` inside the `0,0,1620,1220` rendered
+  capture.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -418,6 +439,9 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260605-054214-762/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; focus, stepped pointer movement, and queued hover messages still did not open the WPF ToolTip |
 | `artifacts/gallery-recordings/20260605-054733-333/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; 18s run keeps both failed hover attempts inside the recording |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
+| `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
+| `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
+| `artifacts/gallery-recordings/20260605-064048-292/report.md` | MessageBox | 1 passed, 0 needs review, 0 failed; owner-centered WPF MessageBox passed open/closed/open visual proof with frames `t2500` / `t6000` / `t9000` |
 
 The `20260604-050301-561` run is intentionally not treated as a green sweep:
 it exposed two remaining interaction gaps that the older static sweep missed.
@@ -540,7 +564,7 @@ proof on top of these static route captures.
 | Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-033404-923/ContentDialog/dark-contentdialog.mp4` | Latest 24s rendered run treats modal close as a named `Cancel` button action and requires pixel-backed close proof. Manifest records `CloseMethod=DialogCancelButton:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t9000` / `t14000`, and deltas `12.379` / `0.756` / `26.644`. |
 | Dialogs & flyouts | Flyout | `item/Flyout` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-030028-982/Flyout/dark-flyout.mp4` | Latest 24s rendered run passes with pixel-backed close proof and baseline-delta transition scan: `CloseVisualChecked=true`, `CloseVisualClosed=true`, `Detection=BaselineDeltaScan`, frames `t2500` / `t6500` / `t11500`, and deltas `22.728` / `0.901` / `19.984`. |
 | Dialogs & flyouts | Popup | `item/Popup` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-033404-923/Popup/dark-popup.mp4` | Latest 24s rendered run accepts the named `Close` button only after the opened-content region returns to baseline, so stale UIA cannot block or fake the close. Manifest records `CloseMethod=SampleCloseButton:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t8500` / `t11000`, and deltas `28.867` / `0.937` / `28.846`. |
-| System | MessageBox | `item/MessageBox` | Failed recording | Open defect | `artifacts/gallery-recordings/20260605-060705-846/MessageBox/dark-messagebox.mp4` | Official WPF MessageBox is no longer accepted from the old static page sweep. Latest 18s rendered run targets `Simple MessageBox`, generates dense transition review, but fails with `FirstOpenElementFound=false`, `SecondOpenElementFound=false`, no visual open-repeat evidence, and no result text change. |
+| System | MessageBox | `item/MessageBox` | Recorded | Fixed | `artifacts/gallery-recordings/20260605-064048-292/MessageBox/dark-messagebox.mp4` | Runtime sample dialogs now use owned WPF `MessageBox.Show(owner, ...)` plus owner-centered native placement. Latest 18s rendered run passes with `OpenRepeatEvidence=true`, frames `t2500` / `t6000` / `t9000`, deltas `204.626` / `0.052` / `204.639`, and dialog text bounds `725,574,150,15` inside the capture. |
 | Menus & toolbars | MenuBar | `item/MenuBar` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-042951-643/MenuBar/dark-menubar.mp4` | Latest rendered run closes through the `Exit` leaf item and requires baseline-delta open/closed/open proof. Manifest records frames `t2500` / `t4000` / `t9000`, deltas `11.896` / `0.258` / `12.3`, and local delta `12.485`. |
 | Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260605-031711-696/MenuFlyout/dark-menuflyout.mp4` | Same-target repeat-open guard now treats tracked absolute-point presenters as the same target to avoid close/reopen flicker. Latest 24s rendered rerun passes with `CloseMethod=LeafMenuItem:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t6500` / `t12000`, and deltas `15.058` / `0.679` / `14.044`. |
 | Menus & toolbars | AppBarButton | `item/AppBarButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/AppBarButton/dark-appbarbutton.mp4` | Latest rendered run records local visual delta `0.795`; output text changed despite low whole-frame delta `0.057`. |

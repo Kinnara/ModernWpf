@@ -3850,21 +3850,25 @@ namespace ModernWpf.Gallery.Tests
                 "return $control -eq \"MessageBox\"");
             AssertContainsInOrder(
                 source,
-                "public static void InvokeAutomationPatternAsync(object pattern)",
-                "new System.Threading.Thread(() =>",
-                "pattern.GetType().GetMethod(\"Invoke\").Invoke(pattern, null)",
-                "thread.SetApartmentState(System.Threading.ApartmentState.STA)",
-                "thread.Start();",
-                "function Invoke-ElementInvokePatternInBackground($element, [int]$postDelayMilliseconds = 600)",
-                "[GalleryRecordingNative]::InvokeAutomationPatternAsync($pattern)");
+                "function Invoke-MessageBoxButtonWithDelayedClose($trigger, [string[]]$openNames, [int]$processId, [int]$dwellMilliseconds)",
+                "$closer = [powershell]::Create()",
+                "$closer.BeginInvoke()",
+                "$pattern = $trigger.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)",
+                "$pattern.Invoke()",
+                "$closer.EndInvoke($asyncResult)",
+                "OpenElementFound = [bool]$result[0].OpenElementFound",
+                "OpenElementBounds = [string]$result[0].OpenElementBounds",
+                "Closed = [bool]$result[0].Closed");
             AssertContainsInOrder(
                 source,
-                "function Invoke-OpenElementOnce($window, [string]$control, $element)",
+                "function Invoke-MessageBoxOpenRepeatInteraction($window, [string]$control, $sampleElement)",
+                "$firstOpenResult = Invoke-MessageBoxButtonWithDelayedClose $trigger $openNames $window.Current.ProcessId 1800",
+                "$secondOpenResult = Invoke-MessageBoxButtonWithDelayedClose $secondTrigger $openNames $window.Current.ProcessId 1800",
+                "FirstOpenElementBounds = $firstOpenElementBounds",
+                "SecondOpenElementBounds = $secondOpenElementBounds",
+                "function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)",
                 "if ($control -eq \"MessageBox\")",
-                "if (Invoke-ElementInvokePatternInBackground $element 600)",
-                "$element.SetFocus()",
-                "[GalleryRecordingNative]::Space()",
-                "return Invoke-NativeClickElementOnce $window $element 600");
+                "return Invoke-MessageBoxOpenRepeatInteraction $window $control $sampleElement");
             AssertContainsInOrder(
                 source,
                 "function Find-MessageBoxDialogElement($window, [string[]]$names)",
@@ -3882,16 +3886,18 @@ namespace ModernWpf.Gallery.Tests
                 "return Find-MessageBoxDialogElement $window $openNames");
             AssertContainsInOrder(
                 source,
-                "function Close-OpenInteractionElement($window, [string]$control, $trigger, [string[]]$openNames, $sampleElement, $visualCloseContext = $null)",
-                "if ($control -eq \"MessageBox\")",
-                "$okButton = Find-MessageBoxDialogButton $window @(\"OK\")",
-                "Invoke-NativeClickElementOnce $window $okButton 700",
-                "Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1600 $visualCloseContext",
-                "Method = \"DialogOkButton:Click\"");
+                "Add-Type -TypeDefinition @\"",
+                "public static class GalleryMessageBoxCloserNative",
+                "public static void Enter()",
+                "$okButton.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()",
+                "$method = \"DialogOkButton:Invoke\"");
             AssertContainsInOrder(
                 source,
                 "function Test-ControlRequiresLiveVisualClose([string]$control)",
                 "$control -eq \"MessageBox\" -or");
+            Assert.IsFalse(
+                source.Contains("InvokeAutomationPatternAsync", StringComparison.Ordinal),
+                "MessageBox must not share a UIA InvokePattern object across threads; the closer re-finds elements in its own runspace.");
         }
 
         [TestMethod]
@@ -5580,7 +5586,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void MessageBoxCodeBehindKeepsOfficialShowCallSourceShape()
+        public void MessageBoxCodeBehindCentersOwnedShowCalls()
         {
             var source = ReadRepoFile(
                 "ModernWpf.Gallery",
@@ -5592,13 +5598,16 @@ namespace ModernWpf.Gallery.Tests
 
             StringAssert.Contains(
                 normalizedSource,
-                "            var result = MessageBox.Show(\"This is a detailed description of what happened or what action is needed.\", \"Custom Title\");\n            ViewModel.CustomTitleResult = $\"Result: {result}\";");
+                "            var result = ShowOwnedMessageBox(\"This is a simple message box!\");\n            ViewModel.DefaultMessageResult = $\"Result: {result}\";");
             StringAssert.Contains(
                 normalizedSource,
-                "            var result = MessageBox.Show($\"This MessageBox has {buttonName} button(s).\", $\"{buttonName} Button(s)\", buttonType);\n            ViewModel.DifferentButtonsResult = $\"Result: {result}\";");
+                "            var result = ShowOwnedMessageBox(\"This is a detailed description of what happened or what action is needed.\", \"Custom Title\");\n            ViewModel.CustomTitleResult = $\"Result: {result}\";");
             StringAssert.Contains(
                 normalizedSource,
-                "            var result = MessageBox.Show($\"This MessageBox displays the {imageName} icon.\", $\"{imageName} Icon\", MessageBoxButton.OK, imageType);\n            ViewModel.DifferentImagesResult = $\"Result: {result}\";");
+                "            var result = ShowOwnedMessageBox($\"This MessageBox has {buttonName} button(s).\", $\"{buttonName} Button(s)\", buttonType);\n            ViewModel.DifferentButtonsResult = $\"Result: {result}\";");
+            StringAssert.Contains(
+                normalizedSource,
+                "            var result = ShowOwnedMessageBox($\"This MessageBox displays the {imageName} icon.\", $\"{imageName} Icon\", MessageBoxButton.OK, imageType);\n            ViewModel.DifferentImagesResult = $\"Result: {result}\";");
             StringAssert.Contains(
                 normalizedSource,
                 "        // 6. Common Messages (Information, Error, Warning)\n        private void ShowCommonInformation_Click(object sender, RoutedEventArgs e)");
@@ -5607,12 +5616,42 @@ namespace ModernWpf.Gallery.Tests
                 "        // 7. Custom Default Button\n        private void ShowCustomDefaultButton_Click(object sender, RoutedEventArgs e)");
             StringAssert.Contains(
                 normalizedSource,
-                "            var result = MessageBox.Show(\"Do you want to save changes? Press Enter to select the default 'No' button.\", \"Save Changes\", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.No);\n            ViewModel.CustomDefaultResult = $\"User selected: {result}\";");
+                "            var result = ShowOwnedMessageBox(\"Do you want to save changes? Press Enter to select the default 'No' button.\", \"Save Changes\", MessageBoxButton.YesNoCancel, MessageBoxImage.Question, MessageBoxResult.No);\n            ViewModel.CustomDefaultResult = $\"User selected: {result}\";");
+            AssertContainsInOrder(
+                normalizedSource,
+                "private MessageBoxResult ShowOwnedMessageBox(string messageBoxText)",
+                "var owner = GetOwnerWindow();",
+                "using (new MessageBoxCenteringScope(owner))",
+                "return MessageBox.Show(owner, messageBoxText);");
+            AssertContainsInOrder(
+                normalizedSource,
+                "private MessageBoxResult ShowOwnedMessageBox(string messageBoxText, string caption, MessageBoxButton button, MessageBoxImage icon, MessageBoxResult defaultResult)",
+                "using (new MessageBoxCenteringScope(owner))",
+                "return MessageBox.Show(owner, messageBoxText, caption, button, icon, defaultResult);");
+            StringAssert.Contains(
+                normalizedSource,
+                "        private Window GetOwnerWindow()\n        {\n            var owner = Window.GetWindow(this) ?? Application.Current.MainWindow;\n            owner?.Activate();\n            return owner;\n        }");
+            AssertContainsInOrder(
+                normalizedSource,
+                "private sealed class MessageBoxCenteringScope : IDisposable",
+                "private const int WH_CBT = 5;",
+                "private const int HCBT_ACTIVATE = 5;",
+                "_hook = SetWindowsHookEx(WH_CBT, _hookProc, IntPtr.Zero, GetCurrentThreadId());",
+                "if (code == HCBT_ACTIVATE)",
+                "CenterDialog(wParam);",
+                "SetWindowPos(dialogHandle, IntPtr.Zero, left, top, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);");
+            Assert.IsFalse(
+                normalizedSource.Contains("MessageBox.Show(\"", StringComparison.Ordinal),
+                "Gallery runtime dialogs must pass an owner window so recording and app placement stay on the Gallery window.");
+            Assert.IsFalse(
+                normalizedSource.Contains("MessageBox.Show($\"", StringComparison.Ordinal),
+                "Gallery runtime dialogs must pass an owner window so recording and app placement stay on the Gallery window.");
 
             AssertContainsInOrder(
                 normalizedSource,
                 "var buttonType = GetMessageBoxButton(ViewModel.SelectedButtonIndex);",
-                "var result = MessageBox.Show($\"This MessageBox has {buttonName} button(s).\", $\"{buttonName} Button(s)\", buttonType);",
+                "var result = ShowOwnedMessageBox($\"This MessageBox has {buttonName} button(s).\", $\"{buttonName} Button(s)\", buttonType);",
+                "private Window GetOwnerWindow()",
                 "private static MessageBoxButton GetMessageBoxButton(int index)");
             StringAssert.Contains(
                 normalizedSource,
@@ -5623,7 +5662,7 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 normalizedSource,
                 "var imageType = GetMessageBoxImage(ViewModel.SelectedImageIndex);",
-                "var result = MessageBox.Show($\"This MessageBox displays the {imageName} icon.\", $\"{imageName} Icon\", MessageBoxButton.OK, imageType);",
+                "var result = ShowOwnedMessageBox($\"This MessageBox displays the {imageName} icon.\", $\"{imageName} Icon\", MessageBoxButton.OK, imageType);",
                 "private static MessageBoxImage GetMessageBoxImage(int index)");
         }
 

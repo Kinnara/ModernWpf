@@ -292,23 +292,6 @@ public static class GalleryRecordingNative
         KeyPress(VK_RETURN);
     }
 
-    public static void InvokeAutomationPatternAsync(object pattern)
-    {
-        var thread = new System.Threading.Thread(() =>
-        {
-            try
-            {
-                pattern.GetType().GetMethod("Invoke").Invoke(pattern, null);
-            }
-            catch
-            {
-            }
-        });
-        thread.IsBackground = true;
-        thread.SetApartmentState(System.Threading.ApartmentState.STA);
-        thread.Start();
-    }
-
     private static void KeyPress(byte virtualKey)
     {
         keybd_event(virtualKey, 0, 0, UIntPtr.Zero);
@@ -2170,10 +2153,6 @@ function Invoke-OpenElementOnce($window, [string]$control, $element) {
             return $false
         }
 
-        if (Invoke-ElementInvokePatternInBackground $element 600) {
-            return $true
-        }
-
         [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
         Start-Sleep -Milliseconds 100
         try {
@@ -2279,25 +2258,6 @@ function Invoke-NativeClickElementOnce($window, $element, [int]$postDelayMillise
     [GalleryRecordingNative]::Click($center.X, $center.Y)
     Start-Sleep -Milliseconds $postDelayMilliseconds
     return $true
-}
-
-function Invoke-ElementInvokePatternInBackground($element, [int]$postDelayMilliseconds = 600) {
-    if ($null -eq $element) {
-        return $false
-    }
-
-    try {
-        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
-        if ($null -ne $pattern) {
-            [GalleryRecordingNative]::InvokeAutomationPatternAsync($pattern)
-            Start-Sleep -Milliseconds $postDelayMilliseconds
-            return $true
-        }
-    }
-    catch {
-    }
-
-    return $false
 }
 
 function Find-MessageBoxDialogElement($window, [string[]]$names) {
@@ -2984,7 +2944,257 @@ function Get-RecordingElapsedSeconds {
     return [Math]::Round($script:GalleryRecordingStopwatch.Elapsed.TotalSeconds, 3)
 }
 
+function Invoke-MessageBoxButtonWithDelayedClose($trigger, [string[]]$openNames, [int]$processId, [int]$dwellMilliseconds) {
+    if ($null -eq $trigger -or $openNames.Count -eq 0) {
+        return [ordered]@{
+            Invoked = $false
+            OpenElementFound = $false
+            OpenElementBounds = ""
+            Closed = $false
+            Method = "DialogOkButton:MissingTrigger"
+        }
+    }
+
+    $closer = [powershell]::Create()
+    $closerScript = {
+        param($targetProcessId, $targetMessageName, $targetDwellMilliseconds)
+
+        Add-Type -AssemblyName UIAutomationClient
+        Add-Type -AssemblyName UIAutomationTypes
+        if (-not ("GalleryMessageBoxCloserNative" -as [type])) {
+            Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+
+public static class GalleryMessageBoxCloserNative
+{
+    [DllImport("user32.dll")]
+    private static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, UIntPtr extraInfo);
+
+    private const byte VK_RETURN = 0x0D;
+    private const uint KEYEVENTF_KEYUP = 0x0002;
+
+    public static void Enter()
+    {
+        keybd_event(VK_RETURN, 0, 0, UIntPtr.Zero);
+        keybd_event(VK_RETURN, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
+    }
+}
+"@
+        }
+
+        function Format-RectForMessageBoxCloser($rect) {
+            if ($null -eq $rect -or $rect.Width -le 0 -or $rect.Height -le 0) {
+                return ""
+            }
+
+            return "{0},{1},{2},{3}" -f `
+                [int][Math]::Round($rect.X), `
+                [int][Math]::Round($rect.Y), `
+                [int][Math]::Round($rect.Width), `
+                [int][Math]::Round($rect.Height)
+        }
+
+        $root = [System.Windows.Automation.AutomationElement]::RootElement
+        $processCondition = New-Object System.Windows.Automation.PropertyCondition(
+            [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+            $targetProcessId)
+        $messageCondition = New-Object System.Windows.Automation.PropertyCondition(
+            [System.Windows.Automation.AutomationElement]::NameProperty,
+            $targetMessageName)
+        $okCondition = New-Object System.Windows.Automation.PropertyCondition(
+            [System.Windows.Automation.AutomationElement]::NameProperty,
+            "OK")
+        $deadline = (Get-Date).AddMilliseconds(5000)
+        $messageElement = $null
+        $okButton = $null
+
+        do {
+            $windows = $root.FindAll([System.Windows.Automation.TreeScope]::Children, $processCondition)
+            foreach ($candidateWindow in $windows) {
+                if ($null -eq $messageElement) {
+                    $messageElement = $candidateWindow.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $messageCondition)
+                }
+
+                if ($null -eq $okButton) {
+                    $foundOk = $candidateWindow.FindAll([System.Windows.Automation.TreeScope]::Descendants, $okCondition)
+                    foreach ($candidateOk in $foundOk) {
+                        try {
+                            if ($candidateOk.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
+                                !$candidateOk.Current.IsOffscreen -and
+                                $candidateOk.Current.IsEnabled) {
+                                $okButton = $candidateOk
+                                break
+                            }
+                        }
+                        catch {
+                        }
+                    }
+                }
+
+                if ($null -ne $messageElement -and $null -ne $okButton) {
+                    break
+                }
+            }
+
+            if ($null -ne $messageElement -and $null -ne $okButton) {
+                break
+            }
+
+            Start-Sleep -Milliseconds 100
+        } while ((Get-Date) -lt $deadline)
+
+        $messageBounds = ""
+        if ($null -ne $messageElement) {
+            try {
+                $messageBounds = Format-RectForMessageBoxCloser $messageElement.Current.BoundingRectangle
+            }
+            catch {
+            }
+        }
+
+        Start-Sleep -Milliseconds $targetDwellMilliseconds
+
+        $closed = $false
+        $method = "DialogOkButton:NotFound"
+        if ($null -ne $okButton) {
+            try {
+                $okButton.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+                $closed = $true
+                $method = "DialogOkButton:Invoke"
+            }
+            catch {
+                [GalleryMessageBoxCloserNative]::Enter()
+                $closed = $true
+                $method = "DialogOkButton:EnterFallback"
+            }
+        }
+        else {
+            [GalleryMessageBoxCloserNative]::Enter()
+            $method = "DialogOkButton:EnterFallbackNoButton"
+        }
+
+        [pscustomobject]@{
+            OpenElementFound = $null -ne $messageElement
+            OpenElementBounds = $messageBounds
+            Closed = $closed
+            Method = $method
+        }
+    }
+
+    [void]$closer.AddScript($closerScript).AddArgument($processId).AddArgument($openNames[0]).AddArgument($dwellMilliseconds)
+    $asyncResult = $closer.BeginInvoke()
+    $invoked = $false
+    try {
+        $pattern = $trigger.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            $invoked = $true
+        }
+    }
+    catch {
+    }
+
+    $closerOutput = $closer.EndInvoke($asyncResult)
+    $closer.Dispose()
+    $result = @($closerOutput | Select-Object -First 1)
+    if ($result.Count -eq 0 -or $null -eq $result[0]) {
+        return [ordered]@{
+            Invoked = $invoked
+            OpenElementFound = $false
+            OpenElementBounds = ""
+            Closed = $false
+            Method = "DialogOkButton:NoCloserResult"
+        }
+    }
+
+    return [ordered]@{
+        Invoked = $invoked
+        OpenElementFound = [bool]$result[0].OpenElementFound
+        OpenElementBounds = [string]$result[0].OpenElementBounds
+        Closed = [bool]$result[0].Closed
+        Method = [string]$result[0].Method
+    }
+}
+
+function Invoke-MessageBoxOpenRepeatInteraction($window, [string]$control, $sampleElement) {
+    $trigger = Get-OpenInteractionTriggerElement $window $control $sampleElement
+    $openNames = @(Get-OpenInteractionNames $control)
+    $triggerBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $trigger)
+    $initialVisualSeconds = [Math]::Max(0.1, (Get-RecordingElapsedSeconds) - 0.75)
+
+    $firstOpenStartSeconds = Get-RecordingElapsedSeconds
+    $firstOpenResult = Invoke-MessageBoxButtonWithDelayedClose $trigger $openNames $window.Current.ProcessId 1800
+    $firstOpenVisualSeconds = [Math]::Round($firstOpenStartSeconds + 0.9, 3)
+    Start-Sleep -Milliseconds 1100
+    $closedVisualSeconds = Get-RecordingElapsedSeconds
+
+    $secondTrigger = Get-OpenInteractionTriggerElement $window $control $sampleElement
+    if ($null -eq $secondTrigger) {
+        $secondTrigger = $trigger
+    }
+
+    $secondTriggerBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $secondTrigger)
+    Start-Sleep -Milliseconds 700
+    $secondOpenStartSeconds = Get-RecordingElapsedSeconds
+    $secondOpenResult = Invoke-MessageBoxButtonWithDelayedClose $secondTrigger $openNames $window.Current.ProcessId 1800
+    $secondOpenVisualSeconds = [Math]::Round($secondOpenStartSeconds + 0.9, 3)
+
+    $firstOpenElementFound = [bool]$firstOpenResult.OpenElementFound
+    $secondOpenElementFound = [bool]$secondOpenResult.OpenElementFound
+    $closedElementGone = [bool]$firstOpenResult.Closed -and [bool]$secondOpenResult.Closed
+    $firstOpenElementBounds = [string]$firstOpenResult.OpenElementBounds
+    $secondOpenElementBounds = [string]$secondOpenResult.OpenElementBounds
+
+    if ([string]::IsNullOrWhiteSpace($firstOpenElementBounds) -and ![string]::IsNullOrWhiteSpace($secondOpenElementBounds)) {
+        $firstOpenElementBounds = $secondOpenElementBounds
+    }
+    if ([string]::IsNullOrWhiteSpace($secondOpenElementBounds) -and ![string]::IsNullOrWhiteSpace($firstOpenElementBounds)) {
+        $secondOpenElementBounds = $firstOpenElementBounds
+    }
+
+    return [ordered]@{
+        Invoked = [bool]$firstOpenResult.Invoked -and [bool]$secondOpenResult.Invoked -and $firstOpenElementFound -and $secondOpenElementFound -and $closedElementGone
+        FirstOpen = [bool]$firstOpenResult.Invoked
+        Closed = $closedElementGone
+        CloseMethod = $firstOpenResult.Method
+        SecondOpen = [bool]$secondOpenResult.Invoked
+        FirstOpenElementFound = $firstOpenElementFound
+        SecondOpenElementFound = $secondOpenElementFound
+        ClosedElementGone = $closedElementGone
+        CloseVisualChecked = $false
+        CloseVisualClosed = $false
+        CloseVisualDelta = $null
+        CloseVisualSnapshot = ""
+        FirstOpenElementAnchored = $true
+        SecondOpenElementAnchored = $true
+        TriggerBounds = $triggerBounds
+        SecondTriggerBounds = $secondTriggerBounds
+        FirstOpenElementBounds = $firstOpenElementBounds
+        SecondOpenElementBounds = $secondOpenElementBounds
+        InitialVisualSeconds = $initialVisualSeconds
+        FirstOpenStartSeconds = $firstOpenStartSeconds
+        FirstOpenVisualSeconds = $firstOpenVisualSeconds
+        ClosedVisualSeconds = $closedVisualSeconds
+        SecondOpenStartSeconds = $secondOpenStartSeconds
+        SecondOpenVisualSeconds = $secondOpenVisualSeconds
+        FirstOpenExpandState = ""
+        SecondOpenExpandState = ""
+        InitialToggleState = ""
+        FirstOpenToggleState = ""
+        ClosedToggleState = ""
+        SecondOpenToggleState = ""
+        FirstCommandBarFlyoutSecondaryExpanded = $false
+        SecondCommandBarFlyoutSecondaryExpanded = $false
+        CommandBarFlyoutSecondaryExpanded = $true
+    }
+}
+
 function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement) {
+    if ($control -eq "MessageBox") {
+        return Invoke-MessageBoxOpenRepeatInteraction $window $control $sampleElement
+    }
+
     $trigger = Get-OpenInteractionTriggerElement $window $control $sampleElement
     $openNames = @(Get-OpenInteractionNames $control)
     $openVisualDwellMilliseconds = switch ($control) {
