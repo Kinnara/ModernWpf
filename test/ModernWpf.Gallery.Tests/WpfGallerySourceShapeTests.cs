@@ -3762,7 +3762,11 @@ namespace ModernWpf.Gallery.Tests
                 "mouse_event(MOUSEEVENTF_MOVE, 1, 0, 0, UIntPtr.Zero);",
                 "mouse_event(MOUSEEVENTF_MOVE, unchecked((uint)-1), 0, 0, UIntPtr.Zero);",
                 "public static void MoveCursorOverWindow(IntPtr hWnd, int x, int y)",
-                "SendMessage(hWnd, WM_MOUSEMOVE, UIntPtr.Zero, new IntPtr(packedPoint));");
+                "SendMessage(hWnd, WM_MOUSEMOVE, UIntPtr.Zero, new IntPtr(packedPoint));",
+                "PostMessage(hWnd, WM_MOUSEMOVE, UIntPtr.Zero, new IntPtr(packedPoint));",
+                "public static void HoverCursorOverWindow(IntPtr hWnd, int x, int y)",
+                "SendMessage(hWnd, WM_MOUSEHOVER, UIntPtr.Zero, new IntPtr(packedPoint));",
+                "PostMessage(hWnd, WM_MOUSEHOVER, UIntPtr.Zero, new IntPtr(packedPoint));");
             AssertContainsInOrder(
                 source,
                 "function Test-ControlSupportsOpenInteraction([string]$control)",
@@ -3783,7 +3787,11 @@ namespace ModernWpf.Gallery.Tests
                 "$offTargetY = [Math]::Max(1, $center.Y - 160)",
                 "[GalleryRecordingNative]::MoveCursorOverWindow($windowHandle, $offTargetX, $offTargetY)",
                 "[GalleryRecordingNative]::Click($offTargetX, $offTargetY)",
-                "[GalleryRecordingNative]::MoveCursorOverWindow($windowHandle, $center.X, $center.Y)",
+                "$element.SetFocus()",
+                "$entryX = if ($null -eq $bounds) { $center.X - 24 } else { [int][Math]::Floor($bounds.X - 24) }",
+                "for ($step = 0; $step -le 8; $step++)",
+                "[GalleryRecordingNative]::MoveCursorOverWindow($windowHandle, $x, $entryY)",
+                "[GalleryRecordingNative]::HoverCursorOverWindow($windowHandle, $center.X, $center.Y)",
                 "Start-Sleep -Milliseconds 1200");
             AssertContainsInOrder(
                 source,

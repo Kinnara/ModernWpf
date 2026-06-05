@@ -103,6 +103,9 @@ public static class GalleryRecordingNative
     [DllImport("user32.dll")]
     private static extern IntPtr SendMessage(IntPtr hWnd, uint message, UIntPtr wParam, IntPtr lParam);
 
+    [DllImport("user32.dll")]
+    private static extern bool PostMessage(IntPtr hWnd, uint message, UIntPtr wParam, IntPtr lParam);
+
     [StructLayout(LayoutKind.Sequential)]
     private struct POINT
     {
@@ -165,6 +168,7 @@ public static class GalleryRecordingNative
     private const uint MOUSEEVENTF_MOVE = 0x0001;
     private const uint MOUSEEVENTF_WHEEL = 0x0800;
     private const uint WM_MOUSEMOVE = 0x0200;
+    private const uint WM_MOUSEHOVER = 0x02A1;
     private const uint KEYEVENTF_KEYUP = 0x0002;
     private const uint KEYEVENTF_UNICODE = 0x0004;
     private const byte VK_CONTROL = 0x11;
@@ -228,6 +232,19 @@ public static class GalleryRecordingNative
         {
             int packedPoint = unchecked((int)(((point.Y & 0xffff) << 16) | (point.X & 0xffff)));
             SendMessage(hWnd, WM_MOUSEMOVE, UIntPtr.Zero, new IntPtr(packedPoint));
+            PostMessage(hWnd, WM_MOUSEMOVE, UIntPtr.Zero, new IntPtr(packedPoint));
+        }
+    }
+
+    public static void HoverCursorOverWindow(IntPtr hWnd, int x, int y)
+    {
+        MoveCursorOverWindow(hWnd, x, y);
+        var point = new POINT { X = x, Y = y };
+        if (ScreenToClient(hWnd, ref point))
+        {
+            int packedPoint = unchecked((int)(((point.Y & 0xffff) << 16) | (point.X & 0xffff)));
+            SendMessage(hWnd, WM_MOUSEHOVER, UIntPtr.Zero, new IntPtr(packedPoint));
+            PostMessage(hWnd, WM_MOUSEHOVER, UIntPtr.Zero, new IntPtr(packedPoint));
         }
     }
 
@@ -2134,7 +2151,21 @@ function Invoke-OpenElementOnce($window, [string]$control, $element) {
         Start-Sleep -Milliseconds 250
         [GalleryRecordingNative]::Click($offTargetX, $offTargetY)
         Start-Sleep -Milliseconds 250
-        [GalleryRecordingNative]::MoveCursorOverWindow($windowHandle, $center.X, $center.Y)
+        try {
+            $element.SetFocus()
+        }
+        catch {
+        }
+        Start-Sleep -Milliseconds 250
+        $bounds = Get-ElementBoundingRectangle $element
+        $entryX = if ($null -eq $bounds) { $center.X - 24 } else { [int][Math]::Floor($bounds.X - 24) }
+        $entryY = $center.Y
+        for ($step = 0; $step -le 8; $step++) {
+            $x = [int][Math]::Round($entryX + (($center.X - $entryX) * ($step / 8.0)))
+            [GalleryRecordingNative]::MoveCursorOverWindow($windowHandle, $x, $entryY)
+            Start-Sleep -Milliseconds 60
+        }
+        [GalleryRecordingNative]::HoverCursorOverWindow($windowHandle, $center.X, $center.Y)
         Start-Sleep -Milliseconds 1200
         return $true
     }

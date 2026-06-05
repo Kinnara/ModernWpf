@@ -354,6 +354,20 @@ prepared-open false pass:
   this desktop session because most captured frames were black, so screen mode
   is not accepted as proof here.
 
+Round 65 strengthens the ToolTip hover probe and keeps the defect open:
+
+- The ToolTip `OpenRepeat` path now forces focus away from the trigger, sets
+  focus back to the button, walks the pointer into the button over multiple
+  move messages, then sends both synchronous and queued WPF window mouse-move
+  and mouse-hover messages before the hover dwell.
+- The stronger probe still does not open the WPF ToolTip in this desktop
+  session. The latest rendered run
+  `artifacts/gallery-recordings/20260605-054214-762/report.md` failed with
+  unchanged frames, `FirstOpenElementFound=false`,
+  `SecondOpenElementFound=false`, and no visual open-repeat evidence. This
+  preserves ToolTip as an explicit open defect instead of accepting a
+  diagnostic prepared-open pass.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -385,6 +399,7 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260605-050718-351/report.md` | Expander, TreeView, TabControl, TextBox, PasswordBox, Calendar, ListBox, ListView, DataGrid, ToolTip, RichTextEdit | 11 passed, 0 needs review, 0 failed; ToolTip was diagnostic prepared-open only and is superseded by the failed real-hover run |
 | `artifacts/gallery-recordings/20260605-052434-715/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed |
 | `artifacts/gallery-recordings/20260605-053026-959/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; screen-mode diagnostic rejected because most frames were black |
+| `artifacts/gallery-recordings/20260605-054214-762/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; focus, stepped pointer movement, and queued hover messages still did not open the WPF ToolTip |
 
 The `20260604-050301-561` run is intentionally not treated as a green sweep:
 it exposed two remaining interaction gaps that the older static sweep missed.
@@ -491,7 +506,7 @@ proof on top of these static route captures.
 | Status & info | InfoBadge | `item/InfoBadge` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260605-045636-525/InfoBadge/dark-infobadge.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_InfoBadge_NavigationView`. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/InfoBar/dark-infobar.mp4` | Latest rendered run records the option interaction with local visual delta `8.084` and whole-frame delta `0.379`. |
 | Status & info | ProgressRing | `item/ProgressRing` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-045636-525/ProgressRing/dark-progressring.mp4` | Latest manifest records `AnimationEvidence=true` with early-frame delta `0.075`, local visual delta `13.759`, and option state change despite low whole-frame delta `0.086`. |
-| Status & info | ToolTip | `item/ToolTip` | Failed recording | Open defect | `artifacts/gallery-recordings/20260605-052434-715/ToolTip/dark-tooltip.mp4` | ToolTip now uses real `OpenRepeat` hover proof instead of diagnostic `PreparedOpen`. Latest rendered run failed with no first/second opened element and no visual open-repeat evidence; prior prepared-open runs are superseded for hover proof. |
+| Status & info | ToolTip | `item/ToolTip` | Failed recording | Open defect | `artifacts/gallery-recordings/20260605-054214-762/ToolTip/dark-tooltip.mp4` | ToolTip now uses real `OpenRepeat` hover proof instead of diagnostic `PreparedOpen`. Latest rendered run includes focus, stepped pointer movement, and queued hover messages, but still failed with no first/second opened element and no visual open-repeat evidence; prior prepared-open runs are superseded for hover proof. |
 | Scrolling | AnnotatedScrollBar | `item/AnnotatedScrollBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/AnnotatedScrollBar/dark-annotatedscrollbar.mp4` | Latest rendered run records scroll interaction with whole-frame delta `4.521` and local visual delta `95.226`. |
 | Collections | GridView | `item/GridView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/GridView/dark-gridview.mp4` | Latest rendered run records local visual delta `1.104`; selection/output evidence changed despite low whole-frame delta `0.162`. |
 | Collections | ItemsRepeater | `item/ItemsRepeater` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-044806-923/ItemsRepeater/dark-itemsrepeater.mp4` | Latest rendered run records virtualized scroll interaction with whole-frame delta `4.456` and local visual delta `11.471`. |
