@@ -1266,7 +1266,7 @@ function Get-ControlRecordingDurationSeconds([string]$control, [string]$interact
             return [Math]::Max($DurationSeconds, 24)
         }
 
-        if ($control -eq "Flyout" -or $control -eq "Popup" -or $control -eq "MenuFlyout") {
+        if ($control -eq "ContentDialog" -or $control -eq "Flyout" -or $control -eq "Popup" -or $control -eq "MenuFlyout") {
             return [Math]::Max($DurationSeconds, 24)
         }
 
@@ -2257,6 +2257,7 @@ function Wait-ForOpenInteractionElementGone($window, $element, [string[]]$openNa
     $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
     do {
         $openElement = if ($control -eq "Flyout" -or
+            $control -eq "ContentDialog" -or
             $control -eq "Popup" -or
             $control -eq "MenuFlyout" -or
             $control -eq "CommandBar" -or
@@ -2266,8 +2267,17 @@ function Wait-ForOpenInteractionElementGone($window, $element, [string[]]$openNa
         else {
             Find-OpenInteractionElement $window $element $openNames $control
         }
+        $visualCloseResult = Test-OpenRepeatVisualClosed $window $visualCloseContext
+        if ($null -ne $visualCloseResult -and $visualCloseResult.Checked) {
+            if ($visualCloseResult.Closed) {
+                return $true
+            }
+
+            Start-Sleep -Milliseconds 100
+            continue
+        }
+
         if ($null -eq $openElement) {
-            $visualCloseResult = Test-OpenRepeatVisualClosed $window $visualCloseContext
             if ($null -eq $visualCloseResult -or !$visualCloseResult.Checked -or $visualCloseResult.Closed) {
                 return $true
             }
@@ -2384,6 +2394,13 @@ function Close-WithVerifiedSampleOption($window, $sampleElement, $trigger, [stri
 }
 
 function Close-OpenInteractionElement($window, [string]$control, $trigger, [string[]]$openNames, $sampleElement, $visualCloseContext = $null) {
+    if ($control -eq "ContentDialog") {
+        $sampleClose = Close-WithVerifiedSampleOption $window $sampleElement $trigger $openNames $control "Cancel" "DialogCancelButton" $visualCloseContext
+        if ($sampleClose.Closed) {
+            return $sampleClose
+        }
+    }
+
     if ($control -eq "Flyout") {
         $sampleClose = Close-WithVerifiedSampleOption $window $sampleElement $trigger $openNames $control "Yes, empty my cart" "SampleConfirmButton" $visualCloseContext
         if ($sampleClose.Closed) {
@@ -2553,6 +2570,7 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     $openVisualDwellMilliseconds = switch ($control) {
         "CommandBar" { 1000; break }
         "CommandBarFlyout" { 1500; break }
+        "ContentDialog" { 6500; break }
         "Flyout" { 6500; break }
         "Popup" { 6500; break }
         "MenuFlyout" { 6500; break }
@@ -3931,7 +3949,8 @@ function Compare-LuminanceSamples($firstSamples, $secondSamples) {
 }
 
 function Test-ControlRequiresLiveVisualClose([string]$control) {
-    return $control -eq "Flyout" -or
+    return $control -eq "ContentDialog" -or
+        $control -eq "Flyout" -or
         $control -eq "Popup" -or
         $control -eq "MenuFlyout" -or
         $control -eq "CommandBar" -or
@@ -4955,7 +4974,7 @@ function Write-Report([string]$runDir, $results) {
     else {
         $lines.Add(("Recorder: ``{0}``" -f ($recorders -join ", ")))
     }
-    $lines.Add(("Duration: ``{0}s`` default; open-repeat controls use at least ``12s``; Flyout, Popup, MenuFlyout, CommandBar, and CommandBarFlyout use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
+    $lines.Add(("Duration: ``{0}s`` default; open-repeat controls use at least ``12s``; ContentDialog, Flyout, Popup, MenuFlyout, CommandBar, and CommandBarFlyout use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
     $lines.Add("")
     $lines.Add("| Control | Status | Interaction | Recording | Dense review | Max frame delta | Max local delta | Notes |")
     $lines.Add("| --- | --- | --- | --- | --- | ---: | ---: | --- |")

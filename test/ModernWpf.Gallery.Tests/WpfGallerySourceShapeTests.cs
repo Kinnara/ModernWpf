@@ -3402,6 +3402,13 @@ namespace ModernWpf.Gallery.Tests
                 "return (Get-BoundingRectangleGap $triggerRect $openRect) -le 320.0");
             AssertContainsInOrder(
                 source,
+                "function Get-ControlRecordingDurationSeconds([string]$control, [string]$interactionKind)",
+                "if ($control -eq \"ContentDialog\" -or $control -eq \"Flyout\" -or $control -eq \"Popup\" -or $control -eq \"MenuFlyout\")",
+                "return [Math]::Max($DurationSeconds, 24)");
+            AssertContainsInOrder(
+                source,
+                "$openVisualDwellMilliseconds = switch ($control)",
+                "\"ContentDialog\" { 6500; break }",
                 "$triggerBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $trigger)",
                 "$visualCloseContext = New-OpenRepeatVisualCloseContext $window $control",
                 "$firstOpenElement = if ($openNames.Count -eq 0) { $null } else { Wait-ForOpenInteractionElement $window $trigger $openNames $control $openElementTimeoutMilliseconds }",
@@ -3417,6 +3424,21 @@ namespace ModernWpf.Gallery.Tests
                 "SecondOpenElementBounds = $secondOpenElementBounds");
             AssertContainsInOrder(
                 source,
+                "function Wait-ForOpenInteractionElementGone($window, $element, [string[]]$openNames, [string]$control, [int]$timeoutMilliseconds, $visualCloseContext = $null)",
+                "$visualCloseResult = Test-OpenRepeatVisualClosed $window $visualCloseContext",
+                "if ($null -ne $visualCloseResult -and $visualCloseResult.Checked)",
+                "if ($visualCloseResult.Closed)",
+                "return $true",
+                "if ($null -eq $openElement)");
+            AssertContainsInOrder(
+                source,
+                "function Close-OpenInteractionElement($window, [string]$control, $trigger, [string[]]$openNames, $sampleElement, $visualCloseContext = $null)",
+                "if ($control -eq \"ContentDialog\")",
+                "Close-WithVerifiedSampleOption $window $sampleElement $trigger $openNames $control \"Cancel\" \"DialogCancelButton\" $visualCloseContext");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresLiveVisualClose([string]$control)",
+                "return $control -eq \"ContentDialog\" -or",
                 "function New-OpenRepeatVisualCloseContext($window, [string]$control)",
                 "BaselinePath = $baseline.Path",
                 "function Test-OpenRepeatVisualClosed($window, $visualCloseContext)",

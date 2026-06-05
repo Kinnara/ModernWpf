@@ -225,6 +225,31 @@ visual-proof class:
   `CloseVisualChecked=true`, frames `t2000` / `t6500` / `t12000`, and
   open/closed/second-open deltas of `15.058`, `0.679`, and `14.044`.
 
+Round 60 closes the ContentDialog and Popup stale-automation verifier gap:
+
+- The failed focused run
+  `artifacts/gallery-recordings/20260605-032318-214/report.md` exposed two
+  recorder defects. ContentDialog was treated like a light-dismiss popup even
+  though the sample is modal, so the dialog stayed open between first and
+  second open. Popup visually closed and reopened, but stale UIA for the
+  named popup element kept `ClosedElementGone=false` and blocked the pass.
+- Popup-style close verification now consults the live pixel close context
+  even while UIA still reports an opened element. A stale automation element
+  can no longer override a close when the opened-content region has returned
+  to baseline. If pixels still show the opened region, the close still fails.
+- ContentDialog is now in the 24-second live-visual close bucket, keeps the
+  dialog visible long enough for poster-frame extraction, and closes through
+  the named `Cancel` dialog button before falling back to generic dismiss
+  paths.
+- Latest ContentDialog/Popup proof
+  `artifacts/gallery-recordings/20260605-033404-923/report.md` passed with
+  `CloseVisualChecked=true` for both controls. ContentDialog used
+  `CloseMethod=DialogCancelButton:Invoke`, frames `t2000` / `t9000` /
+  `t14000`, and open/closed/second-open deltas of `12.379`, `0.756`, and
+  `26.644`. Popup used `CloseMethod=SampleCloseButton:Invoke`, frames
+  `t2000` / `t8500` / `t11000`, and deltas of `28.867`, `0.937`, and
+  `28.846`.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -245,6 +270,7 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260605-020217-228/report.md` | Flyout | 0 passed, 0 needs review, 1 failed |
 | `artifacts/gallery-recordings/20260605-030028-982/report.md` | Flyout | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260605-031711-696/report.md` | MenuFlyout | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-033404-923/report.md` | ContentDialog, Popup | 2 passed, 0 needs review, 0 failed |
 
 The `20260604-050301-561` run is intentionally not treated as a green sweep:
 it exposed two remaining interaction gaps that the older static sweep missed.
@@ -353,9 +379,9 @@ proof on top of these static route captures.
 | Navigation | BreadcrumbBar | `item/BreadcrumbBar` | Recorded | Recorder/sample anchor fixed | `artifacts/gallery-recordings/20260603-091005-125/BreadcrumbBar/dark-breadcrumbbar.mp4` | Manifest proves clicking `Folder1` in the templated breadcrumb removed `Folder2` and `Folder3`; reviewed contact sheet shows the before/after item collection. |
 | Navigation | SelectorBar | `item/SelectorBar` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260604-064455-670/SelectorBar/dark-selectorbar.mp4` | Manifest records `Shared` changing from `Unselected` to `Selected`, sample status changing to `Shared`, and `VisualSelectionEvidence=true` with frame delta `0.003`; reviewed `t2000.png`/`t3000.png` shows the selected pill moving from no basic item to `Shared`. |
 | Navigation | NavigationView | `item/NavigationView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-091005-125/NavigationView/dark-navigationview.mp4` | Manifest proves `Menu Item2` changed from unselected to selected and `Sample Page 2` appeared; reviewed contact sheet shows the selected item/header change. |
-| Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/ContentDialog/dark-contentdialog.mp4` | Manifest records first and second dialog opens; reviewed contact sheet shows the dialog visible on sampled frames. |
+| Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-033404-923/ContentDialog/dark-contentdialog.mp4` | Latest 24s rendered run treats modal close as a named `Cancel` button action and requires pixel-backed close proof. Manifest records `CloseMethod=DialogCancelButton:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t9000` / `t14000`, and deltas `12.379` / `0.756` / `26.644`. |
 | Dialogs & flyouts | Flyout | `item/Flyout` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-030028-982/Flyout/dark-flyout.mp4` | Latest 24s rendered run passes with pixel-backed close proof and baseline-delta transition scan: `CloseVisualChecked=true`, `CloseVisualClosed=true`, `Detection=BaselineDeltaScan`, frames `t2500` / `t6500` / `t11500`, and deltas `22.728` / `0.901` / `19.984`. |
-| Dialogs & flyouts | Popup | `item/Popup` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/Popup/dark-popup.mp4` | Manifest records first and second popup opens despite low full-frame delta; reviewed contact sheet shows `Simple Popup`. |
+| Dialogs & flyouts | Popup | `item/Popup` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-033404-923/Popup/dark-popup.mp4` | Latest 24s rendered run accepts the named `Close` button only after the opened-content region returns to baseline, so stale UIA cannot block or fake the close. Manifest records `CloseMethod=SampleCloseButton:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t8500` / `t11000`, and deltas `28.867` / `0.937` / `28.846`. |
 | Menus & toolbars | MenuBar | `item/MenuBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/MenuBar/dark-menubar.mp4` | Manifest records first and second menu opens despite low full-frame delta; reviewed contact sheet shows the `File` menu. |
 | Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260605-031711-696/MenuFlyout/dark-menuflyout.mp4` | Same-target repeat-open guard now treats tracked absolute-point presenters as the same target to avoid close/reopen flicker. Latest 24s rendered rerun passes with `CloseMethod=LeafMenuItem:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t6500` / `t12000`, and deltas `15.058` / `0.679` / `14.044`. |
 | Menus & toolbars | AppBarButton | `item/AppBarButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarButton/dark-appbarbutton.mp4` | Manifest records output changing to `You clicked: Button1`; reviewed contact sheet shows the click output. |
