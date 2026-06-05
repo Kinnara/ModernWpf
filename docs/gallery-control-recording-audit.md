@@ -183,6 +183,32 @@ tracked failure:
   rows are superseded for close/reopen proof until this product failure is
   fixed.
 
+Round 58 closes the Flyout verifier gap exposed while investigating that
+failure:
+
+- The Flyout blocker was not a product close failure in the latest rendered
+  evidence; the recorder was sampling the wrong proof. UIA could report the
+  named flyout button gone while the chosen poster frame still showed a
+  visible flyout, and stopwatch-derived visual timestamps were not aligned
+  tightly enough with the rendered video frame stream.
+- Popup-style open-repeat closes now carry a pixel-backed live close context.
+  The close path captures a baseline from the rendered recorder's live frames,
+  requires the named open region to return to baseline before accepting a
+  close, and records `CloseVisualChecked`, `CloseVisualClosed`,
+  `CloseVisualDelta`, and the close snapshot in the manifest.
+- Open-repeat visual proof no longer trusts a single stopwatch-derived closed
+  timestamp. It scans the extracted poster frames for the actual
+  baseline -> open -> closed -> second-open transition and accepts the closed
+  state only when the opened-content region returns close to baseline. The
+  closed threshold is `1.0` luminance delta; the latest Flyout run measured
+  open/closed/second-open deltas of `22.728`, `0.901`, and `19.984`.
+- Latest Flyout proof
+  `artifacts/gallery-recordings/20260605-030028-982/report.md` passed with
+  `Detection=BaselineDeltaScan`, frames `t2500` / `t6500` / `t11500`, and
+  `CloseVisualChecked=true`. Earlier failed Flyout runs remain useful
+  evidence of the recorder defect but are superseded for current close/reopen
+  status.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -201,6 +227,7 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260604-183855-055/report.md` | CommandBar | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-194134-079/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260605-020217-228/report.md` | Flyout | 0 passed, 0 needs review, 1 failed |
+| `artifacts/gallery-recordings/20260605-030028-982/report.md` | Flyout | 1 passed, 0 needs review, 0 failed |
 
 The `20260604-050301-561` run is intentionally not treated as a green sweep:
 it exposed two remaining interaction gaps that the older static sweep missed.
@@ -310,7 +337,7 @@ proof on top of these static route captures.
 | Navigation | SelectorBar | `item/SelectorBar` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260604-064455-670/SelectorBar/dark-selectorbar.mp4` | Manifest records `Shared` changing from `Unselected` to `Selected`, sample status changing to `Shared`, and `VisualSelectionEvidence=true` with frame delta `0.003`; reviewed `t2000.png`/`t3000.png` shows the selected pill moving from no basic item to `Shared`. |
 | Navigation | NavigationView | `item/NavigationView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-091005-125/NavigationView/dark-navigationview.mp4` | Manifest proves `Menu Item2` changed from unselected to selected and `Sample Page 2` appeared; reviewed contact sheet shows the selected item/header change. |
 | Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/ContentDialog/dark-contentdialog.mp4` | Manifest records first and second dialog opens; reviewed contact sheet shows the dialog visible on sampled frames. |
-| Dialogs & flyouts | Flyout | `item/Flyout` | Failed | Open | `artifacts/gallery-recordings/20260605-020217-228/Flyout/dark-flyout.mp4` | Latest 24s rendered run rejects the earlier UIA-only pass: `ClosedElementGone=false`, `CloseMethod=DismissPoint2`, `VisualOpenRepeatEvidence.Generated=false`, and the same opened-element bounds remained visible between first and second open. |
+| Dialogs & flyouts | Flyout | `item/Flyout` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-030028-982/Flyout/dark-flyout.mp4` | Latest 24s rendered run passes with pixel-backed close proof and baseline-delta transition scan: `CloseVisualChecked=true`, `CloseVisualClosed=true`, `Detection=BaselineDeltaScan`, frames `t2500` / `t6500` / `t11500`, and deltas `22.728` / `0.901` / `19.984`. |
 | Dialogs & flyouts | Popup | `item/Popup` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/Popup/dark-popup.mp4` | Manifest records first and second popup opens despite low full-frame delta; reviewed contact sheet shows `Simple Popup`. |
 | Menus & toolbars | MenuBar | `item/MenuBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/MenuBar/dark-menubar.mp4` | Manifest records first and second menu opens despite low full-frame delta; reviewed contact sheet shows the `File` menu. |
 | Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Recorded | Product fixed + needs focused rerun | `artifacts/gallery-recordings/20260603-063825-551/MenuFlyout/dark-menuflyout.mp4` | Same-target repeat-open guard now treats tracked absolute-point presenters as the same target to avoid close/reopen flicker; old recording remains route proof only under the stricter close/reopen bar, and a focused rerun is pending after the Flyout blocker. |

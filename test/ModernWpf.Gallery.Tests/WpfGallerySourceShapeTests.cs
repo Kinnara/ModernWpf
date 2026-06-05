@@ -3298,19 +3298,20 @@ namespace ModernWpf.Gallery.Tests
                 "\"CommandBarFlyout\" { return $true }");
             AssertContainsInOrder(
                 source,
-                "function Export-DenseTransitionReviewSheet([string]$videoPath, [string]$caseDir)",
+                "function Export-DenseTransitionReviewSheet([string]$videoPath, [string]$caseDir, [int]$durationSeconds)",
                 "$analysisDir = Join-Path $caseDir \"analysis\"",
                 "$sheetPath = Join-Path $analysisDir \"dense-transition-review.jpg\"",
                 "$tileColumns = 8",
+                "$effectiveDuration = if ($null -ne $actualDuration -and $actualDuration -gt 0.5) { $actualDuration } else { [double]$durationSeconds }",
                 "$filter = \"fps=$reviewFps,scale=360:-1,tile=${tileColumns}x$tileRows\"",
                 "Path = $sheetPath",
                 "Generated = $true");
             AssertContainsInOrder(
                 source,
-                "| Control | Status | Interaction | Recording | Dense review | Max frame delta | Notes |",
+                "| Control | Status | Interaction | Recording | Dense review | Max frame delta | Max local delta | Notes |",
                 "DenseTransitionReview",
                 "if (Test-ControlRequiresDenseTransitionReview $control $interactionKind)",
-                "$denseTransitionReview = Export-DenseTransitionReviewSheet $recordingPath $caseDir",
+                "$denseTransitionReview = Export-DenseTransitionReviewSheet $recordingPath $caseDir $recordingDurationSeconds",
                 "Dense transition review sheet generated",
                 "DenseTransitionReview = $denseTransitionReview");
         }
@@ -3402,14 +3403,25 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "$triggerBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $trigger)",
-                "$firstOpenElement = if ($openNames.Count -eq 0) { $null } else { Find-OpenInteractionElement $window $trigger $openNames $control }",
+                "$visualCloseContext = New-OpenRepeatVisualCloseContext $window $control",
+                "$firstOpenElement = if ($openNames.Count -eq 0) { $null } else { Wait-ForOpenInteractionElement $window $trigger $openNames $control $openElementTimeoutMilliseconds }",
                 "$firstOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $trigger $firstOpenElement)",
-                "$secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $trigger $secondOpenElement)",
+                "$visualCloseContext[\"Bounds\"] = $firstOpenElementBounds",
+                "$closeResult = Close-OpenInteractionElement $window $control $trigger $openNames $sampleElement $visualCloseContext",
+                "$secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $secondTrigger $secondOpenElement)",
+                "CloseVisualChecked = $closeVisualChecked",
                 "FirstOpenElementAnchored = $firstOpenElementAnchored",
                 "SecondOpenElementAnchored = $secondOpenElementAnchored",
                 "TriggerBounds = $triggerBounds",
                 "FirstOpenElementBounds = $firstOpenElementBounds",
                 "SecondOpenElementBounds = $secondOpenElementBounds");
+            AssertContainsInOrder(
+                source,
+                "function New-OpenRepeatVisualCloseContext($window, [string]$control)",
+                "BaselinePath = $baseline.Path",
+                "function Test-OpenRepeatVisualClosed($window, $visualCloseContext)",
+                "$closed = $null -ne $delta -and [double]$delta -le 1.0",
+                "$visualCloseContext[\"LastCloseVisualChecked\"] = $true");
             AssertContainsInOrder(
                 source,
                 "$anchored = $true",
@@ -3603,8 +3615,9 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Test-VisualSelectionEvidence([string]$control, [string]$interactionKind, $maxFrameDelta)",
-                "$control -ne \"DataGrid\"",
-                "return [double]$maxFrameDelta -ge 0.75",
+                "switch ($control)",
+                "\"DataGrid\" { return [double]$maxFrameDelta -ge 0.75 }",
+                "\"SelectorBar\" { return [double]$maxFrameDelta -gt 0.0 }",
                 "$visualSelectionEvidence = Test-VisualSelectionEvidence $control $interactionKind $maxFrameDelta",
                 "VisualSelectionEvidence = $visualSelectionEvidence");
             AssertContainsInOrder(
