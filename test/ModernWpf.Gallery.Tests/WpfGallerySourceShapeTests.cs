@@ -3718,11 +3718,14 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Get-ControlInteractionKind([string]$control)",
-                "if ($control -eq \"ToolTip\") { return \"PreparedOpen\" }",
                 "if ($control -eq \"RichTextEdit\") { return \"PreparedText\" }",
+                "if (Test-ControlSupportsOpenInteraction $control) { return \"OpenRepeat\" }",
                 "function Test-ControlRequiresDiagnosticPreparation([string]$control)",
                 "\"RichTextEdit\" { return $true }",
-                "\"ToolTip\" { return $true }");
+                "default { return $false }");
+            Assert.IsFalse(
+                source.Contains("if ($control -eq \"ToolTip\") { return \"PreparedOpen\" }", StringComparison.Ordinal),
+                "ToolTip must use the hover/open-repeat path, not the pre-opened diagnostic path.");
             AssertContainsInOrder(
                 source,
                 "function Invoke-PreparedTextInteraction($window, [string]$control)",
@@ -3755,7 +3758,11 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "public static void MoveCursor(int x, int y)",
                 "SetCursorPos(x, y);",
-                "SendMouseInput(MOUSEEVENTF_MOVE);");
+                "SendMouseInput(MOUSEEVENTF_MOVE);",
+                "mouse_event(MOUSEEVENTF_MOVE, 1, 0, 0, UIntPtr.Zero);",
+                "mouse_event(MOUSEEVENTF_MOVE, unchecked((uint)-1), 0, 0, UIntPtr.Zero);",
+                "public static void MoveCursorOverWindow(IntPtr hWnd, int x, int y)",
+                "SendMessage(hWnd, WM_MOUSEMOVE, UIntPtr.Zero, new IntPtr(packedPoint));");
             AssertContainsInOrder(
                 source,
                 "function Test-ControlSupportsOpenInteraction([string]$control)",
@@ -3764,24 +3771,20 @@ namespace ModernWpf.Gallery.Tests
                 "\"ToolTip\" { return @(\"Simple ToolTip\") }");
             AssertContainsInOrder(
                 source,
-                "function Invoke-PreparedOpenInteraction($window, [string]$control, $sampleElement)",
-                "$trigger = Get-OpenInteractionTriggerElement $window $control $sampleElement",
-                "$openElement = if ($openNames.Count -eq 0) { $null } else { Find-OpenInteractionElement $window $trigger $openNames $control }",
-                "OpenElementAnchored = $openElementAnchored");
-            AssertContainsInOrder(
-                source,
-                "function Test-PreparedOpenEvidence($interactionResult)",
-                "$interactionResult.Contains(\"OpenElementFound\")",
-                "$interactionResult.Contains(\"OpenElementAnchored\")",
-                "function Test-PreparedTextEvidence($interactionResult)",
-                "$interactionResult.Contains(\"OutputMatched\")");
+                "function Get-ControlInteractionKind([string]$control)",
+                "if ($control -eq \"RichTextEdit\") { return \"PreparedText\" }",
+                "if (Test-ControlSupportsOpenInteraction $control) { return \"OpenRepeat\" }");
             AssertContainsInOrder(
                 source,
                 "function Invoke-OpenElementOnce($window, [string]$control, $element)",
                 "if ($control -eq \"ToolTip\")",
-                "[GalleryRecordingNative]::MoveCursor([Math]::Max(1, $center.X - 160), [Math]::Max(1, $center.Y - 160))",
-                "[GalleryRecordingNative]::MoveCursor($center.X, $center.Y)",
-                "[GalleryRecordingNative]::Click($center.X, $center.Y)");
+                "$windowHandle = [IntPtr]$window.Current.NativeWindowHandle",
+                "$offTargetX = [Math]::Max(1, $center.X - 160)",
+                "$offTargetY = [Math]::Max(1, $center.Y - 160)",
+                "[GalleryRecordingNative]::MoveCursorOverWindow($windowHandle, $offTargetX, $offTargetY)",
+                "[GalleryRecordingNative]::Click($offTargetX, $offTargetY)",
+                "[GalleryRecordingNative]::MoveCursorOverWindow($windowHandle, $center.X, $center.Y)",
+                "Start-Sleep -Milliseconds 1200");
             AssertContainsInOrder(
                 source,
                 "function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleElement)",
@@ -3790,6 +3793,15 @@ namespace ModernWpf.Gallery.Tests
                 "function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [string]$control)",
                 "if ($control -eq \"ToolTip\")",
                 "return Find-ElementByNameInProcess $window.Current.ProcessId $openNames");
+            AssertContainsInOrder(
+                source,
+                "function Test-OpenRepeatEvidence($interactionResult)",
+                "$interactionResult.Contains(\"FirstOpenElementFound\")",
+                "$interactionResult.Contains(\"SecondOpenElementFound\")",
+                "$interactionResult.Contains(\"ClosedElementGone\")");
+            Assert.IsFalse(
+                source.Contains("if ($control -eq \"ToolTip\") { return \"PreparedOpen\" }", StringComparison.Ordinal),
+                "ToolTip should not pass from an already-opened diagnostic tooltip.");
         }
 
         [TestMethod]

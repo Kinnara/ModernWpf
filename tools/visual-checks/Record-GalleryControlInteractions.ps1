@@ -97,6 +97,19 @@ public static class GalleryRecordingNative
     [DllImport("user32.dll")]
     private static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extraInfo);
 
+    [DllImport("user32.dll")]
+    private static extern bool ScreenToClient(IntPtr hWnd, ref POINT point);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr SendMessage(IntPtr hWnd, uint message, UIntPtr wParam, IntPtr lParam);
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct POINT
+    {
+        public int X;
+        public int Y;
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     private struct INPUT
     {
@@ -151,6 +164,7 @@ public static class GalleryRecordingNative
     private const uint MOUSEEVENTF_LEFTUP = 0x0004;
     private const uint MOUSEEVENTF_MOVE = 0x0001;
     private const uint MOUSEEVENTF_WHEEL = 0x0800;
+    private const uint WM_MOUSEMOVE = 0x0200;
     private const uint KEYEVENTF_KEYUP = 0x0002;
     private const uint KEYEVENTF_UNICODE = 0x0004;
     private const byte VK_CONTROL = 0x11;
@@ -202,6 +216,19 @@ public static class GalleryRecordingNative
     {
         SetCursorPos(x, y);
         SendMouseInput(MOUSEEVENTF_MOVE);
+        mouse_event(MOUSEEVENTF_MOVE, 1, 0, 0, UIntPtr.Zero);
+        mouse_event(MOUSEEVENTF_MOVE, unchecked((uint)-1), 0, 0, UIntPtr.Zero);
+    }
+
+    public static void MoveCursorOverWindow(IntPtr hWnd, int x, int y)
+    {
+        MoveCursor(x, y);
+        var point = new POINT { X = x, Y = y };
+        if (ScreenToClient(hWnd, ref point))
+        {
+            int packedPoint = unchecked((int)(((point.Y & 0xffff) << 16) | (point.X & 0xffff)));
+            SendMessage(hWnd, WM_MOUSEMOVE, UIntPtr.Zero, new IntPtr(packedPoint));
+        }
     }
 
     public static void HoldClick(int x, int y, int holdMilliseconds)
@@ -1246,7 +1273,6 @@ function Get-ExpansionInteractionExpectedChildName([string]$control) {
 function Get-ControlInteractionKind([string]$control) {
     if ($control -eq "ShellNavigation") { return "ShellNavigation" }
     if ($control -eq "BreadcrumbBar") { return "Breadcrumb" }
-    if ($control -eq "ToolTip") { return "PreparedOpen" }
     if ($control -eq "RichTextEdit") { return "PreparedText" }
     if (Test-ControlSupportsOpenInteraction $control) { return "OpenRepeat" }
     if (Test-ControlSupportsStateInteraction $control) { return "State" }
@@ -1279,7 +1305,6 @@ function Get-ControlRecordingDurationSeconds([string]$control, [string]$interact
 function Test-ControlRequiresDiagnosticPreparation([string]$control) {
     switch ($control) {
         "RichTextEdit" { return $true }
-        "ToolTip" { return $true }
         default { return $false }
     }
 }
@@ -2102,12 +2127,15 @@ function Invoke-OpenElementOnce($window, [string]$control, $element) {
             return $false
         }
 
-        [GalleryRecordingNative]::MoveCursor([Math]::Max(1, $center.X - 160), [Math]::Max(1, $center.Y - 160))
+        $windowHandle = [IntPtr]$window.Current.NativeWindowHandle
+        $offTargetX = [Math]::Max(1, $center.X - 160)
+        $offTargetY = [Math]::Max(1, $center.Y - 160)
+        [GalleryRecordingNative]::MoveCursorOverWindow($windowHandle, $offTargetX, $offTargetY)
         Start-Sleep -Milliseconds 250
-        [GalleryRecordingNative]::MoveCursor($center.X, $center.Y)
-        Start-Sleep -Milliseconds 120
-        [GalleryRecordingNative]::Click($center.X, $center.Y)
-        Start-Sleep -Milliseconds 900
+        [GalleryRecordingNative]::Click($offTargetX, $offTargetY)
+        Start-Sleep -Milliseconds 250
+        [GalleryRecordingNative]::MoveCursorOverWindow($windowHandle, $center.X, $center.Y)
+        Start-Sleep -Milliseconds 1200
         return $true
     }
 

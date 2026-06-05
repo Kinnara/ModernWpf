@@ -327,6 +327,33 @@ evidence under the current recorder:
   run proves nonblank routed pages against the recorder's required automation
   anchor mapping; it is not interaction proof for those controls.
 
+Round 64 refreshes official WPF interaction coverage and demotes the ToolTip
+prepared-open false pass:
+
+- `artifacts/gallery-recordings/20260605-050718-351/report.md` passed for
+  Expander, TreeView, TabControl, TextBox, PasswordBox, Calendar, ListBox,
+  ListView, DataGrid, ToolTip, and RichTextEdit. Ten of those controls now
+  have current interaction proof through expansion, selection, text-entry, or
+  prepared text evidence. DataGrid remains a visual-selection proof because
+  UIA selection did not report a changed item, but the rendered row/cell
+  highlight produced `VisualSelectionEvidence=true` and local delta `57.125`.
+- The ToolTip row in that run is no longer accepted as full interaction proof.
+  It used the diagnostic `PreparedOpen` path, so it proved only that the WPF
+  ToolTip can render when opened in-process. The same class of static
+  prepared-open pass previously hid the fact that synthetic hover did not
+  prove real open/close/reopen behavior.
+- The recorder now routes ToolTip through `OpenRepeat`, removes ToolTip from
+  diagnostic pre-open preparation, and sends explicit cursor movement and
+  window mouse-move messages before waiting for the hover delay. Source-shape
+  tests reject any return to `PreparedOpen` for ToolTip.
+- Current ToolTip hover proof is still failed and tracked open:
+  `artifacts/gallery-recordings/20260605-052434-715/report.md` failed under
+  rendered capture with unchanged frames, no first or second opened element,
+  and no visual open-repeat evidence. A diagnostic screen-mode attempt at
+  `artifacts/gallery-recordings/20260605-053026-959/report.md` also failed in
+  this desktop session because most captured frames were black, so screen mode
+  is not accepted as proof here.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -355,16 +382,19 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260605-044321-949/report.md` | CheckBox, RadioButton, Slider, RatingControl, ToggleButton, ToggleSwitch, NumberBox, InfoBar, AppBarToggleButton | 9 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260605-044806-923/report.md` | Button, ColorPicker, RepeatButton, SplitView, AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, NavigationView, AppBarButton | 10 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260605-045636-525/report.md` | ShellNavigation, AutoSuggestBox, ProgressRing, HyperlinkButton, PersonPicture, IconElement, ThemeShadow, TitleBar, InfoBadge, AppBarSeparator | 10 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-050718-351/report.md` | Expander, TreeView, TabControl, TextBox, PasswordBox, Calendar, ListBox, ListView, DataGrid, ToolTip, RichTextEdit | 11 passed, 0 needs review, 0 failed; ToolTip was diagnostic prepared-open only and is superseded by the failed real-hover run |
+| `artifacts/gallery-recordings/20260605-052434-715/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed |
+| `artifacts/gallery-recordings/20260605-053026-959/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; screen-mode diagnostic rejected because most frames were black |
 
 The `20260604-050301-561` run is intentionally not treated as a green sweep:
 it exposed two remaining interaction gaps that the older static sweep missed.
 `ToolTip` did not open under the current synthetic hover/click path, and
 `RichTextEdit` focused but did not receive text input through the recorder.
-The `20260604-053726-512` follow-up closes those two controls with
-diagnostics-prepared visual evidence: `--open-interactions` opens the WPF
-tooltip in-process and populates the WPF `RichTextBox` before recording. This
-is accepted as visual proof of the rendered open/text states, not as proof that
-external synthetic hover or keyboard injection works in this desktop session.
+The `20260604-053726-512` follow-up closes RichTextEdit with
+diagnostics-prepared text evidence and shows that a WPF ToolTip can render when
+opened in-process. It is no longer accepted as ToolTip hover interaction proof:
+the current real-hover ToolTip runs failed and must stay open until a recording
+proves open, close, and second open from actual interaction.
 
 ## Current Full-Inventory Sweep
 
@@ -449,7 +479,11 @@ proof on top of these static route captures.
 | Basic input | ToggleSwitch | `item/ToggleSwitch` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/ToggleSwitch/dark-toggleswitch.mp4` | Latest rendered run records local visual delta `7.034`; before/after toggle state changed despite low whole-frame delta `0.014`. |
 | Text | NumberBox | `item/NumberBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/NumberBox/dark-numberbox.mp4` | Latest rendered run reaches the target value with local visual delta `0.381`; whole-frame delta remains `0`, so the proof is intentionally cropped to the interaction bounds. |
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed | `artifacts/gallery-recordings/20260605-045636-525/AutoSuggestBox/dark-autosuggestbox.mp4` | Latest rendered run records text interaction with local visual delta `2.816`; expected output was detected despite low whole-frame delta `0.111`. `AutoSuggestBoxInteractionTests` covers item-click submit/close behavior. |
+| Text | TextBox | `item/TextBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-050718-351/TextBox/dark-textbox.mp4` | Latest rendered run records text entry with local visual delta `5.519`; expected `ModernWpf text` output was detected. |
+| Text | PasswordBox | `item/PasswordBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-050718-351/PasswordBox/dark-passwordbox.mp4` | Latest rendered run records text entry with local visual delta `5.524`; the password output remains masked while the expected input state is detected. |
+| Text | RichTextEdit | `item/RichTextEdit` | Recorded | Recorder gap tracked | `artifacts/gallery-recordings/20260605-050718-351/RichTextEdit/dark-richtextedit.mp4` | Current proof is diagnostic prepared text, not external keyboard injection proof. It remains accepted only as rendered text-state evidence until the recorder can drive WPF RichTextBox input directly. |
 | Layout | SplitView | `item/SplitView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/SplitView/dark-splitview.mp4` | Latest rendered run records the option interaction with local visual delta `36.476` and whole-frame delta `0.951`. |
+| Layout | Expander | `item/Expander` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-050718-351/Expander/dark-expander.mp4` | Latest rendered run records expansion evidence with whole-frame/local deltas `0.659` / `11.331`; reviewed frames show the expected content visible after expansion. |
 | Media | PersonPicture | `item/PersonPicture` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-045636-525/PersonPicture/dark-personpicture.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_PersonPicture_PersonPicture`. |
 | Styles | IconElement | `item/IconElement` | Recorded | Recorder anchor fixed | `artifacts/gallery-recordings/20260605-045636-525/IconElement/dark-iconelement.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_IconElement_ExampleButton1`. |
 | Styles | ThemeShadow | `item/ThemeShadow` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260605-045636-525/ThemeShadow/dark-themeshadow.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_ThemeShadow_TranslationSlider`. |
@@ -457,12 +491,19 @@ proof on top of these static route captures.
 | Status & info | InfoBadge | `item/InfoBadge` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260605-045636-525/InfoBadge/dark-infobadge.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_InfoBadge_NavigationView`. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/InfoBar/dark-infobar.mp4` | Latest rendered run records the option interaction with local visual delta `8.084` and whole-frame delta `0.379`. |
 | Status & info | ProgressRing | `item/ProgressRing` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-045636-525/ProgressRing/dark-progressring.mp4` | Latest manifest records `AnimationEvidence=true` with early-frame delta `0.075`, local visual delta `13.759`, and option state change despite low whole-frame delta `0.086`. |
+| Status & info | ToolTip | `item/ToolTip` | Failed recording | Open defect | `artifacts/gallery-recordings/20260605-052434-715/ToolTip/dark-tooltip.mp4` | ToolTip now uses real `OpenRepeat` hover proof instead of diagnostic `PreparedOpen`. Latest rendered run failed with no first/second opened element and no visual open-repeat evidence; prior prepared-open runs are superseded for hover proof. |
 | Scrolling | AnnotatedScrollBar | `item/AnnotatedScrollBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/AnnotatedScrollBar/dark-annotatedscrollbar.mp4` | Latest rendered run records scroll interaction with whole-frame delta `4.521` and local visual delta `95.226`. |
 | Collections | GridView | `item/GridView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/GridView/dark-gridview.mp4` | Latest rendered run records local visual delta `1.104`; selection/output evidence changed despite low whole-frame delta `0.162`. |
 | Collections | ItemsRepeater | `item/ItemsRepeater` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-044806-923/ItemsRepeater/dark-itemsrepeater.mp4` | Latest rendered run records virtualized scroll interaction with whole-frame delta `4.456` and local visual delta `11.471`. |
+| Collections | ListBox | `item/ListBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-050718-351/ListBox/dark-listbox.mp4` | Latest rendered run records selection evidence with whole-frame/local deltas `1.122` / `22.966`. |
+| Collections | ListView | `item/ListView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-050718-351/ListView/dark-listview.mp4` | Latest rendered run records selection evidence with whole-frame/local deltas `0.379` / `5.654`. |
+| Collections | DataGrid | `item/DataGrid` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-050718-351/DataGrid/dark-datagrid.mp4` | UIA selection did not change, but visual selection evidence passed with whole-frame/local deltas `1.594` / `57.125`; reviewed frames show the selected row/cells highlighted. |
+| Collections | TreeView | `item/TreeView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-050718-351/TreeView/dark-treeview.mp4` | Latest rendered run records expansion evidence with whole-frame/local deltas `1.009` / `14.665`; expected child content is visible after expansion. |
 | Navigation | BreadcrumbBar | `item/BreadcrumbBar` | Recorded | Recorder/sample anchor fixed | `artifacts/gallery-recordings/20260605-044806-923/BreadcrumbBar/dark-breadcrumbbar.mp4` | Latest rendered run records local visual delta `4.267`; breadcrumb item collection changed despite low whole-frame delta `0.028`. |
 | Navigation | SelectorBar | `item/SelectorBar` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260604-064455-670/SelectorBar/dark-selectorbar.mp4` | Manifest records `Shared` changing from `Unselected` to `Selected`, sample status changing to `Shared`, and `VisualSelectionEvidence=true` with frame delta `0.003`; reviewed `t2000.png`/`t3000.png` shows the selected pill moving from no basic item to `Shared`. |
+| Navigation | TabControl | `item/TabControl` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-050718-351/TabControl/dark-tabcontrol.mp4` | Latest rendered run records selection evidence and expected `World` output; local delta `2.818` covers the low whole-frame delta `0.019`. |
 | Navigation | NavigationView | `item/NavigationView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/NavigationView/dark-navigationview.mp4` | Latest rendered run records local visual delta `5.808`; selection/output evidence changed despite low whole-frame delta `0.043`. |
+| Date & calendar | Calendar | `item/Calendar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-050718-351/Calendar/dark-calendar.mp4` | Latest rendered run records selection evidence with whole-frame/local deltas `0.475` / `4.178`. |
 | Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-033404-923/ContentDialog/dark-contentdialog.mp4` | Latest 24s rendered run treats modal close as a named `Cancel` button action and requires pixel-backed close proof. Manifest records `CloseMethod=DialogCancelButton:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t9000` / `t14000`, and deltas `12.379` / `0.756` / `26.644`. |
 | Dialogs & flyouts | Flyout | `item/Flyout` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-030028-982/Flyout/dark-flyout.mp4` | Latest 24s rendered run passes with pixel-backed close proof and baseline-delta transition scan: `CloseVisualChecked=true`, `CloseVisualClosed=true`, `Detection=BaselineDeltaScan`, frames `t2500` / `t6500` / `t11500`, and deltas `22.728` / `0.901` / `19.984`. |
 | Dialogs & flyouts | Popup | `item/Popup` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-033404-923/Popup/dark-popup.mp4` | Latest 24s rendered run accepts the named `Close` button only after the opened-content region returns to baseline, so stale UIA cannot block or fake the close. Manifest records `CloseMethod=SampleCloseButton:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t8500` / `t11000`, and deltas `28.867` / `0.937` / `28.846`. |
