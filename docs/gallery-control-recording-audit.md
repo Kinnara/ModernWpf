@@ -209,6 +209,22 @@ failure:
   evidence of the recorder defect but are superseded for current close/reopen
   status.
 
+Round 59 closes the pending MenuFlyout focused rerun and tightens the same
+visual-proof class:
+
+- The first MenuFlyout rerun under the new baseline scan exposed another
+  false-pass edge: a low `0.714` closed-state drift was high enough to satisfy
+  the old `0.5` open threshold, so the scan could pick a frame before the real
+  second open.
+- Open-repeat visual evidence now requires a `5.0` luminance delta for both
+  open states while keeping the closed threshold at `1.0`. This prevents
+  normal rendered drift in a closed region from counting as an open popup/menu.
+- Latest MenuFlyout proof
+  `artifacts/gallery-recordings/20260605-031711-696/report.md` passed with
+  `Detection=BaselineDeltaScan`, `CloseMethod=LeafMenuItem:Invoke`,
+  `CloseVisualChecked=true`, frames `t2000` / `t6500` / `t12000`, and
+  open/closed/second-open deltas of `15.058`, `0.679`, and `14.044`.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -228,6 +244,7 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260604-194134-079/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260605-020217-228/report.md` | Flyout | 0 passed, 0 needs review, 1 failed |
 | `artifacts/gallery-recordings/20260605-030028-982/report.md` | Flyout | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-031711-696/report.md` | MenuFlyout | 1 passed, 0 needs review, 0 failed |
 
 The `20260604-050301-561` run is intentionally not treated as a green sweep:
 it exposed two remaining interaction gaps that the older static sweep missed.
@@ -340,7 +357,7 @@ proof on top of these static route captures.
 | Dialogs & flyouts | Flyout | `item/Flyout` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-030028-982/Flyout/dark-flyout.mp4` | Latest 24s rendered run passes with pixel-backed close proof and baseline-delta transition scan: `CloseVisualChecked=true`, `CloseVisualClosed=true`, `Detection=BaselineDeltaScan`, frames `t2500` / `t6500` / `t11500`, and deltas `22.728` / `0.901` / `19.984`. |
 | Dialogs & flyouts | Popup | `item/Popup` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/Popup/dark-popup.mp4` | Manifest records first and second popup opens despite low full-frame delta; reviewed contact sheet shows `Simple Popup`. |
 | Menus & toolbars | MenuBar | `item/MenuBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/MenuBar/dark-menubar.mp4` | Manifest records first and second menu opens despite low full-frame delta; reviewed contact sheet shows the `File` menu. |
-| Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Recorded | Product fixed + needs focused rerun | `artifacts/gallery-recordings/20260603-063825-551/MenuFlyout/dark-menuflyout.mp4` | Same-target repeat-open guard now treats tracked absolute-point presenters as the same target to avoid close/reopen flicker; old recording remains route proof only under the stricter close/reopen bar, and a focused rerun is pending after the Flyout blocker. |
+| Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260605-031711-696/MenuFlyout/dark-menuflyout.mp4` | Same-target repeat-open guard now treats tracked absolute-point presenters as the same target to avoid close/reopen flicker. Latest 24s rendered rerun passes with `CloseMethod=LeafMenuItem:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t6500` / `t12000`, and deltas `15.058` / `0.679` / `14.044`. |
 | Menus & toolbars | AppBarButton | `item/AppBarButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarButton/dark-appbarbutton.mp4` | Manifest records output changing to `You clicked: Button1`; reviewed contact sheet shows the click output. |
 | Menus & toolbars | AppBarSeparator | `item/AppBarSeparator` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarSeparator/dark-appbarseparator.mp4` | Static rendered route with stable button anchors; reviewed contact sheet shows separated command buttons. |
 | Menus & toolbars | AppBarToggleButton | `item/AppBarToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarToggleButton/dark-appbartogglebutton.mp4` | Manifest records toggle state from `Off` to `On`; reviewed contact sheet shows the selected toggle output. |

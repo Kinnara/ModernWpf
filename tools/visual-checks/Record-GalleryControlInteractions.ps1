@@ -4556,7 +4556,7 @@ function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionRes
 
     $bounds = $interactionResult.FirstOpenElementBounds
     $samplesByPath = @{}
-    $openThreshold = if ($interactionResult.Contains("FirstCommandBarFlyoutSecondaryExpanded") -and [bool]$interactionResult.FirstCommandBarFlyoutSecondaryExpanded) { 5.0 } else { 0.5 }
+    $openThreshold = 5.0
     $closedThreshold = 1.0
     $initialFrame = Get-ClosestExtractedFrame $frames $interactionResult.InitialVisualSeconds
     if ($null -eq $initialFrame) {

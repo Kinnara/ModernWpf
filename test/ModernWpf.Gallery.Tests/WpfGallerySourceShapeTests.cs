@@ -3424,6 +3424,14 @@ namespace ModernWpf.Gallery.Tests
                 "$visualCloseContext[\"LastCloseVisualChecked\"] = $true");
             AssertContainsInOrder(
                 source,
+                "function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionResult)",
+                "$openThreshold = 5.0",
+                "$closedThreshold = 1.0",
+                "FirstOpenEvidence = [double]$firstOpenEntry.Delta -ge $openThreshold",
+                "ClosedEvidence = [double]$closedEntry.Delta -le $closedThreshold",
+                "SecondOpenEvidence = [double]$secondOpenEntry.Delta -ge $openThreshold");
+            AssertContainsInOrder(
+                source,
                 "$anchored = $true",
                 "$interactionResult.FirstOpenElementAnchored -and $interactionResult.SecondOpenElementAnchored",
                 "$openRepeatGeometryFailed =",
