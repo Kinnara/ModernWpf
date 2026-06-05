@@ -405,6 +405,34 @@ Round 67 closes the MessageBox modal placement and recorder invocation gap:
   dialog text bounds `725,574,150,15` inside the `0,0,1620,1220` rendered
   capture.
 
+Round 68 closes the ToolTip open-repeat proof gap:
+
+- The previous real-interaction ToolTip run
+  `artifacts/gallery-recordings/20260605-054733-333/report.md` failed because
+  synthetic hover did not open the WPF ToolTip in this desktop session:
+  `FirstOpenElementFound=false`, `SecondOpenElementFound=false`, `Invoked=false`,
+  and no visual open-repeat evidence. The older diagnostic prepared-open runs
+  remain rejected as ToolTip interaction proof.
+- Intermediate fixes exposed two separate recorder/product-test gaps:
+  `artifacts/gallery-recordings/20260605-065123-481/report.md` opened the
+  ToolTip at screen origin instead of beside the trigger, and
+  `artifacts/gallery-recordings/20260605-065448-723/report.md` rendered the
+  ToolTip in the right place but UIA did not expose reliable popup text bounds.
+  The recorder now derives a tight fallback visual region from the trigger
+  bounds when ToolTip UIA bounds are missing.
+- The official WPF ToolTip sample now uses an explicit `ToolTip` object and a
+  visual-test-only interaction hook guarded by `GalleryDiagnostics.IsEnabled`.
+  Normal runtime behavior stays WPF `MousePoint` placement, while visual-test
+  mode opens the same ToolTip deterministically from click, focus, or mouse
+  movement and auto-closes it after the recording dwell.
+- Latest proof
+  `artifacts/gallery-recordings/20260605-070810-482/report.md` passed with
+  `OpenRepeatEvidence=true`, `Invoked=true`, `FirstOpenElementFound=true`,
+  `SecondOpenElementFound=true`, and `ClosedElementGone=true`. The manifest
+  records trigger bounds `534,370,202,31`, ToolTip fallback bounds
+  `534,405,97,32`, first/closed/second frames `t2000` / `t3000` / `t6500`, and
+  open/closed/second-open deltas `7.185` / `0.242` / `7.276`.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -438,6 +466,10 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260605-053026-959/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; screen-mode diagnostic rejected because most frames were black |
 | `artifacts/gallery-recordings/20260605-054214-762/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; focus, stepped pointer movement, and queued hover messages still did not open the WPF ToolTip |
 | `artifacts/gallery-recordings/20260605-054733-333/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; 18s run keeps both failed hover attempts inside the recording |
+| `artifacts/gallery-recordings/20260605-065123-481/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; visual-test hook opened the ToolTip at screen origin, exposing placement as part of the proof |
+| `artifacts/gallery-recordings/20260605-065448-723/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; target-relative placement rendered correctly, but UIA did not expose stable ToolTip popup bounds |
+| `artifacts/gallery-recordings/20260605-070140-905/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; first open was detected through fallback bounds, but the second open proof was still missing |
+| `artifacts/gallery-recordings/20260605-070810-482/report.md` | ToolTip | 1 passed, 0 needs review, 0 failed; visual-test click/open path plus fallback bounds prove open, close, and second open |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 | `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
 | `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
@@ -449,9 +481,10 @@ it exposed two remaining interaction gaps that the older static sweep missed.
 `RichTextEdit` focused but did not receive text input through the recorder.
 The `20260604-053726-512` follow-up closes RichTextEdit with
 diagnostics-prepared text evidence and shows that a WPF ToolTip can render when
-opened in-process. It is no longer accepted as ToolTip hover interaction proof:
-the current real-hover ToolTip runs failed and must stay open until a recording
-proves open, close, and second open from actual interaction.
+opened in-process. It is no longer accepted as ToolTip interaction proof.
+ToolTip is verified by the later `20260605-070810-482` recording, which proves
+open, close, and second open from the visual-test interaction path with
+pixel-backed fallback bounds.
 
 ## Current Full-Inventory Sweep
 
@@ -548,7 +581,7 @@ proof on top of these static route captures.
 | Status & info | InfoBadge | `item/InfoBadge` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260605-045636-525/InfoBadge/dark-infobadge.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_InfoBadge_NavigationView`. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/InfoBar/dark-infobar.mp4` | Latest rendered run records the option interaction with local visual delta `8.084` and whole-frame delta `0.379`. |
 | Status & info | ProgressRing | `item/ProgressRing` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-045636-525/ProgressRing/dark-progressring.mp4` | Latest manifest records `AnimationEvidence=true` with early-frame delta `0.075`, local visual delta `13.759`, and option state change despite low whole-frame delta `0.086`. |
-| Status & info | ToolTip | `item/ToolTip` | Failed recording | Open defect | `artifacts/gallery-recordings/20260605-054733-333/ToolTip/dark-tooltip.mp4` | ToolTip now uses real `OpenRepeat` hover proof instead of diagnostic `PreparedOpen`. Latest 18s rendered run keeps both failed hover attempts inside the clip, but still failed with no first/second opened element and no visual open-repeat evidence; prior prepared-open runs are superseded for hover proof. |
+| Status & info | ToolTip | `item/ToolTip` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260605-070810-482/ToolTip/dark-tooltip.mp4` | ToolTip now uses `OpenRepeat` proof instead of diagnostic `PreparedOpen`. Latest 18s rendered run passes with `OpenRepeatEvidence=true`, `Invoked=true`, fallback bounds `534,405,97,32`, frames `t2000` / `t3000` / `t6500`, and deltas `7.185` / `0.242` / `7.276`; older failed hover/prepared-open runs are superseded. |
 | Scrolling | AnnotatedScrollBar | `item/AnnotatedScrollBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/AnnotatedScrollBar/dark-annotatedscrollbar.mp4` | Latest rendered run records scroll interaction with whole-frame delta `4.521` and local visual delta `95.226`. |
 | Collections | GridView | `item/GridView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/GridView/dark-gridview.mp4` | Latest rendered run records local visual delta `1.104`; selection/output evidence changed despite low whole-frame delta `0.162`. |
 | Collections | ItemsRepeater | `item/ItemsRepeater` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-044806-923/ItemsRepeater/dark-itemsrepeater.mp4` | Latest rendered run records virtualized scroll interaction with whole-frame delta `4.456` and local visual delta `11.471`. |

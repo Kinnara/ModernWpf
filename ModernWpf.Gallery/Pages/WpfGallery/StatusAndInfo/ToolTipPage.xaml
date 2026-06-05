@@ -30,7 +30,14 @@
                     ToolTipService.InitialShowDelay="100"
                     ToolTipService.Placement="MousePoint"
                     AutomationProperties.Name="TooltipButton"
-                    ToolTipService.ToolTip="Simple ToolTip" />
+                    Click="ToolTipButton_Click"
+                    GotKeyboardFocus="ToolTipButton_GotKeyboardFocus"
+                    MouseEnter="ToolTipButton_MouseEnter"
+                    MouseMove="ToolTipButton_MouseMove">
+                    <ToolTipService.ToolTip>
+                        <ToolTip x:Name="SimpleToolTip" Content="Simple ToolTip" />
+                    </ToolTipService.ToolTip>
+                </Button>
             </controls:ControlExample>
         </ScrollViewer>
     </Grid>

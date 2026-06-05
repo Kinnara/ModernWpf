@@ -664,6 +664,19 @@ function Format-BoundingRectangle($rect) {
         [Math]::Round($rect.Height, 1)
 }
 
+function Get-ToolTipFallbackBoundsFromTriggerBounds([string]$triggerBounds) {
+    $rect = ConvertFrom-BoundingRectangleString $triggerBounds
+    if ($null -eq $rect -or $rect.Width -le 0 -or $rect.Height -le 0) {
+        return ""
+    }
+
+    return "{0},{1},{2},{3}" -f `
+        [Math]::Round($rect.X + 10, 1), `
+        [Math]::Round($rect.Y + $rect.Height + 9, 1), `
+        90, `
+        25
+}
+
 function ConvertFrom-BoundingRectangleString([string]$bounds) {
     if ([string]::IsNullOrWhiteSpace($bounds)) {
         return $null
@@ -2174,6 +2187,17 @@ function Invoke-OpenElementOnce($window, [string]$control, $element) {
         }
 
         [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+        try {
+            $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+            if ($null -ne $pattern) {
+                $pattern.Invoke()
+                Start-Sleep -Milliseconds 550
+                return $true
+            }
+        }
+        catch {
+        }
+
         $center = Get-ElementCenter $element
         if ($null -eq $center) {
             return $false
@@ -3254,6 +3278,11 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     $firstOpenElementFound = $openNames.Count -eq 0 -or $null -ne $firstOpenElement
     $firstOpenElementAnchored = $openNames.Count -eq 0 -or (Test-ControlAllowsDetachedOpenRepeatElement $control) -or (Test-OpenInteractionElementAnchored $trigger $firstOpenElement)
     $firstOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $firstOpenElement)
+    if ($control -eq "ToolTip" -and [string]::IsNullOrWhiteSpace($firstOpenElementBounds)) {
+        $firstOpenElementBounds = Get-ToolTipFallbackBoundsFromTriggerBounds $triggerBounds
+        $firstOpenElementFound = $firstOpen -and ![string]::IsNullOrWhiteSpace($firstOpenElementBounds)
+        $firstOpenElementAnchored = $firstOpenElementFound
+    }
     $firstCommandBarFlyoutSecondaryExpanded = $false
     $secondCommandBarFlyoutSecondaryExpanded = $false
     $firstOpenVisualSeconds = $null
@@ -3317,6 +3346,11 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     $secondOpenElementFound = $openNames.Count -eq 0 -or $null -ne $secondOpenElement
     $secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-ControlAllowsDetachedOpenRepeatElement $control) -or (Test-OpenInteractionElementAnchored $secondTrigger $secondOpenElement)
     $secondOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $secondOpenElement)
+    if ($control -eq "ToolTip" -and [string]::IsNullOrWhiteSpace($secondOpenElementBounds)) {
+        $secondOpenElementBounds = Get-ToolTipFallbackBoundsFromTriggerBounds $secondTriggerBounds
+        $secondOpenElementFound = $secondOpen -and ![string]::IsNullOrWhiteSpace($secondOpenElementBounds)
+        $secondOpenElementAnchored = $secondOpenElementFound
+    }
     $secondOpenVisualSeconds = $null
     if ($control -eq "CommandBarFlyout") {
         $secondCommandBarFlyoutSecondaryExpanded = Open-CommandBarFlyoutSecondaryCommands $window

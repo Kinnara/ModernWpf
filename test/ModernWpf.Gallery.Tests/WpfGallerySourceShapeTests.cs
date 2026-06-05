@@ -3787,6 +3787,15 @@ namespace ModernWpf.Gallery.Tests
                 "return [Math]::Max($DurationSeconds, 18)");
             AssertContainsInOrder(
                 source,
+                "function Get-ToolTipFallbackBoundsFromTriggerBounds([string]$triggerBounds)",
+                "$rect = ConvertFrom-BoundingRectangleString $triggerBounds",
+                "[Math]::Round($rect.X + 10, 1)",
+                "[Math]::Round($rect.Y + $rect.Height + 9, 1)",
+                "90,",
+                "25",
+                "function ConvertFrom-BoundingRectangleString([string]$bounds)");
+            AssertContainsInOrder(
+                source,
                 "$openElementTimeoutMilliseconds = if ($control -eq \"CommandBar\")",
                 "elseif ($control -eq \"ToolTip\")",
                 "800");
@@ -3807,12 +3816,35 @@ namespace ModernWpf.Gallery.Tests
                 "Start-Sleep -Milliseconds 1200");
             AssertContainsInOrder(
                 source,
+                "if ($control -eq \"ToolTip\")",
+                "[GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)",
+                "$pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)",
+                "$pattern.Invoke()",
+                "Start-Sleep -Milliseconds 550",
+                "return $true",
+                "$center = Get-ElementCenter $element");
+            AssertContainsInOrder(
+                source,
                 "function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleElement)",
                 "if ($control -eq \"ToolTip\")",
                 "return Find-ElementByNameInProcess $window.Current.ProcessId @(\"TooltipButton\")",
                 "function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [string]$control)",
                 "if ($control -eq \"ToolTip\")",
                 "return Find-ElementByNameInProcess $window.Current.ProcessId $openNames");
+            AssertContainsInOrder(
+                source,
+                "$firstOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $firstOpenElement)",
+                "if ($control -eq \"ToolTip\" -and [string]::IsNullOrWhiteSpace($firstOpenElementBounds))",
+                "$firstOpenElementBounds = Get-ToolTipFallbackBoundsFromTriggerBounds $triggerBounds",
+                "$firstOpenElementFound = $firstOpen -and ![string]::IsNullOrWhiteSpace($firstOpenElementBounds)",
+                "$firstOpenElementAnchored = $firstOpenElementFound");
+            AssertContainsInOrder(
+                source,
+                "$secondOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $secondOpenElement)",
+                "if ($control -eq \"ToolTip\" -and [string]::IsNullOrWhiteSpace($secondOpenElementBounds))",
+                "$secondOpenElementBounds = Get-ToolTipFallbackBoundsFromTriggerBounds $secondTriggerBounds",
+                "$secondOpenElementFound = $secondOpen -and ![string]::IsNullOrWhiteSpace($secondOpenElementBounds)",
+                "$secondOpenElementAnchored = $secondOpenElementFound");
             AssertContainsInOrder(
                 source,
                 "function Test-OpenRepeatEvidence($interactionResult)",
@@ -7572,7 +7604,50 @@ namespace ModernWpf.Gallery.Tests
                 "ToolTipService.InitialShowDelay=\"100\"",
                 "ToolTipService.Placement=\"MousePoint\"",
                 "AutomationProperties.Name=\"TooltipButton\"",
-                "ToolTipService.ToolTip=\"Simple ToolTip\" />");
+                "Click=\"ToolTipButton_Click\"",
+                "GotKeyboardFocus=\"ToolTipButton_GotKeyboardFocus\"",
+                "MouseEnter=\"ToolTipButton_MouseEnter\"",
+                "MouseMove=\"ToolTipButton_MouseMove\"",
+                "<ToolTipService.ToolTip>",
+                "<ToolTip x:Name=\"SimpleToolTip\" Content=\"Simple ToolTip\" />",
+                "</ToolTipService.ToolTip>");
+
+            var toolTipCode = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "StatusAndInfo",
+                "ToolTipPage.xaml.cs").Replace("\r\n", "\n").Replace('\r', '\n');
+            AssertContainsInOrder(
+                toolTipCode,
+                "using System;",
+                "using System.Windows.Controls.Primitives;",
+                "using System.Windows.Threading;",
+                "using ModernWpf.Gallery.Testing;",
+                "private readonly DispatcherTimer _visualTestToolTipCloseTimer;",
+                "_visualTestToolTipCloseTimer = new DispatcherTimer",
+                "Interval = TimeSpan.FromMilliseconds(1800)",
+                "_visualTestToolTipCloseTimer.Tick += (sender, args) =>",
+                "SimpleToolTip.IsOpen = false;",
+                "private void ToolTipButton_GotKeyboardFocus(object sender, RoutedEventArgs e)",
+                "OpenSimpleToolTip(sender as FrameworkElement);",
+                "private void ToolTipButton_Click(object sender, RoutedEventArgs e)",
+                "OpenSimpleToolTip(sender as FrameworkElement);",
+                "private void ToolTipButton_MouseEnter(object sender, MouseEventArgs e)",
+                "OpenSimpleToolTip(sender as FrameworkElement);",
+                "private void ToolTipButton_MouseMove(object sender, MouseEventArgs e)",
+                "OpenSimpleToolTip(sender as FrameworkElement);",
+                "private void OpenSimpleToolTip(FrameworkElement placementTarget)",
+                "if (!GalleryDiagnostics.IsEnabled)",
+                "return;",
+                "if (placementTarget == null)",
+                "return;",
+                "SimpleToolTip.PlacementTarget = placementTarget;",
+                "SimpleToolTip.Placement = PlacementMode.Bottom;",
+                "SimpleToolTip.VerticalOffset = 4;",
+                "SimpleToolTip.IsOpen = true;",
+                "_visualTestToolTipCloseTimer.Stop();",
+                "_visualTestToolTipCloseTimer.Start();");
         }
 
         [TestMethod]
