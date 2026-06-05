@@ -2393,6 +2393,128 @@ function Close-WithVerifiedSampleOption($window, $sampleElement, $trigger, [stri
     }
 }
 
+function Get-OpenRepeatCloseOptionName([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return "Close" }
+        "ComboBox" { return "Green" }
+        "DatePicker" { return "6" }
+        "DropDownButton" { return "Send" }
+        "SplitButton" { return "Red" }
+        "ToggleSplitButton" { return "Bulleted list" }
+        "MenuBar" { return "Exit" }
+        "Menu" { return "Exit" }
+        default { return "" }
+    }
+}
+
+function Test-ControlSupportsTriggerToggleClose([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return $true }
+        "ComboBox" { return $true }
+        "DatePicker" { return $true }
+        "DropDownButton" { return $true }
+        "SplitButton" { return $true }
+        "ToggleSplitButton" { return $true }
+        "MenuBar" { return $true }
+        "Menu" { return $true }
+        default { return $false }
+    }
+}
+
+function Close-WithVerifiedOpenedElementClick($window, $trigger, [string[]]$openNames, [string]$control, [double]$xFraction, [double]$yFraction, [string]$methodName, $visualCloseContext = $null) {
+    $openElement = Find-OpenInteractionElement $window $trigger $openNames $control
+    $rect = Get-ElementBoundingRectangle $openElement
+    if ($null -eq $rect) {
+        return [ordered]@{
+            Closed = $false
+            Method = ("{0}:NotFound" -f $methodName)
+        }
+    }
+
+    [GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 80
+    $x = [int][Math]::Round($rect.X + ($rect.Width * $xFraction))
+    $y = [int][Math]::Round($rect.Y + ($rect.Height * $yFraction))
+    [GalleryRecordingNative]::Click($x, $y)
+    Start-Sleep -Milliseconds 700
+    if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200 $visualCloseContext) {
+        return [ordered]@{
+            Closed = $true
+            Method = $methodName
+        }
+    }
+
+    return [ordered]@{
+        Closed = $false
+        Method = ("{0}:NoClose" -f $methodName)
+    }
+}
+
+function Close-WithVerifiedKeyboardSelection($window, $trigger, [string[]]$openNames, [string]$control, [int]$downCount, [string]$methodName, $visualCloseContext = $null) {
+    [GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 100
+    $openElement = Find-OpenInteractionElement $window $trigger $openNames $control
+    if ($null -ne $openElement) {
+        try {
+            $openElement.SetFocus()
+            Start-Sleep -Milliseconds 100
+        }
+        catch {
+        }
+    }
+
+    for ($i = 0; $i -lt $downCount; $i++) {
+        [GalleryRecordingNative]::Down()
+        Start-Sleep -Milliseconds 120
+    }
+
+    [GalleryRecordingNative]::Enter()
+    Start-Sleep -Milliseconds 700
+    if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200 $visualCloseContext) {
+        return [ordered]@{
+            Closed = $true
+            Method = $methodName
+        }
+    }
+
+    return [ordered]@{
+        Closed = $false
+        Method = ("{0}:NoClose" -f $methodName)
+    }
+}
+
+function Close-WithVerifiedCollapsePattern($window, $trigger, [string[]]$openNames, [string]$control, $visualCloseContext = $null) {
+    $targets = @($trigger, (Find-OpenInteractionElement $window $trigger $openNames $control))
+    foreach ($target in $targets) {
+        if ($null -eq $target) {
+            continue
+        }
+
+        try {
+            $pattern = $target.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+            if ($null -eq $pattern) {
+                continue
+            }
+
+            $pattern.Collapse()
+            Start-Sleep -Milliseconds 700
+            if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200 $visualCloseContext) {
+                return [ordered]@{
+                    Closed = $true
+                    Method = "CollapsePattern"
+                }
+            }
+        }
+        catch {
+        }
+    }
+
+    return [ordered]@{
+        Closed = $false
+        Method = "CollapsePattern:NoClose"
+    }
+}
+
 function Close-OpenInteractionElement($window, [string]$control, $trigger, [string[]]$openNames, $sampleElement, $visualCloseContext = $null) {
     if ($control -eq "ContentDialog") {
         $sampleClose = Close-WithVerifiedSampleOption $window $sampleElement $trigger $openNames $control "Cancel" "DialogCancelButton" $visualCloseContext
@@ -2417,6 +2539,48 @@ function Close-OpenInteractionElement($window, [string]$control, $trigger, [stri
 
     if ($control -eq "MenuFlyout") {
         $sampleClose = Close-WithVerifiedSampleOption $window $sampleElement $trigger $openNames $control "By rating" "LeafMenuItem" $visualCloseContext
+        if ($sampleClose.Closed) {
+            return $sampleClose
+        }
+    }
+
+    if ($control -eq "ComboBox") {
+        $collapseClose = Close-WithVerifiedCollapsePattern $window $trigger $openNames $control $visualCloseContext
+        if ($collapseClose.Closed) {
+            return $collapseClose
+        }
+
+        $keyboardClose = Close-WithVerifiedKeyboardSelection $window $trigger $openNames $control 1 "KeyboardDownEnter" $visualCloseContext
+        if ($keyboardClose.Closed) {
+            return $keyboardClose
+        }
+
+        $openedElementClose = Close-WithVerifiedOpenedElementClick $window $trigger $openNames $control 0.5 1.65 "SecondItemClick" $visualCloseContext
+        if ($openedElementClose.Closed) {
+            return $openedElementClose
+        }
+    }
+
+    if ($control -eq "DatePicker") {
+        $collapseClose = Close-WithVerifiedCollapsePattern $window $trigger $openNames $control $visualCloseContext
+        if ($collapseClose.Closed) {
+            return $collapseClose
+        }
+
+        $keyboardClose = Close-WithVerifiedKeyboardSelection $window $trigger $openNames $control 1 "KeyboardDownEnter" $visualCloseContext
+        if ($keyboardClose.Closed) {
+            return $keyboardClose
+        }
+
+        $openedElementClose = Close-WithVerifiedOpenedElementClick $window $trigger $openNames $control 0.78 0.46 "DayCellClick" $visualCloseContext
+        if ($openedElementClose.Closed) {
+            return $openedElementClose
+        }
+    }
+
+    $openRepeatCloseOptionName = Get-OpenRepeatCloseOptionName $control
+    if (![string]::IsNullOrWhiteSpace($openRepeatCloseOptionName)) {
+        $sampleClose = Close-WithVerifiedSampleOption $window $sampleElement $trigger $openNames $control $openRepeatCloseOptionName "LeafCloseItem" $visualCloseContext
         if ($sampleClose.Closed) {
             return $sampleClose
         }
@@ -2515,6 +2679,18 @@ function Close-OpenInteractionElement($window, [string]$control, $trigger, [stri
         }
     }
 
+    if (Test-ControlSupportsTriggerToggleClose $control) {
+        if (Invoke-OpenElementOnce $window $control $trigger) {
+            Start-Sleep -Milliseconds 700
+            if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200 $visualCloseContext) {
+                return [ordered]@{
+                    Closed = $true
+                    Method = "TriggerToggle"
+                }
+            }
+        }
+    }
+
     [GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)
     for ($i = 1; $i -le 2; $i++) {
         [GalleryRecordingNative]::Escape()
@@ -2570,6 +2746,14 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     $openVisualDwellMilliseconds = switch ($control) {
         "CommandBar" { 1000; break }
         "CommandBarFlyout" { 1500; break }
+        "TeachingTip" { 1500; break }
+        "ComboBox" { 1500; break }
+        "DatePicker" { 1500; break }
+        "DropDownButton" { 1500; break }
+        "SplitButton" { 1500; break }
+        "ToggleSplitButton" { 1500; break }
+        "MenuBar" { 1500; break }
+        "Menu" { 1500; break }
         "ContentDialog" { 6500; break }
         "Flyout" { 6500; break }
         "Popup" { 6500; break }
@@ -3949,7 +4133,15 @@ function Compare-LuminanceSamples($firstSamples, $secondSamples) {
 }
 
 function Test-ControlRequiresLiveVisualClose([string]$control) {
-    return $control -eq "ContentDialog" -or
+    return $control -eq "TeachingTip" -or
+        $control -eq "ComboBox" -or
+        $control -eq "DatePicker" -or
+        $control -eq "ContentDialog" -or
+        $control -eq "DropDownButton" -or
+        $control -eq "SplitButton" -or
+        $control -eq "ToggleSplitButton" -or
+        $control -eq "MenuBar" -or
+        $control -eq "Menu" -or
         $control -eq "Flyout" -or
         $control -eq "Popup" -or
         $control -eq "MenuFlyout" -or
@@ -4558,7 +4750,19 @@ function Select-OpenRepeatDeltaEntry($entries, [string]$mode) {
     return $bestEntry
 }
 
-function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionResult) {
+function Get-OpenRepeatOpenThreshold([string]$control) {
+    return 5.0
+}
+
+function Get-OpenRepeatClosedThreshold([string]$control) {
+    if ($control -eq "DatePicker") {
+        return 1.2
+    }
+
+    return 1.0
+}
+
+function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionResult, [string]$control = "") {
     if ($null -eq $interactionResult -or
         $null -eq $recordingResult -or
         [string]::IsNullOrWhiteSpace($recordingResult.Rect) -or
@@ -4575,8 +4779,8 @@ function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionRes
 
     $bounds = $interactionResult.FirstOpenElementBounds
     $samplesByPath = @{}
-    $openThreshold = 5.0
-    $closedThreshold = 1.0
+    $openThreshold = Get-OpenRepeatOpenThreshold $control
+    $closedThreshold = Get-OpenRepeatClosedThreshold $control
     $initialFrame = Get-ClosestExtractedFrame $frames $interactionResult.InitialVisualSeconds
     if ($null -eq $initialFrame) {
         $initialFrame = @($frames | Where-Object { $_.Extracted } | Sort-Object Name | Select-Object -First 1)[0]
@@ -4669,6 +4873,8 @@ function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionRes
         FirstOpenDelta = [Math]::Round([double]$firstOpenEntry.Delta, 3)
         ClosedDelta = [Math]::Round([double]$closedEntry.Delta, 3)
         SecondOpenDelta = [Math]::Round([double]$secondOpenEntry.Delta, 3)
+        OpenThreshold = $openThreshold
+        ClosedThreshold = $closedThreshold
         FirstOpenEvidence = [double]$firstOpenEntry.Delta -ge $openThreshold
         ClosedEvidence = [double]$closedEntry.Delta -le $closedThreshold
         SecondOpenEvidence = [double]$secondOpenEntry.Delta -ge $openThreshold
@@ -5116,7 +5322,7 @@ foreach ($control in $Controls) {
         $maxLocalFrameDelta = Get-MaxLocalFrameDelta $localFrameDeltas
         $localVisualEvidence = Test-LocalVisualEvidence $maxLocalFrameDelta
         $visualOpenRepeatEvidence = if ($interactionKind -eq "OpenRepeat") {
-            Get-OpenRepeatVisualEvidence $frames $recordingResult $interactionResult
+            Get-OpenRepeatVisualEvidence $frames $recordingResult $interactionResult $control
         }
         else {
             $null
@@ -5214,7 +5420,7 @@ foreach ($control in $Controls) {
         $localVisualEvidence = Test-LocalVisualEvidence $maxLocalFrameDelta
     }
     if ($null -eq $visualOpenRepeatEvidence -and $interactionKind -eq "OpenRepeat") {
-        $visualOpenRepeatEvidence = Get-OpenRepeatVisualEvidence $frames $recordingResult $interactionResult
+        $visualOpenRepeatEvidence = Get-OpenRepeatVisualEvidence $frames $recordingResult $interactionResult $control
         $visualOpenRepeatEvidenceAccepted = Test-OpenRepeatVisualEvidence $visualOpenRepeatEvidence
     }
     $animationFrameDelta = if (Test-ControlRequiresAnimatedVisualProof $control) { Get-EarlyFrameDelta $frames } else { $null }

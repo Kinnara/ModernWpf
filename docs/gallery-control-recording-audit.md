@@ -250,6 +250,41 @@ Round 60 closes the ContentDialog and Popup stale-automation verifier gap:
   `t2000` / `t8500` / `t11000`, and deltas of `28.867`, `0.937`, and
   `28.846`.
 
+Round 61 hardens the remaining dropdown/menu open-repeat controls:
+
+- The focused run
+  `artifacts/gallery-recordings/20260605-034335-817/report.md` failed all
+  eight retested open-repeat controls because the generic close path left
+  dropdowns, menus, and calendars open through the close interval. This
+  exposed another false-pass class in older evidence: first and second open
+  elements could be found while the recording never proved a visible closed
+  interval.
+- The recorder now uses control-specific close actions before generic dismiss:
+  leaf item invocation for TeachingTip, DropDownButton, SplitButton,
+  ToggleSplitButton, MenuBar, and Menu; `ExpandCollapsePattern.Collapse()` for
+  ComboBox and DatePicker; focused keyboard/direct-click fallbacks for the WPF
+  popup controls that do not respond to normal mouse dismissal in this desktop
+  session.
+- Live pixel close proof now covers these dropdown/menu controls, with a
+  1500ms first-open dwell so the extracted frames reliably sample open,
+  closed, and second-open states. DatePicker keeps the `5.0` open threshold
+  but uses a `1.2` closed threshold because the expanded calendar proof region
+  includes margin and returned to `1.016` delta in the verified closed frame.
+- Latest proof under the final recorder code:
+  `artifacts/gallery-recordings/20260605-043648-914/report.md` passed for
+  ComboBox and DropDownButton, `20260605-042758-748` passed for DatePicker,
+  and `20260605-042951-643` passed for TeachingTip, SplitButton,
+  ToggleSplitButton, MenuBar, and Menu. The accepted frame/delta triples are
+  ComboBox `t2500` / `t5000` / `t9500` with `9.482` / `0.544` / `11.141`,
+  DropDownButton `t1500` / `t3000` / `t10500` with `12.183` / `0.397` /
+  `12.406`, DatePicker `t2000` / `t4000` / `t8500` with `11.026` / `1.016` /
+  `10.707`, TeachingTip `t2500` / `t3500` / `t8500` with `12.768` / `0.697` /
+  `12.818`, SplitButton `t2500` / `t5500` / `t10000` with `21.394` / `0.013` /
+  `21.441`, ToggleSplitButton `t2500` / `t6000` / `t10500` with `10.864` /
+  `0.025` / `18.001`, MenuBar `t2500` / `t4000` / `t9000` with `11.896` /
+  `0.258` / `12.3`, and Menu `t2500` / `t5000` / `t10000` with `13.701` /
+  `0.797` / `13.843`.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -271,6 +306,10 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260605-030028-982/report.md` | Flyout | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260605-031711-696/report.md` | MenuFlyout | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260605-033404-923/report.md` | ContentDialog, Popup | 2 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-034335-817/report.md` | TeachingTip, ComboBox, DropDownButton, SplitButton, ToggleSplitButton, MenuBar, Menu, DatePicker | 0 passed, 0 needs review, 8 failed |
+| `artifacts/gallery-recordings/20260605-043648-914/report.md` | ComboBox, DropDownButton | 2 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-042758-748/report.md` | DatePicker | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-042951-643/report.md` | TeachingTip, SplitButton, ToggleSplitButton, MenuBar, Menu | 5 passed, 0 needs review, 0 failed |
 
 The `20260604-050301-561` run is intentionally not treated as a green sweep:
 it exposed two remaining interaction gaps that the older static sweep missed.
@@ -348,10 +387,10 @@ proof on top of these static route captures.
 | Area | Control | Route or Scenario | Recording Status | Fix Status | Latest Evidence | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | Shell | Navigation pane | Home, Design Guidance, Samples expand/collapse | Recorded | Fixed | `artifacts/gallery-recordings/20260603-080438-789/ShellNavigation/dark-shellnavigation.mp4` | Manifest proves Design Guidance and Samples expanded with visible children, then collapsed with children hidden; reviewed contact sheet shows initial collapsed, expanded, and final collapsed states. Recorder's injected mouse event still required UIA ExpandCollapse fallback in this desktop session. |
-| Dialogs & flyouts | TeachingTip | `item/TeachingTip` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260603-064740-962/TeachingTip/dark-teachingtip.mp4` | Manifest records first and second open evidence; reviewed contact sheet shows the TeachingTip visible after repeat open. |
+| Dialogs & flyouts | TeachingTip | `item/TeachingTip` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-042951-643/TeachingTip/dark-teachingtip.mp4` | Latest rendered run closes through the named TeachingTip close button and requires baseline-delta open/closed/open proof. Manifest records `CloseMethod=LeafCloseItem:Invoke`, `Detection=BaselineDeltaScan`, frames `t2500` / `t3500` / `t8500`, and deltas `12.768` / `0.697` / `12.818`. |
 | Basic input | Button | `item/Button` | Recorded | Fixed | `artifacts/gallery-recordings/20260603-050244-858/Button/dark-button.mp4` | Recorder toggles `Disable button`; manifest records the primary button changing from `Enabled` to `Disabled`, and reviewed frame `t3000.png` shows the disabled button. |
 | Basic input | CheckBox | `item/CheckBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/CheckBox/dark-checkbox.mp4` | Manifest records `Off` to `On`; reviewed frame shows checked state. |
-| Basic input | ComboBox | `item/ComboBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-030922-916/ComboBox/dark-combobox.mp4` | Rendered MP4 shows dropdown open and second-open path. |
+| Basic input | ComboBox | `item/ComboBox` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-043648-914/ComboBox/dark-combobox.mp4` | Latest rendered run closes through `ExpandCollapsePattern.Collapse()` and requires baseline-delta open/closed/open proof. Manifest records frames `t2500` / `t5000` / `t9500`, deltas `9.482` / `0.544` / `11.141`, and local delta `11.141`. |
 | Basic input | RadioButton | `item/RadioButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-050244-858/RadioButton/dark-radiobutton.mp4` | Manifest records `Option 1` from selected to unselected and `Option 2` from unselected to selected; reviewed frame `t3000.png` shows `Option 2` selected. |
 | Basic input | Slider | `item/Slider` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/Slider/dark-slider.mp4` | Manifest records `0` to `50`; reviewed frame shows output `50`. |
 | Basic input | ColorPicker | `item/ColorPicker` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-050244-858/ColorPicker/dark-colorpicker.mp4` | Manifest records `IsMoreButtonVisible` from `Off` to `On`; reviewed frame `t4000.png` shows the `More` button visible. |
@@ -359,9 +398,9 @@ proof on top of these static route captures.
 | Basic input | RatingControl | `item/RatingControl` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/RatingControl/dark-ratingcontrol.mp4` | Manifest records `0` to `3`; reviewed frame shows three selected stars and value `3`. |
 | Basic input | RepeatButton | `item/RepeatButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-185724-938/RepeatButton/dark-repeatbutton.mp4` | Manifest records output from `Control output` to `Number of clicks: 1` with `OutputEvidence=true`, `OutputMatched=true`, and `OutputChanged=true`. |
 | Basic input | ToggleButton | `item/ToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/ToggleButton/dark-togglebutton.mp4` | Manifest records `Off` to `On`; reviewed frame shows `On`. |
-| Basic input | DropDownButton | `item/DropDownButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-031922-773/DropDownButton/dark-dropdownbutton.mp4` | Rendered MP4 frame shows `Send`, `Reply`, and `Reply All` flyout on repeat-open path. |
-| Basic input | SplitButton | `item/SplitButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-034734-786/SplitButton/dark-splitbutton.mp4` | Rendered MP4 frame shows color flyout; manifest verifies both opens reached `Expanded`. |
-| Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-034734-786/ToggleSplitButton/dark-togglesplitbutton.mp4` | Rendered MP4 frame shows the compact two-button flyout; full-frame delta is small, so the manifest also requires expanded-state and open-element proof on both opens. |
+| Basic input | DropDownButton | `item/DropDownButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-043648-914/DropDownButton/dark-dropdownbutton.mp4` | Latest rendered run closes through the `Send` leaf item and requires baseline-delta open/closed/open proof. Manifest records frames `t1500` / `t3000` / `t10500` and deltas `12.183` / `0.397` / `12.406`. |
+| Basic input | SplitButton | `item/SplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-042951-643/SplitButton/dark-splitbutton.mp4` | Latest rendered run closes through the `Red` leaf item and requires baseline-delta open/closed/open proof. Manifest records frames `t2500` / `t5500` / `t10000` and deltas `21.394` / `0.013` / `21.441`. |
+| Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-042951-643/ToggleSplitButton/dark-togglesplitbutton.mp4` | Latest rendered run closes through the `Bulleted list` leaf item and requires baseline-delta open/closed/open proof. Manifest records frames `t2500` / `t6000` / `t10500`, deltas `10.864` / `0.025` / `18.001`, and local delta `38.571`. |
 | Basic input | ToggleSwitch | `item/ToggleSwitch` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/ToggleSwitch/dark-toggleswitch.mp4` | Manifest records `Off` to `On`; reviewed frame shows switch and `Working` state on. |
 | Text | NumberBox | `item/NumberBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-040311-639/NumberBox/dark-numberbox.mp4` | Manifest records `10` to `20`; reviewed frame shows spin-button value `20`. |
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed | `artifacts/gallery-recordings/20260603-055524-741/AutoSuggestBox/dark-autosuggestbox.mp4` | Manifest records typed input `ae`, suggestion `Aegean`, and output `Aegean`. Recorder still falls back to UIA selection for output proof; `AutoSuggestBoxInteractionTests` covers item-click submit/close behavior. |
@@ -382,7 +421,7 @@ proof on top of these static route captures.
 | Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-033404-923/ContentDialog/dark-contentdialog.mp4` | Latest 24s rendered run treats modal close as a named `Cancel` button action and requires pixel-backed close proof. Manifest records `CloseMethod=DialogCancelButton:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t9000` / `t14000`, and deltas `12.379` / `0.756` / `26.644`. |
 | Dialogs & flyouts | Flyout | `item/Flyout` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-030028-982/Flyout/dark-flyout.mp4` | Latest 24s rendered run passes with pixel-backed close proof and baseline-delta transition scan: `CloseVisualChecked=true`, `CloseVisualClosed=true`, `Detection=BaselineDeltaScan`, frames `t2500` / `t6500` / `t11500`, and deltas `22.728` / `0.901` / `19.984`. |
 | Dialogs & flyouts | Popup | `item/Popup` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-033404-923/Popup/dark-popup.mp4` | Latest 24s rendered run accepts the named `Close` button only after the opened-content region returns to baseline, so stale UIA cannot block or fake the close. Manifest records `CloseMethod=SampleCloseButton:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t8500` / `t11000`, and deltas `28.867` / `0.937` / `28.846`. |
-| Menus & toolbars | MenuBar | `item/MenuBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/MenuBar/dark-menubar.mp4` | Manifest records first and second menu opens despite low full-frame delta; reviewed contact sheet shows the `File` menu. |
+| Menus & toolbars | MenuBar | `item/MenuBar` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-042951-643/MenuBar/dark-menubar.mp4` | Latest rendered run closes through the `Exit` leaf item and requires baseline-delta open/closed/open proof. Manifest records frames `t2500` / `t4000` / `t9000`, deltas `11.896` / `0.258` / `12.3`, and local delta `12.485`. |
 | Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260605-031711-696/MenuFlyout/dark-menuflyout.mp4` | Same-target repeat-open guard now treats tracked absolute-point presenters as the same target to avoid close/reopen flicker. Latest 24s rendered rerun passes with `CloseMethod=LeafMenuItem:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t6500` / `t12000`, and deltas `15.058` / `0.679` / `14.044`. |
 | Menus & toolbars | AppBarButton | `item/AppBarButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarButton/dark-appbarbutton.mp4` | Manifest records output changing to `You clicked: Button1`; reviewed contact sheet shows the click output. |
 | Menus & toolbars | AppBarSeparator | `item/AppBarSeparator` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarSeparator/dark-appbarseparator.mp4` | Static rendered route with stable button anchors; reviewed contact sheet shows separated command buttons. |
