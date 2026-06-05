@@ -3399,7 +3399,9 @@ namespace ModernWpf.Gallery.Tests
                 "function Format-BoundingRectangle($rect)",
                 "function Get-BoundingRectangleGap($first, $second)",
                 "function Test-OpenInteractionElementAnchored($trigger, $openElement)",
-                "return (Get-BoundingRectangleGap $triggerRect $openRect) -le 320.0");
+                "return (Get-BoundingRectangleGap $triggerRect $openRect) -le 320.0",
+                "function Test-ControlAllowsDetachedOpenRepeatElement([string]$control)",
+                "return $control -eq \"MessageBox\"");
             AssertContainsInOrder(
                 source,
                 "function Get-ControlRecordingDurationSeconds([string]$control, [string]$interactionKind)",
@@ -3420,10 +3422,10 @@ namespace ModernWpf.Gallery.Tests
                 "$triggerBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $trigger)",
                 "$visualCloseContext = New-OpenRepeatVisualCloseContext $window $control",
                 "$firstOpenElement = if ($openNames.Count -eq 0) { $null } else { Wait-ForOpenInteractionElement $window $trigger $openNames $control $openElementTimeoutMilliseconds }",
-                "$firstOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $trigger $firstOpenElement)",
+                "$firstOpenElementAnchored = $openNames.Count -eq 0 -or (Test-ControlAllowsDetachedOpenRepeatElement $control) -or (Test-OpenInteractionElementAnchored $trigger $firstOpenElement)",
                 "$visualCloseContext[\"Bounds\"] = $firstOpenElementBounds",
                 "$closeResult = Close-OpenInteractionElement $window $control $trigger $openNames $sampleElement $visualCloseContext",
-                "$secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $secondTrigger $secondOpenElement)",
+                "$secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-ControlAllowsDetachedOpenRepeatElement $control) -or (Test-OpenInteractionElementAnchored $secondTrigger $secondOpenElement)",
                 "CloseVisualChecked = $closeVisualChecked",
                 "FirstOpenElementAnchored = $firstOpenElementAnchored",
                 "SecondOpenElementAnchored = $secondOpenElementAnchored",
@@ -3780,6 +3782,16 @@ namespace ModernWpf.Gallery.Tests
                 "if (Test-ControlSupportsOpenInteraction $control) { return \"OpenRepeat\" }");
             AssertContainsInOrder(
                 source,
+                "function Get-ControlRecordingDurationSeconds([string]$control, [string]$interactionKind)",
+                "if ($control -eq \"ToolTip\")",
+                "return [Math]::Max($DurationSeconds, 18)");
+            AssertContainsInOrder(
+                source,
+                "$openElementTimeoutMilliseconds = if ($control -eq \"CommandBar\")",
+                "elseif ($control -eq \"ToolTip\")",
+                "800");
+            AssertContainsInOrder(
+                source,
                 "function Invoke-OpenElementOnce($window, [string]$control, $element)",
                 "if ($control -eq \"ToolTip\")",
                 "$windowHandle = [IntPtr]$window.Current.NativeWindowHandle",
@@ -3810,6 +3822,76 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 source.Contains("if ($control -eq \"ToolTip\") { return \"PreparedOpen\" }", StringComparison.Ordinal),
                 "ToolTip should not pass from an already-opened diagnostic tooltip.");
+        }
+
+        [TestMethod]
+        public void GalleryInteractionRecorderExercisesOfficialWpfMessageBoxDialogs()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsOpenInteraction([string]$control)",
+                "\"MessageBox\" { return $true }",
+                "function Get-OpenInteractionNames([string]$control)",
+                "\"MessageBox\" { return @(\"This is a simple message box!\") }");
+            AssertContainsInOrder(
+                source,
+                "function Get-ControlRecordingDurationSeconds([string]$control, [string]$interactionKind)",
+                "if ($control -eq \"MessageBox\")",
+                "return [Math]::Max($DurationSeconds, 18)");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlAllowsDetachedOpenRepeatElement([string]$control)",
+                "return $control -eq \"MessageBox\"");
+            AssertContainsInOrder(
+                source,
+                "public static void InvokeAutomationPatternAsync(object pattern)",
+                "new System.Threading.Thread(() =>",
+                "pattern.GetType().GetMethod(\"Invoke\").Invoke(pattern, null)",
+                "thread.SetApartmentState(System.Threading.ApartmentState.STA)",
+                "thread.Start();",
+                "function Invoke-ElementInvokePatternInBackground($element, [int]$postDelayMilliseconds = 600)",
+                "[GalleryRecordingNative]::InvokeAutomationPatternAsync($pattern)");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-OpenElementOnce($window, [string]$control, $element)",
+                "if ($control -eq \"MessageBox\")",
+                "if (Invoke-ElementInvokePatternInBackground $element 600)",
+                "$element.SetFocus()",
+                "[GalleryRecordingNative]::Space()",
+                "return Invoke-NativeClickElementOnce $window $element 600");
+            AssertContainsInOrder(
+                source,
+                "function Find-MessageBoxDialogElement($window, [string[]]$names)",
+                "if ([int]$candidateWindow.Current.NativeWindowHandle -eq $mainHandle)",
+                "Find-DescendantByAnyName $candidateWindow $names",
+                "function Find-MessageBoxDialogButton($window, [string[]]$names)",
+                "Find-DescendantButtonByAnyName $candidateWindow $names");
+            AssertContainsInOrder(
+                source,
+                "function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleElement)",
+                "if ($control -eq \"MessageBox\")",
+                "return Find-InteractiveElementByNameInProcess $window.Current.ProcessId @(\"Simple MessageBox\")",
+                "function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [string]$control)",
+                "if ($control -eq \"MessageBox\")",
+                "return Find-MessageBoxDialogElement $window $openNames");
+            AssertContainsInOrder(
+                source,
+                "function Close-OpenInteractionElement($window, [string]$control, $trigger, [string[]]$openNames, $sampleElement, $visualCloseContext = $null)",
+                "if ($control -eq \"MessageBox\")",
+                "$okButton = Find-MessageBoxDialogButton $window @(\"OK\")",
+                "Invoke-NativeClickElementOnce $window $okButton 700",
+                "Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1600 $visualCloseContext",
+                "Method = \"DialogOkButton:Click\"");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresLiveVisualClose([string]$control)",
+                "$control -eq \"MessageBox\" -or");
         }
 
         [TestMethod]

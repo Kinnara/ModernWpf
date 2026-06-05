@@ -361,12 +361,28 @@ Round 65 strengthens the ToolTip hover probe and keeps the defect open:
   move messages, then sends both synchronous and queued WPF window mouse-move
   and mouse-hover messages before the hover dwell.
 - The stronger probe still does not open the WPF ToolTip in this desktop
-  session. The latest rendered run
-  `artifacts/gallery-recordings/20260605-054214-762/report.md` failed with
+  session. The latest rendered run now keeps the full second failed open
+  inside the 18-second clip:
+  `artifacts/gallery-recordings/20260605-054733-333/report.md` failed with
   unchanged frames, `FirstOpenElementFound=false`,
   `SecondOpenElementFound=false`, and no visual open-repeat evidence. This
   preserves ToolTip as an explicit open defect instead of accepting a
   diagnostic prepared-open pass.
+
+Round 66 adds official WPF MessageBox modal coverage and exposes another
+static-pass gap:
+
+- `MessageBox` is now routed through `OpenRepeat` instead of static page proof.
+  The recorder looks for the real `Simple MessageBox` button, allows the
+  resulting modal dialog to be detached from the trigger, searches top-level
+  process windows for the dialog text, and requires the OK/closed/second-open
+  sequence to be proven by open-repeat frames.
+- The current rendered run
+  `artifacts/gallery-recordings/20260605-060705-846/report.md` failed after a
+  rebuild: no first or second dialog text was found, no modal visual evidence
+  was generated, and the page still showed `No message shown yet`. The older
+  static MessageBox rows are therefore superseded for interaction proof until a
+  recording proves the modal opens, closes, and reopens.
 
 Latest focused evidence:
 
@@ -400,6 +416,8 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260605-052434-715/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed |
 | `artifacts/gallery-recordings/20260605-053026-959/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; screen-mode diagnostic rejected because most frames were black |
 | `artifacts/gallery-recordings/20260605-054214-762/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; focus, stepped pointer movement, and queued hover messages still did not open the WPF ToolTip |
+| `artifacts/gallery-recordings/20260605-054733-333/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; 18s run keeps both failed hover attempts inside the recording |
+| `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 
 The `20260604-050301-561` run is intentionally not treated as a green sweep:
 it exposed two remaining interaction gaps that the older static sweep missed.
@@ -506,7 +524,7 @@ proof on top of these static route captures.
 | Status & info | InfoBadge | `item/InfoBadge` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260605-045636-525/InfoBadge/dark-infobadge.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_InfoBadge_NavigationView`. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/InfoBar/dark-infobar.mp4` | Latest rendered run records the option interaction with local visual delta `8.084` and whole-frame delta `0.379`. |
 | Status & info | ProgressRing | `item/ProgressRing` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-045636-525/ProgressRing/dark-progressring.mp4` | Latest manifest records `AnimationEvidence=true` with early-frame delta `0.075`, local visual delta `13.759`, and option state change despite low whole-frame delta `0.086`. |
-| Status & info | ToolTip | `item/ToolTip` | Failed recording | Open defect | `artifacts/gallery-recordings/20260605-054214-762/ToolTip/dark-tooltip.mp4` | ToolTip now uses real `OpenRepeat` hover proof instead of diagnostic `PreparedOpen`. Latest rendered run includes focus, stepped pointer movement, and queued hover messages, but still failed with no first/second opened element and no visual open-repeat evidence; prior prepared-open runs are superseded for hover proof. |
+| Status & info | ToolTip | `item/ToolTip` | Failed recording | Open defect | `artifacts/gallery-recordings/20260605-054733-333/ToolTip/dark-tooltip.mp4` | ToolTip now uses real `OpenRepeat` hover proof instead of diagnostic `PreparedOpen`. Latest 18s rendered run keeps both failed hover attempts inside the clip, but still failed with no first/second opened element and no visual open-repeat evidence; prior prepared-open runs are superseded for hover proof. |
 | Scrolling | AnnotatedScrollBar | `item/AnnotatedScrollBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/AnnotatedScrollBar/dark-annotatedscrollbar.mp4` | Latest rendered run records scroll interaction with whole-frame delta `4.521` and local visual delta `95.226`. |
 | Collections | GridView | `item/GridView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/GridView/dark-gridview.mp4` | Latest rendered run records local visual delta `1.104`; selection/output evidence changed despite low whole-frame delta `0.162`. |
 | Collections | ItemsRepeater | `item/ItemsRepeater` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-044806-923/ItemsRepeater/dark-itemsrepeater.mp4` | Latest rendered run records virtualized scroll interaction with whole-frame delta `4.456` and local visual delta `11.471`. |
@@ -522,6 +540,7 @@ proof on top of these static route captures.
 | Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-033404-923/ContentDialog/dark-contentdialog.mp4` | Latest 24s rendered run treats modal close as a named `Cancel` button action and requires pixel-backed close proof. Manifest records `CloseMethod=DialogCancelButton:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t9000` / `t14000`, and deltas `12.379` / `0.756` / `26.644`. |
 | Dialogs & flyouts | Flyout | `item/Flyout` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-030028-982/Flyout/dark-flyout.mp4` | Latest 24s rendered run passes with pixel-backed close proof and baseline-delta transition scan: `CloseVisualChecked=true`, `CloseVisualClosed=true`, `Detection=BaselineDeltaScan`, frames `t2500` / `t6500` / `t11500`, and deltas `22.728` / `0.901` / `19.984`. |
 | Dialogs & flyouts | Popup | `item/Popup` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-033404-923/Popup/dark-popup.mp4` | Latest 24s rendered run accepts the named `Close` button only after the opened-content region returns to baseline, so stale UIA cannot block or fake the close. Manifest records `CloseMethod=SampleCloseButton:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t8500` / `t11000`, and deltas `28.867` / `0.937` / `28.846`. |
+| System | MessageBox | `item/MessageBox` | Failed recording | Open defect | `artifacts/gallery-recordings/20260605-060705-846/MessageBox/dark-messagebox.mp4` | Official WPF MessageBox is no longer accepted from the old static page sweep. Latest 18s rendered run targets `Simple MessageBox`, generates dense transition review, but fails with `FirstOpenElementFound=false`, `SecondOpenElementFound=false`, no visual open-repeat evidence, and no result text change. |
 | Menus & toolbars | MenuBar | `item/MenuBar` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-042951-643/MenuBar/dark-menubar.mp4` | Latest rendered run closes through the `Exit` leaf item and requires baseline-delta open/closed/open proof. Manifest records frames `t2500` / `t4000` / `t9000`, deltas `11.896` / `0.258` / `12.3`, and local delta `12.485`. |
 | Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260605-031711-696/MenuFlyout/dark-menuflyout.mp4` | Same-target repeat-open guard now treats tracked absolute-point presenters as the same target to avoid close/reopen flicker. Latest 24s rendered rerun passes with `CloseMethod=LeafMenuItem:Invoke`, `CloseVisualChecked=true`, `Detection=BaselineDeltaScan`, frames `t2000` / `t6500` / `t12000`, and deltas `15.058` / `0.679` / `14.044`. |
 | Menus & toolbars | AppBarButton | `item/AppBarButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/AppBarButton/dark-appbarbutton.mp4` | Latest rendered run records local visual delta `0.795`; output text changed despite low whole-frame delta `0.057`. |

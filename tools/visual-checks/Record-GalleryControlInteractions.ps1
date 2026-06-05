@@ -292,6 +292,23 @@ public static class GalleryRecordingNative
         KeyPress(VK_RETURN);
     }
 
+    public static void InvokeAutomationPatternAsync(object pattern)
+    {
+        var thread = new System.Threading.Thread(() =>
+        {
+            try
+            {
+                pattern.GetType().GetMethod("Invoke").Invoke(pattern, null);
+            }
+            catch
+            {
+            }
+        });
+        thread.IsBackground = true;
+        thread.SetApartmentState(System.Threading.ApartmentState.STA);
+        thread.Start();
+    }
+
     private static void KeyPress(byte virtualKey)
     {
         keybd_event(virtualKey, 0, 0, UIntPtr.Zero);
@@ -739,6 +756,10 @@ function Test-OpenInteractionElementAnchored($trigger, $openElement) {
     return (Get-BoundingRectangleGap $triggerRect $openRect) -le 320.0
 }
 
+function Test-ControlAllowsDetachedOpenRepeatElement([string]$control) {
+    return $control -eq "MessageBox"
+}
+
 function Find-AnchoredInteractiveElementByNameInProcess([int]$processId, [string[]]$names, $anchor) {
     $anchorRect = Get-ElementBoundingRectangle $anchor
     if ($null -eq $anchorRect) {
@@ -1074,6 +1095,7 @@ function Test-ControlSupportsOpenInteraction([string]$control) {
         "ComboBox" { return $true }
         "DatePicker" { return $true }
         "Menu" { return $true }
+        "MessageBox" { return $true }
         "ContentDialog" { return $true }
         "Flyout" { return $true }
         "Popup" { return $true }
@@ -1095,6 +1117,7 @@ function Get-OpenInteractionNames([string]$control) {
         "ComboBox" { return @("Blue", "Green", "Red", "Yellow") }
         "DatePicker" { return @("Calendar") }
         "Menu" { return @("New", "New window", "Open", "Save", "Save As", "Exit") }
+        "MessageBox" { return @("This is a simple message box!") }
         "ContentDialog" { return @("Save your work?", "Upload your content to the cloud.", "Save", "Don't Save", "Cancel") }
         "Flyout" { return @("All items will be removed. Do you want to continue?", "Yes, empty my cart") }
         "Popup" { return @("Simple Popup", "Close") }
@@ -1184,6 +1207,7 @@ function Test-ControlRequiresDenseTransitionReview([string]$control, [string]$in
         "ComboBox" { return $true }
         "DatePicker" { return $true }
         "Menu" { return $true }
+        "MessageBox" { return $true }
         "ContentDialog" { return $true }
         "Flyout" { return $true }
         "Popup" { return $true }
@@ -1305,6 +1329,14 @@ function Get-ControlInteractionKind([string]$control) {
 
 function Get-ControlRecordingDurationSeconds([string]$control, [string]$interactionKind) {
     if ($interactionKind -eq "OpenRepeat") {
+        if ($control -eq "ToolTip") {
+            return [Math]::Max($DurationSeconds, 18)
+        }
+
+        if ($control -eq "MessageBox") {
+            return [Math]::Max($DurationSeconds, 18)
+        }
+
         if ($control -eq "CommandBar" -or $control -eq "CommandBarFlyout") {
             return [Math]::Max($DurationSeconds, 24)
         }
@@ -2133,6 +2165,30 @@ function Invoke-OpenElementOnce($window, [string]$control, $element) {
         return Invoke-ElementOnce $window $element
     }
 
+    if ($control -eq "MessageBox") {
+        if ($null -eq $element) {
+            return $false
+        }
+
+        if (Invoke-ElementInvokePatternInBackground $element 600) {
+            return $true
+        }
+
+        [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+        Start-Sleep -Milliseconds 100
+        try {
+            $element.SetFocus()
+            Start-Sleep -Milliseconds 100
+            [GalleryRecordingNative]::Space()
+            Start-Sleep -Milliseconds 600
+            return $true
+        }
+        catch {
+        }
+
+        return Invoke-NativeClickElementOnce $window $element 600
+    }
+
     if ($control -eq "ToolTip") {
         if ($null -eq $element) {
             return $false
@@ -2208,6 +2264,100 @@ function Hold-Element($window, $element, [int]$milliseconds) {
     return $true
 }
 
+function Invoke-NativeClickElementOnce($window, $element, [int]$postDelayMilliseconds = 250) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 80
+    $center = Get-ElementCenter $element
+    if ($null -eq $center) {
+        return $false
+    }
+
+    [GalleryRecordingNative]::Click($center.X, $center.Y)
+    Start-Sleep -Milliseconds $postDelayMilliseconds
+    return $true
+}
+
+function Invoke-ElementInvokePatternInBackground($element, [int]$postDelayMilliseconds = 600) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            [GalleryRecordingNative]::InvokeAutomationPatternAsync($pattern)
+            Start-Sleep -Milliseconds $postDelayMilliseconds
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Find-MessageBoxDialogElement($window, [string[]]$names) {
+    if ($null -eq $window -or $names.Count -eq 0) {
+        return $null
+    }
+
+    $mainHandle = [int]$window.Current.NativeWindowHandle
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $window.Current.ProcessId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($candidateWindow in $windows) {
+        try {
+            if ([int]$candidateWindow.Current.NativeWindowHandle -eq $mainHandle) {
+                continue
+            }
+        }
+        catch {
+            continue
+        }
+
+        $match = Find-DescendantByAnyName $candidateWindow $names
+        if (Test-AutomationElementUsable $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
+function Find-MessageBoxDialogButton($window, [string[]]$names) {
+    if ($null -eq $window -or $names.Count -eq 0) {
+        return $null
+    }
+
+    $mainHandle = [int]$window.Current.NativeWindowHandle
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $window.Current.ProcessId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($candidateWindow in $windows) {
+        try {
+            if ([int]$candidateWindow.Current.NativeWindowHandle -eq $mainHandle) {
+                continue
+            }
+        }
+        catch {
+            continue
+        }
+
+        $match = Find-DescendantButtonByAnyName $candidateWindow $names
+        if (Test-AutomationElementUsable $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
 function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleElement) {
     if ($control -eq "MenuBar" -or $control -eq "Menu") {
         $trigger = Find-DescendantByAnyName $sampleElement @("File")
@@ -2227,6 +2377,10 @@ function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleEle
 
     if ($control -eq "DatePicker") {
         return Find-ElementByNameInProcess $window.Current.ProcessId @("Pick a date")
+    }
+
+    if ($control -eq "MessageBox") {
+        return Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Simple MessageBox")
     }
 
     if ($control -eq "ToolTip") {
@@ -2277,6 +2431,10 @@ function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [s
 
     if ($control -eq "DatePicker") {
         return Find-ElementByControlTypeInProcess $window.Current.ProcessId ([System.Windows.Automation.ControlType]::Calendar)
+    }
+
+    if ($control -eq "MessageBox") {
+        return Find-MessageBoxDialogElement $window $openNames
     }
 
     if ($control -eq "ToolTip") {
@@ -2575,6 +2733,33 @@ function Close-WithVerifiedCollapsePattern($window, $trigger, [string[]]$openNam
 }
 
 function Close-OpenInteractionElement($window, [string]$control, $trigger, [string[]]$openNames, $sampleElement, $visualCloseContext = $null) {
+    if ($control -eq "MessageBox") {
+        $okButton = Find-MessageBoxDialogButton $window @("OK")
+        if ($null -ne $okButton -and (Invoke-NativeClickElementOnce $window $okButton 700)) {
+            if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1600 $visualCloseContext) {
+                return [ordered]@{
+                    Closed = $true
+                    Method = "DialogOkButton:Click"
+                }
+            }
+        }
+
+        [GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)
+        [GalleryRecordingNative]::Enter()
+        Start-Sleep -Milliseconds 700
+        if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1600 $visualCloseContext) {
+            return [ordered]@{
+                Closed = $true
+                Method = "DialogDefaultButton:Enter"
+            }
+        }
+
+        return [ordered]@{
+            Closed = $false
+            Method = "DialogOkButton:NoClose"
+        }
+    }
+
     if ($control -eq "ContentDialog") {
         $sampleClose = Close-WithVerifiedSampleOption $window $sampleElement $trigger $openNames $control "Cancel" "DialogCancelButton" $visualCloseContext
         if ($sampleClose.Closed) {
@@ -2808,6 +2993,7 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
         "TeachingTip" { 1500; break }
         "ComboBox" { 1500; break }
         "DatePicker" { 1500; break }
+        "MessageBox" { 1500; break }
         "DropDownButton" { 1500; break }
         "SplitButton" { 1500; break }
         "ToggleSplitButton" { 1500; break }
@@ -2819,7 +3005,15 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
         "MenuFlyout" { 6500; break }
         default { 250; break }
     }
-    $openElementTimeoutMilliseconds = if ($control -eq "CommandBar") { 4000 } else { 1200 }
+    $openElementTimeoutMilliseconds = if ($control -eq "CommandBar") {
+        4000
+    }
+    elseif ($control -eq "ToolTip") {
+        800
+    }
+    else {
+        1200
+    }
 
     if ($control -eq "CommandBar") {
         [void](Invoke-CommandBarSampleOption $window $sampleElement "Close command bar")
@@ -2848,7 +3042,7 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     $firstOpenElement = if ($openNames.Count -eq 0) { $null } else { Wait-ForOpenInteractionElement $window $trigger $openNames $control $openElementTimeoutMilliseconds }
     $firstOpenToggleState = Get-ToggleStateName $trigger
     $firstOpenElementFound = $openNames.Count -eq 0 -or $null -ne $firstOpenElement
-    $firstOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $trigger $firstOpenElement)
+    $firstOpenElementAnchored = $openNames.Count -eq 0 -or (Test-ControlAllowsDetachedOpenRepeatElement $control) -or (Test-OpenInteractionElementAnchored $trigger $firstOpenElement)
     $firstOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $firstOpenElement)
     $firstCommandBarFlyoutSecondaryExpanded = $false
     $secondCommandBarFlyoutSecondaryExpanded = $false
@@ -2911,7 +3105,7 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     $secondOpenElement = if ($openNames.Count -eq 0) { $null } else { Wait-ForOpenInteractionElement $window $secondTrigger $openNames $control $openElementTimeoutMilliseconds }
     $secondOpenToggleState = Get-ToggleStateName $secondTrigger
     $secondOpenElementFound = $openNames.Count -eq 0 -or $null -ne $secondOpenElement
-    $secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-OpenInteractionElementAnchored $secondTrigger $secondOpenElement)
+    $secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-ControlAllowsDetachedOpenRepeatElement $control) -or (Test-OpenInteractionElementAnchored $secondTrigger $secondOpenElement)
     $secondOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $secondOpenElement)
     $secondOpenVisualSeconds = $null
     if ($control -eq "CommandBarFlyout") {
@@ -4195,6 +4389,7 @@ function Test-ControlRequiresLiveVisualClose([string]$control) {
     return $control -eq "TeachingTip" -or
         $control -eq "ComboBox" -or
         $control -eq "DatePicker" -or
+        $control -eq "MessageBox" -or
         $control -eq "ContentDialog" -or
         $control -eq "DropDownButton" -or
         $control -eq "SplitButton" -or
@@ -5239,7 +5434,7 @@ function Write-Report([string]$runDir, $results) {
     else {
         $lines.Add(("Recorder: ``{0}``" -f ($recorders -join ", ")))
     }
-    $lines.Add(("Duration: ``{0}s`` default; open-repeat controls use at least ``12s``; ContentDialog, Flyout, Popup, MenuFlyout, CommandBar, and CommandBarFlyout use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
+    $lines.Add(("Duration: ``{0}s`` default; open-repeat controls use at least ``12s``; ToolTip and MessageBox use at least ``18s``; ContentDialog, Flyout, Popup, MenuFlyout, CommandBar, and CommandBarFlyout use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
     $lines.Add("")
     $lines.Add("| Control | Status | Interaction | Recording | Dense review | Max frame delta | Max local delta | Notes |")
     $lines.Add("| --- | --- | --- | --- | --- | ---: | ---: | --- |")
