@@ -1263,6 +1263,10 @@ function Get-ControlRecordingDurationSeconds([string]$control, [string]$interact
             return [Math]::Max($DurationSeconds, 24)
         }
 
+        if ($control -eq "Flyout" -or $control -eq "Popup" -or $control -eq "MenuFlyout") {
+            return [Math]::Max($DurationSeconds, 24)
+        }
+
         return [Math]::Max($DurationSeconds, 12)
     }
 
@@ -2270,7 +2274,16 @@ function Click-OpenInteractionDismissPoint($window) {
 function Invoke-CommandBarSampleOption($window, $sampleElement, [string]$name) {
     $button = Find-DescendantButtonByAnyName $sampleElement @($name)
     if ($null -eq $button) {
+        $button = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
+    }
+    if ($null -eq $button) {
         $button = Find-ElementByNameInProcess $window.Current.ProcessId @($name)
+    }
+    if ($null -ne $button) {
+        $invokeTarget = Find-RawInvokeTarget $button
+        if ($null -ne $invokeTarget) {
+            $button = $invokeTarget
+        }
     }
 
     if ($null -eq $button) {
@@ -2280,7 +2293,101 @@ function Invoke-CommandBarSampleOption($window, $sampleElement, [string]$name) {
     return Invoke-OptionElementOnce $window $button
 }
 
+function Click-CommandBarSampleOption($window, $sampleElement, [string]$name) {
+    $button = Find-DescendantButtonByAnyName $sampleElement @($name)
+    if ($null -eq $button) {
+        $button = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
+    }
+    if ($null -eq $button) {
+        $button = Find-ElementByNameInProcess $window.Current.ProcessId @($name)
+    }
+    if ($null -ne $button) {
+        $invokeTarget = Find-RawInvokeTarget $button
+        if ($null -ne $invokeTarget) {
+            $button = $invokeTarget
+        }
+    }
+
+    if ($null -eq $button) {
+        return $false
+    }
+
+    [GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 80
+    if (Click-ElementOnce $button) {
+        return $true
+    }
+
+    return Invoke-OptionElementOnce $window $button
+}
+
 function Close-OpenInteractionElement($window, [string]$control, $trigger, [string[]]$openNames, $sampleElement) {
+    if ($control -eq "Flyout") {
+        if (Click-CommandBarSampleOption $window $sampleElement "Yes, empty my cart") {
+            Start-Sleep -Milliseconds 700
+            if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200) {
+                return [ordered]@{
+                    Closed = $true
+                    Method = "SampleConfirmButton"
+                }
+            }
+        }
+    }
+
+    if ($control -eq "Popup") {
+        if (Click-CommandBarSampleOption $window $sampleElement "Close") {
+            Start-Sleep -Milliseconds 700
+            if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200) {
+                return [ordered]@{
+                    Closed = $true
+                    Method = "SampleCloseButton"
+                }
+            }
+        }
+    }
+
+    if ($control -eq "MenuFlyout") {
+        if (Click-CommandBarSampleOption $window $sampleElement "By rating") {
+            Start-Sleep -Milliseconds 700
+            if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200) {
+                return [ordered]@{
+                    Closed = $true
+                    Method = "LeafMenuItem"
+                }
+            }
+        }
+    }
+
+    if ($control -eq "Flyout" -or $control -eq "Popup" -or $control -eq "MenuFlyout") {
+        [GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)
+        for ($i = 1; $i -le 2; $i++) {
+            [GalleryRecordingNative]::Escape()
+            Start-Sleep -Milliseconds 700
+            if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200) {
+                return [ordered]@{
+                    Closed = $true
+                    Method = "Escape$i"
+                }
+            }
+        }
+
+        for ($i = 1; $i -le 2; $i++) {
+            Click-OpenInteractionDismissPoint $window
+            Start-Sleep -Milliseconds 550
+            if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200) {
+                return [ordered]@{
+                    Closed = $true
+                    Method = "DismissPoint$i"
+                }
+            }
+        }
+
+        return [ordered]@{
+            Closed = $false
+            Method = "DismissPoint2"
+        }
+    }
+
     if ($control -eq "CommandBar") {
         if (Invoke-CommandBarSampleOption $window $sampleElement "Close command bar") {
             Start-Sleep -Milliseconds 700
@@ -2345,12 +2452,15 @@ function Close-OpenInteractionElement($window, [string]$control, $trigger, [stri
     }
 
     [GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)
-    [GalleryRecordingNative]::Escape()
-    Start-Sleep -Milliseconds 350
+    for ($i = 1; $i -le 2; $i++) {
+        [GalleryRecordingNative]::Escape()
+        Start-Sleep -Milliseconds 350
+    }
+
     if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 900) {
         return [ordered]@{
             Closed = $true
-            Method = "Escape"
+            Method = "Escape2"
         }
     }
 
@@ -2393,7 +2503,14 @@ function Get-RecordingElapsedSeconds {
 function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement) {
     $trigger = Get-OpenInteractionTriggerElement $window $control $sampleElement
     $openNames = @(Get-OpenInteractionNames $control)
-    $openVisualDwellMilliseconds = if ($control -eq "CommandBar") { 1000 } elseif ($control -eq "CommandBarFlyout") { 1500 } else { 250 }
+    $openVisualDwellMilliseconds = switch ($control) {
+        "CommandBar" { 1000; break }
+        "CommandBarFlyout" { 1500; break }
+        "Flyout" { 6500; break }
+        "Popup" { 6500; break }
+        "MenuFlyout" { 6500; break }
+        default { 250; break }
+    }
     $openElementTimeoutMilliseconds = if ($control -eq "CommandBar") { 4000 } else { 1200 }
 
     if ($control -eq "CommandBar") {
@@ -4570,7 +4687,7 @@ function Write-Report([string]$runDir, $results) {
     else {
         $lines.Add(("Recorder: ``{0}``" -f ($recorders -join ", ")))
     }
-    $lines.Add(("Duration: ``{0}s`` default; open-repeat controls use at least ``12s``; CommandBar and CommandBarFlyout use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
+    $lines.Add(("Duration: ``{0}s`` default; open-repeat controls use at least ``12s``; Flyout, Popup, MenuFlyout, CommandBar, and CommandBarFlyout use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
     $lines.Add("")
     $lines.Add("| Control | Status | Interaction | Recording | Dense review | Max frame delta | Max local delta | Notes |")
     $lines.Add("| --- | --- | --- | --- | --- | ---: | ---: | --- |")

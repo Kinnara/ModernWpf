@@ -140,6 +140,41 @@ public class FlyoutBaseApiTests
     }
 
     [TestMethod]
+    public void HideDisconnectsPopupVisualSource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var target = new Button
+            {
+                Content = "Target",
+                Width = 120,
+                Height = 36
+            };
+            var flyout = new Flyout
+            {
+                Content = new TextBlock { Text = "Flyout content" }
+            };
+
+            using var host = new TestWindowHost(target, width: 320, height: 220);
+            host.UpdateLayout();
+
+            flyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(flyout.IsOpen);
+            Assert.IsNotNull(PresentationSource.FromVisual(flyout.InternalPopup.Child));
+
+            flyout.Hide();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(flyout.IsOpen);
+            Assert.IsNull(PresentationSource.FromVisual(flyout.InternalPopup.Child));
+        });
+    }
+
+    [TestMethod]
     public void OpeningSecondFlyoutClosesFirstLikeWinUISource()
     {
         WpfTestHost.Run(() =>

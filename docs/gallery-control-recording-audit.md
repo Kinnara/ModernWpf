@@ -159,6 +159,30 @@ Round 56 closes the CommandBar and CommandBarFlyout repeat-open gap:
   transitions when the owning flyout disables open/close animations, and hide
   the owning flyout on Escape.
 
+Round 57 closes one MenuFlyout repeat-open guard and keeps Flyout open as a
+tracked failure:
+
+- `MenuFlyout.ShowAtCore` now treats an already-open presenter at
+  `AbsolutePoint` as the same target when its tracked `Target` matches the
+  requested placement target, and treats requested `Custom` placement as
+  equivalent to the current absolute-point presenter. This prevents same-target
+  repeat opens from closing and reopening the menu after the absolute-placement
+  conversion.
+- `FlyoutBaseApiTests.HideDisconnectsPopupVisualSource` covers the old blind
+  spot where `Hide()` updated logical `IsOpen` but a popup visual source could
+  remain connected.
+- The recorder no longer starts Flyout/Popup/MenuFlyout close attempts by
+  hold-clicking the first open element. It uses named sample actions first,
+  falls back to Escape/dismiss, and still rejects the run unless rendered
+  frames prove first-open, closed, and second-open states.
+- Latest Flyout proof
+  `artifacts/gallery-recordings/20260605-020217-228/report.md` is intentionally
+  failed: `CloseMethod=DismissPoint2`, `ClosedElementGone=false`,
+  `VisualOpenRepeatEvidence.Generated=false`, and the same opened-element
+  bounds remained present between first and second open. Earlier green Flyout
+  rows are superseded for close/reopen proof until this product failure is
+  fixed.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -176,6 +200,7 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260604-064455-670/report.md` | SelectorBar | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-183855-055/report.md` | CommandBar | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-194134-079/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-020217-228/report.md` | Flyout | 0 passed, 0 needs review, 1 failed |
 
 The `20260604-050301-561` run is intentionally not treated as a green sweep:
 it exposed two remaining interaction gaps that the older static sweep missed.
@@ -285,10 +310,10 @@ proof on top of these static route captures.
 | Navigation | SelectorBar | `item/SelectorBar` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260604-064455-670/SelectorBar/dark-selectorbar.mp4` | Manifest records `Shared` changing from `Unselected` to `Selected`, sample status changing to `Shared`, and `VisualSelectionEvidence=true` with frame delta `0.003`; reviewed `t2000.png`/`t3000.png` shows the selected pill moving from no basic item to `Shared`. |
 | Navigation | NavigationView | `item/NavigationView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-091005-125/NavigationView/dark-navigationview.mp4` | Manifest proves `Menu Item2` changed from unselected to selected and `Sample Page 2` appeared; reviewed contact sheet shows the selected item/header change. |
 | Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/ContentDialog/dark-contentdialog.mp4` | Manifest records first and second dialog opens; reviewed contact sheet shows the dialog visible on sampled frames. |
-| Dialogs & flyouts | Flyout | `item/Flyout` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/Flyout/dark-flyout.mp4` | Manifest records first and second flyout opens; reviewed contact sheet shows the confirmation flyout on sampled frames. |
+| Dialogs & flyouts | Flyout | `item/Flyout` | Failed | Open | `artifacts/gallery-recordings/20260605-020217-228/Flyout/dark-flyout.mp4` | Latest 24s rendered run rejects the earlier UIA-only pass: `ClosedElementGone=false`, `CloseMethod=DismissPoint2`, `VisualOpenRepeatEvidence.Generated=false`, and the same opened-element bounds remained visible between first and second open. |
 | Dialogs & flyouts | Popup | `item/Popup` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/Popup/dark-popup.mp4` | Manifest records first and second popup opens despite low full-frame delta; reviewed contact sheet shows `Simple Popup`. |
 | Menus & toolbars | MenuBar | `item/MenuBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/MenuBar/dark-menubar.mp4` | Manifest records first and second menu opens despite low full-frame delta; reviewed contact sheet shows the `File` menu. |
-| Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-063825-551/MenuFlyout/dark-menuflyout.mp4` | Manifest records first and second flyout opens with `Expanded` state; reviewed contact sheet shows the sort menu. |
+| Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Recorded | Product fixed + needs focused rerun | `artifacts/gallery-recordings/20260603-063825-551/MenuFlyout/dark-menuflyout.mp4` | Same-target repeat-open guard now treats tracked absolute-point presenters as the same target to avoid close/reopen flicker; old recording remains route proof only under the stricter close/reopen bar, and a focused rerun is pending after the Flyout blocker. |
 | Menus & toolbars | AppBarButton | `item/AppBarButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarButton/dark-appbarbutton.mp4` | Manifest records output changing to `You clicked: Button1`; reviewed contact sheet shows the click output. |
 | Menus & toolbars | AppBarSeparator | `item/AppBarSeparator` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarSeparator/dark-appbarseparator.mp4` | Static rendered route with stable button anchors; reviewed contact sheet shows separated command buttons. |
 | Menus & toolbars | AppBarToggleButton | `item/AppBarToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260603-070433-922/AppBarToggleButton/dark-appbartogglebutton.mp4` | Manifest records toggle state from `Off` to `On`; reviewed contact sheet shows the selected toggle output. |

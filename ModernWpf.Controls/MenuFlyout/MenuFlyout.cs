@@ -98,8 +98,8 @@ namespace ModernWpf.Controls
 
             if (m_presenter != null &&
                 m_presenter.IsOpen &&
-                m_presenter.PlacementTarget == placementTarget &&
-                m_presenter.Placement == placement &&
+                IsPresenterPlacementTargetForShow(placementTarget) &&
+                IsPresenterPlacementForShow(placement) &&
                 IsSameTargetPosition(showOptions, showAsContextFlyout))
             {
                 return;
@@ -155,6 +155,23 @@ namespace ModernWpf.Controls
             OnOpening();
             SetOpenFlyout(this);
             m_presenter.IsOpen = true;
+        }
+
+        private bool IsPresenterPlacementTargetForShow(FrameworkElement placementTarget)
+        {
+            return m_presenter.PlacementTarget == placementTarget ||
+                (m_presenter.Placement == PlacementMode.AbsolutePoint && Target == placementTarget);
+        }
+
+        private bool IsPresenterPlacementForShow(PlacementMode placement)
+        {
+            if (m_presenter.Placement == placement)
+            {
+                return true;
+            }
+
+            return placement == PlacementMode.Custom &&
+                m_presenter.Placement == PlacementMode.AbsolutePoint;
         }
 
         private CustomPopupPlacement[] PositionPopup(Size popupSize, Size targetSize, Point offset)
