@@ -2597,7 +2597,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void AnnotatedScrollBarOptionsFollowWinUIGallerySourceShape()
+        public void AnnotatedScrollBarSampleLayoutFollowsWinUIGallerySourceShape()
         {
             var source = File.ReadAllText(Path.Combine(
                 GetRepoRoot(),
@@ -2607,6 +2607,10 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "var scrollViewer = new ScrollViewer",
+                "Name = \"scrollViewer\"",
+                "Width = AnnotatedItemWidth + 4",
+                "Margin = new Thickness(12, 0, 0, 0)",
                 "var slider = new Slider",
                 "Name = \"AnnotatedScrollBarMaxHeightSlider\"",
                 "Margin = new Thickness(0)",

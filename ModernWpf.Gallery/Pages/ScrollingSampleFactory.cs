@@ -96,7 +96,8 @@ namespace ModernWpf.Gallery.Pages
             var scrollViewer = new ScrollViewer
             {
                 Name = "scrollViewer",
-                Width = AnnotatedItemWidth + 16,
+                Width = AnnotatedItemWidth + 4,
+                Margin = new Thickness(12, 0, 0, 0),
                 MaxWidth = 800,
                 MaxHeight = 500,
                 Background = Brushes.LightGray,

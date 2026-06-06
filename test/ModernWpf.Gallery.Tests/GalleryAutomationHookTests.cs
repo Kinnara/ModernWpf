@@ -1242,6 +1242,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(heightSlider);
 
                     Assert.AreEqual("scrollViewer", scrollViewer.Name);
+                    Assert.AreEqual(124.0, scrollViewer.Width);
+                    Assert.AreEqual(new Thickness(12, 0, 0, 0), scrollViewer.Margin);
                     Assert.AreEqual(800.0, scrollViewer.MaxWidth);
                     Assert.AreEqual(500.0, scrollViewer.MaxHeight);
                     Assert.AreEqual(Brushes.LightGray, scrollViewer.Background);
