@@ -2987,6 +2987,16 @@ namespace ModernWpf.Gallery.Tests
                 "\"AppBarToggleButton\" { return $true }");
             AssertContainsInOrder(
                 source,
+                "function Get-StateInteractionSettleDelayMs([string]$control)",
+                "\"ToggleSwitch\" { return 220 }",
+                "default { return 180 }");
+            AssertContainsInOrder(
+                source,
+                "function Test-StateInteractionVisual([string]$control, [string]$desiredState, [string]$cropPath)",
+                "$control -ne \"ToggleSwitch\" -or $desiredState -ne \"On\"",
+                "ToggleSwitch On screenshot left the thumb near x=");
+            AssertContainsInOrder(
+                source,
                 "function Get-ReferencePrimaryAutomationId([string]$control)",
                 "\"Slider\" { return \"Slider1\" }",
                 "function Get-ReferencePrimaryName([string]$control)",
@@ -3018,16 +3028,22 @@ namespace ModernWpf.Gallery.Tests
                 "$baselineState = Get-ToggleStateName $element",
                 "$desiredState = if ($baselineState -eq \"On\") { \"Off\" } else { \"On\" }",
                 "$renderedArtifactPath = if ($app -eq \"ModernWpf\") { Get-ModernRenderedElementArtifactPath $caseDir $element } else { \"\" }",
-                "$baselineCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $baselineCropPath $renderedArtifactSource",
+                "$baselineCrop = if (Test-Path $baselinePath)",
                 "Save-ElementCrop $window $baselinePath $baselineCropPath $element \"UIA\" 10",
+                "$baselineCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $baselineCropPath $renderedArtifactSource",
                 "$invoked = Set-ToggleElementState $window $element $desiredState",
+                "$settleDelayMs = Get-StateInteractionSettleDelayMs $control",
+                "Start-Sleep -Milliseconds $settleDelayMs",
                 "$afterState = Get-ToggleStateName $element",
                 "[void](Refresh-ModernWpfVisualArtifacts $window)",
-                "$afterCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $afterCropPath $renderedArtifactSource",
+                "$afterCrop = if (Test-Path $afterPath)",
                 "Save-ElementCrop $window $afterPath $afterCropPath $element \"UIA\" 10",
+                "$afterCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $afterCropPath $renderedArtifactSource",
                 "$stateDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot",
+                "$stateVisual = Test-StateInteractionVisual $control $desiredState $afterCropScreenshot",
                 "$stateChanged = ![string]::IsNullOrEmpty($baselineState)",
-                "$visualChanged = $null -ne $stateDelta -and $stateDelta.Comparable -and $stateDelta.MeanDelta -gt 0.5");
+                "$visualChanged = $null -ne $stateDelta -and $stateDelta.Comparable -and $stateDelta.MeanDelta -gt 0.5",
+                "elseif (!$stateVisual.Passed)");
             AssertContainsInOrder(
                 source,
                 "$openInteraction = Capture-OpenInteraction \"WinUI3\" $control $caseDir $window $showButton $openNames",

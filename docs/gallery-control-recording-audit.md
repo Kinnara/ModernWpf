@@ -1257,10 +1257,46 @@ parity defect:
   retained as current ModernWpf sample behavior because existing tests pin the
   caption change after setting a value.
 
+Round 106 keeps stable state checks screenshot-first and fixes the ToggleSwitch
+miss found while reviewing that flow:
+
+- Screenshot batch
+  `artifacts/visual-checks/20260606-145251-570-52168/report.md` passed at the
+  harness level, but manual review found the simple ModernWpf ToggleSwitch
+  did not show the default `On` text that the WinUI reference shows. The sample
+  factory was explicitly assigning `OffContent` and `OnContent` to empty
+  strings even though the displayed XAML snippet was the plain reference form.
+- `BasicInputSampleFactory.CreateSimpleToggleSwitch` now leaves the default
+  ToggleSwitch content values alone. `GalleryAutomationHookTests` asserts the
+  simple sample exposes `Off` and `On` through default dependency-property
+  values, not local sample overrides.
+- Reruns `artifacts/visual-checks/20260606-145735-170-175596/report.md` and
+  `artifacts/visual-checks/20260606-150341-192-168024/report.md` exposed a
+  process bug: the rendered artifact crop showed the `On` label but a
+  left-side thumb, while the full live window screenshot already showed the
+  thumb on the right. The state checker was preferring rendered artifact crops,
+  which do not reliably advance ToggleSwitch animation clocks, over live
+  screenshot crops.
+- The visual harness now prefers live UIA element crops for state interactions
+  and uses rendered artifacts only as fallback. `Test-StateInteractionVisual`
+  adds a ToggleSwitch-specific pixel check: after an `On` transition, the crop
+  must expose an accent track and a distinct thumb cluster on the right side.
+  ToggleSwitch state settle time is `220ms`; recordings remain reserved for
+  transition, flicker, popup, and repeat-open behavior.
+- Guard run `artifacts/visual-checks/20260606-151644-822-96804/report.md`
+  correctly failed the stale artifact crop with `ToggleSwitch On screenshot left
+  the thumb near x=10.6`. Post-fix screenshot batch
+  `artifacts/visual-checks/20260606-152649-903-244144/report.md` passed
+  `ToggleButton`, `ToggleSwitch`, `RepeatButton`, `NumberBox`, and
+  `AppBarToggleButton`; reviewed
+  `artifacts/visual-checks/20260606-152649-903-244144/ToggleSwitch/modernwpf-ToggleSwitch-state-after-crop.png`
+  shows `On` text and the thumb on the right in the live crop.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
 | --- | --- | --- |
+| `artifacts/visual-checks/20260606-152649-903-244144/report.md` | ToggleButton, ToggleSwitch, RepeatButton, NumberBox, AppBarToggleButton | 10 app/control rows passed, 0 failed; screenshot review confirmed ToggleSwitch `On` text and right-side thumb in the live state crop |
 | `artifacts/visual-checks/20260606-144434-210-243940/report.md` | Button, CheckBox, RadioButton, Slider, RatingControl | 10 app/control rows passed, 0 failed; screenshot review confirmed Slider starts at output `50` |
 | `artifacts/gallery-recordings/20260604-034810-236/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-035722-075/report.md` | DropDownButton, MenuFlyout, SplitButton, ToggleSplitButton | 4 passed, 0 needs review, 0 failed |
@@ -1481,7 +1517,7 @@ proof on top of these static route captures.
 | Basic input | DropDownButton | `item/DropDownButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-122924-332/DropDownButton/dark-dropdownbutton.mp4` | Latest Dark rendered run keeps DropDownButton on the reliable `Send` leaf-item close path after rejected fast-bounds attempt `20260606-122326-155`. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=LeafCloseItem:Invoke`, frames `t2000` / `t4000` / `t8500`, deltas `12.612` / `0.478` / `12.5`, and local delta `12.63`; reviewed frames show open, closed, and second-open menu states aligned under the trigger. Latest Light proof remains `artifacts/gallery-recordings/20260606-064251-054/DropDownButton/light-dropdownbutton.mp4`. |
 | Basic input | SplitButton | `item/SplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-122109-523/SplitButton/dark-splitbutton.mp4` | Latest Dark rendered run uses the fast popup path and event-window proof. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=FastPopupEscape`, frames `t2000` / `t4000` / `t11000`, deltas `21.39` / `0.03` / `21.428`, and local delta `35.623`; reviewed frames show first open, closed state, and second open with the color menu aligned under the trigger. This supersedes failed run `20260606-115448-915`, where UIA search pushed close/reopen outside the fixed recording window. Latest Light proof remains `artifacts/gallery-recordings/20260606-064538-234/SplitButton/light-splitbutton.mp4`. |
 | Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-122326-155/ToggleSplitButton/dark-togglesplitbutton.mp4` | Latest Dark rendered run uses the fast popup path and event-window proof. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=FastPopupBoundsClick`, frames `t2000` / `t4500` / `t14500`, deltas `8.97` / `0.186` / `8.997`, opened-element local delta `12.26`, and trigger-region local delta `15.369`; reviewed frames show open, closed, and second-open compact menu states. Latest Light proof remains `artifacts/gallery-recordings/20260606-064806-277/ToggleSplitButton/light-togglesplitbutton.mp4`. |
-| Basic input | ToggleSwitch | `item/ToggleSwitch` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/ToggleSwitch/light-toggleswitch.mp4` | Latest Light rendered rerun toggles Off to On with local visual delta `7.322`; reviewed frame `t9500` shows the switches on with the `Working` content visible. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/ToggleSwitch/dark-toggleswitch.mp4` with `StateEvidence=true`, `AfterState=On`, local delta `7.017`, and reviewed frame `t9500` showing the switch and custom content aligned. |
+| Basic input | ToggleSwitch | `item/ToggleSwitch` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-152649-903-244144/report.md` | Round 106 screenshot review caught missing default `On`/`Off` content in the simple sample and a stale rendered-artifact crop path that made the thumb look left after toggling. The sample now uses default ToggleSwitch content, and state interactions prefer live UIA crops with a ToggleSwitch thumb-endpoint pixel check. Reviewed `artifacts/visual-checks/20260606-152649-903-244144/ToggleSwitch/modernwpf-ToggleSwitch-state-after-crop.png` shows `On` text and the thumb on the right. Older Light/Dark recordings remain useful motion proof but predate this screenshot harness fix. |
 | Text | NumberBox | `item/NumberBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/NumberBox/light-numberbox.mp4` | Latest Light rendered rerun reaches value `20` from `10` with local visual delta `0.307`; reviewed frame `t9500` shows the updated value in the spin-button sample, so this remains rendered value proof rather than UIA-only proof. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/NumberBox/dark-numberbox.mp4` with `ValueEvidence=true`, value `10` to `20`, and local delta `0.377`. |
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-074841-162/AutoSuggestBox/light-autosuggestbox.mp4` | Latest Light rendered rerun uses an 18s capture and requires both UIA and final-frame visual close proof. Manifest records `SuggestionInvokeMethod=InvokePattern`, `SuggestionClosed=true`, `TextVisualClosedEvidence.Closed=true`, final frame `t17500`, final delta `0.941`, local visual delta `10.307`, and output `Aegean`; reviewed `t9500` shows the popup open during selection and reviewed `t17500` shows it gone with `Aegean` rendered in the text box and output. Current Dark proof is `artifacts/gallery-recordings/20260606-113018-274/AutoSuggestBox/dark-autosuggestbox.mp4` with `SuggestionClosed=true`, `TextVisualClosedEvidence.Closed=true`, output `Aegean`, local delta `11.377`, and reviewed final frame `t17500` showing the suggestion popup gone. The rejected `20260606-041123-086` row is kept only as false-pass evidence. |
 | Text | TextBox | `item/TextBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/TextBox/light-textbox.mp4` | Latest Light rendered run records text entry with `TextEvidence=true`, `AfterOutput=ModernWpf text`, and local visual delta `1.918`; reviewed late frame `t9500` shows the text visibly rendered. Current Dark proof is `artifacts/gallery-recordings/20260606-113018-274/TextBox/dark-textbox.mp4` with `TextEvidence=true`, `AfterOutput=ModernWpf text`, local delta `6.449`, and reviewed frame `t9500` showing rendered text. |

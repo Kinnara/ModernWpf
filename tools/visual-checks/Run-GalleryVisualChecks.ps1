@@ -1056,6 +1056,112 @@ function Test-ControlSupportsStateInteraction([string]$control) {
     }
 }
 
+function Get-StateInteractionSettleDelayMs([string]$control) {
+    switch ($control) {
+        "ToggleSwitch" { return 220 }
+        default { return 180 }
+    }
+}
+
+function Test-StateInteractionVisual([string]$control, [string]$desiredState, [string]$cropPath) {
+    if ($control -ne "ToggleSwitch" -or $desiredState -ne "On") {
+        return [ordered]@{
+            Passed = $true
+            Notes = ""
+        }
+    }
+
+    if ([string]::IsNullOrEmpty($cropPath) -or !(Test-Path $cropPath)) {
+        return [ordered]@{
+            Passed = $false
+            Notes = "ToggleSwitch state crop was not available for thumb endpoint validation."
+        }
+    }
+
+    $bitmap = [System.Drawing.Bitmap]::FromFile($cropPath)
+    try {
+        $blueCount = 0
+        $blueMinX = $bitmap.Width
+        $blueMaxX = -1
+        $blueMinY = $bitmap.Height
+        $blueMaxY = -1
+        $blueR = 0.0
+        $blueG = 0.0
+        $blueB = 0.0
+
+        for ($y = 0; $y -lt $bitmap.Height; $y++) {
+            for ($x = 0; $x -lt $bitmap.Width; $x++) {
+                $pixel = $bitmap.GetPixel($x, $y)
+                if ($pixel.B -gt 100 -and
+                    ([int]$pixel.B - [int]$pixel.R) -gt 50 -and
+                    ([int]$pixel.B - [int]$pixel.G) -gt 20) {
+                    $blueCount++
+                    $blueMinX = [Math]::Min($blueMinX, $x)
+                    $blueMaxX = [Math]::Max($blueMaxX, $x)
+                    $blueMinY = [Math]::Min($blueMinY, $y)
+                    $blueMaxY = [Math]::Max($blueMaxY, $y)
+                    $blueR += $pixel.R
+                    $blueG += $pixel.G
+                    $blueB += $pixel.B
+                }
+            }
+        }
+
+        if ($blueCount -lt 20 -or $blueMaxX -le $blueMinX -or $blueMaxY -le $blueMinY) {
+            return [ordered]@{
+                Passed = $false
+                Notes = "ToggleSwitch On screenshot did not expose an accent-colored track."
+            }
+        }
+
+        $blueR /= $blueCount
+        $blueG /= $blueCount
+        $blueB /= $blueCount
+        $trackWidth = $blueMaxX - $blueMinX + 1
+        $trackCenterX = ($blueMinX + $blueMaxX) / 2.0
+        $centerY = [int][Math]::Round(($blueMinY + $blueMaxY) / 2.0)
+        $halfBand = [Math]::Max(2, [int][Math]::Round(($blueMaxY - $blueMinY + 1) * 0.25))
+        $candidateCount = 0
+        $candidateX = 0.0
+
+        for ($y = [Math]::Max(0, $centerY - $halfBand); $y -le [Math]::Min($bitmap.Height - 1, $centerY + $halfBand); $y++) {
+            for ($x = $blueMinX; $x -le $blueMaxX; $x++) {
+                $pixel = $bitmap.GetPixel($x, $y)
+                $distanceFromTrack = [Math]::Abs($pixel.R - $blueR) + [Math]::Abs($pixel.G - $blueG) + [Math]::Abs($pixel.B - $blueB)
+                $luminance = (0.2126 * $pixel.R) + (0.7152 * $pixel.G) + (0.0722 * $pixel.B)
+                if ($distanceFromTrack -gt 120 -and ($luminance -lt 90 -or $luminance -gt 180)) {
+                    $candidateCount++
+                    $candidateX += $x
+                }
+            }
+        }
+
+        if ($candidateCount -lt 8) {
+            return [ordered]@{
+                Passed = $false
+                Notes = "ToggleSwitch On screenshot did not expose a distinct thumb inside the accent track."
+            }
+        }
+
+        $thumbCenterX = $candidateX / $candidateCount
+        $requiredRightOfCenter = $trackCenterX + [Math]::Max(2.0, $trackWidth * 0.12)
+        if ($thumbCenterX -le $requiredRightOfCenter) {
+            return [ordered]@{
+                Passed = $false
+                Notes = "ToggleSwitch On screenshot left the thumb near x=$([Math]::Round($thumbCenterX, 1)); expected it right of x=$([Math]::Round($requiredRightOfCenter, 1))."
+            }
+        }
+
+        return [ordered]@{
+            Passed = $true
+            Notes = ""
+        }
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
 function Test-ControlSupportsSelectionInteraction([string]$control) {
     switch ($control) {
         "GridView" { return $true }
@@ -3764,16 +3870,22 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
     }
 
     $baselineCropPath = Join-Path $caseDir ("{0}-{1}-state-before-crop.png" -f $app.ToLowerInvariant(), $control)
-    $baselineCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $baselineCropPath $renderedArtifactSource
-    if ($null -eq $baselineCrop -and (Test-Path $baselinePath)) {
-        $baselineCrop = Save-ElementCrop $window $baselinePath $baselineCropPath $element "UIA" 10
+    $baselineCrop = if (Test-Path $baselinePath) {
+        Save-ElementCrop $window $baselinePath $baselineCropPath $element "UIA" 10
+    }
+    else {
+        $null
+    }
+    if ($null -eq $baselineCrop) {
+        $baselineCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $baselineCropPath $renderedArtifactSource
     }
 
     $invoked = $false
     if (![string]::IsNullOrEmpty($baselineState)) {
         $invoked = Set-ToggleElementState $window $element $desiredState
     }
-    Start-Sleep -Milliseconds 180
+    $settleDelayMs = Get-StateInteractionSettleDelayMs $control
+    Start-Sleep -Milliseconds $settleDelayMs
 
     $afterState = Get-ToggleStateName $element
     if ($app -eq "ModernWpf" -and ![string]::IsNullOrWhiteSpace($renderedArtifactPath)) {
@@ -3788,9 +3900,14 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
     }
 
     $afterCropPath = Join-Path $caseDir ("{0}-{1}-state-after-crop.png" -f $app.ToLowerInvariant(), $control)
-    $afterCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $afterCropPath $renderedArtifactSource
-    if ($null -eq $afterCrop -and (Test-Path $afterPath)) {
-        $afterCrop = Save-ElementCrop $window $afterPath $afterCropPath $element "UIA" 10
+    $afterCrop = if (Test-Path $afterPath) {
+        Save-ElementCrop $window $afterPath $afterCropPath $element "UIA" 10
+    }
+    else {
+        $null
+    }
+    if ($null -eq $afterCrop) {
+        $afterCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $afterCropPath $renderedArtifactSource
     }
 
     $stateDelta = $null
@@ -3801,12 +3918,14 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
         $stateDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot
     }
 
+    $afterCropScreenshot = if ($null -ne $afterCrop -and $afterCrop.Found) { $afterCrop.Screenshot } else { "" }
+    $stateVisual = Test-StateInteractionVisual $control $desiredState $afterCropScreenshot
     $stateChanged = ![string]::IsNullOrEmpty($baselineState) -and
         ![string]::IsNullOrEmpty($afterState) -and
         $baselineState -ne $afterState -and
         $afterState -eq $desiredState
     $visualChanged = $null -ne $stateDelta -and $stateDelta.Comparable -and $stateDelta.MeanDelta -gt 0.5
-    $status = if (!$invoked) { "Failed" } elseif (!$stateChanged) { "Failed" } elseif (!$visualChanged) { "Failed" } else { "Passed" }
+    $status = if (!$invoked) { "Failed" } elseif (!$stateChanged) { "Failed" } elseif (!$visualChanged) { "Failed" } elseif (!$stateVisual.Passed) { "Failed" } else { "Passed" }
     $notes = if ([string]::IsNullOrEmpty($baselineState)) {
         "$control did not expose a UIA TogglePattern state."
     }
@@ -3818,6 +3937,9 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
     }
     elseif (!$visualChanged) {
         "$control toggle state changed, but the cropped control image did not visibly change."
+    }
+    elseif (!$stateVisual.Passed) {
+        $stateVisual.Notes
     }
     else {
         ""
@@ -3833,16 +3955,17 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
         BaselineScreenshot = $baselinePath
         Frames = @(
             [ordered]@{
-                DelayMs = 180
+                DelayMs = $settleDelayMs
                 Screenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
                 NonBlank = $(if (Test-Path $afterPath) { Test-ImageNotBlank $afterPath } else { $false })
                 Error = ""
             }
         )
         StateDelta = $stateDelta
+        StateVisualCheck = $stateVisual
         Crop = $afterCrop
         BaselineCrop = $baselineCrop
-        SelectedFrameDelayMs = 180
+        SelectedFrameDelayMs = $settleDelayMs
         SelectedFrameScreenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
         Notes = $notes
     }

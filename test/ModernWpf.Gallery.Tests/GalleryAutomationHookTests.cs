@@ -2602,8 +2602,14 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(72.0, simpleToggle.Width);
                     Assert.AreEqual(0.0, simpleToggle.MinWidth);
                     Assert.IsFalse(simpleToggle.IsOn);
-                    Assert.AreEqual(string.Empty, simpleToggle.OffContent);
-                    Assert.AreEqual(string.Empty, simpleToggle.OnContent);
+                    Assert.AreEqual("Off", simpleToggle.OffContent);
+                    Assert.AreEqual("On", simpleToggle.OnContent);
+                    Assert.AreSame(
+                        DependencyProperty.UnsetValue,
+                        simpleToggle.ReadLocalValue(Mux.ToggleSwitch.OffContentProperty));
+                    Assert.AreSame(
+                        DependencyProperty.UnsetValue,
+                        simpleToggle.ReadLocalValue(Mux.ToggleSwitch.OnContentProperty));
                     Assert.AreEqual("ToggleSwitch2", workToggle.Name);
                     Assert.AreEqual("Toggle work", workToggle.Header);
                     Assert.IsTrue(workToggle.IsOn);

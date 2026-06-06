@@ -1045,9 +1045,7 @@ namespace ModernWpf.Gallery.Pages
             var toggleSwitch = new Mux.ToggleSwitch
             {
                 Width = 72,
-                MinWidth = 0,
-                OffContent = string.Empty,
-                OnContent = string.Empty
+                MinWidth = 0
             };
             AutomationProperties.SetName(toggleSwitch, "simple ToggleSwitch");
             GalleryAutomation.WithAutomationId(toggleSwitch, GalleryAutomation.SampleElementId("ToggleSwitch", "ToggleSwitch"));
