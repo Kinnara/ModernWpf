@@ -3468,6 +3468,32 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryInteractionRecorderCheckpointsManifestAfterEachControl()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Write-RunCheckpoint([string]$runDir, $results)",
+                "$manifestPath = Join-Path $runDir \"recording-manifest.json\"",
+                "$manifestTempPath = Join-Path $runDir \"recording-manifest.json.tmp\"",
+                "$results | ConvertTo-Json -Depth 8 | Set-Content -Path $manifestTempPath -Encoding UTF8",
+                "Move-Item -Path $manifestTempPath -Destination $manifestPath -Force",
+                "$reportPath = Write-Report $runDir $results");
+            AssertContainsInOrder(
+                source,
+                "$results.Add($result)",
+                "[void](Write-RunCheckpoint $runDir $results)",
+                "$checkpoint = Write-RunCheckpoint $runDir $results",
+                "Manifest = $checkpoint.Manifest",
+                "Report = $checkpoint.Report");
+        }
+
+        [TestMethod]
         public void GalleryInteractionRecorderRejectsMostlyBlankRecordings()
         {
             var source = File.ReadAllText(Path.Combine(

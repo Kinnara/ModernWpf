@@ -1054,6 +1054,21 @@ Round 99 refreshes Dark basic state/value/output proof:
   touch-first copy, and ToggleSwitch in the On state with its custom content and
   progress ring aligned.
 
+Round 100 hardens long-batch recording recovery:
+
+- `Record-GalleryControlInteractions.ps1` now checkpoints
+  `recording-manifest.json` and `report.md` after each completed control instead
+  of waiting until the end of the run. A later control hang or outer command
+  timeout should now preserve completed-control evidence for review.
+- The checkpoint writes `recording-manifest.json.tmp` first and then moves it to
+  `recording-manifest.json`, so readers either see the previous checkpoint or a
+  complete new manifest.
+- `GalleryInteractionRecorderCheckpointsManifestAfterEachControl` guards that
+  checkpointing stays immediately after `$results.Add($result)` and that the
+  final summary reports the checkpoint paths.
+- Parser validation for `Record-GalleryControlInteractions.ps1` and the
+  `WpfGallerySourceShapeTests` filter passed for `net8.0` and `net10.0`.
+
 Latest focused evidence:
 
 | Run | Controls | Result |

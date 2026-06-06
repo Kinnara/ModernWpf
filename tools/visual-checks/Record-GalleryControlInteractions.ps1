@@ -6212,6 +6212,19 @@ function Write-Report([string]$runDir, $results) {
     return $reportPath
 }
 
+function Write-RunCheckpoint([string]$runDir, $results) {
+    $manifestPath = Join-Path $runDir "recording-manifest.json"
+    $manifestTempPath = Join-Path $runDir "recording-manifest.json.tmp"
+    $results | ConvertTo-Json -Depth 8 | Set-Content -Path $manifestTempPath -Encoding UTF8
+    Move-Item -Path $manifestTempPath -Destination $manifestPath -Force
+
+    $reportPath = Write-Report $runDir $results
+    return [ordered]@{
+        Manifest = $manifestPath
+        Report = $reportPath
+    }
+}
+
 $stamp = Get-Date -Format "yyyyMMdd-HHmmss-fff"
 $runDir = Join-Path (Join-Path $RepoRoot $OutputRoot) $stamp
 New-Item -ItemType Directory -Force -Path $runDir | Out-Null
@@ -6700,16 +6713,15 @@ foreach ($control in $Controls) {
         Notes = ($notes.ToArray() -join " ")
     }
     $results.Add($result)
+    [void](Write-RunCheckpoint $runDir $results)
 }
 
-$manifestPath = Join-Path $runDir "recording-manifest.json"
-$results | ConvertTo-Json -Depth 8 | Set-Content -Path $manifestPath -Encoding UTF8
-$reportPath = Write-Report $runDir $results
+$checkpoint = Write-RunCheckpoint $runDir $results
 
 [pscustomobject]@{
     RunDirectory = $runDir
-    Manifest = $manifestPath
-    Report = $reportPath
+    Manifest = $checkpoint.Manifest
+    Report = $checkpoint.Report
     Total = $results.Count
     Passed = @($results | Where-Object { $_.Status -eq "Passed" }).Count
     NeedsReview = @($results | Where-Object { $_.Status -eq "NeedsReview" }).Count
