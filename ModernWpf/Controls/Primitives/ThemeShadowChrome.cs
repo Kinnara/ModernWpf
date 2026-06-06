@@ -304,7 +304,7 @@ namespace ModernWpf.Controls.Primitives
                 nameof(ReservesShadowSpace),
                 typeof(bool),
                 typeof(ThemeShadowChrome),
-                new PropertyMetadata(true, OnReservesShadowSpaceChanged));
+                new PropertyMetadata(false, OnReservesShadowSpaceChanged));
 
         public bool ReservesShadowSpace
         {

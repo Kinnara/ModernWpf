@@ -3983,12 +3983,19 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
     $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
     $beforeLayoutBoundsById = if ($hasLayoutStabilityTargets) { Get-RenderedArtifactBoundsMap $window $artifactDir $layoutStabilityTargetAutomationIds } else { $null }
     $beforeLayoutBounds = Format-BoundingRectangleMap $beforeLayoutBoundsById
+    $themeShadowVisualBounds = if ($control -eq "ThemeShadow" -and $hasLayoutStabilityTargets -and $null -ne $beforeLayoutBoundsById) {
+        $beforeLayoutBoundsById["GallerySample_ThemeShadow_Root"]
+    }
+    else {
+        ""
+    }
     try {
         $pattern = $sampleElement.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
         if ($null -ne $pattern) {
             $target = switch ($control) {
                 "RatingControl" { 3.0 }
                 "Slider" { 50.0 }
+                "ThemeShadow" { 64.0 }
                 default { [double]$pattern.Current.Value + 10.0 }
             }
             $pattern.SetValue($target)
@@ -4002,6 +4009,7 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
             return [ordered]@{
                 Invoked = $true
                 TargetBounds = $targetBounds
+                ThemeShadowVisualBounds = $themeShadowVisualBounds
                 BeforeValue = $before
                 AfterValue = $after
                 TargetValue = $target
@@ -4025,6 +4033,7 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
         return [ordered]@{
             Invoked = $invoked
             TargetBounds = $targetBounds
+            ThemeShadowVisualBounds = $themeShadowVisualBounds
             BeforeValue = $before
             AfterValue = $after
             TargetValue = $null
@@ -4040,6 +4049,7 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
     return [ordered]@{
         Invoked = $false
         TargetBounds = $targetBounds
+        ThemeShadowVisualBounds = $themeShadowVisualBounds
         BeforeValue = $before
         AfterValue = $null
         TargetValue = $null
@@ -6524,6 +6534,47 @@ function Test-LocalVisualEvidence($maxLocalFrameDelta) {
     return [double]$maxLocalFrameDelta -ge 0.05
 }
 
+function Get-LocalFrameDeltaByName($localFrameDeltas, [string]$name) {
+    foreach ($entry in @($localFrameDeltas)) {
+        if ($null -eq $entry) {
+            continue
+        }
+
+        $entryName = $null
+        $maxDelta = $null
+        if ($entry -is [System.Collections.IDictionary]) {
+            if ($entry.Contains("Name")) {
+                $entryName = $entry["Name"]
+            }
+            if ($entry.Contains("MaxDelta")) {
+                $maxDelta = $entry["MaxDelta"]
+            }
+        }
+        else {
+            $nameProperty = $entry.PSObject.Properties["Name"]
+            if ($null -ne $nameProperty) {
+                $entryName = $nameProperty.Value
+            }
+
+            $deltaProperty = $entry.PSObject.Properties["MaxDelta"]
+            if ($null -ne $deltaProperty) {
+                $maxDelta = $deltaProperty.Value
+            }
+        }
+
+        if ($entryName -eq $name -and $null -ne $maxDelta) {
+            return [double]$maxDelta
+        }
+    }
+
+    return $null
+}
+
+function Test-ThemeShadowVisualEvidence($localFrameDeltas) {
+    $delta = Get-LocalFrameDeltaByName $localFrameDeltas "ThemeShadowVisualBounds"
+    return $null -ne $delta -and [double]$delta -ge 0.05
+}
+
 function Test-InteractionRequiresLocalVisualEvidence([string]$interactionKind) {
     switch ($interactionKind) {
         "State" { return $true }
@@ -6948,11 +6999,13 @@ foreach ($control in $Controls) {
     $expansionEvidence = Test-ExpansionEvidence $interactionResult
     $valueEvidence = Test-ValueEvidence $interactionResult
     $layoutStabilityEvidence = Test-LayoutStabilityEvidence $interactionResult
+    $themeShadowVisualEvidence = Test-ThemeShadowVisualEvidence $localFrameDeltas
     $layoutStabilityEvidenceAccepted =
         $control -eq "ThemeShadow" -and
         $interactionKind -eq "Value" -and
         $valueEvidence -and
-        $layoutStabilityEvidence
+        $layoutStabilityEvidence -and
+        $themeShadowVisualEvidence
     $selectionEvidence = Test-SelectionEvidence $interactionResult
     $visualSelectionEvidence = Test-VisualSelectionEvidence $control $interactionKind $maxLocalFrameDelta
     $optionEvidence = Test-OptionEvidence $interactionResult
@@ -7015,6 +7068,18 @@ foreach ($control in $Controls) {
         $beforeBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("BeforeLayoutBounds")) { $interactionResult.BeforeLayoutBounds } else { "" }
         $afterBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("AfterLayoutBounds")) { $interactionResult.AfterLayoutBounds } else { "" }
         $notes.Add(("ThemeShadow depth changed but one or more sample bounds moved or could not be proven stable. Before={0}; after={1}." -f $beforeBounds, $afterBounds))
+    }
+
+    if ($status -eq "Passed" -and
+        $control -eq "ThemeShadow" -and
+        $interactionKind -eq "Value" -and
+        $valueEvidence -and
+        $layoutStabilityEvidence -and
+        !$themeShadowVisualEvidence) {
+        $status = "Failed"
+        $visualDelta = Get-LocalFrameDeltaByName $localFrameDeltas "ThemeShadowVisualBounds"
+        $visualBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("ThemeShadowVisualBounds")) { $interactionResult.ThemeShadowVisualBounds } else { "" }
+        $notes.Add(("ThemeShadow depth changed but no rendered sample-root visual delta was proven. Bounds={0}; delta={1}." -f $visualBounds, $visualDelta))
     }
 
     if ($status -eq "Passed" -and $interactionKind -eq "Option" -and !$optionEvidence) {
@@ -7189,6 +7254,7 @@ foreach ($control in $Controls) {
         ExpansionEvidence = $expansionEvidence
         ValueEvidence = $valueEvidence
         LayoutStabilityEvidence = $layoutStabilityEvidence
+        ThemeShadowVisualEvidence = $themeShadowVisualEvidence
         SelectionEvidence = $selectionEvidence
         VisualSelectionEvidence = $visualSelectionEvidence
         OptionEvidence = $optionEvidence

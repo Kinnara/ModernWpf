@@ -422,6 +422,7 @@
                             <ui:ThemeShadowChrome
                                 CornerRadius="{DynamicResource OverlayCornerRadius}"
                                 Depth="{DynamicResource NumberBoxPopupShadowDepth}"
+                                ReservesShadowSpace="True"
                                 IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
                                 <Border
                                     x:Name="PopupContentRoot"

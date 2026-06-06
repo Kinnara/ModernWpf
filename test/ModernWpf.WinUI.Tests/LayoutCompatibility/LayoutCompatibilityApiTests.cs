@@ -113,7 +113,7 @@ public class LayoutCompatibilityApiTests
 
             Assert.IsNotNull(chrome.Shadow);
             Assert.IsTrue(chrome.IsShadowEnabled);
-            Assert.IsTrue(chrome.ReservesShadowSpace);
+            Assert.IsFalse(chrome.ReservesShadowSpace);
             Assert.AreEqual(32, chrome.TranslationZ);
             Assert.AreEqual(chrome.Depth, chrome.TranslationZ);
 
@@ -177,7 +177,7 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
-    public void ThemeShadowChromeCanRenderSourceTranslationWithoutReservingLayoutSpace()
+    public void ThemeShadowChromeDepthChangeDoesNotMoveDefaultSourceLayout()
     {
         WpfTestHost.Run(() =>
         {
@@ -191,7 +191,6 @@ public class LayoutCompatibilityApiTests
             {
                 Depth = 32,
                 TranslationZ = 32,
-                ReservesShadowSpace = false,
                 Margin = new Thickness(36),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
@@ -206,6 +205,16 @@ public class LayoutCompatibilityApiTests
 
             ArrangeElement(root, 272, 272);
 
+            Assert.IsFalse(chrome.ReservesShadowSpace);
+            Assert.AreEqual(200, chrome.ActualWidth, 0.1);
+            Assert.AreEqual(200, chrome.ActualHeight, 0.1);
+            Assert.AreEqual(new Point(36, 36), chrome.TranslatePoint(new Point(), root));
+            Assert.AreEqual(new Point(36, 36), ((FrameworkElement)chrome.Child).TranslatePoint(new Point(), root));
+
+            chrome.TranslationZ = 0;
+            ArrangeElement(root, 272, 272);
+
+            Assert.AreEqual(0, chrome.Depth);
             Assert.AreEqual(200, chrome.ActualWidth, 0.1);
             Assert.AreEqual(200, chrome.ActualHeight, 0.1);
             Assert.AreEqual(new Point(36, 36), chrome.TranslatePoint(new Point(), root));
@@ -219,6 +228,50 @@ public class LayoutCompatibilityApiTests
             Assert.AreEqual(200, chrome.ActualHeight, 0.1);
             Assert.AreEqual(new Point(36, 36), chrome.TranslatePoint(new Point(), root));
             Assert.AreEqual(new Point(36, 36), ((FrameworkElement)chrome.Child).TranslatePoint(new Point(), root));
+        });
+    }
+
+    [TestMethod]
+    public void ThemeShadowChromeCanReservePopupLayoutSpaceWhenOptedIn()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var root = new Grid
+            {
+                Width = 320,
+                Height = 320,
+                Background = Brushes.White
+            };
+            var chrome = new ThemeShadowChrome
+            {
+                Depth = 32,
+                TranslationZ = 32,
+                ReservesShadowSpace = true,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Child = new Border
+                {
+                    Width = 200,
+                    Height = 200,
+                    Background = Brushes.Transparent
+                }
+            };
+            root.Children.Add(chrome);
+
+            ArrangeElement(root, 320, 320);
+
+            Assert.AreEqual(new Thickness(16, 8, 16, 24), chrome.PopupShadowPadding);
+            Assert.AreEqual(232, chrome.ActualWidth, 0.1);
+            Assert.AreEqual(232, chrome.ActualHeight, 0.1);
+            Assert.AreEqual(new Point(16, 8), ((FrameworkElement)chrome.Child).TranslatePoint(new Point(), chrome));
+
+            chrome.TranslationZ = 48;
+            ArrangeElement(root, 320, 320);
+
+            Assert.AreEqual(new Thickness(24, 12, 24, 36), chrome.PopupShadowPadding);
+            Assert.AreEqual(248, chrome.ActualWidth, 0.1);
+            Assert.AreEqual(248, chrome.ActualHeight, 0.1);
+            Assert.AreEqual(new Point(24, 12), ((FrameworkElement)chrome.Child).TranslatePoint(new Point(), chrome));
         });
     }
 
@@ -239,6 +292,7 @@ public class LayoutCompatibilityApiTests
             {
                 Depth = 32,
                 WindowedPopupInsetMode = ThemeShadowChromeWindowedPopupInsetMode.Medium,
+                ReservesShadowSpace = true,
                 Child = new Border
                 {
                     Width = 50,
@@ -570,6 +624,7 @@ public class LayoutCompatibilityApiTests
                 CornerRadius = new CornerRadius(4),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(25),
                 Child = new Border
                 {
                     Width = 50,
@@ -579,15 +634,15 @@ public class LayoutCompatibilityApiTests
             };
             var root = new Grid
             {
-                Width = 90,
-                Height = 90,
+                Width = 100,
+                Height = 100,
                 Background = Brushes.White
             };
             root.Children.Add(chrome);
 
-            var center = RenderElementPixel(root, 41, 33, 90, 90);
-            var lowerShadow = RenderElementPixel(root, 41, 63, 90, 90);
-            var rightShadow = RenderElementPixel(root, 75, 33, 90, 90);
+            var center = RenderElementPixel(root, 50, 50, 100, 100);
+            var lowerShadow = RenderElementPixel(root, 50, 85, 100, 100);
+            var rightShadow = RenderElementPixel(root, 85, 50, 100, 100);
 
             Assert.IsTrue(center.R >= 250 && center.G >= 250 && center.B >= 250 && center.A == 255, $"Expected hollow shadow center to leave the transparent child area white. Pixel={center}");
             Assert.IsTrue(lowerShadow.R < center.R - 4 && lowerShadow.A == 255, $"Expected rendered shadow below the caster. Pixel={lowerShadow}");
@@ -606,6 +661,7 @@ public class LayoutCompatibilityApiTests
                 CornerRadius = new CornerRadius(4),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(25),
                 Child = new Border
                 {
                     Width = 50,
@@ -629,13 +685,13 @@ public class LayoutCompatibilityApiTests
 
             var child = (FrameworkElement)chrome.Child;
             var childOrigin = child.TranslatePoint(new Point(), chrome);
-            Assert.AreEqual(new Point(16, 8), childOrigin);
+            Assert.AreEqual(new Point(), childOrigin);
 
             Assert.IsNull(
-                chrome.InputHitTest(new Point(4, 4)),
+                chrome.InputHitTest(new Point(-10, -5)),
                 "The top-left shadow extent should not be hit-testable.");
             Assert.IsNull(
-                chrome.InputHitTest(new Point(41, 70)),
+                chrome.InputHitTest(new Point(25, 70)),
                 "The lower shadow extent should not be hit-testable.");
             Assert.IsNotNull(
                 chrome.InputHitTest(new Point(childOrigin.X + 10, childOrigin.Y + 10)),
@@ -1062,6 +1118,7 @@ public class LayoutCompatibilityApiTests
                 var numberBoxChrome = popup.Child as ThemeShadowChrome
                     ?? throw new AssertFailedException("Expected NumberBox popup child to be ThemeShadowChrome.");
                 Assert.AreEqual(16.0, numberBoxChrome.Depth);
+                Assert.IsTrue(numberBoxChrome.ReservesShadowSpace);
                 Assert.AreEqual(new Thickness(8, 4, 8, 12), numberBoxChrome.ShadowPadding);
 
                 popup.Child = null;
@@ -4330,6 +4387,7 @@ public class LayoutCompatibilityApiTests
     private static void AssertMediumWindowedPopupInsets(ThemeShadowChrome chrome)
     {
         Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, chrome.WindowedPopupInsetMode);
+        Assert.IsTrue(chrome.ReservesShadowSpace);
         Assert.AreEqual(new Thickness(10, 2, 10, 18), chrome.PopupShadowPadding);
     }
 
@@ -4918,7 +4976,7 @@ public class LayoutCompatibilityApiTests
             CornerRadius = new CornerRadius(4),
             HorizontalAlignment = HorizontalAlignment.Left,
             VerticalAlignment = VerticalAlignment.Top,
-            Margin = new Thickness(9, 17, 0, 0),
+            Margin = new Thickness(25),
             Child = new Border
             {
                 Width = 50,
@@ -4941,8 +4999,9 @@ public class LayoutCompatibilityApiTests
 
     private static void AssertThemeShadowSourceCanvasLayout(FrameworkElement root, ThemeShadowChrome chrome)
     {
-        Assert.AreEqual(82, chrome.ActualWidth, 0.1);
-        Assert.AreEqual(82, chrome.ActualHeight, 0.1);
+        Assert.IsFalse(chrome.ReservesShadowSpace);
+        Assert.AreEqual(50, chrome.ActualWidth, 0.1);
+        Assert.AreEqual(50, chrome.ActualHeight, 0.1);
         Assert.AreEqual(new Point(25, 25), ((FrameworkElement)chrome.Child).TranslatePoint(new Point(), root));
     }
 

@@ -65,6 +65,7 @@
                             <ui:ThemeShadowChrome
                                 IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
                                 WindowedPopupInsetMode="Medium"
+                                ReservesShadowSpace="True"
                                 CornerRadius="{Binding ElementName=SuggestionsContainer, Path=CornerRadius}"
                                 Width="{TemplateBinding ActualWidth}"
                                 MaxHeight="{TemplateBinding MaxSuggestionListHeight}">

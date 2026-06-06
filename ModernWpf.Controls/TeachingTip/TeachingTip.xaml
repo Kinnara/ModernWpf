@@ -452,6 +452,7 @@
                                         Depth="32"
                                         IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
                                         WindowedPopupInsetMode="Medium"
+                                        ReservesShadowSpace="True"
                                         CornerRadius="{Binding ElementName=ContentRootGrid, Path=CornerRadius}"
                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                                         <Border

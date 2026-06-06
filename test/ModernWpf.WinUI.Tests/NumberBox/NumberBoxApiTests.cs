@@ -262,6 +262,7 @@ public class NumberBoxApiTests
             var chrome = popup.Child as ThemeShadowChrome;
             Assert.IsNotNull(chrome);
             Assert.AreEqual(16.0, chrome!.Depth);
+            Assert.IsTrue(chrome.ReservesShadowSpace);
             Assert.AreEqual(new Thickness(8, 4, 8, 12), chrome.ShadowPadding);
             Assert.AreEqual(numberBox.TryFindResource("OverlayCornerRadius"), chrome.CornerRadius);
             Assert.IsFalse(VisualTreeTestHelper.EnumerateDescendants(chrome).OfType<Border>().Any(border => border.Effect is System.Windows.Media.Effects.BlurEffect));

@@ -33,6 +33,7 @@
                     <ui:ThemeShadowChrome
                         IsShadowEnabled="{TemplateBinding IsDefaultShadowEnabled}"
                         WindowedPopupInsetMode="Medium"
+                        ReservesShadowSpace="True"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
                         <ui:BorderEx

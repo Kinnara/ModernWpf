@@ -990,6 +990,7 @@
                                         x:Name="OuterOverflowContentRootShadowChrome"
                                         IsShadowEnabled="False"
                                         WindowedPopupInsetMode="Medium"
+                                        ReservesShadowSpace="True"
                                         CornerRadius="{Binding ElementName=OuterOverflowContentRoot, Path=CornerRadius}"
                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                                         <Border

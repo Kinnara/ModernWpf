@@ -3187,7 +3187,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertRectNear(new Rect(36, 36, 200, 200), beforeShadowBounds, 0.5, "ThemeShadow chrome should preserve the WinUI sample's 36px caster layout.");
                     AssertRectNear(new Rect(36, 36, 200, 200), beforeRectBounds, 0.5, "ThemeShadow caster should preserve the WinUI sample's 36px layout.");
 
-                    slider.Value = 48;
+                    slider.Value = 64;
                     WpfTestHost.DoEvents();
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
@@ -3196,8 +3196,8 @@ namespace ModernWpf.Gallery.Tests
                     var afterShadowBounds = GetRelativeBounds(shadow, exampleGrid);
                     var afterRectBounds = GetRelativeBounds(shadowRect, exampleGrid);
                     var afterSliderBounds = GetRelativeBounds(slider, page);
-                    Assert.AreEqual(48d, shadow.Depth);
-                    Assert.AreEqual(48d, shadow.TranslationZ);
+                    Assert.AreEqual(64d, shadow.Depth);
+                    Assert.AreEqual(64d, shadow.TranslationZ);
                     AssertRectNear(beforeRootBounds, afterRootBounds, 0.5, "Changing ThemeShadow depth should not move the sample root.");
                     AssertRectNear(beforeGridBounds, afterGridBounds, 0.5, "Changing ThemeShadow depth should not move the example grid.");
                     AssertRectNear(beforeShadowBounds, afterShadowBounds, 0.5, "Changing ThemeShadow depth should not move the shadow chrome.");

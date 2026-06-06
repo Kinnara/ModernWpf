@@ -442,6 +442,7 @@
                                         x:Name="SecondaryItemsControlShadowWrapper"
                                         IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}"
                                         WindowedPopupInsetMode="Medium"
+                                        ReservesShadowSpace="True"
                                         CornerRadius="{Binding ElementName=SecondaryItemsControl, Path=CornerRadius}">
 
                                         <primitives:CommandBarOverflowPresenter
