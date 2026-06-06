@@ -1435,6 +1435,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                         Text = title,
                         FontSize = 22,
                         FontWeight = FontWeights.SemiBold,
+                        Foreground = CreateBrush("#E4000000"),
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Center
                     }

@@ -789,11 +789,13 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(5, selectorBar2.Items.Count);
                     Assert.AreSame(selectorBar2.Items[0], selectorBar2.SelectedItem);
                     Assert.AreEqual("SamplePage1", GetFramePageTitle(contentFrame));
+                    AssertFramePageForeground(contentFrame, Color.FromArgb(0xE4, 0, 0, 0));
 
                     selectorBar2.SelectedItem = selectorBar2.Items[2];
                     WpfTestHost.DoEvents();
                     Assert.AreSame(selectorBar2.Items[2], selectorBar2.SelectedItem);
                     Assert.AreEqual("SamplePage3", GetFramePageTitle(contentFrame));
+                    AssertFramePageForeground(contentFrame, Color.FromArgb(0xE4, 0, 0, 0));
 
                     Assert.AreEqual("SelectorBar3", selectorBar3.Name);
                     Assert.AreEqual(3, selectorBar3.Items.Count);
@@ -4692,13 +4694,25 @@ namespace ModernWpf.Gallery.Tests
 
         private static string GetFramePageTitle(Frame frame)
         {
+            return GetFramePageTextBlock(frame).Text;
+        }
+
+        private static void AssertFramePageForeground(Frame frame, Color expectedColor)
+        {
+            var brush = GetFramePageTextBlock(frame).Foreground as SolidColorBrush;
+            Assert.IsNotNull(brush);
+            Assert.AreEqual(expectedColor, brush.Color);
+        }
+
+        private static TextBlock GetFramePageTextBlock(Frame frame)
+        {
             var page = frame.Content as Page;
             Assert.IsNotNull(page);
             var border = page.Content as Border;
             Assert.IsNotNull(border);
             var textBlock = border.Child as TextBlock;
             Assert.IsNotNull(textBlock);
-            return textBlock.Text;
+            return textBlock;
         }
 
         private static int CountItems(object itemsSource)

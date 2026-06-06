@@ -43,6 +43,9 @@ issue, or an explicit remaining follow-up item in the audit.
 - Launch the Gallery route for each control in visual-test mode.
 - Record the live window while driving the primary interaction for interactive
   controls.
+- Use still screenshots instead of recordings for static layout and final-state
+  visual checks when no transition, animation, popup lifetime, flicker, or crash
+  behavior is under review.
 - When the user provides a recording, review it as source evidence and add the
   visible defects to the active control audit before accepting any automated
   pass.
@@ -67,7 +70,8 @@ issue, or an explicit remaining follow-up item in the audit.
   when the cropped control region shows no pixel change.
 - A fix round is incomplete until the defect inventory says how each visible
   issue would now be caught: automated fail-fast check, dense frame sheet,
-  geometry/parity assertion, crash detection, or explicit still-open follow-up.
+  still screenshot, geometry/parity assertion, crash detection, or explicit
+  still-open follow-up.
 - UIA success alone is not accepted as visual proof for popup/flyout/menu
   interactions. The recording report must include either automated geometry or
   frame evidence, or the control remains `NeedsReview`.
@@ -1186,6 +1190,34 @@ and compares encoder speed:
   duration `6.7s/24s`, 67 captured frames, and 37.2s wall time including Gallery
   launch, interaction, encoding, frame extraction, and dense-review generation.
 
+Round 104 refreshes Dark retained-layout/navigation proof and fixes a
+SelectorBar sample contrast defect found by manual frame review:
+
+- Dark batch `artifacts/gallery-recordings/20260606-141244-639/report.md`
+  passed `ColorPicker`, `ProgressRing`, `InfoBar`, `SplitView`,
+  `AnnotatedScrollBar`, `GridView`, `ItemsRepeater`, `BreadcrumbBar`,
+  `SelectorBar`, and `TabControl` with actual recording durations from `1.8s`
+  to `2.3s`. The batch proves the faster early-stop path across option,
+  scroll, breadcrumb, and selection interactions.
+- Manual review of
+  `artifacts/gallery-recordings/20260606-141244-639/latest-frame-contact-sheet.png`
+  and the original frame
+  `artifacts/gallery-recordings/20260606-141244-639/SelectorBar/frames/t2000.png`
+  rejected SelectorBar as a visual pass even though the recorder marked it
+  green: the frame-transition sample rendered `SamplePage1` as white text on a
+  very light blue page panel in Dark theme.
+- `NavigationSampleFactory.CreatePageContent` now assigns the generated sample
+  page title foreground to `#E4000000`, matching the light pastel background
+  instead of inheriting the dark Gallery page foreground.
+- `GalleryAutomationHookTests.SelectorBarSampleMatchesWinUIGalleryExamples`
+  now asserts the SelectorBar frame page title foreground after initial
+  selection and after selecting another page.
+- Post-fix recording
+  `artifacts/gallery-recordings/20260606-141752-321/report.md` passed
+  `SelectorBar` after a build with actual duration `4.4s/6s`; reviewed frame
+  `artifacts/gallery-recordings/20260606-141752-321/SelectorBar/frames/t4000.png`
+  shows dark, readable `SamplePage1` text on the light blue panel.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -1307,6 +1339,8 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260606-135520-820/report.md` | Menu, MenuBar | 2 passed, 0 needs review, 0 failed; early-stop run records Menu in `6.7s/24s` and MenuBar in `5.9s/18s` |
 | `artifacts/gallery-recordings/20260606-140401-827/report.md` | Menu | 1 passed, 0 needs review, 0 failed; encoder benchmark: `libx264` `0.329s`, `h264_nvenc` `0.954s`, QSV/AMF failed |
 | `artifacts/gallery-recordings/20260606-140850-692/report.md` | Menu | 1 passed, 0 needs review, 0 failed; final Auto-default run selected `libx264`, recorded `6.7s/24s`, and completed in 37.2s wall time |
+| `artifacts/gallery-recordings/20260606-141244-639/report.md` | ColorPicker, ProgressRing, InfoBar, SplitView, AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, SelectorBar, TabControl | 10 passed, 0 needs review, 0 failed; manual frame review found SelectorBar sample text contrast was bad despite the green recorder result |
+| `artifacts/gallery-recordings/20260606-141752-321/report.md` | SelectorBar | 1 passed, 0 needs review, 0 failed; post-fix Dark rerun shows readable dark `SamplePage1` text in frame `t4000` |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 | `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
 | `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
@@ -1431,7 +1465,7 @@ proof on top of these static route captures.
 | Collections | DataGrid | `item/DataGrid` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-072128-088/DataGrid/light-datagrid.mp4` | UIA selection still does not change, so DataGrid uses visual current-cell evidence. Light proof has whole-frame/local deltas `1.344` / `48.134` with reviewed frame `t9500` showing the first row/cell highlighted. The recorder now requires local target-region delta for this fallback rather than whole-frame delta. Current Dark proof is `artifacts/gallery-recordings/20260606-114433-765/DataGrid/dark-datagrid.mp4` with `VisualSelectionEvidence=true`, `SelectionEvidence=false`, local delta `57.115`, and reviewed frame `t9500` showing the current-cell visual state. |
 | Collections | TreeView | `item/TreeView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/TreeView/light-treeview.mp4` | Latest Light rendered run records expansion evidence for `Personal Documents` with whole-frame/local deltas `0.508` / `7.864`; reviewed frame `t9500` shows `Contractor contact info` visible after expansion. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/TreeView/dark-treeview.mp4`. |
 | Navigation | BreadcrumbBar | `item/BreadcrumbBar` | Recorded | Recorder/sample anchor fixed | `artifacts/gallery-recordings/20260606-072826-258/BreadcrumbBar/light-breadcrumbbar.mp4` | Latest Light rendered run records local visual delta `2.886`; breadcrumb item collection changed despite low whole-frame delta `0.018`, and reviewed frame `t9500` shows the path advanced through `Folder1` to `Folder3`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/BreadcrumbBar/dark-breadcrumbbar.mp4`. |
-| Navigation | SelectorBar | `item/SelectorBar` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-072826-258/SelectorBar/light-selectorbar.mp4` | Latest Light rendered run records `Shared` changing to selected with `SelectionEvidence=true`, `VisualSelectionEvidence=true`, and local visual delta `0.715`; reviewed frame `t9500` shows the selected indicator under `Shared`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/SelectorBar/dark-selectorbar.mp4`. |
+| Navigation | SelectorBar | `item/SelectorBar` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-141752-321/SelectorBar/dark-selectorbar.mp4` | Latest Dark rerun records `Shared` changing to selected with local visual delta `0.256` and reviewed frame `t4000` shows readable dark `SamplePage1` text on the light blue frame-transition panel. This supersedes the rejected green Dark batch `artifacts/gallery-recordings/20260606-141244-639/report.md`, where manual frame review found white sample-page text on the same light panel despite the recorder pass. Latest Light proof remains `artifacts/gallery-recordings/20260606-072826-258/SelectorBar/light-selectorbar.mp4`. |
 | Navigation | TabControl | `item/TabControl` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/TabControl/light-tabcontrol.mp4` | Latest Light rendered run records target `Hello Tab`, selection evidence, and local delta `2.429`; reviewed frame `t9500` shows the selected `Hello` tab and content `World`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/TabControl/dark-tabcontrol.mp4`. |
 | Navigation | NavigationView | `item/NavigationView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/NavigationView/light-navigationview.mp4` | Latest Light rendered run records target `Menu Item2`, selection evidence, and local visual delta `5.177`; reviewed frame `t9500` shows `Sample Page 2` selected and rendered in the sample NavigationView. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/NavigationView/dark-navigationview.mp4`. |
 | Date & calendar | Calendar | `item/Calendar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/Calendar/light-calendar.mp4` | Latest Light rendered run records UIA selection evidence with whole-frame/local deltas `0.466` / `4.45`; reviewed frame `t9500` shows the selected day highlighted in the calendar. Current Dark proof is `artifacts/gallery-recordings/20260606-113515-698/Calendar/dark-calendar.mp4` with `SelectionEvidence=true`, local delta `4.119`, and reviewed frame `t9500` showing the selected day with no layout drift. |
