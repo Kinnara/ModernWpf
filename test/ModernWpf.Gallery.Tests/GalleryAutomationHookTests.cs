@@ -2301,6 +2301,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(0, 12, 0, 0), previewRect.Margin);
                     Assert.AreEqual(1.0, previewRect.StrokeThickness);
                     Assert.AreEqual(colorPicker.Color, ((SolidColorBrush)previewRect.Fill).Color);
+                    AssertColorPickerTextInputLayoutMatchesReference(colorPicker);
 
                     moreButtonCheck.IsChecked = true;
                     colorSliderCheck.IsChecked = false;
@@ -4727,6 +4728,51 @@ namespace ModernWpf.Gallery.Tests
             CollectionAssert.Contains(visibleMenuTexts, "Home", string.Join(", ", visibleMenuTexts));
             CollectionAssert.Contains(visibleMenuTexts, "Account", string.Join(", ", visibleMenuTexts));
             CollectionAssert.Contains(visibleMenuTexts, "Inbox", string.Join(", ", visibleMenuTexts));
+        }
+
+        private static void AssertColorPickerTextInputLayoutMatchesReference(Mux.ColorPicker colorPicker)
+        {
+            var colorRepresentationComboBox = FindNamedDescendant<ComboBox>(colorPicker, "ColorRepresentationComboBox");
+            var hexTextBox = FindNamedDescendant<TextBox>(colorPicker, "HexTextBox");
+            var redTextBox = FindNamedDescendant<TextBox>(colorPicker, "RedTextBox");
+            var greenTextBox = FindNamedDescendant<TextBox>(colorPicker, "GreenTextBox");
+            var blueTextBox = FindNamedDescendant<TextBox>(colorPicker, "BlueTextBox");
+            var redLabel = FindNamedDescendant<TextBlock>(colorPicker, "RedLabel");
+            var greenLabel = FindNamedDescendant<TextBlock>(colorPicker, "GreenLabel");
+            var blueLabel = FindNamedDescendant<TextBlock>(colorPicker, "BlueLabel");
+
+            Assert.IsNotNull(colorRepresentationComboBox);
+            Assert.IsNotNull(hexTextBox);
+            Assert.IsNotNull(redTextBox);
+            Assert.IsNotNull(greenTextBox);
+            Assert.IsNotNull(blueTextBox);
+            Assert.IsNotNull(redLabel);
+            Assert.IsNotNull(greenLabel);
+            Assert.IsNotNull(blueLabel);
+
+            var comboBounds = AssertRenderedInside(colorPicker, colorRepresentationComboBox, "ColorPicker representation ComboBox");
+            var hexBounds = AssertRenderedInside(colorPicker, hexTextBox, "ColorPicker hex TextBox");
+            Assert.IsTrue(comboBounds.Left < hexBounds.Left, $"ColorPicker combo should render left of the hex input. Combo={comboBounds}; Hex={hexBounds}.");
+            Assert.IsTrue(Math.Abs(comboBounds.Top - hexBounds.Top) <= 4.0, $"ColorPicker combo and hex input should share a row. Combo={comboBounds}; Hex={hexBounds}.");
+
+            var redBounds = AssertColorPickerChannelRow(colorPicker, redTextBox, redLabel, "Red");
+            var greenBounds = AssertColorPickerChannelRow(colorPicker, greenTextBox, greenLabel, "Green");
+            var blueBounds = AssertColorPickerChannelRow(colorPicker, blueTextBox, blueLabel, "Blue");
+
+            Assert.IsTrue(greenBounds.Top > redBounds.Bottom, $"Green input should stack below Red. Red={redBounds}; Green={greenBounds}.");
+            Assert.IsTrue(blueBounds.Top > greenBounds.Bottom, $"Blue input should stack below Green. Green={greenBounds}; Blue={blueBounds}.");
+        }
+
+        private static Rect AssertColorPickerChannelRow(FrameworkElement ancestor, TextBox textBox, TextBlock label, string channelName)
+        {
+            var textBoxBounds = AssertRenderedInside(ancestor, textBox, $"ColorPicker {channelName} TextBox");
+            var labelBounds = AssertRenderedInside(ancestor, label, $"ColorPicker {channelName} label");
+            Assert.IsTrue(textBoxBounds.Left < labelBounds.Left, $"ColorPicker {channelName} label should render to the right of its input. Input={textBoxBounds}; Label={labelBounds}.");
+
+            var textBoxCenterY = (textBoxBounds.Top + textBoxBounds.Bottom) / 2.0;
+            var labelCenterY = (labelBounds.Top + labelBounds.Bottom) / 2.0;
+            Assert.IsTrue(Math.Abs(textBoxCenterY - labelCenterY) <= 6.0, $"ColorPicker {channelName} label should align with its input row. Input={textBoxBounds}; Label={labelBounds}.");
+            return textBoxBounds;
         }
 
         private static Rect AssertRenderedInside(FrameworkElement ancestor, FrameworkElement element, string description, string ancestorDiagnostics = null)

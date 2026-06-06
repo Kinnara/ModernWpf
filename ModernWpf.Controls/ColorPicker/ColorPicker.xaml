@@ -669,26 +669,26 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBox
-                                        x:Name="HexTextBox"
-                                        Grid.Row="0"
-                                        Grid.Column="0"
-                                        Width="96"
-                                        MaxLength="7"
-                                        Margin="0,0,12,12"
-                                        TabIndex="4" />
-
                                     <ComboBox
                                         x:Name="ColorRepresentationComboBox"
                                         Grid.Row="0"
-                                        Grid.Column="1"
-                                        Width="88"
-                                        Margin="0,0,12,12"
+                                        Grid.Column="0"
+                                        Width="128"
+                                        Margin="0,0,56,12"
                                         SelectedIndex="0"
-                                        TabIndex="5">
+                                        TabIndex="4">
                                         <ComboBoxItem x:Name="RGBComboBoxItem" IsSelected="True">RGB</ComboBoxItem>
                                         <ComboBoxItem x:Name="HSVComboBoxItem">HSV</ComboBoxItem>
                                     </ComboBox>
+
+                                    <TextBox
+                                        x:Name="HexTextBox"
+                                        Grid.Row="0"
+                                        Grid.Column="1"
+                                        Width="132"
+                                        MaxLength="7"
+                                        Margin="0,0,0,12"
+                                        TabIndex="5" />
 
                                     <Grid
                                         x:Name="ColorTextInputPanels"
@@ -697,38 +697,40 @@
                                         <Grid x:Name="ColorChannelTextInputPanel">
                                             <Grid x:Name="RgbPanel">
                                                 <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="120" />
                                                     <ColumnDefinition x:Name="RgbTextLabelColumn" Width="Auto" />
-                                                    <ColumnDefinition Width="72" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="72" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="72" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock x:Name="RedLabel" Grid.Column="0" Text="Red" VerticalAlignment="Center" Margin="0,0,6,8" />
-                                                <TextBox x:Name="RedTextBox" Grid.Column="1" Margin="0,0,12,8" MaxLength="3" TabIndex="6" />
-                                                <TextBlock x:Name="GreenLabel" Grid.Column="2" Text="Green" VerticalAlignment="Center" Margin="0,0,6,8" />
-                                                <TextBox x:Name="GreenTextBox" Grid.Column="3" Margin="0,0,12,8" MaxLength="3" TabIndex="7" />
-                                                <TextBlock x:Name="BlueLabel" Grid.Column="4" Text="Blue" VerticalAlignment="Center" Margin="0,0,6,8" />
-                                                <TextBox x:Name="BlueTextBox" Grid.Column="5" Margin="0,0,0,8" MaxLength="3" TabIndex="8" />
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <TextBox x:Name="RedTextBox" Grid.Row="0" Grid.Column="0" Margin="0,0,8,12" MaxLength="3" TabIndex="6" />
+                                                <TextBlock x:Name="RedLabel" Grid.Row="0" Grid.Column="1" Text="Red" VerticalAlignment="Center" Margin="0,0,0,12" />
+                                                <TextBox x:Name="GreenTextBox" Grid.Row="1" Grid.Column="0" Margin="0,0,8,12" MaxLength="3" TabIndex="7" />
+                                                <TextBlock x:Name="GreenLabel" Grid.Row="1" Grid.Column="1" Text="Green" VerticalAlignment="Center" Margin="0,0,0,12" />
+                                                <TextBox x:Name="BlueTextBox" Grid.Row="2" Grid.Column="0" Margin="0,0,8,0" MaxLength="3" TabIndex="8" />
+                                                <TextBlock x:Name="BlueLabel" Grid.Row="2" Grid.Column="1" Text="Blue" VerticalAlignment="Center" />
                                             </Grid>
 
                                             <Grid
                                                 x:Name="HsvPanel"
                                                 Visibility="Collapsed">
                                                 <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="120" />
                                                     <ColumnDefinition x:Name="HsvTextLabelColumn" Width="Auto" />
-                                                    <ColumnDefinition Width="72" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="72" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="72" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock x:Name="HueLabel" Grid.Column="0" Text="Hue" VerticalAlignment="Center" Margin="0,0,6,8" />
-                                                <TextBox x:Name="HueTextBox" Grid.Column="1" Margin="0,0,12,8" MaxLength="3" TabIndex="6" />
-                                                <TextBlock x:Name="SaturationLabel" Grid.Column="2" Text="Saturation" VerticalAlignment="Center" Margin="0,0,6,8" />
-                                                <TextBox x:Name="SaturationTextBox" Grid.Column="3" Margin="0,0,12,8" MaxLength="3" TabIndex="7" />
-                                                <TextBlock x:Name="ValueLabel" Grid.Column="4" Text="Value" VerticalAlignment="Center" Margin="0,0,6,8" />
-                                                <TextBox x:Name="ValueTextBox" Grid.Column="5" Margin="0,0,0,8" MaxLength="3" TabIndex="8" />
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <TextBox x:Name="HueTextBox" Grid.Row="0" Grid.Column="0" Margin="0,0,8,12" MaxLength="3" TabIndex="6" />
+                                                <TextBlock x:Name="HueLabel" Grid.Row="0" Grid.Column="1" Text="Hue" VerticalAlignment="Center" Margin="0,0,0,12" />
+                                                <TextBox x:Name="SaturationTextBox" Grid.Row="1" Grid.Column="0" Margin="0,0,8,12" MaxLength="3" TabIndex="7" />
+                                                <TextBlock x:Name="SaturationLabel" Grid.Row="1" Grid.Column="1" Text="Saturation" VerticalAlignment="Center" Margin="0,0,0,12" />
+                                                <TextBox x:Name="ValueTextBox" Grid.Row="2" Grid.Column="0" Margin="0,0,8,0" MaxLength="3" TabIndex="8" />
+                                                <TextBlock x:Name="ValueLabel" Grid.Row="2" Grid.Column="1" Text="Value" VerticalAlignment="Center" />
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -738,11 +740,11 @@
                                         Grid.Row="2"
                                         Grid.ColumnSpan="3">
                                         <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120" />
                                             <ColumnDefinition x:Name="AlphaTextLabelColumn" Width="Auto" />
-                                            <ColumnDefinition Width="72" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock x:Name="AlphaLabel" Text="Alpha" VerticalAlignment="Center" Margin="0,0,6,0" />
-                                        <TextBox x:Name="AlphaTextBox" Grid.Column="1" MaxLength="4" TabIndex="9" />
+                                        <TextBox x:Name="AlphaTextBox" Grid.Column="0" Margin="0,0,8,0" MaxLength="4" TabIndex="9" />
+                                        <TextBlock x:Name="AlphaLabel" Grid.Column="1" Text="Alpha" VerticalAlignment="Center" />
                                     </Grid>
                                 </Grid>
                             </StackPanel>

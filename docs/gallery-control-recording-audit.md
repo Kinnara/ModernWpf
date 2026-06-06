@@ -1386,10 +1386,37 @@ evidence instead of a recording:
   ModernWpf and WinUI3Gallery for InfoBadge. This is a static/final-state issue,
   so no recording was needed for this round.
 
+Round 110 uses screenshot-first review for a static ColorPicker layout defect:
+
+- Dark screenshot batch
+  `artifacts/visual-checks/20260606-172013-723-159108/report.md` passed at the
+  report level, but manual review of the ColorPicker screenshots found that the
+  ModernWpf control still used the older compact text-entry layout: hex input
+  before the color model combo and horizontal Red/Green/Blue rows. The WinUI
+  reference shows the color model combo first, the hex input beside it, and
+  vertical Red/Green/Blue rows with labels to the right.
+- The ColorPicker template now matches that reference text-entry structure in
+  the default vertical orientation. The focused automation test asserts the
+  relative geometry of the combo, hex input, and Red/Green/Blue rows so the old
+  layout cannot return silently.
+- The screenshot harness now requires a ColorPicker primary crop and builds the
+  WinUI reference primary crop from stable child bounds (`ColorSpectrum`,
+  `ThirdDimensionSlider`, `ColorRepresentationComboBox`, `HexTextBox`,
+  `BlueTextBox`, and `BlueLabel`). This closes the harness gap where ColorPicker
+  previously passed from broad page screenshots without a focused crop delta.
+- Post-fix screenshot run
+  `artifacts/visual-checks/20260606-173145-835-10284/report.md` passed with
+  focused primary crops. Reviewed
+  `ColorPicker/modernwpf-artifacts/GallerySample_ColorPicker_ColorPicker.png`
+  and `ColorPicker/winui3-ColorPicker-primary-content-crop.png` both show the
+  combo/hex row and vertical RGB rows. The remaining primary crop delta is from
+  the color spectrum rendering, not the old text-entry layout.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
 | --- | --- | --- |
+| `artifacts/visual-checks/20260606-173145-835-10284/report.md` | ColorPicker | 2 app/control rows passed; focused primary crops show the combo/hex row and vertical Red/Green/Blue rows on both ModernWpf and WinUI |
 | `artifacts/visual-checks/20260606-171020-087-82140/report.md` | InfoBadge | 2 app/control rows passed; ModernWpf embedded NavigationView crop shows `Home`, `Account`, `Inbox`, `Settings`, and the `5` badge |
 | `artifacts/visual-checks/20260606-164331-590-226096/report.md` | InfoBadge | Expected screenshot harness failure for ModernWpf embedded badge pixels; verifies missing primary crops no longer pass |
 | `artifacts/visual-checks/20260606-164411-857-61908/report.md` | ThemeShadow, PersonPicture | 4 app/control rows passed; required primary crops were present for both controls |
@@ -1607,7 +1634,7 @@ proof on top of these static route captures.
 | Basic input | ComboBox | `item/ComboBox` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-063701-757/ComboBox/light-combobox.mp4` | Latest Light 24s rendered run closes through `ExpandCollapsePattern.Collapse()` and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t4000` / `t8000` / `t14000`, deltas `14.128` / `0.287` / `14.091`, and local delta `14.25`; reviewed frame `t4000` shows the ComboBox dropdown anchored under the field. Current Dark proof is `artifacts/gallery-recordings/20260606-100047-740/ComboBox/dark-combobox.mp4` with frames `t3500` / `t7500` / `t13500`, deltas `9.717` / `0.316` / `11.359`, and local delta `11.359`. |
 | Basic input | RadioButton | `item/RadioButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/RadioButton/light-radiobutton.mp4` | Latest Light rendered rerun selects `Default Radio Option 2` with local visual delta `4.189`; reviewed frame `t9500` shows Option 2 selected and the radio examples aligned. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/RadioButton/dark-radiobutton.mp4` with `SelectionEvidence=true`, target `Default Radio Option 2`, and local delta `3.503`. |
 | Basic input | Slider | `item/Slider` | Recorded + screenshot | Fixed | `artifacts/visual-checks/20260606-144434-210-243940/report.md` | Round 105 screenshot-first parity caught that the simple Slider opened at output `0` while WinUI opened at `50`. `SliderPageViewModel` now initializes `SimpleSliderValue` to `50`; reviewed `artifacts/visual-checks/20260606-144434-210-243940/Slider/modernwpf-artifacts/GallerySample_Slider_Root.png` shows the thumb centered and output `50`. Older Light/Dark recordings still prove the value interaction path but predate this initial-state fix. |
-| Basic input | ColorPicker | `item/ColorPicker` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/ColorPicker/light-colorpicker.mp4` | Latest Light rendered rerun toggles `IsMoreButtonVisible` from Off to On with local visual delta `6.087` and whole-frame delta `0.247`; reviewed frame `t9500` shows the More color picker content visible. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/ColorPicker/dark-colorpicker.mp4`. |
+| Basic input | ColorPicker | `item/ColorPicker` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-173145-835-10284/report.md` | Round 110 fixed the default ColorPicker text-entry layout to match the reference combo/hex row and vertical Red/Green/Blue rows. `ColorPickerSampleMatchesWinUIGalleryExample` now asserts those relative positions, and the screenshot harness requires a focused ColorPicker primary crop built from stable WinUI child bounds. Reviewed `modernwpf-artifacts/GallerySample_ColorPicker_ColorPicker.png` and `winui3-ColorPicker-primary-content-crop.png` show the aligned structure. Older Light/Dark recordings still prove the More-button interaction path. |
 | Basic input | HyperlinkButton | `item/HyperlinkButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-074841-162/HyperlinkButton/light-hyperlinkbutton.mp4` | Latest Light rendered run clicks the safe in-app `Go to ToggleButton` sample and requires route proof: `BeforeRoute=item/HyperlinkButton`, `AfterRoute=item/ToggleButton`, `TargetSampleVisible=true`, whole-frame delta `2.563`, and local visual delta `12.244`. Reviewed `t9500` shows the ToggleButton destination page. External URI navigation remains intentionally not invoked. The previous dark proof remains at `artifacts/gallery-recordings/20260606-020424-123/HyperlinkButton/dark-hyperlinkbutton.mp4`. |
 | Basic input | RatingControl | `item/RatingControl` | Recorded | Touch-first sample copy removed | `artifacts/gallery-recordings/20260606-070029-557/RatingControl/light-ratingcontrol.mp4` | Latest Light rendered rerun changes the rating from `0` to target `3` with local visual delta `3.861`; reviewed frame `t9500` shows three selected stars, output `3`, and the corrected `Click again to clear your rating.` text with no `Swipe left` instruction. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/RatingControl/dark-ratingcontrol.mp4` with `ValueEvidence=true`, value `0` to `3`, local delta `4.049`, and reviewed frame `t9500` showing the same corrected copy. |
 | Basic input | RepeatButton | `item/RepeatButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/RepeatButton/light-repeatbutton.mp4` | Latest Light rendered rerun changes output from `Control output` to `Number of clicks: 1` with local visual delta `0.669`; reviewed frame `t9500` shows the click count. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/RepeatButton/dark-repeatbutton.mp4` with `OutputEvidence=true`, output `Number of clicks: 1`, and local delta `1.002`. |

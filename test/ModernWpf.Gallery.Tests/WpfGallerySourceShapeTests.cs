@@ -2610,6 +2610,7 @@ namespace ModernWpf.Gallery.Tests
                 "function Get-PrimaryCropMinimumVisibleStdDev([string]$control)",
                 "\"InfoBadge\" { return 8.0 }",
                 "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"ColorPicker\" { return $true }",
                 "\"InfoBadge\" { return $true }",
                 "\"PersonPicture\" { return $true }",
                 "\"ThemeShadow\" { return $true }",
@@ -2618,6 +2619,8 @@ namespace ModernWpf.Gallery.Tests
                 "\"PersonPicture\" { return \"GallerySample_PersonPicture_PersonPicture\" }",
                 "\"InfoBadge\" { return \"GallerySample_InfoBadge_NavigationView\" }",
                 "function Get-ReferencePrimaryAutomationId([string]$control)",
+                "\"Slider\" { return \"Slider1\" }",
+                "\"ColorPicker\" { return \"ColorSpectrum\" }",
                 "\"SplitView\" { return \"NavLinksList\" }",
                 "\"PersonPicture\" { return \"\" }",
                 "\"ThemeShadow\" { return \"\" }",
@@ -2632,6 +2635,10 @@ namespace ModernWpf.Gallery.Tests
                 "function Find-AccentComponentCropBounds([string]$screenshot, $searchBounds, [int]$targetWidth, [int]$targetHeight)",
                 "$color.B -gt 120",
                 "$minY -lt ($height * 0.65)",
+                "function New-ColorPickerReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot)",
+                "\"ColorRepresentationComboBox\"",
+                "\"BlueTextBox\"",
+                "ColorPicker editor surface",
                 "function New-InfoBadgeReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement)",
                 "GallerySample_InfoBadge_NavigationView.png",
                 "Find-AccentComponentCropBounds $screenshot $sampleBounds $modernSize.Width $modernSize.Height",
@@ -2641,7 +2648,9 @@ namespace ModernWpf.Gallery.Tests
                 "elseif ($control -eq \"PersonPicture\")",
                 "New-PersonPictureReferencePrimaryCrop $caseDir $window $screenshot $sampleElement",
                 "elseif ($control -eq \"InfoBadge\")",
-                "New-InfoBadgeReferencePrimaryCrop $caseDir $window $screenshot $sampleElement");
+                "New-InfoBadgeReferencePrimaryCrop $caseDir $window $screenshot $sampleElement",
+                "elseif ($control -eq \"ColorPicker\")",
+                "New-ColorPickerReferencePrimaryCrop $caseDir $window $screenshot");
             Assert.IsTrue(
                 source.Contains("$primaryCropMissing = (Test-ControlRequiresPrimaryCrop $control) -and !$staticCrops.Primary.Found", StringComparison.Ordinal),
                 "Controls with custom primary parity must fail when the primary crop is missing.");

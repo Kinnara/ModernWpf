@@ -865,6 +865,7 @@ function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
 
 function Test-ControlRequiresPrimaryCrop([string]$control) {
     switch ($control) {
+        "ColorPicker" { return $true }
         "InfoBadge" { return $true }
         "PersonPicture" { return $true }
         "ThemeShadow" { return $true }
@@ -932,6 +933,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "HyperlinkButton" { return "Control1" }
         "RatingControl" { return "RatingControl1" }
         "Slider" { return "Slider1" }
+        "ColorPicker" { return "ColorSpectrum" }
         "ToggleButton" { return "Toggle1" }
         "SplitButton" { return "myColorButton" }
         "ToggleSplitButton" { return "myListButton" }
@@ -2466,6 +2468,50 @@ function Find-AccentComponentCropBounds([string]$screenshot, $searchBounds, [int
     }
 }
 
+function New-ColorPickerReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot) {
+    $elementIds = @(
+        "ColorSpectrum",
+        "ThirdDimensionSlider",
+        "ColorRepresentationComboBox",
+        "HexTextBox",
+        "BlueTextBox",
+        "BlueLabel"
+    )
+    $boundsList = @()
+    foreach ($elementId in $elementIds) {
+        $element = Find-DescendantByAutomationId $window $elementId
+        $bounds = Get-ElementWindowBounds $window $element
+        if ($null -eq $bounds -or !$bounds.Found) {
+            return $null
+        }
+
+        $boundsList += $bounds
+    }
+
+    $left = @($boundsList | ForEach-Object { $_.X } | Measure-Object -Minimum).Minimum
+    $top = @($boundsList | ForEach-Object { $_.Y } | Measure-Object -Minimum).Minimum
+    $right = @($boundsList | ForEach-Object { $_.X + $_.Width } | Measure-Object -Maximum).Maximum
+    $bottom = @($boundsList | ForEach-Object { $_.Y + $_.Height } | Measure-Object -Maximum).Maximum
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the WinUI ColorPicker editor surface from stable child bounds."
+        X = $left
+        Y = $top
+        Width = $right - $left
+        Height = $bottom - $top
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "winui3-ColorPicker-primary-content-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "ColorPicker editor surface" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
 function New-InfoBadgeReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
     $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
     $modernPrimaryArtifact = Join-Path $modernArtifactDir "GallerySample_InfoBadge_NavigationView.png"
@@ -2669,6 +2715,12 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
         $infoBadgePrimary = New-InfoBadgeReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
         if ($null -ne $infoBadgePrimary) {
             $primaryResult = $infoBadgePrimary
+        }
+    }
+    elseif ($control -eq "ColorPicker") {
+        $colorPickerPrimary = New-ColorPickerReferencePrimaryCrop $caseDir $window $screenshot
+        if ($null -ne $colorPickerPrimary) {
+            $primaryResult = $colorPickerPrimary
         }
     }
 
