@@ -1292,10 +1292,46 @@ miss found while reviewing that flow:
   `artifacts/visual-checks/20260606-152649-903-244144/ToggleSwitch/modernwpf-ToggleSwitch-state-after-crop.png`
   shows `On` text and the thumb on the right in the live crop.
 
+Round 107 narrows screenshot use to the cases where screenshots provide real
+pixels and hardens popup screenshot evidence so wallpaper or page-behind crops
+cannot pass:
+
+- A combined screenshot batch for `DropDownButton`, `SplitButton`,
+  `ToggleSplitButton`, `MenuFlyout`, and `MenuBar` timed out, so popup/static
+  parity is now being split into single-control runs.
+- `artifacts/visual-checks/20260606-153711-725-99288/report.md` initially
+  reported DropDownButton green, but manual review found the WinUI reference
+  open crop was the underlying `Source code` page region even though UIA had
+  found the opened `Send` menu item. This was the same category of miss as the
+  user-reported recording review gaps: the automation accepted structure
+  without verifying the actual pixels.
+- `Run-GalleryVisualChecks.ps1` now has a dedicated popup evidence path:
+  native popup-window capture first, then a UIA screen-element crop only as a
+  fallback. The screen-element crop maps UIA logical bounds through the native
+  app-window rectangle, clamps to the virtual desktop, is non-fatal on capture
+  failure, and must have visible variation (`VisibleStdDev >= 8.0`) before it
+  can count as popup content.
+- Popup-required controls no longer pass from a generic reference crop or
+  difference crop. Source-shape tests assert the `ScreenElement` fallback,
+  the visible-variation guard, and the removal of the old
+  `$referencePopupCropNonBlank` shortcut.
+- Latest guard run
+  `artifacts/visual-checks/20260606-160227-645-194344/report.md` now fails
+  WinUI DropDownButton screenshot evidence with `DropDownButton exposed opened
+  popup UIA but no nonblank popup pixels were captured.` That is intentional:
+  the WinUI popup overlay cannot be trusted from screenshots in this desktop
+  surface, so DropDownButton open/close/reopen parity remains recording-backed
+  unless a real popup-window screenshot is captured.
+- Screenshot-first policy after this round: use screenshots for static layout,
+  initial parity, and settled final states; use recordings for flicker,
+  animations, popup overlays that do not expose a trustworthy window capture,
+  and repeat-open/close crash checks.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
 | --- | --- | --- |
+| `artifacts/visual-checks/20260606-160227-645-194344/report.md` | DropDownButton | Expected screenshot harness failure for WinUI popup pixels; verifies the old page-behind/wallpaper crop false pass is rejected |
 | `artifacts/visual-checks/20260606-152649-903-244144/report.md` | ToggleButton, ToggleSwitch, RepeatButton, NumberBox, AppBarToggleButton | 10 app/control rows passed, 0 failed; screenshot review confirmed ToggleSwitch `On` text and right-side thumb in the live state crop |
 | `artifacts/visual-checks/20260606-144434-210-243940/report.md` | Button, CheckBox, RadioButton, Slider, RatingControl | 10 app/control rows passed, 0 failed; screenshot review confirmed Slider starts at output `50` |
 | `artifacts/gallery-recordings/20260604-034810-236/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed |
@@ -1514,7 +1550,7 @@ proof on top of these static route captures.
 | Basic input | RatingControl | `item/RatingControl` | Recorded | Touch-first sample copy removed | `artifacts/gallery-recordings/20260606-070029-557/RatingControl/light-ratingcontrol.mp4` | Latest Light rendered rerun changes the rating from `0` to target `3` with local visual delta `3.861`; reviewed frame `t9500` shows three selected stars, output `3`, and the corrected `Click again to clear your rating.` text with no `Swipe left` instruction. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/RatingControl/dark-ratingcontrol.mp4` with `ValueEvidence=true`, value `0` to `3`, local delta `4.049`, and reviewed frame `t9500` showing the same corrected copy. |
 | Basic input | RepeatButton | `item/RepeatButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/RepeatButton/light-repeatbutton.mp4` | Latest Light rendered rerun changes output from `Control output` to `Number of clicks: 1` with local visual delta `0.669`; reviewed frame `t9500` shows the click count. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/RepeatButton/dark-repeatbutton.mp4` with `OutputEvidence=true`, output `Number of clicks: 1`, and local delta `1.002`. |
 | Basic input | ToggleButton | `item/ToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/ToggleButton/light-togglebutton.mp4` | Latest Light rendered rerun toggles Off to On with local visual delta `48.038`; reviewed frame `t9500` shows the checked ToggleButton and output text `On`. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/ToggleButton/dark-togglebutton.mp4` with `StateEvidence=true`, `AfterState=On`, and local delta `33.918`. |
-| Basic input | DropDownButton | `item/DropDownButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-122924-332/DropDownButton/dark-dropdownbutton.mp4` | Latest Dark rendered run keeps DropDownButton on the reliable `Send` leaf-item close path after rejected fast-bounds attempt `20260606-122326-155`. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=LeafCloseItem:Invoke`, frames `t2000` / `t4000` / `t8500`, deltas `12.612` / `0.478` / `12.5`, and local delta `12.63`; reviewed frames show open, closed, and second-open menu states aligned under the trigger. Latest Light proof remains `artifacts/gallery-recordings/20260606-064251-054/DropDownButton/light-dropdownbutton.mp4`. |
+| Basic input | DropDownButton | `item/DropDownButton` | Recorded + screenshot guard | Recorder hardened + screenshot false-pass rejected | `artifacts/gallery-recordings/20260606-122924-332/DropDownButton/dark-dropdownbutton.mp4` | Latest Dark recording keeps DropDownButton on the reliable `Send` leaf-item close path after rejected fast-bounds attempt `20260606-122326-155`. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=LeafCloseItem:Invoke`, frames `t2000` / `t4000` / `t8500`, deltas `12.612` / `0.478` / `12.5`, and local delta `12.63`; reviewed frames show open, closed, and second-open menu states aligned under the trigger. Round 107 screenshot guard `artifacts/visual-checks/20260606-160227-645-194344/report.md` intentionally fails the WinUI popup screenshot path instead of accepting the old page-behind/wallpaper crop, so popup overlay parity remains recording-backed unless a real popup-window screenshot is captured. Latest Light proof remains `artifacts/gallery-recordings/20260606-064251-054/DropDownButton/light-dropdownbutton.mp4`. |
 | Basic input | SplitButton | `item/SplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-122109-523/SplitButton/dark-splitbutton.mp4` | Latest Dark rendered run uses the fast popup path and event-window proof. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=FastPopupEscape`, frames `t2000` / `t4000` / `t11000`, deltas `21.39` / `0.03` / `21.428`, and local delta `35.623`; reviewed frames show first open, closed state, and second open with the color menu aligned under the trigger. This supersedes failed run `20260606-115448-915`, where UIA search pushed close/reopen outside the fixed recording window. Latest Light proof remains `artifacts/gallery-recordings/20260606-064538-234/SplitButton/light-splitbutton.mp4`. |
 | Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-122326-155/ToggleSplitButton/dark-togglesplitbutton.mp4` | Latest Dark rendered run uses the fast popup path and event-window proof. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=FastPopupBoundsClick`, frames `t2000` / `t4500` / `t14500`, deltas `8.97` / `0.186` / `8.997`, opened-element local delta `12.26`, and trigger-region local delta `15.369`; reviewed frames show open, closed, and second-open compact menu states. Latest Light proof remains `artifacts/gallery-recordings/20260606-064806-277/ToggleSplitButton/light-togglesplitbutton.mp4`. |
 | Basic input | ToggleSwitch | `item/ToggleSwitch` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-152649-903-244144/report.md` | Round 106 screenshot review caught missing default `On`/`Off` content in the simple sample and a stale rendered-artifact crop path that made the thumb look left after toggling. The sample now uses default ToggleSwitch content, and state interactions prefer live UIA crops with a ToggleSwitch thumb-endpoint pixel check. Reviewed `artifacts/visual-checks/20260606-152649-903-244144/ToggleSwitch/modernwpf-ToggleSwitch-state-after-crop.png` shows `On` text and the thumb on the right. Older Light/Dark recordings remain useful motion proof but predate this screenshot harness fix. |

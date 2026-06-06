@@ -1609,6 +1609,40 @@ function Capture-ScreenRect([IntPtr]$hwnd, [string]$path) {
     }
 }
 
+function Capture-ScreenBounds([int]$left, [int]$top, [int]$width, [int]$height, [string]$path) {
+    $width = [Math]::Max(1, $width)
+    $height = [Math]::Max(1, $height)
+    $bitmap = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+    try {
+        try {
+            $graphics.CopyFromScreen($left, $top, 0, 0, [System.Drawing.Size]::new($width, $height))
+        }
+        catch {
+            $copyFromScreenError = $_.Exception.Message
+            $graphics.Clear([System.Drawing.Color]::Transparent)
+            $hdc = $graphics.GetHdc()
+            $copied = $false
+            try {
+                $copied = [GalleryVisualNative]::CopyScreenSurface($hdc, $left, $top, $width, $height)
+            }
+            finally {
+                $graphics.ReleaseHdc($hdc)
+            }
+
+            if (!$copied) {
+                throw "CopyFromScreen failed and native screen bounds capture fallback failed: $copyFromScreenError"
+            }
+        }
+
+        $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+    }
+    finally {
+        $graphics.Dispose()
+        $bitmap.Dispose()
+    }
+}
+
 function Find-DifferenceBounds([string]$beforePath, [string]$afterPath, [int]$threshold = 32, [int]$step = 2) {
     $before = [System.Drawing.Bitmap]::FromFile($beforePath)
     $after = [System.Drawing.Bitmap]::FromFile($afterPath)
@@ -1896,6 +1930,132 @@ function Save-ElementCrop($window, [string]$screenshot, [string]$path, $element,
         Bounds = $expandedBounds
         Width = $expandedBounds.Width
         Height = $expandedBounds.Height
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+    }
+}
+
+function Get-ElementScreenBounds($element, [int]$padding = 8, $referenceWindow = $null) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    $rect = $element.Current.BoundingRectangle
+    $x = [double]$rect.X
+    $y = [double]$rect.Y
+    $width = [double]$rect.Width
+    $height = [double]$rect.Height
+
+    if ([double]::IsInfinity($x) -or [double]::IsInfinity($y) -or
+        [double]::IsInfinity($width) -or [double]::IsInfinity($height) -or
+        [double]::IsNaN($x) -or [double]::IsNaN($y) -or
+        [double]::IsNaN($width) -or [double]::IsNaN($height) -or
+        $width -le 0 -or $height -le 0) {
+        return $null
+    }
+
+    $left = [int][Math]::Floor($x)
+    $top = [int][Math]::Floor($y)
+    $right = [int][Math]::Ceiling($x + $width)
+    $bottom = [int][Math]::Ceiling($y + $height)
+    if ($null -ne $referenceWindow) {
+        try {
+            $windowRect = [GalleryVisualNative]::GetRect($referenceWindow.Current.NativeWindowHandle)
+            $windowUiaRect = $referenceWindow.Current.BoundingRectangle
+            $nativeWidth = [Math]::Max(1, $windowRect.Right - $windowRect.Left)
+            $nativeHeight = [Math]::Max(1, $windowRect.Bottom - $windowRect.Top)
+            $windowUiaWidth = [double]$windowUiaRect.Width
+            $windowUiaHeight = [double]$windowUiaRect.Height
+            $scaleX = if ($windowUiaWidth -gt 0 -and ![double]::IsInfinity($windowUiaWidth) -and ![double]::IsNaN($windowUiaWidth)) {
+                $nativeWidth / $windowUiaWidth
+            }
+            else {
+                1.0
+            }
+            $scaleY = if ($windowUiaHeight -gt 0 -and ![double]::IsInfinity($windowUiaHeight) -and ![double]::IsNaN($windowUiaHeight)) {
+                $nativeHeight / $windowUiaHeight
+            }
+            else {
+                1.0
+            }
+
+            $left = [int][Math]::Round($windowRect.Left + (($x - $windowUiaRect.X) * $scaleX))
+            $top = [int][Math]::Round($windowRect.Top + (($y - $windowUiaRect.Y) * $scaleY))
+            $right = [int][Math]::Round($windowRect.Left + (($x + $width - $windowUiaRect.X) * $scaleX))
+            $bottom = [int][Math]::Round($windowRect.Top + (($y + $height - $windowUiaRect.Y) * $scaleY))
+        }
+        catch {
+        }
+    }
+
+    $left -= $padding
+    $top -= $padding
+    $right += $padding
+    $bottom += $padding
+    try {
+        Add-Type -AssemblyName System.Windows.Forms -ErrorAction SilentlyContinue
+        $virtualScreen = [System.Windows.Forms.SystemInformation]::VirtualScreen
+        $left = [Math]::Max($virtualScreen.Left, $left)
+        $top = [Math]::Max($virtualScreen.Top, $top)
+        $right = [Math]::Min($virtualScreen.Right, $right)
+        $bottom = [Math]::Min($virtualScreen.Bottom, $bottom)
+    }
+    catch {
+    }
+
+    if ($right -le $left -or $bottom -le $top) {
+        return $null
+    }
+
+    return [ordered]@{
+        Found = $true
+        Reason = ""
+        X = $left
+        Y = $top
+        Width = [Math]::Max(1, $right - $left)
+        Height = [Math]::Max(1, $bottom - $top)
+        ChangedSamples = 0
+    }
+}
+
+function Save-ScreenElementCrop($element, [string]$path, [string]$source = "ScreenElement", [int]$padding = 8, $referenceWindow = $null) {
+    $bounds = Get-ElementScreenBounds $element $padding $referenceWindow
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = $source
+            Screenshot = ""
+            Bounds = $bounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    try {
+        Capture-ScreenBounds $bounds.X $bounds.Y $bounds.Width $bounds.Height $path
+    }
+    catch {
+        return [ordered]@{
+            Found = $false
+            Source = $source
+            Screenshot = ""
+            Bounds = $bounds
+            Width = $bounds.Width
+            Height = $bounds.Height
+            NonBlank = $false
+            Error = $_.Exception.Message
+        }
+    }
+
+    return [ordered]@{
+        Found = $true
+        Source = $source
+        Screenshot = $path
+        Bounds = $bounds
+        Width = $bounds.Width
+        Height = $bounds.Height
+        ChangedSamples = 0
         NonBlank = Test-ImageNotBlank $path
         VisibleStdDev = Get-ImageVisibleStdDev $path
     }
@@ -2875,6 +3035,103 @@ function Get-ElementNativeWindowHandle($element) {
     return [IntPtr]::Zero
 }
 
+function Test-PopupScreenCropCandidate($window, $element) {
+    $bounds = Get-ElementScreenBounds $element 0
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return $false
+    }
+
+    $windowBounds = Get-ElementScreenBounds $window 0
+    if ($null -ne $windowBounds -and $windowBounds.Found) {
+        if ($bounds.Width -ge ($windowBounds.Width * 0.85) -or
+            $bounds.Height -ge ($windowBounds.Height * 0.85)) {
+            return $false
+        }
+    }
+
+    return $true
+}
+
+function Get-PopupScreenCropElement($window, $openElement) {
+    if ($null -eq $openElement) {
+        return $null
+    }
+
+    $best = $openElement
+    $candidate = $openElement
+    for ($depth = 0; $depth -lt 10 -and $null -ne $candidate; $depth++) {
+        try {
+            $parent = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+            if ($null -eq $parent -or !(Test-PopupScreenCropCandidate $window $parent)) {
+                break
+            }
+
+            $best = $parent
+            $candidate = $parent
+        }
+        catch {
+            break
+        }
+    }
+
+    return $best
+}
+
+function Test-ScreenElementPopupCropHasContent($crop) {
+    return $null -ne $crop -and
+        $crop.Found -and
+        $crop.NonBlank -and
+        $crop.Contains("VisibleStdDev") -and
+        $crop.VisibleStdDev -ge 8.0
+}
+
+function Capture-OpenElementPopupCrop($window, $openElement, [IntPtr]$popupHandle, [string]$popupWindowPath, [string]$screenElementPath) {
+    $mainHandle = $window.Current.NativeWindowHandle
+    if ($popupHandle -ne [IntPtr]::Zero -and $popupHandle -ne $mainHandle) {
+        try {
+            Capture-Window $popupHandle $popupWindowPath -SkipActivate
+            $popupNonBlank = Test-ImageNotBlank $popupWindowPath
+            if (!$popupNonBlank) {
+                Capture-ScreenRect $popupHandle $popupWindowPath
+                $popupNonBlank = Test-ImageNotBlank $popupWindowPath
+            }
+
+            if ($popupNonBlank) {
+                $popupSize = Get-ImageSize $popupWindowPath
+                return [ordered]@{
+                    Found = $true
+                    Source = "PopupWindow"
+                    Screenshot = $popupWindowPath
+                    Bounds = [ordered]@{
+                        Found = $true
+                        Reason = ""
+                        X = 0
+                        Y = 0
+                        Width = $popupSize.Width
+                        Height = $popupSize.Height
+                        ChangedSamples = 0
+                    }
+                    Width = $popupSize.Width
+                    Height = $popupSize.Height
+                    ChangedSamples = 0
+                    NonBlank = $true
+                    VisibleStdDev = Get-ImageVisibleStdDev $popupWindowPath
+                }
+            }
+        }
+        catch {
+        }
+    }
+
+    $screenElement = Get-PopupScreenCropElement $window $openElement
+    $screenElementCrop = Save-ScreenElementCrop $screenElement $screenElementPath "ScreenElement" 10 $window
+    if (Test-ScreenElementPopupCropHasContent $screenElementCrop) {
+        return $screenElementCrop
+    }
+
+    return $null
+}
+
 function Find-EditableDescendant($element) {
     if ($null -eq $element) {
         return $null
@@ -3508,12 +3765,15 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     $comboBoxPopupScreenshot = ""
     $comboBoxPopupNonBlank = $false
     $comboBoxPopupSize = $null
+    $comboBoxPopupCrop = $null
     $menuBarPopupNonBlank = $false
     $menuBarPopupScreenshot = ""
     $menuBarPopupSize = $null
+    $menuBarPopupCrop = $null
     $openPopupNonBlank = $false
     $openPopupScreenshot = ""
     $openPopupSize = $null
+    $openPopupCrop = $null
     $openElement = if ($control -eq "CommandBarFlyout") {
         Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move")
     }
@@ -3528,71 +3788,52 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         Write-UiaTree $openElement $treePath 3
         if ($control -eq "ComboBox") {
             $popupHandle = Get-ElementNativeWindowHandle $openElement
-            if ($popupHandle -ne [IntPtr]::Zero -and $popupHandle -ne $window.Current.NativeWindowHandle) {
-                $comboBoxPopupScreenshot = Join-Path $caseDir ("{0}-{1}-popup-window.png" -f $app.ToLowerInvariant(), $control)
-                try {
-                    Capture-Window $popupHandle $comboBoxPopupScreenshot -SkipActivate
-                    $comboBoxPopupNonBlank = Test-ImageNotBlank $comboBoxPopupScreenshot
-                    if ($comboBoxPopupNonBlank) {
-                        $comboBoxPopupSize = Get-ImageSize $comboBoxPopupScreenshot
-                    }
-                }
-                catch {
-                    $comboBoxPopupScreenshot = ""
-                    $comboBoxPopupNonBlank = $false
-                    $comboBoxPopupSize = $null
+            $comboBoxPopupCrop = Capture-OpenElementPopupCrop `
+                $window `
+                $openElement `
+                $popupHandle `
+                (Join-Path $caseDir ("{0}-{1}-popup-window.png" -f $app.ToLowerInvariant(), $control)) `
+                (Join-Path $caseDir ("{0}-{1}-popup-screen-element.png" -f $app.ToLowerInvariant(), $control))
+            if ($null -ne $comboBoxPopupCrop -and $comboBoxPopupCrop.NonBlank) {
+                $comboBoxPopupScreenshot = $comboBoxPopupCrop.Screenshot
+                $comboBoxPopupNonBlank = $true
+                $comboBoxPopupSize = [ordered]@{
+                    Width = $comboBoxPopupCrop.Width
+                    Height = $comboBoxPopupCrop.Height
                 }
             }
         }
         elseif ($control -eq "MenuBar") {
             $popupHandle = Get-ElementNativeWindowHandle $openElement
-            if ($popupHandle -ne [IntPtr]::Zero -and $popupHandle -ne $window.Current.NativeWindowHandle) {
-                $menuBarPopupScreenshot = Join-Path $caseDir ("{0}-{1}-popup-window.png" -f $app.ToLowerInvariant(), $control)
-                try {
-                    Capture-Window $popupHandle $menuBarPopupScreenshot -SkipActivate
-                    $menuBarPopupNonBlank = Test-ImageNotBlank $menuBarPopupScreenshot
-                    if (!$menuBarPopupNonBlank) {
-                        Capture-ScreenRect $popupHandle $menuBarPopupScreenshot
-                        $menuBarPopupNonBlank = Test-ImageNotBlank $menuBarPopupScreenshot
-                    }
-
-                    if ($menuBarPopupNonBlank) {
-                        $menuBarPopupSize = Get-ImageSize $menuBarPopupScreenshot
-                    }
-                    else {
-                        $menuBarPopupScreenshot = ""
-                    }
-                }
-                catch {
-                    $menuBarPopupScreenshot = ""
-                    $menuBarPopupNonBlank = $false
-                    $menuBarPopupSize = $null
+            $menuBarPopupCrop = Capture-OpenElementPopupCrop `
+                $window `
+                $openElement `
+                $popupHandle `
+                (Join-Path $caseDir ("{0}-{1}-popup-window.png" -f $app.ToLowerInvariant(), $control)) `
+                (Join-Path $caseDir ("{0}-{1}-popup-screen-element.png" -f $app.ToLowerInvariant(), $control))
+            if ($null -ne $menuBarPopupCrop -and $menuBarPopupCrop.NonBlank) {
+                $menuBarPopupScreenshot = $menuBarPopupCrop.Screenshot
+                $menuBarPopupNonBlank = $true
+                $menuBarPopupSize = [ordered]@{
+                    Width = $menuBarPopupCrop.Width
+                    Height = $menuBarPopupCrop.Height
                 }
             }
         }
         elseif (Test-ControlRequiresPopupWindowOpenProof $control) {
             $popupHandle = Get-ElementNativeWindowHandle $openElement
-            if ($popupHandle -ne [IntPtr]::Zero -and $popupHandle -ne $window.Current.NativeWindowHandle) {
-                $openPopupScreenshot = Join-Path $caseDir ("{0}-{1}-popup-window.png" -f $app.ToLowerInvariant(), $control)
-                try {
-                    Capture-Window $popupHandle $openPopupScreenshot -SkipActivate
-                    $openPopupNonBlank = Test-ImageNotBlank $openPopupScreenshot
-                    if (!$openPopupNonBlank) {
-                        Capture-ScreenRect $popupHandle $openPopupScreenshot
-                        $openPopupNonBlank = Test-ImageNotBlank $openPopupScreenshot
-                    }
-
-                    if ($openPopupNonBlank) {
-                        $openPopupSize = Get-ImageSize $openPopupScreenshot
-                    }
-                    else {
-                        $openPopupScreenshot = ""
-                    }
-                }
-                catch {
-                    $openPopupScreenshot = ""
-                    $openPopupNonBlank = $false
-                    $openPopupSize = $null
+            $openPopupCrop = Capture-OpenElementPopupCrop `
+                $window `
+                $openElement `
+                $popupHandle `
+                (Join-Path $caseDir ("{0}-{1}-popup-window.png" -f $app.ToLowerInvariant(), $control)) `
+                (Join-Path $caseDir ("{0}-{1}-popup-screen-element.png" -f $app.ToLowerInvariant(), $control))
+            if ($null -ne $openPopupCrop -and $openPopupCrop.NonBlank) {
+                $openPopupScreenshot = $openPopupCrop.Screenshot
+                $openPopupNonBlank = $true
+                $openPopupSize = [ordered]@{
+                    Width = $openPopupCrop.Width
+                    Height = $openPopupCrop.Height
                 }
             }
         }
@@ -3688,79 +3929,34 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         $visualOpened = $deltaOpened -or
             ($null -ne $crop -and $crop.Found -and $crop.Source -eq "Difference" -and $crop.ChangedSamples -gt 0)
         if ($control -eq "ComboBox") {
-            $visualOpened = $comboBoxPopupNonBlank -or
+            $comboBoxPopupTrusted = $comboBoxPopupNonBlank -and
+                ($null -ne $comboBoxPopupCrop) -and
+                ($comboBoxPopupCrop.Source -ne "ScreenElement" -or $screenCaptureTrusted)
+            $visualOpened = $comboBoxPopupTrusted -or
                 ($screenCaptureTrusted -and
                     $null -ne $comboBoxOpenVisualDelta -and
                     $comboBoxOpenVisualDelta.Comparable -and
                     $comboBoxOpenVisualDelta.MeanDelta -gt 5.0)
-            if ($comboBoxPopupNonBlank) {
-                $crop = [ordered]@{
-                    Found = $true
-                    Screenshot = $comboBoxPopupScreenshot
-                    Bounds = [ordered]@{
-                        Found = $true
-                        Reason = ""
-                        X = 0
-                        Y = 0
-                        Width = $comboBoxPopupSize.Width
-                        Height = $comboBoxPopupSize.Height
-                        ChangedSamples = 0
-                    }
-                    Width = $comboBoxPopupSize.Width
-                    Height = $comboBoxPopupSize.Height
-                    ChangedSamples = 0
-                    Source = "PopupWindow"
-                }
+            if ($comboBoxPopupTrusted) {
+                $crop = $comboBoxPopupCrop
             }
         }
         elseif ($control -eq "MenuBar") {
-            $visualOpened = $menuBarPopupNonBlank
-            if ($menuBarPopupNonBlank) {
-                $crop = [ordered]@{
-                    Found = $true
-                    Screenshot = $menuBarPopupScreenshot
-                    Bounds = [ordered]@{
-                        Found = $true
-                        Reason = ""
-                        X = 0
-                        Y = 0
-                        Width = $menuBarPopupSize.Width
-                        Height = $menuBarPopupSize.Height
-                        ChangedSamples = 0
-                    }
-                    Width = $menuBarPopupSize.Width
-                    Height = $menuBarPopupSize.Height
-                    ChangedSamples = 0
-                    Source = "PopupWindow"
-                }
+            $menuBarPopupTrusted = $menuBarPopupNonBlank -and
+                ($null -ne $menuBarPopupCrop) -and
+                ($menuBarPopupCrop.Source -ne "ScreenElement" -or $screenCaptureTrusted)
+            $visualOpened = $menuBarPopupTrusted
+            if ($menuBarPopupTrusted) {
+                $crop = $menuBarPopupCrop
             }
         }
         elseif (Test-ControlRequiresPopupWindowOpenProof $control) {
-            $referencePopupCropNonBlank =
-                $app -ne "ModernWpf" -and
-                $null -ne $crop -and
-                $crop.Found -and
-                ![string]::IsNullOrEmpty($crop.Screenshot) -and
-                (Test-ImageNotBlank $crop.Screenshot)
-            $visualOpened = $openPopupNonBlank -or $referencePopupCropNonBlank
-            if ($openPopupNonBlank) {
-                $crop = [ordered]@{
-                    Found = $true
-                    Screenshot = $openPopupScreenshot
-                    Bounds = [ordered]@{
-                        Found = $true
-                        Reason = ""
-                        X = 0
-                        Y = 0
-                        Width = $openPopupSize.Width
-                        Height = $openPopupSize.Height
-                        ChangedSamples = 0
-                    }
-                    Width = $openPopupSize.Width
-                    Height = $openPopupSize.Height
-                    ChangedSamples = 0
-                    Source = "PopupWindow"
-                }
+            $openPopupTrusted = $openPopupNonBlank -and
+                ($null -ne $openPopupCrop) -and
+                ($openPopupCrop.Source -ne "ScreenElement" -or $screenCaptureTrusted)
+            $visualOpened = $openPopupTrusted
+            if ($openPopupTrusted) {
+                $crop = $openPopupCrop
             }
         }
     }
@@ -3801,7 +3997,7 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     }
     elseif (Test-ControlRequiresPopupWindowOpenProof $control) {
         $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
-        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose opened popup content." } elseif (!$visualOpened) { "$control exposed opened popup UIA but no nonblank popup window was captured." } else { "" }
+        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose opened popup content." } elseif (!$visualOpened) { "$control exposed opened popup UIA but no nonblank popup pixels were captured." } else { "" }
     }
     else {
         $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -or $visualOpened) { "Passed" } else { "Failed" }
@@ -3836,12 +4032,15 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         ComboBoxPopupScreenshot = $comboBoxPopupScreenshot
         ComboBoxPopupNonBlank = $comboBoxPopupNonBlank
         ComboBoxPopupSize = $comboBoxPopupSize
+        ComboBoxPopupCrop = $comboBoxPopupCrop
         MenuBarPopupScreenshot = $menuBarPopupScreenshot
         MenuBarPopupNonBlank = $menuBarPopupNonBlank
         MenuBarPopupSize = $menuBarPopupSize
+        MenuBarPopupCrop = $menuBarPopupCrop
         OpenPopupScreenshot = $openPopupScreenshot
         OpenPopupNonBlank = $openPopupNonBlank
         OpenPopupSize = $openPopupSize
+        OpenPopupCrop = $openPopupCrop
         CommandBarFlyoutSecondaryExpanded = $commandBarFlyoutSecondaryExpanded
         SelectedFrameDelayMs = $(if ($null -ne $selectedFrame) { $selectedFrame.DelayMs } else { $null })
         SelectedFrameScreenshot = $(if ($null -ne $selectedFrame) { $selectedFrame.Screenshot } else { "" })
