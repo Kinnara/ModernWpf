@@ -10,6 +10,9 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class MediaSampleFactory
     {
+        private const string PersonPictureProfileImageResourcePath =
+            "Assets/SampleMedia/shoulder-tap-static-payload.png";
+
         private const string PersonPictureBasicXaml =
 @"<PersonPicture x:Name=""personPicture"" Height=""300"" VerticalAlignment=""Top"" />
 
@@ -151,7 +154,7 @@ namespace ModernWpf.Gallery.Pages
         {
             if (profileImageRadio.IsChecked == true)
             {
-                personPicture.ProfilePicture = CreateBitmap(ResourceUri("Assets/UserDashboard/64-100x100.jpg"));
+                personPicture.ProfilePicture = CreateBitmap(ResourceUri(PersonPictureProfileImageResourcePath));
                 personPicture.DisplayName = null;
                 personPicture.Initials = null;
             }
@@ -176,7 +179,10 @@ namespace ModernWpf.Gallery.Pages
             bitmap.UriSource = new Uri(uri, UriKind.Absolute);
             bitmap.CacheOption = BitmapCacheOption.OnLoad;
             bitmap.EndInit();
-            bitmap.Freeze();
+            if (bitmap.CanFreeze)
+            {
+                bitmap.Freeze();
+            }
             return bitmap;
         }
 

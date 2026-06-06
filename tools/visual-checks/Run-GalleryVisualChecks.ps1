@@ -2414,15 +2414,29 @@ function New-PersonPictureReferencePrimaryCrop([string]$caseDir, $window, [strin
         return $null
     }
 
-    $bounds = [ordered]@{
+    $profileImageRadio = Find-DescendantByAutomationId $window "ProfileImageRadio"
+    $profileImageRadioBounds = Get-ElementWindowBounds $window $profileImageRadio
+    $searchRight = if ($null -ne $profileImageRadioBounds -and $profileImageRadioBounds.Found) {
+        [Math]::Min($profileImageRadioBounds.X, $sampleBounds.X + 320)
+    } else {
+        $sampleBounds.X + 320
+    }
+    $searchBounds = [ordered]@{
         Found = $true
-        Reason = "Cropped the WinUI PersonPicture avatar from the first example content."
-        X = $sampleBounds.X + 59
-        Y = $sampleBounds.Y + 106
-        Width = $modernSize.Width
-        Height = $modernSize.Height
+        Reason = "Searches the first example body for the rendered PersonPicture image."
+        X = $sampleBounds.X
+        Y = $sampleBounds.Y + 70
+        Width = [Math]::Max($modernSize.Width, $searchRight - $sampleBounds.X)
+        Height = 170
         ChangedSamples = 0
     }
+
+    $bounds = Find-ColorfulContentCropBounds $screenshot $searchBounds $modernSize.Width $modernSize.Height
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return $null
+    }
+
+    $bounds.Reason = "Cropped the WinUI PersonPicture avatar from the first example content."
 
     $path = Join-Path $caseDir "winui3-PersonPicture-primary-content-crop.png"
     $savedBounds = Save-Crop $screenshot $bounds $path 0
@@ -2432,6 +2446,61 @@ function New-PersonPictureReferencePrimaryCrop([string]$caseDir, $window, [strin
     }
 
     return $null
+}
+
+function Find-ColorfulContentCropBounds([string]$screenshot, $searchBounds, [int]$targetWidth, [int]$targetHeight) {
+    if ($null -eq $searchBounds -or !$searchBounds.Found -or !(Test-Path $screenshot)) {
+        return $null
+    }
+
+    $source = [System.Drawing.Bitmap]::FromFile($screenshot)
+    try {
+        $left = [Math]::Max(0, [int]$searchBounds.X)
+        $top = [Math]::Max(0, [int]$searchBounds.Y)
+        $right = [Math]::Min($source.Width, [int]($searchBounds.X + $searchBounds.Width))
+        $bottom = [Math]::Min($source.Height, [int]($searchBounds.Y + $searchBounds.Height))
+        if ($right -le $left -or $bottom -le $top) {
+            return $null
+        }
+
+        $minX = $source.Width
+        $minY = $source.Height
+        $maxX = -1
+        $maxY = -1
+        $pixelCount = 0
+        for ($x = $left; $x -lt $right; $x++) {
+            for ($y = $top; $y -lt $bottom; $y++) {
+                $color = $source.GetPixel($x, $y)
+                $maxChannel = [Math]::Max($color.R, [Math]::Max($color.G, $color.B))
+                $minChannel = [Math]::Min($color.R, [Math]::Min($color.G, $color.B))
+                $luminance = (0.2126 * $color.R) + (0.7152 * $color.G) + (0.0722 * $color.B)
+                if (($maxChannel - $minChannel) -gt 22 -and $luminance -gt 45) {
+                    $minX = [Math]::Min($minX, $x)
+                    $maxX = [Math]::Max($maxX, $x)
+                    $minY = [Math]::Min($minY, $y)
+                    $maxY = [Math]::Max($maxY, $y)
+                    $pixelCount++
+                }
+            }
+        }
+
+        if ($pixelCount -lt 200 -or $maxX -lt $minX -or $maxY -lt $minY) {
+            return $null
+        }
+
+        return [ordered]@{
+            Found = $true
+            Reason = "Cropped the colorful rendered content within the search bounds."
+            X = [Math]::Max(0, [Math]::Min($source.Width - $targetWidth, $minX))
+            Y = [Math]::Max(0, [Math]::Min($source.Height - $targetHeight, $minY))
+            Width = $targetWidth
+            Height = $targetHeight
+            ChangedSamples = 0
+        }
+    }
+    finally {
+        $source.Dispose()
+    }
 }
 
 function Find-AccentComponentCropBounds([string]$screenshot, $searchBounds, [int]$targetWidth, [int]$targetHeight) {

@@ -2956,6 +2956,11 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(displayNameRadio));
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(initialsRadio));
                     Assert.IsNotNull(personPicture.ProfilePicture);
+                    var profileBitmap = personPicture.ProfilePicture as BitmapImage;
+                    Assert.IsNotNull(profileBitmap);
+                    Assert.AreEqual(
+                        "pack://application:,,,/ModernWpf.Gallery;component/Assets/SampleMedia/shoulder-tap-static-payload.png",
+                        profileBitmap.UriSource.AbsoluteUri);
                     Assert.AreEqual(string.Empty, personPicture.DisplayName);
                     Assert.AreEqual(string.Empty, personPicture.Initials);
 

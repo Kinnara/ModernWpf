@@ -2641,6 +2641,26 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void PersonPictureSampleUsesWinUIGalleryProfileImage()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "ModernWpf.Gallery",
+                "Pages",
+                "MediaSampleFactory.cs"));
+
+            AssertContainsInOrder(
+                source,
+                "private const string PersonPictureProfileImageResourcePath =",
+                "\"Assets/SampleMedia/shoulder-tap-static-payload.png\"",
+                "\"https://learn.microsoft.com/windows/uwp/contacts-and-calendar/images/shoulder-tap-static-payload.png\"",
+                "personPicture.ProfilePicture = CreateBitmap(ResourceUri(PersonPictureProfileImageResourcePath));");
+            Assert.IsFalse(
+                source.Contains("Assets/UserDashboard/64-100x100.jpg", StringComparison.Ordinal),
+                "PersonPicture should not render the local dashboard portrait for the WinUI profile-image state.");
+        }
+
+        [TestMethod]
         public void GalleryVisualChecksUseRenderedModernPrimaryArtifactsForSplitViewAndPersonPicture()
         {
             var source = File.ReadAllText(Path.Combine(
@@ -2682,8 +2702,12 @@ namespace ModernWpf.Gallery.Tests
                 "ThemeShadow demo body",
                 "function New-PersonPictureReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement)",
                 "GallerySample_PersonPicture_PersonPicture.png",
+                "Find-DescendantByAutomationId $window \"ProfileImageRadio\"",
+                "Find-ColorfulContentCropBounds $screenshot $searchBounds $modernSize.Width $modernSize.Height",
                 "Cropped the WinUI PersonPicture avatar from the first example content.",
                 "PersonPicture avatar",
+                "function Find-ColorfulContentCropBounds([string]$screenshot, $searchBounds, [int]$targetWidth, [int]$targetHeight)",
+                "($maxChannel - $minChannel) -gt 22",
                 "function Find-AccentComponentCropBounds([string]$screenshot, $searchBounds, [int]$targetWidth, [int]$targetHeight)",
                 "$color.B -gt 120",
                 "$minY -lt ($height * 0.65)",
@@ -2715,6 +2739,13 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 source.Contains("\"PersonPicture\" { return \"ProfileImageRadio\" }", StringComparison.Ordinal),
                 "PersonPicture primary parity must crop the avatar, not the profile-type radio button.");
+            Assert.IsFalse(
+                source.Contains("$sampleBounds.X + 59", StringComparison.Ordinal) ||
+                source.Contains("$sampleBounds.Y + 106", StringComparison.Ordinal) ||
+                source.Contains("$sampleBounds.Y + 38", StringComparison.Ordinal) ||
+                source.Contains("$profileImageRadioBounds.Y - 27", StringComparison.Ordinal) ||
+                source.Contains("$sampleBounds.X - 10", StringComparison.Ordinal),
+                "PersonPicture primary parity must crop the full avatar from pixels, not from stale hard-coded offsets.");
             Assert.IsFalse(
                 source.Contains("\"ThemeShadow\" { return \"svPanel\" }", StringComparison.Ordinal),
                 "ThemeShadow primary parity must crop the demo body, not the whole reference page sample.");

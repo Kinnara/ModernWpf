@@ -126,6 +126,33 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 117 closes the PersonPicture screenshot false-positive and sample image
+parity defect:
+
+- The previous focused PersonPicture screenshot evidence compared ModernWpf's
+  rendered avatar against the WinUI `ProfileImageRadio` row or against a
+  partial lower-right avatar crop. That missed the visible product mismatch:
+  ModernWpf used the local dashboard portrait
+  `Assets/UserDashboard/64-100x100.jpg`, while the sample code and WinUI
+  Gallery reference use the shoulder-tap profile image.
+- The Gallery sample now packages the official shoulder-tap PNG at
+  `Assets/SampleMedia/shoulder-tap-static-payload.png` and renders it through a
+  pack URI. The snippet still documents the original Learn URL, but runtime
+  rendering no longer depends on a network image load during visual capture.
+- `New-PersonPictureReferencePrimaryCrop` no longer derives the avatar crop
+  from stale `svPanel` or `ProfileImageRadio` offsets. It searches the first
+  WinUI sample body for the colorful rendered avatar pixels and crops the same
+  `96x96` area emitted by the ModernWpf rendered artifact.
+- Focused runtime/source-shape tests now pin the packaged profile image URI,
+  reject the old dashboard portrait, and reject the stale hard-coded crop
+  offsets.
+- Post-fix Dark visual parity at
+  `artifacts/visual-checks/20260606-193052-521-96680/report.md` passed with
+  PersonPicture primary crop delta `0.35` and matching `96x96 vs 96x96` crops.
+  Reviewed `GallerySample_PersonPicture_PersonPicture.png` and
+  `winui3-PersonPicture-primary-content-crop.png` show the same full
+  shoulder-tap avatar.
+
 Round 116 closes the AnnotatedScrollBar left-side geometry residual from Round
 115:
 
@@ -1548,6 +1575,7 @@ Latest focused evidence:
 
 | Run | Controls | Result |
 | --- | --- | --- |
+| `artifacts/visual-checks/20260606-193052-521-96680/report.md` | PersonPicture | 2 app/control rows passed; ModernWpf and WinUI primary avatar crops match at `96x96` with delta `0.35`, using the packaged shoulder-tap profile image |
 | `artifacts/visual-checks/20260606-190420-164-86500/report.md` | AnnotatedScrollBar | 2 app/control rows passed; options panel uses card background/padding, ScrollViewer artifact is `124x500`, and primary crop delta dropped from `15.36` to `4.43` |
 | `artifacts/visual-checks/20260606-173145-835-10284/report.md` | ColorPicker | 2 app/control rows passed; focused primary crops show the combo/hex row and vertical Red/Green/Blue rows on both ModernWpf and WinUI |
 | `artifacts/visual-checks/20260606-183210-009-111152/report.md` | SplitView | 2 app/control rows passed; corrected primary crop compares pane-plus-content `400x300` regions instead of the old WinUI `NavLinksList`-only crop |
@@ -1785,7 +1813,7 @@ proof on top of these static route captures.
 | Text | RichTextEdit | `item/RichTextEdit` | Recorded | Visual size fixed + recorder fixed | `artifacts/gallery-recordings/20260606-102212-861/RichTextEdit/light-richtextedit.mp4` | The Gallery sample now renders the live RichTextBox as a 160px-tall editor instead of the previous 32px one-line field. `RichTextEditAcceptsTextCompositionInput` proves the focused live RichTextBox accepts WPF text composition without diagnostic-prepared text, and the recorder now keeps running after `SendKeys` throws so the remaining fallbacks can type into the live control. Latest Light rendered rerun passes with `TextEvidence=true`, `AfterOutput=ModernWpf rich text`, `OutputMatched=true`, `InputMethod=WindowMessage`, local delta `3.467`, and reviewed frame `t10000` shows the text visibly rendered. Current Dark proof is `artifacts/gallery-recordings/20260606-110233-846/RichTextEdit/dark-richtextedit.mp4` with `TextEvidence=true`, `AfterOutput=ModernWpf rich text`, `OutputMatched=true`, `InputMethod=ClipboardPaste`, local delta `10.927`, and reviewed frame `t10000` visibly populated. These runs supersede failed Light runs `20260606-075521-729`, `20260606-083715-785`, `20260606-091557-396`, and stale failed Dark run `20260606-075734-362`. |
 | Layout | SplitView | `item/SplitView` | Recorded + screenshot | Screenshot harness corrected | `artifacts/gallery-recordings/20260606-071255-441/SplitView/light-splitview.mp4` | Latest Light rendered rerun toggles `IsPaneOpen` from On to Off with local visual delta `45.737` and whole-frame delta `0.495`; reviewed frame `t9500` shows the pane closed with the option controls aligned. Round 113 focused screenshot proof `artifacts/visual-checks/20260606-183210-009-111152/report.md` corrects the WinUI primary crop to compare the same `400x300` pane-plus-content region as ModernWpf, with primary delta `3.37`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/SplitView/dark-splitview.mp4`. |
 | Layout | Expander | `item/Expander` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/Expander/light-expander.mp4` | Latest Light rendered run records expansion evidence with whole-frame/local deltas `0.305` / `5.512`; reviewed frame `t9500` shows the expected content visible after expansion. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/Expander/dark-expander.mp4`. |
-| Media | PersonPicture | `item/PersonPicture` | Recorded | Recorder coverage hardened | `artifacts/gallery-recordings/20260606-073924-914/PersonPicture/light-personpicture.mp4` | Latest Light rendered rerun selects the `Display Name` radio instead of accepting a static route. Manifest records `SelectionEvidence=true`, `TargetName=Display Name`, local visual delta `20.344`, and reviewed `t9500` shows the avatar changed to the `JD` display-name state. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/PersonPicture/dark-personpicture.mp4`. |
+| Media | PersonPicture | `item/PersonPicture` | Recorded + screenshot | Fixed profile-image parity | `artifacts/visual-checks/20260606-193052-521-96680/report.md` | Round 117 fixes the profile-image sample to render the packaged shoulder-tap PNG used by the WinUI Gallery snippet/reference, replacing the old local dashboard portrait. The screenshot harness now crops the full WinUI avatar from rendered pixels instead of the `ProfileImageRadio` row or stale offsets; focused Dark parity passed with primary crop delta `0.35` and matching `96x96` crops. Latest Light interaction proof remains `artifacts/gallery-recordings/20260606-073924-914/PersonPicture/light-personpicture.mp4`, which selects `Display Name` and reviewed `t9500` shows the avatar changed to `JD`; previous Dark interaction proof remains `artifacts/gallery-recordings/20260606-052421-356/PersonPicture/dark-personpicture.mp4`. |
 | Styles | IconElement | `item/IconElement` | Recorded | Recorder coverage hardened | `artifacts/gallery-recordings/20260606-073924-914/IconElement/light-iconelement.mp4` | Latest Light rendered rerun toggles the `Monochrome` checkbox instead of accepting a static route. Manifest records `BeforeState=Off`, `AfterState=On`, `OptionEvidence=true`, local visual delta `4.175`, and reviewed `t9500` shows the monochrome bitmap icon and checked option. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/IconElement/dark-iconelement.mp4`. |
 | Styles | ThemeShadow | `item/ThemeShadow` | Recorded | Recorder coverage hardened | `artifacts/gallery-recordings/20260606-073924-914/ThemeShadow/light-themeshadow.mp4` | Latest Light rendered rerun moves the translation slider instead of accepting a static route. Manifest records `BeforeValue=32`, `AfterValue=42`, `TargetReached=true`, local visual delta `2.045`, and reviewed `t9500` shows the slider and shadow sample in the changed position. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/ThemeShadow/dark-themeshadow.mp4`. |
 | Windowing | TitleBar | `item/TitleBar` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-073924-914/TitleBar/light-titlebar.mp4` | Latest Light rendered run toggles `IsBackButtonVisible` and requires the preview Back button to become visible. Manifest records `BeforeState=Off`, `AfterState=On`, `BeforeExpectedElementVisible=false`, `AfterExpectedElementVisible=true`, `ExpectedElementChanged=true`, whole-frame delta `0.127`, and local visual delta `8.509`; reviewed frame `t9500` shows the Back preview button. The previous dark proof remains at `artifacts/gallery-recordings/20260606-021439-880/TitleBar/dark-titlebar.mp4`. |
