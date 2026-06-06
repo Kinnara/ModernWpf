@@ -3936,6 +3936,38 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryInteractionRecorderDoesNotLeaveInteractiveModernPagesStatic()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsSelectionInteraction([string]$control)",
+                "\"PersonPicture\" { return $true }",
+                "function Get-SelectionInteractionTriggerName([string]$control)",
+                "\"PersonPicture\" { return \"Display Name\" }");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsValueInteraction([string]$control)",
+                "\"ThemeShadow\" { return $true }",
+                "function Get-ControlInteractionKind([string]$control)",
+                "if (Test-ControlSupportsValueInteraction $control) { return \"Value\" }");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsOptionInteraction([string]$control)",
+                "\"IconElement\" { return $true }",
+                "\"InfoBadge\" { return $true }",
+                "function Get-OptionInteractionTriggerName([string]$control)",
+                "\"IconElement\" { return \"Monochrome\" }",
+                "function Get-OptionInteractionTriggerAutomationId([string]$control)",
+                "\"InfoBadge\" { return \"ToggleInfoBadgeOpacity\" }");
+        }
+
+        [TestMethod]
         public void GalleryInteractionRecorderHoverOpensOfficialWpfToolTip()
         {
             var source = File.ReadAllText(Path.Combine(

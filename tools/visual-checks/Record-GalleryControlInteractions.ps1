@@ -1190,6 +1190,7 @@ function Test-ControlSupportsSelectionInteraction([string]$control) {
     switch ($control) {
         "Calendar" { return $true }
         "DataGrid" { return $true }
+        "PersonPicture" { return $true }
         "RadioButton" { return $true }
         "GridView" { return $true }
         "ListBox" { return $true }
@@ -1213,8 +1214,10 @@ function Test-ControlSupportsOptionInteraction([string]$control) {
     switch ($control) {
         "Button" { return $true }
         "ColorPicker" { return $true }
+        "IconElement" { return $true }
         "SplitView" { return $true }
         "TitleBar" { return $true }
+        "InfoBadge" { return $true }
         "InfoBar" { return $true }
         "ProgressRing" { return $true }
         default { return $false }
@@ -1281,6 +1284,7 @@ function Test-ControlSupportsValueInteraction([string]$control) {
     switch ($control) {
         "RatingControl" { return $true }
         "Slider" { return $true }
+        "ThemeShadow" { return $true }
         "NumberBox" { return $true }
         default { return $false }
     }
@@ -1325,6 +1329,7 @@ function Get-RouteNavigationExpectedSampleAutomationId([string]$control) {
 function Get-SelectionInteractionTriggerName([string]$control) {
     switch ($control) {
         "ListBox" { return "Green" }
+        "PersonPicture" { return "Display Name" }
         "RadioButton" { return "Default Radio Option 2" }
         "GridView" { return "Item 1" }
         "SelectorBar" { return "Shared" }
@@ -3892,6 +3897,7 @@ function Get-OptionInteractionTriggerName([string]$control) {
     switch ($control) {
         "Button" { return "Disable button" }
         "ColorPicker" { return "IsMoreButtonVisible" }
+        "IconElement" { return "Monochrome" }
         "SplitView" { return "IsPaneOpen" }
         "TitleBar" { return "IsBackButtonVisible" }
         "InfoBar" { return "Is Open" }
@@ -3903,6 +3909,7 @@ function Get-OptionInteractionTriggerName([string]$control) {
 function Get-OptionInteractionTriggerAutomationId([string]$control) {
     switch ($control) {
         "SplitView" { return "GallerySample_SplitView_IsPaneOpenToggle" }
+        "InfoBadge" { return "ToggleInfoBadgeOpacity" }
         "InfoBar" { return "GallerySample_InfoBar_IsOpenCheckBox" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressToggle" }
         default { return "" }
