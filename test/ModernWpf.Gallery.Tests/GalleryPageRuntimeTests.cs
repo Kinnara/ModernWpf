@@ -1592,6 +1592,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("simple rich text editor", AutomationProperties.GetName(richTextBox));
                 Assert.IsTrue(double.IsNaN(richTextBox.Width));
                 Assert.IsTrue(double.IsNaN(richTextBox.Height));
+                Assert.AreEqual(160, richTextBox.MinHeight);
             });
         }
 
