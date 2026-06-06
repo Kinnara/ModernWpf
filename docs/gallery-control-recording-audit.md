@@ -126,6 +126,39 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 115 starts with the next retained ported-WinUI control after the
+WPF-reference audit: `AnnotatedScrollBar`.
+
+- Correct reference family: `AnnotatedScrollBar` is a ModernWpf port of a WinUI
+  control, so its static layout is compared with WinUI Gallery, unlike WPF
+  controls such as Slider/TextBox/Button that must use official WPF Gallery.
+- Focused Dark screenshot parity at
+  `artifacts/visual-checks/20260606-183549-708-216224/report.md` passed route
+  and crop capture but still showed an obvious options-layout mismatch in the
+  contact sheet: ModernWpf placed a separate text header row above the height
+  slider, while the WinUI sample uses the Slider header in a two-row options
+  grid with a `0,10,0,0` slider margin.
+- `ScrollingSampleFactory.CreateAnnotatedScrollBarExampleContent` now removes
+  the extra options-grid row. Because stock WPF `Slider` does not render
+  `ControlHelper.Header`, the visible header is retained inside a row-1
+  `StackPanel` that carries the WinUI-equivalent `0,10,0,0` top margin while
+  the slider itself remains unshifted.
+- The follow-up visual crop showed the larger remaining mismatch: the options
+  panel had a manual `52px` left offset and no card background/padding. The
+  options host now uses `CardBackgroundFillColorDefaultBrush`,
+  `ControlCornerRadius`, and `16px` padding with no manual offset, matching the
+  WinUI `ControlExample.Options` chrome more closely.
+- Post-fix Dark visual parity at
+  `artifacts/visual-checks/20260606-185509-529-52072/report.md` passed and
+  reduced the AnnotatedScrollBar primary crop delta from `15.36` to `7.5`.
+  Reviewed `GallerySample_AnnotatedScrollBar_Root.png` and the WinUI primary
+  content crop show the options text/slider aligned to the card panel. Residual
+  delta remains in the left color-grid/annotation area and is kept as the next
+  AnnotatedScrollBar follow-up rather than counted as an options-panel defect.
+- Runtime and source-shape tests now pin the WinUI-shaped options layout so a
+  future passing interaction or route check cannot silently reintroduce the
+  old three-row sample.
+
 Round 114 audits the WPF-versus-WinUI reference split after the Slider rollback:
 
 - The unpushed product changes were checked for WPF controls moved toward WinUI.
@@ -1495,6 +1528,7 @@ Latest focused evidence:
 
 | Run | Controls | Result |
 | --- | --- | --- |
+| `artifacts/visual-checks/20260606-185509-529-52072/report.md` | AnnotatedScrollBar | 2 app/control rows passed; options panel now uses card background/padding and primary crop delta dropped from `15.36` to `7.5`; left color-grid residual remains a follow-up |
 | `artifacts/visual-checks/20260606-173145-835-10284/report.md` | ColorPicker | 2 app/control rows passed; focused primary crops show the combo/hex row and vertical Red/Green/Blue rows on both ModernWpf and WinUI |
 | `artifacts/visual-checks/20260606-183210-009-111152/report.md` | SplitView | 2 app/control rows passed; corrected primary crop compares pane-plus-content `400x300` regions instead of the old WinUI `NavLinksList`-only crop |
 | `artifacts/visual-checks/20260606-171020-087-82140/report.md` | InfoBadge | 2 app/control rows passed; ModernWpf embedded NavigationView crop shows `Home`, `Account`, `Inbox`, `Settings`, and the `5` badge |
@@ -1739,7 +1773,7 @@ proof on top of these static route captures.
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/InfoBar/light-infobar.mp4` | Latest Light rendered rerun toggles `Is Open` from On to Off with local visual delta `4.173` and whole-frame delta `0.192`; reviewed frame `t9500` shows the first InfoBar sample closed while later samples remain aligned. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/InfoBar/dark-infobar.mp4`. |
 | Status & info | ProgressRing | `item/ProgressRing` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260606-071255-441/ProgressRing/light-progressring.mp4` | Latest Light manifest records `AnimationEvidence=true` with early-frame delta `0.083`, local visual delta `13.824`, and option state changing from On to Off despite low whole-frame delta `0.085`; reviewed frame `t9500` shows the toggled ProgressRing sample and aligned controls. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/ProgressRing/dark-progressring.mp4`. |
 | Status & info | ToolTip | `item/ToolTip` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-065048-868/ToolTip/light-tooltip.mp4` | ToolTip uses `OpenRepeat` proof instead of diagnostic `PreparedOpen`. Latest Light 18s rendered run passes with `OpenRepeatEvidence=true`, close method `Escape2`, frames `t3500` / `t5500` / `t10000`, deltas `5.786` / `0.181` / `5.749`, and local delta `43.935`; reviewed frame `t3500` shows the ToolTip beside the trigger. The previous dark proof remains at `artifacts/gallery-recordings/20260606-032006-230/ToolTip/dark-tooltip.mp4`. |
-| Scrolling | AnnotatedScrollBar | `item/AnnotatedScrollBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/AnnotatedScrollBar/light-annotatedscrollbar.mp4` | Latest Light rendered rerun records scroll evidence with whole-frame delta `4.548` and local visual delta `95.557`; reviewed frame `t9500` shows the colored list scrolled with annotated markers visible. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/AnnotatedScrollBar/dark-annotatedscrollbar.mp4`. |
+| Scrolling | AnnotatedScrollBar | `item/AnnotatedScrollBar` | Recorded + screenshot | Fixed options panel; left residual tracked | `artifacts/visual-checks/20260606-185509-529-52072/report.md` | Round 115 fixes the static options panel mismatch against WinUI Gallery: the sample now uses a two-row options layout, row-1 headered slider host, card background, `ControlCornerRadius`, and `16px` padding instead of the old third row and `52px` left offset. The focused Dark screenshot check passed and reduced primary crop delta from `15.36` to `7.5`; reviewed crops show the options text/slider aligned to the card panel. Residual delta remains in the left color-grid/annotation area and is tracked as the next follow-up. The latest Light scroll recording `artifacts/gallery-recordings/20260606-071255-441/AnnotatedScrollBar/light-annotatedscrollbar.mp4` remains interaction proof with whole-frame delta `4.548` and local visual delta `95.557`; previous Dark scroll proof remains at `artifacts/gallery-recordings/20260606-041123-086/AnnotatedScrollBar/dark-annotatedscrollbar.mp4`. |
 | Collections | GridView | `item/GridView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/GridView/light-gridview.mp4` | Latest Light rendered rerun selects `Item 1` and changes output to `You clicked Item 1.` with local visual delta `0.784` and whole-frame delta `0.085`; reviewed frame `t9500` shows populated GridView image tiles and the output text, so this remains visible rendered output proof rather than UIA-only proof. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/GridView/dark-gridview.mp4`. |
 | Collections | ItemsRepeater | `item/ItemsRepeater` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260606-071255-441/ItemsRepeater/light-itemsrepeater.mp4` | Latest Light rendered rerun records scroll evidence with whole-frame delta `6.815` and local visual delta `22.712`; reviewed frame `t9500` shows virtualized items in the 260s rendered after scroll. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/ItemsRepeater/dark-itemsrepeater.mp4`. |
 | Collections | ListBox | `item/ListBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/ListBox/light-listbox.mp4` | Latest Light rendered run records UIA selection evidence for target `Green` with whole-frame/local deltas `1.929` / `40.303`; reviewed frame `t9500` shows selected ListBox rows. Current Dark proof is `artifacts/gallery-recordings/20260606-113632-394/ListBox/dark-listbox.mp4` with `SelectionEvidence=true`, local delta `32.148`, and reviewed frame `t9500` showing selected ListBox rows. |

@@ -1320,6 +1320,18 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(100.0, heightSlider.Minimum);
                     Assert.AreEqual(500.0, heightSlider.Maximum);
                     Assert.AreEqual(500.0, heightSlider.Value);
+                    Assert.AreEqual(new Thickness(0), heightSlider.Margin);
+                    var heightSliderHost = heightSlider.Parent as StackPanel;
+                    Assert.IsNotNull(heightSliderHost);
+                    Assert.AreEqual(new Thickness(0, 10, 0, 0), heightSliderHost.Margin);
+                    var optionsGrid = heightSliderHost.Parent as Grid;
+                    Assert.IsNotNull(optionsGrid);
+                    var optionsHost = optionsGrid.Parent as Border;
+                    Assert.IsNotNull(optionsHost);
+                    Assert.AreEqual(new Thickness(0), optionsHost.Margin);
+                    Assert.AreEqual(new Thickness(16), optionsHost.Padding);
+                    Assert.AreEqual(new CornerRadius(4), optionsHost.CornerRadius);
+                    Assert.IsNotNull(optionsHost.Background);
                     Assert.IsTrue(heightSlider.IsSelectionRangeEnabled);
                     Assert.AreEqual(100.0, heightSlider.SelectionStart);
                     Assert.AreEqual(500.0, heightSlider.SelectionEnd);

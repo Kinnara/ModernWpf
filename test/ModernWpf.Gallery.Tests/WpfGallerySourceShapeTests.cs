@@ -2597,6 +2597,46 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void AnnotatedScrollBarOptionsFollowWinUIGallerySourceShape()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "ModernWpf.Gallery",
+                "Pages",
+                "ScrollingSampleFactory.cs"));
+
+            AssertContainsInOrder(
+                source,
+                "var slider = new Slider",
+                "Name = \"AnnotatedScrollBarMaxHeightSlider\"",
+                "Margin = new Thickness(0)",
+                "ControlHelper.SetHeader(slider, \"AnnotatedScrollBar maximum height:\");",
+                "var options = new Grid",
+                "MinWidth = 200",
+                "options.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });",
+                "options.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });",
+                "Text = \"Changing the AnnotatedScrollBar height refreshes its Labels layout.\"",
+                "var sliderHost = new StackPanel",
+                "Margin = new Thickness(0, 10, 0, 0)",
+                "var sliderHeader = new TextBlock",
+                "Text = \"AnnotatedScrollBar maximum height:\"",
+                "sliderHost.Children.Add(sliderHeader);",
+                "sliderHost.Children.Add(slider);",
+                "Grid.SetRow(sliderHost, 1);",
+                "options.Children.Add(sliderHost);",
+                "var optionsHost = new Border",
+                "Padding = new Thickness(16)",
+                "optionsHost.SetResourceReference(Border.BackgroundProperty, \"CardBackgroundFillColorDefaultBrush\");",
+                "optionsHost.SetResourceReference(Border.CornerRadiusProperty, \"ControlCornerRadius\");");
+            Assert.IsFalse(
+                source.Contains("Grid.SetRow(slider, 2);", StringComparison.Ordinal),
+                "AnnotatedScrollBar options should keep the slider in the second WinUI source row.");
+            Assert.IsFalse(
+                source.Contains("Margin = new Thickness(52, 0, 0, 0)", StringComparison.Ordinal),
+                "AnnotatedScrollBar options should use ControlExample-style padding instead of a manual left offset.");
+        }
+
+        [TestMethod]
         public void GalleryVisualChecksUseRenderedModernPrimaryArtifactsForSplitViewAndPersonPicture()
         {
             var source = File.ReadAllText(Path.Combine(

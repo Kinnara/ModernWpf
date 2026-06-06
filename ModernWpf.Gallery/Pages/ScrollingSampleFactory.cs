@@ -189,23 +189,26 @@ namespace ModernWpf.Gallery.Pages
             };
             options.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             options.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            options.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             options.Children.Add(new TextBlock
             {
                 Text = "Changing the AnnotatedScrollBar height refreshes its Labels layout.",
                 TextWrapping = TextWrapping.Wrap,
                 VerticalAlignment = VerticalAlignment.Center
             });
+            var sliderHost = new StackPanel
+            {
+                Margin = new Thickness(0, 10, 0, 0)
+            };
             var sliderHeader = new TextBlock
             {
                 Text = "AnnotatedScrollBar maximum height:",
-                Margin = new Thickness(0, 10, 0, 4),
+                Margin = new Thickness(0, 0, 0, 4),
                 VerticalAlignment = VerticalAlignment.Center
             };
-            Grid.SetRow(sliderHeader, 1);
-            options.Children.Add(sliderHeader);
-            Grid.SetRow(slider, 2);
-            options.Children.Add(slider);
+            sliderHost.Children.Add(sliderHeader);
+            sliderHost.Children.Add(slider);
+            Grid.SetRow(sliderHost, 1);
+            options.Children.Add(sliderHost);
 
             var layout = new Grid();
             layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(320) });
@@ -224,9 +227,11 @@ namespace ModernWpf.Gallery.Pages
             layout.Children.Add(optionsSeparator);
             var optionsHost = new Border
             {
-                Margin = new Thickness(52, 0, 0, 0),
+                Padding = new Thickness(16),
                 Child = options
             };
+            optionsHost.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            optionsHost.SetResourceReference(Border.CornerRadiusProperty, "ControlCornerRadius");
             Grid.SetColumn(optionsHost, 2);
             layout.Children.Add(optionsHost);
 
