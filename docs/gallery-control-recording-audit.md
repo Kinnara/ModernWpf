@@ -1095,6 +1095,44 @@ DataGrid selection evidence:
   `57.115`, and reviewed frame `t9500`. This is accepted as visual current-cell
   evidence for stock WPF DataGrid, not as machine-readable UIA selection proof.
 
+Round 102 hardens popup open-repeat recording and reduces the slow SplitButton
+path:
+
+- The initial Dark popup batch
+  `artifacts/gallery-recordings/20260606-115002-453/report.md` passed
+  `DropDownButton`, but the outer command timed out while recording
+  `SplitButton`. The completed DropDownButton checkpoint is accepted; the
+  partial SplitButton folder in that run is not accepted.
+- Focused Dark SplitButton run
+  `artifacts/gallery-recordings/20260606-115448-915/report.md` failed because
+  the fixed 24s video captured the first open but not the later close/reopen
+  cycle. The interaction eventually closed and reopened after the recording
+  window, which exposed that whole-process UIA popup searches were dominating
+  runtime.
+- The recorder now uses inferred anchored popup bounds for SplitButton and
+  ToggleSplitButton, tries fast popup close methods before leaf-item UIA
+  fallback, gives those fast popup controls an 18s minimum recording window,
+  and checks rendered close evidence before whole-process UIA "gone" searches.
+  DropDownButton is intentionally excluded from this fast path because native
+  click/Escape did not close its popup reliably in
+  `artifacts/gallery-recordings/20260606-122326-155/report.md`; its reliable
+  leaf-item UIA close path remains in use.
+- `Get-OpenRepeatVisualEvidence` now scans event windows derived from
+  `FirstOpenStartSeconds` and `SecondOpenStartSeconds` instead of accepting the
+  earliest global post-close delta. This rejected the previous false second-open
+  candidate and now reports `Detection=BaselineDeltaEventWindowScan`.
+- Accepted Dark reruns:
+  `artifacts/gallery-recordings/20260606-122109-523/report.md` passed
+  `SplitButton` with `CloseMethod=FastPopupEscape`, frames `t2000` / `t4000` /
+  `t11000`, deltas `21.39` / `0.03` / `21.428`, and local delta `35.623`;
+  `artifacts/gallery-recordings/20260606-122326-155/report.md` passed
+  `ToggleSplitButton` with `CloseMethod=FastPopupBoundsClick`, frames `t2000` /
+  `t4500` / `t14500`, deltas `8.97` / `0.186` / `8.997`, and local delta
+  `15.369`; `artifacts/gallery-recordings/20260606-122924-332/report.md`
+  passed `DropDownButton` with `CloseMethod=LeafCloseItem:Invoke`, frames
+  `t2000` / `t4000` / `t8500`, deltas `12.612` / `0.478` / `12.5`, and local
+  delta `12.63`.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -1201,6 +1239,11 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260606-113515-698/report.md` | Calendar | 1 passed, 0 needs review, 0 failed; isolated Dark Calendar rerun proves selected-day rendering with reviewed frame `t9500` |
 | `artifacts/gallery-recordings/20260606-113632-394/report.md` | ListBox, ListView, DataGrid | 3 passed, 0 needs review, 0 failed; Dark collection batch refreshed selection/current-cell frames and exposed the DataGrid whole-frame visual-selection fallback weakness |
 | `artifacts/gallery-recordings/20260606-114433-765/report.md` | DataGrid | 1 passed, 0 needs review, 0 failed; hardened DataGrid rerun proves visual fallback now uses local target-region delta `57.115` instead of whole-frame delta |
+| `artifacts/gallery-recordings/20260606-115002-453/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed; checkpointed result from a later timed-out two-control run |
+| `artifacts/gallery-recordings/20260606-115448-915/report.md` | SplitButton | 0 passed, 0 needs review, 1 failed; rejected because the video captured first open but not close/reopen before the recording ended |
+| `artifacts/gallery-recordings/20260606-122109-523/report.md` | SplitButton | 1 passed, 0 needs review, 0 failed; event-window proof accepts first/closed/second frames `t2000` / `t4000` / `t11000` |
+| `artifacts/gallery-recordings/20260606-122326-155/report.md` | DropDownButton, ToggleSplitButton | 1 passed, 0 needs review, 1 failed; ToggleSplitButton accepted, DropDownButton rejected from fast path |
+| `artifacts/gallery-recordings/20260606-122924-332/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed; DropDownButton remains on reliable leaf-item UIA close path with event-window proof |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 | `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
 | `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
@@ -1298,9 +1341,9 @@ proof on top of these static route captures.
 | Basic input | RatingControl | `item/RatingControl` | Recorded | Touch-first sample copy removed | `artifacts/gallery-recordings/20260606-070029-557/RatingControl/light-ratingcontrol.mp4` | Latest Light rendered rerun changes the rating from `0` to target `3` with local visual delta `3.861`; reviewed frame `t9500` shows three selected stars, output `3`, and the corrected `Click again to clear your rating.` text with no `Swipe left` instruction. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/RatingControl/dark-ratingcontrol.mp4` with `ValueEvidence=true`, value `0` to `3`, local delta `4.049`, and reviewed frame `t9500` showing the same corrected copy. |
 | Basic input | RepeatButton | `item/RepeatButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/RepeatButton/light-repeatbutton.mp4` | Latest Light rendered rerun changes output from `Control output` to `Number of clicks: 1` with local visual delta `0.669`; reviewed frame `t9500` shows the click count. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/RepeatButton/dark-repeatbutton.mp4` with `OutputEvidence=true`, output `Number of clicks: 1`, and local delta `1.002`. |
 | Basic input | ToggleButton | `item/ToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/ToggleButton/light-togglebutton.mp4` | Latest Light rendered rerun toggles Off to On with local visual delta `48.038`; reviewed frame `t9500` shows the checked ToggleButton and output text `On`. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/ToggleButton/dark-togglebutton.mp4` with `StateEvidence=true`, `AfterState=On`, and local delta `33.918`. |
-| Basic input | DropDownButton | `item/DropDownButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-064251-054/DropDownButton/light-dropdownbutton.mp4` | Latest Light 24s rendered run closes through the `Send` leaf item and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t3500` / `t6000` / `t16500`, deltas `9.819` / `0.456` / `9.908`, and local delta `9.934`; reviewed frame `t3500` shows the menu aligned under the trigger. The previous dark proof remains at `artifacts/gallery-recordings/20260606-030431-469/DropDownButton/dark-dropdownbutton.mp4`. |
-| Basic input | SplitButton | `item/SplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-064538-234/SplitButton/light-splitbutton.mp4` | Latest Light 24s rendered run closes through the `Red` leaf item and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t5000` / `t12000` / `t19000`, deltas `47.282` / `0.036` / `47.417`, and local delta `47.417`; reviewed frame `t5000` shows the color menu aligned under the trigger. The previous dark proof remains at `artifacts/gallery-recordings/20260606-030658-445/SplitButton/dark-splitbutton.mp4`. |
-| Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-064806-277/ToggleSplitButton/light-togglesplitbutton.mp4` | Latest Light 24s rendered run closes through the `Bulleted list` leaf item and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t5000` / `t12000` / `t19500`, deltas `5.265` / `0.025` / `5.385`, opened-element local delta `5.385`, and trigger-region local delta `46.41`; reviewed frame `t5000` shows the compact menu visible and aligned. The previous dark proof remains at `artifacts/gallery-recordings/20260606-030911-067/ToggleSplitButton/dark-togglesplitbutton.mp4`. |
+| Basic input | DropDownButton | `item/DropDownButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-122924-332/DropDownButton/dark-dropdownbutton.mp4` | Latest Dark rendered run keeps DropDownButton on the reliable `Send` leaf-item close path after rejected fast-bounds attempt `20260606-122326-155`. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=LeafCloseItem:Invoke`, frames `t2000` / `t4000` / `t8500`, deltas `12.612` / `0.478` / `12.5`, and local delta `12.63`; reviewed frames show open, closed, and second-open menu states aligned under the trigger. Latest Light proof remains `artifacts/gallery-recordings/20260606-064251-054/DropDownButton/light-dropdownbutton.mp4`. |
+| Basic input | SplitButton | `item/SplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-122109-523/SplitButton/dark-splitbutton.mp4` | Latest Dark rendered run uses the fast popup path and event-window proof. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=FastPopupEscape`, frames `t2000` / `t4000` / `t11000`, deltas `21.39` / `0.03` / `21.428`, and local delta `35.623`; reviewed frames show first open, closed state, and second open with the color menu aligned under the trigger. This supersedes failed run `20260606-115448-915`, where UIA search pushed close/reopen outside the fixed recording window. Latest Light proof remains `artifacts/gallery-recordings/20260606-064538-234/SplitButton/light-splitbutton.mp4`. |
+| Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-122326-155/ToggleSplitButton/dark-togglesplitbutton.mp4` | Latest Dark rendered run uses the fast popup path and event-window proof. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=FastPopupBoundsClick`, frames `t2000` / `t4500` / `t14500`, deltas `8.97` / `0.186` / `8.997`, opened-element local delta `12.26`, and trigger-region local delta `15.369`; reviewed frames show open, closed, and second-open compact menu states. Latest Light proof remains `artifacts/gallery-recordings/20260606-064806-277/ToggleSplitButton/light-togglesplitbutton.mp4`. |
 | Basic input | ToggleSwitch | `item/ToggleSwitch` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/ToggleSwitch/light-toggleswitch.mp4` | Latest Light rendered rerun toggles Off to On with local visual delta `7.322`; reviewed frame `t9500` shows the switches on with the `Working` content visible. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/ToggleSwitch/dark-toggleswitch.mp4` with `StateEvidence=true`, `AfterState=On`, local delta `7.017`, and reviewed frame `t9500` showing the switch and custom content aligned. |
 | Text | NumberBox | `item/NumberBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/NumberBox/light-numberbox.mp4` | Latest Light rendered rerun reaches value `20` from `10` with local visual delta `0.307`; reviewed frame `t9500` shows the updated value in the spin-button sample, so this remains rendered value proof rather than UIA-only proof. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/NumberBox/dark-numberbox.mp4` with `ValueEvidence=true`, value `10` to `20`, and local delta `0.377`. |
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-074841-162/AutoSuggestBox/light-autosuggestbox.mp4` | Latest Light rendered rerun uses an 18s capture and requires both UIA and final-frame visual close proof. Manifest records `SuggestionInvokeMethod=InvokePattern`, `SuggestionClosed=true`, `TextVisualClosedEvidence.Closed=true`, final frame `t17500`, final delta `0.941`, local visual delta `10.307`, and output `Aegean`; reviewed `t9500` shows the popup open during selection and reviewed `t17500` shows it gone with `Aegean` rendered in the text box and output. Current Dark proof is `artifacts/gallery-recordings/20260606-113018-274/AutoSuggestBox/dark-autosuggestbox.mp4` with `SuggestionClosed=true`, `TextVisualClosedEvidence.Closed=true`, output `Aegean`, local delta `11.377`, and reviewed final frame `t17500` showing the suggestion popup gone. The rejected `20260606-041123-086` row is kept only as false-pass evidence. |

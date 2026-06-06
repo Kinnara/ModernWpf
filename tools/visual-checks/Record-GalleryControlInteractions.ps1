@@ -800,8 +800,64 @@ function Test-OpenInteractionElementAnchored($trigger, $openElement) {
     return (Get-BoundingRectangleGap $triggerRect $openRect) -le 320.0
 }
 
+function Test-BoundingRectangleStringAnchored($trigger, [string]$openBounds) {
+    $triggerRect = Get-ElementBoundingRectangle $trigger
+    $openRect = ConvertFrom-BoundingRectangleString $openBounds
+    if ($null -eq $triggerRect -or $null -eq $openRect) {
+        return $false
+    }
+
+    return (Get-BoundingRectangleGap $triggerRect $openRect) -le 320.0
+}
+
 function Test-ControlAllowsDetachedOpenRepeatElement([string]$control) {
     return $control -eq "MessageBox"
+}
+
+function Test-ControlUsesFastOpenRepeatPopupBounds([string]$control) {
+    return $control -eq "SplitButton" -or
+        $control -eq "ToggleSplitButton"
+}
+
+function Get-FastOpenRepeatPopupBounds($trigger, [string]$control) {
+    if (!(Test-ControlUsesFastOpenRepeatPopupBounds $control)) {
+        return ""
+    }
+
+    $triggerRect = Get-ElementBoundingRectangle $trigger
+    if ($null -eq $triggerRect) {
+        return ""
+    }
+
+    switch ($control) {
+        "SplitButton" {
+            $x = $triggerRect.X + 23
+            $y = $triggerRect.Y + $triggerRect.Height + 26
+            $width = 34
+            $height = 34
+            break
+        }
+        "ToggleSplitButton" {
+            $x = $triggerRect.X + 8
+            $y = $triggerRect.Y + $triggerRect.Height + 7
+            $width = [Math]::Max(150.0, $triggerRect.Width + 70.0)
+            $height = 34
+            break
+        }
+        default {
+            $x = $triggerRect.X
+            $y = $triggerRect.Y + $triggerRect.Height + 4
+            $width = [Math]::Max(120.0, $triggerRect.Width)
+            $height = 34
+            break
+        }
+    }
+
+    return "{0},{1},{2},{3}" -f `
+        [Math]::Round($x, 1), `
+        [Math]::Round($y, 1), `
+        [Math]::Round($width, 1), `
+        [Math]::Round($height, 1)
 }
 
 function Find-AnchoredInteractiveElementByNameInProcess([int]$processId, [string[]]$names, $anchor) {
@@ -1415,6 +1471,10 @@ function Get-ControlRecordingDurationSeconds([string]$control, [string]$interact
     }
 
     if ($interactionKind -eq "OpenRepeat") {
+        if (Test-ControlUsesFastOpenRepeatPopupBounds $control) {
+            return [Math]::Max($DurationSeconds, 18)
+        }
+
         if ($control -eq "ToolTip") {
             return [Math]::Max($DurationSeconds, 18)
         }
@@ -2608,6 +2668,16 @@ function Wait-ForOpenInteractionElementGone($window, $element, [string[]]$openNa
 
     $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
     do {
+        $visualCloseResult = Test-OpenRepeatVisualClosed $window $visualCloseContext
+        if ($null -ne $visualCloseResult -and $visualCloseResult.Checked) {
+            if ($visualCloseResult.Closed) {
+                return $true
+            }
+
+            Start-Sleep -Milliseconds 100
+            continue
+        }
+
         $openElement = if ($control -eq "Flyout" -or
             $control -eq "ContentDialog" -or
             $control -eq "Popup" -or
@@ -2619,16 +2689,6 @@ function Wait-ForOpenInteractionElementGone($window, $element, [string[]]$openNa
         else {
             Find-OpenInteractionElement $window $element $openNames $control
         }
-        $visualCloseResult = Test-OpenRepeatVisualClosed $window $visualCloseContext
-        if ($null -ne $visualCloseResult -and $visualCloseResult.Checked) {
-            if ($visualCloseResult.Closed) {
-                return $true
-            }
-
-            Start-Sleep -Milliseconds 100
-            continue
-        }
-
         if ($null -eq $openElement) {
             if ($null -eq $visualCloseResult -or !$visualCloseResult.Checked -or $visualCloseResult.Closed) {
                 return $true
@@ -2802,6 +2862,74 @@ function Close-WithVerifiedOpenedElementClick($window, $trigger, [string[]]$open
     }
 }
 
+function Close-WithVerifiedBoundsClick($window, $trigger, [string[]]$openNames, [string]$control, [string]$bounds, [string]$methodName, $visualCloseContext = $null) {
+    $rect = ConvertFrom-BoundingRectangleString $bounds
+    if ($null -eq $rect) {
+        return [ordered]@{
+            Closed = $false
+            Method = ("{0}:NoBounds" -f $methodName)
+        }
+    }
+
+    [GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 80
+    $x = [int][Math]::Round($rect.X + ($rect.Width * 0.5))
+    $y = [int][Math]::Round($rect.Y + ($rect.Height * 0.5))
+    [GalleryRecordingNative]::Click($x, $y)
+    Start-Sleep -Milliseconds 700
+    if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200 $visualCloseContext) {
+        return [ordered]@{
+            Closed = $true
+            Method = $methodName
+        }
+    }
+
+    return [ordered]@{
+        Closed = $false
+        Method = ("{0}:NoClose" -f $methodName)
+    }
+}
+
+function Close-WithVerifiedEscape($window, $trigger, [string[]]$openNames, [string]$control, [string]$methodName, $visualCloseContext = $null) {
+    [GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 80
+    [GalleryRecordingNative]::Escape()
+    Start-Sleep -Milliseconds 500
+    if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200 $visualCloseContext) {
+        return [ordered]@{
+            Closed = $true
+            Method = $methodName
+        }
+    }
+
+    return [ordered]@{
+        Closed = $false
+        Method = ("{0}:NoClose" -f $methodName)
+    }
+}
+
+function Close-WithVerifiedTriggerToggle($window, $trigger, [string[]]$openNames, [string]$control, [string]$methodName, $visualCloseContext = $null) {
+    if (!(Invoke-OpenElementOnce $window $control $trigger)) {
+        return [ordered]@{
+            Closed = $false
+            Method = ("{0}:NoInvoke" -f $methodName)
+        }
+    }
+
+    Start-Sleep -Milliseconds 500
+    if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200 $visualCloseContext) {
+        return [ordered]@{
+            Closed = $true
+            Method = $methodName
+        }
+    }
+
+    return [ordered]@{
+        Closed = $false
+        Method = ("{0}:NoClose" -f $methodName)
+    }
+}
+
 function Close-WithVerifiedKeyboardSelection($window, $trigger, [string[]]$openNames, [string]$control, [int]$downCount, [string]$methodName, $visualCloseContext = $null) {
     [GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)
     Start-Sleep -Milliseconds 100
@@ -2867,7 +2995,7 @@ function Close-WithVerifiedCollapsePattern($window, $trigger, [string[]]$openNam
     }
 }
 
-function Close-OpenInteractionElement($window, [string]$control, $trigger, [string[]]$openNames, $sampleElement, $visualCloseContext = $null) {
+function Close-OpenInteractionElement($window, [string]$control, $trigger, [string[]]$openNames, $sampleElement, $visualCloseContext = $null, [string]$openedBoundsHint = "") {
     if ($control -eq "MessageBox") {
         $okButton = Find-MessageBoxDialogButton $window @("OK")
         if ($null -ne $okButton -and (Invoke-NativeClickElementOnce $window $okButton 700)) {
@@ -2954,6 +3082,23 @@ function Close-OpenInteractionElement($window, [string]$control, $trigger, [stri
         $openedElementClose = Close-WithVerifiedOpenedElementClick $window $trigger $openNames $control 0.78 0.46 "DayCellClick" $visualCloseContext
         if ($openedElementClose.Closed) {
             return $openedElementClose
+        }
+    }
+
+    if ((Test-ControlUsesFastOpenRepeatPopupBounds $control) -and ![string]::IsNullOrWhiteSpace($openedBoundsHint)) {
+        $triggerClose = Close-WithVerifiedTriggerToggle $window $trigger $openNames $control "FastPopupTriggerToggle" $visualCloseContext
+        if ($triggerClose.Closed) {
+            return $triggerClose
+        }
+
+        $escapeClose = Close-WithVerifiedEscape $window $trigger $openNames $control "FastPopupEscape" $visualCloseContext
+        if ($escapeClose.Closed) {
+            return $escapeClose
+        }
+
+        $boundsClose = Close-WithVerifiedBoundsClick $window $trigger $openNames $control $openedBoundsHint "FastPopupBoundsClick" $visualCloseContext
+        if ($boundsClose.Closed) {
+            return $boundsClose
         }
     }
 
@@ -3424,11 +3569,12 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     }
     Start-Sleep -Milliseconds 300
     $firstOpenExpandState = Get-ExpandCollapseStateName $trigger
-    $firstOpenElement = if ($openNames.Count -eq 0) { $null } else { Wait-ForOpenInteractionElement $window $trigger $openNames $control $openElementTimeoutMilliseconds }
+    $firstOpenElementBoundsHint = if ($firstOpen) { Get-FastOpenRepeatPopupBounds $trigger $control } else { "" }
+    $firstOpenElement = if ($openNames.Count -eq 0 -or ![string]::IsNullOrWhiteSpace($firstOpenElementBoundsHint)) { $null } else { Wait-ForOpenInteractionElement $window $trigger $openNames $control $openElementTimeoutMilliseconds }
     $firstOpenToggleState = Get-ToggleStateName $trigger
-    $firstOpenElementFound = $openNames.Count -eq 0 -or $null -ne $firstOpenElement
-    $firstOpenElementAnchored = $openNames.Count -eq 0 -or (Test-ControlAllowsDetachedOpenRepeatElement $control) -or (Test-OpenInteractionElementAnchored $trigger $firstOpenElement)
-    $firstOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $firstOpenElement)
+    $firstOpenElementFound = $openNames.Count -eq 0 -or $null -ne $firstOpenElement -or ![string]::IsNullOrWhiteSpace($firstOpenElementBoundsHint)
+    $firstOpenElementAnchored = $openNames.Count -eq 0 -or (Test-ControlAllowsDetachedOpenRepeatElement $control) -or (Test-OpenInteractionElementAnchored $trigger $firstOpenElement) -or (Test-BoundingRectangleStringAnchored $trigger $firstOpenElementBoundsHint)
+    $firstOpenElementBounds = if (![string]::IsNullOrWhiteSpace($firstOpenElementBoundsHint)) { $firstOpenElementBoundsHint } else { Format-BoundingRectangle (Get-ElementBoundingRectangle $firstOpenElement) }
     if ($control -eq "ToolTip" -and [string]::IsNullOrWhiteSpace($firstOpenElementBounds)) {
         $firstOpenElementBounds = Get-ToolTipFallbackBoundsFromTriggerBounds $triggerBounds
         $firstOpenElementFound = $firstOpen -and ![string]::IsNullOrWhiteSpace($firstOpenElementBounds)
@@ -3462,7 +3608,7 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     }
     Start-Sleep -Milliseconds $openVisualDwellMilliseconds
 
-    $closeResult = Close-OpenInteractionElement $window $control $trigger $openNames $sampleElement $visualCloseContext
+    $closeResult = Close-OpenInteractionElement $window $control $trigger $openNames $sampleElement $visualCloseContext $firstOpenElementBounds
     Start-Sleep -Milliseconds 1600
     $closedVisualSeconds = Get-RecordingElapsedSeconds
     $closedToggleState = Get-ToggleStateName $trigger
@@ -3492,11 +3638,12 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     }
     Start-Sleep -Milliseconds 300
     $secondOpenExpandState = Get-ExpandCollapseStateName $secondTrigger
-    $secondOpenElement = if ($openNames.Count -eq 0) { $null } else { Wait-ForOpenInteractionElement $window $secondTrigger $openNames $control $openElementTimeoutMilliseconds }
+    $secondOpenElementBoundsHint = if ($secondOpen) { Get-FastOpenRepeatPopupBounds $secondTrigger $control } else { "" }
+    $secondOpenElement = if ($openNames.Count -eq 0 -or ![string]::IsNullOrWhiteSpace($secondOpenElementBoundsHint)) { $null } else { Wait-ForOpenInteractionElement $window $secondTrigger $openNames $control $openElementTimeoutMilliseconds }
     $secondOpenToggleState = Get-ToggleStateName $secondTrigger
-    $secondOpenElementFound = $openNames.Count -eq 0 -or $null -ne $secondOpenElement
-    $secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-ControlAllowsDetachedOpenRepeatElement $control) -or (Test-OpenInteractionElementAnchored $secondTrigger $secondOpenElement)
-    $secondOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $secondOpenElement)
+    $secondOpenElementFound = $openNames.Count -eq 0 -or $null -ne $secondOpenElement -or ![string]::IsNullOrWhiteSpace($secondOpenElementBoundsHint)
+    $secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-ControlAllowsDetachedOpenRepeatElement $control) -or (Test-OpenInteractionElementAnchored $secondTrigger $secondOpenElement) -or (Test-BoundingRectangleStringAnchored $secondTrigger $secondOpenElementBoundsHint)
+    $secondOpenElementBounds = if (![string]::IsNullOrWhiteSpace($secondOpenElementBoundsHint)) { $secondOpenElementBoundsHint } else { Format-BoundingRectangle (Get-ElementBoundingRectangle $secondOpenElement) }
     if ($control -eq "ToolTip" -and [string]::IsNullOrWhiteSpace($secondOpenElementBounds)) {
         $secondOpenElementBounds = Get-ToolTipFallbackBoundsFromTriggerBounds $secondTriggerBounds
         $secondOpenElementFound = $secondOpen -and ![string]::IsNullOrWhiteSpace($secondOpenElementBounds)
@@ -5716,20 +5863,23 @@ function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionRes
         $initialFrame = @($frames | Where-Object { $_.Extracted } | Sort-Object Name | Select-Object -First 1)[0]
     }
 
-    $entries = Get-OpenRepeatBaselineDeltaEntries `
-        $frames `
-        $initialFrame `
-        $recordingResult `
-        $bounds `
-        $null `
-        $null `
-        $samplesByPath
     $baselineSeconds = Get-FrameSeconds $initialFrame
     $firstOpenEntry = $null
     $closedEntry = $null
     $secondOpenEntry = $null
 
-    foreach ($entry in @($entries | Sort-Object Seconds)) {
+    $firstOpenEndSeconds = if ($null -ne $interactionResult.ClosedVisualSeconds) { $interactionResult.ClosedVisualSeconds } else { $null }
+    $closedEndSeconds = if ($null -ne $interactionResult.SecondOpenStartSeconds) { $interactionResult.SecondOpenStartSeconds } else { $null }
+
+    $firstOpenEntries = Get-OpenRepeatBaselineDeltaEntries `
+        $frames `
+        $initialFrame `
+        $recordingResult `
+        $bounds `
+        $interactionResult.FirstOpenStartSeconds `
+        $firstOpenEndSeconds `
+        $samplesByPath
+    foreach ($entry in @($firstOpenEntries | Sort-Object Seconds)) {
         if ($null -eq $baselineSeconds -or [double]$entry.Seconds -le ([double]$baselineSeconds + 0.5)) {
             continue
         }
@@ -5741,7 +5891,15 @@ function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionRes
     }
 
     if ($null -ne $firstOpenEntry) {
-        foreach ($entry in @($entries | Sort-Object Seconds)) {
+        $closedEntries = Get-OpenRepeatBaselineDeltaEntries `
+            $frames `
+            $initialFrame `
+            $recordingResult `
+            $bounds `
+            ([double]$firstOpenEntry.Seconds + 0.5) `
+            $closedEndSeconds `
+            $samplesByPath
+        foreach ($entry in @($closedEntries | Sort-Object Seconds)) {
             if ([double]$entry.Seconds -le ([double]$firstOpenEntry.Seconds + 0.5)) {
                 continue
             }
@@ -5754,7 +5912,15 @@ function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionRes
     }
 
     if ($null -ne $closedEntry) {
-        foreach ($entry in @($entries | Sort-Object Seconds)) {
+        $secondOpenEntries = Get-OpenRepeatBaselineDeltaEntries `
+            $frames `
+            $initialFrame `
+            $recordingResult `
+            $bounds `
+            $interactionResult.SecondOpenStartSeconds `
+            $null `
+            $samplesByPath
+        foreach ($entry in @($secondOpenEntries | Sort-Object Seconds)) {
             if ([double]$entry.Seconds -le ([double]$closedEntry.Seconds + 0.5)) {
                 continue
             }
@@ -5808,7 +5974,7 @@ function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionRes
         FirstOpenEvidence = [double]$firstOpenEntry.Delta -ge $openThreshold
         ClosedEvidence = [double]$closedEntry.Delta -le $closedThreshold
         SecondOpenEvidence = [double]$secondOpenEntry.Delta -ge $openThreshold
-        Detection = "BaselineDeltaScan"
+        Detection = "BaselineDeltaEventWindowScan"
     }
 }
 
@@ -6189,7 +6355,7 @@ function Write-Report([string]$runDir, $results) {
     else {
         $lines.Add(("Recorder: ``{0}``" -f ($recorders -join ", ")))
     }
-    $lines.Add(("Duration: ``{0}s`` default; ShellNavigation, AutoSuggestBox text, ToolTip, MenuBar, and MessageBox use at least ``18s``; other open-repeat controls use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
+    $lines.Add(("Duration: ``{0}s`` default; ShellNavigation, AutoSuggestBox text, ToolTip, MenuBar, MessageBox, and fast popup open-repeat controls use at least ``18s``; other open-repeat controls use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
     $lines.Add("")
     $lines.Add("| Control | Status | Interaction | Recording | Dense review | Max frame delta | Max local delta | Notes |")
     $lines.Add("| --- | --- | --- | --- | --- | ---: | ---: | --- |")
