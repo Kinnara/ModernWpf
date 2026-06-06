@@ -126,6 +126,76 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 118 fixes the Styles sample options chrome for `IconElement` and
+`ThemeShadow`:
+
+- The focused non-popup Dark screenshot sweep at
+  `artifacts/visual-checks/20260606-193515-300-68684/report.md` passed route
+  capture but manual crop review found obvious options-panel defects. The
+  `IconElement` `Monochrome` checkbox was visually floating in the example
+  content instead of living in the WinUI-style side panel, and the
+  `ThemeShadow` slider lacked the same options chrome and visible
+  `Z-translation` header.
+- A first factory-local options host improved the root crops at
+  `artifacts/visual-checks/20260606-194448-127-116608/report.md`, but
+  full-page screenshots still showed the options nested inside the
+  `ExampleContent` padding. That left the panel start too far right compared
+  with WinUI Gallery's template-level `ControlExample.Options` presenter.
+- `ControlExample` now exposes optional `OptionsContent`, and `ItemPage` binds
+  `GalleryExample.OptionsContent` into the template. The options presenter is a
+  real sample-row side column with `200px` minimum width, `320px` maximum
+  width, `CardBackgroundFillColorDefaultBrush`, a divider stroke, and `16px`
+  padding. The column collapses to zero width when no options are supplied, so
+  direct official-WPF Gallery pages without options keep the no-options visual
+  row.
+- `StylesSampleFactory` now supplies the BitmapIcon `Monochrome` checkbox and
+  the ThemeShadow `Z-translation` slider through `OptionsContent` for
+  ItemPage-hosted examples. The standalone factory path still wraps content and
+  options together so diagnostic direct sample creation remains usable.
+- Moving options out of the ThemeShadow sample root made the required primary
+  crop a low-texture shadow/card body. The visual checker keeps ThemeShadow's
+  required primary crop but uses a control-specific visible-variation floor of
+  `4.0`; the failed guard-only run at
+  `artifacts/visual-checks/20260606-195938-160-40748/report.md` had nonblank
+  crops and tight primary delta `0.97`.
+- The first post-fix recording
+  `artifacts/gallery-recordings/20260606-200439-290/report.md` is rejected as
+  insufficient evidence. It proved the `ThemeShadow` value changed from `32`
+  to `42`, but the visible delta came from the layout shift the user reported,
+  so it did not prove the sample card stayed fixed while depth changed.
+- The product fix pins the sample `ThemeShadowChrome` to the source-shaped
+  popup inset mode and compensates the fixed sample margin, so the 200x200
+  `ShadowRect` child remains at the same rendered origin when depth changes.
+  `ThemeShadowSampleMatchesWinUIGalleryExample` now asserts the
+  `ShadowRect.TranslatePoint` origin before and after moving the slider to
+  `48`.
+- The first hardened proof run
+  `artifacts/gallery-recordings/20260606-201636-415/report.md` failed because
+  UI Automation could not see the plain WPF `Border` used as the sample card.
+  `GalleryDiagnostics` now emits a `.bounds.txt` sidecar next to every rendered
+  visual artifact, so the recorder can verify rendered sample bounds even when
+  UIA has no element for the visual.
+- The second hardened proof run
+  `artifacts/gallery-recordings/20260606-202234-662/report.md` failed because
+  the baseline sidecar was stale from before the recorder moved the app window.
+  The recorder now refreshes ModernWpf rendered artifacts before taking the
+  baseline and again after the value interaction.
+- The accepted focused Dark recording is
+  `artifacts/gallery-recordings/20260606-202416-952/report.md`: it moves the
+  translation slider from `32` to `42`, records `ValueEvidence=true`, and
+  proves `BeforeLayoutBounds` and `AfterLayoutBounds` are both
+  `586.0,437.0,200.0,200.0` with `LayoutStabilityEvidence=true`.
+- Post-fix Dark screenshot parity passed at
+  `artifacts/visual-checks/20260606-202525-061-150024/report.md`.
+  `IconElement` primary crop delta is `13.08` with matching `590x118` crops,
+  and `ThemeShadow` primary crop delta is `0.69` with matching `557x272`
+  crops. Reviewed full-page captures show both controls using a template-level
+  side options panel aligned with the WinUI Gallery sample row.
+- Focused tests passed for `IconElement`, `ThemeShadow`, `ControlExample`
+  options plumbing/source shape, the ItemPage binding, visual-artifact bounds
+  sidecars, the ThemeShadow visual-check threshold guard, and the recorder's
+  ThemeShadow layout-stability gate.
+
 Round 117 closes the PersonPicture screenshot false-positive and sample image
 parity defect:
 
@@ -1575,6 +1645,7 @@ Latest focused evidence:
 
 | Run | Controls | Result |
 | --- | --- | --- |
+| `artifacts/visual-checks/20260606-202525-061-150024/report.md` | IconElement, ThemeShadow | 4 app/control rows passed; IconElement primary crops match at `590x118` with delta `13.08`, and ThemeShadow primary crops match at `557x272` with delta `0.69` after the fixed options chrome and stable-depth layout |
 | `artifacts/visual-checks/20260606-193052-521-96680/report.md` | PersonPicture | 2 app/control rows passed; ModernWpf and WinUI primary avatar crops match at `96x96` with delta `0.35`, using the packaged shoulder-tap profile image |
 | `artifacts/visual-checks/20260606-190420-164-86500/report.md` | AnnotatedScrollBar | 2 app/control rows passed; options panel uses card background/padding, ScrollViewer artifact is `124x500`, and primary crop delta dropped from `15.36` to `4.43` |
 | `artifacts/visual-checks/20260606-173145-835-10284/report.md` | ColorPicker | 2 app/control rows passed; focused primary crops show the combo/hex row and vertical Red/Green/Blue rows on both ModernWpf and WinUI |
@@ -1705,6 +1776,7 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260606-140850-692/report.md` | Menu | 1 passed, 0 needs review, 0 failed; final Auto-default run selected `libx264`, recorded `6.7s/24s`, and completed in 37.2s wall time |
 | `artifacts/gallery-recordings/20260606-141244-639/report.md` | ColorPicker, ProgressRing, InfoBar, SplitView, AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, SelectorBar, TabControl | 10 passed, 0 needs review, 0 failed; manual frame review found SelectorBar sample text contrast was bad despite the green recorder result |
 | `artifacts/gallery-recordings/20260606-141752-321/report.md` | SelectorBar | 1 passed, 0 needs review, 0 failed; post-fix Dark rerun shows readable dark `SamplePage1` text in frame `t4000` |
+| `artifacts/gallery-recordings/20260606-202416-952/report.md` | ThemeShadow | 1 passed, 0 needs review, 0 failed; value moved `32 -> 42` and rendered `ShadowRect` bounds stayed fixed at `586.0,437.0,200.0,200.0` before and after the depth change |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 | `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
 | `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
@@ -1814,8 +1886,8 @@ proof on top of these static route captures.
 | Layout | SplitView | `item/SplitView` | Recorded + screenshot | Screenshot harness corrected | `artifacts/gallery-recordings/20260606-071255-441/SplitView/light-splitview.mp4` | Latest Light rendered rerun toggles `IsPaneOpen` from On to Off with local visual delta `45.737` and whole-frame delta `0.495`; reviewed frame `t9500` shows the pane closed with the option controls aligned. Round 113 focused screenshot proof `artifacts/visual-checks/20260606-183210-009-111152/report.md` corrects the WinUI primary crop to compare the same `400x300` pane-plus-content region as ModernWpf, with primary delta `3.37`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/SplitView/dark-splitview.mp4`. |
 | Layout | Expander | `item/Expander` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/Expander/light-expander.mp4` | Latest Light rendered run records expansion evidence with whole-frame/local deltas `0.305` / `5.512`; reviewed frame `t9500` shows the expected content visible after expansion. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/Expander/dark-expander.mp4`. |
 | Media | PersonPicture | `item/PersonPicture` | Recorded + screenshot | Fixed profile-image parity | `artifacts/visual-checks/20260606-193052-521-96680/report.md` | Round 117 fixes the profile-image sample to render the packaged shoulder-tap PNG used by the WinUI Gallery snippet/reference, replacing the old local dashboard portrait. The screenshot harness now crops the full WinUI avatar from rendered pixels instead of the `ProfileImageRadio` row or stale offsets; focused Dark parity passed with primary crop delta `0.35` and matching `96x96` crops. Latest Light interaction proof remains `artifacts/gallery-recordings/20260606-073924-914/PersonPicture/light-personpicture.mp4`, which selects `Display Name` and reviewed `t9500` shows the avatar changed to `JD`; previous Dark interaction proof remains `artifacts/gallery-recordings/20260606-052421-356/PersonPicture/dark-personpicture.mp4`. |
-| Styles | IconElement | `item/IconElement` | Recorded | Recorder coverage hardened | `artifacts/gallery-recordings/20260606-073924-914/IconElement/light-iconelement.mp4` | Latest Light rendered rerun toggles the `Monochrome` checkbox instead of accepting a static route. Manifest records `BeforeState=Off`, `AfterState=On`, `OptionEvidence=true`, local visual delta `4.175`, and reviewed `t9500` shows the monochrome bitmap icon and checked option. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/IconElement/dark-iconelement.mp4`. |
-| Styles | ThemeShadow | `item/ThemeShadow` | Recorded | Recorder coverage hardened | `artifacts/gallery-recordings/20260606-073924-914/ThemeShadow/light-themeshadow.mp4` | Latest Light rendered rerun moves the translation slider instead of accepting a static route. Manifest records `BeforeValue=32`, `AfterValue=42`, `TargetReached=true`, local visual delta `2.045`, and reviewed `t9500` shows the slider and shadow sample in the changed position. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/ThemeShadow/dark-themeshadow.mp4`. |
+| Styles | IconElement | `item/IconElement` | Recorded + screenshot | Fixed options chrome | `artifacts/visual-checks/20260606-202525-061-150024/report.md` | Round 118 moves the `Monochrome` checkbox out of `ExampleContent` and into `ControlExample.OptionsContent`, so the first sample renders a template-level side options panel with `200-320px` width, card background, divider, and `16px` padding. Latest focused Dark screenshot parity passed with matching `590x118` primary crops and delta `13.08`; reviewed full-page captures show the side panel aligned with the sample row. Latest Light interaction proof remains `artifacts/gallery-recordings/20260606-073924-914/IconElement/light-iconelement.mp4`, which toggles `Monochrome` Off -> On with local visual delta `4.175`; previous Dark interaction proof remains `artifacts/gallery-recordings/20260606-052421-356/IconElement/dark-iconelement.mp4`. |
+| Styles | ThemeShadow | `item/ThemeShadow` | Recorded + screenshot | Fixed options chrome + stable depth-change layout | `artifacts/gallery-recordings/20260606-202416-952/report.md` | Round 118 moves the `Z-translation` slider into `ControlExample.OptionsContent`, adds a visible header for WPF Slider, and renders the options in the template side panel instead of a floating right-margin stack. The first post-fix recording `artifacts/gallery-recordings/20260606-200439-290/report.md` is rejected because it did not prove the card stayed fixed. Latest Dark screenshot parity passed at `artifacts/visual-checks/20260606-202525-061-150024/report.md` with matching `557x272` primary crops and delta `0.69`; the visual checker keeps ThemeShadow's required primary crop with a `4.0` low-texture threshold. Latest Dark recording moves depth `32 -> 42`, records `ValueEvidence=true`, and proves rendered `ShadowRect` bounds stayed fixed at `586.0,437.0,200.0,200.0` with `LayoutStabilityEvidence=true`. Previous Light proof remains `artifacts/gallery-recordings/20260606-073924-914/ThemeShadow/light-themeshadow.mp4`. |
 | Windowing | TitleBar | `item/TitleBar` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-073924-914/TitleBar/light-titlebar.mp4` | Latest Light rendered run toggles `IsBackButtonVisible` and requires the preview Back button to become visible. Manifest records `BeforeState=Off`, `AfterState=On`, `BeforeExpectedElementVisible=false`, `AfterExpectedElementVisible=true`, `ExpectedElementChanged=true`, whole-frame delta `0.127`, and local visual delta `8.509`; reviewed frame `t9500` shows the Back preview button. The previous dark proof remains at `artifacts/gallery-recordings/20260606-021439-880/TitleBar/dark-titlebar.mp4`. |
 | Status & info | InfoBadge | `item/InfoBadge` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-171020-087-82140/report.md` | Round 108 fixed the base InfoBadge auto corner radius and Round 109 fixed the embedded NavigationView sample by refreshing `TemplateSettings.OpenPaneLength` during arrange. `InfoBadgeSampleMatchesWinUIGalleryExamples` now asserts rendered bounds for the nested `Inbox` item and `5` badge plus visible `Home`, `Account`, and `Inbox` text. The screenshot harness uses the embedded NavigationView artifact as the required primary crop with variation threshold `8.0`; reviewed `modernwpf-artifacts/GallerySample_InfoBadge_NavigationView.png` shows `Home`, `Account`, `Inbox`, `Settings`, and the `5` badge. Older Light/Dark recordings still prove the opacity-toggle interaction path, but embedded-badge static parity is now screenshot-backed. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/InfoBar/light-infobar.mp4` | Latest Light rendered rerun toggles `Is Open` from On to Off with local visual delta `4.173` and whole-frame delta `0.192`; reviewed frame `t9500` shows the first InfoBar sample closed while later samples remain aligned. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/InfoBar/dark-infobar.mp4`. |

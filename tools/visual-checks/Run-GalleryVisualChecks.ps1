@@ -904,6 +904,7 @@ function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
         "InfoBadge" { return 8.0 }
         "NavigationView" { return 45.0 }
         "AutoSuggestBox" { return 1.0 }
+        "ThemeShadow" { return 4.0 }
         default { return 6.0 }
     }
 }

@@ -488,11 +488,21 @@ namespace ModernWpf.Gallery.Tests
                     var displayBorder = FindVisualChildren<Border>(controlExample)
                         .Single(border =>
                             Grid.GetRow(border) == 1 &&
-                            border.Padding == new Thickness(16) &&
+                            border.BorderThickness == new Thickness(1, 1, 1, 0) &&
                             border.CornerRadius == new CornerRadius(8, 8, 0, 0));
                     Assert.AreEqual(
                         (double)Application.Current.FindResource("BodyTextBlockFontSize"),
                         TextElement.GetFontSize(displayBorder));
+                    var examplePresenter = FindVisualChildren<ContentPresenter>(displayBorder)
+                        .Single(presenter => ReferenceEquals(presenter.Content, controlExample.ExampleContent));
+                    Assert.AreEqual(new Thickness(16), examplePresenter.Margin);
+                    var optionsRoot = (Border)controlExample.Template.FindName("OptionsRoot", controlExample);
+                    Assert.IsNotNull(optionsRoot);
+                    Assert.AreEqual(Visibility.Collapsed, optionsRoot.Visibility);
+                    var optionsColumn = (ColumnDefinition)controlExample.Template.FindName("OptionsColumn", controlExample);
+                    Assert.IsNotNull(optionsColumn);
+                    Assert.AreEqual(0d, optionsColumn.MinWidth);
+                    Assert.AreEqual(320d, optionsColumn.MaxWidth);
 
                     Assert.IsNull(controlExample.Template.FindName("SourceCodeExpander", controlExample));
                     var sourceCodeExpander = FindVisualChildren<Expander>(controlExample).Single();

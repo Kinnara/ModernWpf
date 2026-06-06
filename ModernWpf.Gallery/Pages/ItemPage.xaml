@@ -47,6 +47,7 @@
                                 XamlCode="{Binding XamlCode}"
                                 CSharpCode="{Binding CSharpCode}"
                                 ExampleContent="{Binding ExampleContent}"
+                                OptionsContent="{Binding OptionsContent}"
                                 Margin="{Binding Margin}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

@@ -3028,8 +3028,9 @@ namespace ModernWpf.Gallery.Tests
 
                     var bitmapRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
                     Assert.AreEqual(1, bitmapRoot.Children.Count);
-                    var bitmapLayout = (Grid)bitmapRoot.Children[0];
-                    Assert.AreEqual(2, bitmapLayout.ColumnDefinitions.Count);
+                    Assert.IsInstanceOfType(bitmapRoot.Children[0], typeof(StackPanel));
+                    var bitmapOptions = (CheckBox)page.Examples[0].OptionsContent;
+                    Assert.IsNotNull(bitmapOptions);
 
                     var slicesIcon = (Mux.BitmapIcon)FindByAutomationId(page, "GallerySample_IconElement_SlicesIcon");
                     Assert.IsNotNull(slicesIcon);
@@ -3041,6 +3042,7 @@ namespace ModernWpf.Gallery.Tests
 
                     var monochromeButton = FindNamedDescendant<CheckBox>(page, "MonochromeButton");
                     Assert.IsNotNull(monochromeButton);
+                    Assert.AreSame(bitmapOptions, monochromeButton);
                     Assert.AreEqual("Monochrome", monochromeButton.Content);
                     Assert.AreEqual(false, monochromeButton.IsChecked);
                     monochromeButton.IsChecked = true;
@@ -3130,8 +3132,12 @@ namespace ModernWpf.Gallery.Tests
 
                     var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
                     Assert.AreEqual(1, root.Children.Count);
-                    var layout = (Grid)root.Children[0];
-                    Assert.AreEqual(2, layout.ColumnDefinitions.Count);
+                    Assert.IsInstanceOfType(root.Children[0], typeof(Grid));
+                    var optionsPanel = (StackPanel)page.Examples[0].OptionsContent;
+                    Assert.AreEqual(2, optionsPanel.Children.Count);
+                    var sliderHeader = (TextBlock)optionsPanel.Children[0];
+                    Assert.AreEqual("Z-translation", sliderHeader.Text);
+                    Assert.AreEqual(new Thickness(0, 0, 0, 10), sliderHeader.Margin);
 
                     var exampleGrid = FindNamedDescendant<Grid>(page, "Example3Grid");
                     Assert.IsNotNull(exampleGrid);
@@ -3146,7 +3152,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(shadow);
                     Assert.AreEqual(32d, shadow.Depth);
                     Assert.AreEqual(32d, shadow.TranslationZ);
-                    Assert.AreEqual(new Thickness(36), shadow.Margin);
+                    Assert.AreEqual(new Thickness(42, 43, 0, 0), shadow.Margin);
+                    Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, shadow.WindowedPopupInsetMode);
                     Assert.AreEqual(HorizontalAlignment.Left, shadow.HorizontalAlignment);
                     Assert.AreEqual(VerticalAlignment.Top, shadow.VerticalAlignment);
 
@@ -3169,10 +3176,16 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(1d, slider.TickFrequency);
                     Assert.AreEqual(32d, slider.Value);
 
+                    var beforePosition = shadowRect.TranslatePoint(new Point(), exampleGrid);
                     slider.Value = 48;
                     WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+                    var afterPosition = shadowRect.TranslatePoint(new Point(), exampleGrid);
                     Assert.AreEqual(48d, shadow.Depth);
                     Assert.AreEqual(48d, shadow.TranslationZ);
+                    Assert.AreEqual(beforePosition.X, afterPosition.X, 0.5, "Changing ThemeShadow depth should not move the sample card horizontally.");
+                    Assert.AreEqual(beforePosition.Y, afterPosition.Y, 0.5, "Changing ThemeShadow depth should not move the sample card vertically.");
                 }
                 finally
                 {
@@ -3494,13 +3507,24 @@ namespace ModernWpf.Gallery.Tests
                     GalleryDiagnostics.WriteVisualArtifacts(page);
 
                     var infoBarArtifact = Path.Combine(artifactDirectory, "GallerySample_InfoBar_InfoBar.png");
+                    var infoBarBoundsArtifact = Path.Combine(artifactDirectory, "GallerySample_InfoBar_InfoBar.bounds.txt");
                     var rootArtifact = Path.Combine(artifactDirectory, "GallerySample_InfoBar_Root.png");
+                    var rootBoundsArtifact = Path.Combine(artifactDirectory, "GallerySample_InfoBar_Root.bounds.txt");
                     Assert.IsTrue(File.Exists(infoBarArtifact), infoBarArtifact + " was not written.");
+                    Assert.IsTrue(File.Exists(infoBarBoundsArtifact), infoBarBoundsArtifact + " was not written.");
                     Assert.IsTrue(File.Exists(rootArtifact), rootArtifact + " was not written.");
+                    Assert.IsTrue(File.Exists(rootBoundsArtifact), rootBoundsArtifact + " was not written.");
                     Assert.IsTrue(new FileInfo(infoBarArtifact).Length > 0);
+                    Assert.IsTrue(new FileInfo(infoBarBoundsArtifact).Length > 0);
                     Assert.IsTrue(new FileInfo(rootArtifact).Length > 0);
+                    Assert.IsTrue(new FileInfo(rootBoundsArtifact).Length > 0);
                     Assert.IsTrue(HasVisibleRgbPixels(infoBarArtifact), infoBarArtifact + " has no visible RGB content.");
                     Assert.IsTrue(HasVisibleRgbPixels(rootArtifact), rootArtifact + " has no visible RGB content.");
+
+                    var infoBarBounds = File.ReadAllText(infoBarBoundsArtifact).Split(',');
+                    Assert.AreEqual(4, infoBarBounds.Length);
+                    Assert.IsTrue(double.Parse(infoBarBounds[2], CultureInfo.InvariantCulture) > 0);
+                    Assert.IsTrue(double.Parse(infoBarBounds[3], CultureInfo.InvariantCulture) > 0);
                 }
                 finally
                 {

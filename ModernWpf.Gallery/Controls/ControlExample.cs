@@ -38,6 +38,13 @@ namespace ModernWpf.Gallery.Controls
             new PropertyMetadata(null)
         );
 
+        public static readonly DependencyProperty OptionsContentProperty = DependencyProperty.Register(
+            nameof(OptionsContent),
+            typeof(object),
+            typeof(ControlExample),
+            new PropertyMetadata(null)
+        );
+
         public static readonly DependencyProperty XamlCodeProperty = DependencyProperty.Register(
             nameof(XamlCode),
             typeof(string),
@@ -82,6 +89,12 @@ namespace ModernWpf.Gallery.Controls
         {
             get => GetValue(ExampleContentProperty);
             set => SetValue(ExampleContentProperty, value);
+        }
+
+        public object OptionsContent
+        {
+            get => GetValue(OptionsContentProperty);
+            set => SetValue(OptionsContentProperty, value);
         }
 
         public string XamlCode

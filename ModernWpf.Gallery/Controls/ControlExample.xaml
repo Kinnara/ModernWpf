@@ -42,13 +42,38 @@
 
                         <Border
                             Grid.Row="1"
-                            Padding="16"
                             Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
                             BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1,1,1,0"
                             CornerRadius="8,8,0,0"
                             TextElement.FontSize="{StaticResource BodyTextBlockFontSize}">
-                            <ContentPresenter Content="{TemplateBinding ExampleContent}" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition
+                                        x:Name="OptionsColumn"
+                                        Width="Auto"
+                                        MinWidth="200"
+                                        MaxWidth="320" />
+                                </Grid.ColumnDefinitions>
+
+                                <ContentPresenter
+                                    Margin="16"
+                                    Content="{TemplateBinding ExampleContent}" />
+
+                                <Border
+                                    x:Name="OptionsRoot"
+                                    Grid.Column="1"
+                                    Padding="16"
+                                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
+                                    BorderThickness="1,0,0,0"
+                                    CornerRadius="0,8,0,0">
+                                    <ContentPresenter
+                                        Content="{TemplateBinding OptionsContent}"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </Border>
+                            </Grid>
                         </Border>
 
                         <Expander
@@ -137,6 +162,10 @@
                         <Trigger Property="CSharpCode" Value="{x:Null}">
                             <Setter TargetName="CSharpCodeBlock" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="Border" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="OptionsContent" Value="{x:Null}">
+                            <Setter TargetName="OptionsRoot" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="OptionsColumn" Property="MinWidth" Value="0" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

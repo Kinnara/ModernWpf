@@ -765,6 +765,19 @@ function ConvertFrom-BoundingRectangleString([string]$bounds) {
     }
 }
 
+function Test-BoundingRectangleStringsNearlyEqual([string]$before, [string]$after, [double]$tolerance) {
+    $beforeRect = ConvertFrom-BoundingRectangleString $before
+    $afterRect = ConvertFrom-BoundingRectangleString $after
+    if ($null -eq $beforeRect -or $null -eq $afterRect) {
+        return $false
+    }
+
+    return [Math]::Abs($beforeRect.X - $afterRect.X) -le $tolerance -and
+        [Math]::Abs($beforeRect.Y - $afterRect.Y) -le $tolerance -and
+        [Math]::Abs($beforeRect.Width - $afterRect.Width) -le $tolerance -and
+        [Math]::Abs($beforeRect.Height - $afterRect.Height) -le $tolerance
+}
+
 function Get-BoundingRectangleGap($first, $second) {
     if ($null -eq $first -or $null -eq $second) {
         return [double]::PositiveInfinity
@@ -2214,6 +2227,47 @@ function Invoke-ElementOnce($window, $element) {
     }
 
     return $false
+}
+
+function Refresh-ModernWpfVisualArtifacts($window) {
+    $refreshButton = Find-DescendantByAutomationId $window "GalleryVisualTestRefreshArtifacts"
+    if ($null -eq $refreshButton) {
+        return $false
+    }
+
+    if (Invoke-ElementOnce $window $refreshButton) {
+        Start-Sleep -Milliseconds 150
+        return $true
+    }
+
+    return $false
+}
+
+function Get-RenderedArtifactBoundsPath([string]$artifactDir, [string]$automationId) {
+    if ([string]::IsNullOrWhiteSpace($artifactDir) -or [string]::IsNullOrWhiteSpace($automationId)) {
+        return ""
+    }
+
+    return Join-Path $artifactDir ("{0}.bounds.txt" -f $automationId)
+}
+
+function Get-RenderedArtifactBounds([string]$artifactDir, [string]$automationId) {
+    $path = Get-RenderedArtifactBoundsPath $artifactDir $automationId
+    if ([string]::IsNullOrWhiteSpace($path) -or !(Test-Path $path)) {
+        return ""
+    }
+
+    try {
+        $value = Get-Content -LiteralPath $path -Raw
+        if ($null -eq $value) {
+            return ""
+        }
+
+        return $value.Trim()
+    }
+    catch {
+        return ""
+    }
 }
 
 function Select-ElementOnce($window, $element) {
@@ -3854,14 +3908,31 @@ function Invoke-ExpansionInteraction($window, [string]$control) {
     }
 }
 
-function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
+function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [string]$artifactDir = "") {
     if ($null -eq $sampleElement) {
         return [ordered]@{ Invoked = $false }
     }
 
     [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    $layoutStabilityTargetAutomationId = if ($control -eq "ThemeShadow") { "GallerySample_ThemeShadow_ShadowRect" } else { "" }
+    if (![string]::IsNullOrWhiteSpace($layoutStabilityTargetAutomationId)) {
+        [void](Refresh-ModernWpfVisualArtifacts $window)
+    }
+
     $before = Get-NumericValue $sampleElement
     $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
+    $beforeLayoutBounds = if (![string]::IsNullOrWhiteSpace($layoutStabilityTargetAutomationId)) {
+        $artifactBounds = Get-RenderedArtifactBounds $artifactDir $layoutStabilityTargetAutomationId
+        if (![string]::IsNullOrWhiteSpace($artifactBounds)) {
+            $artifactBounds
+        }
+        else {
+            Format-BoundingRectangle (Get-ElementBoundingRectangle (Find-DescendantByAutomationId $window $layoutStabilityTargetAutomationId))
+        }
+    }
+    else {
+        ""
+    }
     try {
         $pattern = $sampleElement.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
         if ($null -ne $pattern) {
@@ -3873,6 +3944,21 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
             $pattern.SetValue($target)
             Start-Sleep -Milliseconds 250
             $after = Get-NumericValue $sampleElement
+            if (![string]::IsNullOrWhiteSpace($layoutStabilityTargetAutomationId)) {
+                [void](Refresh-ModernWpfVisualArtifacts $window)
+            }
+            $afterLayoutBounds = if (![string]::IsNullOrWhiteSpace($layoutStabilityTargetAutomationId)) {
+                $artifactBounds = Get-RenderedArtifactBounds $artifactDir $layoutStabilityTargetAutomationId
+                if (![string]::IsNullOrWhiteSpace($artifactBounds)) {
+                    $artifactBounds
+                }
+                else {
+                    Format-BoundingRectangle (Get-ElementBoundingRectangle (Find-DescendantByAutomationId $window $layoutStabilityTargetAutomationId))
+                }
+            }
+            else {
+                ""
+            }
             return [ordered]@{
                 Invoked = $true
                 TargetBounds = $targetBounds
@@ -3880,6 +3966,11 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
                 AfterValue = $after
                 TargetValue = $target
                 TargetReached = $null -ne $after -and [Math]::Abs(([double]$after) - ([double]$target)) -lt 0.001
+                LayoutStabilityTargetAutomationId = $layoutStabilityTargetAutomationId
+                LayoutStabilitySource = if (![string]::IsNullOrWhiteSpace($layoutStabilityTargetAutomationId)) { "RenderedArtifactBounds" } else { "" }
+                BeforeLayoutBounds = $beforeLayoutBounds
+                AfterLayoutBounds = $afterLayoutBounds
+                LayoutStable = Test-BoundingRectangleStringsNearlyEqual $beforeLayoutBounds $afterLayoutBounds 1.0
             }
         }
     }
@@ -3898,6 +3989,11 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
             AfterValue = $after
             TargetValue = $null
             TargetReached = $null -ne $before -and $null -ne $after -and [double]$after -ne [double]$before
+            LayoutStabilityTargetAutomationId = $layoutStabilityTargetAutomationId
+            LayoutStabilitySource = if (![string]::IsNullOrWhiteSpace($layoutStabilityTargetAutomationId)) { "RenderedArtifactBounds" } else { "" }
+            BeforeLayoutBounds = $beforeLayoutBounds
+            AfterLayoutBounds = ""
+            LayoutStable = $false
         }
     }
 
@@ -3908,6 +4004,11 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement) {
         AfterValue = $null
         TargetValue = $null
         TargetReached = $false
+        LayoutStabilityTargetAutomationId = $layoutStabilityTargetAutomationId
+        LayoutStabilitySource = if (![string]::IsNullOrWhiteSpace($layoutStabilityTargetAutomationId)) { "RenderedArtifactBounds" } else { "" }
+        BeforeLayoutBounds = $beforeLayoutBounds
+        AfterLayoutBounds = ""
+        LayoutStable = $false
     }
 }
 
@@ -4769,7 +4870,7 @@ function Invoke-RecordedInteraction($window, [string]$control, $sampleElement, [
         "OpenRepeat" { return Invoke-OpenRepeatInteraction $window $control $sampleElement }
         "State" { return Invoke-StateInteraction $window $sampleElement }
         "Expansion" { return Invoke-ExpansionInteraction $window $control }
-        "Value" { return Invoke-ValueInteraction $window $control $sampleElement }
+        "Value" { return Invoke-ValueInteraction $window $control $sampleElement $artifactDir }
         "Selection" { return Invoke-SelectionInteraction $window $control $sampleElement }
         "Option" { return Invoke-OptionInteraction $window $control $sampleElement }
         "Text" { return Invoke-TextInteraction $window $control $sampleElement }
@@ -6347,6 +6448,14 @@ function Test-ValueEvidence($interactionResult) {
     return [bool]$interactionResult.TargetReached
 }
 
+function Test-LayoutStabilityEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("LayoutStable")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.LayoutStable
+}
+
 function Test-SelectionEvidence($interactionResult) {
     if ($null -eq $interactionResult -or !$interactionResult.Contains("SelectionChanged")) {
         return $false
@@ -6798,6 +6907,12 @@ foreach ($control in $Controls) {
     $stateEvidence = Test-StateEvidence $interactionResult
     $expansionEvidence = Test-ExpansionEvidence $interactionResult
     $valueEvidence = Test-ValueEvidence $interactionResult
+    $layoutStabilityEvidence = Test-LayoutStabilityEvidence $interactionResult
+    $layoutStabilityEvidenceAccepted =
+        $control -eq "ThemeShadow" -and
+        $interactionKind -eq "Value" -and
+        $valueEvidence -and
+        $layoutStabilityEvidence
     $selectionEvidence = Test-SelectionEvidence $interactionResult
     $visualSelectionEvidence = Test-VisualSelectionEvidence $control $interactionKind $maxLocalFrameDelta
     $optionEvidence = Test-OptionEvidence $interactionResult
@@ -6849,6 +6964,17 @@ foreach ($control in $Controls) {
     if ($status -eq "Passed" -and $interactionKind -eq "Value" -and !$valueEvidence) {
         $status = "Failed"
         $notes.Add("Value interaction did not reach the expected target value.")
+    }
+
+    if ($status -eq "Passed" -and
+        $control -eq "ThemeShadow" -and
+        $interactionKind -eq "Value" -and
+        $valueEvidence -and
+        !$layoutStabilityEvidence) {
+        $status = "Failed"
+        $beforeBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("BeforeLayoutBounds")) { $interactionResult.BeforeLayoutBounds } else { "" }
+        $afterBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("AfterLayoutBounds")) { $interactionResult.AfterLayoutBounds } else { "" }
+        $notes.Add(("ThemeShadow depth changed but the ShadowRect bounds moved or could not be proven stable. Before={0}; after={1}." -f $beforeBounds, $afterBounds))
     }
 
     if ($status -eq "Passed" -and $interactionKind -eq "Option" -and !$optionEvidence) {
@@ -6937,9 +7063,12 @@ foreach ($control in $Controls) {
         $interactionKind -ne "Static" -and
         $null -ne $maxFrameDelta -and
         $maxFrameDelta -lt 0.35) {
-        if ((Test-InteractionRequiresLocalVisualEvidence $interactionKind) -and $interactionEvidenceForKind -and !$localVisualEvidence) {
+        if ((Test-InteractionRequiresLocalVisualEvidence $interactionKind) -and $interactionEvidenceForKind -and !$localVisualEvidence -and !$layoutStabilityEvidenceAccepted) {
             $status = "NeedsReview"
             $notes.Add("Interactive recording produced low poster-frame delta and no local rendered change inside recorded interaction bounds.")
+        }
+        elseif ($layoutStabilityEvidenceAccepted -and !$localVisualEvidence) {
+            $notes.Add("ThemeShadow target value was reached and ShadowRect bounds stayed stable despite low local rendered delta.")
         }
         elseif ($localVisualEvidence) {
             $notes.Add(("Local visual delta {0} was detected inside recorded interaction bounds." -f $maxLocalFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture)))
@@ -6954,6 +7083,9 @@ foreach ($control in $Controls) {
             }
             elseif ($interactionKind -eq "Expansion" -and $expansionEvidence) {
                 $notes.Add("Expanded child content was detected despite low full-frame delta.")
+            }
+            elseif ($layoutStabilityEvidenceAccepted) {
+                $notes.Add("ThemeShadow target value was reached and ShadowRect bounds stayed stable despite low full-frame delta.")
             }
             elseif ($interactionKind -eq "Value" -and $valueEvidence) {
                 $notes.Add("Target value was reached despite low full-frame delta.")
@@ -7016,6 +7148,7 @@ foreach ($control in $Controls) {
         StateEvidence = $stateEvidence
         ExpansionEvidence = $expansionEvidence
         ValueEvidence = $valueEvidence
+        LayoutStabilityEvidence = $layoutStabilityEvidence
         SelectionEvidence = $selectionEvidence
         VisualSelectionEvidence = $visualSelectionEvidence
         OptionEvidence = $optionEvidence

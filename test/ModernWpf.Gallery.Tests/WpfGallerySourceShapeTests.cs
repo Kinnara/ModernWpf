@@ -2486,6 +2486,7 @@ namespace ModernWpf.Gallery.Tests
                 "XamlCode=\"{Binding XamlCode}\"",
                 "CSharpCode=\"{Binding CSharpCode}\"",
                 "ExampleContent=\"{Binding ExampleContent}\"",
+                "OptionsContent=\"{Binding OptionsContent}\"",
                 "Margin=\"{Binding Margin}\" />");
         }
 
@@ -2661,6 +2662,54 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void StylesSamplesUseWinUIGalleryOptionsChrome()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "ModernWpf.Gallery",
+                "Pages",
+                "StylesSampleFactory.cs"));
+
+            AssertContainsInOrder(
+                source,
+                "var bitmapIconExample = CreateBitmapIconExampleContent(assignRootAutomationId: true, out var bitmapIconOptions);",
+                "bitmapIconExample",
+                "IconElementBitmapIconXaml",
+                "null,",
+                "bitmapIconOptions)");
+            AssertContainsInOrder(
+                source,
+                "var shadow = new ThemeShadowChrome",
+                "Depth = 32",
+                "TranslationZ = 32",
+                "Child = shadowRect",
+                "Margin = new Thickness(42, 43, 0, 0)",
+                "WindowedPopupInsetMode = ThemeShadowChromeWindowedPopupInsetMode.Medium");
+            AssertContainsInOrder(
+                source,
+                "var sliderHeader = new TextBlock",
+                "Text = \"Z-translation\"",
+                "Margin = new Thickness(0, 0, 0, 10)",
+                "options.Children.Add(sliderHeader);",
+                "options.Children.Add(translationSlider);",
+                "optionsContent = options;",
+                "root.Children.Add(exampleGrid);");
+            AssertContainsInOrder(
+                source,
+                "var themeShadowExample = CreateThemeShadowExampleContent(assignRootAutomationId: true, out var optionsContent);",
+                "themeShadowExample",
+                "ThemeShadowXaml",
+                "ThemeShadowCSharp,",
+                "optionsContent)");
+            Assert.IsFalse(
+                source.Contains("options.Margin = new Thickness(24, 0, 0, 0)", StringComparison.Ordinal),
+                "Styles samples should use ControlExample.OptionsContent instead of a floating right-margin option control.");
+            Assert.IsFalse(
+                source.Contains("root.Children.Add(CreateExampleWithOptions(example, monochromeButton));", StringComparison.Ordinal),
+                "ItemPage-hosted styles examples should not nest options inside ExampleContent.");
+        }
+
+        [TestMethod]
         public void GalleryVisualChecksUseRenderedModernPrimaryArtifactsForSplitViewAndPersonPicture()
         {
             var source = File.ReadAllText(Path.Combine(
@@ -2673,6 +2722,7 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "function Get-PrimaryCropMinimumVisibleStdDev([string]$control)",
                 "\"InfoBadge\" { return 8.0 }",
+                "\"ThemeShadow\" { return 4.0 }",
                 "function Test-ControlRequiresPrimaryCrop([string]$control)",
                 "\"ColorPicker\" { return $true }",
                 "\"InfoBadge\" { return $true }",
@@ -4440,6 +4490,36 @@ namespace ModernWpf.Gallery.Tests
                 "if (Test-ControlSupportsValueInteraction $control) { return \"Value\" }");
             AssertContainsInOrder(
                 source,
+                "function Test-BoundingRectangleStringsNearlyEqual([string]$before, [string]$after, [double]$tolerance)",
+                "$beforeRect = ConvertFrom-BoundingRectangleString $before",
+                "$afterRect = ConvertFrom-BoundingRectangleString $after",
+                "function Refresh-ModernWpfVisualArtifacts($window)",
+                "Find-DescendantByAutomationId $window \"GalleryVisualTestRefreshArtifacts\"",
+                "function Get-RenderedArtifactBounds([string]$artifactDir, [string]$automationId)",
+                "Get-Content -LiteralPath $path -Raw",
+                "function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [string]$artifactDir = \"\")",
+                "$layoutStabilityTargetAutomationId = if ($control -eq \"ThemeShadow\") { \"GallerySample_ThemeShadow_ShadowRect\" } else { \"\" }",
+                "[void](Refresh-ModernWpfVisualArtifacts $window)",
+                "$artifactBounds = Get-RenderedArtifactBounds $artifactDir $layoutStabilityTargetAutomationId",
+                "LayoutStabilitySource = if (![string]::IsNullOrWhiteSpace($layoutStabilityTargetAutomationId)) { \"RenderedArtifactBounds\" } else { \"\" }",
+                "BeforeLayoutBounds = $beforeLayoutBounds",
+                "AfterLayoutBounds = $afterLayoutBounds",
+                "LayoutStable = Test-BoundingRectangleStringsNearlyEqual $beforeLayoutBounds $afterLayoutBounds 1.0");
+            AssertContainsInOrder(
+                source,
+                "function Test-LayoutStabilityEvidence($interactionResult)",
+                "$interactionResult.Contains(\"LayoutStable\")",
+                "$layoutStabilityEvidence = Test-LayoutStabilityEvidence $interactionResult",
+                "$layoutStabilityEvidenceAccepted =",
+                "$control -eq \"ThemeShadow\"",
+                "$interactionKind -eq \"Value\"",
+                "$valueEvidence -and",
+                "$layoutStabilityEvidence",
+                "ThemeShadow depth changed but the ShadowRect bounds moved or could not be proven stable.",
+                "!$localVisualEvidence -and !$layoutStabilityEvidenceAccepted",
+                "LayoutStabilityEvidence = $layoutStabilityEvidence");
+            AssertContainsInOrder(
+                source,
                 "function Test-ControlSupportsOptionInteraction([string]$control)",
                 "\"IconElement\" { return $true }",
                 "\"InfoBadge\" { return $true }",
@@ -5011,12 +5091,30 @@ namespace ModernWpf.Gallery.Tests
                 xaml,
                 "<Border",
                 "Grid.Row=\"1\"",
-                "Padding=\"16\"",
                 "Background=\"{DynamicResource SolidBackgroundFillColorBaseBrush}\"",
                 "BorderBrush=\"{DynamicResource CardStrokeColorDefaultBrush}\"",
                 "BorderThickness=\"1,1,1,0\"",
                 "CornerRadius=\"8,8,0,0\"",
-                "TextElement.FontSize=\"{StaticResource BodyTextBlockFontSize}\">");
+                "TextElement.FontSize=\"{StaticResource BodyTextBlockFontSize}\">",
+                "<Grid>",
+                "<Grid.ColumnDefinitions>",
+                "<ColumnDefinition Width=\"*\" />",
+                "x:Name=\"OptionsColumn\"",
+                "Width=\"Auto\"",
+                "MinWidth=\"200\"",
+                "MaxWidth=\"320\" />",
+                "<ContentPresenter",
+                "Margin=\"16\"",
+                "Content=\"{TemplateBinding ExampleContent}\" />",
+                "<Border",
+                "x:Name=\"OptionsRoot\"",
+                "Grid.Column=\"1\"",
+                "Padding=\"16\"",
+                "Background=\"{DynamicResource CardBackgroundFillColorDefaultBrush}\"",
+                "BorderBrush=\"{DynamicResource DividerStrokeColorDefaultBrush}\"",
+                "BorderThickness=\"1,0,0,0\"",
+                "CornerRadius=\"0,8,0,0\">",
+                "Content=\"{TemplateBinding OptionsContent}\"");
             Assert.IsFalse(
                 xaml.Contains("ControlExampleSourceExpanderStyle", StringComparison.Ordinal),
                 "The source-code expander should use the official WPF Gallery default Expander template.");
@@ -5075,6 +5173,12 @@ namespace ModernWpf.Gallery.Tests
                 "Style=\"{StaticResource SelectionTextBox}\"",
                 "AutomationProperties.Name=\"CSharp Source Code\"",
                 "Text=\"{TemplateBinding CSharpCode}\" />");
+            AssertContainsInOrder(
+                xaml,
+                "<Trigger Property=\"OptionsContent\" Value=\"{x:Null}\">",
+                "<Setter TargetName=\"OptionsRoot\" Property=\"Visibility\" Value=\"Collapsed\" />",
+                "<Setter TargetName=\"OptionsColumn\" Property=\"MinWidth\" Value=\"0\" />",
+                "</Trigger>");
         }
 
         [TestMethod]
@@ -5111,6 +5215,7 @@ namespace ModernWpf.Gallery.Tests
                 "CommandManager.RegisterClassCommandBinding(typeof(ControlExample), new CommandBinding(ApplicationCommands.Copy, Copy_SourceCode));",
                 "public static readonly DependencyProperty HeaderTextProperty = DependencyProperty.Register(",
                 "public static readonly DependencyProperty ExampleContentProperty = DependencyProperty.Register(",
+                "public static readonly DependencyProperty OptionsContentProperty = DependencyProperty.Register(",
                 "public static readonly DependencyProperty XamlCodeProperty = DependencyProperty.Register(",
                 "public static readonly DependencyProperty XamlCodeSourceProperty = DependencyProperty.Register(",
                 "static (o, args) => ((ControlExample)o).OnXamlCodeSourceChanged((Uri)args.NewValue)",
@@ -5123,6 +5228,9 @@ namespace ModernWpf.Gallery.Tests
                 "public object ExampleContent",
                 "get => GetValue(ExampleContentProperty);",
                 "set => SetValue(ExampleContentProperty, value);",
+                "public object OptionsContent",
+                "get => GetValue(OptionsContentProperty);",
+                "set => SetValue(OptionsContentProperty, value);",
                 "public string XamlCode",
                 "get => (string)GetValue(XamlCodeProperty);",
                 "set => SetValue(XamlCodeProperty, value);",

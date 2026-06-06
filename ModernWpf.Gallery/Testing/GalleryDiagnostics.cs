@@ -269,7 +269,9 @@ namespace ModernWpf.Gallery.Testing
                 var artifactId = GetVisualArtifactId(element, automationId);
                 if (ShouldWriteVisualArtifact(artifactId) && !ShouldSkipVisualArtifact(element, artifactId))
                 {
-                    WriteElementPng(element, Path.Combine(ArtifactDirectory, SanitizeFileName(artifactId) + ".png"));
+                    var artifactFileName = SanitizeFileName(artifactId);
+                    WriteElementPng(element, Path.Combine(ArtifactDirectory, artifactFileName + ".png"));
+                    WriteElementBounds(element, Path.Combine(ArtifactDirectory, artifactFileName + ".bounds.txt"));
                 }
 
                 var popup = element as Popup;
@@ -405,6 +407,28 @@ namespace ModernWpf.Gallery.Testing
             {
                 encoder.Save(stream);
             }
+        }
+
+        private static void WriteElementBounds(FrameworkElement element, string path)
+        {
+            element.UpdateLayout();
+            var width = element.ActualWidth;
+            var height = element.ActualHeight;
+            if (width <= 0 || height <= 0)
+            {
+                return;
+            }
+
+            var topLeft = element.PointToScreen(new Point(0, 0));
+            File.WriteAllText(
+                path,
+                string.Format(
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    "{0:0.0},{1:0.0},{2:0.0},{3:0.0}",
+                    topLeft.X,
+                    topLeft.Y,
+                    width,
+                    height));
         }
 
         private static Rect GetArtifactViewbox(FrameworkElement element, int width, int height)

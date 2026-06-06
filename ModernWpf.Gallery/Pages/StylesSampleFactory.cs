@@ -60,18 +60,22 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateIconElementSample()
         {
-            return CreateBitmapIconExampleContent(assignRootAutomationId: true);
+            var root = CreateBitmapIconExampleContent(assignRootAutomationId: true, out var optionsContent);
+            return AddOptionsToStandaloneSample(root, optionsContent);
         }
 
         private static IReadOnlyList<GalleryExample> CreateIconElementExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
         {
+            var bitmapIconExample = CreateBitmapIconExampleContent(assignRootAutomationId: true, out var bitmapIconOptions);
+
             return new[]
             {
                 new GalleryExample(
                     "A BitmapIcon with a multicolor bitmap image",
-                    CreateBitmapIconExampleContent(assignRootAutomationId: true),
+                    bitmapIconExample,
                     IconElementBitmapIconXaml,
-                    null),
+                    null,
+                    bitmapIconOptions),
                 new GalleryExample(
                     "A FontIcon using a glyph from a specific font family in a button",
                     CreateFontIconExampleContent(),
@@ -100,7 +104,7 @@ namespace ModernWpf.Gallery.Pages
             };
         }
 
-        private static GallerySamplePanel CreateBitmapIconExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateBitmapIconExampleContent(bool assignRootAutomationId, out FrameworkElement optionsContent)
         {
             var root = new GallerySamplePanel();
             if (assignRootAutomationId)
@@ -130,7 +134,16 @@ namespace ModernWpf.Gallery.Pages
             monochromeButton.Checked += delegate { slicesIcon.ShowAsMonochrome = true; };
             monochromeButton.Unchecked += delegate { slicesIcon.ShowAsMonochrome = false; };
 
-            root.Children.Add(CreateExampleWithOptions(example, monochromeButton));
+            optionsContent = monochromeButton;
+            root.Children.Add(example);
+            return root;
+        }
+
+        private static GallerySamplePanel AddOptionsToStandaloneSample(GallerySamplePanel root, FrameworkElement optionsContent)
+        {
+            var example = root.Children[0];
+            root.Children.RemoveAt(0);
+            root.Children.Add(CreateExampleWithOptions(example, optionsContent));
             return root;
         }
 
@@ -240,33 +253,51 @@ namespace ModernWpf.Gallery.Pages
         {
             var layout = new Grid();
             layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto, MinWidth = 200, MaxWidth = 320 });
             Grid.SetColumn(example, 0);
-            Grid.SetColumn(options, 1);
-            options.Margin = new Thickness(24, 0, 0, 0);
+            var optionsHost = CreateOptionsHost(options);
+            Grid.SetColumn(optionsHost, 1);
             layout.Children.Add(example);
-            layout.Children.Add(options);
+            layout.Children.Add(optionsHost);
             return layout;
+        }
+
+        private static Border CreateOptionsHost(UIElement options)
+        {
+            var optionsHost = new Border
+            {
+                Padding = new Thickness(16),
+                BorderThickness = new Thickness(1, 0, 0, 0),
+                Child = options
+            };
+            optionsHost.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            optionsHost.SetResourceReference(Border.BorderBrushProperty, "DividerStrokeColorDefaultBrush");
+            optionsHost.SetResourceReference(Border.CornerRadiusProperty, "ControlCornerRadius");
+            return optionsHost;
         }
 
         private static UIElement CreateThemeShadowSample()
         {
-            return CreateThemeShadowExampleContent(assignRootAutomationId: true);
+            var root = CreateThemeShadowExampleContent(assignRootAutomationId: true, out var optionsContent);
+            return AddOptionsToStandaloneSample(root, optionsContent);
         }
 
         private static IReadOnlyList<GalleryExample> CreateThemeShadowExamples()
         {
+            var themeShadowExample = CreateThemeShadowExampleContent(assignRootAutomationId: true, out var optionsContent);
+
             return new[]
             {
                 new GalleryExample(
                     "ThemeShadow applied to a Border",
-                    CreateThemeShadowExampleContent(assignRootAutomationId: true),
+                    themeShadowExample,
                     ThemeShadowXaml,
-                    ThemeShadowCSharp)
+                    ThemeShadowCSharp,
+                    optionsContent)
             };
         }
 
-        private static GallerySamplePanel CreateThemeShadowExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateThemeShadowExampleContent(bool assignRootAutomationId, out FrameworkElement optionsContent)
         {
             var root = new GallerySamplePanel();
             if (assignRootAutomationId)
@@ -295,7 +326,8 @@ namespace ModernWpf.Gallery.Pages
                 Depth = 32,
                 TranslationZ = 32,
                 Child = shadowRect,
-                Margin = new Thickness(36),
+                Margin = new Thickness(42, 43, 0, 0),
+                WindowedPopupInsetMode = ThemeShadowChromeWindowedPopupInsetMode.Medium,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top
             };
@@ -330,20 +362,17 @@ namespace ModernWpf.Gallery.Pages
                 shadow.TranslationZ = translationSlider.Value;
             };
 
-            var options = new StackPanel
+            var sliderHeader = new TextBlock
             {
-                Margin = new Thickness(24, 0, 0, 0)
+                Text = "Z-translation",
+                Margin = new Thickness(0, 0, 0, 10)
             };
+            var options = new StackPanel();
+            options.Children.Add(sliderHeader);
             options.Children.Add(translationSlider);
 
-            var layout = new Grid();
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            Grid.SetColumn(exampleGrid, 0);
-            Grid.SetColumn(options, 1);
-            layout.Children.Add(exampleGrid);
-            layout.Children.Add(options);
-            root.Children.Add(layout);
+            optionsContent = options;
+            root.Children.Add(exampleGrid);
             return root;
         }
 

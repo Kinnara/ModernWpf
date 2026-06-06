@@ -425,19 +425,30 @@ namespace ModernWpf.Gallery.Pages
     public sealed class GalleryExample
     {
         public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode)
-            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(10), Array.Empty<string>())
+            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(10), Array.Empty<string>(), null)
+        {
+        }
+
+        public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, object optionsContent)
+            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(10), Array.Empty<string>(), optionsContent)
         {
         }
 
         public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, Thickness margin)
-            : this(headerText, exampleContent, xamlCode, csharpCode, margin, Array.Empty<string>())
+            : this(headerText, exampleContent, xamlCode, csharpCode, margin, Array.Empty<string>(), null)
         {
         }
 
         public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, Thickness margin, IReadOnlyList<string> consumedSnippetTexts)
+            : this(headerText, exampleContent, xamlCode, csharpCode, margin, consumedSnippetTexts, null)
+        {
+        }
+
+        private GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, Thickness margin, IReadOnlyList<string> consumedSnippetTexts, object optionsContent)
         {
             HeaderText = headerText;
             ExampleContent = exampleContent;
+            OptionsContent = optionsContent;
             XamlCode = xamlCode;
             CSharpCode = csharpCode;
             Margin = margin;
@@ -446,6 +457,7 @@ namespace ModernWpf.Gallery.Pages
 
         public string HeaderText { get; }
         public object ExampleContent { get; }
+        public object OptionsContent { get; }
         public string XamlCode { get; }
         public string CSharpCode { get; }
         public Thickness Margin { get; }
@@ -453,7 +465,7 @@ namespace ModernWpf.Gallery.Pages
 
         public GalleryExample WithMargin(Thickness margin)
         {
-            return new GalleryExample(HeaderText, ExampleContent, XamlCode, CSharpCode, margin, ConsumedSnippetTexts);
+            return new GalleryExample(HeaderText, ExampleContent, XamlCode, CSharpCode, margin, ConsumedSnippetTexts, OptionsContent);
         }
     }
 }
