@@ -3246,6 +3246,110 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryInteractionRecorderRequiresAutoSuggestBoxSuggestionToClose()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "private const byte VK_END = 0x23;",
+                "public static void End()",
+                "KeyPress(VK_END);");
+            AssertContainsInOrder(
+                source,
+                "function Get-ControlRecordingDurationSeconds([string]$control, [string]$interactionKind)",
+                "if ($interactionKind -eq \"Text\" -and $control -eq \"AutoSuggestBox\")",
+                "return [Math]::Max($DurationSeconds, 18)");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-SuggestionKeyboardCommit($window, $editElement, [bool]$hasMatchedOutput)",
+                "$editElement.SetFocus()",
+                "[System.Windows.Forms.SendKeys]::SendWait(\"{ENTER}\")",
+                "[System.Windows.Forms.SendKeys]::SendWait(\"{END}{DOWN}{ENTER}\")",
+                "[GalleryRecordingNative]::End()",
+                "[GalleryRecordingNative]::Down()",
+                "[GalleryRecordingNative]::Enter()");
+            AssertContainsInOrder(
+                source,
+                "function Wait-ForSuggestionClosed([int]$processId, [string[]]$names, [int]$timeoutMilliseconds)",
+                "Find-InteractiveElementByNameInProcess $processId $names",
+                "if ($null -eq $element)",
+                "return $true",
+                "return $false");
+            AssertContainsInOrder(
+                source,
+                "function Find-InvokePatternTarget($element)",
+                "Test-ElementSupportsPattern $candidate ([System.Windows.Automation.InvokePattern]::Pattern)",
+                "return $candidate",
+                "return $null");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-SuggestionElementOnce($window, $element)",
+                "$invokeTarget = Find-InvokePatternTarget $element",
+                "$pattern = $invokeTarget.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)",
+                "Method = \"InvokePattern\"",
+                "if (Click-ElementOnce $element)",
+                "Method = \"ElementClick\"",
+                "if (Select-ElementOnce $window $element)",
+                "Method = \"SelectionItem\"");
+            AssertContainsInOrder(
+                source,
+                "function Get-TextVisualClosedEvidence($frames, $recordingResult, $interactionResult)",
+                "InitialSuggestionBounds",
+                "$baselineFrame = $extractedFrames[0]",
+                "$finalFrame = $extractedFrames[$extractedFrames.Count - 1]",
+                "$delta = Compare-LuminanceSamples $baselineSamples $finalSamples",
+                "Closed = $roundedDelta -le 4.0");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-TextInteraction($window, [string]$control, $sampleElement)",
+                "$initialSuggestionBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $suggestionElement)",
+                "$suggestionClosed = $false",
+                "$suggestionInvoked = Click-FirstSuggestionBelowEdit $editElement",
+                "$suggestionClosed = Wait-ForSuggestionClosed $window.Current.ProcessId $suggestionNames 1200",
+                "$suggestionInvokeResult = Invoke-SuggestionElementOnce $window $suggestionElement",
+                "$suggestionInvokeMethod = $suggestionInvokeResult.Method",
+                "$suggestionClosed = Wait-ForSuggestionClosed $window.Current.ProcessId $suggestionNames 1200",
+                "Invoke-SuggestionKeyboardCommit $window $editElement ($null -ne $outputElement)",
+                "$suggestionInvokeResult = Invoke-SuggestionElementOnce $window $suggestionElement",
+                "$suggestionInvokeMethod = $suggestionInvokeResult.Method",
+                "$suggestionClosed = Wait-ForSuggestionClosed $window.Current.ProcessId $suggestionNames 1200",
+                "Invoke-SuggestionKeyboardCommit $window $editElement $true",
+                "$suggestionInvokeMethod = \"SelectionItemKeyboard\"",
+                "$suggestionClosed = Wait-ForSuggestionClosed $window.Current.ProcessId $suggestionNames 1200",
+                "InitialSuggestionBounds = $initialSuggestionBounds",
+                "SuggestionClosed = $suggestionClosed",
+                "RemainingSuggestionBounds = $remainingSuggestionBounds");
+            AssertContainsInOrder(
+                source,
+                "function Test-TextEvidence($interactionResult)",
+                "if ($interactionResult.Contains(\"SuggestionClosed\") -and !$interactionResult.SuggestionClosed)",
+                "return $false",
+                "return [bool]$interactionResult.OutputMatched");
+            AssertContainsInOrder(
+                source,
+                "$status -eq \"Passed\" -and $interactionKind -eq \"Text\" -and !$textEvidence",
+                "$interactionResult.Contains(\"SuggestionClosed\")",
+                "$notes.Add(\"Text interaction left the suggestion popup visible after the claimed suggestion choice.\")");
+            AssertContainsInOrder(
+                source,
+                "$status -eq \"Passed\" -and",
+                "$interactionKind -eq \"Text\" -and",
+                "$control -eq \"AutoSuggestBox\"",
+                "!$textVisualClosedEvidence.Generated",
+                "!$textVisualClosedEvidence.Closed",
+                "$notes.Add((\"Rendered final frame still differs inside the initial suggestion popup bounds.");
+            AssertContainsInOrder(
+                source,
+                "TextEvidence = $textEvidence",
+                "TextVisualClosedEvidence = $textVisualClosedEvidence");
+        }
+
+        [TestMethod]
         public void GalleryInteractionRecorderClicksHyperlinkButtonInAppNavigationSample()
         {
             var source = File.ReadAllText(Path.Combine(

@@ -177,6 +177,7 @@ public static class GalleryRecordingNative
     private const byte VK_ESCAPE = 0x1B;
     private const byte VK_RETURN = 0x0D;
     private const byte VK_DOWN = 0x28;
+    private const byte VK_END = 0x23;
     private const byte VK_SPACE = 0x20;
     private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
     private static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
@@ -286,6 +287,11 @@ public static class GalleryRecordingNative
     public static void Down()
     {
         KeyPress(VK_DOWN);
+    }
+
+    public static void End()
+    {
+        KeyPress(VK_END);
     }
 
     public static void Enter()
@@ -677,6 +683,32 @@ function Format-BoundingRectangle($rect) {
         [Math]::Round($rect.Y, 1), `
         [Math]::Round($rect.Width, 1), `
         [Math]::Round($rect.Height, 1)
+}
+
+function Get-ElementControlTypeName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        return $element.Current.ControlType.ProgrammaticName
+    }
+    catch {
+        return ""
+    }
+}
+
+function Get-ElementClassName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        return $element.Current.ClassName
+    }
+    catch {
+        return ""
+    }
 }
 
 function Get-ToolTipFallbackBoundsFromTriggerBounds([string]$triggerBounds) {
@@ -1372,6 +1404,10 @@ function Get-ControlRecordingDurationSeconds([string]$control, [string]$interact
         return [Math]::Max($DurationSeconds, 18)
     }
 
+    if ($interactionKind -eq "Text" -and $control -eq "AutoSuggestBox") {
+        return [Math]::Max($DurationSeconds, 18)
+    }
+
     if ($interactionKind -eq "OpenRepeat") {
         if ($control -eq "ToolTip") {
             return [Math]::Max($DurationSeconds, 18)
@@ -1793,6 +1829,24 @@ function Test-ElementSupportsPattern($element, $pattern) {
     }
 }
 
+function Find-InvokePatternTarget($element) {
+    $candidate = $element
+    for ($depth = 0; $depth -lt 8 -and $null -ne $candidate; $depth++) {
+        if (Test-ElementSupportsPattern $candidate ([System.Windows.Automation.InvokePattern]::Pattern)) {
+            return $candidate
+        }
+
+        try {
+            $candidate = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+        }
+        catch {
+            return $null
+        }
+    }
+
+    return $null
+}
+
 function Find-SelectionInvokeTarget($element) {
     $candidate = $element
     for ($depth = 0; $depth -lt 8 -and $null -ne $candidate; $depth++) {
@@ -2133,6 +2187,46 @@ function Click-ElementOnce($element) {
     }
 
     return $false
+}
+
+function Invoke-SuggestionElementOnce($window, $element) {
+    $invokeTarget = Find-InvokePatternTarget $element
+    if ($null -ne $invokeTarget) {
+        [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+        Start-Sleep -Milliseconds 80
+        try {
+            $pattern = $invokeTarget.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+            if ($null -ne $pattern) {
+                $pattern.Invoke()
+                Start-Sleep -Milliseconds 350
+                return [ordered]@{
+                    Invoked = $true
+                    Method = "InvokePattern"
+                }
+            }
+        }
+        catch {
+        }
+    }
+
+    if (Click-ElementOnce $element) {
+        return [ordered]@{
+            Invoked = $true
+            Method = "ElementClick"
+        }
+    }
+
+    if (Select-ElementOnce $window $element) {
+        return [ordered]@{
+            Invoked = $true
+            Method = "SelectionItem"
+        }
+    }
+
+    return [ordered]@{
+        Invoked = $false
+        Method = ""
+    }
 }
 
 function Click-FirstSuggestionBelowEdit($edit) {
@@ -4174,6 +4268,59 @@ function Wait-ForTextOutput([int]$processId, [string]$automationId, [string]$exp
     return $null
 }
 
+function Wait-ForSuggestionClosed([int]$processId, [string[]]$names, [int]$timeoutMilliseconds) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
+    do {
+        $element = Find-InteractiveElementByNameInProcess $processId $names
+        if ($null -eq $element) {
+            return $true
+        }
+
+        Start-Sleep -Milliseconds 100
+    } while ((Get-Date) -lt $deadline)
+
+    return $false
+}
+
+function Invoke-SuggestionKeyboardCommit($window, $editElement, [bool]$hasMatchedOutput) {
+    [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $editElement.SetFocus()
+        Start-Sleep -Milliseconds 80
+    }
+    catch {
+    }
+
+    $sentKeys = $false
+    try {
+        if ("System.Windows.Forms.SendKeys" -as [type]) {
+            if ($hasMatchedOutput) {
+                [System.Windows.Forms.SendKeys]::SendWait("{ENTER}")
+            }
+            else {
+                [System.Windows.Forms.SendKeys]::SendWait("{END}{DOWN}{ENTER}")
+            }
+            $sentKeys = $true
+        }
+    }
+    catch {
+        $sentKeys = $false
+    }
+
+    if (!$sentKeys) {
+        if (!$hasMatchedOutput) {
+            [GalleryRecordingNative]::End()
+            Start-Sleep -Milliseconds 100
+            [GalleryRecordingNative]::Down()
+            Start-Sleep -Milliseconds 100
+        }
+        [GalleryRecordingNative]::Enter()
+    }
+
+    Start-Sleep -Milliseconds 350
+    return $true
+}
+
 function Invoke-PlainTextInteraction($window, [string]$control) {
     $targetName = Get-TextInteractionTargetName $control
     $inputText = Get-TextInteractionInput $control
@@ -4231,52 +4378,59 @@ function Invoke-TextInteraction($window, [string]$control, $sampleElement) {
     else {
         $null
     }
+    $initialSuggestionBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $suggestionElement)
 
     $suggestionInvoked = $false
     $suggestionInvokeMethod = ""
+    $suggestionClosed = $false
     $outputElement = $null
     if ($null -ne $suggestionElement) {
         $suggestionInvoked = Click-FirstSuggestionBelowEdit $editElement
         $suggestionInvokeMethod = "GeometryClick"
         $outputElement = Wait-ForTextOutput $window.Current.ProcessId $outputAutomationId $expectedOutput 1200
+        if ($null -ne $outputElement) {
+            $suggestionClosed = Wait-ForSuggestionClosed $window.Current.ProcessId $suggestionNames 1200
+        }
 
-        if ($null -eq $outputElement) {
-            [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
-            $sentKeys = $false
-            try {
-                if ("System.Windows.Forms.SendKeys" -as [type]) {
-                    [System.Windows.Forms.SendKeys]::SendWait("{DOWN}{DOWN}{ENTER}")
-                    $sentKeys = $true
+        if ($null -eq $outputElement -or !$suggestionClosed) {
+            $suggestionElement = Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId $suggestionNames 500
+            if ($null -ne $suggestionElement) {
+                $suggestionInvokeResult = Invoke-SuggestionElementOnce $window $suggestionElement
+                $suggestionInvoked = $suggestionInvokeResult.Invoked
+                $suggestionInvokeMethod = $suggestionInvokeResult.Method
+                $outputElement = Wait-ForTextOutput $window.Current.ProcessId $outputAutomationId $expectedOutput 1200
+                if ($null -ne $outputElement) {
+                    $suggestionClosed = Wait-ForSuggestionClosed $window.Current.ProcessId $suggestionNames 1200
                 }
             }
-            catch {
-                $sentKeys = $false
-            }
+        }
 
-            if (!$sentKeys) {
-                [GalleryRecordingNative]::Down()
-                Start-Sleep -Milliseconds 100
-                [GalleryRecordingNative]::Down()
-                Start-Sleep -Milliseconds 100
-                [GalleryRecordingNative]::Enter()
-            }
-            Start-Sleep -Milliseconds 400
+        if ($null -eq $outputElement -or !$suggestionClosed) {
+            [void](Invoke-SuggestionKeyboardCommit $window $editElement ($null -ne $outputElement))
             $suggestionInvoked = $true
             $suggestionInvokeMethod = "Keyboard"
             $outputElement = Wait-ForTextOutput $window.Current.ProcessId $outputAutomationId $expectedOutput 1200
+            if ($null -ne $outputElement) {
+                $suggestionClosed = Wait-ForSuggestionClosed $window.Current.ProcessId $suggestionNames 1200
+            }
         }
 
-        if ($null -eq $outputElement) {
-            $suggestionInvoked = Click-ElementOnce $suggestionElement
-            $suggestionInvokeMethod = "Click"
-            $outputElement = Wait-ForTextOutput $window.Current.ProcessId $outputAutomationId $expectedOutput 1200
-        }
-
-        if ($null -eq $outputElement) {
-            $suggestionInvoked = Select-ElementOnce $window $suggestionElement
-            $suggestionInvokeMethod = "SelectionItem"
+        if ($null -eq $outputElement -or !$suggestionClosed) {
+            $suggestionElement = Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId $suggestionNames 500
+            $suggestionInvokeResult = Invoke-SuggestionElementOnce $window $suggestionElement
+            $suggestionInvoked = $suggestionInvokeResult.Invoked
+            $suggestionInvokeMethod = $suggestionInvokeResult.Method
             Start-Sleep -Milliseconds 400
             $outputElement = Wait-ForTextOutput $window.Current.ProcessId $outputAutomationId $expectedOutput 1200
+            if ($null -ne $outputElement) {
+                $suggestionClosed = Wait-ForSuggestionClosed $window.Current.ProcessId $suggestionNames 1200
+                if (!$suggestionClosed) {
+                    [void](Invoke-SuggestionKeyboardCommit $window $editElement $true)
+                    $suggestionInvokeMethod = "SelectionItemKeyboard"
+                    $outputElement = Wait-ForTextOutput $window.Current.ProcessId $outputAutomationId $expectedOutput 1200
+                    $suggestionClosed = Wait-ForSuggestionClosed $window.Current.ProcessId $suggestionNames 1200
+                }
+            }
         }
     }
 
@@ -4290,7 +4444,14 @@ function Invoke-TextInteraction($window, [string]$control, $sampleElement) {
         $outputElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId $outputAutomationId
     }
     $afterOutput = Get-ElementText $outputElement
+    $remainingSuggestionElement = Find-InteractiveElementByNameInProcess $window.Current.ProcessId $suggestionNames
+    if ($suggestionInvoked) {
+        $suggestionClosed = $null -eq $remainingSuggestionElement
+    }
+    $suggestionInvokeTarget = Find-InvokePatternTarget $suggestionElement
     $suggestionBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $suggestionElement)
+    $suggestionInvokeTargetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $suggestionInvokeTarget)
+    $remainingSuggestionBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $remainingSuggestionElement)
     $outputBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $outputElement)
 
     return [ordered]@{
@@ -4302,9 +4463,19 @@ function Invoke-TextInteraction($window, [string]$control, $sampleElement) {
         SuggestionNames = $suggestionNames
         SuggestionFound = $null -ne $suggestionElement
         SuggestionName = $(if ($null -ne $suggestionElement) { $suggestionElement.Current.Name } else { "" })
+        InitialSuggestionBounds = $initialSuggestionBounds
         SuggestionBounds = $suggestionBounds
+        SuggestionControlType = Get-ElementControlTypeName $suggestionElement
+        SuggestionClassName = Get-ElementClassName $suggestionElement
+        SuggestionSupportsInvoke = Test-ElementSupportsPattern $suggestionElement ([System.Windows.Automation.InvokePattern]::Pattern)
+        SuggestionSupportsSelectionItem = Test-ElementSupportsPattern $suggestionElement ([System.Windows.Automation.SelectionItemPattern]::Pattern)
+        SuggestionInvokeTargetBounds = $suggestionInvokeTargetBounds
+        SuggestionInvokeTargetControlType = Get-ElementControlTypeName $suggestionInvokeTarget
+        SuggestionInvokeTargetClassName = Get-ElementClassName $suggestionInvokeTarget
         SuggestionInvoked = $suggestionInvoked
         SuggestionInvokeMethod = $suggestionInvokeMethod
+        SuggestionClosed = $suggestionClosed
+        RemainingSuggestionBounds = $remainingSuggestionBounds
         OutputAutomationId = $outputAutomationId
         OutputBounds = $outputBounds
         BeforeOutput = $beforeOutput
@@ -5253,6 +5424,47 @@ function Get-MaxLocalFrameDelta($localFrameDeltas) {
     return [Math]::Round(($deltas | Measure-Object -Maximum).Maximum, 3)
 }
 
+function Get-TextVisualClosedEvidence($frames, $recordingResult, $interactionResult) {
+    if ($null -eq $interactionResult -or
+        !$interactionResult.Contains("InitialSuggestionBounds") -or
+        [string]::IsNullOrWhiteSpace($interactionResult.InitialSuggestionBounds)) {
+        return [ordered]@{
+            Generated = $false
+            Reason = "Initial suggestion bounds were not recorded."
+        }
+    }
+
+    $extractedFrames = @($frames | Where-Object { $_.Extracted } | Sort-Object Name)
+    if ($extractedFrames.Count -lt 2 -or $null -eq $recordingResult -or [string]::IsNullOrWhiteSpace($recordingResult.Rect)) {
+        return [ordered]@{
+            Generated = $false
+            Reason = "Not enough extracted frames were available."
+        }
+    }
+
+    $baselineFrame = $extractedFrames[0]
+    $finalFrame = $extractedFrames[$extractedFrames.Count - 1]
+    $baselineSamples = Get-ImageRegionLuminanceSamples $baselineFrame.Path $interactionResult.InitialSuggestionBounds $recordingResult.Rect
+    $finalSamples = Get-ImageRegionLuminanceSamples $finalFrame.Path $interactionResult.InitialSuggestionBounds $recordingResult.Rect
+    $delta = Compare-LuminanceSamples $baselineSamples $finalSamples
+    if ($null -eq $delta) {
+        return [ordered]@{
+            Generated = $false
+            Reason = "Could not sample the initial suggestion bounds."
+        }
+    }
+
+    $roundedDelta = [Math]::Round([double]$delta, 3)
+    return [ordered]@{
+        Generated = $true
+        Bounds = $interactionResult.InitialSuggestionBounds
+        BaselineFrame = $baselineFrame.Name
+        FinalFrame = $finalFrame.Name
+        FinalDelta = $roundedDelta
+        Closed = $roundedDelta -le 4.0
+    }
+}
+
 function Get-FrameSeconds($frame) {
     if ($null -eq $frame -or [string]::IsNullOrWhiteSpace($frame.Name)) {
         return $null
@@ -5730,6 +5942,10 @@ function Test-TextEvidence($interactionResult) {
         return $false
     }
 
+    if ($interactionResult.Contains("SuggestionClosed") -and !$interactionResult.SuggestionClosed) {
+        return $false
+    }
+
     return [bool]$interactionResult.OutputMatched
 }
 
@@ -5805,7 +6021,7 @@ function Write-Report([string]$runDir, $results) {
     else {
         $lines.Add(("Recorder: ``{0}``" -f ($recorders -join ", ")))
     }
-    $lines.Add(("Duration: ``{0}s`` default; ShellNavigation, ToolTip, MenuBar, and MessageBox use at least ``18s``; other open-repeat controls use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
+    $lines.Add(("Duration: ``{0}s`` default; ShellNavigation, AutoSuggestBox text, ToolTip, MenuBar, and MessageBox use at least ``18s``; other open-repeat controls use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
     $lines.Add("")
     $lines.Add("| Control | Status | Interaction | Recording | Dense review | Max frame delta | Max local delta | Notes |")
     $lines.Add("| --- | --- | --- | --- | --- | ---: | ---: | --- |")
@@ -5853,6 +6069,7 @@ foreach ($control in $Controls) {
     $localVisualEvidence = $false
     $visualOpenRepeatEvidence = $null
     $visualOpenRepeatEvidenceAccepted = $false
+    $textVisualClosedEvidence = $null
     $status = "Passed"
     $renderedPageArtifactAnchor = $null
     $recordingPath = Join-Path $caseDir ("{0}-{1}{2}" -f $Theme.ToLowerInvariant(), $control.ToLowerInvariant(), $extension)
@@ -5953,6 +6170,12 @@ foreach ($control in $Controls) {
             $null
         }
         $visualOpenRepeatEvidenceAccepted = Test-OpenRepeatVisualEvidence $visualOpenRepeatEvidence
+        $textVisualClosedEvidence = if ($interactionKind -eq "Text") {
+            Get-TextVisualClosedEvidence $frames $recordingResult $interactionResult
+        }
+        else {
+            $null
+        }
 
         $openRepeatVisualEvidenceFailed =
             $interactionKind -eq "OpenRepeat" -and
@@ -6048,6 +6271,9 @@ foreach ($control in $Controls) {
         $visualOpenRepeatEvidence = Get-OpenRepeatVisualEvidence $frames $recordingResult $interactionResult $control
         $visualOpenRepeatEvidenceAccepted = Test-OpenRepeatVisualEvidence $visualOpenRepeatEvidence
     }
+    if ($null -eq $textVisualClosedEvidence -and $interactionKind -eq "Text") {
+        $textVisualClosedEvidence = Get-TextVisualClosedEvidence $frames $recordingResult $interactionResult
+    }
     $animationFrameDelta = if (Test-ControlRequiresAnimatedVisualProof $control) { Get-EarlyFrameDelta $frames } else { $null }
     $animationEvidence = Test-AnimationEvidence $control $animationFrameDelta
     $openRepeatEvidence = (Test-OpenRepeatEvidence $interactionResult) -and (
@@ -6116,7 +6342,31 @@ foreach ($control in $Controls) {
 
     if ($status -eq "Passed" -and $interactionKind -eq "Text" -and !$textEvidence) {
         $status = "Failed"
-        $notes.Add("Text interaction did not expose the expected output.")
+        if ($null -ne $interactionResult -and
+            $interactionResult.Contains("SuggestionClosed") -and
+            !$interactionResult.SuggestionClosed) {
+            $notes.Add("Text interaction left the suggestion popup visible after the claimed suggestion choice.")
+        }
+        else {
+            $notes.Add("Text interaction did not expose the expected output.")
+        }
+    }
+
+    if ($status -eq "Passed" -and
+        $interactionKind -eq "Text" -and
+        $control -eq "AutoSuggestBox") {
+        if ($null -eq $textVisualClosedEvidence -or
+            !$textVisualClosedEvidence.Generated -or
+            !$textVisualClosedEvidence.Closed) {
+            $status = "Failed"
+            if ($null -ne $textVisualClosedEvidence -and $textVisualClosedEvidence.Generated) {
+                $notes.Add(("Rendered final frame still differs inside the initial suggestion popup bounds. Bounds={0}; frames={1}->{2}; delta={3}." -f $textVisualClosedEvidence.Bounds, $textVisualClosedEvidence.BaselineFrame, $textVisualClosedEvidence.FinalFrame, $textVisualClosedEvidence.FinalDelta))
+            }
+            else {
+                $reason = if ($null -ne $textVisualClosedEvidence -and $textVisualClosedEvidence.Contains("Reason")) { $textVisualClosedEvidence.Reason } else { "Visual close evidence was not generated." }
+                $notes.Add(("Rendered final frame did not prove the suggestion popup closed. {0}" -f $reason))
+            }
+        }
     }
 
     if ($status -eq "Passed" -and $interactionKind -eq "Output" -and !$outputEvidence) {
@@ -6253,6 +6503,7 @@ foreach ($control in $Controls) {
         OptionEvidence = $optionEvidence
         OutputEvidence = $outputEvidence
         TextEvidence = $textEvidence
+        TextVisualClosedEvidence = $textVisualClosedEvidence
         ScrollEvidence = $scrollEvidence
         ShellNavigationEvidence = $shellNavigationEvidence
         BreadcrumbEvidence = $breadcrumbEvidence

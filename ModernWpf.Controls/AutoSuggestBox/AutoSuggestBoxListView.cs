@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -29,6 +30,11 @@ namespace ModernWpf.Controls.Primitives
         protected override DependencyObject GetContainerForItemOverride()
         {
             return new AutoSuggestBoxListViewItem();
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new AutoSuggestBoxListViewAutomationPeer(this);
         }
 
         internal void NotifyListItemClicked(AutoSuggestBoxListViewItem item, MouseButton? mouseButton = null, bool isSecondaryGesture = false)
