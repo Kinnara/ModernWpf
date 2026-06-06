@@ -132,8 +132,8 @@ namespace ModernWpf.Gallery.Tests
 
                     var slider = FindNamedDescendant<Slider>(page, "SimpleSlider");
 
-                    Assert.AreEqual(50, viewModel.SimpleSliderValue);
-                    Assert.AreEqual(50.0, slider.Value);
+                    Assert.AreEqual(0, viewModel.SimpleSliderValue);
+                    Assert.AreEqual(0.0, slider.Value);
                 }
                 finally
                 {

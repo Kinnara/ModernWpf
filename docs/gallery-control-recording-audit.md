@@ -90,12 +90,12 @@ catalog pages without page-specific `GallerySample_*` anchors are accepted for
 static route proof only when the recorder captures a nonblank rendered
 `ContentPagePane` or `GalleryItemPageRoot` artifact.
 
-Static screenshot parity must use the correct reference family. Controls from
-the WinUI-derived ModernWpf visual-check inventory use
-`Run-GalleryVisualChecks.ps1` with `InstalledWinUI3Gallery`; official WPF
-Gallery pages use `Run-WpfGalleryVisualAudit.ps1` with
-`OfficialWpfGallery`. A WinUI reference screenshot is not accepted as evidence
-for WPF-only pages such as TextBox, PasswordBox, or RichTextEdit.
+Static screenshot parity must use the correct reference family. WPF Gallery
+controls use `Run-WpfGalleryVisualAudit.ps1` with `OfficialWpfGallery`; only
+ported WinUI controls use `Run-GalleryVisualChecks.ps1` with
+`InstalledWinUI3Gallery`. A WinUI reference screenshot is not accepted as
+evidence for WPF controls such as Button, CheckBox, Slider, TextBox,
+PasswordBox, or RichTextEdit.
 
 ## Recorder
 
@@ -1247,8 +1247,8 @@ SelectorBar sample contrast defect found by manual frame review:
   shows dark, readable `SamplePage1` text on the light blue panel.
 
 Round 105 switches static parity checks to screenshots where motion proof is
-not needed, fixes harness false negatives, and closes a Slider initial-state
-parity defect:
+not needed and fixes harness false negatives. Its original Slider initial-state
+conclusion is superseded by Round 112:
 
 - Screenshot batch
   `artifacts/visual-checks/20260606-142534-044-93236/report.md` ran
@@ -1263,27 +1263,37 @@ parity defect:
   helper is now control-type aware for CheckBox and source-shape coverage
   asserts that path.
 - Manual review of the all-green screenshot batch
-  `artifacts/visual-checks/20260606-143710-663-138452/report.md` found a real
-  ModernWpf sample parity issue that the earlier recordings did not flag:
-  `Slider/modernwpf-artifacts/GallerySample_Slider_Root.png` showed the simple
-  Slider starting at output `0`, while WinUI started at output `50`.
-- `SliderPageViewModel` now initializes `SimpleSliderValue` to `50`.
-  `GalleryAutomationHookTests.SliderSampleStartsAtReferenceValue` hosts the
-  actual WPF Slider page and asserts both the view-model value and the bound
-  `SimpleSlider.Value`. Source-shape tests also pin the updated default.
-- Post-fix screenshot batch
-  `artifacts/visual-checks/20260606-144434-210-243940/report.md` passed the
-  same five controls. Reviewed
-  `artifacts/visual-checks/20260606-144434-210-243940/Slider/modernwpf-artifacts/GallerySample_Slider_Root.png`
-  shows the simple Slider thumb centered and output `50`, matching the WinUI
-  reference final state. The remaining Slider crop score is a bounding-box
-  difference (`200x32` ModernWpf control crop versus `200x70` WinUI primary
-  crop), not the old wrong initial value.
+  `artifacts/visual-checks/20260606-143710-663-138452/report.md` originally
+  read the simple Slider reference as output `50` and changed ModernWpf to
+  match. Round 112 shows that the comparison itself used the wrong reference
+  family for a WPF control, so the centered-thumb run
+  `artifacts/visual-checks/20260606-144434-210-243940/report.md` is retained
+  only as superseded false evidence.
 - `Button`, `CheckBox`, `RadioButton`, and `RatingControl` screenshot crops did
   not show a product layout defect in this round. The RatingControl
   post-interaction caption difference (`Your rating` versus `312 ratings`) is
   retained as current ModernWpf sample behavior because existing tests pin the
   caption change after setting a value.
+
+Round 112 corrects the Slider screenshot-reference mistake:
+
+- The non-popup static screenshot batch
+  `artifacts/visual-checks/20260606-175916-208-224604/report.md` was itself
+  wrong to compare the WPF Gallery Slider page to WinUI. It is retained only as
+  evidence that the harness allowed a wrong-reference run.
+- Official WPF Gallery source at
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\BasicInput\SliderPageViewModel.cs`
+  initializes `SimpleSliderValue` to `0`, matching the WPF Slider default.
+  `SliderPageViewModel.SimpleSliderValue` is back to `0`, and
+  `GalleryAutomationHookTests.SliderSampleStartsAtReferenceValue` plus
+  source-shape coverage now pin the official WPF reference value.
+- Slider is reclassified as screenshot-corrected rather than product-fixed:
+  the fix is undoing an incorrect ModernWpf sample change introduced by the
+  audit. Future screenshot fixes must compare WPF controls with official WPF
+  Gallery, not WinUI Gallery.
+- `Run-GalleryVisualChecks.ps1` now rejects WPF Basic Input controls
+  (`Button`, `CheckBox`, `ComboBox`, `RadioButton`, and `Slider`) with the
+  WinUI reference and directs them to the official WPF visual audit.
 
 Round 106 keeps stable state checks screenshot-first and fixes the ToggleSwitch
 miss found while reviewing that flow:
@@ -1450,7 +1460,8 @@ Latest focused evidence:
 | `artifacts/visual-checks/20260606-164411-857-61908/report.md` | ThemeShadow, PersonPicture | 4 app/control rows passed; required primary crops were present for both controls |
 | `artifacts/visual-checks/20260606-160227-645-194344/report.md` | DropDownButton | Expected screenshot harness failure for WinUI popup pixels; verifies the old page-behind/wallpaper crop false pass is rejected |
 | `artifacts/visual-checks/20260606-152649-903-244144/report.md` | ToggleButton, ToggleSwitch, RepeatButton, NumberBox, AppBarToggleButton | 10 app/control rows passed, 0 failed; screenshot review confirmed ToggleSwitch `On` text and right-side thumb in the live state crop |
-| `artifacts/visual-checks/20260606-144434-210-243940/report.md` | Button, CheckBox, RadioButton, Slider, RatingControl | 10 app/control rows passed, 0 failed; screenshot review confirmed Slider starts at output `50` |
+| `artifacts/wpf-gallery-visual-audit/20260606-180955-711-45732/report.md` | Button, CheckBox, ComboBox, RadioButton, Slider | Official WPF Gallery comparison passed with exact content delta `0`; verifies the reverted WPF Slider starts at output `0` |
+| `artifacts/visual-checks/20260606-144434-210-243940/report.md` | Button, CheckBox, RadioButton, Slider, RatingControl | Superseded bad evidence; this WinUI-reference run was invalid for WPF Button, CheckBox, RadioButton, and Slider, and only remains as proof that the old harness allowed wrong-reference comparisons |
 | `artifacts/gallery-recordings/20260604-034810-236/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-035722-075/report.md` | DropDownButton, MenuFlyout, SplitButton, ToggleSplitButton | 4 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-040103-946/report.md` | ContentDialog, Flyout, Popup, CommandBarFlyout | 4 passed, 0 needs review, 0 failed |
@@ -1661,7 +1672,7 @@ proof on top of these static route captures.
 | Basic input | CheckBox | `item/CheckBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/CheckBox/light-checkbox.mp4` | Latest Light rendered rerun toggles the two-state CheckBox from Off to On with local visual delta `3.389`; reviewed frame `t9500` shows the checked state and the three-state examples aligned. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/CheckBox/dark-checkbox.mp4` with `StateEvidence=true`, `AfterState=On`, and local delta `3.182`. |
 | Basic input | ComboBox | `item/ComboBox` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-063701-757/ComboBox/light-combobox.mp4` | Latest Light 24s rendered run closes through `ExpandCollapsePattern.Collapse()` and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t4000` / `t8000` / `t14000`, deltas `14.128` / `0.287` / `14.091`, and local delta `14.25`; reviewed frame `t4000` shows the ComboBox dropdown anchored under the field. Current Dark proof is `artifacts/gallery-recordings/20260606-100047-740/ComboBox/dark-combobox.mp4` with frames `t3500` / `t7500` / `t13500`, deltas `9.717` / `0.316` / `11.359`, and local delta `11.359`. |
 | Basic input | RadioButton | `item/RadioButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/RadioButton/light-radiobutton.mp4` | Latest Light rendered rerun selects `Default Radio Option 2` with local visual delta `4.189`; reviewed frame `t9500` shows Option 2 selected and the radio examples aligned. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/RadioButton/dark-radiobutton.mp4` with `SelectionEvidence=true`, target `Default Radio Option 2`, and local delta `3.503`. |
-| Basic input | Slider | `item/Slider` | Recorded + screenshot | Fixed | `artifacts/visual-checks/20260606-144434-210-243940/report.md` | Round 105 screenshot-first parity caught that the simple Slider opened at output `0` while WinUI opened at `50`. `SliderPageViewModel` now initializes `SimpleSliderValue` to `50`; reviewed `artifacts/visual-checks/20260606-144434-210-243940/Slider/modernwpf-artifacts/GallerySample_Slider_Root.png` shows the thumb centered and output `50`. Older Light/Dark recordings still prove the value interaction path but predate this initial-state fix. |
+| Basic input | Slider | `item/Slider` | Recorded + screenshot | WPF reference restored | `artifacts/wpf-gallery-visual-audit/20260606-180955-711-45732/report.md` | Round 112 corrected the Round 105 wrong-reference comparison: Slider is a WPF Gallery page and must be compared to official WPF, not WinUI. Official WPF source initializes `SimpleSliderValue` to `0`; ModernWpf is restored to `0`, and the rebuilt official-WPF screenshot audit passed with exact content delta `0`. Runtime/source-shape tests pin that value. Older Light/Dark recordings still prove the value interaction path; the superseded centered-thumb screenshot run `artifacts/visual-checks/20260606-144434-210-243940/report.md` is retained only as bad audit evidence. |
 | Basic input | ColorPicker | `item/ColorPicker` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-173145-835-10284/report.md` | Round 110 fixed the default ColorPicker text-entry layout to match the reference combo/hex row and vertical Red/Green/Blue rows. `ColorPickerSampleMatchesWinUIGalleryExample` now asserts those relative positions, and the screenshot harness requires a focused ColorPicker primary crop built from stable WinUI child bounds. Reviewed `modernwpf-artifacts/GallerySample_ColorPicker_ColorPicker.png` and `winui3-ColorPicker-primary-content-crop.png` show the aligned structure. Older Light/Dark recordings still prove the More-button interaction path. |
 | Basic input | HyperlinkButton | `item/HyperlinkButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-074841-162/HyperlinkButton/light-hyperlinkbutton.mp4` | Latest Light rendered run clicks the safe in-app `Go to ToggleButton` sample and requires route proof: `BeforeRoute=item/HyperlinkButton`, `AfterRoute=item/ToggleButton`, `TargetSampleVisible=true`, whole-frame delta `2.563`, and local visual delta `12.244`. Reviewed `t9500` shows the ToggleButton destination page. External URI navigation remains intentionally not invoked. The previous dark proof remains at `artifacts/gallery-recordings/20260606-020424-123/HyperlinkButton/dark-hyperlinkbutton.mp4`. |
 | Basic input | RatingControl | `item/RatingControl` | Recorded | Touch-first sample copy removed | `artifacts/gallery-recordings/20260606-070029-557/RatingControl/light-ratingcontrol.mp4` | Latest Light rendered rerun changes the rating from `0` to target `3` with local visual delta `3.861`; reviewed frame `t9500` shows three selected stars, output `3`, and the corrected `Click again to clear your rating.` text with no `Swipe left` instruction. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/RatingControl/dark-ratingcontrol.mp4` with `ValueEvidence=true`, value `0` to `3`, local delta `4.049`, and reviewed frame `t9500` showing the same corrected copy. |

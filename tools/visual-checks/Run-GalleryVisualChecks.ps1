@@ -25,9 +25,12 @@ if ([string]::IsNullOrWhiteSpace($GalleryExe)) {
 
 $WpfGalleryOnlyVisualAuditCases = @(
     "Border",
+    "Button",
     "Calendar",
     "Canvas",
+    "CheckBox",
     "Clipboard",
+    "ComboBox",
     "DataGrid",
     "DatePicker",
     "Expander",
@@ -46,8 +49,10 @@ $WpfGalleryOnlyVisualAuditCases = @(
     "NavigationWindow",
     "PasswordBox",
     "ProgressBar",
+    "RadioButton",
     "ResizeGrip",
     "RichTextEdit",
+    "Slider",
     "StackPanel",
     "TabControl",
     "TextBlock",

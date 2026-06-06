@@ -1602,7 +1602,7 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "public partial class SliderPageViewModel : BasicInputPageViewModelBase",
-                "private int _simpleSliderValue = 50;",
+                "private int _simpleSliderValue = 0;",
                 "private int _rangeSliderValue = 500;",
                 "private int _marksSliderValue = 0;",
                 "private int _verticalSliderValue = 0;");
@@ -2678,8 +2678,13 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "$WpfGalleryOnlyVisualAuditCases = @(",
+                "\"Button\"",
+                "\"CheckBox\"",
+                "\"ComboBox\"",
                 "\"PasswordBox\"",
+                "\"RadioButton\"",
                 "\"RichTextEdit\"",
+                "\"Slider\"",
                 "\"TextBox\"",
                 "if ($Reference -eq \"InstalledWinUI3Gallery\")",
                 "$wrongReferenceControls = @($Controls | Where-Object { $WpfGalleryOnlyVisualAuditCases -contains $_ })",
