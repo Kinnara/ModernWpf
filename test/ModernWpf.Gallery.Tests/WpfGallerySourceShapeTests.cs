@@ -3770,6 +3770,24 @@ namespace ModernWpf.Gallery.Tests
                 "if (Test-ControlSupportsOpenInteraction $control) { return \"OpenRepeat\" }",
                 "function Test-ControlRequiresDiagnosticPreparation([string]$control)",
                 "default { return $false }");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsOptionInteraction([string]$control)",
+                "\"TitleBar\" { return $true }",
+                "function Get-OptionInteractionTriggerName([string]$control)",
+                "\"TitleBar\" { return \"IsBackButtonVisible\" }",
+                "function Get-OptionInteractionExpectedElementAutomationId([string]$control)",
+                "\"TitleBar\" { return \"GallerySample_TitleBar_BackButton\" }",
+                "function Invoke-OptionInteraction($window, [string]$control, $sampleElement)",
+                "$expectedElementAutomationId = Get-OptionInteractionExpectedElementAutomationId $control",
+                "$beforeExpectedElementVisible = Test-AutomationElementUsable $expectedElement",
+                "$afterExpectedElementVisible = Test-AutomationElementUsable $expectedElement",
+                "ExpectedElementBounds = $expectedElementBounds",
+                "BeforeExpectedElementVisible = $beforeExpectedElementVisible",
+                "AfterExpectedElementVisible = $afterExpectedElementVisible",
+                "StateOrSampleChanged = $stateOrSampleChanged",
+                "ExpectedElementChanged = $expectedElementChanged",
+                "OptionChanged = if ($requiresExpectedElement) { $stateOrSampleChanged -and $expectedElementChanged } else { $stateOrSampleChanged }");
             Assert.IsFalse(
                 source.Contains("if ($control -eq \"ToolTip\") { return \"PreparedOpen\" }", StringComparison.Ordinal),
                 "ToolTip must use the hover/open-repeat path, not the pre-opened diagnostic path.");

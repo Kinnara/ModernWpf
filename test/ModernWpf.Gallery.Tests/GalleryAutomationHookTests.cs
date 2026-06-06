@@ -3190,6 +3190,12 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(paneToggle);
                     Assert.AreEqual("IsPaneToggleButtonVisible", paneToggle.Header);
                     Assert.IsFalse(paneToggle.IsOn);
+                    var previewBackButton = (Button)FindByAutomationId(page, "GallerySample_TitleBar_BackButton");
+                    Assert.IsNotNull(previewBackButton);
+                    Assert.AreEqual(Visibility.Collapsed, previewBackButton.Visibility);
+                    var previewPaneButton = (Button)FindByAutomationId(page, "GallerySample_TitleBar_PaneToggleButton");
+                    Assert.IsNotNull(previewPaneButton);
+                    Assert.AreEqual(Visibility.Collapsed, previewPaneButton.Visibility);
 
                     var titleText = FindNamedDescendant<TextBlock>(page, "TitleText");
                     var subtitleText = FindNamedDescendant<TextBlock>(page, "SubtitleText");
@@ -3197,6 +3203,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(subtitleText);
                     Assert.AreEqual("WinUI Gallery", titleText.Text);
                     Assert.AreEqual("Preview", subtitleText.Text);
+                    backButtonToggle.IsOn = true;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(Visibility.Visible, previewBackButton.Visibility);
 
                     var endToEndRoot = (GallerySamplePanel)page.Examples[1].ExampleContent;
                     Assert.AreEqual(1, endToEndRoot.Children.Count);

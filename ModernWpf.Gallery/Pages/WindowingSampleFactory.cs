@@ -349,7 +349,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
 
         private static Button CreateTitleBarPreviewButton(string name, Mux.Symbol symbol)
         {
-            return new Button
+            var button = new Button
             {
                 Name = name,
                 Width = 40,
@@ -360,6 +360,8 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 Visibility = Visibility.Collapsed,
                 Content = new Mux.SymbolIcon(symbol)
             };
+            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("TitleBar", name));
+            return button;
         }
 
         private static FrameworkElement CreateTitleBarWindowBody()

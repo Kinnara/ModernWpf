@@ -1182,6 +1182,7 @@ function Test-ControlSupportsOptionInteraction([string]$control) {
         "Button" { return $true }
         "ColorPicker" { return $true }
         "SplitView" { return $true }
+        "TitleBar" { return $true }
         "InfoBar" { return $true }
         "ProgressRing" { return $true }
         default { return $false }
@@ -3790,6 +3791,7 @@ function Get-OptionInteractionTriggerName([string]$control) {
         "Button" { return "Disable button" }
         "ColorPicker" { return "IsMoreButtonVisible" }
         "SplitView" { return "IsPaneOpen" }
+        "TitleBar" { return "IsBackButtonVisible" }
         "InfoBar" { return "Is Open" }
         "ProgressRing" { return "Progress Options" }
         default { return "" }
@@ -3805,9 +3807,17 @@ function Get-OptionInteractionTriggerAutomationId([string]$control) {
     }
 }
 
+function Get-OptionInteractionExpectedElementAutomationId([string]$control) {
+    switch ($control) {
+        "TitleBar" { return "GallerySample_TitleBar_BackButton" }
+        default { return "" }
+    }
+}
+
 function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
     $name = Get-OptionInteractionTriggerName $control
     $automationId = Get-OptionInteractionTriggerAutomationId $control
+    $expectedElementAutomationId = Get-OptionInteractionExpectedElementAutomationId $control
     $target = if (![string]::IsNullOrWhiteSpace($automationId)) {
         Find-ElementByAutomationIdInProcess $window.Current.ProcessId $automationId
     }
@@ -3822,24 +3832,48 @@ function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
     $beforeSampleEnabled = Get-IsEnabledStateName $sampleElement
     $optionBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $target)
     $sampleBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
+    $expectedElement = if (![string]::IsNullOrWhiteSpace($expectedElementAutomationId)) {
+        Find-ElementByAutomationIdInProcess $window.Current.ProcessId $expectedElementAutomationId
+    }
+    else {
+        $null
+    }
+    $beforeExpectedElementVisible = Test-AutomationElementUsable $expectedElement
     $invoked = Invoke-OptionElementOnce $window $target
     Start-Sleep -Milliseconds 300
     $afterState = Get-ToggleStateName $target
     $afterSampleEnabled = Get-IsEnabledStateName $sampleElement
+    $expectedElement = if (![string]::IsNullOrWhiteSpace($expectedElementAutomationId)) {
+        Find-ElementByAutomationIdInProcess $window.Current.ProcessId $expectedElementAutomationId
+    }
+    else {
+        $null
+    }
+    $afterExpectedElementVisible = Test-AutomationElementUsable $expectedElement
+    $expectedElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $expectedElement)
+    $stateOrSampleChanged = (
+        (![string]::IsNullOrWhiteSpace($beforeState) -and $beforeState -ne $afterState) -or
+        (![string]::IsNullOrWhiteSpace($beforeSampleEnabled) -and $beforeSampleEnabled -ne $afterSampleEnabled))
+    $requiresExpectedElement = ![string]::IsNullOrWhiteSpace($expectedElementAutomationId)
+    $expectedElementChanged = $requiresExpectedElement -and !$beforeExpectedElementVisible -and $afterExpectedElementVisible
 
     return [ordered]@{
         Invoked = $invoked
         OptionName = $name
         OptionAutomationId = $automationId
+        ExpectedElementAutomationId = $expectedElementAutomationId
         OptionBounds = $optionBounds
         SampleBounds = $sampleBounds
+        ExpectedElementBounds = $expectedElementBounds
         BeforeState = $beforeState
         AfterState = $afterState
         BeforeSampleEnabled = $beforeSampleEnabled
         AfterSampleEnabled = $afterSampleEnabled
-        OptionChanged = (
-            (![string]::IsNullOrWhiteSpace($beforeState) -and $beforeState -ne $afterState) -or
-            (![string]::IsNullOrWhiteSpace($beforeSampleEnabled) -and $beforeSampleEnabled -ne $afterSampleEnabled))
+        BeforeExpectedElementVisible = $beforeExpectedElementVisible
+        AfterExpectedElementVisible = $afterExpectedElementVisible
+        StateOrSampleChanged = $stateOrSampleChanged
+        ExpectedElementChanged = $expectedElementChanged
+        OptionChanged = if ($requiresExpectedElement) { $stateOrSampleChanged -and $expectedElementChanged } else { $stateOrSampleChanged }
     }
 }
 

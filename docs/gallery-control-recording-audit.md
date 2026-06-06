@@ -326,7 +326,8 @@ evidence under the current recorder:
   InfoBadge, and AppBarSeparator remained static route captures in this run.
   The run proved nonblank routed pages against the recorder's required
   automation anchor mapping, not interaction proof. HyperlinkButton's
-  static-only status is superseded by Round 70.
+  static-only status is superseded by Round 70; TitleBar's is superseded by
+  Round 71.
 
 Round 64 refreshes official WPF interaction coverage and demotes the ToolTip
 prepared-open false pass:
@@ -480,6 +481,28 @@ Round 70 closes the HyperlinkButton static-pass gap:
   `artifacts/gallery-recordings/20260606-020424-123/HyperlinkButton/frames/t5000.png`
   visibly shows the ToggleButton page after the click.
 
+Round 71 closes the TitleBar static-pass gap:
+
+- The weak static batch
+  `artifacts/gallery-recordings/20260606-015618-998/report.md` also marked
+  TitleBar as `Passed` with `InteractionKind=Static`, even though the page has
+  interactive configuration switches. Static proof could miss a broken preview
+  update when `IsBackButtonVisible` is toggled.
+- The TitleBar sample now exposes automation ids for its preview Back and pane
+  buttons, and the recorder routes TitleBar through the `Option` interaction.
+  It toggles `IsBackButtonVisible` and requires
+  `GallerySample_TitleBar_BackButton` to become visible, so the proof covers
+  the rendered preview change rather than only the switch state.
+- Latest proof
+  `artifacts/gallery-recordings/20260606-021439-880/report.md` passed with
+  `InteractionKind=Option`, `BeforeState=Off`, `AfterState=On`,
+  `BeforeExpectedElementVisible=false`, `AfterExpectedElementVisible=true`,
+  `StateOrSampleChanged=true`, `ExpectedElementChanged=true`,
+  whole-frame delta `0.133`, and local visual delta `8.552` on the expected
+  Back-button bounds. Reviewed frame
+  `artifacts/gallery-recordings/20260606-021439-880/TitleBar/frames/t5000.png`
+  visibly shows the Back preview button after the switch toggles on.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -519,6 +542,7 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260605-070810-482/report.md` | ToolTip | 1 passed, 0 needs review, 0 failed; visual-test click/open path plus fallback bounds prove open, close, and second open |
 | `artifacts/gallery-recordings/20260606-014544-783/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; recorder-driven `WM_CHAR` text input is visible in dark-theme frames and UIA output changed from empty to `ModernWpf rich text` |
 | `artifacts/gallery-recordings/20260606-020424-123/report.md` | HyperlinkButton | 1 passed, 0 needs review, 0 failed; in-app route-click proof changed from `item/HyperlinkButton` to `item/ToggleButton` and the destination ToggleButton sample was visible |
+| `artifacts/gallery-recordings/20260606-021439-880/report.md` | TitleBar | 1 passed, 0 needs review, 0 failed; option proof toggled `IsBackButtonVisible`, required the preview Back button visibility change, and recorded local delta `8.552` |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 | `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
 | `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
@@ -627,7 +651,7 @@ proof on top of these static route captures.
 | Media | PersonPicture | `item/PersonPicture` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-045636-525/PersonPicture/dark-personpicture.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_PersonPicture_PersonPicture`. |
 | Styles | IconElement | `item/IconElement` | Recorded | Recorder anchor fixed | `artifacts/gallery-recordings/20260605-045636-525/IconElement/dark-iconelement.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_IconElement_ExampleButton1`. |
 | Styles | ThemeShadow | `item/ThemeShadow` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260605-045636-525/ThemeShadow/dark-themeshadow.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_ThemeShadow_TranslationSlider`. |
-| Windowing | TitleBar | `item/TitleBar` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260605-045636-525/TitleBar/dark-titlebar.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_TitleBar_SearchBox`. |
+| Windowing | TitleBar | `item/TitleBar` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-021439-880/TitleBar/dark-titlebar.mp4` | Latest rendered run toggles `IsBackButtonVisible` and requires the preview Back button to become visible. Manifest records `BeforeState=Off`, `AfterState=On`, `BeforeExpectedElementVisible=false`, `AfterExpectedElementVisible=true`, `StateOrSampleChanged=true`, `ExpectedElementChanged=true`, whole-frame delta `0.133`, and local visual delta `8.552`. |
 | Status & info | InfoBadge | `item/InfoBadge` | Recorded | Sample anchor fixed | `artifacts/gallery-recordings/20260605-045636-525/InfoBadge/dark-infobadge.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_InfoBadge_NavigationView`. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/InfoBar/dark-infobar.mp4` | Latest rendered run records the option interaction with local visual delta `8.084` and whole-frame delta `0.379`. |
 | Status & info | ProgressRing | `item/ProgressRing` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260605-045636-525/ProgressRing/dark-progressring.mp4` | Latest manifest records `AnimationEvidence=true` with early-frame delta `0.075`, local visual delta `13.759`, and option state change despite low whole-frame delta `0.086`. |
