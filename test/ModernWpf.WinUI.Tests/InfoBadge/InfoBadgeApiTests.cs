@@ -283,6 +283,43 @@ public class InfoBadgeApiTests
     }
 
     [TestMethod]
+    public void InfoBadgeDefaultCornerRadiusTracksActualHeight()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var infoBadge = new ModernWpf.Controls.InfoBadge
+            {
+                Value = 5
+            };
+
+            using var host = new TestWindowHost(infoBadge, width: 100, height: 100);
+            host.UpdateLayout();
+
+            var expectedRadius = infoBadge.ActualHeight / 2;
+            Assert.IsTrue(expectedRadius > 0);
+            Assert.AreEqual(new CornerRadius(expectedRadius), infoBadge.TemplateSettings.InfoBadgeCornerRadius);
+        });
+    }
+
+    [TestMethod]
+    public void InfoBadgeExplicitCornerRadiusIsHonored()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var infoBadge = new ModernWpf.Controls.InfoBadge
+            {
+                CornerRadius = new CornerRadius(2),
+                Value = 5
+            };
+
+            using var host = new TestWindowHost(infoBadge, width: 100, height: 100);
+            host.UpdateLayout();
+
+            Assert.AreEqual(new CornerRadius(2), infoBadge.TemplateSettings.InfoBadgeCornerRadius);
+        });
+    }
+
+    [TestMethod]
     public void InfoBadgeValueLessThanNegativeOneThrows()
     {
         WpfTestHost.Run(() =>

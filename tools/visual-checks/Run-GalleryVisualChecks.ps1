@@ -862,6 +862,15 @@ function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
     }
 }
 
+function Test-ControlRequiresPrimaryCrop([string]$control) {
+    switch ($control) {
+        "InfoBadge" { return $true }
+        "PersonPicture" { return $true }
+        "ThemeShadow" { return $true }
+        default { return $false }
+    }
+}
+
 function Get-ModernPrimaryCropAutomationId([string]$control) {
     switch ($control) {
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
@@ -928,9 +937,9 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "NumberBox" { return "NumberBoxSpinButtonPlacementExample" }
         "AutoSuggestBox" { return "Control1" }
         "SplitView" { return "NavLinksList" }
-        "PersonPicture" { return "ProfileImageRadio" }
+        "PersonPicture" { return "" }
         "IconElement" { return "svPanel" }
-        "ThemeShadow" { return "svPanel" }
+        "ThemeShadow" { return "" }
         "TitleBar" { return "TitleBarControl" }
         "ProgressRing" { return "ProgressRing1" }
         "AnnotatedScrollBar" { return "svPanel" }
@@ -2266,6 +2275,220 @@ function New-IconElementReferencePrimaryCrop([string]$caseDir, $window, [string]
     return $null
 }
 
+function New-ThemeShadowReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
+    $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $modernSampleArtifact = Join-Path $modernArtifactDir "GallerySample_ThemeShadow_Root.png"
+    if (!(Test-Path $modernSampleArtifact)) {
+        return $null
+    }
+
+    $modernSize = Get-ImageSize $modernSampleArtifact
+    $sampleBounds = Get-ElementWindowBounds $window $sampleElement
+    $headerText = Find-DescendantByName $window "ThemeShadow applied to a Border"
+    $headerBounds = Get-ElementWindowBounds $window $headerText
+    if ($null -eq $sampleBounds -or !$sampleBounds.Found -or $null -eq $headerBounds -or !$headerBounds.Found) {
+        return $null
+    }
+
+    $contentY = $headerBounds.Y + $headerBounds.Height + 13
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the WinUI ThemeShadow demo body to match the ModernWpf rendered sample root."
+        X = $headerBounds.X
+        Y = [Math]::Max($sampleBounds.Y, $contentY)
+        Width = $modernSize.Width
+        Height = $modernSize.Height
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "winui3-ThemeShadow-primary-content-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "ThemeShadow demo body" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
+function New-PersonPictureReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
+    $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $modernPrimaryArtifact = Join-Path $modernArtifactDir "GallerySample_PersonPicture_PersonPicture.png"
+    if (!(Test-Path $modernPrimaryArtifact)) {
+        return $null
+    }
+
+    $modernSize = Get-ImageSize $modernPrimaryArtifact
+    $sampleBounds = Get-ElementWindowBounds $window $sampleElement
+    if ($null -eq $sampleBounds -or !$sampleBounds.Found) {
+        return $null
+    }
+
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the WinUI PersonPicture avatar from the first example content."
+        X = $sampleBounds.X + 59
+        Y = $sampleBounds.Y + 106
+        Width = $modernSize.Width
+        Height = $modernSize.Height
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "winui3-PersonPicture-primary-content-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "PersonPicture avatar" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
+function Find-AccentComponentCropBounds([string]$screenshot, $searchBounds, [int]$targetWidth, [int]$targetHeight) {
+    if ($null -eq $searchBounds -or !$searchBounds.Found -or !(Test-Path $screenshot)) {
+        return $null
+    }
+
+    $source = [System.Drawing.Bitmap]::FromFile($screenshot)
+    try {
+        $left = [Math]::Max(0, [int]$searchBounds.X)
+        $top = [Math]::Max(0, [int]$searchBounds.Y)
+        $right = [Math]::Min($source.Width, [int]($searchBounds.X + $searchBounds.Width))
+        $bottom = [Math]::Min($source.Height, [int]($searchBounds.Y + $searchBounds.Height))
+        $width = $right - $left
+        $height = $bottom - $top
+        if ($width -le 0 -or $height -le 0) {
+            return $null
+        }
+
+        $accentPixels = New-Object 'bool[,]' $width, $height
+        for ($x = 0; $x -lt $width; $x++) {
+            for ($y = 0; $y -lt $height; $y++) {
+                $color = $source.GetPixel($left + $x, $top + $y)
+                if ($color.B -gt 120 -and
+                    $color.G -gt 120 -and
+                    $color.R -lt 90 -and
+                    ($color.B - $color.R) -gt 80) {
+                    $accentPixels[$x, $y] = $true
+                }
+            }
+        }
+
+        $visited = New-Object 'bool[,]' $width, $height
+        $components = New-Object System.Collections.Generic.List[object]
+        for ($startX = 0; $startX -lt $width; $startX++) {
+            for ($startY = 0; $startY -lt $height; $startY++) {
+                if (!$accentPixels[$startX, $startY] -or $visited[$startX, $startY]) {
+                    continue
+                }
+
+                $queueX = New-Object System.Collections.Generic.Queue[int]
+                $queueY = New-Object System.Collections.Generic.Queue[int]
+                $queueX.Enqueue($startX)
+                $queueY.Enqueue($startY)
+                $visited[$startX, $startY] = $true
+                $minX = $startX
+                $maxX = $startX
+                $minY = $startY
+                $maxY = $startY
+                $count = 0
+
+                while ($queueX.Count -gt 0) {
+                    $x = $queueX.Dequeue()
+                    $y = $queueY.Dequeue()
+                    $count++
+                    $minX = [Math]::Min($minX, $x)
+                    $maxX = [Math]::Max($maxX, $x)
+                    $minY = [Math]::Min($minY, $y)
+                    $maxY = [Math]::Max($maxY, $y)
+
+                    for ($dx = -1; $dx -le 1; $dx++) {
+                        for ($dy = -1; $dy -le 1; $dy++) {
+                            if ($dx -eq 0 -and $dy -eq 0) {
+                                continue
+                            }
+
+                            $nextX = $x + $dx
+                            $nextY = $y + $dy
+                            if ($nextX -lt 0 -or $nextY -lt 0 -or $nextX -ge $width -or $nextY -ge $height) {
+                                continue
+                            }
+
+                            if ($accentPixels[$nextX, $nextY] -and !$visited[$nextX, $nextY]) {
+                                $visited[$nextX, $nextY] = $true
+                                $queueX.Enqueue($nextX)
+                                $queueY.Enqueue($nextY)
+                            }
+                        }
+                    }
+                }
+
+                $componentWidth = $maxX - $minX + 1
+                $componentHeight = $maxY - $minY + 1
+                if ($count -ge 20 -and
+                    $componentWidth -ge [Math]::Max(4, $targetWidth - 6) -and
+                    $componentWidth -le ($targetWidth + 10) -and
+                    $componentHeight -ge [Math]::Max(4, $targetHeight - 6) -and
+                    $componentHeight -le ($targetHeight + 10) -and
+                    $minY -lt ($height * 0.65)) {
+                    $components.Add([ordered]@{
+                        Count = $count
+                        X = $minX
+                        Y = $minY
+                        Width = $componentWidth
+                        Height = $componentHeight
+                    })
+                }
+            }
+        }
+
+        $component = @($components.ToArray() | Sort-Object @{ Expression = "Y"; Ascending = $true }, @{ Expression = "X"; Ascending = $true } | Select-Object -First 1)
+        if ($component.Count -eq 0) {
+            return $null
+        }
+
+        $match = $component[0]
+        $centerX = $left + $match.X + ($match.Width / 2.0)
+        $centerY = $top + $match.Y + ($match.Height / 2.0)
+        return [ordered]@{
+            Found = $true
+            Reason = "Cropped the first small accent component inside the reference sample."
+            X = [Math]::Max(0, [int][Math]::Round($centerX - ($targetWidth / 2.0)))
+            Y = [Math]::Max(0, [int][Math]::Round($centerY - ($targetHeight / 2.0)))
+            Width = $targetWidth
+            Height = $targetHeight
+            ChangedSamples = 0
+        }
+    }
+    finally {
+        $source.Dispose()
+    }
+}
+
+function New-InfoBadgeReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
+    $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $modernPrimaryArtifact = Join-Path $modernArtifactDir "GallerySample_InfoBadge_InfoBadge.png"
+    if (!(Test-Path $modernPrimaryArtifact)) {
+        return $null
+    }
+
+    $modernSize = Get-ImageSize $modernPrimaryArtifact
+    $sampleBounds = Get-ElementWindowBounds $window $sampleElement
+    $bounds = Find-AccentComponentCropBounds $screenshot $sampleBounds $modernSize.Width $modernSize.Height
+    if ($null -eq $bounds) {
+        return $null
+    }
+
+    $path = Join-Path $caseDir "winui3-InfoBadge-primary-content-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "Embedded InfoBadge" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
 function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $window, [string]$screenshot) {
     $primaryElement = $null
     $primarySource = ""
@@ -2297,6 +2520,10 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             else {
                 $primaryCrop = $null
             }
+        }
+
+        if ($control -eq "InfoBadge") {
+            $primaryCrop = $null
         }
 
         if ($control -eq "ProgressRing" -and $null -ne $primaryCrop) {
@@ -2415,6 +2642,24 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
         $iconElementPrimary = New-IconElementReferencePrimaryCrop $caseDir $window $screenshot
         if ($null -ne $iconElementPrimary) {
             $primaryResult = $iconElementPrimary
+        }
+    }
+    elseif ($control -eq "ThemeShadow") {
+        $themeShadowPrimary = New-ThemeShadowReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
+        if ($null -ne $themeShadowPrimary) {
+            $primaryResult = $themeShadowPrimary
+        }
+    }
+    elseif ($control -eq "PersonPicture") {
+        $personPicturePrimary = New-PersonPictureReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
+        if ($null -ne $personPicturePrimary) {
+            $primaryResult = $personPicturePrimary
+        }
+    }
+    elseif ($control -eq "InfoBadge") {
+        $infoBadgePrimary = New-InfoBadgeReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
+        if ($null -ne $infoBadgePrimary) {
+            $primaryResult = $infoBadgePrimary
         }
     }
 
@@ -4832,8 +5077,12 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
         $primaryCropMinimumVisibleStdDev = Get-PrimaryCropMinimumVisibleStdDev $control
         $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt $primaryCropMinimumVisibleStdDev
+        $primaryCropMissing = (Test-ControlRequiresPrimaryCrop $control) -and !$staticCrops.Primary.Found
         $requiredSampleFound = $requiredSampleArtifactFound -or $null -ne $sample -or $hasRenderedCrops
-        $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif (!$requiredSampleFound) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
+        $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($primaryCropMissing) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif (!$requiredSampleFound) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
+        if ($primaryCropMissing -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = "Primary crop was required for $control but was not found."
+        }
         if ($primaryCropBlank -and [string]::IsNullOrEmpty($lastException)) {
             $lastException = "Primary crop '$($staticCrops.Primary.Source)' was blank."
         }
@@ -4928,9 +5177,10 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
             Capture-Window $window.Current.NativeWindowHandle $screenshot
             $staticCrops = Capture-StaticCrops "WinUI3" $control $caseDir $window $screenshot
             $notBlank = Test-ImageNotBlank $screenshot
+            $primaryCropMissing = (Test-ControlRequiresPrimaryCrop $control) -and !$staticCrops.Primary.Found
             $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
             $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt $primaryCropMinimumVisibleStdDev
-            if ($notBlank -and !$primaryCropBlank -and !$primaryCropLowVariation) {
+            if ($notBlank -and !$primaryCropMissing -and !$primaryCropBlank -and !$primaryCropLowVariation) {
                 break
             }
         }
@@ -4941,11 +5191,11 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
             App = "WinUI3Gallery"
             Control = $control
             Route = $route
-            Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($themeProbeFailed) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
+            Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropMissing) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($themeProbeFailed) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
             Title = $pageTitle
             Screenshot = $screenshot
             UiaTree = $treePath
-            LastException = $(if ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)." } elseif ($themeProbeFailed) { "Reference theme probe did not prove $Theme theme: $($themeProbe.Reason)" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
+            LastException = $(if ($primaryCropMissing) { "Primary crop was required for $control but was not found." } elseif ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)." } elseif ($themeProbeFailed) { "Reference theme probe did not prove $Theme theme: $($themeProbe.Reason)" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
             NonBlank = $notBlank
             RequiredSampleAutomationId = ""
             RequiredSampleElementFound = $true

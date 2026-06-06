@@ -2607,12 +2607,69 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"InfoBadge\" { return $true }",
+                "\"PersonPicture\" { return $true }",
+                "\"ThemeShadow\" { return $true }",
                 "function Get-ModernPrimaryCropAutomationId([string]$control)",
                 "\"SplitView\" { return \"GallerySample_SplitView_SplitView\" }",
                 "\"PersonPicture\" { return \"GallerySample_PersonPicture_PersonPicture\" }",
                 "function Get-ReferencePrimaryAutomationId([string]$control)",
                 "\"SplitView\" { return \"NavLinksList\" }",
-                "\"PersonPicture\" { return \"ProfileImageRadio\" }");
+                "\"PersonPicture\" { return \"\" }",
+                "\"ThemeShadow\" { return \"\" }",
+                "function New-ThemeShadowReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement)",
+                "GallerySample_ThemeShadow_Root.png",
+                "Cropped the WinUI ThemeShadow demo body to match the ModernWpf rendered sample root.",
+                "ThemeShadow demo body",
+                "function New-PersonPictureReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement)",
+                "GallerySample_PersonPicture_PersonPicture.png",
+                "Cropped the WinUI PersonPicture avatar from the first example content.",
+                "PersonPicture avatar",
+                "function Find-AccentComponentCropBounds([string]$screenshot, $searchBounds, [int]$targetWidth, [int]$targetHeight)",
+                "$color.B -gt 120",
+                "$minY -lt ($height * 0.65)",
+                "function New-InfoBadgeReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement)",
+                "GallerySample_InfoBadge_InfoBadge.png",
+                "Find-AccentComponentCropBounds $screenshot $sampleBounds $modernSize.Width $modernSize.Height",
+                "Embedded InfoBadge",
+                "if ($control -eq \"InfoBadge\")",
+                "$primaryCrop = $null",
+                "elseif ($control -eq \"ThemeShadow\")",
+                "New-ThemeShadowReferencePrimaryCrop $caseDir $window $screenshot $sampleElement",
+                "elseif ($control -eq \"PersonPicture\")",
+                "New-PersonPictureReferencePrimaryCrop $caseDir $window $screenshot $sampleElement",
+                "elseif ($control -eq \"InfoBadge\")",
+                "New-InfoBadgeReferencePrimaryCrop $caseDir $window $screenshot $sampleElement");
+            Assert.IsTrue(
+                source.Contains("$primaryCropMissing = (Test-ControlRequiresPrimaryCrop $control) -and !$staticCrops.Primary.Found", StringComparison.Ordinal),
+                "Controls with custom primary parity must fail when the primary crop is missing.");
+            Assert.IsFalse(
+                source.Contains("\"PersonPicture\" { return \"ProfileImageRadio\" }", StringComparison.Ordinal),
+                "PersonPicture primary parity must crop the avatar, not the profile-type radio button.");
+            Assert.IsFalse(
+                source.Contains("\"ThemeShadow\" { return \"svPanel\" }", StringComparison.Ordinal),
+                "ThemeShadow primary parity must crop the demo body, not the whole reference page sample.");
+        }
+
+        [TestMethod]
+        public void InfoBadgeNavigationViewSampleKeepsEmbeddedBadgeVisible()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "ModernWpf.Gallery",
+                "Pages",
+                "StatusInfoSampleFactory.cs"));
+
+            AssertContainsInOrder(
+                source,
+                "var navigationView = new Mux.NavigationView",
+                "Name = \"nvSample1\"",
+                "Width = 560",
+                "Height = 300",
+                "PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Left",
+                "IsPaneOpen = true",
+                "GalleryAutomation.WithAutomationId(infoBadge, GalleryAutomation.SampleElementId(\"InfoBadge\", \"InfoBadge\"))");
         }
 
         [TestMethod]

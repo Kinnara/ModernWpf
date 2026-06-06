@@ -14,7 +14,6 @@ namespace ModernWpf.Controls
         public InfoBadge()
         {
             SetValue(TemplateSettingsPropertyKey, new InfoBadgeTemplateSettings());
-            SizeChanged += OnSizeChanged;
         }
 
         public override void OnApplyTemplate()
@@ -36,6 +35,13 @@ namespace ModernWpf.Controls
             return desiredSize;
         }
 
+        protected override Size ArrangeOverride(Size arrangeBounds)
+        {
+            var finalSize = base.ArrangeOverride(arrangeBounds);
+            UpdateCornerRadius(finalSize.Height);
+            return finalSize;
+        }
+
         private static void OnDisplayKindPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((InfoBadge)d).UpdateDisplayKind();
@@ -44,11 +50,6 @@ namespace ModernWpf.Controls
         private static void OnCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((InfoBadge)d).UpdateCornerRadius();
-        }
-
-        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            UpdateCornerRadius();
         }
 
         private void UpdateDisplayKind()
@@ -74,11 +75,25 @@ namespace ModernWpf.Controls
 
         private void UpdateCornerRadius()
         {
-            var cornerRadius = ReadLocalValue(CornerRadiusProperty) == DependencyProperty.UnsetValue
-                ? new CornerRadius(ActualHeight / 2)
+            UpdateCornerRadius(ActualHeight);
+        }
+
+        private void UpdateCornerRadius(double actualHeight)
+        {
+            var cornerRadius = IsDefaultCornerRadiusValue()
+                ? new CornerRadius(actualHeight / 2)
                 : CornerRadius;
 
             TemplateSettings.InfoBadgeCornerRadius = cornerRadius;
+        }
+
+        private bool IsDefaultCornerRadiusValue()
+        {
+            var valueSource = DependencyPropertyHelper.GetValueSource(this, CornerRadiusProperty);
+            return valueSource.BaseValueSource == BaseValueSource.Default &&
+                !valueSource.IsAnimated &&
+                !valueSource.IsCoerced &&
+                !valueSource.IsExpression;
         }
     }
 }

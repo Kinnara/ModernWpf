@@ -163,6 +163,7 @@ namespace ModernWpf.Gallery.Pages
             var navigationView = new Mux.NavigationView
             {
                 Name = "nvSample1",
+                Width = 560,
                 Height = 300,
                 PaneDisplayMode = Mux.NavigationViewPaneDisplayMode.Left,
                 IsPaneOpen = true,
