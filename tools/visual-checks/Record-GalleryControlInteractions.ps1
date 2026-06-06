@@ -46,6 +46,7 @@ if (!(Test-Path $RecordWindowRenderedScript)) {
 
 $script:GalleryVisualSnapshotDirectory = ""
 $script:GalleryLiveFrameDirectory = ""
+$script:LastEditableTextMethod = ""
 
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
@@ -4160,6 +4161,7 @@ function Find-EditableDescendant($element) {
 }
 
 function Set-EditableElementText($window, $element, [string]$text) {
+    $script:LastEditableTextMethod = ""
     $edit = Find-EditableDescendant $element
     if ($null -eq $edit) {
         return $false
@@ -4188,6 +4190,7 @@ function Set-EditableElementText($window, $element, [string]$text) {
                 [GalleryRecordingNative]::PressCtrlV()
                 Start-Sleep -Milliseconds 350
                 if ((Get-ElementText $edit) -eq $text) {
+                    $script:LastEditableTextMethod = "ClipboardPaste"
                     return $true
                 }
             }
@@ -4197,16 +4200,22 @@ function Set-EditableElementText($window, $element, [string]$text) {
             [GalleryRecordingNative]::PressCtrlA()
             Start-Sleep -Milliseconds 50
             if ("System.Windows.Forms.SendKeys" -as [type]) {
-                [System.Windows.Forms.SendKeys]::SendWait($text)
-                Start-Sleep -Milliseconds 250
-                if ((Get-ElementText $edit) -eq $text) {
-                    return $true
+                try {
+                    [System.Windows.Forms.SendKeys]::SendWait($text)
+                    Start-Sleep -Milliseconds 250
+                    if ((Get-ElementText $edit) -eq $text) {
+                        $script:LastEditableTextMethod = "SendKeys"
+                        return $true
+                    }
+                }
+                catch {
                 }
             }
 
             [GalleryRecordingNative]::TypeText($text)
             Start-Sleep -Milliseconds 350
             if ((Get-ElementText $edit) -eq $text) {
+                $script:LastEditableTextMethod = "UnicodeSendInput"
                 return $true
             }
 
@@ -4215,6 +4224,7 @@ function Set-EditableElementText($window, $element, [string]$text) {
             [GalleryRecordingNative]::TypeWindowMessageText($window.Current.NativeWindowHandle, $text)
             Start-Sleep -Milliseconds 350
             if ((Get-ElementText $edit) -eq $text) {
+                $script:LastEditableTextMethod = "WindowMessage"
                 return $true
             }
 
@@ -4223,6 +4233,7 @@ function Set-EditableElementText($window, $element, [string]$text) {
             [GalleryRecordingNative]::TypeVirtualKeyText($text)
             Start-Sleep -Milliseconds 350
             if ((Get-ElementText $edit) -eq $text) {
+                $script:LastEditableTextMethod = "VirtualKey"
                 return $true
             }
         }
@@ -4237,6 +4248,7 @@ function Set-EditableElementText($window, $element, [string]$text) {
             Start-Sleep -Milliseconds 50
             $pattern.SetValue($text)
             Start-Sleep -Milliseconds 350
+            $script:LastEditableTextMethod = "ValuePattern"
             return $true
         }
     }
@@ -4337,6 +4349,7 @@ function Invoke-PlainTextInteraction($window, [string]$control) {
     $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $target)
     $editBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $editElement)
     $typed = Set-EditableElementText $window $target $inputText
+    $inputMethod = $script:LastEditableTextMethod
     Start-Sleep -Milliseconds 350
     $after = Get-ElementText $editElement
     $outputMatched = if ($control -eq "PasswordBox") {
@@ -4355,6 +4368,7 @@ function Invoke-PlainTextInteraction($window, [string]$control) {
         AfterOutput = $after
         ExpectedOutput = $inputText
         OutputMatched = $outputMatched
+        InputMethod = $inputMethod
     }
 }
 

@@ -3969,6 +3969,39 @@ namespace ModernWpf.Gallery.Tests
                 "[GalleryRecordingNative]::TypeText($text)",
                 "[GalleryRecordingNative]::TypeWindowMessageText($window.Current.NativeWindowHandle, $text)",
                 "[GalleryRecordingNative]::TypeVirtualKeyText($text)");
+            var setEditableFunctionStart = source.IndexOf(
+                "function Set-EditableElementText($window, $element, [string]$text)",
+                StringComparison.Ordinal);
+            var setEditableFunctionEnd = source.IndexOf(
+                "\nfunction Wait-ForInteractiveElementByNameInProcess",
+                setEditableFunctionStart,
+                StringComparison.Ordinal);
+            Assert.IsTrue(setEditableFunctionStart >= 0);
+            Assert.IsTrue(setEditableFunctionEnd > setEditableFunctionStart);
+            var setEditableFunction = source.Substring(
+                setEditableFunctionStart,
+                setEditableFunctionEnd - setEditableFunctionStart);
+            var sendKeysIndex = setEditableFunction.IndexOf(
+                "[System.Windows.Forms.SendKeys]::SendWait($text)",
+                StringComparison.Ordinal);
+            var unicodeFallbackIndex = setEditableFunction.IndexOf(
+                "[GalleryRecordingNative]::TypeText($text)",
+                StringComparison.Ordinal);
+            Assert.IsTrue(sendKeysIndex >= 0);
+            Assert.IsTrue(unicodeFallbackIndex > sendKeysIndex);
+            StringAssert.Contains(
+                setEditableFunction.Substring(sendKeysIndex, unicodeFallbackIndex - sendKeysIndex),
+                "catch {");
+            AssertContainsInOrder(
+                source,
+                "$script:LastEditableTextMethod = \"\"",
+                "$script:LastEditableTextMethod = \"ClipboardPaste\"",
+                "$script:LastEditableTextMethod = \"SendKeys\"",
+                "$script:LastEditableTextMethod = \"UnicodeSendInput\"",
+                "$script:LastEditableTextMethod = \"WindowMessage\"",
+                "$script:LastEditableTextMethod = \"VirtualKey\"",
+                "$script:LastEditableTextMethod = \"ValuePattern\"",
+                "InputMethod = $inputMethod");
         }
 
         [TestMethod]
