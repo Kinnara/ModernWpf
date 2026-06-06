@@ -942,6 +942,27 @@ recorder gap open:
   `artifacts/gallery-recordings/20260606-091557-396/report.md`, which still
   reports `AfterOutput=""` and `TextEvidence=false`.
 
+Round 94 hardens screen-recorder evidence and refreshes CommandBarFlyout:
+
+- Screen-mode rerun
+  `artifacts/gallery-recordings/20260606-093304-563/report.md` failed because
+  the capture showed the desktop wallpaper and then black frames while the
+  Gallery's own `ModernWpfGalleryMainWindow.png` artifact proved the app was
+  rendered. This is a recorder-surface failure, not accepted product evidence.
+- The recorder now rejects `Screen` captures whose expected window region does
+  not match the rendered `ModernWpfGalleryMainWindow.png` anchor. The measured
+  bad run had an anchor delta of about `117`, while a valid rendered frame is
+  about `6.6`; the guard threshold is `25`.
+- A short post-fix screen-mode runtime check
+  `artifacts/gallery-recordings/20260606-094556-238/report.md` now fails
+  explicitly with `AnchorDelta=124.523`, `Threshold=25`, and the note that the
+  screen capture likely came from a different desktop or monitor.
+- Product verification for CommandBarFlyout remains the rendered-window rerun
+  `artifacts/gallery-recordings/20260606-093650-021/report.md`. It passed with
+  `OpenRepeatEvidence=true`, `CloseMethod=SecondaryCommand`, frames `t4000` /
+  `t6500` / `t13500`, and deltas `2.803` / `0.0` / `2.8`. Reviewed frames show
+  the first and second menus aligned and the closed state clean.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -1035,6 +1056,9 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260606-082426-601/report.md` | MessageBox | 1 passed, 0 needs review, 0 failed; Light-theme owner-centered MessageBox passed open/closed/open proof with reviewed frames `t3500` / `t9500` / `t13500` |
 | `artifacts/gallery-recordings/20260606-083715-785/report.md` | RichTextEdit | 0 passed, 0 needs review, 1 failed; Light rerun after the 160px editor height fix shows the larger editor but still failed with `AfterOutput=""` |
 | `artifacts/gallery-recordings/20260606-091557-396/report.md` | RichTextEdit | 0 passed, 0 needs review, 1 failed; latest Light rerun keeps the larger focused editor visible, but text insertion remains unproven |
+| `artifacts/gallery-recordings/20260606-093304-563/report.md` | CommandBarFlyout | 0 passed, 0 needs review, 1 failed; rejected screen-mode evidence because the recording captured wallpaper/black frames instead of the Gallery window |
+| `artifacts/gallery-recordings/20260606-093650-021/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed; rendered-window rerun proves open/closed/open frames `t4000` / `t6500` / `t13500` with aligned menus |
+| `artifacts/gallery-recordings/20260606-094556-238/report.md` | Button | 0 passed, 0 needs review, 1 failed; post-fix screen-mode check explicitly rejects wallpaper capture with `AnchorDelta=124.523` over threshold `25` |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 | `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
 | `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
@@ -1174,4 +1198,4 @@ proof on top of these static route captures.
 | Menus & toolbars | AppBarSeparator | `item/AppBarSeparator` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-073924-914/AppBarSeparator/light-appbarseparator.mp4` | Latest Light rendered static route remains appropriate because the sample command bar has no state/output-changing action. Reviewed `t9500` shows visible separators and aligned AppBar commands. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/AppBarSeparator/dark-appbarseparator.mp4`. |
 | Menus & toolbars | AppBarToggleButton | `item/AppBarToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-074841-162/AppBarToggleButton/light-appbartogglebutton.mp4` | Latest Light rendered rerun toggles Off to On with local visual delta `44.826`; reviewed frame `t9500` shows the first symbol AppBarToggleButton checked and output `IsChecked = True`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-040225-951/AppBarToggleButton/dark-appbartogglebutton.mp4`. |
 | Menus & toolbars | CommandBar | `item/CommandBar` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-061229-078/CommandBar/light-commandbar.mp4` | Product popup state is now synchronized with `IsOpen` and the recorder no longer depends on UIA exposing the second-open overflow item. Latest Light 24s rendered run passes with `OpenRepeatEvidence=true`, `CloseMethod=SampleCloseButton`, frames `t9500` / `t13500` / `t20000`, deltas `4.17` / `0.005` / `4.181`, and local delta `4.181`; reviewed frames show aligned first-open and second-open overflow plus a clean closed frame. The previous dark proof remains at `artifacts/gallery-recordings/20260604-183855-055/CommandBar/dark-commandbar.mp4`. |
-| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-060315-799/CommandBarFlyout/light-commandbarflyout.mp4` | Product popup state is synchronized with `IsOpen`, WPF popup animation is disabled, Escape hides the owning flyout, and secondary transitions respect the owning flyout animation gate. Latest Light 24s rendered run passes with `OpenRepeatEvidence=true`, `CloseMethod=SecondaryCommand`, frames `t4000` / `t6500` / `t13500`, deltas `2.871` / `0.003` / `2.846`, and local delta `2.872`; reviewed first-open and second-open frames show the command bar and secondary menu aligned with no repeat-open crash frame. The previous dark proof remains at `artifacts/gallery-recordings/20260606-032144-304/CommandBarFlyout/dark-commandbarflyout.mp4`. |
+| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Fixed + screen recorder anchor hardened | `artifacts/gallery-recordings/20260606-093650-021/CommandBarFlyout/light-commandbarflyout.mp4` | Product popup state is synchronized with `IsOpen`, WPF popup animation is disabled, Escape hides the owning flyout, and secondary transitions respect the owning flyout animation gate. Latest Light 24s rendered run passes with `OpenRepeatEvidence=true`, `CloseMethod=SecondaryCommand`, frames `t4000` / `t6500` / `t13500`, deltas `2.803` / `0.0` / `2.8`, and local delta `2.913`; reviewed first-open and second-open frames show the command bar and secondary menu aligned with no repeat-open crash frame. Rejected screen-mode run `artifacts/gallery-recordings/20260606-093304-563/report.md` captured wallpaper/black frames and now drives a recorder anchor guard. The previous dark proof remains at `artifacts/gallery-recordings/20260606-032144-304/CommandBarFlyout/dark-commandbarflyout.mp4`. |

@@ -3492,6 +3492,38 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryInteractionRecorderRejectsScreenCapturesWithoutGalleryAnchor()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Compare-FrameWindowRegionToAnchorMeanDelta([string]$framePath, [string]$anchorPath, [string]$windowBoundsText, [string]$captureRectText)",
+                "ConvertTo-FrameRectangle $windowBounds $captureRect $frame.Width $frame.Height 0",
+                "$width = [Math]::Min([int]$region.Width, $anchor.Width)",
+                "return [Math]::Round($sum / $count, 3)");
+            AssertContainsInOrder(
+                source,
+                "function Get-ScreenRecordingGalleryAnchor($frames, $recordingResult, [string]$windowBounds, [string]$artifactDir)",
+                "$threshold = 25.0",
+                "$anchorPath = Join-Path $artifactDir \"ModernWpfGalleryMainWindow.png\"",
+                "$frame = Get-FirstNonBlankExtractedFrame $frames",
+                "$delta = Compare-FrameWindowRegionToAnchorMeanDelta $frame.Path $anchorPath $windowBounds $recordingResult.Rect",
+                "Matched = ([double]$delta -le $threshold)");
+            AssertContainsInOrder(
+                source,
+                "$windowBounds = Format-NativeWindowRectangle ([GalleryRecordingNative]::GetRect([IntPtr]$window.Current.NativeWindowHandle))",
+                "if ($CaptureMode -eq \"Screen\" -and !$SkipFrameExtraction)",
+                "$screenRecordingGalleryAnchor = Get-ScreenRecordingGalleryAnchor $frames $recordingResult $windowBounds $artifactDir",
+                "Screen capture did not match the rendered Gallery window anchor.",
+                "ScreenRecordingGalleryAnchor = $screenRecordingGalleryAnchor");
+        }
+
+        [TestMethod]
         public void GalleryInteractionRecorderSelectsRealGalleryWindowOverInputOverlays()
         {
             var source = File.ReadAllText(Path.Combine(

@@ -4625,6 +4625,20 @@ function Get-ExpandedCaptureRect([IntPtr]$windowHandle) {
     }
 }
 
+function Format-NativeWindowRectangle($rect) {
+    if ($null -eq $rect) {
+        return ""
+    }
+
+    $width = [Math]::Max(0, $rect.Right - $rect.Left)
+    $height = [Math]::Max(0, $rect.Bottom - $rect.Top)
+    if ($width -le 0 -or $height -le 0) {
+        return ""
+    }
+
+    return "{0},{1},{2},{3}" -f $rect.Left, $rect.Top, $width, $height
+}
+
 function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$outputPath, [string]$captureMode, [int]$durationSeconds) {
     $captureRect = Get-ExpandedCaptureRect $windowHandle
     Start-Job -ScriptBlock {
@@ -4843,6 +4857,57 @@ function Compare-ImageRegionMeanDelta([string]$firstPath, [string]$secondPath, [
     finally {
         $first.Dispose()
         $second.Dispose()
+    }
+}
+
+function Compare-FrameWindowRegionToAnchorMeanDelta([string]$framePath, [string]$anchorPath, [string]$windowBoundsText, [string]$captureRectText) {
+    if (!(Test-Path $framePath) -or !(Test-Path $anchorPath)) {
+        return $null
+    }
+
+    $windowBounds = ConvertFrom-BoundingRectangleString $windowBoundsText
+    $captureRect = ConvertFrom-BoundingRectangleString $captureRectText
+    if ($null -eq $windowBounds -or $null -eq $captureRect) {
+        return $null
+    }
+
+    $frame = [System.Drawing.Bitmap]::FromFile((Resolve-Path $framePath).Path)
+    $anchor = [System.Drawing.Bitmap]::FromFile((Resolve-Path $anchorPath).Path)
+    try {
+        $region = ConvertTo-FrameRectangle $windowBounds $captureRect $frame.Width $frame.Height 0
+        if ($null -eq $region) {
+            return $null
+        }
+
+        $width = [Math]::Min([int]$region.Width, $anchor.Width)
+        $height = [Math]::Min([int]$region.Height, $anchor.Height)
+        if ($width -le 1 -or $height -le 1) {
+            return $null
+        }
+
+        $step = [Math]::Max(1, [int][Math]::Floor([Math]::Max($width, $height) / 220.0))
+        $sum = 0.0
+        $count = 0
+        for ($y = 0; $y -lt $height; $y += $step) {
+            for ($x = 0; $x -lt $width; $x += $step) {
+                $a = $frame.GetPixel([int]$region.X + $x, [int]$region.Y + $y)
+                $b = $anchor.GetPixel($x, $y)
+                $la = (0.2126 * $a.R) + (0.7152 * $a.G) + (0.0722 * $a.B)
+                $lb = (0.2126 * $b.R) + (0.7152 * $b.G) + (0.0722 * $b.B)
+                $sum += [Math]::Abs($la - $lb)
+                $count++
+            }
+        }
+
+        if ($count -eq 0) {
+            return $null
+        }
+
+        return [Math]::Round($sum / $count, 3)
+    }
+    finally {
+        $frame.Dispose()
+        $anchor.Dispose()
     }
 }
 
@@ -5840,6 +5905,80 @@ function Get-RenderedPageArtifactAnchor([string]$artifactDir) {
     return $null
 }
 
+function Get-FirstNonBlankExtractedFrame($frames) {
+    foreach ($frame in @($frames | Where-Object { $_.Extracted } | Sort-Object Name)) {
+        if ($null -ne $frame.Stats -and $frame.Stats.NonBlank) {
+            return $frame
+        }
+    }
+
+    return $null
+}
+
+function Get-ScreenRecordingGalleryAnchor($frames, $recordingResult, [string]$windowBounds, [string]$artifactDir) {
+    $threshold = 25.0
+    if ($null -eq $recordingResult -or [string]::IsNullOrWhiteSpace($recordingResult.Rect)) {
+        return [ordered]@{
+            Generated = $false
+            Reason = "Recorder did not report a capture rectangle."
+            Threshold = $threshold
+        }
+    }
+
+    if ([string]::IsNullOrWhiteSpace($windowBounds)) {
+        return [ordered]@{
+            Generated = $false
+            Reason = "Gallery window bounds were not recorded."
+            Threshold = $threshold
+        }
+    }
+
+    $anchorPath = Join-Path $artifactDir "ModernWpfGalleryMainWindow.png"
+    if (!(Test-Path -LiteralPath $anchorPath)) {
+        return [ordered]@{
+            Generated = $false
+            Reason = "ModernWpfGalleryMainWindow rendered artifact was not produced."
+            Threshold = $threshold
+        }
+    }
+
+    $frame = Get-FirstNonBlankExtractedFrame $frames
+    if ($null -eq $frame) {
+        return [ordered]@{
+            Generated = $false
+            Reason = "No nonblank extracted screen frame was available."
+            Anchor = (Resolve-Path -LiteralPath $anchorPath).Path
+            Threshold = $threshold
+        }
+    }
+
+    $delta = Compare-FrameWindowRegionToAnchorMeanDelta $frame.Path $anchorPath $windowBounds $recordingResult.Rect
+    if ($null -eq $delta) {
+        return [ordered]@{
+            Generated = $false
+            Reason = "Could not compare the screen frame window region with the rendered Gallery anchor."
+            Frame = $frame.Name
+            FramePath = $frame.Path
+            Anchor = (Resolve-Path -LiteralPath $anchorPath).Path
+            WindowBounds = $windowBounds
+            CaptureRect = $recordingResult.Rect
+            Threshold = $threshold
+        }
+    }
+
+    return [ordered]@{
+        Generated = $true
+        Frame = $frame.Name
+        FramePath = $frame.Path
+        Anchor = (Resolve-Path -LiteralPath $anchorPath).Path
+        WindowBounds = $windowBounds
+        CaptureRect = $recordingResult.Rect
+        AnchorDelta = $delta
+        Threshold = $threshold
+        Matched = ([double]$delta -le $threshold)
+    }
+}
+
 function Test-OpenRepeatEvidence($interactionResult) {
     if ($null -eq $interactionResult) {
         return $false
@@ -6081,12 +6220,14 @@ foreach ($control in $Controls) {
     $denseTransitionReview = $null
     $localFrameDeltas = @()
     $maxLocalFrameDelta = $null
+    $screenRecordingGalleryAnchor = $null
     $localVisualEvidence = $false
     $visualOpenRepeatEvidence = $null
     $visualOpenRepeatEvidenceAccepted = $false
     $textVisualClosedEvidence = $null
     $status = "Passed"
     $renderedPageArtifactAnchor = $null
+    $windowBounds = ""
     $recordingPath = Join-Path $caseDir ("{0}-{1}{2}" -f $Theme.ToLowerInvariant(), $control.ToLowerInvariant(), $extension)
     $interactionKind = Get-ControlInteractionKind $control
     $recordingDurationSeconds = Get-ControlRecordingDurationSeconds $control $interactionKind
@@ -6115,6 +6256,7 @@ foreach ($control in $Controls) {
         [void][GalleryRecordingNative]::Move($window.Current.NativeWindowHandle, $WindowLeft, $WindowTop, $Width, $Height)
         [GalleryRecordingNative]::SetTopMost($window.Current.NativeWindowHandle, $true)
         [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+        $windowBounds = Format-NativeWindowRectangle ([GalleryRecordingNative]::GetRect([IntPtr]$window.Current.NativeWindowHandle))
         Wait-ModernWpfReady $window $route $artifactDir | Out-Null
         Start-Sleep -Milliseconds 700
 
@@ -6173,6 +6315,20 @@ foreach ($control in $Controls) {
         if ($nonBlankFrameCount -lt $minimumNonBlankFrameCount -and !$SkipFrameExtraction) {
             $status = "Failed"
             $notes.Add(("Only {0} of {1} extracted poster frames were nonblank; at least {2} are required." -f $nonBlankFrameCount, $extractedFrameCount, $minimumNonBlankFrameCount))
+        }
+        if ($CaptureMode -eq "Screen" -and !$SkipFrameExtraction) {
+            $screenRecordingGalleryAnchor = Get-ScreenRecordingGalleryAnchor $frames $recordingResult $windowBounds $artifactDir
+            if ($null -eq $screenRecordingGalleryAnchor -or
+                !$screenRecordingGalleryAnchor.Contains("Generated") -or
+                !$screenRecordingGalleryAnchor.Generated) {
+                $status = "Failed"
+                $reason = if ($null -ne $screenRecordingGalleryAnchor -and $screenRecordingGalleryAnchor.Contains("Reason")) { $screenRecordingGalleryAnchor.Reason } else { "Screen Gallery anchor evidence was not generated." }
+                $notes.Add(("Screen capture did not prove the Gallery window was recorded. {0}" -f $reason))
+            }
+            elseif (!$screenRecordingGalleryAnchor.Matched) {
+                $status = "Failed"
+                $notes.Add(("Screen capture did not match the rendered Gallery window anchor. Frame={0}; delta={1}; threshold={2}; window={3}; capture={4}. This usually means screen mode captured a different desktop or monitor." -f $screenRecordingGalleryAnchor.Frame, $screenRecordingGalleryAnchor.AnchorDelta, $screenRecordingGalleryAnchor.Threshold, $screenRecordingGalleryAnchor.WindowBounds, $screenRecordingGalleryAnchor.CaptureRect))
+            }
         }
 
         $localFrameDeltas = Get-LocalFrameDeltas $frames $recordingResult $interactionResult
@@ -6505,6 +6661,7 @@ foreach ($control in $Controls) {
         MaxFrameDelta = $maxFrameDelta
         LocalFrameDeltas = $localFrameDeltas
         MaxLocalFrameDelta = $maxLocalFrameDelta
+        ScreenRecordingGalleryAnchor = $screenRecordingGalleryAnchor
         LocalVisualEvidence = $localVisualEvidence
         AnimationFrameDelta = $animationFrameDelta
         AnimationEvidence = $animationEvidence
