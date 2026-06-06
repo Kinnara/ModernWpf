@@ -12,13 +12,17 @@ Run the unit/runtime checks:
 dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj -f net8.0-windows7.0 --no-restore
 ```
 
-Run the local visual pass:
+Run the local WinUI-backed visual pass for ported WinUI controls:
 
 ```powershell
 .\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Build -Reference InstalledWinUI3Gallery
 ```
 
 Pass `-Theme Light` or `-Theme Dark` to match the installed WinUI Gallery theme before comparing image deltas.
+Do not use this script with WPF Gallery stock-control pages such as `Button`,
+`CheckBox`, `ComboBox`, `RadioButton`, `Slider`, `TextBox`, `PasswordBox`, or
+`RichTextEdit`; use `Run-WpfGalleryVisualAudit.ps1 -Reference
+OfficialWpfGallery` for those pages.
 
 Run the TeachingTip interaction pass:
 

@@ -2704,6 +2704,28 @@ namespace ModernWpf.Gallery.Tests
                 "$wrongReferenceControls = @($Controls | Where-Object { $WpfGalleryOnlyVisualAuditCases -contains $_ })",
                 "Run-GalleryVisualChecks.ps1 uses the WinUI Gallery reference.",
                 "Run-WpfGalleryVisualAudit.ps1 -Cases $($wrongReferenceControls -join ',') -Reference OfficialWpfGallery");
+
+            var defaultControlsMatch = Regex.Match(
+                source,
+                @"\[string\[\]\]\$Controls\s*=\s*@\((?<items>.*?)\),\s*\r?\n\s*\[ValidateSet",
+                RegexOptions.Singleline);
+            var wpfOnlyControlsMatch = Regex.Match(
+                source,
+                @"\$WpfGalleryOnlyVisualAuditCases\s*=\s*@\((?<items>.*?)\)",
+                RegexOptions.Singleline);
+            Assert.IsTrue(defaultControlsMatch.Success, "Could not locate the default visual-check control list.");
+            Assert.IsTrue(wpfOnlyControlsMatch.Success, "Could not locate the WPF-only visual-audit case list.");
+
+            var defaultControls = ExtractQuotedStrings(defaultControlsMatch.Groups["items"].Value);
+            var wpfOnlyControls = ExtractQuotedStrings(wpfOnlyControlsMatch.Groups["items"].Value);
+            var wrongDefaultControls = defaultControls
+                .Intersect(wpfOnlyControls, StringComparer.Ordinal)
+                .OrderBy(control => control, StringComparer.Ordinal)
+                .ToArray();
+            CollectionAssert.AreEqual(
+                Array.Empty<string>(),
+                wrongDefaultControls,
+                "The default WinUI Gallery visual-check sweep must not include WPF-only pages.");
         }
 
         [TestMethod]
@@ -8588,6 +8610,14 @@ namespace ModernWpf.Gallery.Tests
                 "Width=\"200\"",
                 "Height=\"200\"",
                 "HorizontalAlignment=\"Left\">");
+        }
+
+        private static string[] ExtractQuotedStrings(string source)
+        {
+            return Regex.Matches(source, "\"(?<value>[^\"]+)\"")
+                .Cast<Match>()
+                .Select(match => match.Groups["value"].Value)
+                .ToArray();
         }
 
         private static void AssertControlExamplesKeepOfficialSourceAttributeOrder(string xaml, string pageName)

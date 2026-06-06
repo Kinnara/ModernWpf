@@ -126,6 +126,24 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 114 audits the WPF-versus-WinUI reference split after the Slider rollback:
+
+- The unpushed product changes were checked for WPF controls moved toward WinUI.
+  The earlier Slider default-value change is already reverted in Round 112:
+  `SliderPageViewModel.SimpleSliderValue` remains `0`, matching official WPF
+  Gallery source and the official WPF visual audit.
+- The remaining product changes in the current unpushed range are on ported
+  WinUI controls or their harness crops (`ColorPicker`, `InfoBadge`,
+  `NavigationView`, and `SplitView`), where WinUI remains the correct
+  reference family.
+- `Run-GalleryVisualChecks.ps1` still fails fast if a WPF-only page is passed
+  with `InstalledWinUI3Gallery`, and its default control list now excludes the
+  WPF-only pages so a default WinUI sweep starts only from ported WinUI
+  controls.
+- `GalleryVisualChecksRejectWpfOnlyPagesWhenUsingWinUIReference` now parses the
+  default control list and the WPF-only audit-case list from the script and
+  fails if the two overlap.
+
 Round 111 corrects the screenshot reference split:
 
 - The failed TextBox/PasswordBox/RichTextEdit screenshot batch at
