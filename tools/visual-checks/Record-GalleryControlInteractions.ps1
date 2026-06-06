@@ -5594,6 +5594,10 @@ function Select-OpenRepeatDeltaEntry($entries, [string]$mode) {
 }
 
 function Get-OpenRepeatOpenThreshold([string]$control) {
+    if ($control -eq "CommandBarFlyout") {
+        return 2.0
+    }
+
     return 5.0
 }
 

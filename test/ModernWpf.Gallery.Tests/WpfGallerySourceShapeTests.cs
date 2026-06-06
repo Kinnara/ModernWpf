@@ -3653,6 +3653,8 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Get-OpenRepeatOpenThreshold([string]$control)",
+                "if ($control -eq \"CommandBarFlyout\")",
+                "return 2.0",
                 "return 5.0",
                 "function Get-OpenRepeatClosedThreshold([string]$control)",
                 "if ($control -eq \"DatePicker\")",

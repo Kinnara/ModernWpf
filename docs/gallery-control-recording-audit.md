@@ -687,6 +687,28 @@ controls:
   moved ThemeShadow slider, InfoBadge opacity toggled off, and aligned
   AppBarSeparator commands.
 
+Round 81 closes a Light-theme CommandBarFlyout recorder false negative:
+
+- The focused Light run
+  `artifacts/gallery-recordings/20260606-055704-392/report.md` failed even
+  though UIA proved `FirstOpenElementFound=true`,
+  `SecondOpenElementFound=true`, `ClosedElementGone=true`,
+  `FirstCommandBarFlyoutSecondaryExpanded=true`, and
+  `SecondCommandBarFlyoutSecondaryExpanded=true`. The visual pass used the
+  shared open threshold `5.0`, while the real Light-theme opened-element crop
+  only moved by local delta `2.872`.
+- `Get-OpenRepeatOpenThreshold` now uses a `2.0` open threshold for
+  `CommandBarFlyout`; the closed-state threshold remains `1.0`, so the
+  detector still requires open, closed, and second-open frames instead of
+  accepting a merely static popup region. The source-shape guard now rejects
+  removing that CommandBarFlyout-specific threshold.
+- The focused Light rerun
+  `artifacts/gallery-recordings/20260606-060315-799/report.md` passed with
+  `OpenRepeatEvidence=true`, frames `t4000` / `t6500` / `t13500`, deltas
+  `2.871` / `0.003` / `2.846`, and local delta `2.872`. Reviewed frames show
+  the first-open and second-open command bar plus secondary menu aligned beside
+  the image, and the closed frame cleanly removes the popup.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -751,6 +773,8 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260606-045803-926/report.md` | AutoSuggestBox | 1 passed, 0 needs review, 0 failed; 18s capture plus final-frame visual-close proof shows the suggestions popup gone at `t17500` |
 | `artifacts/gallery-recordings/20260606-051218-679/report.md` | RatingControl | 1 passed, 0 needs review, 0 failed; reviewed `t9500` shows the corrected `Click again to clear your rating.` sample copy and target value `3` |
 | `artifacts/gallery-recordings/20260606-052421-356/report.md` | PersonPicture, IconElement, ThemeShadow, InfoBadge, AppBarSeparator | 5 passed, 0 needs review, 0 failed; replaces static-only proof for four interactive ModernWpf pages with selection/option/value evidence and reviewed `t9500` frames |
+| `artifacts/gallery-recordings/20260606-055704-392/report.md` | CommandBarFlyout | 0 passed, 0 needs review, 1 failed; exposed that Light-theme CommandBarFlyout open-repeat visual proof was real but below the old shared `5.0` open threshold |
+| `artifacts/gallery-recordings/20260606-060315-799/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t4000` / `t6500` / `t13500` with deltas `2.871` / `0.003` / `2.846` |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 | `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
 | `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
@@ -888,4 +912,4 @@ proof on top of these static route captures.
 | Menus & toolbars | AppBarSeparator | `item/AppBarSeparator` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-052421-356/AppBarSeparator/dark-appbarseparator.mp4` | Latest rendered static route remains appropriate because the sample command bar has no state/output-changing action. The refreshed nonblank recording is anchored to `GallerySample_AppBarSeparator_AttachCameraButton`; reviewed `t9500` shows visible separators and aligned AppBar commands. |
 | Menus & toolbars | AppBarToggleButton | `item/AppBarToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-040225-951/AppBarToggleButton/dark-appbartogglebutton.mp4` | Latest rendered rerun toggles Off to On with local visual delta `41.735`; reviewed frame `t9500` shows the first symbol AppBarToggleButton checked and output `IsChecked = True`. |
 | Menus & toolbars | CommandBar | `item/CommandBar` | Recorded | Fixed | `artifacts/gallery-recordings/20260604-183855-055/CommandBar/dark-commandbar.mp4` | Product popup state is now synchronized with `IsOpen` and the recorder no longer depends on UIA exposing the second-open overflow item. Manifest records `ClosedElementGone=true`, `CloseMethod=SampleCloseButton`, `OpenRepeatEvidence=true`, and visual open/closed/open frames `t0500` / `t5000` / `t7500` / `t11000` with deltas `9.921`, `0.001`, and `9.839`. |
-| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-032144-304/CommandBarFlyout/dark-commandbarflyout.mp4` | Product popup state is synchronized with `IsOpen`, WPF popup animation is disabled, Escape hides the owning flyout, and secondary transitions respect the owning flyout animation gate. Latest 24s rendered run passes with `OpenRepeatEvidence=true`, `CloseMethod=SecondaryCommand`, frames `t4000` / `t6500` / `t13500`, deltas `12.389` / `0` / `12.423`, and local delta `12.423`; reviewed second-open frame shows the command bar and secondary menu aligned with no repeat-open crash frame. |
+| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-060315-799/CommandBarFlyout/light-commandbarflyout.mp4` | Product popup state is synchronized with `IsOpen`, WPF popup animation is disabled, Escape hides the owning flyout, and secondary transitions respect the owning flyout animation gate. Latest Light 24s rendered run passes with `OpenRepeatEvidence=true`, `CloseMethod=SecondaryCommand`, frames `t4000` / `t6500` / `t13500`, deltas `2.871` / `0.003` / `2.846`, and local delta `2.872`; reviewed first-open and second-open frames show the command bar and secondary menu aligned with no repeat-open crash frame. The previous dark proof remains at `artifacts/gallery-recordings/20260606-032144-304/CommandBarFlyout/dark-commandbarflyout.mp4`. |
