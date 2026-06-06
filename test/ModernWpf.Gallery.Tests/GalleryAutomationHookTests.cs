@@ -4231,6 +4231,60 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
+        [TestMethod]
+        public void RichTextEditAcceptsTextCompositionInput()
+        {
+            WpfTestHost.Run(() =>
+            {
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test" }));
+                var page = new ItemPage(GalleryCatalog.FindItem("RichTextEdit"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var richTextBox = (RichTextBox)FindByAutomationName(page, "simple rich text editor");
+                    Assert.IsNotNull(richTextBox);
+                    Assert.AreEqual(160, richTextBox.MinHeight);
+
+                    richTextBox.Focus();
+                    WpfTestHost.DoEvents();
+
+                    var composition = new TextComposition(
+                        InputManager.Current,
+                        richTextBox,
+                        "ModernWpf rich text");
+                    TextCompositionManager.StartComposition(composition);
+                    WpfTestHost.DoEvents();
+
+                    var text = new TextRange(
+                        richTextBox.Document.ContentStart,
+                        richTextBox.Document.ContentEnd).Text;
+                    StringAssert.Contains(text, "ModernWpf rich text");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
         private static void WaitFor(Func<bool> condition)
         {
             var deadline = DateTime.UtcNow.AddSeconds(3);

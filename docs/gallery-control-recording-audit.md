@@ -925,6 +925,23 @@ Round 92 partially fixes RichTextEdit and keeps text input open:
   issue is fixed. The recorder still cannot prove typed text in this desktop
   session, so RichTextEdit remains open rather than green.
 
+Round 93 adds in-process RichTextEdit input proof while keeping the external
+recorder gap open:
+
+- Added `RichTextEditAcceptsTextCompositionInput` in
+  `GalleryAutomationHookTests`. It launches `RichTextEdit` with only
+  `--visual-test`, focuses the actual `RichTextBox` named
+  `simple rich text editor`, asserts `MinHeight == 160`, sends a WPF
+  `TextComposition`, and asserts the document contains `ModernWpf rich text`.
+- Focused verification passed on both `net8.0-windows7.0` and
+  `net10.0-windows7.0`. This proves the Gallery sample accepts real WPF text
+  composition input after focus and is not populated by diagnostic-prepared
+  text.
+- This does not close the recording requirement. The latest external recorder
+  proof remains
+  `artifacts/gallery-recordings/20260606-091557-396/report.md`, which still
+  reports `AfterOutput=""` and `TextEvidence=false`.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -1122,7 +1139,7 @@ proof on top of these static route captures.
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-074841-162/AutoSuggestBox/light-autosuggestbox.mp4` | Latest Light rendered rerun uses an 18s capture and requires both UIA and final-frame visual close proof. Manifest records `SuggestionInvokeMethod=InvokePattern`, `SuggestionClosed=true`, `TextVisualClosedEvidence.Closed=true`, final frame `t17500`, final delta `0.941`, local visual delta `10.307`, and output `Aegean`; reviewed `t9500` shows the popup open during selection and reviewed `t17500` shows it gone with `Aegean` rendered in the text box and output. The rejected `20260606-041123-086` row is kept only as false-pass evidence, and the previous dark proof remains at `artifacts/gallery-recordings/20260606-045803-926/AutoSuggestBox/dark-autosuggestbox.mp4`. |
 | Text | TextBox | `item/TextBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/TextBox/light-textbox.mp4` | Latest Light rendered run records text entry with `TextEvidence=true`, `AfterOutput=ModernWpf text`, and local visual delta `1.918`; reviewed late frame `t9500` shows the text visibly rendered. The previous dark proof remains at `artifacts/gallery-recordings/20260606-034438-510/TextBox/dark-textbox.mp4`. |
 | Text | PasswordBox | `item/PasswordBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/PasswordBox/light-passwordbox.mp4` | Latest Light rendered run records text entry with `TextEvidence=true`, masked `AfterOutput`, and local visual delta `2.362`; reviewed late frame `t9500` shows masked password bullets rendered. The previous dark proof remains at `artifacts/gallery-recordings/20260606-034438-510/PasswordBox/dark-passwordbox.mp4`. |
-| Text | RichTextEdit | `item/RichTextEdit` | Recorded failure | Visual size fixed; text input open | `artifacts/gallery-recordings/20260606-091557-396/RichTextEdit/light-richtextedit.mp4` | The Gallery sample now renders the live RichTextBox as a 160px-tall editor instead of the previous 32px one-line field; reviewed Light frames show a 790x160 editor area and focused caret. Text input remains open: current Light and Dark focused reruns fail with `AfterOutput=""`, so the older `artifacts/gallery-recordings/20260606-014544-783/RichTextEdit/dark-richtextedit.mp4` proof is stale under the current desktop session. Failed evidence includes `20260606-075521-729` Light, `20260606-075734-362` Dark, `20260606-080845-863` Light screen mode, and post-height-fix Light runs `20260606-083715-785` / `20260606-091557-396`. |
+| Text | RichTextEdit | `item/RichTextEdit` | Recorded failure | Visual size fixed; runtime input proven; recorder text input open | `artifacts/gallery-recordings/20260606-091557-396/RichTextEdit/light-richtextedit.mp4` | The Gallery sample now renders the live RichTextBox as a 160px-tall editor instead of the previous 32px one-line field; reviewed Light frames show a 790x160 editor area and focused caret. `RichTextEditAcceptsTextCompositionInput` proves the focused live RichTextBox accepts WPF text composition without diagnostic-prepared text, but recorder text input remains open: current Light and Dark focused reruns fail with `AfterOutput=""`, so the older `artifacts/gallery-recordings/20260606-014544-783/RichTextEdit/dark-richtextedit.mp4` proof is stale under the current desktop session. Failed recorder evidence includes `20260606-075521-729` Light, `20260606-075734-362` Dark, `20260606-080845-863` Light screen mode, and post-height-fix Light runs `20260606-083715-785` / `20260606-091557-396`. |
 | Layout | SplitView | `item/SplitView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/SplitView/light-splitview.mp4` | Latest Light rendered rerun toggles `IsPaneOpen` from On to Off with local visual delta `45.737` and whole-frame delta `0.495`; reviewed frame `t9500` shows the pane closed with the option controls aligned. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/SplitView/dark-splitview.mp4`. |
 | Layout | Expander | `item/Expander` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/Expander/light-expander.mp4` | Latest Light rendered run records expansion evidence with whole-frame/local deltas `0.305` / `5.512`; reviewed frame `t9500` shows the expected content visible after expansion. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/Expander/dark-expander.mp4`. |
 | Media | PersonPicture | `item/PersonPicture` | Recorded | Recorder coverage hardened | `artifacts/gallery-recordings/20260606-073924-914/PersonPicture/light-personpicture.mp4` | Latest Light rendered rerun selects the `Display Name` radio instead of accepting a static route. Manifest records `SelectionEvidence=true`, `TargetName=Display Name`, local visual delta `20.344`, and reviewed `t9500` shows the avatar changed to the `JD` display-name state. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/PersonPicture/dark-personpicture.mp4`. |
