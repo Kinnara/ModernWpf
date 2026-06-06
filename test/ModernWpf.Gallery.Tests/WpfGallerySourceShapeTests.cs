@@ -3246,6 +3246,53 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryInteractionRecorderClicksHyperlinkButtonInAppNavigationSample()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsRouteNavigationInteraction([string]$control)",
+                "\"HyperlinkButton\" { return $true }",
+                "function Get-RouteNavigationTriggerAutomationId([string]$control)",
+                "\"HyperlinkButton\" { return \"GallerySample_HyperlinkButton_ClickHyperlinkButton\" }",
+                "function Get-RouteNavigationExpectedRoute([string]$control)",
+                "\"HyperlinkButton\" { return \"item/ToggleButton\" }",
+                "function Get-RouteNavigationExpectedSampleAutomationId([string]$control)",
+                "\"HyperlinkButton\" { return \"GallerySample_ToggleButton_ToggleButton\" }");
+            AssertContainsInOrder(
+                source,
+                "function Get-ControlInteractionKind([string]$control)",
+                "if (Test-ControlSupportsOutputInteraction $control) { return \"Output\" }",
+                "if (Test-ControlSupportsRouteNavigationInteraction $control) { return \"RouteNavigation\" }");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-RouteNavigationInteraction($window, [string]$control, [string]$artifactDir)",
+                "$beforeStatus = if (![string]::IsNullOrWhiteSpace($artifactDir)) { Read-ModernWpfStatusFile $artifactDir } else { $null }",
+                "$invoked = Invoke-ElementOnce $window $trigger",
+                "$ready = Wait-ModernWpfReady $window $expectedRoute $artifactDir",
+                "$targetSampleVisible = Test-AutomationElementUsable $targetSample",
+                "RouteNavigationChanged = $invoked -and $afterRoute -eq $expectedRoute -and $targetSampleVisible");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-RecordedInteraction($window, [string]$control, $sampleElement, [string]$artifactDir = \"\")",
+                "\"RouteNavigation\" { return Invoke-RouteNavigationInteraction $window $control $artifactDir }",
+                "$interactionResult = Invoke-RecordedInteraction $window $control $sampleElement $artifactDir");
+            AssertContainsInOrder(
+                source,
+                "function Test-RouteNavigationEvidence($interactionResult)",
+                "$interactionResult.Contains(\"RouteNavigationChanged\")",
+                "$routeNavigationEvidence = Test-RouteNavigationEvidence $interactionResult",
+                "\"RouteNavigation\" { $interactionEvidenceForKind = $routeNavigationEvidence }",
+                "$status -eq \"Passed\" -and $interactionKind -eq \"RouteNavigation\" -and !$routeNavigationEvidence",
+                "RouteNavigationEvidence = $routeNavigationEvidence");
+        }
+
+        [TestMethod]
         public void GalleryInteractionRecorderScopesCommandBarFlyoutMoreButtonToPopup()
         {
             var source = File.ReadAllText(Path.Combine(

@@ -1261,6 +1261,34 @@ function Test-ControlSupportsOutputInteraction([string]$control) {
     }
 }
 
+function Test-ControlSupportsRouteNavigationInteraction([string]$control) {
+    switch ($control) {
+        "HyperlinkButton" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-RouteNavigationTriggerAutomationId([string]$control) {
+    switch ($control) {
+        "HyperlinkButton" { return "GallerySample_HyperlinkButton_ClickHyperlinkButton" }
+        default { return "" }
+    }
+}
+
+function Get-RouteNavigationExpectedRoute([string]$control) {
+    switch ($control) {
+        "HyperlinkButton" { return "item/ToggleButton" }
+        default { return "" }
+    }
+}
+
+function Get-RouteNavigationExpectedSampleAutomationId([string]$control) {
+    switch ($control) {
+        "HyperlinkButton" { return "GallerySample_ToggleButton_ToggleButton" }
+        default { return "" }
+    }
+}
+
 function Get-SelectionInteractionTriggerName([string]$control) {
     switch ($control) {
         "ListBox" { return "Green" }
@@ -1333,6 +1361,7 @@ function Get-ControlInteractionKind([string]$control) {
     if (Test-ControlSupportsOptionInteraction $control) { return "Option" }
     if (Test-ControlSupportsTextInteraction $control) { return "Text" }
     if (Test-ControlSupportsOutputInteraction $control) { return "Output" }
+    if (Test-ControlSupportsRouteNavigationInteraction $control) { return "RouteNavigation" }
     if (Test-ControlSupportsScrollInteraction $control) { return "Scroll" }
     return "Static"
 }
@@ -3440,6 +3469,58 @@ function Invoke-PreparedOpenInteraction($window, [string]$control, $sampleElemen
     }
 }
 
+function Invoke-RouteNavigationInteraction($window, [string]$control, [string]$artifactDir) {
+    $triggerAutomationId = Get-RouteNavigationTriggerAutomationId $control
+    $expectedRoute = Get-RouteNavigationExpectedRoute $control
+    $targetSampleAutomationId = Get-RouteNavigationExpectedSampleAutomationId $control
+    $trigger = if (![string]::IsNullOrWhiteSpace($triggerAutomationId)) {
+        Find-ElementByAutomationIdInProcess $window.Current.ProcessId $triggerAutomationId
+    }
+    else {
+        $null
+    }
+    if ($null -eq $trigger -and ![string]::IsNullOrWhiteSpace($triggerAutomationId)) {
+        $trigger = Find-DescendantByAutomationId $window $triggerAutomationId
+    }
+
+    $beforeStatus = if (![string]::IsNullOrWhiteSpace($artifactDir)) { Read-ModernWpfStatusFile $artifactDir } else { $null }
+    $beforeRoute = if ($null -ne $beforeStatus -and $beforeStatus.Contains("CurrentRoute")) { [string]$beforeStatus.CurrentRoute } else { "" }
+    $triggerBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $trigger)
+    $invoked = Invoke-ElementOnce $window $trigger
+    $ready = $null
+    if ($invoked -and ![string]::IsNullOrWhiteSpace($expectedRoute) -and ![string]::IsNullOrWhiteSpace($artifactDir)) {
+        $ready = Wait-ModernWpfReady $window $expectedRoute $artifactDir
+    }
+
+    Start-Sleep -Milliseconds 250
+    $afterStatus = if (![string]::IsNullOrWhiteSpace($artifactDir)) { Read-ModernWpfStatusFile $artifactDir } else { $null }
+    $afterRoute = if ($null -ne $afterStatus -and $afterStatus.Contains("CurrentRoute")) { [string]$afterStatus.CurrentRoute } else { "" }
+    $readyState = if ($null -ne $afterStatus -and $afterStatus.Contains("ReadyState")) { [string]$afterStatus.ReadyState } else { "" }
+    $targetSample = if (![string]::IsNullOrWhiteSpace($targetSampleAutomationId)) {
+        Find-DescendantByAutomationId $window $targetSampleAutomationId
+    }
+    else {
+        $null
+    }
+    $targetSampleVisible = Test-AutomationElementUsable $targetSample
+    $targetSampleBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $targetSample)
+
+    return [ordered]@{
+        Invoked = $invoked
+        TriggerAutomationId = $triggerAutomationId
+        TriggerBounds = $triggerBounds
+        BeforeRoute = $beforeRoute
+        ExpectedRoute = $expectedRoute
+        AfterRoute = $afterRoute
+        ReadyState = $readyState
+        WaitReadyReturned = $null -ne $ready
+        TargetSampleAutomationId = $targetSampleAutomationId
+        TargetSampleBounds = $targetSampleBounds
+        TargetSampleVisible = $targetSampleVisible
+        RouteNavigationChanged = $invoked -and $afterRoute -eq $expectedRoute -and $targetSampleVisible
+    }
+}
+
 function Invoke-StateInteraction($window, $sampleElement) {
     $before = Get-ToggleStateName $sampleElement
     $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
@@ -4290,7 +4371,7 @@ function Invoke-BreadcrumbInteraction($window, $sampleElement) {
     }
 }
 
-function Invoke-RecordedInteraction($window, [string]$control, $sampleElement) {
+function Invoke-RecordedInteraction($window, [string]$control, $sampleElement, [string]$artifactDir = "") {
     $kind = Get-ControlInteractionKind $control
     switch ($kind) {
         "ShellNavigation" { return Invoke-ShellNavigationInteraction $window $sampleElement }
@@ -4304,6 +4385,7 @@ function Invoke-RecordedInteraction($window, [string]$control, $sampleElement) {
         "Option" { return Invoke-OptionInteraction $window $control $sampleElement }
         "Text" { return Invoke-TextInteraction $window $control $sampleElement }
         "Output" { return Invoke-OutputInteraction $window $control $sampleElement }
+        "RouteNavigation" { return Invoke-RouteNavigationInteraction $window $control $artifactDir }
         "Scroll" { return Invoke-ScrollInteraction $window $control $sampleElement }
         default { return [ordered]@{ Invoked = $true } }
     }
@@ -5573,6 +5655,7 @@ function Test-InteractionRequiresLocalVisualEvidence([string]$interactionKind) {
         "Scroll" { return $true }
         "ShellNavigation" { return $true }
         "Breadcrumb" { return $true }
+        "RouteNavigation" { return $true }
         default { return $false }
     }
 }
@@ -5630,6 +5713,14 @@ function Test-BreadcrumbEvidence($interactionResult) {
     }
 
     return [bool]$interactionResult.BreadcrumbChanged
+}
+
+function Test-RouteNavigationEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("RouteNavigationChanged")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.RouteNavigationChanged
 }
 
 function Test-PreparedOpenEvidence($interactionResult) {
@@ -5777,7 +5868,7 @@ foreach ($control in $Controls) {
         $recordingJob = Start-RecordingJob $window.Current.ProcessId ([IntPtr]$window.Current.NativeWindowHandle) $recordingPath $CaptureMode $recordingDurationSeconds
         $script:GalleryRecordingStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
         Start-Sleep -Milliseconds 1500
-        $interactionResult = Invoke-RecordedInteraction $window $control $sampleElement
+        $interactionResult = Invoke-RecordedInteraction $window $control $sampleElement $artifactDir
         $process.Refresh()
         if ($process.HasExited) {
             throw "ModernWpf Gallery exited during $control interaction."
@@ -5931,6 +6022,7 @@ foreach ($control in $Controls) {
     $scrollEvidence = Test-ScrollEvidence $interactionResult
     $shellNavigationEvidence = Test-ShellNavigationEvidence $interactionResult
     $breadcrumbEvidence = Test-BreadcrumbEvidence $interactionResult
+    $routeNavigationEvidence = Test-RouteNavigationEvidence $interactionResult
     $preparedOpenEvidence = Test-PreparedOpenEvidence $interactionResult
     $interactionEvidenceForKind = $false
     switch ($interactionKind) {
@@ -5944,6 +6036,7 @@ foreach ($control in $Controls) {
         "Scroll" { $interactionEvidenceForKind = $scrollEvidence }
         "ShellNavigation" { $interactionEvidenceForKind = $shellNavigationEvidence }
         "Breadcrumb" { $interactionEvidenceForKind = $breadcrumbEvidence }
+        "RouteNavigation" { $interactionEvidenceForKind = $routeNavigationEvidence }
     }
     if ($status -eq "Passed" -and $interactionKind -eq "Selection" -and !$selectionEvidence -and !$visualSelectionEvidence) {
         $status = "Failed"
@@ -6010,6 +6103,14 @@ foreach ($control in $Controls) {
         $notes.Add("Breadcrumb interaction did not remove the trailing folders after clicking Folder1.")
     }
 
+    if ($status -eq "Passed" -and $interactionKind -eq "RouteNavigation" -and !$routeNavigationEvidence) {
+        $status = "Failed"
+        $afterRoute = if ($null -ne $interactionResult -and $interactionResult.Contains("AfterRoute")) { $interactionResult.AfterRoute } else { "" }
+        $expectedRoute = if ($null -ne $interactionResult -and $interactionResult.Contains("ExpectedRoute")) { $interactionResult.ExpectedRoute } else { "" }
+        $targetSampleVisible = if ($null -ne $interactionResult -and $interactionResult.Contains("TargetSampleVisible")) { $interactionResult.TargetSampleVisible } else { $false }
+        $notes.Add(("Route navigation did not reach the expected page. Expected={0}; actual={1}; target sample visible={2}." -f $expectedRoute, $afterRoute, $targetSampleVisible))
+    }
+
     if ($status -eq "Passed" -and $interactionKind -eq "PreparedOpen" -and !$preparedOpenEvidence) {
         $status = "Failed"
         $notes.Add("Prepared opened content was not visible and anchored during recording.")
@@ -6070,6 +6171,9 @@ foreach ($control in $Controls) {
             elseif ($interactionKind -eq "Breadcrumb" -and $breadcrumbEvidence) {
                 $notes.Add("Breadcrumb item collection changed despite low full-frame delta.")
             }
+            elseif ($interactionKind -eq "RouteNavigation" -and $routeNavigationEvidence) {
+                $notes.Add("Route changed to the expected page despite low full-frame delta.")
+            }
             elseif ($interactionKind -eq "PreparedOpen" -and $preparedOpenEvidence) {
                 $notes.Add("Prepared opened content was visible and anchored despite low full-frame delta.")
             }
@@ -6110,6 +6214,7 @@ foreach ($control in $Controls) {
         ScrollEvidence = $scrollEvidence
         ShellNavigationEvidence = $shellNavigationEvidence
         BreadcrumbEvidence = $breadcrumbEvidence
+        RouteNavigationEvidence = $routeNavigationEvidence
         PreparedOpenEvidence = $preparedOpenEvidence
         RenderedPageArtifactAnchor = $renderedPageArtifactAnchor
         InteractionResult = $interactionResult

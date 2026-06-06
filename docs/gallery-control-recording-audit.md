@@ -323,9 +323,10 @@ evidence under the current recorder:
   with early-frame delta `0.075`, local delta `13.759`, and option-state
   change.
 - HyperlinkButton, PersonPicture, IconElement, ThemeShadow, TitleBar,
-  InfoBadge, and AppBarSeparator remain static route captures. The current
-  run proves nonblank routed pages against the recorder's required automation
-  anchor mapping; it is not interaction proof for those controls.
+  InfoBadge, and AppBarSeparator remained static route captures in this run.
+  The run proved nonblank routed pages against the recorder's required
+  automation anchor mapping, not interaction proof. HyperlinkButton's
+  static-only status is superseded by Round 70.
 
 Round 64 refreshes official WPF interaction coverage and demotes the ToolTip
 prepared-open false pass:
@@ -455,6 +456,30 @@ Round 69 closes the RichTextEdit recorder and dark-rendering gap:
   shows the typed `ModernWpf rich text` visibly rendered in the dark
   RichTextBox.
 
+Round 70 closes the HyperlinkButton static-pass gap:
+
+- The latest weak static batch
+  `artifacts/gallery-recordings/20260606-015618-998/report.md` still marked
+  HyperlinkButton as `Passed` with `InteractionKind=Static`, even though the
+  page includes a safe in-app click sample: `Go to ToggleButton`. That meant
+  the recorder could miss a broken handled-click path while still reporting a
+  green routed page.
+- HyperlinkButton now uses a `RouteNavigation` interaction instead of static
+  proof. The recorder clicks
+  `GallerySample_HyperlinkButton_ClickHyperlinkButton`, waits for
+  `item/ToggleButton`, requires the destination
+  `GallerySample_ToggleButton_ToggleButton` sample to be visible, and records
+  `RouteNavigationEvidence=true` only when the route and destination sample
+  are both proven.
+- Latest proof
+  `artifacts/gallery-recordings/20260606-020424-123/report.md` passed with
+  `InteractionKind=RouteNavigation`, `BeforeRoute=item/HyperlinkButton`,
+  `AfterRoute=item/ToggleButton`, `ReadyState=Ready:item/ToggleButton`,
+  `TargetSampleVisible=true`, whole-frame delta `3.661`, and local visual
+  delta `15.085`. Reviewed frame
+  `artifacts/gallery-recordings/20260606-020424-123/HyperlinkButton/frames/t5000.png`
+  visibly shows the ToggleButton page after the click.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -493,6 +518,7 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260605-070140-905/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; first open was detected through fallback bounds, but the second open proof was still missing |
 | `artifacts/gallery-recordings/20260605-070810-482/report.md` | ToolTip | 1 passed, 0 needs review, 0 failed; visual-test click/open path plus fallback bounds prove open, close, and second open |
 | `artifacts/gallery-recordings/20260606-014544-783/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; recorder-driven `WM_CHAR` text input is visible in dark-theme frames and UIA output changed from empty to `ModernWpf rich text` |
+| `artifacts/gallery-recordings/20260606-020424-123/report.md` | HyperlinkButton | 1 passed, 0 needs review, 0 failed; in-app route-click proof changed from `item/HyperlinkButton` to `item/ToggleButton` and the destination ToggleButton sample was visible |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 | `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
 | `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
@@ -583,7 +609,7 @@ proof on top of these static route captures.
 | Basic input | RadioButton | `item/RadioButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/RadioButton/dark-radiobutton.mp4` | Latest rendered run records local visual delta `3.87`; selection/output evidence changed despite low whole-frame delta `0.022`. |
 | Basic input | Slider | `item/Slider` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/Slider/dark-slider.mp4` | Latest rendered run records local visual delta `2.422`; target value was reached despite low whole-frame delta `0.031`. |
 | Basic input | ColorPicker | `item/ColorPicker` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/ColorPicker/dark-colorpicker.mp4` | Latest rendered run records option interaction with local visual delta `6.413` and whole-frame delta `0.37`. |
-| Basic input | HyperlinkButton | `item/HyperlinkButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-045636-525/HyperlinkButton/dark-hyperlinkbutton.mp4` | Static route capture only; the current run records nonblank frames and routes against required anchor `GallerySample_HyperlinkButton_HyperlinkButton`. External URI navigation is intentionally not invoked. |
+| Basic input | HyperlinkButton | `item/HyperlinkButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-020424-123/HyperlinkButton/dark-hyperlinkbutton.mp4` | Latest rendered run clicks the safe in-app `Go to ToggleButton` sample and requires route proof: `BeforeRoute=item/HyperlinkButton`, `AfterRoute=item/ToggleButton`, `TargetSampleVisible=true`, whole-frame delta `3.661`, and local visual delta `15.085`. External URI navigation remains intentionally not invoked. |
 | Basic input | RatingControl | `item/RatingControl` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/RatingControl/dark-ratingcontrol.mp4` | Latest rendered run records local visual delta `4.198`; target value was reached despite low whole-frame delta `0.21`. |
 | Basic input | RepeatButton | `item/RepeatButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/RepeatButton/dark-repeatbutton.mp4` | Latest rendered run records local visual delta `1.034`; output text changed despite low whole-frame delta `0.035`. |
 | Basic input | ToggleButton | `item/ToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/ToggleButton/dark-togglebutton.mp4` | Latest rendered run records local visual delta `38.487`; before/after toggle state changed despite low whole-frame delta `0.234`. |
