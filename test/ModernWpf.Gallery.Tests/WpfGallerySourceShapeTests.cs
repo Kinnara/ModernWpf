@@ -2607,6 +2607,8 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "function Get-PrimaryCropMinimumVisibleStdDev([string]$control)",
+                "\"InfoBadge\" { return 8.0 }",
                 "function Test-ControlRequiresPrimaryCrop([string]$control)",
                 "\"InfoBadge\" { return $true }",
                 "\"PersonPicture\" { return $true }",
@@ -2614,6 +2616,7 @@ namespace ModernWpf.Gallery.Tests
                 "function Get-ModernPrimaryCropAutomationId([string]$control)",
                 "\"SplitView\" { return \"GallerySample_SplitView_SplitView\" }",
                 "\"PersonPicture\" { return \"GallerySample_PersonPicture_PersonPicture\" }",
+                "\"InfoBadge\" { return \"GallerySample_InfoBadge_NavigationView\" }",
                 "function Get-ReferencePrimaryAutomationId([string]$control)",
                 "\"SplitView\" { return \"NavLinksList\" }",
                 "\"PersonPicture\" { return \"\" }",
@@ -2630,11 +2633,9 @@ namespace ModernWpf.Gallery.Tests
                 "$color.B -gt 120",
                 "$minY -lt ($height * 0.65)",
                 "function New-InfoBadgeReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement)",
-                "GallerySample_InfoBadge_InfoBadge.png",
+                "GallerySample_InfoBadge_NavigationView.png",
                 "Find-AccentComponentCropBounds $screenshot $sampleBounds $modernSize.Width $modernSize.Height",
-                "Embedded InfoBadge",
-                "if ($control -eq \"InfoBadge\")",
-                "$primaryCrop = $null",
+                "Embedded InfoBadge NavigationView",
                 "elseif ($control -eq \"ThemeShadow\")",
                 "New-ThemeShadowReferencePrimaryCrop $caseDir $window $screenshot $sampleElement",
                 "elseif ($control -eq \"PersonPicture\")",
@@ -2650,6 +2651,10 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 source.Contains("\"ThemeShadow\" { return \"svPanel\" }", StringComparison.Ordinal),
                 "ThemeShadow primary parity must crop the demo body, not the whole reference page sample.");
+            Assert.IsFalse(
+                source.Contains("if ($control -eq \"InfoBadge\")\r\n        {\r\n            $primaryCrop = $null", StringComparison.Ordinal) ||
+                source.Contains("if ($control -eq \"InfoBadge\") {\n            $primaryCrop = $null", StringComparison.Ordinal),
+                "InfoBadge primary parity must use the embedded NavigationView artifact instead of discarding the ModernWpf primary crop.");
         }
 
         [TestMethod]

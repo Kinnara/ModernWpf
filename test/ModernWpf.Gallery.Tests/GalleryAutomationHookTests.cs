@@ -988,6 +988,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("infoBadge1", infoBadge1.Name);
                     Assert.AreEqual(5, infoBadge1.Value);
                     Assert.AreEqual(1.0, infoBadge1.Opacity);
+                    AssertNavigationViewInfoBadgeSampleRendered(navigationView, inboxItem, infoBadge1);
                     Assert.AreEqual("InfoBadge Opacity", toggle.Header);
                     Assert.IsTrue(toggle.IsOn);
                     Assert.AreEqual("LeftExpanded", displayMode.SelectedItem);
@@ -4706,6 +4707,73 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsTrue(textVisual.ActualWidth > 0, "SelectorBar text visual should be rendered.");
             Assert.IsTrue(iconVisual.ActualWidth > 0, "SelectorBar icon visual should be rendered.");
             Assert.IsTrue(selectionVisual.ActualWidth > 0, "SelectorBar selection visual should be measured.");
+        }
+
+        private static void AssertNavigationViewInfoBadgeSampleRendered(
+            Mux.NavigationView navigationView,
+            Mux.NavigationViewItem inboxItem,
+            Mux.InfoBadge infoBadge)
+        {
+            Assert.IsTrue(navigationView.ActualWidth > 0, "InfoBadge sample NavigationView should be measured.");
+            var navigationDiagnostics = GetNavigationViewLayoutDiagnostics(navigationView);
+            AssertRenderedInside(navigationView, inboxItem, "Inbox NavigationViewItem", navigationDiagnostics);
+            AssertRenderedInside(navigationView, infoBadge, "Inbox InfoBadge", navigationDiagnostics);
+
+            var visibleMenuTexts = FindDescendants<TextBlock>(navigationView)
+                .Where(textBlock => textBlock.IsVisible && textBlock.ActualWidth > 0 && textBlock.ActualHeight > 0)
+                .Select(textBlock => textBlock.Text)
+                .ToList();
+
+            CollectionAssert.Contains(visibleMenuTexts, "Home", string.Join(", ", visibleMenuTexts));
+            CollectionAssert.Contains(visibleMenuTexts, "Account", string.Join(", ", visibleMenuTexts));
+            CollectionAssert.Contains(visibleMenuTexts, "Inbox", string.Join(", ", visibleMenuTexts));
+        }
+
+        private static Rect AssertRenderedInside(FrameworkElement ancestor, FrameworkElement element, string description, string ancestorDiagnostics = null)
+        {
+            Assert.IsTrue(element.IsVisible, description + " should be visible.");
+            Assert.IsTrue(element.ActualWidth > 0, $"{description} should have positive width. Actual={element.ActualWidth}x{element.ActualHeight}. {ancestorDiagnostics}");
+            Assert.IsTrue(element.ActualHeight > 0, $"{description} should have positive height. Actual={element.ActualWidth}x{element.ActualHeight}. {ancestorDiagnostics}");
+
+            var bounds = element.TransformToAncestor(ancestor).TransformBounds(new Rect(element.RenderSize));
+            Assert.IsTrue(
+                bounds.Right > 0 && bounds.Bottom > 0 && bounds.Left < ancestor.ActualWidth && bounds.Top < ancestor.ActualHeight,
+                $"{description} should render inside the NavigationView. Bounds={bounds}; Ancestor={ancestor.ActualWidth}x{ancestor.ActualHeight}.");
+            return bounds;
+        }
+
+        private static string GetNavigationViewLayoutDiagnostics(Mux.NavigationView navigationView)
+        {
+            var paneContentGrid = FindNamedDescendant<FrameworkElement>(navigationView, "PaneContentGrid");
+            var menuItemsHost = FindNamedDescendant<FrameworkElement>(navigationView, "MenuItemsHost");
+            var rootSplitView = FindNamedDescendant<FrameworkElement>(navigationView, "RootSplitView");
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "NavigationView Actual={0:0.##}x{1:0.##}; TemplateOpenPaneLength={2:0.##}; OpenPaneLength={3:0.##}; IsPaneOpen={4}; DisplayMode={5}; PaneDisplayMode={6}; RootSplitView={7}; PaneContentGrid={8}; MenuItemsHost={9}",
+                navigationView.ActualWidth,
+                navigationView.ActualHeight,
+                navigationView.TemplateSettings.OpenPaneLength,
+                navigationView.OpenPaneLength,
+                navigationView.IsPaneOpen,
+                navigationView.DisplayMode,
+                navigationView.PaneDisplayMode,
+                FormatActualSize(rootSplitView),
+                FormatActualSize(paneContentGrid),
+                FormatActualSize(menuItemsHost));
+        }
+
+        private static string FormatActualSize(FrameworkElement element)
+        {
+            if (element == null)
+            {
+                return "<missing>";
+            }
+
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0:0.##}x{1:0.##}",
+                element.ActualWidth,
+                element.ActualHeight);
         }
 
         private static void RaiseSelectorBarItemClick(Mux.SelectorBarItem item)

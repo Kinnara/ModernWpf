@@ -856,6 +856,7 @@ function Get-SampleRootAutomationId([string]$control) {
 
 function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
     switch ($control) {
+        "InfoBadge" { return 8.0 }
         "NavigationView" { return 45.0 }
         "AutoSuggestBox" { return 1.0 }
         default { return 6.0 }
@@ -893,7 +894,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "IconElement" { return "GallerySample_IconElement_Root" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_Root" }
         "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
-        "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
+        "InfoBadge" { return "GallerySample_InfoBadge_NavigationView" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_Root" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
@@ -2467,7 +2468,7 @@ function Find-AccentComponentCropBounds([string]$screenshot, $searchBounds, [int
 
 function New-InfoBadgeReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
     $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
-    $modernPrimaryArtifact = Join-Path $modernArtifactDir "GallerySample_InfoBadge_InfoBadge.png"
+    $modernPrimaryArtifact = Join-Path $modernArtifactDir "GallerySample_InfoBadge_NavigationView.png"
     if (!(Test-Path $modernPrimaryArtifact)) {
         return $null
     }
@@ -2476,12 +2477,24 @@ function New-InfoBadgeReferencePrimaryCrop([string]$caseDir, $window, [string]$s
     $sampleBounds = Get-ElementWindowBounds $window $sampleElement
     $bounds = Find-AccentComponentCropBounds $screenshot $sampleBounds $modernSize.Width $modernSize.Height
     if ($null -eq $bounds) {
-        return $null
+        if ($null -eq $sampleBounds -or !$sampleBounds.Found) {
+            return $null
+        }
+
+        $bounds = [ordered]@{
+            Found = $true
+            Reason = "Cropped the reference InfoBadge sample because the embedded NavigationView crop is larger than the badge accent."
+            X = $sampleBounds.X
+            Y = $sampleBounds.Y
+            Width = $sampleBounds.Width
+            Height = $sampleBounds.Height
+            ChangedSamples = $sampleBounds.ChangedSamples
+        }
     }
 
     $path = Join-Path $caseDir "winui3-InfoBadge-primary-content-crop.png"
     $savedBounds = Save-Crop $screenshot $bounds $path 0
-    $crop = New-RenderedArtifactCrop $path "Embedded InfoBadge" $savedBounds
+    $crop = New-RenderedArtifactCrop $path "Embedded InfoBadge NavigationView" $savedBounds
     if ($null -ne $crop -and $crop.NonBlank) {
         return $crop
     }
@@ -2520,10 +2533,6 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             else {
                 $primaryCrop = $null
             }
-        }
-
-        if ($control -eq "InfoBadge") {
-            $primaryCrop = $null
         }
 
         if ($control -eq "ProgressRing" -and $null -ne $primaryCrop) {

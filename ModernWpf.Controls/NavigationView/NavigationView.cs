@@ -1448,6 +1448,12 @@ namespace ModernWpf.Controls
             return base.MeasureOverride(availableSize);
         }
 
+        protected override Size ArrangeOverride(Size arrangeBounds)
+        {
+            UpdateOpenPaneLength(arrangeBounds.Width);
+            return base.ArrangeOverride(arrangeBounds);
+        }
+
         void OnLayoutUpdated(object sender, object e)
         {
             // We only need to handle once after MeasureOverride, so revoke the token.
@@ -1487,8 +1493,13 @@ namespace ModernWpf.Controls
         {
             if (!IsTopNavigationView() && m_rootSplitView != null)
             {
-                m_OpenPaneLength = Math.Max(0.0, Math.Min(width, OpenPaneLength));
-                GetTemplateSettings().OpenPaneLength = m_OpenPaneLength;
+                var openPaneLength = Math.Max(0.0, Math.Min(width, OpenPaneLength));
+                var templateSettings = GetTemplateSettings();
+                if (m_OpenPaneLength != openPaneLength || templateSettings.OpenPaneLength != openPaneLength)
+                {
+                    m_OpenPaneLength = openPaneLength;
+                    templateSettings.OpenPaneLength = openPaneLength;
+                }
             }
         }
 

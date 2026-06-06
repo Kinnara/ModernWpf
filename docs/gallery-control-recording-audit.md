@@ -1362,10 +1362,35 @@ real InfoBadge rendering defect:
   recordings remain required for transition flicker, animation timing, popup
   overlay lifetime, close/reopen behavior, and crash checks.
 
+Round 109 fixes the embedded InfoBadge NavigationView defect with screenshot
+evidence instead of a recording:
+
+- `NavigationView.ArrangeOverride` now refreshes `TemplateSettings.OpenPaneLength`
+  from the final arrange width before arranging children. This covers the WPF
+  lifecycle where `SizeChanged` can run before `RootSplitView` exists, leaving an
+  initially arranged nested NavigationView with a zero-width pane even though
+  `ActualWidth` later becomes `560`.
+- `InfoBadgeSampleMatchesWinUIGalleryExamples` now asserts rendered, nonzero
+  bounds for the nested `Inbox` item and `InfoBadge`, plus visible `Home`,
+  `Account`, and `Inbox` text. This catches the exact old failure where the
+  menu item existed in `MenuItems` but the repeater/pane rendered at width zero.
+- The screenshot harness now uses the embedded
+  `GallerySample_InfoBadge_NavigationView` artifact as InfoBadge's ModernWpf
+  primary crop and requires visible variation above `8.0`. The previous blank
+  nested NavigationView artifact measured `3.881`; the fixed artifact in
+  `artifacts/visual-checks/20260606-171020-087-82140/InfoBadge/modernwpf-artifacts/GallerySample_InfoBadge_NavigationView.png`
+  measures above that threshold and visibly shows `Home`, `Account`, `Inbox`,
+  `Settings`, and the `5` badge.
+- The focused dark screenshot run
+  `artifacts/visual-checks/20260606-171020-087-82140/report.md` passed both
+  ModernWpf and WinUI3Gallery for InfoBadge. This is a static/final-state issue,
+  so no recording was needed for this round.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
 | --- | --- | --- |
+| `artifacts/visual-checks/20260606-171020-087-82140/report.md` | InfoBadge | 2 app/control rows passed; ModernWpf embedded NavigationView crop shows `Home`, `Account`, `Inbox`, `Settings`, and the `5` badge |
 | `artifacts/visual-checks/20260606-164331-590-226096/report.md` | InfoBadge | Expected screenshot harness failure for ModernWpf embedded badge pixels; verifies missing primary crops no longer pass |
 | `artifacts/visual-checks/20260606-164411-857-61908/report.md` | ThemeShadow, PersonPicture | 4 app/control rows passed; required primary crops were present for both controls |
 | `artifacts/visual-checks/20260606-160227-645-194344/report.md` | DropDownButton | Expected screenshot harness failure for WinUI popup pixels; verifies the old page-behind/wallpaper crop false pass is rejected |
@@ -1602,7 +1627,7 @@ proof on top of these static route captures.
 | Styles | IconElement | `item/IconElement` | Recorded | Recorder coverage hardened | `artifacts/gallery-recordings/20260606-073924-914/IconElement/light-iconelement.mp4` | Latest Light rendered rerun toggles the `Monochrome` checkbox instead of accepting a static route. Manifest records `BeforeState=Off`, `AfterState=On`, `OptionEvidence=true`, local visual delta `4.175`, and reviewed `t9500` shows the monochrome bitmap icon and checked option. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/IconElement/dark-iconelement.mp4`. |
 | Styles | ThemeShadow | `item/ThemeShadow` | Recorded | Recorder coverage hardened | `artifacts/gallery-recordings/20260606-073924-914/ThemeShadow/light-themeshadow.mp4` | Latest Light rendered rerun moves the translation slider instead of accepting a static route. Manifest records `BeforeValue=32`, `AfterValue=42`, `TargetReached=true`, local visual delta `2.045`, and reviewed `t9500` shows the slider and shadow sample in the changed position. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/ThemeShadow/dark-themeshadow.mp4`. |
 | Windowing | TitleBar | `item/TitleBar` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-073924-914/TitleBar/light-titlebar.mp4` | Latest Light rendered run toggles `IsBackButtonVisible` and requires the preview Back button to become visible. Manifest records `BeforeState=Off`, `AfterState=On`, `BeforeExpectedElementVisible=false`, `AfterExpectedElementVisible=true`, `ExpectedElementChanged=true`, whole-frame delta `0.127`, and local visual delta `8.509`; reviewed frame `t9500` shows the Back preview button. The previous dark proof remains at `artifacts/gallery-recordings/20260606-021439-880/TitleBar/dark-titlebar.mp4`. |
-| Status & info | InfoBadge | `item/InfoBadge` | Recorded + screenshot guard | Partially fixed; nested sample defect open | `artifacts/visual-checks/20260606-164331-590-226096/report.md` | Round 108 fixed the base InfoBadge auto corner radius and unit-tests explicit/default radius behavior. The screenshot harness now requires a live primary crop for InfoBadge and intentionally fails the current ModernWpf page because the embedded NavigationView sample does not expose the `Inbox` item and `5` badge that the WinUI reference shows. Older Light/Dark recordings still prove the opacity-toggle interaction path, but they are superseded for embedded-badge static parity by this failed screenshot guard. |
+| Status & info | InfoBadge | `item/InfoBadge` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-171020-087-82140/report.md` | Round 108 fixed the base InfoBadge auto corner radius and Round 109 fixed the embedded NavigationView sample by refreshing `TemplateSettings.OpenPaneLength` during arrange. `InfoBadgeSampleMatchesWinUIGalleryExamples` now asserts rendered bounds for the nested `Inbox` item and `5` badge plus visible `Home`, `Account`, and `Inbox` text. The screenshot harness uses the embedded NavigationView artifact as the required primary crop with variation threshold `8.0`; reviewed `modernwpf-artifacts/GallerySample_InfoBadge_NavigationView.png` shows `Home`, `Account`, `Inbox`, `Settings`, and the `5` badge. Older Light/Dark recordings still prove the opacity-toggle interaction path, but embedded-badge static parity is now screenshot-backed. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/InfoBar/light-infobar.mp4` | Latest Light rendered rerun toggles `Is Open` from On to Off with local visual delta `4.173` and whole-frame delta `0.192`; reviewed frame `t9500` shows the first InfoBar sample closed while later samples remain aligned. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/InfoBar/dark-infobar.mp4`. |
 | Status & info | ProgressRing | `item/ProgressRing` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260606-071255-441/ProgressRing/light-progressring.mp4` | Latest Light manifest records `AnimationEvidence=true` with early-frame delta `0.083`, local visual delta `13.824`, and option state changing from On to Off despite low whole-frame delta `0.085`; reviewed frame `t9500` shows the toggled ProgressRing sample and aligned controls. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/ProgressRing/dark-progressring.mp4`. |
 | Status & info | ToolTip | `item/ToolTip` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-065048-868/ToolTip/light-tooltip.mp4` | ToolTip uses `OpenRepeat` proof instead of diagnostic `PreparedOpen`. Latest Light 18s rendered run passes with `OpenRepeatEvidence=true`, close method `Escape2`, frames `t3500` / `t5500` / `t10000`, deltas `5.786` / `0.181` / `5.749`, and local delta `43.935`; reviewed frame `t3500` shows the ToolTip beside the trigger. The previous dark proof remains at `artifacts/gallery-recordings/20260606-032006-230/ToolTip/dark-tooltip.mp4`. |
