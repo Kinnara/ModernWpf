@@ -571,6 +571,15 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void RatingControlSampleDoesNotUseTouchFirstClearInstruction()
+        {
+            var source = File.ReadAllText(FindRepoFile("ModernWpf.Gallery", "Pages", "BasicInputSampleFactory.cs"));
+
+            Assert.IsFalse(source.Contains("Swipe left or click again to clear your rating."));
+            StringAssert.Contains(source, "Click again to clear your rating.");
+        }
+
+        [TestMethod]
         public void WpfGalleryVisualAuditRejectsLightDarkWhileOsHighContrastIsEnabled()
         {
             var script = File.ReadAllText(FindRepoFile("tools", "visual-checks", "Run-WpfGalleryVisualAudit.ps1"));

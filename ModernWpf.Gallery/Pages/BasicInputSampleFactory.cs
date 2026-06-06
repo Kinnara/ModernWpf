@@ -940,7 +940,7 @@ namespace ModernWpf.Gallery.Pages
             options.Children.Add(clearEnabledCheck);
             options.Children.Add(new TextBlock
             {
-                Text = "Swipe left or click again to clear your rating.",
+                Text = "Click again to clear your rating.",
                 TextWrapping = TextWrapping.Wrap
             });
             var readOnlyCheck = new CheckBox

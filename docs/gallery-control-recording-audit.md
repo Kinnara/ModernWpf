@@ -647,6 +647,23 @@ text/layout/status/collection recordings:
   pane closed, AnnotatedScrollBar and ItemsRepeater scrolled, and GridView
   output changed to `You clicked Item 1.`
 
+Round 79 removes the remaining touch-first visible sample instruction:
+
+- The touch-oriented Gallery surfaces remain pruned from active source by
+  `ActiveGallerySourceDoesNotKeepDeletedWinUIPageImplementationArtifacts`
+  and `SourceWinUIControlInfoDataOnlyContainsRetainedModernWpfSurfaces`;
+  the only live Gallery hit in this pass was RatingControl copy that said
+  `Swipe left or click again to clear your rating.`
+- RatingControl now says `Click again to clear your rating.` so the retained
+  WPF sample does not present a touch-first interaction path. The new
+  `RatingControlSampleDoesNotUseTouchFirstClearInstruction` guard rejects the
+  old visible string.
+- The focused dark recording
+  `artifacts/gallery-recordings/20260606-051218-679/report.md` passed with
+  `AfterValue=3`, `TargetValue=3`, local visual delta `4.231`, and reviewed
+  frame `t9500` shows three selected stars, output `3`, and the corrected
+  non-touch-first clear instruction.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -709,6 +726,7 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260606-042454-736/report.md` | AutoSuggestBox | 0 passed, 0 needs review, 1 failed; first hardened rerun failed because output changed while the suggestion popup remained UIA-visible |
 | `artifacts/gallery-recordings/20260606-044415-653/report.md` | AutoSuggestBox | 0 passed, 0 needs review, 1 failed; exposed that the 10s clip could end with the suggestion popup visibly open before the final closed state was recorded |
 | `artifacts/gallery-recordings/20260606-045803-926/report.md` | AutoSuggestBox | 1 passed, 0 needs review, 0 failed; 18s capture plus final-frame visual-close proof shows the suggestions popup gone at `t17500` |
+| `artifacts/gallery-recordings/20260606-051218-679/report.md` | RatingControl | 1 passed, 0 needs review, 0 failed; reviewed `t9500` shows the corrected `Click again to clear your rating.` sample copy and target value `3` |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 | `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
 | `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
@@ -800,7 +818,7 @@ proof on top of these static route captures.
 | Basic input | Slider | `item/Slider` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-035858-519/Slider/dark-slider.mp4` | Latest rendered rerun moves the slider from `0` to target `50` with local visual delta `2.433`; reviewed frame `t9500` shows the thumb at the new value and output `50`. |
 | Basic input | ColorPicker | `item/ColorPicker` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-041123-086/ColorPicker/dark-colorpicker.mp4` | Latest rendered rerun toggles `IsMoreButtonVisible` from Off to On with local visual delta `6.228` and whole-frame delta `0.366`; reviewed frame `t9500` shows the More color picker content visible. |
 | Basic input | HyperlinkButton | `item/HyperlinkButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-020424-123/HyperlinkButton/dark-hyperlinkbutton.mp4` | Latest rendered run clicks the safe in-app `Go to ToggleButton` sample and requires route proof: `BeforeRoute=item/HyperlinkButton`, `AfterRoute=item/ToggleButton`, `TargetSampleVisible=true`, whole-frame delta `3.661`, and local visual delta `15.085`. External URI navigation remains intentionally not invoked. |
-| Basic input | RatingControl | `item/RatingControl` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-035858-519/RatingControl/dark-ratingcontrol.mp4` | Latest rendered rerun changes the rating from `0` to target `3` with local visual delta `4.231`; reviewed frame `t9500` shows three selected stars and output `3`. |
+| Basic input | RatingControl | `item/RatingControl` | Recorded | Touch-first sample copy removed | `artifacts/gallery-recordings/20260606-051218-679/RatingControl/dark-ratingcontrol.mp4` | Latest rendered rerun changes the rating from `0` to target `3` with local visual delta `4.231`; reviewed frame `t9500` shows three selected stars, output `3`, and the corrected `Click again to clear your rating.` text with no `Swipe left` instruction. |
 | Basic input | RepeatButton | `item/RepeatButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-040225-951/RepeatButton/dark-repeatbutton.mp4` | Latest rendered rerun changes output from `Control output` to `Number of clicks: 1` with local visual delta `1.002`; reviewed frame `t9500` shows the click count. |
 | Basic input | ToggleButton | `item/ToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-040225-951/ToggleButton/dark-togglebutton.mp4` | Latest rendered rerun toggles Off to On with local visual delta `38.594`; reviewed frame `t9500` shows the checked ToggleButton and output text `On`. |
 | Basic input | DropDownButton | `item/DropDownButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-030431-469/DropDownButton/dark-dropdownbutton.mp4` | Latest rendered run uses a 24s capture, closes through the `Send` leaf item, and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t3500` / `t6000` / `t16000`, deltas `12.131` / `0.263` / `12.125`, and local delta `12.14`. |
