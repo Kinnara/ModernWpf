@@ -126,6 +126,35 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 120 restores RichTextEdit official WPF Gallery layout parity:
+
+- The active WPF-reference check found that ModernWpf's live
+  `RichTextEdit` sample had drifted from official WPF Gallery. The product
+  rendered a custom `RichTextBox` with `MinHeight=160` and an explicit
+  `FlowDocument`, while official WPF Gallery uses a bare
+  `<RichTextBox AutomationProperties.Name="simple rich text editor" />`.
+- Root cause: Round 92 made the control taller to help recorder input instead
+  of fixing the recorder/input proof independently. That violated the standing
+  rule that WPF-native controls compare to official WPF Gallery, not WinUI or a
+  recorder-friendly variant.
+- `RichTextEditPage.xaml` now matches the official WPF source shape again: a
+  self-closing `RichTextBox` with only the automation name. Focused source and
+  runtime tests reject a local `MinHeight=160`, reject a custom
+  `FlowDocument`, and keep the in-process text-composition proof on the real
+  control.
+- Official WPF visual parity is exact in both themes:
+  `artifacts/wpf-gallery-visual-audit/20260606-210055-915-20200/report.md`
+  for Dark and
+  `artifacts/wpf-gallery-visual-audit/20260606-210239-299-178336/report.md`
+  for Light both report content delta `0`, changed samples `0/41230`, max RGB
+  diff `0`, and matching `868x758` crops.
+- Recorder proof still works with the official one-line editor. Dark recording
+  `artifacts/gallery-recordings/20260606-210129-330/report.md` passes with
+  `TextEvidence=true`, `AfterOutput=ModernWpf rich text`,
+  `InputMethod=WindowMessage`, and local delta `6.395`; Light recording
+  `artifacts/gallery-recordings/20260606-210310-713/report.md` passes with the
+  same text evidence and local delta `1.932`.
+
 Round 119 corrects the ThemeShadow depth-change layout false pass from Round
 118:
 
@@ -1682,6 +1711,8 @@ Latest focused evidence:
 
 | Run | Controls | Result |
 | --- | --- | --- |
+| `artifacts/wpf-gallery-visual-audit/20260606-210055-915-20200/report.md` | RichTextEdit | Official WPF Gallery Dark comparison passed with exact content delta `0`, changed samples `0/41230`, max RGB diff `0`, and matching `868x758` crops after restoring the official one-line RichTextBox |
+| `artifacts/wpf-gallery-visual-audit/20260606-210239-299-178336/report.md` | RichTextEdit | Official WPF Gallery Light comparison passed with exact content delta `0`, changed samples `0/41230`, max RGB diff `0`, and matching `868x758` crops |
 | `artifacts/visual-checks/20260606-204833-477-177172/report.md` | ThemeShadow | 2 app/control rows passed; WinUI-reference primary crops match at `557x272` with delta `1.26` after restoring the source-like `36px` caster layout |
 | `artifacts/visual-checks/20260606-202525-061-150024/report.md` | IconElement, ThemeShadow | 4 app/control rows passed; IconElement primary crops match at `590x118` with delta `13.08`; the ThemeShadow row is superseded by `20260606-204833-477-177172` because the old sample still used the shifted popup-inset compensation |
 | `artifacts/visual-checks/20260606-193052-521-96680/report.md` | PersonPicture | 2 app/control rows passed; ModernWpf and WinUI primary avatar crops match at `96x96` with delta `0.35`, using the packaged shoulder-tap profile image |
@@ -1814,6 +1845,8 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260606-140850-692/report.md` | Menu | 1 passed, 0 needs review, 0 failed; final Auto-default run selected `libx264`, recorded `6.7s/24s`, and completed in 37.2s wall time |
 | `artifacts/gallery-recordings/20260606-141244-639/report.md` | ColorPicker, ProgressRing, InfoBar, SplitView, AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, SelectorBar, TabControl | 10 passed, 0 needs review, 0 failed; manual frame review found SelectorBar sample text contrast was bad despite the green recorder result |
 | `artifacts/gallery-recordings/20260606-141752-321/report.md` | SelectorBar | 1 passed, 0 needs review, 0 failed; post-fix Dark rerun shows readable dark `SamplePage1` text in frame `t4000` |
+| `artifacts/gallery-recordings/20260606-210129-330/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; Dark recording proves text input on the official one-line RichTextBox with `AfterOutput=ModernWpf rich text`, `InputMethod=WindowMessage`, and local delta `6.395` |
+| `artifacts/gallery-recordings/20260606-210310-713/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; Light recording proves text input on the official one-line RichTextBox with `AfterOutput=ModernWpf rich text`, `InputMethod=WindowMessage`, and local delta `1.932` |
 | `artifacts/gallery-recordings/20260606-204907-388/report.md` | ThemeShadow | 1 passed, 0 needs review, 0 failed; value moved `32 -> 42` and root, example grid, shadow chrome, card, and slider bounds all stayed fixed before and after the depth change |
 | `artifacts/gallery-recordings/20260606-202416-952/report.md` | ThemeShadow | Superseded false pass; value moved `32 -> 42`, but the layout-stability gate only checked `ShadowRect` and missed the broader source-layout shift |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
@@ -1921,7 +1954,7 @@ proof on top of these static route captures.
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-074841-162/AutoSuggestBox/light-autosuggestbox.mp4` | Latest Light rendered rerun uses an 18s capture and requires both UIA and final-frame visual close proof. Manifest records `SuggestionInvokeMethod=InvokePattern`, `SuggestionClosed=true`, `TextVisualClosedEvidence.Closed=true`, final frame `t17500`, final delta `0.941`, local visual delta `10.307`, and output `Aegean`; reviewed `t9500` shows the popup open during selection and reviewed `t17500` shows it gone with `Aegean` rendered in the text box and output. Current Dark proof is `artifacts/gallery-recordings/20260606-113018-274/AutoSuggestBox/dark-autosuggestbox.mp4` with `SuggestionClosed=true`, `TextVisualClosedEvidence.Closed=true`, output `Aegean`, local delta `11.377`, and reviewed final frame `t17500` showing the suggestion popup gone. The rejected `20260606-041123-086` row is kept only as false-pass evidence. |
 | Text | TextBox | `item/TextBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/TextBox/light-textbox.mp4` | Latest Light rendered run records text entry with `TextEvidence=true`, `AfterOutput=ModernWpf text`, and local visual delta `1.918`; reviewed late frame `t9500` shows the text visibly rendered. Current Dark proof is `artifacts/gallery-recordings/20260606-113018-274/TextBox/dark-textbox.mp4` with `TextEvidence=true`, `AfterOutput=ModernWpf text`, local delta `6.449`, and reviewed frame `t9500` showing rendered text. |
 | Text | PasswordBox | `item/PasswordBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/PasswordBox/light-passwordbox.mp4` | Latest Light rendered run records text entry with `TextEvidence=true`, masked `AfterOutput`, and local visual delta `2.362`; reviewed late frame `t9500` shows masked password bullets rendered. Current Dark proof is `artifacts/gallery-recordings/20260606-113018-274/PasswordBox/dark-passwordbox.mp4` with `TextEvidence=true`, masked `AfterOutput`, local delta `8.734`, and reviewed frame `t9500` showing password bullets rendered. |
-| Text | RichTextEdit | `item/RichTextEdit` | Recorded | Visual size fixed + recorder fixed | `artifacts/gallery-recordings/20260606-102212-861/RichTextEdit/light-richtextedit.mp4` | The Gallery sample now renders the live RichTextBox as a 160px-tall editor instead of the previous 32px one-line field. `RichTextEditAcceptsTextCompositionInput` proves the focused live RichTextBox accepts WPF text composition without diagnostic-prepared text, and the recorder now keeps running after `SendKeys` throws so the remaining fallbacks can type into the live control. Latest Light rendered rerun passes with `TextEvidence=true`, `AfterOutput=ModernWpf rich text`, `OutputMatched=true`, `InputMethod=WindowMessage`, local delta `3.467`, and reviewed frame `t10000` shows the text visibly rendered. Current Dark proof is `artifacts/gallery-recordings/20260606-110233-846/RichTextEdit/dark-richtextedit.mp4` with `TextEvidence=true`, `AfterOutput=ModernWpf rich text`, `OutputMatched=true`, `InputMethod=ClipboardPaste`, local delta `10.927`, and reviewed frame `t10000` visibly populated. These runs supersede failed Light runs `20260606-075521-729`, `20260606-083715-785`, `20260606-091557-396`, and stale failed Dark run `20260606-075734-362`. |
+| Text | RichTextEdit | `item/RichTextEdit` | Recorded + official WPF screenshot parity | Official WPF layout parity restored + recorder fixed | `artifacts/wpf-gallery-visual-audit/20260606-210055-915-20200/report.md` | Round 120 supersedes the recorder-driven 160px editor workaround. The live sample now matches official WPF Gallery's self-closing one-line `RichTextBox` with no local `MinHeight` and no custom `FlowDocument`. Dark and Light official WPF parity both pass with exact content delta `0` and matching `868x758` crops: `artifacts/wpf-gallery-visual-audit/20260606-210055-915-20200/report.md` and `artifacts/wpf-gallery-visual-audit/20260606-210239-299-178336/report.md`. Current Dark recording `artifacts/gallery-recordings/20260606-210129-330/RichTextEdit/dark-richtextedit.mp4` proves `TextEvidence=true`, `AfterOutput=ModernWpf rich text`, `InputMethod=WindowMessage`, and local delta `6.395`; current Light recording `artifacts/gallery-recordings/20260606-210310-713/RichTextEdit/light-richtextedit.mp4` proves the same text output with local delta `1.932`. |
 | Layout | SplitView | `item/SplitView` | Recorded + screenshot | Screenshot harness corrected | `artifacts/gallery-recordings/20260606-071255-441/SplitView/light-splitview.mp4` | Latest Light rendered rerun toggles `IsPaneOpen` from On to Off with local visual delta `45.737` and whole-frame delta `0.495`; reviewed frame `t9500` shows the pane closed with the option controls aligned. Round 113 focused screenshot proof `artifacts/visual-checks/20260606-183210-009-111152/report.md` corrects the WinUI primary crop to compare the same `400x300` pane-plus-content region as ModernWpf, with primary delta `3.37`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/SplitView/dark-splitview.mp4`. |
 | Layout | Expander | `item/Expander` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/Expander/light-expander.mp4` | Latest Light rendered run records expansion evidence with whole-frame/local deltas `0.305` / `5.512`; reviewed frame `t9500` shows the expected content visible after expansion. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/Expander/dark-expander.mp4`. |
 | Media | PersonPicture | `item/PersonPicture` | Recorded + screenshot | Fixed profile-image parity | `artifacts/visual-checks/20260606-193052-521-96680/report.md` | Round 117 fixes the profile-image sample to render the packaged shoulder-tap PNG used by the WinUI Gallery snippet/reference, replacing the old local dashboard portrait. The screenshot harness now crops the full WinUI avatar from rendered pixels instead of the `ProfileImageRadio` row or stale offsets; focused Dark parity passed with primary crop delta `0.35` and matching `96x96` crops. Latest Light interaction proof remains `artifacts/gallery-recordings/20260606-073924-914/PersonPicture/light-personpicture.mp4`, which selects `Display Name` and reviewed `t9500` shows the avatar changed to `JD`; previous Dark interaction proof remains `artifacts/gallery-recordings/20260606-052421-356/PersonPicture/dark-personpicture.mp4`. |

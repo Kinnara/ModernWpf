@@ -8286,13 +8286,13 @@ namespace ModernWpf.Gallery.Tests
                 "Margin=\"10\"",
                 "HeaderText=\"A simple RichTextBox\"",
                 "XamlCode=\"&lt;RichTextBox /&gt;\"",
-                "<RichTextBox",
-                "MinHeight=\"160\"",
-                "AutomationProperties.Name=\"simple rich text editor\">",
-                "<FlowDocument Foreground=\"{DynamicResource TextControlForeground}\">",
-                "<Paragraph />",
-                "</FlowDocument>",
-                "</RichTextBox>");
+                "<RichTextBox AutomationProperties.Name=\"simple rich text editor\" />");
+            Assert.IsFalse(
+                richTextEditXaml.Contains("MinHeight=\"160\"", StringComparison.Ordinal),
+                "RichTextEdit should match official WPF Gallery's one-line RichTextBox instead of a recorder-inflated editor.");
+            Assert.IsFalse(
+                richTextEditXaml.Contains("<FlowDocument", StringComparison.Ordinal),
+                "RichTextEdit should not add a custom FlowDocument to the official WPF sample.");
 
             var textBlockXaml = ReadRepoFile(
                 "ModernWpf.Gallery",

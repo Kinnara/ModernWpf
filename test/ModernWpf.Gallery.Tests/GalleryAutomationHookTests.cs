@@ -4367,7 +4367,11 @@ namespace ModernWpf.Gallery.Tests
 
                     var richTextBox = (RichTextBox)FindByAutomationName(page, "simple rich text editor");
                     Assert.IsNotNull(richTextBox);
-                    Assert.AreEqual(160, richTextBox.MinHeight);
+                    Assert.AreSame(DependencyProperty.UnsetValue, richTextBox.ReadLocalValue(FrameworkElement.MinHeightProperty));
+                    Assert.IsTrue(double.IsNaN(richTextBox.Height));
+                    Assert.IsTrue(
+                        richTextBox.ActualHeight > 24d && richTextBox.ActualHeight < 60d,
+                        "RichTextEdit should keep the official WPF one-line RichTextBox layout instead of a recorder-inflated editor.");
 
                     richTextBox.Focus();
                     WpfTestHost.DoEvents();
