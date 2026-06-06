@@ -913,8 +913,16 @@ function Test-ControlRequiresPrimaryCrop([string]$control) {
         "ColorPicker" { return $true }
         "InfoBadge" { return $true }
         "PersonPicture" { return $true }
+        "SplitView" { return $true }
         "ThemeShadow" { return $true }
         default { return $false }
+    }
+}
+
+function Get-RequiredReferencePrimaryCropSource([string]$control) {
+    switch ($control) {
+        "SplitView" { return "SplitView pane and content" }
+        default { return "" }
     }
 }
 
@@ -984,7 +992,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "ToggleSplitButton" { return "myListButton" }
         "NumberBox" { return "NumberBoxSpinButtonPlacementExample" }
         "AutoSuggestBox" { return "Control1" }
-        "SplitView" { return "NavLinksList" }
+        "SplitView" { return "PaneRoot" }
         "PersonPicture" { return "" }
         "IconElement" { return "svPanel" }
         "ThemeShadow" { return "" }
@@ -2222,6 +2230,40 @@ function New-ProgressRingModernPrimaryCrop([string]$caseDir, [int]$width, [int]$
     return New-RenderedArtifactCrop $path "GallerySample_ProgressRing_ProgressRing" $savedBounds
 }
 
+function New-SplitViewReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
+    if ($null -eq $sampleElement) {
+        return $null
+    }
+
+    $paneRoot = Find-DescendantByAutomationId $sampleElement "PaneRoot"
+    $content = Find-DescendantByAutomationId $sampleElement "content"
+    $paneBounds = Get-ElementWindowBounds $window $paneRoot
+    $contentBounds = Get-ElementWindowBounds $window $content
+    if ($null -eq $paneBounds -or $null -eq $contentBounds) {
+        return $null
+    }
+
+    $right = [Math]::Max($paneBounds.X + $paneBounds.Width, $contentBounds.X + $contentBounds.Width)
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the WinUI SplitView pane and content columns to match the ModernWpf rendered SplitView artifact."
+        X = $paneBounds.X
+        Y = $paneBounds.Y
+        Width = [Math]::Max(1, $right - $paneBounds.X)
+        Height = $paneBounds.Height
+        ChangedSamples = $paneBounds.ChangedSamples
+    }
+
+    $path = Join-Path $caseDir "winui3-SplitView-primary-content-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "SplitView pane and content" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
 function New-TitleBarModernPrimaryCrop([string]$caseDir) {
     $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
     $sampleArtifact = Join-Path $artifactDir "GallerySample_TitleBar_Root.png"
@@ -2732,7 +2774,13 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
     }
 
     $primaryResult = Save-ElementCrop $window $screenshot $primaryPath $primaryElement $primarySource 0
-    if ($control -eq "AnnotatedScrollBar") {
+    if ($control -eq "SplitView") {
+        $splitViewPrimary = New-SplitViewReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
+        if ($null -ne $splitViewPrimary) {
+            $primaryResult = $splitViewPrimary
+        }
+    }
+    elseif ($control -eq "AnnotatedScrollBar") {
         $annotatedScrollBarPrimary = New-AnnotatedScrollBarReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
         if ($null -ne $annotatedScrollBarPrimary) {
             $primaryResult = $annotatedScrollBarPrimary
@@ -5274,6 +5322,8 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         $primaryCropBlank = $false
         $primaryCropLowVariation = $false
         $primaryCropMinimumVisibleStdDev = Get-PrimaryCropMinimumVisibleStdDev $control
+        $primaryCropWrongSource = $false
+        $requiredPrimaryCropSource = Get-RequiredReferencePrimaryCropSource $control
         foreach ($captureAttempt in 1..3) {
             if ($captureAttempt -gt 1) {
                 [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
@@ -5286,7 +5336,8 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
             $primaryCropMissing = (Test-ControlRequiresPrimaryCrop $control) -and !$staticCrops.Primary.Found
             $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
             $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt $primaryCropMinimumVisibleStdDev
-            if ($notBlank -and !$primaryCropMissing -and !$primaryCropBlank -and !$primaryCropLowVariation) {
+            $primaryCropWrongSource = $staticCrops.Primary.Found -and ![string]::IsNullOrEmpty($requiredPrimaryCropSource) -and $staticCrops.Primary.Source -ne $requiredPrimaryCropSource
+            if ($notBlank -and !$primaryCropMissing -and !$primaryCropBlank -and !$primaryCropLowVariation -and !$primaryCropWrongSource) {
                 break
             }
         }
@@ -5297,11 +5348,11 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
             App = "WinUI3Gallery"
             Control = $control
             Route = $route
-            Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropMissing) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($themeProbeFailed) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
+            Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropMissing) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($primaryCropWrongSource) { "Failed" } elseif ($themeProbeFailed) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
             Title = $pageTitle
             Screenshot = $screenshot
             UiaTree = $treePath
-            LastException = $(if ($primaryCropMissing) { "Primary crop was required for $control but was not found." } elseif ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)." } elseif ($themeProbeFailed) { "Reference theme probe did not prove $Theme theme: $($themeProbe.Reason)" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
+            LastException = $(if ($primaryCropMissing) { "Primary crop was required for $control but was not found." } elseif ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)." } elseif ($primaryCropWrongSource) { "Primary crop for $control used '$($staticCrops.Primary.Source)' but expected '$requiredPrimaryCropSource'." } elseif ($themeProbeFailed) { "Reference theme probe did not prove $Theme theme: $($themeProbe.Reason)" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
             NonBlank = $notBlank
             RequiredSampleAutomationId = ""
             RequiredSampleElementFound = $true

@@ -1295,6 +1295,29 @@ Round 112 corrects the Slider screenshot-reference mistake:
   (`Button`, `CheckBox`, `ComboBox`, `RadioButton`, and `Slider`) with the
   WinUI reference and directs them to the official WPF visual audit.
 
+Round 113 fixes a SplitView static-crop false high delta:
+
+- Ported WinUI control screenshot batch
+  `artifacts/visual-checks/20260606-181736-984-159704/report.md` correctly used
+  the WinUI Gallery reference for retained ModernWpf controls, but the SplitView
+  primary crop compared ModernWpf's full `GallerySample_SplitView_SplitView`
+  artifact against only the WinUI `NavLinksList`. That produced a high
+  `SplitView` crop score (`10.7`) even though the full sample region visually
+  matched.
+- `Run-GalleryVisualChecks.ps1` now builds a focused WinUI SplitView primary crop
+  from the sample `PaneRoot` through the `content` column, scoped inside
+  `svPanel`, so it compares the same pane-plus-content visual unit as
+  ModernWpf. SplitView now requires that custom reference crop source, so the
+  harness fails instead of silently falling back to a generic `PaneRoot` crop.
+- Focused guarded rerun
+  `artifacts/visual-checks/20260606-183210-009-111152/report.md` passed with
+  `400x300 vs 400x300` primary crops and primary delta `3.37`. Reviewed
+  `artifacts/visual-checks/20260606-183210-009-111152/splitview-primary-contact-sheet.png`
+  shows matching pane/content composition on both sides.
+- This is a harness correction, not a product change. ProgressRing remains
+  recording-backed for animation proof because static indeterminate screenshots
+  can still differ by animation phase.
+
 Round 106 keeps stable state checks screenshot-first and fixes the ToggleSwitch
 miss found while reviewing that flow:
 
@@ -1455,6 +1478,7 @@ Latest focused evidence:
 | Run | Controls | Result |
 | --- | --- | --- |
 | `artifacts/visual-checks/20260606-173145-835-10284/report.md` | ColorPicker | 2 app/control rows passed; focused primary crops show the combo/hex row and vertical Red/Green/Blue rows on both ModernWpf and WinUI |
+| `artifacts/visual-checks/20260606-183210-009-111152/report.md` | SplitView | 2 app/control rows passed; corrected primary crop compares pane-plus-content `400x300` regions instead of the old WinUI `NavLinksList`-only crop |
 | `artifacts/visual-checks/20260606-171020-087-82140/report.md` | InfoBadge | 2 app/control rows passed; ModernWpf embedded NavigationView crop shows `Home`, `Account`, `Inbox`, `Settings`, and the `5` badge |
 | `artifacts/visual-checks/20260606-164331-590-226096/report.md` | InfoBadge | Expected screenshot harness failure for ModernWpf embedded badge pixels; verifies missing primary crops no longer pass |
 | `artifacts/visual-checks/20260606-164411-857-61908/report.md` | ThemeShadow, PersonPicture | 4 app/control rows passed; required primary crops were present for both controls |
@@ -1687,7 +1711,7 @@ proof on top of these static route captures.
 | Text | TextBox | `item/TextBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/TextBox/light-textbox.mp4` | Latest Light rendered run records text entry with `TextEvidence=true`, `AfterOutput=ModernWpf text`, and local visual delta `1.918`; reviewed late frame `t9500` shows the text visibly rendered. Current Dark proof is `artifacts/gallery-recordings/20260606-113018-274/TextBox/dark-textbox.mp4` with `TextEvidence=true`, `AfterOutput=ModernWpf text`, local delta `6.449`, and reviewed frame `t9500` showing rendered text. |
 | Text | PasswordBox | `item/PasswordBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/PasswordBox/light-passwordbox.mp4` | Latest Light rendered run records text entry with `TextEvidence=true`, masked `AfterOutput`, and local visual delta `2.362`; reviewed late frame `t9500` shows masked password bullets rendered. Current Dark proof is `artifacts/gallery-recordings/20260606-113018-274/PasswordBox/dark-passwordbox.mp4` with `TextEvidence=true`, masked `AfterOutput`, local delta `8.734`, and reviewed frame `t9500` showing password bullets rendered. |
 | Text | RichTextEdit | `item/RichTextEdit` | Recorded | Visual size fixed + recorder fixed | `artifacts/gallery-recordings/20260606-102212-861/RichTextEdit/light-richtextedit.mp4` | The Gallery sample now renders the live RichTextBox as a 160px-tall editor instead of the previous 32px one-line field. `RichTextEditAcceptsTextCompositionInput` proves the focused live RichTextBox accepts WPF text composition without diagnostic-prepared text, and the recorder now keeps running after `SendKeys` throws so the remaining fallbacks can type into the live control. Latest Light rendered rerun passes with `TextEvidence=true`, `AfterOutput=ModernWpf rich text`, `OutputMatched=true`, `InputMethod=WindowMessage`, local delta `3.467`, and reviewed frame `t10000` shows the text visibly rendered. Current Dark proof is `artifacts/gallery-recordings/20260606-110233-846/RichTextEdit/dark-richtextedit.mp4` with `TextEvidence=true`, `AfterOutput=ModernWpf rich text`, `OutputMatched=true`, `InputMethod=ClipboardPaste`, local delta `10.927`, and reviewed frame `t10000` visibly populated. These runs supersede failed Light runs `20260606-075521-729`, `20260606-083715-785`, `20260606-091557-396`, and stale failed Dark run `20260606-075734-362`. |
-| Layout | SplitView | `item/SplitView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/SplitView/light-splitview.mp4` | Latest Light rendered rerun toggles `IsPaneOpen` from On to Off with local visual delta `45.737` and whole-frame delta `0.495`; reviewed frame `t9500` shows the pane closed with the option controls aligned. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/SplitView/dark-splitview.mp4`. |
+| Layout | SplitView | `item/SplitView` | Recorded + screenshot | Screenshot harness corrected | `artifacts/gallery-recordings/20260606-071255-441/SplitView/light-splitview.mp4` | Latest Light rendered rerun toggles `IsPaneOpen` from On to Off with local visual delta `45.737` and whole-frame delta `0.495`; reviewed frame `t9500` shows the pane closed with the option controls aligned. Round 113 focused screenshot proof `artifacts/visual-checks/20260606-183210-009-111152/report.md` corrects the WinUI primary crop to compare the same `400x300` pane-plus-content region as ModernWpf, with primary delta `3.37`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/SplitView/dark-splitview.mp4`. |
 | Layout | Expander | `item/Expander` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/Expander/light-expander.mp4` | Latest Light rendered run records expansion evidence with whole-frame/local deltas `0.305` / `5.512`; reviewed frame `t9500` shows the expected content visible after expansion. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/Expander/dark-expander.mp4`. |
 | Media | PersonPicture | `item/PersonPicture` | Recorded | Recorder coverage hardened | `artifacts/gallery-recordings/20260606-073924-914/PersonPicture/light-personpicture.mp4` | Latest Light rendered rerun selects the `Display Name` radio instead of accepting a static route. Manifest records `SelectionEvidence=true`, `TargetName=Display Name`, local visual delta `20.344`, and reviewed `t9500` shows the avatar changed to the `JD` display-name state. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/PersonPicture/dark-personpicture.mp4`. |
 | Styles | IconElement | `item/IconElement` | Recorded | Recorder coverage hardened | `artifacts/gallery-recordings/20260606-073924-914/IconElement/light-iconelement.mp4` | Latest Light rendered rerun toggles the `Monochrome` checkbox instead of accepting a static route. Manifest records `BeforeState=Off`, `AfterState=On`, `OptionEvidence=true`, local visual delta `4.175`, and reviewed `t9500` shows the monochrome bitmap icon and checked option. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/IconElement/dark-iconelement.mp4`. |

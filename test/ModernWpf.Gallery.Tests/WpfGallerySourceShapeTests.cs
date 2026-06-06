@@ -2613,7 +2613,10 @@ namespace ModernWpf.Gallery.Tests
                 "\"ColorPicker\" { return $true }",
                 "\"InfoBadge\" { return $true }",
                 "\"PersonPicture\" { return $true }",
+                "\"SplitView\" { return $true }",
                 "\"ThemeShadow\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"SplitView\" { return \"SplitView pane and content\" }",
                 "function Get-ModernPrimaryCropAutomationId([string]$control)",
                 "\"SplitView\" { return \"GallerySample_SplitView_SplitView\" }",
                 "\"PersonPicture\" { return \"GallerySample_PersonPicture_PersonPicture\" }",
@@ -2621,9 +2624,14 @@ namespace ModernWpf.Gallery.Tests
                 "function Get-ReferencePrimaryAutomationId([string]$control)",
                 "\"Slider\" { return \"Slider1\" }",
                 "\"ColorPicker\" { return \"ColorSpectrum\" }",
-                "\"SplitView\" { return \"NavLinksList\" }",
+                "\"SplitView\" { return \"PaneRoot\" }",
                 "\"PersonPicture\" { return \"\" }",
                 "\"ThemeShadow\" { return \"\" }",
+                "function New-SplitViewReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement)",
+                "Find-DescendantByAutomationId $sampleElement \"PaneRoot\"",
+                "Find-DescendantByAutomationId $sampleElement \"content\"",
+                "Cropped the WinUI SplitView pane and content columns to match the ModernWpf rendered SplitView artifact.",
+                "SplitView pane and content",
                 "function New-ThemeShadowReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement)",
                 "GallerySample_ThemeShadow_Root.png",
                 "Cropped the WinUI ThemeShadow demo body to match the ModernWpf rendered sample root.",
@@ -2643,6 +2651,9 @@ namespace ModernWpf.Gallery.Tests
                 "GallerySample_InfoBadge_NavigationView.png",
                 "Find-AccentComponentCropBounds $screenshot $sampleBounds $modernSize.Width $modernSize.Height",
                 "Embedded InfoBadge NavigationView",
+                "if ($control -eq \"SplitView\")",
+                "New-SplitViewReferencePrimaryCrop $caseDir $window $screenshot $sampleElement",
+                "elseif ($control -eq \"AnnotatedScrollBar\")",
                 "elseif ($control -eq \"ThemeShadow\")",
                 "New-ThemeShadowReferencePrimaryCrop $caseDir $window $screenshot $sampleElement",
                 "elseif ($control -eq \"PersonPicture\")",
@@ -2654,6 +2665,9 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsTrue(
                 source.Contains("$primaryCropMissing = (Test-ControlRequiresPrimaryCrop $control) -and !$staticCrops.Primary.Found", StringComparison.Ordinal),
                 "Controls with custom primary parity must fail when the primary crop is missing.");
+            Assert.IsTrue(
+                source.Contains("$primaryCropWrongSource = $staticCrops.Primary.Found -and ![string]::IsNullOrEmpty($requiredPrimaryCropSource) -and $staticCrops.Primary.Source -ne $requiredPrimaryCropSource", StringComparison.Ordinal),
+                "Controls with custom reference primary crops must fail if the harness falls back to a different source.");
             Assert.IsFalse(
                 source.Contains("\"PersonPicture\" { return \"ProfileImageRadio\" }", StringComparison.Ordinal),
                 "PersonPicture primary parity must crop the avatar, not the profile-type radio button.");
