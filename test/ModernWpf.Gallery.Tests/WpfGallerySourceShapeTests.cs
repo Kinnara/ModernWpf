@@ -3452,6 +3452,8 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Get-ControlRecordingDurationSeconds([string]$control, [string]$interactionKind)",
+                "if ($interactionKind -eq \"ShellNavigation\")",
+                "return [Math]::Max($DurationSeconds, 18)",
                 "if ($control -eq \"MenuBar\")",
                 "return [Math]::Max($DurationSeconds, 18)",
                 "if ($control -eq \"ContentDialog\" -or $control -eq \"Flyout\" -or $control -eq \"Popup\" -or $control -eq \"MenuFlyout\")",

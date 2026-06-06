@@ -1368,6 +1368,10 @@ function Get-ControlInteractionKind([string]$control) {
 }
 
 function Get-ControlRecordingDurationSeconds([string]$control, [string]$interactionKind) {
+    if ($interactionKind -eq "ShellNavigation") {
+        return [Math]::Max($DurationSeconds, 18)
+    }
+
     if ($interactionKind -eq "OpenRepeat") {
         if ($control -eq "ToolTip") {
             return [Math]::Max($DurationSeconds, 18)
@@ -5801,7 +5805,7 @@ function Write-Report([string]$runDir, $results) {
     else {
         $lines.Add(("Recorder: ``{0}``" -f ($recorders -join ", ")))
     }
-    $lines.Add(("Duration: ``{0}s`` default; ToolTip, MenuBar, and MessageBox use at least ``18s``; other open-repeat controls use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
+    $lines.Add(("Duration: ``{0}s`` default; ShellNavigation, ToolTip, MenuBar, and MessageBox use at least ``18s``; other open-repeat controls use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
     $lines.Add("")
     $lines.Add("| Control | Status | Interaction | Recording | Dense review | Max frame delta | Max local delta | Notes |")
     $lines.Add("| --- | --- | --- | --- | --- | ---: | ---: | --- |")
