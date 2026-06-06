@@ -2667,6 +2667,27 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryVisualChecksRejectWpfOnlyPagesWhenUsingWinUIReference()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "$WpfGalleryOnlyVisualAuditCases = @(",
+                "\"PasswordBox\"",
+                "\"RichTextEdit\"",
+                "\"TextBox\"",
+                "if ($Reference -eq \"InstalledWinUI3Gallery\")",
+                "$wrongReferenceControls = @($Controls | Where-Object { $WpfGalleryOnlyVisualAuditCases -contains $_ })",
+                "Run-GalleryVisualChecks.ps1 uses the WinUI Gallery reference.",
+                "Run-WpfGalleryVisualAudit.ps1 -Cases $($wrongReferenceControls -join ',') -Reference OfficialWpfGallery");
+        }
+
+        [TestMethod]
         public void InfoBadgeNavigationViewSampleKeepsEmbeddedBadgeVisible()
         {
             var source = File.ReadAllText(Path.Combine(

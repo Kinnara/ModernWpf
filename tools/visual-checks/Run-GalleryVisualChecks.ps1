@@ -23,6 +23,46 @@ if ([string]::IsNullOrWhiteSpace($GalleryExe)) {
     $GalleryExe = Join-Path $RepoRoot "ModernWpf.Gallery\bin\Debug\net8.0-windows7.0\ModernWpf.Gallery.exe"
 }
 
+$WpfGalleryOnlyVisualAuditCases = @(
+    "Border",
+    "Calendar",
+    "Canvas",
+    "Clipboard",
+    "DataGrid",
+    "DatePicker",
+    "Expander",
+    "FileAndFolderDialogs",
+    "Frame",
+    "Grid",
+    "GridSplitter",
+    "GroupBox",
+    "Hyperlink",
+    "Image",
+    "Label",
+    "ListBox",
+    "ListView",
+    "Menu",
+    "MessageBox",
+    "NavigationWindow",
+    "PasswordBox",
+    "ProgressBar",
+    "ResizeGrip",
+    "RichTextEdit",
+    "StackPanel",
+    "TabControl",
+    "TextBlock",
+    "TextBox",
+    "ToolTip",
+    "TreeView"
+)
+
+if ($Reference -eq "InstalledWinUI3Gallery") {
+    $wrongReferenceControls = @($Controls | Where-Object { $WpfGalleryOnlyVisualAuditCases -contains $_ })
+    if ($wrongReferenceControls.Count -gt 0) {
+        throw "Run-GalleryVisualChecks.ps1 uses the WinUI Gallery reference. WPF Gallery pages ($($wrongReferenceControls -join ', ')) must use tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases $($wrongReferenceControls -join ',') -Reference OfficialWpfGallery."
+    }
+}
+
 if ($Build) {
     & dotnet build (Join-Path $RepoRoot "ModernWpf.Gallery\ModernWpf.Gallery.csproj") -f net8.0-windows7.0 -c Debug --no-restore
     if ($LASTEXITCODE -ne 0) {

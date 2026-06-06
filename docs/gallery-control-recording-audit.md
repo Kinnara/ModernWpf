@@ -90,6 +90,13 @@ catalog pages without page-specific `GallerySample_*` anchors are accepted for
 static route proof only when the recorder captures a nonblank rendered
 `ContentPagePane` or `GalleryItemPageRoot` artifact.
 
+Static screenshot parity must use the correct reference family. Controls from
+the WinUI-derived ModernWpf visual-check inventory use
+`Run-GalleryVisualChecks.ps1` with `InstalledWinUI3Gallery`; official WPF
+Gallery pages use `Run-WpfGalleryVisualAudit.ps1` with
+`OfficialWpfGallery`. A WinUI reference screenshot is not accepted as evidence
+for WPF-only pages such as TextBox, PasswordBox, or RichTextEdit.
+
 ## Recorder
 
 Use the per-control recorder:
@@ -118,6 +125,27 @@ unavailable, so `Auto` prefers `libx264` unless a benchmark or explicit encoder
 request says otherwise.
 
 ## Current Focused Fix Round
+
+Round 111 corrects the screenshot reference split:
+
+- The failed TextBox/PasswordBox/RichTextEdit screenshot batch at
+  `artifacts/visual-checks/20260606-173735-264-161412/report.md` used the
+  WinUI Gallery reference against WPF Gallery pages. That comparison is invalid
+  evidence for those pages.
+- Local official WPF Gallery source at
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views\Text\TextBoxPage.xaml`
+  matches the current ModernWpf TextBox page shape, so the WinUI-style TextBox
+  header/placeholder/read-only mismatch is not a ModernWpf WPF Gallery defect.
+- `Run-GalleryVisualChecks.ps1` now fails fast when WPF-only page names are
+  passed with `InstalledWinUI3Gallery` and directs the run to
+  `Run-WpfGalleryVisualAudit.ps1 -Reference OfficialWpfGallery`.
+- Corrected Dark TextBox screenshot parity against the official WPF Gallery
+  direct host passed at
+  `artifacts/wpf-gallery-visual-audit/20260606-174951-110-69196/report.md`
+  with `Content delta 0`.
+- The practical split is screenshots for static layout/final-state parity and
+  recordings for temporal behavior: flicker, open/close animation, popup
+  lifetime, repeat-open, and crashes.
 
 Round 49 tightened the recorder after manual review found failures that earlier
 passes accepted:
