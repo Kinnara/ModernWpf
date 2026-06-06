@@ -1836,7 +1836,9 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("TooltipButton", AutomationProperties.GetName(toolTipButton));
                 Assert.AreEqual(100, ToolTipService.GetInitialShowDelay(toolTipButton));
                 Assert.AreEqual(PlacementMode.MousePoint, ToolTipService.GetPlacement(toolTipButton));
-                Assert.AreEqual("Simple ToolTip", ToolTipService.GetToolTip(toolTipButton));
+                var simpleToolTip = ToolTipService.GetToolTip(toolTipButton) as ToolTip;
+                Assert.IsNotNull(simpleToolTip);
+                Assert.AreEqual("Simple ToolTip", simpleToolTip.Content);
 
                 var clipboardPage = new ItemPage(GalleryCatalog.FindItem("Clipboard"));
                 WithRenderedPage(clipboardPage, () =>

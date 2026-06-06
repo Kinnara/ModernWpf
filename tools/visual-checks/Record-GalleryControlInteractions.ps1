@@ -169,6 +169,7 @@ public static class GalleryRecordingNative
     private const uint MOUSEEVENTF_WHEEL = 0x0800;
     private const uint WM_MOUSEMOVE = 0x0200;
     private const uint WM_MOUSEHOVER = 0x02A1;
+    private const uint WM_CHAR = 0x0102;
     private const uint KEYEVENTF_KEYUP = 0x0002;
     private const uint KEYEVENTF_UNICODE = 0x0004;
     private const byte VK_CONTROL = 0x11;
@@ -355,6 +356,20 @@ public static class GalleryRecordingNative
                 keybd_event(VK_SHIFT, 0, KEYEVENTF_KEYUP, UIntPtr.Zero);
             }
 
+            System.Threading.Thread.Sleep(15);
+        }
+    }
+
+    public static void TypeWindowMessageText(IntPtr hWnd, string text)
+    {
+        if (text == null)
+        {
+            return;
+        }
+
+        foreach (char ch in text)
+        {
+            SendMessage(hWnd, WM_CHAR, new UIntPtr(ch), new IntPtr(1));
             System.Threading.Thread.Sleep(15);
         }
     }
@@ -1310,7 +1325,6 @@ function Get-ExpansionInteractionExpectedChildName([string]$control) {
 function Get-ControlInteractionKind([string]$control) {
     if ($control -eq "ShellNavigation") { return "ShellNavigation" }
     if ($control -eq "BreadcrumbBar") { return "Breadcrumb" }
-    if ($control -eq "RichTextEdit") { return "PreparedText" }
     if (Test-ControlSupportsOpenInteraction $control) { return "OpenRepeat" }
     if (Test-ControlSupportsStateInteraction $control) { return "State" }
     if (Test-ControlSupportsExpansionInteraction $control) { return "Expansion" }
@@ -1349,7 +1363,6 @@ function Get-ControlRecordingDurationSeconds([string]$control, [string]$interact
 
 function Test-ControlRequiresDiagnosticPreparation([string]$control) {
     switch ($control) {
-        "RichTextEdit" { return $true }
         default { return $false }
     }
 }
@@ -3975,6 +3988,14 @@ function Set-EditableElementText($window, $element, [string]$text) {
 
             [GalleryRecordingNative]::PressCtrlA()
             Start-Sleep -Milliseconds 50
+            [GalleryRecordingNative]::TypeWindowMessageText($window.Current.NativeWindowHandle, $text)
+            Start-Sleep -Milliseconds 350
+            if ((Get-ElementText $edit) -eq $text) {
+                return $true
+            }
+
+            [GalleryRecordingNative]::PressCtrlA()
+            Start-Sleep -Milliseconds 50
             [GalleryRecordingNative]::TypeVirtualKeyText($text)
             Start-Sleep -Milliseconds 350
             if ((Get-ElementText $edit) -eq $text) {
@@ -4056,24 +4077,6 @@ function Invoke-PlainTextInteraction($window, [string]$control) {
         BeforeOutput = $before
         AfterOutput = $after
         ExpectedOutput = $inputText
-        OutputMatched = $outputMatched
-    }
-}
-
-function Invoke-PreparedTextInteraction($window, [string]$control) {
-    $targetName = Get-TextInteractionTargetName $control
-    $expectedText = Get-TextInteractionInput $control
-    $target = Find-ElementByNameInProcess $window.Current.ProcessId @($targetName)
-    $actualText = Get-ElementText $target
-    $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $target)
-    $outputMatched = $actualText -eq $expectedText
-
-    return [ordered]@{
-        Invoked = $outputMatched
-        TargetName = $targetName
-        TargetBounds = $targetBounds
-        ExpectedOutput = $expectedText
-        AfterOutput = $actualText
         OutputMatched = $outputMatched
     }
 }
@@ -4293,7 +4296,6 @@ function Invoke-RecordedInteraction($window, [string]$control, $sampleElement) {
         "ShellNavigation" { return Invoke-ShellNavigationInteraction $window $sampleElement }
         "Breadcrumb" { return Invoke-BreadcrumbInteraction $window $sampleElement }
         "PreparedOpen" { return Invoke-PreparedOpenInteraction $window $control $sampleElement }
-        "PreparedText" { return Invoke-PreparedTextInteraction $window $control }
         "OpenRepeat" { return Invoke-OpenRepeatInteraction $window $control $sampleElement }
         "State" { return Invoke-StateInteraction $window $sampleElement }
         "Expansion" { return Invoke-ExpansionInteraction $window $control }
@@ -5640,14 +5642,6 @@ function Test-PreparedOpenEvidence($interactionResult) {
     return [bool]$interactionResult.OpenElementFound -and [bool]$interactionResult.OpenElementAnchored
 }
 
-function Test-PreparedTextEvidence($interactionResult) {
-    if ($null -eq $interactionResult -or !$interactionResult.Contains("OutputMatched")) {
-        return $false
-    }
-
-    return [bool]$interactionResult.OutputMatched
-}
-
 function Format-RelativePath([string]$path) {
     if ([string]::IsNullOrWhiteSpace($path)) {
         return ""
@@ -5938,7 +5932,6 @@ foreach ($control in $Controls) {
     $shellNavigationEvidence = Test-ShellNavigationEvidence $interactionResult
     $breadcrumbEvidence = Test-BreadcrumbEvidence $interactionResult
     $preparedOpenEvidence = Test-PreparedOpenEvidence $interactionResult
-    $preparedTextEvidence = Test-PreparedTextEvidence $interactionResult
     $interactionEvidenceForKind = $false
     switch ($interactionKind) {
         "State" { $interactionEvidenceForKind = $stateEvidence }
@@ -6022,11 +6015,6 @@ foreach ($control in $Controls) {
         $notes.Add("Prepared opened content was not visible and anchored during recording.")
     }
 
-    if ($status -eq "Passed" -and $interactionKind -eq "PreparedText" -and !$preparedTextEvidence) {
-        $status = "Failed"
-        $notes.Add("Prepared text content was not visible through UI Automation during recording.")
-    }
-
     if ($status -eq "Passed" -and (Test-ControlRequiresAnimatedVisualProof $control) -and !$animationEvidence) {
         $status = "NeedsReview"
         $notes.Add("Animated visual proof was not detected in early poster frames.")
@@ -6085,9 +6073,6 @@ foreach ($control in $Controls) {
             elseif ($interactionKind -eq "PreparedOpen" -and $preparedOpenEvidence) {
                 $notes.Add("Prepared opened content was visible and anchored despite low full-frame delta.")
             }
-            elseif ($interactionKind -eq "PreparedText" -and $preparedTextEvidence) {
-                $notes.Add("Prepared text content matched despite low full-frame delta.")
-            }
             else {
                 $status = "NeedsReview"
                 $notes.Add("Interactive recording produced low poster-frame delta.")
@@ -6126,7 +6111,6 @@ foreach ($control in $Controls) {
         ShellNavigationEvidence = $shellNavigationEvidence
         BreadcrumbEvidence = $breadcrumbEvidence
         PreparedOpenEvidence = $preparedOpenEvidence
-        PreparedTextEvidence = $preparedTextEvidence
         RenderedPageArtifactAnchor = $renderedPageArtifactAnchor
         InteractionResult = $interactionResult
         Notes = ($notes.ToArray() -join " ")

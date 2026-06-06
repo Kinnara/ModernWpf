@@ -5,7 +5,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls.Primitives;
@@ -179,7 +178,6 @@ namespace ModernWpf.Gallery.Testing
             {
                 OpenTeachingTip(root);
                 OpenWpfToolTip(root);
-                PopulateRichTextBox(root);
             }
             catch (Exception ex)
             {
@@ -226,19 +224,6 @@ namespace ModernWpf.Gallery.Testing
             toolTip.PlacementTarget = button;
             toolTip.Placement = ToolTipService.GetPlacement(button);
             toolTip.IsOpen = true;
-            root.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
-        }
-
-        private static void PopulateRichTextBox(DependencyObject root)
-        {
-            var richTextBox = FindByAutomationName(root, "simple rich text editor") as RichTextBox;
-            if (richTextBox == null)
-            {
-                return;
-            }
-
-            richTextBox.Document.Blocks.Clear();
-            richTextBox.Document.Blocks.Add(new Paragraph(new Run("ModernWpf rich text")));
             root.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
         }
 

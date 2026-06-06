@@ -4151,7 +4151,9 @@ namespace ModernWpf.Gallery.Tests
 
                     var button = (Button)FindByAutomationName(page, "TooltipButton");
                     Assert.IsNotNull(button);
-                    Assert.AreEqual("Simple ToolTip", ToolTipService.GetToolTip(button));
+                    var initialToolTip = ToolTipService.GetToolTip(button) as ToolTip;
+                    Assert.IsNotNull(initialToolTip);
+                    Assert.AreEqual("Simple ToolTip", initialToolTip.Content);
 
                     GalleryDiagnostics.PrepareInteractiveVisualState(page);
                     WpfTestHost.DoEvents();
@@ -4173,7 +4175,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void RichTextEditInteractionModePopulatesDocumentText()
+        public void RichTextEditInteractionModeDoesNotPopulateDocumentText()
         {
             WpfTestHost.Run(() =>
             {
@@ -4206,7 +4208,9 @@ namespace ModernWpf.Gallery.Tests
                     var text = new TextRange(
                         richTextBox.Document.ContentStart,
                         richTextBox.Document.ContentEnd).Text;
-                    Assert.AreEqual("ModernWpf rich text\r\n", text);
+                    Assert.IsFalse(
+                        text.Contains("ModernWpf rich text", StringComparison.Ordinal),
+                        "RichTextEdit must be exercised through recorder input, not diagnostic-prepared text.");
                 }
                 finally
                 {

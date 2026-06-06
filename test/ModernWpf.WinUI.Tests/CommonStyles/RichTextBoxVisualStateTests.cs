@@ -55,6 +55,7 @@ public class RichTextBoxVisualStateTests
     {
         Assert.IsNull(richTextBox.FocusVisualStyle);
         Assert.AreSame(richTextBox.TryFindResource("TextControlForeground"), richTextBox.Foreground);
+        Assert.AreSame(richTextBox.TryFindResource("TextControlForeground"), TextElement.GetForeground(richTextBox));
         Assert.AreSame(richTextBox.TryFindResource("TextControlForeground"), richTextBox.CaretBrush);
         Assert.AreSame(richTextBox.TryFindResource("TextControlBackground"), richTextBox.Background);
         Assert.AreSame(richTextBox.TryFindResource("TextControlBorderBrush"), richTextBox.BorderBrush);
@@ -99,6 +100,7 @@ public class RichTextBoxVisualStateTests
         Assert.AreEqual(ScrollViewer.GetIsDeferredScrollingEnabled(richTextBox), contentHost.IsDeferredScrollingEnabled);
         Assert.AreEqual(richTextBox.IsTabStop, contentHost.IsTabStop);
         Assert.AreSame(richTextBox.Foreground, TextElement.GetForeground(contentHost));
+        Assert.AreSame(richTextBox.Foreground, richTextBox.Document.Foreground);
 
         Assert.IsNull(richTextBox.Template.FindName("HeaderContentPresenter", richTextBox));
         Assert.IsNull(richTextBox.Template.FindName("DescriptionPresenter", richTextBox));
@@ -113,17 +115,20 @@ public class RichTextBoxVisualStateTests
         Assert.AreEqual(3, triggers.Length);
 
         AssertTrigger(triggers, "IsMouseOver", true,
+            (null, "Foreground", "TextControlForegroundPointerOver"),
             ("ContentBorder", "Background", "TextControlBackgroundPointerOver"),
             ("ContentBorder", "BorderBrush", "TextControlBorderBrushPointerOver"),
             ("PART_ContentHost", "Foreground", "TextControlForegroundPointerOver"));
 
         AssertTrigger(triggers, "IsFocused", true,
+            (null, "Foreground", "TextControlForegroundFocused"),
             ("ContentBorder", "BorderThickness", "TextControlBorderThemeThicknessFocused"),
             ("ContentBorder", "Background", "TextControlBackgroundFocused"),
             ("ContentBorder", "BorderBrush", "TextControlBorderBrushFocused"),
             ("PART_ContentHost", "Foreground", "TextControlForegroundFocused"));
 
         AssertTrigger(triggers, "IsEnabled", false,
+            (null, "Foreground", "TextControlForegroundDisabled"),
             ("ContentBorder", "Background", "TextControlBackgroundDisabled"),
             ("ContentBorder", "BorderBrush", "TextControlBorderBrushDisabled"),
             ("PART_ContentHost", "Foreground", "TextControlForegroundDisabled"));
@@ -133,7 +138,7 @@ public class RichTextBoxVisualStateTests
         Trigger[] triggers,
         string propertyName,
         object value,
-        params (string TargetName, string PropertyName, string ResourceKey)[] expectedSetters)
+        params (string? TargetName, string PropertyName, string ResourceKey)[] expectedSetters)
     {
         var trigger = triggers.Single(item => item.Property.Name == propertyName && Equals(item.Value, value));
         var setters = trigger.Setters.OfType<Setter>().ToArray();
@@ -146,7 +151,7 @@ public class RichTextBoxVisualStateTests
         }
     }
 
-    private static void AssertSetter(Setter[] setters, string targetName, string propertyName, string resourceKey)
+    private static void AssertSetter(Setter[] setters, string? targetName, string propertyName, string resourceKey)
     {
         var setter = setters.Single(item =>
             item.TargetName == targetName &&
@@ -168,6 +173,8 @@ public class RichTextBoxVisualStateTests
         Assert.AreSame(contentBorder.TryFindResource("TextControlBackgroundDisabled"), contentBorder.Background);
         Assert.AreSame(contentBorder.TryFindResource("TextControlBorderBrushDisabled"), contentBorder.BorderBrush);
         Assert.AreSame(contentHost.TryFindResource("TextControlForegroundDisabled"), contentHost.Foreground);
+        Assert.AreSame(richTextBox.TryFindResource("TextControlForegroundDisabled"), TextElement.GetForeground(richTextBox));
+        Assert.AreSame(richTextBox.TryFindResource("TextControlForegroundDisabled"), richTextBox.Document.Foreground);
     }
 
     private static T GetTemplateChild<T>(Control control, string name)

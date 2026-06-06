@@ -3720,30 +3720,43 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Get-ControlInteractionKind([string]$control)",
-                "if ($control -eq \"RichTextEdit\") { return \"PreparedText\" }",
                 "if (Test-ControlSupportsOpenInteraction $control) { return \"OpenRepeat\" }",
                 "function Test-ControlRequiresDiagnosticPreparation([string]$control)",
-                "\"RichTextEdit\" { return $true }",
                 "default { return $false }");
             Assert.IsFalse(
                 source.Contains("if ($control -eq \"ToolTip\") { return \"PreparedOpen\" }", StringComparison.Ordinal),
                 "ToolTip must use the hover/open-repeat path, not the pre-opened diagnostic path.");
+            Assert.IsFalse(
+                source.Contains("PreparedText", StringComparison.Ordinal),
+                "RichTextEdit must use recorder-driven text input, not diagnostic-prepared text.");
+            var diagnosticPreparationFunctionStart = source.IndexOf(
+                "function Test-ControlRequiresDiagnosticPreparation([string]$control)",
+                StringComparison.Ordinal);
+            var diagnosticPreparationFunctionEnd = source.IndexOf(
+                "\nfunction Find-ShellNavigationItem",
+                diagnosticPreparationFunctionStart,
+                StringComparison.Ordinal);
+            Assert.IsTrue(diagnosticPreparationFunctionStart >= 0);
+            Assert.IsTrue(diagnosticPreparationFunctionEnd > diagnosticPreparationFunctionStart);
+            var diagnosticPreparationFunction = source.Substring(
+                diagnosticPreparationFunctionStart,
+                diagnosticPreparationFunctionEnd - diagnosticPreparationFunctionStart);
+            Assert.IsFalse(
+                diagnosticPreparationFunction.Contains("RichTextEdit", StringComparison.Ordinal),
+                "RichTextEdit must not opt into --open-interactions diagnostic preparation.");
             AssertContainsInOrder(
                 source,
-                "function Invoke-PreparedTextInteraction($window, [string]$control)",
-                "$targetName = Get-TextInteractionTargetName $control",
-                "$expectedText = Get-TextInteractionInput $control",
-                "$actualText = Get-ElementText $target",
-                "OutputMatched = $outputMatched");
-            AssertContainsInOrder(
-                source,
+                "private const uint WM_CHAR = 0x0102;",
                 "public static void PressCtrlV()",
                 "KeyPress(0x56);",
+                "public static void TypeWindowMessageText(IntPtr hWnd, string text)",
+                "SendMessage(hWnd, WM_CHAR",
                 "private static void TypeUnicodeChar(char ch)",
                 "KEYEVENTF_UNICODE",
                 "Set-Clipboard -Value $text",
                 "[GalleryRecordingNative]::PressCtrlV()",
                 "[GalleryRecordingNative]::TypeText($text)",
+                "[GalleryRecordingNative]::TypeWindowMessageText($window.Current.NativeWindowHandle, $text)",
                 "[GalleryRecordingNative]::TypeVirtualKeyText($text)");
         }
 
@@ -3778,7 +3791,6 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Get-ControlInteractionKind([string]$control)",
-                "if ($control -eq \"RichTextEdit\") { return \"PreparedText\" }",
                 "if (Test-ControlSupportsOpenInteraction $control) { return \"OpenRepeat\" }");
             AssertContainsInOrder(
                 source,
@@ -7453,7 +7465,11 @@ namespace ModernWpf.Gallery.Tests
                 "Margin=\"10\"",
                 "HeaderText=\"A simple RichTextBox\"",
                 "XamlCode=\"&lt;RichTextBox /&gt;\"",
-                "<RichTextBox AutomationProperties.Name=\"simple rich text editor\" />");
+                "<RichTextBox AutomationProperties.Name=\"simple rich text editor\">",
+                "<FlowDocument Foreground=\"{DynamicResource TextControlForeground}\">",
+                "<Paragraph />",
+                "</FlowDocument>",
+                "</RichTextBox>");
 
             var textBlockXaml = ReadRepoFile(
                 "ModernWpf.Gallery",

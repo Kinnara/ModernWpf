@@ -25,7 +25,11 @@
                     Margin="10"
                     HeaderText="A simple RichTextBox"
                     XamlCode="&lt;RichTextBox /&gt;">
-                    <RichTextBox AutomationProperties.Name="simple rich text editor" />
+                    <RichTextBox AutomationProperties.Name="simple rich text editor">
+                        <FlowDocument Foreground="{DynamicResource TextControlForeground}">
+                            <Paragraph />
+                        </FlowDocument>
+                    </RichTextBox>
                 </controls:ControlExample>
             </StackPanel>
         </ScrollViewer>

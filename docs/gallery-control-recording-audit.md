@@ -334,7 +334,7 @@ prepared-open false pass:
   Expander, TreeView, TabControl, TextBox, PasswordBox, Calendar, ListBox,
   ListView, DataGrid, ToolTip, and RichTextEdit. Ten of those controls now
   have current interaction proof through expansion, selection, text-entry, or
-  prepared text evidence. DataGrid remains a visual-selection proof because
+  open-repeat evidence. DataGrid remains a visual-selection proof because
   UIA selection did not report a changed item, but the rendered row/cell
   highlight produced `VisualSelectionEvidence=true` and local delta `57.125`.
 - The ToolTip row in that run is no longer accepted as full interaction proof.
@@ -433,6 +433,28 @@ Round 68 closes the ToolTip open-repeat proof gap:
   `534,405,97,32`, first/closed/second frames `t2000` / `t3000` / `t6500`, and
   open/closed/second-open deltas `7.185` / `0.242` / `7.276`.
 
+Round 69 closes the RichTextEdit recorder and dark-rendering gap:
+
+- The previous accepted RichTextEdit proof was diagnostic-prepared text, so it
+  could hide both input-driver failures and dark-on-dark rendering. The recorder
+  now removes the `PreparedText` path entirely for RichTextEdit and no longer
+  starts the Gallery with `--open-interactions` for that page.
+- Native clipboard, Unicode `SendInput`, and virtual-key input did not
+  reliably drive WPF `RichTextBox` in this desktop session. A focused probe
+  showed that sending `WM_CHAR` to the WPF host window after focus/click does
+  insert text, so the recorder now uses that as a final real-input fallback.
+- The Gallery sample now seeds the RichTextBox with a `FlowDocument` whose
+  foreground uses the text-control foreground resource. Without that explicit
+  document foreground, UIA could read inserted text while dark-theme recording
+  still showed no readable glyphs.
+- Latest proof
+  `artifacts/gallery-recordings/20260606-014544-783/report.md` passed with
+  `InteractionKind=Text`, `TextEvidence=true`, `BeforeOutput=""`,
+  `AfterOutput="ModernWpf rich text"`, and local visual delta `7.606`. Reviewed
+  crop `artifacts/gallery-recordings/20260606-014544-783/RichTextEdit/frames/t5000-richtext-crop.png`
+  shows the typed `ModernWpf rich text` visibly rendered in the dark
+  RichTextBox.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -470,6 +492,7 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260605-065448-723/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; target-relative placement rendered correctly, but UIA did not expose stable ToolTip popup bounds |
 | `artifacts/gallery-recordings/20260605-070140-905/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; first open was detected through fallback bounds, but the second open proof was still missing |
 | `artifacts/gallery-recordings/20260605-070810-482/report.md` | ToolTip | 1 passed, 0 needs review, 0 failed; visual-test click/open path plus fallback bounds prove open, close, and second open |
+| `artifacts/gallery-recordings/20260606-014544-783/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; recorder-driven `WM_CHAR` text input is visible in dark-theme frames and UIA output changed from empty to `ModernWpf rich text` |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 | `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
 | `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
@@ -480,8 +503,9 @@ it exposed two remaining interaction gaps that the older static sweep missed.
 `ToolTip` did not open under the current synthetic hover/click path, and
 `RichTextEdit` focused but did not receive text input through the recorder.
 The `20260604-053726-512` follow-up closes RichTextEdit with
-diagnostics-prepared text evidence and shows that a WPF ToolTip can render when
-opened in-process. It is no longer accepted as ToolTip interaction proof.
+diagnostics-prepared text evidence only; that RichTextEdit proof is superseded
+by the later `20260606-014544-783` recording. That run proves recorder-driven
+text entry through `WM_CHAR` and visibly rendered dark-theme RichTextBox text.
 ToolTip is verified by the later `20260605-070810-482` recording, which proves
 open, close, and second open from the visual-test interaction path with
 pixel-backed fallback bounds.
@@ -571,7 +595,7 @@ proof on top of these static route captures.
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed | `artifacts/gallery-recordings/20260605-045636-525/AutoSuggestBox/dark-autosuggestbox.mp4` | Latest rendered run records text interaction with local visual delta `2.816`; expected output was detected despite low whole-frame delta `0.111`. `AutoSuggestBoxInteractionTests` covers item-click submit/close behavior. |
 | Text | TextBox | `item/TextBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-050718-351/TextBox/dark-textbox.mp4` | Latest rendered run records text entry with local visual delta `5.519`; expected `ModernWpf text` output was detected. |
 | Text | PasswordBox | `item/PasswordBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-050718-351/PasswordBox/dark-passwordbox.mp4` | Latest rendered run records text entry with local visual delta `5.524`; the password output remains masked while the expected input state is detected. |
-| Text | RichTextEdit | `item/RichTextEdit` | Recorded | Recorder gap tracked | `artifacts/gallery-recordings/20260605-050718-351/RichTextEdit/dark-richtextedit.mp4` | Current proof is diagnostic prepared text, not external keyboard injection proof. It remains accepted only as rendered text-state evidence until the recorder can drive WPF RichTextBox input directly. |
+| Text | RichTextEdit | `item/RichTextEdit` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-014544-783/RichTextEdit/dark-richtextedit.mp4` | Latest rendered run records real text interaction through the `WM_CHAR` fallback with `BeforeOutput=""`, `AfterOutput="ModernWpf rich text"`, `TextEvidence=true`, and local visual delta `7.606`. Reviewed crop `t5000-richtext-crop.png` shows the inserted text visibly rendered in dark mode; older diagnostic-prepared text proofs are superseded. |
 | Layout | SplitView | `item/SplitView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/SplitView/dark-splitview.mp4` | Latest rendered run records the option interaction with local visual delta `36.476` and whole-frame delta `0.951`. |
 | Layout | Expander | `item/Expander` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-050718-351/Expander/dark-expander.mp4` | Latest rendered run records expansion evidence with whole-frame/local deltas `0.659` / `11.331`; reviewed frames show the expected content visible after expansion. |
 | Media | PersonPicture | `item/PersonPicture` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-045636-525/PersonPicture/dark-personpicture.mp4` | Static rendered route with nonblank frames against required anchor `GallerySample_PersonPicture_PersonPicture`. |
