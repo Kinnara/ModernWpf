@@ -3141,6 +3141,7 @@ namespace ModernWpf.Gallery.Tests
 
                     var exampleGrid = FindNamedDescendant<Grid>(page, "Example3Grid");
                     Assert.IsNotNull(exampleGrid);
+                    Assert.AreSame(exampleGrid, FindByAutomationId(page, "GallerySample_ThemeShadow_Example3Grid"));
                     Assert.AreEqual(272d, exampleGrid.MinWidth);
                     Assert.AreEqual(272d, exampleGrid.MinHeight);
 
@@ -3150,10 +3151,12 @@ namespace ModernWpf.Gallery.Tests
 
                     var shadow = FindNamedDescendant<ThemeShadowChrome>(page, "shadow");
                     Assert.IsNotNull(shadow);
+                    Assert.AreSame(shadow, FindByAutomationId(page, "GallerySample_ThemeShadow_ShadowChrome"));
                     Assert.AreEqual(32d, shadow.Depth);
                     Assert.AreEqual(32d, shadow.TranslationZ);
-                    Assert.AreEqual(new Thickness(42, 43, 0, 0), shadow.Margin);
-                    Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, shadow.WindowedPopupInsetMode);
+                    Assert.AreEqual(new Thickness(36), shadow.Margin);
+                    Assert.IsFalse(shadow.ReservesShadowSpace);
+                    Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Default, shadow.WindowedPopupInsetMode);
                     Assert.AreEqual(HorizontalAlignment.Left, shadow.HorizontalAlignment);
                     Assert.AreEqual(VerticalAlignment.Top, shadow.VerticalAlignment);
 
@@ -3176,16 +3179,30 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(1d, slider.TickFrequency);
                     Assert.AreEqual(32d, slider.Value);
 
-                    var beforePosition = shadowRect.TranslatePoint(new Point(), exampleGrid);
+                    var beforeRootBounds = GetRelativeBounds(root, page);
+                    var beforeGridBounds = GetRelativeBounds(exampleGrid, page);
+                    var beforeShadowBounds = GetRelativeBounds(shadow, exampleGrid);
+                    var beforeRectBounds = GetRelativeBounds(shadowRect, exampleGrid);
+                    var beforeSliderBounds = GetRelativeBounds(slider, page);
+                    AssertRectNear(new Rect(36, 36, 200, 200), beforeShadowBounds, 0.5, "ThemeShadow chrome should preserve the WinUI sample's 36px caster layout.");
+                    AssertRectNear(new Rect(36, 36, 200, 200), beforeRectBounds, 0.5, "ThemeShadow caster should preserve the WinUI sample's 36px layout.");
+
                     slider.Value = 48;
                     WpfTestHost.DoEvents();
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
-                    var afterPosition = shadowRect.TranslatePoint(new Point(), exampleGrid);
+                    var afterRootBounds = GetRelativeBounds(root, page);
+                    var afterGridBounds = GetRelativeBounds(exampleGrid, page);
+                    var afterShadowBounds = GetRelativeBounds(shadow, exampleGrid);
+                    var afterRectBounds = GetRelativeBounds(shadowRect, exampleGrid);
+                    var afterSliderBounds = GetRelativeBounds(slider, page);
                     Assert.AreEqual(48d, shadow.Depth);
                     Assert.AreEqual(48d, shadow.TranslationZ);
-                    Assert.AreEqual(beforePosition.X, afterPosition.X, 0.5, "Changing ThemeShadow depth should not move the sample card horizontally.");
-                    Assert.AreEqual(beforePosition.Y, afterPosition.Y, 0.5, "Changing ThemeShadow depth should not move the sample card vertically.");
+                    AssertRectNear(beforeRootBounds, afterRootBounds, 0.5, "Changing ThemeShadow depth should not move the sample root.");
+                    AssertRectNear(beforeGridBounds, afterGridBounds, 0.5, "Changing ThemeShadow depth should not move the example grid.");
+                    AssertRectNear(beforeShadowBounds, afterShadowBounds, 0.5, "Changing ThemeShadow depth should not move the shadow chrome.");
+                    AssertRectNear(beforeRectBounds, afterRectBounds, 0.5, "Changing ThemeShadow depth should not move the sample card.");
+                    AssertRectNear(beforeSliderBounds, afterSliderBounds, 0.5, "Changing ThemeShadow depth should not move the options slider.");
                 }
                 finally
                 {
@@ -4403,6 +4420,20 @@ namespace ModernWpf.Gallery.Tests
             window.UpdateLayout();
             WpfTestHost.DoEvents();
             return page;
+        }
+
+        private static Rect GetRelativeBounds(FrameworkElement element, UIElement ancestor)
+        {
+            var origin = element.TranslatePoint(new Point(), ancestor);
+            return new Rect(origin, element.RenderSize);
+        }
+
+        private static void AssertRectNear(Rect expected, Rect actual, double tolerance, string message)
+        {
+            Assert.AreEqual(expected.X, actual.X, tolerance, message + " X");
+            Assert.AreEqual(expected.Y, actual.Y, tolerance, message + " Y");
+            Assert.AreEqual(expected.Width, actual.Width, tolerance, message + " Width");
+            Assert.AreEqual(expected.Height, actual.Height, tolerance, message + " Height");
         }
 
         private static DependencyObject FindByAutomationId(DependencyObject root, string automationId)

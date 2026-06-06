@@ -2683,8 +2683,22 @@ namespace ModernWpf.Gallery.Tests
                 "Depth = 32",
                 "TranslationZ = 32",
                 "Child = shadowRect",
-                "Margin = new Thickness(42, 43, 0, 0)",
-                "WindowedPopupInsetMode = ThemeShadowChromeWindowedPopupInsetMode.Medium");
+                "Margin = new Thickness(36)",
+                "ReservesShadowSpace = false");
+            AssertContainsInOrder(
+                source,
+                "GalleryAutomation.WithAutomationId(shadow, GalleryAutomation.SampleElementId(\"ThemeShadow\", \"ShadowChrome\"));",
+                "var exampleGrid = new Grid",
+                "Name = \"Example3Grid\"",
+                "MinWidth = 272",
+                "MinHeight = 272",
+                "GalleryAutomation.WithAutomationId(exampleGrid, GalleryAutomation.SampleElementId(\"ThemeShadow\", \"Example3Grid\"));");
+            Assert.IsFalse(
+                source.Contains("Margin = new Thickness(42, 43, 0, 0)", StringComparison.Ordinal),
+                "ThemeShadow sample should preserve the WinUI 36px caster layout instead of a magic offset.");
+            Assert.IsFalse(
+                source.Contains("WindowedPopupInsetMode = ThemeShadowChromeWindowedPopupInsetMode.Medium", StringComparison.Ordinal),
+                "ThemeShadow sample is not a popup host and should not rely on popup inset layout.");
             AssertContainsInOrder(
                 source,
                 "var sliderHeader = new TextBlock",
@@ -4493,18 +4507,28 @@ namespace ModernWpf.Gallery.Tests
                 "function Test-BoundingRectangleStringsNearlyEqual([string]$before, [string]$after, [double]$tolerance)",
                 "$beforeRect = ConvertFrom-BoundingRectangleString $before",
                 "$afterRect = ConvertFrom-BoundingRectangleString $after",
+                "function Get-LayoutStabilityTargetAutomationIds([string]$control)",
+                "\"GallerySample_ThemeShadow_Root\"",
+                "\"GallerySample_ThemeShadow_Example3Grid\"",
+                "\"GallerySample_ThemeShadow_ShadowChrome\"",
+                "\"GallerySample_ThemeShadow_ShadowRect\"",
+                "\"GallerySample_ThemeShadow_TranslationSlider\"",
+                "function Get-RenderedArtifactBoundsMap($window, [string]$artifactDir, [string[]]$automationIds)",
+                "function Format-BoundingRectangleMap($boundsById)",
+                "function Test-BoundingRectangleMapsNearlyEqual($beforeById, $afterById, [double]$tolerance)",
                 "function Refresh-ModernWpfVisualArtifacts($window)",
                 "Find-DescendantByAutomationId $window \"GalleryVisualTestRefreshArtifacts\"",
                 "function Get-RenderedArtifactBounds([string]$artifactDir, [string]$automationId)",
                 "Get-Content -LiteralPath $path -Raw",
                 "function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [string]$artifactDir = \"\")",
-                "$layoutStabilityTargetAutomationId = if ($control -eq \"ThemeShadow\") { \"GallerySample_ThemeShadow_ShadowRect\" } else { \"\" }",
+                "$layoutStabilityTargetAutomationIds = @(Get-LayoutStabilityTargetAutomationIds $control)",
                 "[void](Refresh-ModernWpfVisualArtifacts $window)",
-                "$artifactBounds = Get-RenderedArtifactBounds $artifactDir $layoutStabilityTargetAutomationId",
-                "LayoutStabilitySource = if (![string]::IsNullOrWhiteSpace($layoutStabilityTargetAutomationId)) { \"RenderedArtifactBounds\" } else { \"\" }",
+                "$beforeLayoutBoundsById = if ($hasLayoutStabilityTargets) { Get-RenderedArtifactBoundsMap $window $artifactDir $layoutStabilityTargetAutomationIds } else { $null }",
+                "LayoutStabilityTargetAutomationIds = $layoutStabilityTargetAutomationIds",
+                "LayoutStabilitySource = if ($hasLayoutStabilityTargets) { \"RenderedArtifactBounds\" } else { \"\" }",
                 "BeforeLayoutBounds = $beforeLayoutBounds",
                 "AfterLayoutBounds = $afterLayoutBounds",
-                "LayoutStable = Test-BoundingRectangleStringsNearlyEqual $beforeLayoutBounds $afterLayoutBounds 1.0");
+                "LayoutStable = Test-BoundingRectangleMapsNearlyEqual $beforeLayoutBoundsById $afterLayoutBoundsById 1.0");
             AssertContainsInOrder(
                 source,
                 "function Test-LayoutStabilityEvidence($interactionResult)",
@@ -4515,7 +4539,7 @@ namespace ModernWpf.Gallery.Tests
                 "$interactionKind -eq \"Value\"",
                 "$valueEvidence -and",
                 "$layoutStabilityEvidence",
-                "ThemeShadow depth changed but the ShadowRect bounds moved or could not be proven stable.",
+                "ThemeShadow depth changed but one or more sample bounds moved or could not be proven stable.",
                 "!$localVisualEvidence -and !$layoutStabilityEvidenceAccepted",
                 "LayoutStabilityEvidence = $layoutStabilityEvidence");
             AssertContainsInOrder(

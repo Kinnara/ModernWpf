@@ -290,7 +290,38 @@ namespace ModernWpf.Controls.Primitives
         {
             if (IsInitialized)
             {
+                UpdateShadow();
                 UpdatePopupMargin();
+            }
+        }
+
+        #endregion
+
+        #region ReservesShadowSpace
+
+        public static readonly DependencyProperty ReservesShadowSpaceProperty =
+            DependencyProperty.Register(
+                nameof(ReservesShadowSpace),
+                typeof(bool),
+                typeof(ThemeShadowChrome),
+                new PropertyMetadata(true, OnReservesShadowSpaceChanged));
+
+        public bool ReservesShadowSpace
+        {
+            get => (bool)GetValue(ReservesShadowSpaceProperty);
+            set => SetValue(ReservesShadowSpaceProperty, value);
+        }
+
+        private static void OnReservesShadowSpaceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((ThemeShadowChrome)d).OnReservesShadowSpaceChanged();
+        }
+
+        private void OnReservesShadowSpaceChanged()
+        {
+            if (IsInitialized)
+            {
+                UpdateShadow();
             }
         }
 
@@ -666,7 +697,7 @@ namespace ModernWpf.Controls.Primitives
             _shadow?.InvalidateVisual();
         }
 
-        private Thickness LayoutShadowPadding => PopupShadowPadding;
+        private Thickness LayoutShadowPadding => ReservesShadowSpace ? PopupShadowPadding : new Thickness();
 
         private static double SubtractConstraintPadding(double value, double padding)
         {

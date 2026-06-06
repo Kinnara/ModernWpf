@@ -326,12 +326,13 @@ namespace ModernWpf.Gallery.Pages
                 Depth = 32,
                 TranslationZ = 32,
                 Child = shadowRect,
-                Margin = new Thickness(42, 43, 0, 0),
-                WindowedPopupInsetMode = ThemeShadowChromeWindowedPopupInsetMode.Medium,
+                Margin = new Thickness(36),
+                ReservesShadowSpace = false,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top
             };
             shadow.SetResourceReference(ThemeShadowChrome.CornerRadiusProperty, "OverlayCornerRadius");
+            GalleryAutomation.WithAutomationId(shadow, GalleryAutomation.SampleElementId("ThemeShadow", "ShadowChrome"));
 
             var exampleGrid = new Grid
             {
@@ -339,6 +340,7 @@ namespace ModernWpf.Gallery.Pages
                 MinWidth = 272,
                 MinHeight = 272
             };
+            GalleryAutomation.WithAutomationId(exampleGrid, GalleryAutomation.SampleElementId("ThemeShadow", "Example3Grid"));
             exampleGrid.Children.Add(shadowCastGrid);
             exampleGrid.Children.Add(shadow);
 

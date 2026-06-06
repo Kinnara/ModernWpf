@@ -113,6 +113,7 @@ public class LayoutCompatibilityApiTests
 
             Assert.IsNotNull(chrome.Shadow);
             Assert.IsTrue(chrome.IsShadowEnabled);
+            Assert.IsTrue(chrome.ReservesShadowSpace);
             Assert.AreEqual(32, chrome.TranslationZ);
             Assert.AreEqual(chrome.Depth, chrome.TranslationZ);
 
@@ -172,6 +173,52 @@ public class LayoutCompatibilityApiTests
 
             chrome.WindowedPopupInsetMode = ThemeShadowChromeWindowedPopupInsetMode.Small;
             Assert.AreEqual(new Thickness(4, 1, 4, 8), chrome.PopupShadowPadding);
+        });
+    }
+
+    [TestMethod]
+    public void ThemeShadowChromeCanRenderSourceTranslationWithoutReservingLayoutSpace()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var root = new Grid
+            {
+                Width = 272,
+                Height = 272,
+                Background = Brushes.White
+            };
+            var chrome = new ThemeShadowChrome
+            {
+                Depth = 32,
+                TranslationZ = 32,
+                ReservesShadowSpace = false,
+                Margin = new Thickness(36),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Child = new Border
+                {
+                    Width = 200,
+                    Height = 200,
+                    Background = Brushes.Transparent
+                }
+            };
+            root.Children.Add(chrome);
+
+            ArrangeElement(root, 272, 272);
+
+            Assert.AreEqual(200, chrome.ActualWidth, 0.1);
+            Assert.AreEqual(200, chrome.ActualHeight, 0.1);
+            Assert.AreEqual(new Point(36, 36), chrome.TranslatePoint(new Point(), root));
+            Assert.AreEqual(new Point(36, 36), ((FrameworkElement)chrome.Child).TranslatePoint(new Point(), root));
+
+            chrome.TranslationZ = 48;
+            ArrangeElement(root, 272, 272);
+
+            Assert.AreEqual(48, chrome.Depth);
+            Assert.AreEqual(200, chrome.ActualWidth, 0.1);
+            Assert.AreEqual(200, chrome.ActualHeight, 0.1);
+            Assert.AreEqual(new Point(36, 36), chrome.TranslatePoint(new Point(), root));
+            Assert.AreEqual(new Point(36, 36), ((FrameworkElement)chrome.Child).TranslatePoint(new Point(), root));
         });
     }
 
