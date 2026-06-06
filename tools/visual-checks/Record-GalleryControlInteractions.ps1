@@ -5001,7 +5001,7 @@ function Format-NativeWindowRectangle($rect) {
     return "{0},{1},{2},{3}" -f $rect.Left, $rect.Top, $width, $height
 }
 
-function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$outputPath, [string]$captureMode, [int]$durationSeconds, [string]$videoEncoder, [bool]$benchmarkEncoders) {
+function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$outputPath, [string]$captureMode, [int]$durationSeconds, [string]$videoEncoder, [bool]$benchmarkEncoders, [int]$frameRate) {
     $captureRect = Get-ExpandedCaptureRect $windowHandle
     $stopFile = Join-Path (Split-Path -Parent $outputPath) (([IO.Path]::GetFileNameWithoutExtension($outputPath)) + ".stop")
     if (Test-Path -LiteralPath $stopFile) {
@@ -5012,7 +5012,7 @@ function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$out
         param($scriptPath, $targetProcessId, $handleValue, $left, $top, $width, $height, $output, $duration, $frameRate, $mode, $encoder, $benchmark, $stopSignal)
         $handle = [IntPtr]::new([int64]$handleValue)
         & $scriptPath -ProcessId $targetProcessId -WindowHandle $handle -Left $left -Top $top -Width $width -Height $height -Output $output -DurationSeconds $duration -FrameRate $frameRate -CaptureMode $mode -VideoEncoder $encoder -BenchmarkEncoders:$benchmark -StopFile $stopSignal
-    } -ArgumentList $RecordWindowRenderedScript, $processId, ([int64]$windowHandle), $captureRect.Left, $captureRect.Top, $captureRect.Width, $captureRect.Height, $outputPath, $durationSeconds, $FrameRate, $captureMode, $videoEncoder, $benchmarkEncoders, $stopFile
+    } -ArgumentList $RecordWindowRenderedScript, $processId, ([int64]$windowHandle), $captureRect.Left, $captureRect.Top, $captureRect.Width, $captureRect.Height, $outputPath, $durationSeconds, $frameRate, $captureMode, $videoEncoder, $benchmarkEncoders, $stopFile
 
     return [ordered]@{
         Job = $job
@@ -5604,6 +5604,14 @@ function Get-PosterFrameIntervalSeconds([string]$control, [string]$interactionKi
     return 0.5
 }
 
+function Get-ControlRecordingFrameRate([string]$control, [string]$interactionKind) {
+    if ($control -eq "ThemeShadow" -and $interactionKind -eq "Value") {
+        return [Math]::Max(30, $FrameRate)
+    }
+
+    return $FrameRate
+}
+
 function Export-PosterFrames([string]$videoPath, [string]$caseDir, [double]$frameIntervalSeconds) {
     if ($SkipFrameExtraction) {
         return @()
@@ -5697,6 +5705,191 @@ function Export-DenseTransitionReviewSheet([string]$videoPath, [string]$caseDir,
         Fps = $reviewFps
         Tile = "${tileColumns}x$tileRows"
         Stats = Get-ImageStats $sheetPath
+    }
+}
+
+function Export-DenseAnalysisFrames([string]$videoPath, [string]$caseDir, [string]$name, [int]$fps) {
+    if ($SkipFrameExtraction) {
+        return @()
+    }
+
+    $ffmpeg = Get-FfmpegPath
+    if ([string]::IsNullOrWhiteSpace($ffmpeg) -or !(Test-Path $videoPath)) {
+        return @()
+    }
+
+    $analysisDir = Join-Path $caseDir "analysis"
+    $frameDir = Join-Path $analysisDir $name
+    New-Item -ItemType Directory -Force -Path $frameDir | Out-Null
+    $pattern = Join-Path $frameDir "frame-%04d.png"
+    $effectiveFps = [Math]::Max(1, $fps)
+    $filter = "fps=$effectiveFps"
+    $output = & $ffmpeg -hide_banner -loglevel error -y -i $videoPath -vf $filter $pattern 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        return @()
+    }
+
+    return @(Get-ChildItem -LiteralPath $frameDir -Filter "frame-*.png" | Sort-Object Name | ForEach-Object { $_.FullName })
+}
+
+function Get-PixelLuma($pixel) {
+    return (0.2126 * $pixel.R) + (0.7152 * $pixel.G) + (0.0722 * $pixel.B)
+}
+
+function Compare-ImageRegionMeanDeltaSampled($baseline, $current, $region, [int]$sampleStep) {
+    if ($null -eq $baseline -or $null -eq $current -or $null -eq $region) {
+        return $null
+    }
+
+    $left = [int]$region.X
+    $top = [int]$region.Y
+    $width = [int]$region.Width
+    $height = [int]$region.Height
+    if ($width -le 1 -or $height -le 1) {
+        return $null
+    }
+
+    $sum = 0.0
+    $count = 0
+    for ($y = 0; $y -lt $height; $y += $sampleStep) {
+        $pixelY = $top + $y
+        if ($pixelY -lt 0 -or $pixelY -ge $baseline.Height -or $pixelY -ge $current.Height) {
+            continue
+        }
+
+        for ($x = 0; $x -lt $width; $x += $sampleStep) {
+            $pixelX = $left + $x
+            if ($pixelX -lt 0 -or $pixelX -ge $baseline.Width -or $pixelX -ge $current.Width) {
+                continue
+            }
+
+            $baselinePixel = $baseline.GetPixel($pixelX, $pixelY)
+            $currentPixel = $current.GetPixel($pixelX, $pixelY)
+            $sum += [Math]::Abs((Get-PixelLuma $baselinePixel) - (Get-PixelLuma $currentPixel))
+            $count++
+        }
+    }
+
+    if ($count -eq 0) {
+        return $null
+    }
+
+    return [ordered]@{
+        MeanDelta = [Math]::Round($sum / [double]$count, 3)
+        SampleCount = $count
+    }
+}
+
+function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recordingResult, $interactionResult) {
+    $cardDeltaThreshold = 2.0
+    $sampleStep = 6
+
+    if ($SkipFrameExtraction) {
+        return [ordered]@{
+            Generated = $false
+            Stable = $false
+            Reason = "Frame extraction was skipped."
+            CardDeltaThreshold = $cardDeltaThreshold
+        }
+    }
+
+    if ($null -eq $recordingResult -or [string]::IsNullOrWhiteSpace($recordingResult.Rect)) {
+        return [ordered]@{
+            Generated = $false
+            Stable = $false
+            Reason = "Recorder capture rectangle was not reported."
+            CardDeltaThreshold = $cardDeltaThreshold
+        }
+    }
+
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("ThemeShadowCasterBeforeBounds")) {
+        return [ordered]@{
+            Generated = $false
+            Stable = $false
+            Reason = "ThemeShadow caster bounds were not reported."
+            CardDeltaThreshold = $cardDeltaThreshold
+        }
+    }
+
+    $bounds = ConvertFrom-BoundingRectangleString $interactionResult.ThemeShadowCasterBeforeBounds
+    $captureRect = ConvertFrom-BoundingRectangleString $recordingResult.Rect
+    if ($null -eq $bounds -or $null -eq $captureRect) {
+        return [ordered]@{
+            Generated = $false
+            Stable = $false
+            Reason = "ThemeShadow caster or capture bounds could not be parsed."
+            CardDeltaThreshold = $cardDeltaThreshold
+        }
+    }
+
+    $targetFps = if ($recordingResult.PSObject.Properties["FrameRate"] -and $null -ne $recordingResult.FrameRate) {
+        [int]$recordingResult.FrameRate
+    }
+    else {
+        [Math]::Max(1, $FrameRate)
+    }
+    $framePaths = @(Export-DenseAnalysisFrames $videoPath $caseDir "theme-shadow-dense-frames" $targetFps)
+    if ($framePaths.Count -lt 2) {
+        return [ordered]@{
+            Generated = $false
+            Stable = $false
+            Reason = "Fewer than two dense ThemeShadow frames were decoded."
+            FrameCount = $framePaths.Count
+            CardDeltaThreshold = $cardDeltaThreshold
+        }
+    }
+
+    $baseline = [System.Drawing.Bitmap]::FromFile($framePaths[0])
+    try {
+        $region = ConvertTo-FrameRectangle $bounds $captureRect $baseline.Width $baseline.Height 0
+        if ($null -eq $region) {
+            return [ordered]@{
+                Generated = $false
+                Stable = $false
+                Reason = "ThemeShadow caster bounds could not be converted into frame coordinates."
+                FrameCount = $framePaths.Count
+                CardDeltaThreshold = $cardDeltaThreshold
+            }
+        }
+
+        $maxCardMeanDelta = 0.0
+        $worstFrame = [IO.Path]::GetFileNameWithoutExtension($framePaths[0])
+
+        for ($i = 1; $i -lt $framePaths.Count; $i++) {
+            $current = [System.Drawing.Bitmap]::FromFile($framePaths[$i])
+            try {
+                $match = Compare-ImageRegionMeanDeltaSampled $baseline $current $region $sampleStep
+                if ($null -eq $match) {
+                    continue
+                }
+
+                $meanDelta = [double]$match.MeanDelta
+                if ($meanDelta -gt $maxCardMeanDelta) {
+                    $maxCardMeanDelta = $meanDelta
+                    $worstFrame = [IO.Path]::GetFileNameWithoutExtension($framePaths[$i])
+                }
+            }
+            finally {
+                $current.Dispose()
+            }
+        }
+
+        return [ordered]@{
+            Generated = $true
+            Stable = ([double]$maxCardMeanDelta -le $cardDeltaThreshold)
+            FrameCount = $framePaths.Count
+            FrameRate = $targetFps
+            Bounds = $interactionResult.ThemeShadowCasterBeforeBounds
+            FrameRegion = ("{0},{1},{2},{3}" -f $region.X, $region.Y, $region.Width, $region.Height)
+            BaselineFrame = [IO.Path]::GetFileNameWithoutExtension($framePaths[0])
+            WorstFrame = $worstFrame
+            MaxCardMeanDelta = [Math]::Round($maxCardMeanDelta, 3)
+            CardDeltaThreshold = $cardDeltaThreshold
+            SampleStep = $sampleStep
+        }
+    }
+    finally {
+        $baseline.Dispose()
     }
 }
 
@@ -6625,6 +6818,18 @@ function Test-ThemeShadowCasterStabilityEvidence($interactionResult) {
     return [bool]$interactionResult.ThemeShadowCasterStable
 }
 
+function Test-ThemeShadowDenseFrameStabilityEvidence($themeShadowDenseFrameStability) {
+    if ($null -eq $themeShadowDenseFrameStability) {
+        return $false
+    }
+
+    if (!$themeShadowDenseFrameStability.Contains("Generated") -or !$themeShadowDenseFrameStability.Contains("Stable")) {
+        return $false
+    }
+
+    return [bool]$themeShadowDenseFrameStability.Generated -and [bool]$themeShadowDenseFrameStability.Stable
+}
+
 function Test-InteractionRequiresLocalVisualEvidence([string]$interactionKind) {
     switch ($interactionKind) {
         "State" { return $true }
@@ -6757,7 +6962,7 @@ function Write-Report([string]$runDir, $results) {
     if ($encoders.Count -gt 0) {
         $lines.Add(("Video encoder: ``{0}``" -f ($encoders -join ", ")))
     }
-    $lines.Add(("Duration: ``{0}s`` default; ShellNavigation, AutoSuggestBox text, ToolTip, MenuBar, MessageBox, and fast popup open-repeat controls use larger maximum windows, but recording stops early after interaction evidence plus a short tail at ``{1}fps``" -f $DurationSeconds, $FrameRate))
+    $lines.Add(("Duration: ``{0}s`` default; ShellNavigation, AutoSuggestBox text, ToolTip, MenuBar, MessageBox, and fast popup open-repeat controls use larger maximum windows, but recording stops early after interaction evidence plus a short tail at ``{1}fps`` by default. Individual controls may raise the capture frame rate for dense visual stability checks." -f $DurationSeconds, $FrameRate))
     $lines.Add("")
     $lines.Add("| Control | Status | Interaction | Duration | Recording | Dense review | Max frame delta | Max local delta | Notes |")
     $lines.Add("| --- | --- | --- | ---: | --- | --- | ---: | ---: | --- |")
@@ -6821,6 +7026,7 @@ foreach ($control in $Controls) {
     $denseTransitionReview = $null
     $localFrameDeltas = @()
     $maxLocalFrameDelta = $null
+    $themeShadowDenseFrameStability = $null
     $screenRecordingGalleryAnchor = $null
     $localVisualEvidence = $false
     $visualOpenRepeatEvidence = $null
@@ -6882,7 +7088,8 @@ foreach ($control in $Controls) {
 
         $script:GalleryVisualSnapshotDirectory = Join-Path $caseDir "live-snapshots"
         $script:GalleryLiveFrameDirectory = Join-Path (Split-Path -Parent $recordingPath) (([IO.Path]::GetFileNameWithoutExtension($recordingPath)) + ".frames")
-        $recordingJob = Start-RecordingJob $window.Current.ProcessId ([IntPtr]$window.Current.NativeWindowHandle) $recordingPath $CaptureMode $recordingDurationSeconds $VideoEncoder ([bool]$BenchmarkEncoders)
+        $recordingFrameRate = Get-ControlRecordingFrameRate $control $interactionKind
+        $recordingJob = Start-RecordingJob $window.Current.ProcessId ([IntPtr]$window.Current.NativeWindowHandle) $recordingPath $CaptureMode $recordingDurationSeconds $VideoEncoder ([bool]$BenchmarkEncoders) $recordingFrameRate
         $script:GalleryRecordingStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
         Start-Sleep -Milliseconds 1500
         $interactionResult = Invoke-RecordedInteraction $window $control $sampleElement $artifactDir
@@ -6939,6 +7146,12 @@ foreach ($control in $Controls) {
         $localFrameDeltas = Get-LocalFrameDeltas $frames $recordingResult $interactionResult
         $maxLocalFrameDelta = Get-MaxLocalFrameDelta $localFrameDeltas
         $localVisualEvidence = Test-LocalVisualEvidence $maxLocalFrameDelta
+        $themeShadowDenseFrameStability = if ($control -eq "ThemeShadow" -and $interactionKind -eq "Value") {
+            Get-ThemeShadowDenseFrameStability $recordingPath $caseDir $recordingResult $interactionResult
+        }
+        else {
+            $null
+        }
         $visualOpenRepeatEvidence = if ($interactionKind -eq "OpenRepeat") {
             Get-OpenRepeatVisualEvidence $frames $recordingResult $interactionResult $control
         }
@@ -7040,6 +7253,9 @@ foreach ($control in $Controls) {
     if ($null -eq $textVisualClosedEvidence -and $interactionKind -eq "Text") {
         $textVisualClosedEvidence = Get-TextVisualClosedEvidence $frames $recordingResult $interactionResult
     }
+    if ($null -eq $themeShadowDenseFrameStability -and $control -eq "ThemeShadow" -and $interactionKind -eq "Value") {
+        $themeShadowDenseFrameStability = Get-ThemeShadowDenseFrameStability $recordingPath $caseDir $recordingResult $interactionResult
+    }
     $animationFrameDelta = if (Test-ControlRequiresAnimatedVisualProof $control) { Get-EarlyFrameDelta $frames } else { $null }
     $animationEvidence = Test-AnimationEvidence $control $animationFrameDelta
     $openRepeatEvidence = (Test-OpenRepeatEvidence $interactionResult) -and (
@@ -7051,12 +7267,14 @@ foreach ($control in $Controls) {
     $layoutStabilityEvidence = Test-LayoutStabilityEvidence $interactionResult
     $themeShadowVisualEvidence = Test-ThemeShadowVisualEvidence $localFrameDeltas
     $themeShadowCasterStabilityEvidence = Test-ThemeShadowCasterStabilityEvidence $interactionResult
+    $themeShadowDenseFrameStabilityEvidence = Test-ThemeShadowDenseFrameStabilityEvidence $themeShadowDenseFrameStability
     $layoutStabilityEvidenceAccepted =
         $control -eq "ThemeShadow" -and
         $interactionKind -eq "Value" -and
         $valueEvidence -and
         $layoutStabilityEvidence -and
         $themeShadowCasterStabilityEvidence -and
+        $themeShadowDenseFrameStabilityEvidence -and
         $themeShadowVisualEvidence
     $selectionEvidence = Test-SelectionEvidence $interactionResult
     $visualSelectionEvidence = Test-VisualSelectionEvidence $control $interactionKind $maxLocalFrameDelta
@@ -7144,6 +7362,23 @@ foreach ($control in $Controls) {
         $visualDelta = Get-LocalFrameDeltaByName $localFrameDeltas "ThemeShadowVisualBounds"
         $visualBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("ThemeShadowVisualBounds")) { $interactionResult.ThemeShadowVisualBounds } else { "" }
         $notes.Add(("ThemeShadow depth changed but no rendered sample-root visual delta was proven. Bounds={0}; delta={1}." -f $visualBounds, $visualDelta))
+    }
+
+    if ($status -eq "Passed" -and
+        $control -eq "ThemeShadow" -and
+        $interactionKind -eq "Value" -and
+        $valueEvidence -and
+        $layoutStabilityEvidence -and
+        $themeShadowCasterStabilityEvidence -and
+        !$themeShadowDenseFrameStabilityEvidence) {
+        $status = "Failed"
+        if ($null -ne $themeShadowDenseFrameStability -and $themeShadowDenseFrameStability.Contains("Generated") -and $themeShadowDenseFrameStability.Generated) {
+            $notes.Add(("ThemeShadow rendered card changed too much in dense video frames, indicating a visible layout shift. WorstFrame={0}; cardDelta={1}; threshold={2}." -f $themeShadowDenseFrameStability.WorstFrame, $themeShadowDenseFrameStability.MaxCardMeanDelta, $themeShadowDenseFrameStability.CardDeltaThreshold))
+        }
+        else {
+            $reason = if ($null -ne $themeShadowDenseFrameStability -and $themeShadowDenseFrameStability.Contains("Reason")) { $themeShadowDenseFrameStability.Reason } else { "Dense rendered-card stability evidence was not generated." }
+            $notes.Add(("ThemeShadow depth changed but dense video frames did not prove the rendered card stayed fixed. {0}" -f $reason))
+        }
     }
 
     if ($status -eq "Passed" -and $interactionKind -eq "Option" -and !$optionEvidence) {
@@ -7235,6 +7470,9 @@ foreach ($control in $Controls) {
         $beforeCasterBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("ThemeShadowCasterBeforeBounds")) { $interactionResult.ThemeShadowCasterBeforeBounds } else { "" }
         $afterCasterBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("ThemeShadowCasterAfterBounds")) { $interactionResult.ThemeShadowCasterAfterBounds } else { "" }
         $notes.Add(("ThemeShadow card/caster bounds stayed fixed while depth changed. Caster before={0}; after={1}. The visible shadow envelope may expand with depth; live WinUI source-geometry captures show the same behavior." -f $beforeCasterBounds, $afterCasterBounds))
+        if ($null -ne $themeShadowDenseFrameStability -and $themeShadowDenseFrameStability.Contains("Generated") -and $themeShadowDenseFrameStability.Generated) {
+            $notes.Add(("Dense ThemeShadow video frames kept the rendered card fixed. Frames={0}; cardDelta={1}; threshold={2}." -f $themeShadowDenseFrameStability.FrameCount, $themeShadowDenseFrameStability.MaxCardMeanDelta, $themeShadowDenseFrameStability.CardDeltaThreshold))
+        }
     }
 
     if ($status -eq "Passed" -and
@@ -7328,6 +7566,8 @@ foreach ($control in $Controls) {
         ValueEvidence = $valueEvidence
         LayoutStabilityEvidence = $layoutStabilityEvidence
         ThemeShadowCasterStabilityEvidence = $themeShadowCasterStabilityEvidence
+        ThemeShadowDenseFrameStabilityEvidence = $themeShadowDenseFrameStabilityEvidence
+        ThemeShadowDenseFrameStability = $themeShadowDenseFrameStability
         ThemeShadowVisualEvidence = $themeShadowVisualEvidence
         SelectionEvidence = $selectionEvidence
         VisualSelectionEvidence = $visualSelectionEvidence

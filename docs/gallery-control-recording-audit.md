@@ -126,6 +126,25 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 123 corrects the ThemeShadow layout-shift evidence after user review:
+
+- User review rejected the Round 122 conclusion because the visible check still
+  did not prove that the rendered card stayed fixed while depth changed.
+- Root cause in the audit harness: ThemeShadow accepted UIA/rendered-artifact
+  bounds plus sparse 500ms poster deltas. That can miss a brief frame-level
+  jump and does not directly measure the pixels the user sees.
+- The recorder now raises ThemeShadow value recordings to at least 30fps,
+  decodes dense frames into `analysis/theme-shadow-dense-frames`, and samples
+  the exact 200x200 rendered card region from the video. A ThemeShadow value
+  pass now requires `ThemeShadowDenseFrameStabilityEvidence=true`; the card
+  region must stay below a mean-delta threshold of `2.0`.
+- Fresh Light verification
+  `artifacts/gallery-recordings/20260606-222601-469/report.md` passes with
+  `ThemeShadowDenseFrameStabilityEvidence=true`, `FrameRate=30`,
+  `FrameCount=151`, `MaxCardMeanDelta=0.128`, and
+  `CardDeltaThreshold=2.0`. The visible shadow envelope still expands with
+  depth, but the rendered 200x200 card did not shift in the dense video frames.
+
 Round 122 corrects the ThemeShadow depth-change interpretation:
 
 - User review clarified that the visible shift after changing depth was still
