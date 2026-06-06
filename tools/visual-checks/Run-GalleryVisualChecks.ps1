@@ -321,6 +321,17 @@ function Find-DescendantButtonByName($root, [string]$name) {
     return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
 }
 
+function Find-DescendantByNameAndControlType($root, [string]$name, $controlType) {
+    $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::NameProperty,
+        $name)
+    $typeCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        $controlType)
+    $condition = New-Object System.Windows.Automation.AndCondition($nameCondition, $typeCondition)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
 function Find-DescendantButtonByAnyName($root, [string[]]$names) {
     foreach ($name in $names) {
         $button = Find-DescendantButtonByName $root $name
@@ -340,6 +351,10 @@ function Find-DescendantByControlType($root, $controlType) {
 }
 
 function Find-ReferencePrimaryByName($root, [string]$control, [string]$name) {
+    if ($control -eq "CheckBox") {
+        return Find-DescendantByNameAndControlType $root $name ([System.Windows.Automation.ControlType]::CheckBox)
+    }
+
     return Find-DescendantButtonByName $root $name
 }
 
@@ -906,6 +921,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "CommandBarFlyout" { return "myImageButton" }
         "HyperlinkButton" { return "Control1" }
         "RatingControl" { return "RatingControl1" }
+        "Slider" { return "Slider1" }
         "ToggleButton" { return "Toggle1" }
         "SplitButton" { return "myColorButton" }
         "ToggleSplitButton" { return "myListButton" }
@@ -927,7 +943,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
 
 function Get-ReferencePrimaryName([string]$control) {
     switch ($control) {
-        "CheckBox" { return "Two-state CheckBox" }
+        "CheckBox" { return "Two-state" }
         "DropDownButton" { return "Email" }
         "MenuFlyout" { return "Sort" }
         "Popup" { return "Show Popup (using Offset)" }

@@ -106,6 +106,45 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void SliderSampleStartsAtReferenceValue()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var viewModel = new ModernWpf.Gallery.Pages.WpfGallery.BasicInput.SliderPageViewModel();
+                var page = new ModernWpf.Gallery.Pages.WpfGallery.BasicInput.SliderPage(viewModel);
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var slider = FindNamedDescendant<Slider>(page, "SimpleSlider");
+
+                    Assert.AreEqual(50, viewModel.SimpleSliderValue);
+                    Assert.AreEqual(50.0, slider.Value);
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         [DynamicData(nameof(CuratedSampleAutomationIds), DynamicDataSourceType.Method)]
         public void CuratedSamplesExposeStableAutomationIds(string uniqueId, string rootAutomationId, string primaryAutomationId)
         {

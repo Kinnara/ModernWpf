@@ -1218,10 +1218,50 @@ SelectorBar sample contrast defect found by manual frame review:
   `artifacts/gallery-recordings/20260606-141752-321/SelectorBar/frames/t4000.png`
   shows dark, readable `SamplePage1` text on the light blue panel.
 
+Round 105 switches static parity checks to screenshots where motion proof is
+not needed, fixes harness false negatives, and closes a Slider initial-state
+parity defect:
+
+- Screenshot batch
+  `artifacts/visual-checks/20260606-142534-044-93236/report.md` ran
+  `Button`, `CheckBox`, `RadioButton`, `Slider`, and `RatingControl` in Dark
+  theme against the installed WinUI 3 Gallery reference. ModernWpf passed, but
+  the reference side exposed harness misses: CheckBox was still looking for the
+  old `Two-state CheckBox` name and Slider did not have the current reference
+  automation id `Slider1`.
+- Rerun `artifacts/visual-checks/20260606-143327-599-239956/report.md` proved
+  the Slider reference id fix but still failed CheckBox because
+  `Find-ReferencePrimaryByName` always searched for a Button by name. The
+  helper is now control-type aware for CheckBox and source-shape coverage
+  asserts that path.
+- Manual review of the all-green screenshot batch
+  `artifacts/visual-checks/20260606-143710-663-138452/report.md` found a real
+  ModernWpf sample parity issue that the earlier recordings did not flag:
+  `Slider/modernwpf-artifacts/GallerySample_Slider_Root.png` showed the simple
+  Slider starting at output `0`, while WinUI started at output `50`.
+- `SliderPageViewModel` now initializes `SimpleSliderValue` to `50`.
+  `GalleryAutomationHookTests.SliderSampleStartsAtReferenceValue` hosts the
+  actual WPF Slider page and asserts both the view-model value and the bound
+  `SimpleSlider.Value`. Source-shape tests also pin the updated default.
+- Post-fix screenshot batch
+  `artifacts/visual-checks/20260606-144434-210-243940/report.md` passed the
+  same five controls. Reviewed
+  `artifacts/visual-checks/20260606-144434-210-243940/Slider/modernwpf-artifacts/GallerySample_Slider_Root.png`
+  shows the simple Slider thumb centered and output `50`, matching the WinUI
+  reference final state. The remaining Slider crop score is a bounding-box
+  difference (`200x32` ModernWpf control crop versus `200x70` WinUI primary
+  crop), not the old wrong initial value.
+- `Button`, `CheckBox`, `RadioButton`, and `RatingControl` screenshot crops did
+  not show a product layout defect in this round. The RatingControl
+  post-interaction caption difference (`Your rating` versus `312 ratings`) is
+  retained as current ModernWpf sample behavior because existing tests pin the
+  caption change after setting a value.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
 | --- | --- | --- |
+| `artifacts/visual-checks/20260606-144434-210-243940/report.md` | Button, CheckBox, RadioButton, Slider, RatingControl | 10 app/control rows passed, 0 failed; screenshot review confirmed Slider starts at output `50` |
 | `artifacts/gallery-recordings/20260604-034810-236/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-035722-075/report.md` | DropDownButton, MenuFlyout, SplitButton, ToggleSplitButton | 4 passed, 0 needs review, 0 failed |
 | `artifacts/gallery-recordings/20260604-040103-946/report.md` | ContentDialog, Flyout, Popup, CommandBarFlyout | 4 passed, 0 needs review, 0 failed |
@@ -1432,7 +1472,7 @@ proof on top of these static route captures.
 | Basic input | CheckBox | `item/CheckBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/CheckBox/light-checkbox.mp4` | Latest Light rendered rerun toggles the two-state CheckBox from Off to On with local visual delta `3.389`; reviewed frame `t9500` shows the checked state and the three-state examples aligned. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/CheckBox/dark-checkbox.mp4` with `StateEvidence=true`, `AfterState=On`, and local delta `3.182`. |
 | Basic input | ComboBox | `item/ComboBox` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-063701-757/ComboBox/light-combobox.mp4` | Latest Light 24s rendered run closes through `ExpandCollapsePattern.Collapse()` and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t4000` / `t8000` / `t14000`, deltas `14.128` / `0.287` / `14.091`, and local delta `14.25`; reviewed frame `t4000` shows the ComboBox dropdown anchored under the field. Current Dark proof is `artifacts/gallery-recordings/20260606-100047-740/ComboBox/dark-combobox.mp4` with frames `t3500` / `t7500` / `t13500`, deltas `9.717` / `0.316` / `11.359`, and local delta `11.359`. |
 | Basic input | RadioButton | `item/RadioButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/RadioButton/light-radiobutton.mp4` | Latest Light rendered rerun selects `Default Radio Option 2` with local visual delta `4.189`; reviewed frame `t9500` shows Option 2 selected and the radio examples aligned. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/RadioButton/dark-radiobutton.mp4` with `SelectionEvidence=true`, target `Default Radio Option 2`, and local delta `3.503`. |
-| Basic input | Slider | `item/Slider` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/Slider/light-slider.mp4` | Latest Light rendered rerun moves the slider from `0` to target `50` with local visual delta `2.031`; reviewed frame `t9500` shows the thumb at the new value and output `50`. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/Slider/dark-slider.mp4` with `ValueEvidence=true`, value `0` to `50`, and local delta `2.451`. |
+| Basic input | Slider | `item/Slider` | Recorded + screenshot | Fixed | `artifacts/visual-checks/20260606-144434-210-243940/report.md` | Round 105 screenshot-first parity caught that the simple Slider opened at output `0` while WinUI opened at `50`. `SliderPageViewModel` now initializes `SimpleSliderValue` to `50`; reviewed `artifacts/visual-checks/20260606-144434-210-243940/Slider/modernwpf-artifacts/GallerySample_Slider_Root.png` shows the thumb centered and output `50`. Older Light/Dark recordings still prove the value interaction path but predate this initial-state fix. |
 | Basic input | ColorPicker | `item/ColorPicker` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/ColorPicker/light-colorpicker.mp4` | Latest Light rendered rerun toggles `IsMoreButtonVisible` from Off to On with local visual delta `6.087` and whole-frame delta `0.247`; reviewed frame `t9500` shows the More color picker content visible. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/ColorPicker/dark-colorpicker.mp4`. |
 | Basic input | HyperlinkButton | `item/HyperlinkButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-074841-162/HyperlinkButton/light-hyperlinkbutton.mp4` | Latest Light rendered run clicks the safe in-app `Go to ToggleButton` sample and requires route proof: `BeforeRoute=item/HyperlinkButton`, `AfterRoute=item/ToggleButton`, `TargetSampleVisible=true`, whole-frame delta `2.563`, and local visual delta `12.244`. Reviewed `t9500` shows the ToggleButton destination page. External URI navigation remains intentionally not invoked. The previous dark proof remains at `artifacts/gallery-recordings/20260606-020424-123/HyperlinkButton/dark-hyperlinkbutton.mp4`. |
 | Basic input | RatingControl | `item/RatingControl` | Recorded | Touch-first sample copy removed | `artifacts/gallery-recordings/20260606-070029-557/RatingControl/light-ratingcontrol.mp4` | Latest Light rendered rerun changes the rating from `0` to target `3` with local visual delta `3.861`; reviewed frame `t9500` shows three selected stars, output `3`, and the corrected `Click again to clear your rating.` text with no `Swipe left` instruction. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/RatingControl/dark-ratingcontrol.mp4` with `ValueEvidence=true`, value `0` to `3`, local delta `4.049`, and reviewed frame `t9500` showing the same corrected copy. |

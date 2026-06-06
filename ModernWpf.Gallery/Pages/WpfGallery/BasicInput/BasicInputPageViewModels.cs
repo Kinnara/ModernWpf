@@ -253,7 +253,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.BasicInput
 
     public partial class SliderPageViewModel : BasicInputPageViewModelBase
     {
-        private int _simpleSliderValue = 0;
+        private int _simpleSliderValue = 50;
         private int _rangeSliderValue = 500;
         private int _marksSliderValue = 0;
         private int _verticalSliderValue = 0;

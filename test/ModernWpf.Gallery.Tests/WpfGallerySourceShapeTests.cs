@@ -1602,7 +1602,7 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "public partial class SliderPageViewModel : BasicInputPageViewModelBase",
-                "private int _simpleSliderValue = 0;",
+                "private int _simpleSliderValue = 50;",
                 "private int _rangeSliderValue = 500;",
                 "private int _marksSliderValue = 0;",
                 "private int _verticalSliderValue = 0;");
@@ -2987,9 +2987,19 @@ namespace ModernWpf.Gallery.Tests
                 "\"AppBarToggleButton\" { return $true }");
             AssertContainsInOrder(
                 source,
+                "function Get-ReferencePrimaryAutomationId([string]$control)",
+                "\"Slider\" { return \"Slider1\" }",
                 "function Get-ReferencePrimaryName([string]$control)",
-                "\"CheckBox\" { return \"Two-state CheckBox\" }",
+                "\"CheckBox\" { return \"Two-state\" }",
                 "\"ToggleSwitch\" { return \"simple ToggleSwitch\" }");
+            AssertContainsInOrder(
+                source,
+                "function Find-DescendantByNameAndControlType($root, [string]$name, $controlType)",
+                "[System.Windows.Automation.AutomationElement]::ControlTypeProperty",
+                "function Find-ReferencePrimaryByName($root, [string]$control, [string]$name)",
+                "if ($control -eq \"CheckBox\")",
+                "Find-DescendantByNameAndControlType $root $name ([System.Windows.Automation.ControlType]::CheckBox)",
+                "return Find-DescendantButtonByName $root $name");
             AssertContainsInOrder(
                 source,
                 "function Get-ModernRenderedElementArtifactPath([string]$caseDir, $element)",
