@@ -806,6 +806,18 @@ function Get-RenderedArtifactBoundsMap($window, [string]$artifactDir, [string[]]
     return $boundsById
 }
 
+function Get-BoundingRectangleMapValue($boundsById, [string]$automationId) {
+    if ($null -eq $boundsById -or [string]::IsNullOrWhiteSpace($automationId)) {
+        return ""
+    }
+
+    if ($boundsById.Contains($automationId)) {
+        return [string]$boundsById[$automationId]
+    }
+
+    return ""
+}
+
 function Format-BoundingRectangleMap($boundsById) {
     if ($null -eq $boundsById -or $boundsById.Keys.Count -eq 0) {
         return ""
@@ -3984,7 +3996,13 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
     $beforeLayoutBoundsById = if ($hasLayoutStabilityTargets) { Get-RenderedArtifactBoundsMap $window $artifactDir $layoutStabilityTargetAutomationIds } else { $null }
     $beforeLayoutBounds = Format-BoundingRectangleMap $beforeLayoutBoundsById
     $themeShadowVisualBounds = if ($control -eq "ThemeShadow" -and $hasLayoutStabilityTargets -and $null -ne $beforeLayoutBoundsById) {
-        $beforeLayoutBoundsById["GallerySample_ThemeShadow_Root"]
+        Get-BoundingRectangleMapValue $beforeLayoutBoundsById "GallerySample_ThemeShadow_Root"
+    }
+    else {
+        ""
+    }
+    $themeShadowCasterBeforeBounds = if ($control -eq "ThemeShadow" -and $hasLayoutStabilityTargets) {
+        Get-BoundingRectangleMapValue $beforeLayoutBoundsById "GallerySample_ThemeShadow_ShadowRect"
     }
     else {
         ""
@@ -4006,10 +4024,26 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
             }
             $afterLayoutBoundsById = if ($hasLayoutStabilityTargets) { Get-RenderedArtifactBoundsMap $window $artifactDir $layoutStabilityTargetAutomationIds } else { $null }
             $afterLayoutBounds = Format-BoundingRectangleMap $afterLayoutBoundsById
+            $themeShadowCasterAfterBounds = if ($control -eq "ThemeShadow" -and $hasLayoutStabilityTargets) {
+                Get-BoundingRectangleMapValue $afterLayoutBoundsById "GallerySample_ThemeShadow_ShadowRect"
+            }
+            else {
+                ""
+            }
+            $themeShadowCasterStable = if ($control -eq "ThemeShadow" -and $hasLayoutStabilityTargets) {
+                Test-BoundingRectangleStringsNearlyEqual $themeShadowCasterBeforeBounds $themeShadowCasterAfterBounds 1.0
+            }
+            else {
+                $false
+            }
             return [ordered]@{
                 Invoked = $true
                 TargetBounds = $targetBounds
                 ThemeShadowVisualBounds = $themeShadowVisualBounds
+                ThemeShadowCasterBeforeBounds = $themeShadowCasterBeforeBounds
+                ThemeShadowCasterAfterBounds = $themeShadowCasterAfterBounds
+                ThemeShadowCasterStable = $themeShadowCasterStable
+                ThemeShadowSourceGeometryReference = if ($control -eq "ThemeShadow") { "WinUI source-geometry captures show the shadow envelope expands with depth; the caster/card bounds are the layout contract." } else { "" }
                 BeforeValue = $before
                 AfterValue = $after
                 TargetValue = $target
@@ -4034,6 +4068,10 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
             Invoked = $invoked
             TargetBounds = $targetBounds
             ThemeShadowVisualBounds = $themeShadowVisualBounds
+            ThemeShadowCasterBeforeBounds = $themeShadowCasterBeforeBounds
+            ThemeShadowCasterAfterBounds = ""
+            ThemeShadowCasterStable = $false
+            ThemeShadowSourceGeometryReference = if ($control -eq "ThemeShadow") { "WinUI source-geometry captures show the shadow envelope expands with depth; the caster/card bounds are the layout contract." } else { "" }
             BeforeValue = $before
             AfterValue = $after
             TargetValue = $null
@@ -4050,6 +4088,10 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
         Invoked = $false
         TargetBounds = $targetBounds
         ThemeShadowVisualBounds = $themeShadowVisualBounds
+        ThemeShadowCasterBeforeBounds = $themeShadowCasterBeforeBounds
+        ThemeShadowCasterAfterBounds = ""
+        ThemeShadowCasterStable = $false
+        ThemeShadowSourceGeometryReference = if ($control -eq "ThemeShadow") { "WinUI source-geometry captures show the shadow envelope expands with depth; the caster/card bounds are the layout contract." } else { "" }
         BeforeValue = $before
         AfterValue = $null
         TargetValue = $null
@@ -6575,6 +6617,14 @@ function Test-ThemeShadowVisualEvidence($localFrameDeltas) {
     return $null -ne $delta -and [double]$delta -ge 0.05
 }
 
+function Test-ThemeShadowCasterStabilityEvidence($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("ThemeShadowCasterStable")) {
+        return $false
+    }
+
+    return [bool]$interactionResult.ThemeShadowCasterStable
+}
+
 function Test-InteractionRequiresLocalVisualEvidence([string]$interactionKind) {
     switch ($interactionKind) {
         "State" { return $true }
@@ -7000,11 +7050,13 @@ foreach ($control in $Controls) {
     $valueEvidence = Test-ValueEvidence $interactionResult
     $layoutStabilityEvidence = Test-LayoutStabilityEvidence $interactionResult
     $themeShadowVisualEvidence = Test-ThemeShadowVisualEvidence $localFrameDeltas
+    $themeShadowCasterStabilityEvidence = Test-ThemeShadowCasterStabilityEvidence $interactionResult
     $layoutStabilityEvidenceAccepted =
         $control -eq "ThemeShadow" -and
         $interactionKind -eq "Value" -and
         $valueEvidence -and
         $layoutStabilityEvidence -and
+        $themeShadowCasterStabilityEvidence -and
         $themeShadowVisualEvidence
     $selectionEvidence = Test-SelectionEvidence $interactionResult
     $visualSelectionEvidence = Test-VisualSelectionEvidence $control $interactionKind $maxLocalFrameDelta
@@ -7068,6 +7120,18 @@ foreach ($control in $Controls) {
         $beforeBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("BeforeLayoutBounds")) { $interactionResult.BeforeLayoutBounds } else { "" }
         $afterBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("AfterLayoutBounds")) { $interactionResult.AfterLayoutBounds } else { "" }
         $notes.Add(("ThemeShadow depth changed but one or more sample bounds moved or could not be proven stable. Before={0}; after={1}." -f $beforeBounds, $afterBounds))
+    }
+
+    if ($status -eq "Passed" -and
+        $control -eq "ThemeShadow" -and
+        $interactionKind -eq "Value" -and
+        $valueEvidence -and
+        $layoutStabilityEvidence -and
+        !$themeShadowCasterStabilityEvidence) {
+        $status = "Failed"
+        $beforeCasterBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("ThemeShadowCasterBeforeBounds")) { $interactionResult.ThemeShadowCasterBeforeBounds } else { "" }
+        $afterCasterBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("ThemeShadowCasterAfterBounds")) { $interactionResult.ThemeShadowCasterAfterBounds } else { "" }
+        $notes.Add(("ThemeShadow depth changed but the card/caster bounds moved or were not measured. Before={0}; after={1}." -f $beforeCasterBounds, $afterCasterBounds))
     }
 
     if ($status -eq "Passed" -and
@@ -7165,6 +7229,15 @@ foreach ($control in $Controls) {
     }
 
     if ($status -eq "Passed" -and
+        $control -eq "ThemeShadow" -and
+        $interactionKind -eq "Value" -and
+        $layoutStabilityEvidenceAccepted) {
+        $beforeCasterBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("ThemeShadowCasterBeforeBounds")) { $interactionResult.ThemeShadowCasterBeforeBounds } else { "" }
+        $afterCasterBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("ThemeShadowCasterAfterBounds")) { $interactionResult.ThemeShadowCasterAfterBounds } else { "" }
+        $notes.Add(("ThemeShadow card/caster bounds stayed fixed while depth changed. Caster before={0}; after={1}. The visible shadow envelope may expand with depth; live WinUI source-geometry captures show the same behavior." -f $beforeCasterBounds, $afterCasterBounds))
+    }
+
+    if ($status -eq "Passed" -and
         $interactionKind -ne "Static" -and
         $null -ne $maxFrameDelta -and
         $maxFrameDelta -lt 0.35) {
@@ -7254,6 +7327,7 @@ foreach ($control in $Controls) {
         ExpansionEvidence = $expansionEvidence
         ValueEvidence = $valueEvidence
         LayoutStabilityEvidence = $layoutStabilityEvidence
+        ThemeShadowCasterStabilityEvidence = $themeShadowCasterStabilityEvidence
         ThemeShadowVisualEvidence = $themeShadowVisualEvidence
         SelectionEvidence = $selectionEvidence
         VisualSelectionEvidence = $visualSelectionEvidence
