@@ -3922,11 +3922,11 @@ namespace ModernWpf.Gallery.Tests
                 "AfterContainerSelection = $afterContainerSelection");
             AssertContainsInOrder(
                 source,
-                "function Test-VisualSelectionEvidence([string]$control, [string]$interactionKind, $maxFrameDelta)",
+                "function Test-VisualSelectionEvidence([string]$control, [string]$interactionKind, $maxLocalFrameDelta)",
                 "switch ($control)",
-                "\"DataGrid\" { return [double]$maxFrameDelta -ge 0.75 }",
-                "\"SelectorBar\" { return [double]$maxFrameDelta -gt 0.0 }",
-                "$visualSelectionEvidence = Test-VisualSelectionEvidence $control $interactionKind $maxFrameDelta",
+                "\"DataGrid\" { return [double]$maxLocalFrameDelta -ge 10.0 }",
+                "\"SelectorBar\" { return [double]$maxLocalFrameDelta -ge 0.05 }",
+                "$visualSelectionEvidence = Test-VisualSelectionEvidence $control $interactionKind $maxLocalFrameDelta",
                 "VisualSelectionEvidence = $visualSelectionEvidence");
             AssertContainsInOrder(
                 source,

@@ -6045,14 +6045,14 @@ function Test-SelectionEvidence($interactionResult) {
     return [bool]$interactionResult.SelectionChanged
 }
 
-function Test-VisualSelectionEvidence([string]$control, [string]$interactionKind, $maxFrameDelta) {
-    if ($interactionKind -ne "Selection" -or $null -eq $maxFrameDelta) {
+function Test-VisualSelectionEvidence([string]$control, [string]$interactionKind, $maxLocalFrameDelta) {
+    if ($interactionKind -ne "Selection" -or $null -eq $maxLocalFrameDelta) {
         return $false
     }
 
     switch ($control) {
-        "DataGrid" { return [double]$maxFrameDelta -ge 0.75 }
-        "SelectorBar" { return [double]$maxFrameDelta -gt 0.0 }
+        "DataGrid" { return [double]$maxLocalFrameDelta -ge 10.0 }
+        "SelectorBar" { return [double]$maxLocalFrameDelta -ge 0.05 }
         default { return $false }
     }
 }
@@ -6481,7 +6481,7 @@ foreach ($control in $Controls) {
     $expansionEvidence = Test-ExpansionEvidence $interactionResult
     $valueEvidence = Test-ValueEvidence $interactionResult
     $selectionEvidence = Test-SelectionEvidence $interactionResult
-    $visualSelectionEvidence = Test-VisualSelectionEvidence $control $interactionKind $maxFrameDelta
+    $visualSelectionEvidence = Test-VisualSelectionEvidence $control $interactionKind $maxLocalFrameDelta
     $optionEvidence = Test-OptionEvidence $interactionResult
     $outputEvidence = Test-OutputEvidence $interactionResult
     $textEvidence = if ($interactionKind -eq "Text") { Test-TextEvidence $interactionResult } else { $false }
@@ -6515,7 +6515,7 @@ foreach ($control in $Controls) {
     }
 
     if ($status -eq "Passed" -and $interactionKind -eq "Selection" -and !$selectionEvidence -and $visualSelectionEvidence) {
-        $notes.Add(("Visual selection evidence was accepted from frame delta {0}." -f $maxFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture)))
+        $notes.Add(("Visual selection evidence was accepted from local frame delta {0}." -f $maxLocalFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture)))
     }
 
     if ($status -eq "Passed" -and $interactionKind -eq "State" -and !$stateEvidence) {
