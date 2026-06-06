@@ -16,6 +16,9 @@ param(
     [string]$Recorder = "Auto",
     [ValidateSet("Rendered", "Screen")]
     [string]$CaptureMode = "Rendered",
+    [ValidateSet("Auto", "libx264", "h264_nvenc", "h264_qsv", "h264_amf")]
+    [string]$VideoEncoder = "Auto",
+    [switch]$BenchmarkEncoders,
     [switch]$Build,
     [switch]$SkipFrameExtraction
 )
@@ -3518,21 +3521,26 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     $trigger = Get-OpenInteractionTriggerElement $window $control $sampleElement
     $openNames = @(Get-OpenInteractionNames $control)
     $openVisualDwellMilliseconds = switch ($control) {
-        "CommandBar" { 1000; break }
-        "CommandBarFlyout" { 1500; break }
-        "TeachingTip" { 1500; break }
-        "ComboBox" { 1500; break }
-        "DatePicker" { 1500; break }
-        "MessageBox" { 1500; break }
-        "DropDownButton" { 1500; break }
-        "SplitButton" { 1500; break }
-        "ToggleSplitButton" { 1500; break }
-        "MenuBar" { 1500; break }
-        "Menu" { 1500; break }
-        "ContentDialog" { 6500; break }
-        "Flyout" { 6500; break }
-        "Popup" { 6500; break }
-        "MenuFlyout" { 6500; break }
+        "CommandBar" { 700; break }
+        "CommandBarFlyout" { 800; break }
+        "ContentDialog" { 1200; break }
+        "Flyout" { 1200; break }
+        "Popup" { 1200; break }
+        "MenuFlyout" { 1200; break }
+        default { 600; break }
+    }
+    $closedVisualDwellMilliseconds = switch ($control) {
+        "ContentDialog" { 700; break }
+        "Flyout" { 700; break }
+        "Popup" { 700; break }
+        "MenuFlyout" { 700; break }
+        default { 450; break }
+    }
+    $betweenOpenDwellMilliseconds = switch ($control) {
+        "ContentDialog" { 450; break }
+        "Flyout" { 450; break }
+        "Popup" { 450; break }
+        "MenuFlyout" { 450; break }
         default { 250; break }
     }
     $openElementTimeoutMilliseconds = if ($control -eq "CommandBar") {
@@ -3609,7 +3617,7 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     Start-Sleep -Milliseconds $openVisualDwellMilliseconds
 
     $closeResult = Close-OpenInteractionElement $window $control $trigger $openNames $sampleElement $visualCloseContext $firstOpenElementBounds
-    Start-Sleep -Milliseconds 1600
+    Start-Sleep -Milliseconds $closedVisualDwellMilliseconds
     $closedVisualSeconds = Get-RecordingElapsedSeconds
     $closedToggleState = Get-ToggleStateName $trigger
     $closedElementGone = $closeResult.Closed
@@ -3628,7 +3636,7 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
         $secondTrigger = $trigger
     }
     $secondTriggerBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $secondTrigger)
-    Start-Sleep -Milliseconds 800
+    Start-Sleep -Milliseconds $betweenOpenDwellMilliseconds
     $secondOpenStartSeconds = Get-RecordingElapsedSeconds
     $secondOpen = if ($control -eq "CommandBar") {
         Invoke-CommandBarSampleOption $window $sampleElement "Open command bar"
@@ -4800,16 +4808,41 @@ function Format-NativeWindowRectangle($rect) {
     return "{0},{1},{2},{3}" -f $rect.Left, $rect.Top, $width, $height
 }
 
-function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$outputPath, [string]$captureMode, [int]$durationSeconds) {
+function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$outputPath, [string]$captureMode, [int]$durationSeconds, [string]$videoEncoder, [bool]$benchmarkEncoders) {
     $captureRect = Get-ExpandedCaptureRect $windowHandle
-    Start-Job -ScriptBlock {
-        param($scriptPath, $targetProcessId, $handleValue, $left, $top, $width, $height, $output, $duration, $frameRate, $mode)
+    $stopFile = Join-Path (Split-Path -Parent $outputPath) (([IO.Path]::GetFileNameWithoutExtension($outputPath)) + ".stop")
+    if (Test-Path -LiteralPath $stopFile) {
+        Remove-Item -LiteralPath $stopFile -Force
+    }
+
+    $job = Start-Job -ScriptBlock {
+        param($scriptPath, $targetProcessId, $handleValue, $left, $top, $width, $height, $output, $duration, $frameRate, $mode, $encoder, $benchmark, $stopSignal)
         $handle = [IntPtr]::new([int64]$handleValue)
-        & $scriptPath -ProcessId $targetProcessId -WindowHandle $handle -Left $left -Top $top -Width $width -Height $height -Output $output -DurationSeconds $duration -FrameRate $frameRate -CaptureMode $mode
-    } -ArgumentList $RecordWindowRenderedScript, $processId, ([int64]$windowHandle), $captureRect.Left, $captureRect.Top, $captureRect.Width, $captureRect.Height, $outputPath, $durationSeconds, $FrameRate, $captureMode
+        & $scriptPath -ProcessId $targetProcessId -WindowHandle $handle -Left $left -Top $top -Width $width -Height $height -Output $output -DurationSeconds $duration -FrameRate $frameRate -CaptureMode $mode -VideoEncoder $encoder -BenchmarkEncoders:$benchmark -StopFile $stopSignal
+    } -ArgumentList $RecordWindowRenderedScript, $processId, ([int64]$windowHandle), $captureRect.Left, $captureRect.Top, $captureRect.Width, $captureRect.Height, $outputPath, $durationSeconds, $FrameRate, $captureMode, $videoEncoder, $benchmarkEncoders, $stopFile
+
+    return [ordered]@{
+        Job = $job
+        StopFile = $stopFile
+        RequestedDurationSeconds = $durationSeconds
+        RequestedVideoEncoder = $videoEncoder
+        BenchmarkEncoders = $benchmarkEncoders
+    }
 }
 
-function Wait-RecordingJob($job, [int]$durationSeconds) {
+function Request-RecordingStop($recordingJob) {
+    if ($null -eq $recordingJob -or
+        !($recordingJob -is [System.Collections.IDictionary]) -or
+        !$recordingJob.Contains("StopFile") -or
+        [string]::IsNullOrWhiteSpace($recordingJob.StopFile)) {
+        return
+    }
+
+    New-Item -ItemType File -Path $recordingJob.StopFile -Force | Out-Null
+}
+
+function Wait-RecordingJob($recordingJob, [int]$durationSeconds) {
+    $job = if ($null -ne $recordingJob -and $recordingJob -is [System.Collections.IDictionary] -and $recordingJob.Contains("Job")) { $recordingJob.Job } else { $recordingJob }
     $timeout = [Math]::Max(($durationSeconds * 3) + 45, 60)
     $completed = Wait-Job -Job $job -Timeout $timeout
     if ($null -eq $completed) {
@@ -4823,7 +4856,32 @@ function Wait-RecordingJob($job, [int]$durationSeconds) {
         return $result | Select-Object -Last 1
     }
     finally {
+        if ($null -ne $recordingJob -and
+            $recordingJob -is [System.Collections.IDictionary] -and
+            $recordingJob.Contains("StopFile") -and
+            ![string]::IsNullOrWhiteSpace($recordingJob.StopFile) -and
+            (Test-Path -LiteralPath $recordingJob.StopFile)) {
+            Remove-Item -LiteralPath $recordingJob.StopFile -Force
+        }
         Remove-Job -Job $job -Force -ErrorAction SilentlyContinue
+    }
+}
+
+function Close-GalleryRecordingProcess($process) {
+    if ($null -eq $process) {
+        return
+    }
+
+    try {
+        $process.Refresh()
+        if (!$process.HasExited) {
+            $process.CloseMainWindow() | Out-Null
+            if (!$process.WaitForExit(3000)) {
+                $process.Kill()
+            }
+        }
+    }
+    catch {
     }
 }
 
@@ -5819,6 +5877,80 @@ function Select-OpenRepeatDeltaEntry($entries, [string]$mode) {
     return $bestEntry
 }
 
+function Get-OpenRepeatDirectFrameEvidence(
+    $frames,
+    $recordingResult,
+    $interactionResult,
+    [string]$bounds,
+    [double]$openThreshold,
+    [double]$closedThreshold,
+    $samplesByPath) {
+    $initialFrame = Get-ClosestExtractedFrame $frames $interactionResult.InitialVisualSeconds
+    $firstFrame = Get-ClosestExtractedFrame $frames $interactionResult.FirstOpenVisualSeconds
+    $closedFrame = Get-ClosestExtractedFrame $frames $interactionResult.ClosedVisualSeconds
+    $secondFrame = Get-ClosestExtractedFrame $frames $interactionResult.SecondOpenVisualSeconds
+
+    if ($null -eq $initialFrame -or
+        $null -eq $firstFrame -or
+        $null -eq $closedFrame -or
+        $null -eq $secondFrame) {
+        return $null
+    }
+
+    if ($firstFrame.Path -eq $closedFrame.Path -or
+        $secondFrame.Path -eq $closedFrame.Path -or
+        $firstFrame.Path -eq $secondFrame.Path) {
+        return $null
+    }
+
+    $initialSamples = Get-CachedOpenRepeatRegionSamples $initialFrame.Path $bounds $recordingResult.Rect $samplesByPath
+    $firstSamples = Get-CachedOpenRepeatRegionSamples $firstFrame.Path $bounds $recordingResult.Rect $samplesByPath
+    $closedSamples = Get-CachedOpenRepeatRegionSamples $closedFrame.Path $bounds $recordingResult.Rect $samplesByPath
+    $secondSamples = Get-CachedOpenRepeatRegionSamples $secondFrame.Path $bounds $recordingResult.Rect $samplesByPath
+    $initialClosedDelta = Compare-LuminanceSamples $initialSamples $closedSamples
+    $firstOpenDelta = Compare-LuminanceSamples $closedSamples $firstSamples
+    $secondOpenDelta = Compare-LuminanceSamples $closedSamples $secondSamples
+
+    if ($null -eq $initialClosedDelta -or
+        $null -eq $firstOpenDelta -or
+        $null -eq $secondOpenDelta) {
+        return $null
+    }
+
+    $firstOpenEvidence = [double]$firstOpenDelta -ge $openThreshold
+    $closeVisualClosed = $interactionResult.Contains("CloseVisualClosed") -and [bool]$interactionResult.CloseVisualClosed
+    $closedEvidence = ([double]$initialClosedDelta -le $closedThreshold) -or $closeVisualClosed
+    $secondOpenEvidence = [double]$secondOpenDelta -ge $openThreshold
+    if (!$firstOpenEvidence -or !$closedEvidence -or !$secondOpenEvidence) {
+        return $null
+    }
+
+    return [ordered]@{
+        Generated = $true
+        Bounds = $bounds
+        InitialFrame = $initialFrame.Name
+        FirstFrame = $firstFrame.Name
+        ClosedFrame = $closedFrame.Name
+        SecondFrame = $secondFrame.Name
+        InitialVisualSeconds = $interactionResult.InitialVisualSeconds
+        FirstOpenVisualSeconds = $interactionResult.FirstOpenVisualSeconds
+        ClosedVisualSeconds = $interactionResult.ClosedVisualSeconds
+        SecondOpenVisualSeconds = $interactionResult.SecondOpenVisualSeconds
+        FirstOpenDelta = [Math]::Round([double]$firstOpenDelta, 3)
+        ClosedDelta = [Math]::Round([double]$initialClosedDelta, 3)
+        SecondOpenDelta = [Math]::Round([double]$secondOpenDelta, 3)
+        OpenThreshold = $openThreshold
+        ClosedThreshold = $closedThreshold
+        FirstOpenEvidence = $true
+        ClosedEvidence = $true
+        SecondOpenEvidence = $true
+        FirstOpenClosedDelta = [Math]::Round([double]$firstOpenDelta, 3)
+        InitialClosedDelta = [Math]::Round([double]$initialClosedDelta, 3)
+        SecondOpenClosedDelta = [Math]::Round([double]$secondOpenDelta, 3)
+        Detection = "DirectEventFrameClosedBaselineScan"
+    }
+}
+
 function Get-OpenRepeatOpenThreshold([string]$control) {
     if ($control -eq "CommandBar") {
         return 3.0
@@ -5933,6 +6065,18 @@ function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionRes
     }
 
     if ($null -eq $initialFrame -or $null -eq $firstOpenEntry -or $null -eq $closedEntry -or $null -eq $secondOpenEntry) {
+        $directEvidence = Get-OpenRepeatDirectFrameEvidence `
+            $frames `
+            $recordingResult `
+            $interactionResult `
+            $bounds `
+            $openThreshold `
+            $closedThreshold `
+            $samplesByPath
+        if ($null -ne $directEvidence) {
+            return $directEvidence
+        }
+
         return [ordered]@{
             Generated = $false
             Bounds = $bounds
@@ -6355,12 +6499,26 @@ function Write-Report([string]$runDir, $results) {
     else {
         $lines.Add(("Recorder: ``{0}``" -f ($recorders -join ", ")))
     }
-    $lines.Add(("Duration: ``{0}s`` default; ShellNavigation, AutoSuggestBox text, ToolTip, MenuBar, MessageBox, and fast popup open-repeat controls use at least ``18s``; other open-repeat controls use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
+    $encoders = @($results | ForEach-Object {
+            if ($null -ne $_.RecorderResult -and ![string]::IsNullOrWhiteSpace($_.RecorderResult.VideoEncoder)) {
+                $_.RecorderResult.VideoEncoder
+            }
+        } | Sort-Object -Unique)
+    if ($encoders.Count -gt 0) {
+        $lines.Add(("Video encoder: ``{0}``" -f ($encoders -join ", ")))
+    }
+    $lines.Add(("Duration: ``{0}s`` default; ShellNavigation, AutoSuggestBox text, ToolTip, MenuBar, MessageBox, and fast popup open-repeat controls use larger maximum windows, but recording stops early after interaction evidence plus a short tail at ``{1}fps``" -f $DurationSeconds, $FrameRate))
     $lines.Add("")
-    $lines.Add("| Control | Status | Interaction | Recording | Dense review | Max frame delta | Max local delta | Notes |")
-    $lines.Add("| --- | --- | --- | --- | --- | ---: | ---: | --- |")
+    $lines.Add("| Control | Status | Interaction | Duration | Recording | Dense review | Max frame delta | Max local delta | Notes |")
+    $lines.Add("| --- | --- | --- | ---: | --- | --- | ---: | ---: | --- |")
     foreach ($result in $results) {
         $recording = Format-RelativePath $result.Recording
+        $duration = if ($null -ne $result.RecorderResult -and $null -ne $result.RecorderResult.DurationSeconds) {
+            "{0:0.###}s/{1}s" -f [double]$result.RecorderResult.DurationSeconds, [int]$result.RecordingDurationSeconds
+        }
+        else {
+            "/{0}s" -f [int]$result.RecordingDurationSeconds
+        }
         $denseReview = if ($null -ne $result.DenseTransitionReview -and $result.DenseTransitionReview.Generated) {
             Format-RelativePath $result.DenseTransitionReview.Path
         }
@@ -6370,7 +6528,7 @@ function Write-Report([string]$runDir, $results) {
         $delta = if ($null -eq $result.MaxFrameDelta) { "" } else { $result.MaxFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture) }
         $localDelta = if ($null -eq $result.MaxLocalFrameDelta) { "" } else { $result.MaxLocalFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture) }
         $notes = ($result.Notes -replace "\|", "\|")
-        $lines.Add(("| {0} | {1} | {2} | ``{3}`` | ``{4}`` | {5} | {6} | {7} |" -f $result.Control, $result.Status, $result.InteractionKind, $recording, $denseReview, $delta, $localDelta, $notes))
+        $lines.Add(("| {0} | {1} | {2} | {3} | ``{4}`` | ``{5}`` | {6} | {7} | {8} |" -f $result.Control, $result.Status, $result.InteractionKind, $duration, $recording, $denseReview, $delta, $localDelta, $notes))
     }
 
     $reportPath = Join-Path $runDir "report.md"
@@ -6474,7 +6632,7 @@ foreach ($control in $Controls) {
 
         $script:GalleryVisualSnapshotDirectory = Join-Path $caseDir "live-snapshots"
         $script:GalleryLiveFrameDirectory = Join-Path (Split-Path -Parent $recordingPath) (([IO.Path]::GetFileNameWithoutExtension($recordingPath)) + ".frames")
-        $recordingJob = Start-RecordingJob $window.Current.ProcessId ([IntPtr]$window.Current.NativeWindowHandle) $recordingPath $CaptureMode $recordingDurationSeconds
+        $recordingJob = Start-RecordingJob $window.Current.ProcessId ([IntPtr]$window.Current.NativeWindowHandle) $recordingPath $CaptureMode $recordingDurationSeconds $VideoEncoder ([bool]$BenchmarkEncoders)
         $script:GalleryRecordingStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
         Start-Sleep -Milliseconds 1500
         $interactionResult = Invoke-RecordedInteraction $window $control $sampleElement $artifactDir
@@ -6483,6 +6641,10 @@ foreach ($control in $Controls) {
             throw "ModernWpf Gallery exited during $control interaction."
         }
 
+        Start-Sleep -Milliseconds 350
+        Request-RecordingStop $recordingJob
+        Start-Sleep -Milliseconds 250
+        Close-GalleryRecordingProcess $process
         $recordingResult = Wait-RecordingJob $recordingJob $recordingDurationSeconds
         $recordingJob = $null
         if ($null -eq $recordingResult -or !(Test-Path $recordingPath)) {
@@ -6604,25 +6766,15 @@ foreach ($control in $Controls) {
         $status = "Failed"
         $notes.Add($_.Exception.Message)
         if ($null -ne $recordingJob) {
-            Stop-Job -Job $recordingJob -ErrorAction SilentlyContinue
-            Remove-Job -Job $recordingJob -Force -ErrorAction SilentlyContinue
+            Request-RecordingStop $recordingJob
+            $jobToStop = if ($recordingJob -is [System.Collections.IDictionary] -and $recordingJob.Contains("Job")) { $recordingJob.Job } else { $recordingJob }
+            Stop-Job -Job $jobToStop -ErrorAction SilentlyContinue
+            Remove-Job -Job $jobToStop -Force -ErrorAction SilentlyContinue
             $recordingJob = $null
         }
     }
     finally {
-        try {
-            if ($null -ne $process) {
-                $process.Refresh()
-                if (!$process.HasExited) {
-                    $process.CloseMainWindow() | Out-Null
-                    if (!$process.WaitForExit(3000)) {
-                        $process.Kill()
-                    }
-                }
-            }
-        }
-        catch {
-        }
+        Close-GalleryRecordingProcess $process
     }
 
     $maxFrameDelta = Get-MaxFrameDelta $frames
@@ -6847,6 +6999,7 @@ foreach ($control in $Controls) {
         Status = $status
         InteractionKind = $interactionKind
         RecordingDurationSeconds = $recordingDurationSeconds
+        ActualRecordingDurationSeconds = if ($null -ne $recordingResult -and $null -ne $recordingResult.DurationSeconds) { $recordingResult.DurationSeconds } else { $null }
         Recording = if (Test-Path $recordingPath) { (Resolve-Path $recordingPath).Path } else { $recordingPath }
         RecorderResult = $recordingResult
         Frames = $frames

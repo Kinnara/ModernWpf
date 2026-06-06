@@ -3459,7 +3459,8 @@ namespace ModernWpf.Gallery.Tests
                 "Generated = $true");
             AssertContainsInOrder(
                 source,
-                "| Control | Status | Interaction | Recording | Dense review | Max frame delta | Max local delta | Notes |",
+                "| Control | Status | Interaction | Duration | Recording | Dense review | Max frame delta | Max local delta | Notes |",
+                "{0:0.###}s/{1}s",
                 "DenseTransitionReview",
                 "if (Test-ControlRequiresDenseTransitionReview $control $interactionKind)",
                 "$denseTransitionReview = Export-DenseTransitionReviewSheet $recordingPath $caseDir $recordingDurationSeconds",
@@ -3491,6 +3492,67 @@ namespace ModernWpf.Gallery.Tests
                 "$checkpoint = Write-RunCheckpoint $runDir $results",
                 "Manifest = $checkpoint.Manifest",
                 "Report = $checkpoint.Report");
+        }
+
+        [TestMethod]
+        public void GalleryInteractionRecorderStopsRecordingAfterEvidenceTail()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+            var recorder = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-WindowRendered.ps1"));
+
+            AssertContainsInOrder(
+                recorder,
+                "[string]$VideoEncoder = \"Auto\"",
+                "[string]$StopFile = \"\"",
+                "[switch]$KeepFrames,",
+                "[switch]$BenchmarkEncoders",
+                "function Get-VideoEncoderCandidates([string]$requestedEncoder, [string]$ffmpegPath)",
+                "foreach ($encoder in @(\"libx264\", \"h264_nvenc\", \"h264_qsv\", \"h264_amf\"))",
+                "$actualFrameCount = 0",
+                "if ($actualFrameCount -gt 0 -and",
+                "(Test-Path -LiteralPath $StopFile))",
+                "$actualFrameCount++",
+                "$encoderCandidates = if ($BenchmarkEncoders)",
+                "Sort-Object ElapsedSeconds",
+                "Frames = $actualFrameCount",
+                "DurationSeconds = [Math]::Round($actualFrameCount / [double]$FrameRate, 3)",
+                "RequestedDurationSeconds = $DurationSeconds",
+                "VideoEncoder = $usedEncoder",
+                "BenchmarkEncoders = [bool]$BenchmarkEncoders",
+                "EncoderAttempts = $encoderAttempts.ToArray()");
+            AssertContainsInOrder(
+                source,
+                "[string]$VideoEncoder = \"Auto\"",
+                "[switch]$BenchmarkEncoders",
+                "function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$outputPath, [string]$captureMode, [int]$durationSeconds, [string]$videoEncoder, [bool]$benchmarkEncoders)",
+                "$stopFile = Join-Path (Split-Path -Parent $outputPath)",
+                "-VideoEncoder $encoder",
+                "-BenchmarkEncoders:$benchmark",
+                "-StopFile $stopSignal",
+                "StopFile = $stopFile",
+                "RequestedVideoEncoder = $videoEncoder",
+                "BenchmarkEncoders = $benchmarkEncoders",
+                "function Request-RecordingStop($recordingJob)",
+                "New-Item -ItemType File -Path $recordingJob.StopFile -Force | Out-Null",
+                "function Wait-RecordingJob($recordingJob, [int]$durationSeconds)",
+                "function Close-GalleryRecordingProcess($process)");
+            AssertContainsInOrder(
+                source,
+                "$interactionResult = Invoke-RecordedInteraction $window $control $sampleElement $artifactDir",
+                "Start-Sleep -Milliseconds 350",
+                "Request-RecordingStop $recordingJob",
+                "Start-Sleep -Milliseconds 250",
+                "Close-GalleryRecordingProcess $process",
+                "$recordingResult = Wait-RecordingJob $recordingJob $recordingDurationSeconds",
+                "ActualRecordingDurationSeconds = if ($null -ne $recordingResult -and $null -ne $recordingResult.DurationSeconds)");
         }
 
         [TestMethod]
@@ -3634,15 +3696,18 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "$openVisualDwellMilliseconds = switch ($control)",
-                "\"TeachingTip\" { 1500; break }",
-                "\"ComboBox\" { 1500; break }",
-                "\"DatePicker\" { 1500; break }",
-                "\"DropDownButton\" { 1500; break }",
-                "\"SplitButton\" { 1500; break }",
-                "\"ToggleSplitButton\" { 1500; break }",
-                "\"MenuBar\" { 1500; break }",
-                "\"Menu\" { 1500; break }",
-                "\"ContentDialog\" { 6500; break }",
+                "\"CommandBar\" { 700; break }",
+                "\"CommandBarFlyout\" { 800; break }",
+                "\"ContentDialog\" { 1200; break }",
+                "\"Flyout\" { 1200; break }",
+                "\"MenuFlyout\" { 1200; break }",
+                "default { 600; break }",
+                "$closedVisualDwellMilliseconds = switch ($control)",
+                "\"ContentDialog\" { 700; break }",
+                "default { 450; break }",
+                "$betweenOpenDwellMilliseconds = switch ($control)",
+                "\"ContentDialog\" { 450; break }",
+                "default { 250; break }",
                 "$triggerBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $trigger)",
                 "$visualCloseContext = New-OpenRepeatVisualCloseContext $window $control",
                 "$firstOpenElementBoundsHint = if ($firstOpen) { Get-FastOpenRepeatPopupBounds $trigger $control } else { \"\" }",
@@ -3757,6 +3822,19 @@ namespace ModernWpf.Gallery.Tests
                 "ClosedEvidence = [double]$closedEntry.Delta -le $closedThreshold",
                 "SecondOpenEvidence = [double]$secondOpenEntry.Delta -ge $openThreshold",
                 "Detection = \"BaselineDeltaEventWindowScan\"");
+            AssertContainsInOrder(
+                source,
+                "function Get-OpenRepeatDirectFrameEvidence(",
+                "$initialFrame = Get-ClosestExtractedFrame $frames $interactionResult.InitialVisualSeconds",
+                "$firstOpenDelta = Compare-LuminanceSamples $closedSamples $firstSamples",
+                "$closeVisualClosed = $interactionResult.Contains(\"CloseVisualClosed\") -and [bool]$interactionResult.CloseVisualClosed",
+                "$closedEvidence = ([double]$initialClosedDelta -le $closedThreshold) -or $closeVisualClosed",
+                "Detection = \"DirectEventFrameClosedBaselineScan\"",
+                "function Get-OpenRepeatOpenThreshold([string]$control)",
+                "function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionResult, [string]$control = \"\")",
+                "$directEvidence = Get-OpenRepeatDirectFrameEvidence",
+                "if ($null -ne $directEvidence)",
+                "return $directEvidence");
             AssertContainsInOrder(
                 source,
                 "$visualOpenRepeatEvidence = if ($interactionKind -eq \"OpenRepeat\")",
@@ -4178,14 +4256,14 @@ namespace ModernWpf.Gallery.Tests
                 "return Find-ElementByNameInProcess $window.Current.ProcessId $openNames");
             AssertContainsInOrder(
                 source,
-                "$firstOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $firstOpenElement)",
+                "$firstOpenElementBounds = if (![string]::IsNullOrWhiteSpace($firstOpenElementBoundsHint)) { $firstOpenElementBoundsHint } else { Format-BoundingRectangle (Get-ElementBoundingRectangle $firstOpenElement) }",
                 "if ($control -eq \"ToolTip\" -and [string]::IsNullOrWhiteSpace($firstOpenElementBounds))",
                 "$firstOpenElementBounds = Get-ToolTipFallbackBoundsFromTriggerBounds $triggerBounds",
                 "$firstOpenElementFound = $firstOpen -and ![string]::IsNullOrWhiteSpace($firstOpenElementBounds)",
                 "$firstOpenElementAnchored = $firstOpenElementFound");
             AssertContainsInOrder(
                 source,
-                "$secondOpenElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $secondOpenElement)",
+                "$secondOpenElementBounds = if (![string]::IsNullOrWhiteSpace($secondOpenElementBoundsHint)) { $secondOpenElementBoundsHint } else { Format-BoundingRectangle (Get-ElementBoundingRectangle $secondOpenElement) }",
                 "if ($control -eq \"ToolTip\" -and [string]::IsNullOrWhiteSpace($secondOpenElementBounds))",
                 "$secondOpenElementBounds = Get-ToolTipFallbackBoundsFromTriggerBounds $secondTriggerBounds",
                 "$secondOpenElementFound = $secondOpen -and ![string]::IsNullOrWhiteSpace($secondOpenElementBounds)",

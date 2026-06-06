@@ -10,7 +10,11 @@ param(
     [int]$Height = 0,
     [ValidateSet("Rendered", "Screen")]
     [string]$CaptureMode = "Rendered",
-    [switch]$KeepFrames
+    [ValidateSet("Auto", "libx264", "h264_nvenc", "h264_qsv", "h264_amf")]
+    [string]$VideoEncoder = "Auto",
+    [string]$StopFile = "",
+    [switch]$KeepFrames,
+    [switch]$BenchmarkEncoders
 )
 
 $ErrorActionPreference = "Stop"
@@ -35,6 +39,49 @@ function Get-FfmpegPath {
     }
 
     return $command.Source
+}
+
+function Get-FfmpegEncoderNames([string]$ffmpegPath) {
+    try {
+        $lines = & $ffmpegPath -hide_banner -encoders 2>&1
+        return @($lines | ForEach-Object {
+                if ($_ -match '^\s*[A-Z\.]{6}\s+(\S+)') {
+                    $Matches[1]
+                }
+            })
+    }
+    catch {
+        return @()
+    }
+}
+
+function Get-VideoEncoderCandidates([string]$requestedEncoder, [string]$ffmpegPath) {
+    if ($requestedEncoder -ne "Auto") {
+        return @($requestedEncoder)
+    }
+
+    $available = @(Get-FfmpegEncoderNames $ffmpegPath)
+    $candidates = New-Object System.Collections.Generic.List[string]
+    foreach ($encoder in @("libx264", "h264_nvenc", "h264_qsv", "h264_amf")) {
+        if ($available -contains $encoder) {
+            $candidates.Add($encoder)
+        }
+    }
+
+    if ($candidates.Count -eq 0) {
+        $candidates.Add("libx264")
+    }
+
+    return $candidates.ToArray()
+}
+
+function Get-VideoEncoderArguments([string]$encoder) {
+    switch ($encoder) {
+        "h264_nvenc" { return @("-c:v", "h264_nvenc", "-preset", "fast", "-cq", "23", "-b:v", "0") }
+        "h264_qsv" { return @("-c:v", "h264_qsv", "-global_quality", "23") }
+        "h264_amf" { return @("-c:v", "h264_amf", "-quality", "speed") }
+        default { return @("-c:v", "libx264", "-preset", "veryfast", "-crf", "23") }
+    }
 }
 
 $ffmpeg = Get-FfmpegPath
@@ -412,7 +459,14 @@ New-Item -ItemType Directory -Force -Path $frameRoot | Out-Null
 $frameCount = $DurationSeconds * $FrameRate
 $intervalMs = 1000.0 / $FrameRate
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+$actualFrameCount = 0
 for ($index = 0; $index -lt $frameCount; $index++) {
+    if ($actualFrameCount -gt 0 -and
+        ![string]::IsNullOrWhiteSpace($StopFile) -and
+        (Test-Path -LiteralPath $StopFile)) {
+        break
+    }
+
     $framePath = Join-Path $frameRoot ("frame-{0:00000}.png" -f $index)
     if ($CaptureMode -eq "Screen") {
         [ModernWpfRenderedRecorder.Capture]::CaptureScreenRect($Left, $Top, $Width, $Height, $framePath)
@@ -420,6 +474,7 @@ for ($index = 0; $index -lt $frameCount; $index++) {
     else {
         [ModernWpfRenderedRecorder.Capture]::CaptureProcessWindows($ProcessId, $WindowHandle, $Left, $Top, $Width, $Height, $framePath)
     }
+    $actualFrameCount++
 
     $nextDue = ($index + 1) * $intervalMs
     $sleepMs = [int][Math]::Floor($nextDue - $stopwatch.Elapsed.TotalMilliseconds)
@@ -429,7 +484,7 @@ for ($index = 0; $index -lt $frameCount; $index++) {
 }
 
 $inputPattern = Join-Path $frameRoot "frame-%05d.png"
-$arguments = @(
+$baseArguments = @(
     "-hide_banner",
     "-loglevel", "error",
     "-nostdin",
@@ -438,18 +493,95 @@ $arguments = @(
     "-i", $inputPattern,
     "-an",
     "-vf", "pad=ceil(iw/2)*2:ceil(ih/2)*2",
-    "-c:v", "libx264",
-    "-preset", "veryfast",
-    "-crf", "23",
-    "-pix_fmt", "yuv420p",
-    "-movflags", "+faststart",
-    $fullOutput
+    "-pix_fmt", "yuv420p"
 )
 
-$ffmpegOutput = & $ffmpeg @arguments 2>&1
-if ($LASTEXITCODE -ne 0) {
-    $message = ($ffmpegOutput | Select-Object -Last 20) -join [Environment]::NewLine
-    throw "ffmpeg rendered encoding failed with exit code $LASTEXITCODE.$([Environment]::NewLine)$message"
+$usedEncoder = ""
+$failedAttempts = New-Object System.Collections.Generic.List[string]
+$encoderAttempts = New-Object System.Collections.Generic.List[object]
+$successfulBenchmarkOutputs = New-Object System.Collections.Generic.List[string]
+$encoderCandidates = if ($BenchmarkEncoders) {
+    @(Get-VideoEncoderCandidates "Auto" $ffmpeg)
+}
+else {
+    @(Get-VideoEncoderCandidates $VideoEncoder $ffmpeg)
+}
+
+foreach ($encoder in $encoderCandidates) {
+    $candidateOutput = if ($BenchmarkEncoders) {
+        Join-Path $outputDirectory ("{0}.{1}.mp4" -f [IO.Path]::GetFileNameWithoutExtension($fullOutput), $encoder)
+    }
+    else {
+        $fullOutput
+    }
+
+    if (Test-Path -LiteralPath $candidateOutput) {
+        Remove-Item -LiteralPath $candidateOutput -Force
+    }
+    if (!$BenchmarkEncoders -and (Test-Path -LiteralPath $fullOutput)) {
+        Remove-Item -LiteralPath $fullOutput -Force
+    }
+
+    $arguments = @($baseArguments) + @(Get-VideoEncoderArguments $encoder) + @(
+        "-movflags", "+faststart",
+        $candidateOutput
+    )
+    $encodeStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    $ffmpegOutput = & $ffmpeg @arguments 2>&1
+    $encodeStopwatch.Stop()
+    if ($LASTEXITCODE -eq 0 -and (Test-Path -LiteralPath $candidateOutput)) {
+        $bytes = (Get-Item -LiteralPath $candidateOutput).Length
+        $attempt = [pscustomobject]@{
+            Encoder = $encoder
+            Succeeded = $true
+            ElapsedSeconds = [Math]::Round($encodeStopwatch.Elapsed.TotalSeconds, 3)
+            Bytes = $bytes
+            Output = $candidateOutput
+        }
+        $encoderAttempts.Add($attempt)
+        if ($BenchmarkEncoders) {
+            $successfulBenchmarkOutputs.Add($candidateOutput)
+            continue
+        }
+
+        $usedEncoder = $encoder
+        break
+    }
+
+    $message = ($ffmpegOutput | Select-Object -Last 8) -join " "
+    $encoderAttempts.Add([pscustomobject]@{
+        Encoder = $encoder
+        Succeeded = $false
+        ElapsedSeconds = [Math]::Round($encodeStopwatch.Elapsed.TotalSeconds, 3)
+        Error = $message
+        Output = $candidateOutput
+    })
+    $failedAttempts.Add(("{0}: {1}" -f $encoder, $message))
+}
+
+if ($BenchmarkEncoders) {
+    $fastest = @($encoderAttempts |
+        Where-Object { $_.Succeeded } |
+        Sort-Object ElapsedSeconds |
+        Select-Object -First 1)
+    if ($fastest.Count -gt 0) {
+        $usedEncoder = $fastest[0].Encoder
+        if (Test-Path -LiteralPath $fullOutput) {
+            Remove-Item -LiteralPath $fullOutput -Force
+        }
+        Copy-Item -LiteralPath $fastest[0].Output -Destination $fullOutput -Force
+    }
+
+    foreach ($benchmarkOutput in $successfulBenchmarkOutputs) {
+        if ((Test-Path -LiteralPath $benchmarkOutput) -and $benchmarkOutput -ne $fullOutput) {
+            Remove-Item -LiteralPath $benchmarkOutput -Force
+        }
+    }
+}
+
+if ([string]::IsNullOrWhiteSpace($usedEncoder)) {
+    $message = $failedAttempts -join [Environment]::NewLine
+    throw "ffmpeg rendered encoding failed for all attempted encoders.$([Environment]::NewLine)$message"
 }
 
 if (!$KeepFrames) {
@@ -458,10 +590,16 @@ if (!$KeepFrames) {
 
 [pscustomobject]@{
     Output = $fullOutput
-    Frames = $frameCount
+    Frames = $actualFrameCount
     FrameRate = $FrameRate
+    DurationSeconds = [Math]::Round($actualFrameCount / [double]$FrameRate, 3)
+    RequestedDurationSeconds = $DurationSeconds
     Rect = "{0},{1},{2},{3}" -f $Left, $Top, $Width, $Height
     Bytes = (Get-Item -LiteralPath $fullOutput).Length
     Recorder = if ($CaptureMode -eq "Screen") { "ScreenFfmpeg" } else { "RenderedFfmpeg" }
+    VideoEncoder = $usedEncoder
+    RequestedVideoEncoder = $VideoEncoder
+    BenchmarkEncoders = [bool]$BenchmarkEncoders
+    EncoderAttempts = $encoderAttempts.ToArray()
     FrameDirectory = if ($KeepFrames) { $frameRoot } else { "" }
 }

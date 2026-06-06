@@ -107,6 +107,12 @@ Controls that require motion proof can opt into preserved animations and record
 `AnimationEvidence` in the manifest while the normal visual-test artifact path
 keeps indeterminate visuals stabilized.
 
+Rendered MP4 output supports `-VideoEncoder Auto|libx264|h264_nvenc|h264_qsv|h264_amf`
+and `-BenchmarkEncoders`. The current machine benchmark for a 6.6s Menu clip
+showed `libx264` faster than NVENC (`0.329s` versus `0.954s`), with QSV/AMF
+unavailable, so `Auto` prefers `libx264` unless a benchmark or explicit encoder
+request says otherwise.
+
 ## Current Focused Fix Round
 
 Round 49 tightened the recorder after manual review found failures that earlier
@@ -1133,6 +1139,53 @@ path:
   `t2000` / `t4000` / `t8500`, deltas `12.612` / `0.478` / `12.5`, and local
   delta `12.63`.
 
+Round 103 refreshes Dark navigation/menu proof, hardens a Menu false-negative,
+and compares encoder speed:
+
+- Fresh Dark navigation/expansion run
+  `artifacts/gallery-recordings/20260606-124033-491/report.md` passed
+  `ShellNavigation`, `Expander`, `TreeView`, and `NavigationView`; reviewed
+  shell frames show Design Guidance and Samples expand/collapse without blank
+  stale regions, and the Expander/TreeView/NavigationView samples show visible
+  expanded or selected content.
+- The broad Dark popup batch
+  `artifacts/gallery-recordings/20260606-124440-183/report.md` checkpointed
+  seven accepted controls before the outer command timed out at SplitButton:
+  `TeachingTip`, `ComboBox`, `MenuFlyout`, `CommandBar`,
+  `CommandBarFlyout`, `DatePicker`, and `DropDownButton`. Focused SplitButton
+  rerun `artifacts/gallery-recordings/20260606-130037-394/report.md` passed.
+- Diagnostic run `artifacts/gallery-recordings/20260606-130227-864/report.md`
+  exposed recorder flakiness rather than accepted product failures:
+  `ToggleSplitButton` passed, while `Menu` and `MenuBar` failed despite visible
+  open/close/reopen states in later focused runs. The recorder now adds direct
+  frame evidence from the interaction timestamps and accepts closed-state proof
+  only when the sampled closed frame returns to baseline or the live
+  `CloseVisualClosed` pixel check already proved the popup region closed.
+- Accepted reruns
+  `artifacts/gallery-recordings/20260606-132543-419/report.md`,
+  `artifacts/gallery-recordings/20260606-133130-700/report.md`, and
+  `artifacts/gallery-recordings/20260606-133313-593/report.md` pass
+  `ToggleSplitButton`, `Menu`, `MenuBar`, `ToolTip`, `ContentDialog`,
+  `Flyout`, and `Popup` under the hardened proof path.
+- Recording idle time was reduced with a stop-file signal, shorter
+  open/closed/reopen dwells, and closing Gallery before encoder/frame-review
+  work. The verification run
+  `artifacts/gallery-recordings/20260606-135520-820/report.md` records Menu in
+  `6.7s/24s` and MenuBar in `5.9s/18s` instead of sitting for the full maximum
+  windows.
+- Encoder benchmark run
+  `artifacts/gallery-recordings/20260606-140401-827/report.md` passed Menu with
+  actual recording duration `6.6s/24s`. The same captured frame sequence encoded
+  with `h264_nvenc` in `0.954s`, `libx264` in `0.329s`; `h264_qsv` and
+  `h264_amf` failed quickly on this machine. Because NVENC is slower for these
+  short UI clips here, `Auto` now prefers `libx264`; GPU encoders remain
+  selectable with `-VideoEncoder` and comparable with `-BenchmarkEncoders`.
+- Final default-encoder run
+  `artifacts/gallery-recordings/20260606-140850-692/report.md` passed Menu
+  after the Auto-order change with `Video encoder: libx264`, actual recording
+  duration `6.7s/24s`, 67 captured frames, and 37.2s wall time including Gallery
+  launch, interaction, encoding, frame extraction, and dense-review generation.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -1244,6 +1297,16 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260606-122109-523/report.md` | SplitButton | 1 passed, 0 needs review, 0 failed; event-window proof accepts first/closed/second frames `t2000` / `t4000` / `t11000` |
 | `artifacts/gallery-recordings/20260606-122326-155/report.md` | DropDownButton, ToggleSplitButton | 1 passed, 0 needs review, 1 failed; ToggleSplitButton accepted, DropDownButton rejected from fast path |
 | `artifacts/gallery-recordings/20260606-122924-332/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed; DropDownButton remains on reliable leaf-item UIA close path with event-window proof |
+| `artifacts/gallery-recordings/20260606-124033-491/report.md` | ShellNavigation, Expander, TreeView, NavigationView | 4 passed, 0 needs review, 0 failed; refreshed Dark navigation and expansion proof with reviewed expanded/collapsed shell frames |
+| `artifacts/gallery-recordings/20260606-124440-183/report.md` | TeachingTip, ComboBox, MenuFlyout, CommandBar, CommandBarFlyout, DatePicker, DropDownButton | 7 passed, 0 needs review, 0 failed; checkpointed completed controls from a later timed-out popup batch |
+| `artifacts/gallery-recordings/20260606-130037-394/report.md` | SplitButton | 1 passed, 0 needs review, 0 failed; focused rerun after the timed-out popup batch |
+| `artifacts/gallery-recordings/20260606-130227-864/report.md` | ToggleSplitButton, Menu, MenuBar | 1 passed, 0 needs review, 2 failed; diagnostic false-negative run that drove the direct-frame fallback for Menu/MenuBar proof |
+| `artifacts/gallery-recordings/20260606-132543-419/report.md` | ToggleSplitButton, Menu, MenuBar | 3 passed, 0 needs review, 0 failed; hardened direct/event-frame proof accepts the visible open/close/reopen states |
+| `artifacts/gallery-recordings/20260606-133130-700/report.md` | ToolTip | 1 passed, 0 needs review, 0 failed; focused Dark ToolTip rerun under the hardened open-repeat verifier |
+| `artifacts/gallery-recordings/20260606-133313-593/report.md` | ContentDialog, Flyout, Popup | 3 passed, 0 needs review, 0 failed; focused Dark dialog/flyout/popup rerun under the hardened open-repeat verifier |
+| `artifacts/gallery-recordings/20260606-135520-820/report.md` | Menu, MenuBar | 2 passed, 0 needs review, 0 failed; early-stop run records Menu in `6.7s/24s` and MenuBar in `5.9s/18s` |
+| `artifacts/gallery-recordings/20260606-140401-827/report.md` | Menu | 1 passed, 0 needs review, 0 failed; encoder benchmark: `libx264` `0.329s`, `h264_nvenc` `0.954s`, QSV/AMF failed |
+| `artifacts/gallery-recordings/20260606-140850-692/report.md` | Menu | 1 passed, 0 needs review, 0 failed; final Auto-default run selected `libx264`, recorded `6.7s/24s`, and completed in 37.2s wall time |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 | `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
 | `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
