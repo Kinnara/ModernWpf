@@ -3455,7 +3455,9 @@ namespace ModernWpf.Gallery.Tests
                 "if ($control -eq \"MenuBar\")",
                 "return [Math]::Max($DurationSeconds, 18)",
                 "if ($control -eq \"ContentDialog\" -or $control -eq \"Flyout\" -or $control -eq \"Popup\" -or $control -eq \"MenuFlyout\")",
-                "return [Math]::Max($DurationSeconds, 24)");
+                "return [Math]::Max($DurationSeconds, 24)",
+                "return [Math]::Max($DurationSeconds, 24)",
+                "return $DurationSeconds");
             AssertContainsInOrder(
                 source,
                 "$openVisualDwellMilliseconds = switch ($control)",

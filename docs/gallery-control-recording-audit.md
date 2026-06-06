@@ -525,6 +525,27 @@ static-only controls:
   `artifacts/gallery-recordings/20260606-023615-570/MenuBar/frames/t12000.png`
   visibly shows the second opened menu.
 
+Round 73 broadens the default open-repeat capture window:
+
+- The five-control run
+  `artifacts/gallery-recordings/20260606-024107-834/report.md` failed
+  TeachingTip, ComboBox, DropDownButton, SplitButton, and ToggleSplitButton
+  because the default 12s open-repeat capture ended before the second visible
+  open in the current desktop session. The slowest controls recorded
+  `SecondOpenVisualSeconds` above 21s, so the recording could not prove the
+  open/closed/open sequence even though the UIA interaction completed.
+- Open-repeat controls now use at least 24s by default, while the already
+  proven ToolTip, MenuBar, and MessageBox paths keep their 18s floor.
+- Focused reruns passed for all five controls with `OpenRepeatEvidence=true`:
+  TeachingTip `20260606-025938-600` frames `t3500` / `t6000` / `t12000`;
+  ComboBox `20260606-030156-853` frames `t3500` / `t7500` / `t14000`;
+  DropDownButton `20260606-030431-469` frames `t3500` / `t6000` /
+  `t16000`; SplitButton `20260606-030658-445` frames `t5000` / `t11500` /
+  `t18500`; and ToggleSplitButton `20260606-030911-067` frames `t4500` /
+  `t12000` / `t19000`. Reviewed
+  `artifacts/gallery-recordings/20260606-030911-067/ToggleSplitButton/frames/t19000.png`
+  visibly shows the second opened ToggleSplitButton menu.
+
 Latest focused evidence:
 
 | Run | Controls | Result |
@@ -568,6 +589,12 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260606-022033-503/report.md` | PersonPicture, IconElement, ThemeShadow, InfoBadge, AppBarSeparator | 5 passed, 0 needs review, 0 failed; static-only refresh manually reviewed for obvious blank, stale, or misaligned regions |
 | `artifacts/gallery-recordings/20260606-023146-388/report.md` | MenuBar | 0 passed, 0 needs review, 1 failed; exposed a recorder timing gap where the second visible open occurred after the 12s capture window |
 | `artifacts/gallery-recordings/20260606-023615-570/report.md` | MenuBar | 1 passed, 0 needs review, 0 failed; 18s capture proved open/closed/open frames `t3500` / `t5500` / `t12000` with `OpenRepeatEvidence=true` |
+| `artifacts/gallery-recordings/20260606-024107-834/report.md` | TeachingTip, ComboBox, DropDownButton, SplitButton, ToggleSplitButton | 0 passed, 0 needs review, 5 failed; exposed the default 12s open-repeat capture window ending before late second-open frames |
+| `artifacts/gallery-recordings/20260606-025938-600/report.md` | TeachingTip | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t3500` / `t6000` / `t12000` |
+| `artifacts/gallery-recordings/20260606-030156-853/report.md` | ComboBox | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t3500` / `t7500` / `t14000` |
+| `artifacts/gallery-recordings/20260606-030431-469/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t3500` / `t6000` / `t16000` |
+| `artifacts/gallery-recordings/20260606-030658-445/report.md` | SplitButton | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t5000` / `t11500` / `t18500` |
+| `artifacts/gallery-recordings/20260606-030911-067/report.md` | ToggleSplitButton | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t4500` / `t12000` / `t19000` |
 | `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
 | `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
 | `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
@@ -651,10 +678,10 @@ proof on top of these static route captures.
 | Area | Control | Route or Scenario | Recording Status | Fix Status | Latest Evidence | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | Shell | Navigation pane | Home, Design Guidance, Samples expand/collapse | Recorded | Fixed | `artifacts/gallery-recordings/20260605-045636-525/ShellNavigation/dark-shellnavigation.mp4` | Latest manifest proves Design Guidance and Samples expanded with visible children, then collapsed with children hidden; following-item gaps remain `2.0`, `ShellNavigationChanged=true`, and local visual delta is `9.407`. Dense transition review sheet: `artifacts/gallery-recordings/20260605-045636-525/ShellNavigation/analysis/dense-transition-review.jpg`. |
-| Dialogs & flyouts | TeachingTip | `item/TeachingTip` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-042951-643/TeachingTip/dark-teachingtip.mp4` | Latest rendered run closes through the named TeachingTip close button and requires baseline-delta open/closed/open proof. Manifest records `CloseMethod=LeafCloseItem:Invoke`, `Detection=BaselineDeltaScan`, frames `t2500` / `t3500` / `t8500`, and deltas `12.768` / `0.697` / `12.818`. |
+| Dialogs & flyouts | TeachingTip | `item/TeachingTip` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-025938-600/TeachingTip/dark-teachingtip.mp4` | Latest rendered run uses a 24s capture, closes through the named TeachingTip close button, and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t3500` / `t6000` / `t12000`, deltas `12.665` / `0.431` / `12.716`, and local delta `12.72`; the earlier `20260606-024107-834` run failed because the second visible open landed after the old 12s window. |
 | Basic input | Button | `item/Button` | Recorded | Fixed | `artifacts/gallery-recordings/20260605-044806-923/Button/dark-button.mp4` | Latest rendered run toggles `Disable button` and records local visual delta `4.268`; option state changed despite low whole-frame delta `0.048`. |
 | Basic input | CheckBox | `item/CheckBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/CheckBox/dark-checkbox.mp4` | Latest rendered run records local visual delta `3.174`; before/after toggle state changed despite low whole-frame delta `0.028`. |
-| Basic input | ComboBox | `item/ComboBox` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-043648-914/ComboBox/dark-combobox.mp4` | Latest rendered run closes through `ExpandCollapsePattern.Collapse()` and requires baseline-delta open/closed/open proof. Manifest records frames `t2500` / `t5000` / `t9500`, deltas `9.482` / `0.544` / `11.141`, and local delta `11.141`. |
+| Basic input | ComboBox | `item/ComboBox` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-030156-853/ComboBox/dark-combobox.mp4` | Latest rendered run uses a 24s capture, closes through `ExpandCollapsePattern.Collapse()`, and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t3500` / `t7500` / `t14000`, deltas `9.635` / `0.3` / `9.646`, and local delta `9.65`. |
 | Basic input | RadioButton | `item/RadioButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/RadioButton/dark-radiobutton.mp4` | Latest rendered run records local visual delta `3.87`; selection/output evidence changed despite low whole-frame delta `0.022`. |
 | Basic input | Slider | `item/Slider` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/Slider/dark-slider.mp4` | Latest rendered run records local visual delta `2.422`; target value was reached despite low whole-frame delta `0.031`. |
 | Basic input | ColorPicker | `item/ColorPicker` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/ColorPicker/dark-colorpicker.mp4` | Latest rendered run records option interaction with local visual delta `6.413` and whole-frame delta `0.37`. |
@@ -662,9 +689,9 @@ proof on top of these static route captures.
 | Basic input | RatingControl | `item/RatingControl` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/RatingControl/dark-ratingcontrol.mp4` | Latest rendered run records local visual delta `4.198`; target value was reached despite low whole-frame delta `0.21`. |
 | Basic input | RepeatButton | `item/RepeatButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044806-923/RepeatButton/dark-repeatbutton.mp4` | Latest rendered run records local visual delta `1.034`; output text changed despite low whole-frame delta `0.035`. |
 | Basic input | ToggleButton | `item/ToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/ToggleButton/dark-togglebutton.mp4` | Latest rendered run records local visual delta `38.487`; before/after toggle state changed despite low whole-frame delta `0.234`. |
-| Basic input | DropDownButton | `item/DropDownButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-043648-914/DropDownButton/dark-dropdownbutton.mp4` | Latest rendered run closes through the `Send` leaf item and requires baseline-delta open/closed/open proof. Manifest records frames `t1500` / `t3000` / `t10500` and deltas `12.183` / `0.397` / `12.406`. |
-| Basic input | SplitButton | `item/SplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-042951-643/SplitButton/dark-splitbutton.mp4` | Latest rendered run closes through the `Red` leaf item and requires baseline-delta open/closed/open proof. Manifest records frames `t2500` / `t5500` / `t10000` and deltas `21.394` / `0.013` / `21.441`. |
-| Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260605-042951-643/ToggleSplitButton/dark-togglesplitbutton.mp4` | Latest rendered run closes through the `Bulleted list` leaf item and requires baseline-delta open/closed/open proof. Manifest records frames `t2500` / `t6000` / `t10500`, deltas `10.864` / `0.025` / `18.001`, and local delta `38.571`. |
+| Basic input | DropDownButton | `item/DropDownButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-030431-469/DropDownButton/dark-dropdownbutton.mp4` | Latest rendered run uses a 24s capture, closes through the `Send` leaf item, and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t3500` / `t6000` / `t16000`, deltas `12.131` / `0.263` / `12.125`, and local delta `12.14`. |
+| Basic input | SplitButton | `item/SplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-030658-445/SplitButton/dark-splitbutton.mp4` | Latest rendered run uses a 24s capture, closes through the `Red` leaf item, and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t5000` / `t11500` / `t18500`, deltas `21.379` / `0.021` / `20.924`, and local delta `21.38`. |
+| Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-030911-067/ToggleSplitButton/dark-togglesplitbutton.mp4` | Latest rendered run uses a 24s capture, closes through the `Bulleted list` leaf item, and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t4500` / `t12000` / `t19000`, deltas `17.881` / `0.041` / `18.14`, and local delta `38.89`; reviewed frame `t19000` shows the second opened menu. |
 | Basic input | ToggleSwitch | `item/ToggleSwitch` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/ToggleSwitch/dark-toggleswitch.mp4` | Latest rendered run records local visual delta `7.034`; before/after toggle state changed despite low whole-frame delta `0.014`. |
 | Text | NumberBox | `item/NumberBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260605-044321-949/NumberBox/dark-numberbox.mp4` | Latest rendered run reaches the target value with local visual delta `0.381`; whole-frame delta remains `0`, so the proof is intentionally cropped to the interaction bounds. |
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed | `artifacts/gallery-recordings/20260605-045636-525/AutoSuggestBox/dark-autosuggestbox.mp4` | Latest rendered run records text interaction with local visual delta `2.816`; expected output was detected despite low whole-frame delta `0.111`. `AutoSuggestBoxInteractionTests` covers item-click submit/close behavior. |

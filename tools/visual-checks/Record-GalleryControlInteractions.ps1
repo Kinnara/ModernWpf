@@ -1389,7 +1389,7 @@ function Get-ControlRecordingDurationSeconds([string]$control, [string]$interact
             return [Math]::Max($DurationSeconds, 24)
         }
 
-        return [Math]::Max($DurationSeconds, 12)
+        return [Math]::Max($DurationSeconds, 24)
     }
 
     return $DurationSeconds
@@ -5801,7 +5801,7 @@ function Write-Report([string]$runDir, $results) {
     else {
         $lines.Add(("Recorder: ``{0}``" -f ($recorders -join ", ")))
     }
-    $lines.Add(("Duration: ``{0}s`` default; open-repeat controls use at least ``12s``; ToolTip, MenuBar, and MessageBox use at least ``18s``; ContentDialog, Flyout, Popup, MenuFlyout, CommandBar, and CommandBarFlyout use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
+    $lines.Add(("Duration: ``{0}s`` default; ToolTip, MenuBar, and MessageBox use at least ``18s``; other open-repeat controls use at least ``24s`` at ``{1}fps``" -f $DurationSeconds, $FrameRate))
     $lines.Add("")
     $lines.Add("| Control | Status | Interaction | Recording | Dense review | Max frame delta | Max local delta | Notes |")
     $lines.Add("| --- | --- | --- | --- | --- | ---: | ---: | --- |")
