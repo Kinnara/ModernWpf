@@ -3199,30 +3199,37 @@ namespace ModernWpf.Gallery.Tests
                     AssertRectNear(new Rect(36, 36, 200, 200), beforeShadowBounds, 0.5, "ThemeShadow chrome should preserve the WinUI sample's 36px caster layout.");
                     AssertRectNear(new Rect(36, 36, 200, 200), beforeRectBounds, 0.5, "ThemeShadow caster should preserve the WinUI sample's 36px layout.");
 
-                    slider.Value = 64;
-                    WpfTestHost.DoEvents();
-                    window.UpdateLayout();
-                    WpfTestHost.DoEvents();
-                    WaitForRendering();
-                    var afterRootBounds = GetRelativeBounds(root, page);
-                    var afterGridBounds = GetRelativeBounds(exampleGrid, page);
-                    var afterReceiverBounds = GetRelativeBounds(shadowCastGrid, exampleGrid);
-                    var afterShadowBounds = GetRelativeBounds(shadow, exampleGrid);
-                    var afterRectBounds = GetRelativeBounds(shadowRect, exampleGrid);
-                    var afterSliderBounds = GetRelativeBounds(slider, page);
-                    var afterRenderedSample = RenderElementBitmap(root);
-                    var afterRenderedCardBounds = MeasureRenderedColorBounds(afterRenderedSample, color => color.R > 245 && color.G > 245 && color.B > 245);
-                    var renderedDelta = CompareRenderedMeanDelta(beforeRenderedSample, afterRenderedSample);
-                    Assert.AreEqual(64d, shadow.Depth);
-                    Assert.AreEqual(64d, shadow.TranslationZ);
-                    AssertRectNear(beforeRootBounds, afterRootBounds, 0.5, "Changing ThemeShadow depth should not move the sample root.");
-                    AssertRectNear(beforeGridBounds, afterGridBounds, 0.5, "Changing ThemeShadow depth should not move the example grid.");
-                    AssertRectNear(beforeReceiverBounds, afterReceiverBounds, 0.5, "Changing ThemeShadow depth should not move the receiver grid.");
-                    AssertRectNear(beforeShadowBounds, afterShadowBounds, 0.5, "Changing ThemeShadow depth should not move the shadow chrome.");
-                    AssertRectNear(beforeRectBounds, afterRectBounds, 0.5, "Changing ThemeShadow depth should not move the sample card.");
-                    AssertRectNear(beforeSliderBounds, afterSliderBounds, 0.5, "Changing ThemeShadow depth should not move the options slider.");
-                    Assert.AreEqual(beforeRenderedCardBounds, afterRenderedCardBounds, "Changing ThemeShadow depth should not move the rendered card pixels.");
-                    Assert.IsTrue(renderedDelta > 0.1, $"Changing ThemeShadow depth should visibly redraw the sample shadow. Delta={renderedDelta}.");
+                    var maxRenderedDelta = 0d;
+                    foreach (var depth in new[] { 0d, 16d, 32d, 48d, 64d })
+                    {
+                        slider.Value = depth;
+                        WpfTestHost.DoEvents();
+                        window.UpdateLayout();
+                        WpfTestHost.DoEvents();
+                        WaitForRendering();
+
+                        var afterRootBounds = GetRelativeBounds(root, page);
+                        var afterGridBounds = GetRelativeBounds(exampleGrid, page);
+                        var afterReceiverBounds = GetRelativeBounds(shadowCastGrid, exampleGrid);
+                        var afterShadowBounds = GetRelativeBounds(shadow, exampleGrid);
+                        var afterRectBounds = GetRelativeBounds(shadowRect, exampleGrid);
+                        var afterSliderBounds = GetRelativeBounds(slider, page);
+                        var afterRenderedSample = RenderElementBitmap(root);
+                        var afterRenderedCardBounds = MeasureRenderedColorBounds(afterRenderedSample, color => color.R > 245 && color.G > 245 && color.B > 245);
+                        maxRenderedDelta = Math.Max(maxRenderedDelta, CompareRenderedMeanDelta(beforeRenderedSample, afterRenderedSample));
+
+                        Assert.AreEqual(depth, shadow.Depth);
+                        Assert.AreEqual(depth, shadow.TranslationZ);
+                        AssertRectNear(beforeRootBounds, afterRootBounds, 0.5, $"Changing ThemeShadow depth to {depth} should not move the sample root.");
+                        AssertRectNear(beforeGridBounds, afterGridBounds, 0.5, $"Changing ThemeShadow depth to {depth} should not move the example grid.");
+                        AssertRectNear(beforeReceiverBounds, afterReceiverBounds, 0.5, $"Changing ThemeShadow depth to {depth} should not move the receiver grid.");
+                        AssertRectNear(beforeShadowBounds, afterShadowBounds, 0.5, $"Changing ThemeShadow depth to {depth} should not move the shadow chrome.");
+                        AssertRectNear(beforeRectBounds, afterRectBounds, 0.5, $"Changing ThemeShadow depth to {depth} should not move the sample card.");
+                        AssertRectNear(beforeSliderBounds, afterSliderBounds, 0.5, $"Changing ThemeShadow depth to {depth} should not move the options slider.");
+                        Assert.AreEqual(beforeRenderedCardBounds, afterRenderedCardBounds, $"Changing ThemeShadow depth to {depth} should not move the rendered card pixels.");
+                    }
+
+                    Assert.IsTrue(maxRenderedDelta > 0.1, $"Changing ThemeShadow depth should visibly redraw the sample shadow. Delta={maxRenderedDelta}.");
                 }
                 finally
                 {

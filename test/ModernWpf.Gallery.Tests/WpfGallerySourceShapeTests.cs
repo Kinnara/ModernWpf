@@ -3936,6 +3936,17 @@ namespace ModernWpf.Gallery.Tests
                 "$minimumNonBlankFrameCount = Get-MinimumNonBlankFrameCount $extractedFrameCount",
                 "if ($nonBlankFrameCount -lt $minimumNonBlankFrameCount -and !$SkipFrameExtraction)",
                 "Only {0} of {1} extracted poster frames were nonblank; at least {2} are required.");
+            AssertContainsInOrder(
+                source,
+                "function Test-FrameExtracted($frame)",
+                "if ($frame -is [System.Collections.IDictionary])",
+                "return $frame.Contains(\"Extracted\") -and [bool]$frame.Extracted",
+                "function Get-LocalFrameDeltas($frames, $recordingResult, $interactionResult)",
+                "Where-Object { Test-FrameExtracted $_ }",
+                "function Get-NonBlankFrameCount($frames)",
+                "if ((Test-FrameExtracted $frame) -and $null -ne $frame.Stats -and $frame.Stats.NonBlank)",
+                "function Get-ExtractedFrameCount($frames)",
+                "if (Test-FrameExtracted $frame)");
         }
 
         [TestMethod]
@@ -3992,6 +4003,35 @@ namespace ModernWpf.Gallery.Tests
                 "if ($window.Current.Name -eq \"WPF Gallery\")",
                 "if ($window.Current.ClassName -eq \"Window\")",
                 "return $bestWindow");
+        }
+
+        [TestMethod]
+        public void GalleryInteractionRecorderRequiresShellNavigationPointerDisclosureClicks()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Get-ShellNavigationDisclosureClickPoint($item)",
+                "$rect = $item.Current.BoundingRectangle",
+                "$rect.X + [Math]::Min(30.0",
+                "Source = \"DisclosureGlyph\"",
+                "function Invoke-ShellNavigationDisclosure($window, $navigationView, [string]$name, [string]$targetState)",
+                "$point = Get-ShellNavigationDisclosureClickPoint $item",
+                "[GalleryRecordingNative]::HoldClickOverWindow($window.Current.NativeWindowHandle, $point.X, $point.Y, 120)",
+                "StateAfterClick = $stateAfterClick",
+                "UsedAutomationFallback = $usedAutomationFallback");
+            AssertContainsInOrder(
+                source,
+                "foreach ($click in @($designExpandedClick, $samplesExpandedClick, $designCollapsedClick, $samplesCollapsedClick))",
+                "elseif ($click.StateAfterClick -ne $click.TargetState)",
+                "pointer disclosure click expected",
+                "if ($click.UsedAutomationFallback)",
+                "used automation fallback for {1}; pointer disclosure proof is required.");
         }
 
         [TestMethod]

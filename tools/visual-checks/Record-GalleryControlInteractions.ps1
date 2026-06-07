@@ -172,10 +172,13 @@ public static class GalleryRecordingNative
     private const uint MOUSEEVENTF_MOVE = 0x0001;
     private const uint MOUSEEVENTF_WHEEL = 0x0800;
     private const uint WM_MOUSEMOVE = 0x0200;
+    private const uint WM_LBUTTONDOWN = 0x0201;
+    private const uint WM_LBUTTONUP = 0x0202;
     private const uint WM_MOUSEHOVER = 0x02A1;
     private const uint WM_KEYDOWN = 0x0100;
     private const uint WM_KEYUP = 0x0101;
     private const uint WM_CHAR = 0x0102;
+    private const uint MK_LBUTTON = 0x0001;
     private const uint KEYEVENTF_KEYUP = 0x0002;
     private const uint KEYEVENTF_UNICODE = 0x0004;
     private const byte VK_CONTROL = 0x11;
@@ -263,6 +266,23 @@ public static class GalleryRecordingNative
         SendMouseInput(MOUSEEVENTF_LEFTDOWN);
         System.Threading.Thread.Sleep(holdMilliseconds);
         SendMouseInput(MOUSEEVENTF_LEFTUP);
+    }
+
+    public static void HoldClickOverWindow(IntPtr hWnd, int x, int y, int holdMilliseconds)
+    {
+        MoveCursorOverWindow(hWnd, x, y);
+        var point = new POINT { X = x, Y = y };
+        if (ScreenToClient(hWnd, ref point))
+        {
+            int packedPoint = unchecked((int)(((point.Y & 0xffff) << 16) | (point.X & 0xffff)));
+            SendMessage(hWnd, WM_LBUTTONDOWN, new UIntPtr(MK_LBUTTON), new IntPtr(packedPoint));
+            System.Threading.Thread.Sleep(holdMilliseconds);
+            SendMessage(hWnd, WM_LBUTTONUP, UIntPtr.Zero, new IntPtr(packedPoint));
+        }
+        else
+        {
+            HoldClick(x, y, holdMilliseconds);
+        }
     }
 
     public static void Drag(int startX, int startY, int endX, int endY, int steps, int stepDelayMilliseconds)
@@ -1767,25 +1787,12 @@ function Test-ElementVisible($element) {
     }
 }
 
-function Get-ShellNavigationClickPoint($item) {
-    try {
-        $point = New-Object System.Windows.Point
-        if ($item.TryGetClickablePoint([ref]$point)) {
-            return [ordered]@{
-                X = [int][Math]::Round($point.X)
-                Y = [int][Math]::Round($point.Y)
-                Source = "ClickablePoint"
-            }
-        }
-    }
-    catch {
-    }
-
+function Get-ShellNavigationDisclosureClickPoint($item) {
     $rect = $item.Current.BoundingRectangle
     return [ordered]@{
-        X = [int][Math]::Round($rect.X + ($rect.Width / 2.0))
-        Y = [int][Math]::Round($rect.Y + ($rect.Height / 2.0))
-        Source = "BoundsCenter"
+        X = [int][Math]::Round($rect.X + [Math]::Min(30.0, [Math]::Max(8.0, $rect.Width * 0.14)))
+        Y = [int][Math]::Round($rect.Y + 20.0)
+        Source = "DisclosureGlyph"
     }
 }
 
@@ -1826,8 +1833,8 @@ function Invoke-ShellNavigationDisclosure($window, $navigationView, [string]$nam
             return [ordered]@{ Clicked = $false; Name = $name; Failure = "Navigation item had empty bounds." }
         }
 
-        $point = Get-ShellNavigationClickPoint $item
-        [GalleryRecordingNative]::HoldClick($point.X, $point.Y, 120)
+        $point = Get-ShellNavigationDisclosureClickPoint $item
+        [GalleryRecordingNative]::HoldClickOverWindow($window.Current.NativeWindowHandle, $point.X, $point.Y, 120)
         Start-Sleep -Milliseconds 250
         $stateAfterClick = Get-ExpandCollapseStateName $item
         $usedAutomationFallback = $false
@@ -1997,10 +2004,18 @@ function Invoke-ShellNavigationInteraction($window, $navigationView) {
         48.0
     $steps.Add($samplesCollapsed)
 
-    if (!$designExpandedClick.Clicked) { $failures.Add("Could not click Design Guidance to expand.") }
-    if (!$samplesExpandedClick.Clicked) { $failures.Add("Could not click Samples to expand.") }
-    if (!$designCollapsedClick.Clicked) { $failures.Add("Could not click Design Guidance to collapse.") }
-    if (!$samplesCollapsedClick.Clicked) { $failures.Add("Could not click Samples to collapse.") }
+    foreach ($click in @($designExpandedClick, $samplesExpandedClick, $designCollapsedClick, $samplesCollapsedClick)) {
+        if (!$click.Clicked) {
+            $failures.Add(("Could not click {0} to {1}." -f $click.Name, $click.TargetState.ToLowerInvariant()))
+        }
+        elseif ($click.StateAfterClick -ne $click.TargetState) {
+            $failures.Add(("{0} pointer disclosure click expected {1}, observed {2}." -f $click.Name, $click.TargetState, $click.StateAfterClick))
+        }
+
+        if ($click.UsedAutomationFallback) {
+            $failures.Add(("{0} used automation fallback for {1}; pointer disclosure proof is required." -f $click.Name, $click.TargetState))
+        }
+    }
     foreach ($step in $steps) {
         foreach ($failure in $step.Failures) {
             $failures.Add($failure)
@@ -6365,7 +6380,7 @@ function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recor
 }
 
 function Get-MaxFrameDelta($frames) {
-    $paths = @($frames | Where-Object { $_.Extracted } | ForEach-Object { $_.Path })
+    $paths = @($frames | Where-Object { Test-FrameExtracted $_ } | ForEach-Object { $_.Path })
     if ($paths.Count -lt 2) {
         return $null
     }
@@ -6481,8 +6496,20 @@ function Get-InteractionBoundsEntries($interactionResult) {
     return $unique.ToArray()
 }
 
+function Test-FrameExtracted($frame) {
+    if ($null -eq $frame) {
+        return $false
+    }
+
+    if ($frame -is [System.Collections.IDictionary]) {
+        return $frame.Contains("Extracted") -and [bool]$frame.Extracted
+    }
+
+    return $frame.PSObject.Properties.Match("Extracted").Count -gt 0 -and [bool]$frame.Extracted
+}
+
 function Get-LocalFrameDeltas($frames, $recordingResult, $interactionResult) {
-    $paths = @($frames | Where-Object { $_.Extracted } | Sort-Object Name | ForEach-Object { $_.Path })
+    $paths = @($frames | Where-Object { Test-FrameExtracted $_ } | Sort-Object Name | ForEach-Object { $_.Path })
     if ($paths.Count -lt 2 -or $null -eq $recordingResult -or [string]::IsNullOrWhiteSpace($recordingResult.Rect)) {
         return @()
     }
@@ -6582,7 +6609,7 @@ function Get-TextVisualClosedEvidence($frames, $recordingResult, $interactionRes
         }
     }
 
-    $extractedFrames = @($frames | Where-Object { $_.Extracted } | Sort-Object Name)
+    $extractedFrames = @($frames | Where-Object { Test-FrameExtracted $_ } | Sort-Object Name)
     if ($extractedFrames.Count -lt 2 -or $null -eq $recordingResult -or [string]::IsNullOrWhiteSpace($recordingResult.Rect)) {
         return [ordered]@{
             Generated = $false
@@ -6632,7 +6659,7 @@ function Get-ClosestExtractedFrame($frames, $seconds) {
 
     $bestFrame = $null
     $bestDistance = [double]::PositiveInfinity
-    foreach ($frame in @($frames | Where-Object { $_.Extracted })) {
+    foreach ($frame in @($frames | Where-Object { Test-FrameExtracted $_ })) {
         $frameSeconds = Get-FrameSeconds $frame
         if ($null -eq $frameSeconds) {
             continue
@@ -6650,7 +6677,7 @@ function Get-ClosestExtractedFrame($frames, $seconds) {
 
 function Get-ExtractedFramesInRange($frames, $startSeconds, $endSeconds) {
     $selected = New-Object System.Collections.Generic.List[object]
-    foreach ($frame in @($frames | Where-Object { $_.Extracted } | Sort-Object Name)) {
+    foreach ($frame in @($frames | Where-Object { Test-FrameExtracted $_ } | Sort-Object Name)) {
         $frameSeconds = Get-FrameSeconds $frame
         if ($null -eq $frameSeconds) {
             continue
@@ -6849,7 +6876,7 @@ function Get-OpenRepeatVisualEvidence($frames, $recordingResult, $interactionRes
     $closedThreshold = Get-OpenRepeatClosedThreshold $control
     $initialFrame = Get-ClosestExtractedFrame $frames $interactionResult.InitialVisualSeconds
     if ($null -eq $initialFrame) {
-        $initialFrame = @($frames | Where-Object { $_.Extracted } | Sort-Object Name | Select-Object -First 1)[0]
+        $initialFrame = @($frames | Where-Object { Test-FrameExtracted $_ } | Sort-Object Name | Select-Object -First 1)[0]
     }
 
     $baselineSeconds = Get-FrameSeconds $initialFrame
@@ -6992,7 +7019,7 @@ function Test-OpenRepeatVisualEvidence($visualEvidence) {
 function Get-EarlyFrameDelta($frames) {
     $paths = @(
         $frames |
-            Where-Object { $_.Extracted } |
+            Where-Object { Test-FrameExtracted $_ } |
             Sort-Object Name |
             Select-Object -First 4 |
             ForEach-Object { $_.Path }
@@ -7029,7 +7056,7 @@ function Test-AnimationEvidence([string]$control, $earlyFrameDelta) {
 function Get-NonBlankFrameCount($frames) {
     $count = 0
     foreach ($frame in $frames) {
-        if ($frame.Extracted -and $null -ne $frame.Stats -and $frame.Stats.NonBlank) {
+        if ((Test-FrameExtracted $frame) -and $null -ne $frame.Stats -and $frame.Stats.NonBlank) {
             $count++
         }
     }
@@ -7040,7 +7067,7 @@ function Get-NonBlankFrameCount($frames) {
 function Get-ExtractedFrameCount($frames) {
     $count = 0
     foreach ($frame in $frames) {
-        if ($frame.Extracted) {
+        if (Test-FrameExtracted $frame) {
             $count++
         }
     }
@@ -7087,7 +7114,7 @@ function Get-RenderedPageArtifactAnchor([string]$artifactDir) {
 }
 
 function Get-FirstNonBlankExtractedFrame($frames) {
-    foreach ($frame in @($frames | Where-Object { $_.Extracted } | Sort-Object Name)) {
+    foreach ($frame in @($frames | Where-Object { Test-FrameExtracted $_ } | Sort-Object Name)) {
         if ($null -ne $frame.Stats -and $frame.Stats.NonBlank) {
             return $frame
         }

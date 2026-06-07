@@ -126,6 +126,37 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 135 tightens ThemeShadow depth-shift proof and exposes a ShellNavigation
+pointer-proof gap:
+
+- User review again challenged the ThemeShadow conclusion. The rerun did not
+  reproduce a card or layout move: focused rendered artifacts from
+  `artifacts/gallery-recordings/20260607-060818-933/report.md` show stable
+  ThemeShadow root/card bounds, `BeforeValue=32`, `AfterValue=64`,
+  `rootDelta=1.192`, `CardEdgeShift=0`, and dense frame card edge stability
+  at `570,428,200,200`. The visible shadow envelope changes with depth, but
+  the measured card/layout edge does not move.
+- Product guard strengthened:
+  `GalleryAutomationHookTests.ThemeShadowSampleMatchesWinUIGalleryExample`
+  now walks ThemeShadow depths `0`, `16`, `32`, `48`, and `64`, asserting that
+  the sample root, example grid, receiver, shadow chrome, card, options slider,
+  and rendered card pixels stay fixed while the shadow redraws.
+- Popup guard strengthened:
+  `LayoutCompatibilityApiTests.ThemeShadowChromePopupScreenBoundsDoNotFollowDepthWhileHosted`
+  verifies a hosted popup's chrome and child screen bounds stay fixed when
+  depth changes after opening. This keeps the previous popup-placement fix from
+  regressing into a visible hosted-layout shift.
+- Recorder guard strengthened: frame consumers now use `Test-FrameExtracted`
+  so skipped extraction cannot crash or be counted as proof. A ThemeShadow
+  run with `-SkipFrameExtraction` now fails explicitly instead of throwing.
+- Remaining open defect from the same harness pass: ShellNavigation recordings
+  now click the visible disclosure glyph and fail if they need UIA
+  `ExpandCollapsePattern` fallback. The stricter Dark run
+  `artifacts/gallery-recordings/20260607-060415-409/report.md` failed because
+  all four pointer disclosure clicks missed and fallback forced the state. That
+  control must stay open until the product or recorder can prove real pointer
+  expansion/collapse with visible child rows and no stale blank region.
+
 Round 134 fixes the remaining ThemeShadow depth-driven popup layout shift:
 
 - User review rejected the previous ThemeShadow conclusion because changing

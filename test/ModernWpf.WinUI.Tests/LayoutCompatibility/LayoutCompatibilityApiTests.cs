@@ -483,6 +483,90 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromePopupScreenBoundsDoNotFollowDepthWhileHosted()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var target = new Border
+            {
+                Width = 80,
+                Height = 24,
+                Background = Brushes.Transparent,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(24)
+            };
+            var root = new Grid
+            {
+                Width = 240,
+                Height = 180,
+                Background = Brushes.White,
+                Children = { target }
+            };
+            using var host = new TestWindowHost(root, width: 240, height: 180);
+
+            var child = new Border
+            {
+                Width = 90,
+                Height = 32,
+                Background = Brushes.Transparent
+            };
+            var chrome = new ThemeShadowChrome
+            {
+                Depth = 32,
+                TranslationZ = 32,
+                ReservesShadowSpace = true,
+                Child = child
+            };
+            var popup = new Popup
+            {
+                AllowsTransparency = true,
+                Child = chrome,
+                Placement = PlacementMode.Bottom,
+                PlacementTarget = target
+            };
+            root.Children.Add(popup);
+
+            try
+            {
+                popup.IsOpen = true;
+                WpfTestHost.DoEvents();
+                host.UpdateLayout();
+                chrome.UpdateLayout();
+
+                var beforeChromeBounds = GetScreenBounds(chrome);
+                var beforeChildBounds = GetScreenBounds(child);
+                var beforeChromeRenderSize = chrome.RenderSize;
+                var beforeChildRenderSize = child.RenderSize;
+                var hostedPadding = chrome.PopupPositionShadowPadding;
+
+                chrome.TranslationZ = 64;
+                WpfTestHost.DoEvents();
+                host.UpdateLayout();
+                chrome.UpdateLayout();
+
+                Assert.AreEqual(64, chrome.Depth);
+                Assert.AreEqual(new Thickness(32, 16, 32, 48), chrome.PopupShadowPadding);
+                Assert.AreEqual(
+                    hostedPadding,
+                    chrome.PopupPositionShadowPadding,
+                    "Changing hosted popup depth must not change the cached placement padding.");
+                Assert.AreEqual(beforeChromeRenderSize.Width, chrome.RenderSize.Width, 0.5, "Changing hosted popup depth must not resize the shadow chrome width.");
+                Assert.AreEqual(beforeChromeRenderSize.Height, chrome.RenderSize.Height, 0.5, "Changing hosted popup depth must not resize the shadow chrome height.");
+                Assert.AreEqual(beforeChildRenderSize.Width, child.RenderSize.Width, 0.5, "Changing hosted popup depth must not resize the child width.");
+                Assert.AreEqual(beforeChildRenderSize.Height, child.RenderSize.Height, 0.5, "Changing hosted popup depth must not resize the child height.");
+                AssertRectNear(beforeChromeBounds, GetScreenBounds(chrome), 0.5, "Changing hosted popup depth must not move the chrome on screen.");
+                AssertRectNear(beforeChildBounds, GetScreenBounds(child), 0.5, "Changing hosted popup depth must not move the child on screen.");
+            }
+            finally
+            {
+                popup.IsOpen = false;
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromePopupInsetsAreNotDoubleAppliedAsChildMargin()
     {
         WpfTestHost.Run(() =>
@@ -5567,6 +5651,20 @@ public class LayoutCompatibilityApiTests
     {
         var topLeft = element.TranslatePoint(new Point(), ancestor);
         return new Rect(topLeft, new Size(element.ActualWidth, element.ActualHeight));
+    }
+
+    private static Rect GetScreenBounds(FrameworkElement element)
+    {
+        var topLeft = element.PointToScreen(new Point());
+        return new Rect(topLeft, new Size(element.ActualWidth, element.ActualHeight));
+    }
+
+    private static void AssertRectNear(Rect expected, Rect actual, double tolerance, string message)
+    {
+        Assert.AreEqual(expected.X, actual.X, tolerance, message + " X");
+        Assert.AreEqual(expected.Y, actual.Y, tolerance, message + " Y");
+        Assert.AreEqual(expected.Width, actual.Width, tolerance, message + " Width");
+        Assert.AreEqual(expected.Height, actual.Height, tolerance, message + " Height");
     }
 
     private static Int32Rect ToShadowSnapshotBounds(Rect bounds)
