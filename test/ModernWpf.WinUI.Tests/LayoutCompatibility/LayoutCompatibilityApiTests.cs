@@ -311,9 +311,62 @@ public class LayoutCompatibilityApiTests
             ArrangeElement(root, 320, 320);
 
             Assert.AreEqual(new Thickness(24, 12, 24, 36), chrome.PopupShadowPadding);
-            Assert.AreEqual(248, chrome.ActualWidth, 0.1);
-            Assert.AreEqual(248, chrome.ActualHeight, 0.1);
-            Assert.AreEqual(new Point(24, 12), ((FrameworkElement)chrome.Child).TranslatePoint(new Point(), chrome));
+            Assert.AreEqual(232, chrome.ActualWidth, 0.1);
+            Assert.AreEqual(232, chrome.ActualHeight, 0.1);
+            Assert.AreEqual(new Point(16, 8), ((FrameworkElement)chrome.Child).TranslatePoint(new Point(), chrome));
+        });
+    }
+
+    [TestMethod]
+    public void ThemeShadowChromeReservedSpaceDepthChangeDoesNotMoveChildLayout()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var child = new LayoutProbeElement
+            {
+                Width = 200,
+                Height = 200
+            };
+            var root = new Grid
+            {
+                Width = 320,
+                Height = 320,
+                Background = Brushes.White
+            };
+            var chrome = new ThemeShadowChrome
+            {
+                Depth = 32,
+                TranslationZ = 32,
+                ReservesShadowSpace = true,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Child = child
+            };
+            root.Children.Add(chrome);
+
+            ArrangeElement(root, 320, 320);
+            var beforeChromeBounds = new Rect(chrome.TranslatePoint(new Point(), root), chrome.RenderSize);
+            var beforeChildBounds = new Rect(child.TranslatePoint(new Point(), root), child.RenderSize);
+            child.ResetLayoutCounts();
+
+            chrome.TranslationZ = 64;
+            root.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(64, chrome.Depth);
+            Assert.AreEqual(new Thickness(32, 16, 32, 48), chrome.PopupShadowPadding);
+            Assert.AreEqual(0, child.MeasureOverrideCount, "Changing reserved ThemeShadow depth should be render-only for the child layout.");
+            Assert.AreEqual(0, child.ArrangeOverrideCount, "Changing reserved ThemeShadow depth should not move the child layout.");
+            var afterChromeBounds = new Rect(chrome.TranslatePoint(new Point(), root), chrome.RenderSize);
+            var afterChildBounds = new Rect(child.TranslatePoint(new Point(), root), child.RenderSize);
+            Assert.AreEqual(beforeChromeBounds.X, afterChromeBounds.X, 0.5, "Changing reserved ThemeShadow depth should not move the chrome horizontally.");
+            Assert.AreEqual(beforeChromeBounds.Y, afterChromeBounds.Y, 0.5, "Changing reserved ThemeShadow depth should not move the chrome vertically.");
+            Assert.AreEqual(beforeChromeBounds.Width, afterChromeBounds.Width, 0.5, "Changing reserved ThemeShadow depth should not resize the chrome width.");
+            Assert.AreEqual(beforeChromeBounds.Height, afterChromeBounds.Height, 0.5, "Changing reserved ThemeShadow depth should not resize the chrome height.");
+            Assert.AreEqual(beforeChildBounds.X, afterChildBounds.X, 0.5, "Changing reserved ThemeShadow depth should not move the child horizontally.");
+            Assert.AreEqual(beforeChildBounds.Y, afterChildBounds.Y, 0.5, "Changing reserved ThemeShadow depth should not move the child vertically.");
+            Assert.AreEqual(beforeChildBounds.Width, afterChildBounds.Width, 0.5, "Changing reserved ThemeShadow depth should not resize the child width.");
+            Assert.AreEqual(beforeChildBounds.Height, afterChildBounds.Height, 0.5, "Changing reserved ThemeShadow depth should not resize the child height.");
         });
     }
 

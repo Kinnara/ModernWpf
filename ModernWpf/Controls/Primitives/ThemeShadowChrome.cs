@@ -70,6 +70,8 @@ namespace ModernWpf.Controls.Primitives
 
             if (IsInitialized)
             {
+                ClearReservedLayoutShadowPadding();
+
                 if (IsShadowEnabled)
                 {
                     EnsureShadow();
@@ -185,7 +187,7 @@ namespace ModernWpf.Controls.Primitives
 
             if (IsInitialized)
             {
-                UpdateShadow(invalidateLayout: ReservesShadowSpace);
+                UpdateShadow(invalidateLayout: false);
                 UpdatePopupMargin();
             }
         }
@@ -290,6 +292,7 @@ namespace ModernWpf.Controls.Primitives
         {
             if (IsInitialized)
             {
+                ClearReservedLayoutShadowPadding();
                 UpdateShadow(invalidateLayout: ReservesShadowSpace);
                 UpdatePopupMargin();
             }
@@ -321,7 +324,9 @@ namespace ModernWpf.Controls.Primitives
         {
             if (IsInitialized)
             {
+                ClearReservedLayoutShadowPadding();
                 UpdateShadow(invalidateLayout: true);
+                UpdatePopupMargin();
             }
         }
 
@@ -391,7 +396,7 @@ namespace ModernWpf.Controls.Primitives
         {
             if (IsShadowEnabled)
             {
-                PopupMargin = PopupShadowPadding;
+                PopupMargin = PopupPositionShadowPadding;
             }
             else
             {
@@ -700,7 +705,24 @@ namespace ModernWpf.Controls.Primitives
             _shadow?.InvalidateVisual();
         }
 
-        private Thickness LayoutShadowPadding => ReservesShadowSpace ? PopupShadowPadding : new Thickness();
+        private Thickness LayoutShadowPadding => ReservesShadowSpace ? GetReservedLayoutShadowPadding() : new Thickness();
+
+        private Thickness PopupPositionShadowPadding => ReservesShadowSpace ? GetReservedLayoutShadowPadding() : PopupShadowPadding;
+
+        private Thickness GetReservedLayoutShadowPadding()
+        {
+            if (!_reservedLayoutShadowPadding.HasValue)
+            {
+                _reservedLayoutShadowPadding = PopupShadowPadding;
+            }
+
+            return _reservedLayoutShadowPadding.Value;
+        }
+
+        private void ClearReservedLayoutShadowPadding()
+        {
+            _reservedLayoutShadowPadding = null;
+        }
 
         private static double SubtractConstraintPadding(double value, double padding)
         {
@@ -1185,6 +1207,7 @@ namespace ModernWpf.Controls.Primitives
         private TranslateTransform _transform;
         private PopupPositioner _popupPositioner;
         private UIElement _shadowOpacitySource;
+        private Thickness? _reservedLayoutShadowPadding;
         private bool _isShadowOpacityRenderingHooked;
         private bool _updatingShadowAlias;
         private bool _updatingTranslationZAlias;

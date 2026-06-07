@@ -126,6 +126,36 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 130 corrects the remaining ThemeShadow reserved-space layout shift:
+
+- User review rejected the Round 129 conclusion because changing depth can still
+  shift layout in a real `ThemeShadowChrome` host. The missed path was not the
+  Gallery sample's source-style caster (`ReservesShadowSpace=false`); it was the
+  reserved-space path. The previous code and test explicitly allowed
+  `ReservesShadowSpace=true` with default insets to grow from `232x232` to
+  `248x248` and move the child origin from `(16,8)` to `(24,12)` when depth
+  changed.
+- Product fix: `ThemeShadowChrome` now freezes reserved layout padding for the
+  current host. `Depth` / `TranslationZ` changes redraw the shadow only; they no
+  longer invalidate layout, resize the chrome, move the child origin, or change
+  popup-position padding. The reserved padding is recalculated only when the
+  shadow host is reset by `IsShadowEnabled`, `WindowedPopupInsetMode`, or
+  `ReservesShadowSpace`.
+- Guard tests passed:
+  `LayoutCompatibilityApiTests.ThemeShadowChrome` for `net8.0-windows7.0`,
+  including the new
+  `ThemeShadowChromeReservedSpaceDepthChangeDoesNotMoveChildLayout` probe. The
+  test verifies that changing reserved depth from `32` to `64` reports the new
+  `PopupShadowPadding` but does not remeasure, rearrange, move, or resize the
+  child/chrome layout.
+- Fresh Light recording
+  `artifacts/gallery-recordings/20260607-035946-118/report.md` passes the
+  Gallery ThemeShadow value path with `ValueInputMethod=RangeValuePatternStepAfterInputMiss`,
+  `BeforeValue=32`, `AfterValue=64`, `TargetReached=true`,
+  identical before/after root, grid, chrome, card, and slider bounds,
+  `ThemeShadowDenseFrameStabilityEvidence=true`, `MaxCardMeanDelta=0.079`, and
+  `MaxCardEdgeShift=0`.
+
 Round 129 corrects the ThemeShadow depth-change conclusion after user review:
 
 - User review rejected the Round 127 conclusion because the visible layout
@@ -137,8 +167,9 @@ Round 129 corrects the ThemeShadow depth-change conclusion after user review:
   `TranslationZ` changes as render-only when `ReservesShadowSpace=false`.
   That is the normal source-style ThemeShadow path used by the Gallery sample;
   it no longer invalidates measure or arrange merely because shadow depth
-  changes. Hosts that opt into `ReservesShadowSpace=true` still invalidate
-  layout because their reserved popup padding is intentionally depth-dependent.
+  changes. Round 130 supersedes the old reserved-space conclusion: hosts that
+  opt into `ReservesShadowSpace=true` now keep their reserved layout fixed while
+  depth changes.
 - Recorder fix: the ThemeShadow value path no longer accepts the single `End`
   jump as current proof. It first tries rendered drag/right-key input, then
   falls back to stepped `RangeValuePattern` updates with short frame delays so
@@ -2225,7 +2256,7 @@ proof on top of these static route captures.
 | Layout | Expander | `item/Expander` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/Expander/light-expander.mp4` | Latest Light rendered run records expansion evidence with whole-frame/local deltas `0.305` / `5.512`; reviewed frame `t9500` shows the expected content visible after expansion. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/Expander/dark-expander.mp4`. |
 | Media | PersonPicture | `item/PersonPicture` | Recorded + screenshot | Fixed profile-image parity | `artifacts/visual-checks/20260606-193052-521-96680/report.md` | Round 117 fixes the profile-image sample to render the packaged shoulder-tap PNG used by the WinUI Gallery snippet/reference, replacing the old local dashboard portrait. The screenshot harness now crops the full WinUI avatar from rendered pixels instead of the `ProfileImageRadio` row or stale offsets; focused Dark parity passed with primary crop delta `0.35` and matching `96x96` crops. Latest Light interaction proof remains `artifacts/gallery-recordings/20260606-073924-914/PersonPicture/light-personpicture.mp4`, which selects `Display Name` and reviewed `t9500` shows the avatar changed to `JD`; previous Dark interaction proof remains `artifacts/gallery-recordings/20260606-052421-356/PersonPicture/dark-personpicture.mp4`. |
 | Styles | IconElement | `item/IconElement` | Recorded + screenshot | Fixed options chrome | `artifacts/visual-checks/20260606-202525-061-150024/report.md` | Round 118 moves the `Monochrome` checkbox out of `ExampleContent` and into `ControlExample.OptionsContent`, so the first sample renders a template-level side options panel with `200-320px` width, card background, divider, and `16px` padding. Latest focused Dark screenshot parity passed with matching `590x118` primary crops and delta `13.08`; reviewed full-page captures show the side panel aligned with the sample row. Latest Light interaction proof remains `artifacts/gallery-recordings/20260606-073924-914/IconElement/light-iconelement.mp4`, which toggles `Monochrome` Off -> On with local visual delta `4.175`; previous Dark interaction proof remains `artifacts/gallery-recordings/20260606-052421-356/IconElement/dark-iconelement.mp4`. |
-| Styles | ThemeShadow | `item/ThemeShadow` | Recorded + screenshot | Fixed options chrome + source-layout-stable depth change; recorder hardened | Light: `artifacts/gallery-recordings/20260607-033114-802/report.md`; Dark: `artifacts/gallery-recordings/20260607-032841-062/report.md` | Round 129 fixes the remaining depth-change layout concern: default `ThemeShadowChrome` depth changes are render-only when `ReservesShadowSpace=false`, and the recorder now requires a visible stepped depth transition instead of the old `SliderKeyboardEndAfterDragMiss` jump. Latest Light and Dark recordings move depth `32 -> 64` through `ValueInputMethod=RangeValuePatternStepAfterInputMiss`, record `ThemeShadowVisualEvidence=true`, `ThemeShadowCasterStabilityEvidence=true`, `ThemeShadowDenseFrameStabilityEvidence=true`, and keep before/after root, example grid, shadow chrome, card, and slider bounds identical. Dense transition evidence keeps the rendered card fixed: Light `MaxCardEdgeShift=0`, Dark `MaxCardEdgeShift=1` within the `1px` threshold. The visible shadow envelope expands, and temporary WinUI source captures in `artifacts/theme-shadow-depth-check/winui-depth32-64/` verify that the official `36,36,200,200` caster also expands its envelope at depth `64`. Latest Light WinUI-reference screenshot parity remains `artifacts/visual-checks/20260606-214802-529-203260/report.md`; latest Dark parity remains `artifacts/visual-checks/20260606-213646-251-68508/report.md`. |
+| Styles | ThemeShadow | `item/ThemeShadow` | Recorded + screenshot | Fixed options chrome + source-layout-stable depth change; reserved-space layout fixed; recorder hardened | Light: `artifacts/gallery-recordings/20260607-035946-118/report.md`; Dark: `artifacts/gallery-recordings/20260607-032841-062/report.md` | Round 130 fixes the remaining depth-change layout concern: `ThemeShadowChrome` freezes reserved layout padding for the current host, so `Depth` / `TranslationZ` changes redraw the shadow without resizing the chrome, moving the child, or changing popup-position padding. The new `ThemeShadowChromeReservedSpaceDepthChangeDoesNotMoveChildLayout` test covers the previously missed `ReservesShadowSpace=true` path. The latest Light recording still moves the Gallery sample from depth `32 -> 64` through `ValueInputMethod=RangeValuePatternStepAfterInputMiss`, records `ThemeShadowVisualEvidence=true`, `ThemeShadowCasterStabilityEvidence=true`, `ThemeShadowDenseFrameStabilityEvidence=true`, keeps before/after root, example grid, shadow chrome, card, and slider bounds identical, and reports `MaxCardEdgeShift=0`. The previous Dark recording remains valid for the source-style sample path with `MaxCardEdgeShift=1` within the `1px` threshold. Latest Light WinUI-reference screenshot parity remains `artifacts/visual-checks/20260606-214802-529-203260/report.md`; latest Dark parity remains `artifacts/visual-checks/20260606-213646-251-68508/report.md`. |
 | Windowing | TitleBar | `item/TitleBar` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-073924-914/TitleBar/light-titlebar.mp4` | Latest Light rendered run toggles `IsBackButtonVisible` and requires the preview Back button to become visible. Manifest records `BeforeState=Off`, `AfterState=On`, `BeforeExpectedElementVisible=false`, `AfterExpectedElementVisible=true`, `ExpectedElementChanged=true`, whole-frame delta `0.127`, and local visual delta `8.509`; reviewed frame `t9500` shows the Back preview button. The previous dark proof remains at `artifacts/gallery-recordings/20260606-021439-880/TitleBar/dark-titlebar.mp4`. |
 | Status & info | InfoBadge | `item/InfoBadge` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-171020-087-82140/report.md` | Round 108 fixed the base InfoBadge auto corner radius and Round 109 fixed the embedded NavigationView sample by refreshing `TemplateSettings.OpenPaneLength` during arrange. `InfoBadgeSampleMatchesWinUIGalleryExamples` now asserts rendered bounds for the nested `Inbox` item and `5` badge plus visible `Home`, `Account`, and `Inbox` text. The screenshot harness uses the embedded NavigationView artifact as the required primary crop with variation threshold `8.0`; reviewed `modernwpf-artifacts/GallerySample_InfoBadge_NavigationView.png` shows `Home`, `Account`, `Inbox`, `Settings`, and the `5` badge. Older Light/Dark recordings still prove the opacity-toggle interaction path, but embedded-badge static parity is now screenshot-backed. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/InfoBar/light-infobar.mp4` | Latest Light rendered rerun toggles `Is Open` from On to Off with local visual delta `4.173` and whole-frame delta `0.192`; reviewed frame `t9500` shows the first InfoBar sample closed while later samples remain aligned. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/InfoBar/dark-infobar.mp4`. |
