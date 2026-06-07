@@ -18,6 +18,11 @@ namespace ModernWpf.WinUI.Tests.CommandBarFlyouts;
 [TestClass]
 public class CommandBarFlyoutApiTests
 {
+    private const double PrimaryCommandTemplateWidth = 57.67;
+    private const double PrimaryCommandActualWidth = 58.0;
+    private const double PrimaryCommandHeight = 55.0;
+    private const double CommandBarPrimarySurfaceHeight = 57.0;
+
     private enum CommandBarSizingOptions
     {
         PrimaryItemsLarger,
@@ -378,7 +383,7 @@ public class CommandBarFlyoutApiTests
     }
 
     [TestMethod]
-    public void FlyoutAnimationsDoNotClipVisibleCommandSurfaces()
+    public void FlyoutAnimationsFollowWinUISourceStoryboards()
     {
         WpfTestHost.Run(() =>
         {
@@ -427,20 +432,10 @@ public class CommandBarFlyoutApiTests
                 Assert.IsNotNull(collapsedToExpandedDownStoryboard);
                 Assert.IsNotNull(expandedDownToCollapsedStoryboard);
 
-                AssertStoryboardDoesNotTarget(openingStoryboard!, "OuterContentRootClipTransform");
-                AssertStoryboardDoesNotTarget(openingStoryboard!, "OuterOverflowContentRootClipTransform");
-                Assert.IsTrue(
-                    StoryboardTargets(openingStoryboard!, "LayoutRoot", "Opacity"),
-                    "CommandBarFlyout open animation should show the complete command surface instead of clipping commands.");
-
-                AssertStoryboardDoesNotTarget(closingStoryboard!, "OuterContentRootClipTransform");
-                AssertStoryboardDoesNotTarget(closingStoryboard!, "OuterOverflowContentRootClipTransform");
-                Assert.IsTrue(
-                    StoryboardTargets(closingStoryboard!, "LayoutRoot", "Opacity"),
-                    "CommandBarFlyout close animation should fade the full primary strip instead of clipping commands.");
-                Assert.IsTrue(
-                    StoryboardTargets(closingStoryboard!, "OuterOverflowContentRoot", "Opacity"),
-                    "CommandBarFlyout close animation should fade the overflow root instead of clipping commands.");
+                AssertStoryboardTargets(openingStoryboard!, "OuterContentRootClipTransform", "X");
+                AssertStoryboardTargets(openingStoryboard!, "OuterOverflowContentRootClipTransform", "X");
+                AssertStoryboardTargets(closingStoryboard!, "OuterContentRootClipTransform", "X");
+                AssertStoryboardTargets(closingStoryboard!, "OuterOverflowContentRootClipTransform", "X");
 
                 VerifySecondaryMenuStoryboard(collapsedToExpandedUpStoryboard!, shouldShow: true);
                 VerifySecondaryMenuStoryboard(expandedUpToCollapsedStoryboard!, shouldShow: false);
@@ -485,7 +480,7 @@ public class CommandBarFlyoutApiTests
             var commandBar = GetCommandBar(commandBarFlyout);
             commandBar.ApplyTemplate();
             WaitForExpandedOverflow(commandBar, host);
-            AssertOverflowRightEdgesAligned(commandBar);
+            AssertOverflowEdgesAligned(commandBar);
             AssertLayoutOpacity(commandBar, 1.0);
 
             HideAndWait(commandBarFlyout);
@@ -498,7 +493,7 @@ public class CommandBarFlyoutApiTests
             commandBar = GetCommandBar(commandBarFlyout);
             commandBar.ApplyTemplate();
             WaitForExpandedOverflow(commandBar, host);
-            AssertOverflowRightEdgesAligned(commandBar);
+            AssertOverflowEdgesAligned(commandBar);
             AssertLayoutOpacity(commandBar, 1.0);
 
             HideAndWait(commandBarFlyout);
@@ -667,7 +662,7 @@ public class CommandBarFlyoutApiTests
                 Assert.AreSame(commandBar.TryFindResource("CommandBarFlyoutBorderBrush"), commandBar.BorderBrush);
                 Assert.AreEqual(commandBar.TryFindResource("CommandBarFlyoutBorderThemeThickness"), commandBar.BorderThickness);
                 Assert.AreEqual(440d, commandBar.MaxWidth);
-                Assert.AreEqual(50d, commandBar.Height);
+                Assert.AreEqual(CommandBarPrimarySurfaceHeight, commandBar.Height);
                 Assert.AreEqual(commandBar.TryFindResource("OverlayCornerRadius"), commandBar.CornerRadius);
             }
             finally
@@ -908,6 +903,8 @@ public class CommandBarFlyoutApiTests
             var rootHost = CreateTemplateHost(commandBar, resources);
             using var host = new TestWindowHost(rootHost, width: 260, height: 160);
             host.UpdateLayout();
+            WaitForExpandedOverflow(commandBar, host);
+            commandBar.ClearShadow();
 
             VerifyFlyoutCommandBarAvailableAndCombinedStates(commandBar);
         });
@@ -989,9 +986,7 @@ public class CommandBarFlyoutApiTests
             host.UpdateLayout();
 
             commandBar.SetLastInputModeForTesting(AppBarButtonInputMode.Touch);
-            commandBar.IsOpen = true;
-            host.UpdateLayout();
-            WpfTestHost.DoEvents();
+            WaitForExpandedOverflow(commandBar, host);
 
             var primaryRoot = FindTemplateChild<System.Windows.Controls.Grid>(primaryButton, "Root");
             var secondaryRoot = FindTemplateChild<System.Windows.Controls.Grid>(secondaryButton, "Root");
@@ -1003,7 +998,7 @@ public class CommandBarFlyoutApiTests
 
             commandBar.IsOpen = false;
             host.UpdateLayout();
-            WpfTestHost.DoEvents();
+            WaitFor(() => !FindTemplateChild<Popup>(commandBar, "OverflowPopup").IsOpen, "CommandBarFlyout overflow popup did not close.");
 
             secondaryRoot = FindTemplateChild<System.Windows.Controls.Grid>(secondaryButton, "Root");
             secondaryToggleRoot = FindTemplateChild<System.Windows.Controls.Grid>(secondaryToggleButton, "Root");
@@ -1134,19 +1129,31 @@ public class CommandBarFlyoutApiTests
             "CommandBarFlyout overflow did not open with measurable layout.");
     }
 
-    private static void AssertOverflowRightEdgesAligned(CommandBarFlyoutCommandBar commandBar)
+    private static void AssertOverflowEdgesAligned(CommandBarFlyoutCommandBar commandBar)
     {
         var primaryItemsRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "PrimaryItemsRoot");
         var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OuterOverflowContentRoot");
 
+        var primaryLeft = primaryItemsRoot.PointToScreen(new Point(0, 0)).X;
         var primaryRight = primaryItemsRoot.PointToScreen(new Point(primaryItemsRoot.ActualWidth, 0)).X;
+        var primaryBottom = primaryItemsRoot.PointToScreen(new Point(0, primaryItemsRoot.ActualHeight)).Y;
+        var overflowLeft = overflowContentRoot.PointToScreen(new Point(0, 0)).X;
         var overflowRight = overflowContentRoot.PointToScreen(new Point(overflowContentRoot.ActualWidth, 0)).X;
+        var overflowTop = overflowContentRoot.PointToScreen(new Point(0, 0)).Y;
 
         Assert.AreEqual(
-            primaryRight,
-            overflowRight,
+            primaryRight - primaryLeft,
+            overflowRight - overflowLeft,
             1.0,
-            $"Expected expanded CommandBarFlyout overflow to align to the primary command strip right edge. PrimaryRight={primaryRight}, OverflowRight={overflowRight}.");
+            $"Expected expanded CommandBarFlyout overflow width to match the primary command strip width. PrimaryWidth={primaryRight - primaryLeft}, OverflowWidth={overflowRight - overflowLeft}.");
+        var horizontalGap = overflowLeft - primaryLeft;
+        Assert.IsTrue(
+            horizontalGap <= 1.0 && horizontalGap >= -8.0,
+            $"Expected expanded CommandBarFlyout overflow to avoid a visible right-shift from the primary command strip. PrimaryLeft={primaryLeft}, OverflowLeft={overflowLeft}, HorizontalGap={horizontalGap}.");
+        var joinGap = overflowTop - primaryBottom;
+        Assert.IsTrue(
+            joinGap <= 1.0 && joinGap >= -4.0,
+            $"Expected expanded CommandBarFlyout overflow to touch the primary command strip with no visible gap. PrimaryBottom={primaryBottom}, OverflowTop={overflowTop}, JoinGap={joinGap}.");
     }
 
     private static void AssertLayoutOpacity(CommandBarFlyoutCommandBar commandBar, double expected)
@@ -1167,23 +1174,22 @@ public class CommandBarFlyoutApiTests
 
     private static void VerifySecondaryMenuStoryboard(Storyboard storyboard, bool shouldShow)
     {
-        AssertStoryboardDoesNotTarget(storyboard, "MoreButtonTransform");
-        AssertStoryboardDoesNotTarget(storyboard, "ContentRootClipTransform");
-        AssertStoryboardDoesNotTarget(storyboard, "OverflowContentRootClipTransform");
+        AssertStoryboardTargets(storyboard, "MoreButtonTransform", "X");
+        AssertStoryboardTargets(storyboard, "ContentRootClipTransform", "X");
+        AssertStoryboardTargets(storyboard, "OverflowContentRootClipTransform", "X");
+        AssertStoryboardTargets(storyboard, "OverflowContentRootClipTransform", "Y");
         Assert.IsTrue(
             StoryboardTargets(storyboard, "OuterOverflowContentRoot", "Opacity"),
             shouldShow
-                ? "CommandBarFlyout secondary menu open animation should show the complete menu instead of clipping menu items."
-                : "CommandBarFlyout secondary menu close animation should hide the complete menu instead of clipping menu items.");
+                ? "CommandBarFlyout secondary menu open animation should expose the overflow root."
+                : "CommandBarFlyout secondary menu close animation should hide the overflow root.");
     }
 
-    private static void AssertStoryboardDoesNotTarget(Storyboard storyboard, string targetName)
+    private static void AssertStoryboardTargets(Storyboard storyboard, string targetName, string targetProperty)
     {
-        var targets = storyboard.Children
-            .Select(Storyboard.GetTargetName)
-            .ToArray();
-
-        CollectionAssert.DoesNotContain(targets, targetName);
+        Assert.IsTrue(
+            StoryboardTargets(storyboard, targetName, targetProperty),
+            $"Expected CommandBarFlyout storyboard to animate {targetName}.{targetProperty} like the WinUI source template.");
     }
 
     private static void VerifyCommandBarSizing(CommandBarSizingOptions sizingOptions)
@@ -1316,10 +1322,10 @@ public class CommandBarFlyoutApiTests
         var overflowTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "OverflowTextLabel");
 
         AssertCurrentState(root, "ApplicationViewStates", "FullSize");
-        Assert.AreEqual(56.0, button.ActualWidth);
-        Assert.AreEqual(48.0, button.ActualHeight);
-        Assert.AreEqual(56.0, contentRoot.Width);
-        Assert.AreEqual(48.0, contentRoot.MinHeight);
+        Assert.AreEqual(PrimaryCommandActualWidth, button.ActualWidth);
+        Assert.AreEqual(PrimaryCommandHeight, button.ActualHeight);
+        Assert.AreEqual(PrimaryCommandTemplateWidth, contentRoot.Width);
+        Assert.AreEqual(PrimaryCommandHeight, contentRoot.MinHeight);
         Assert.AreEqual(expectedLabel, textLabel.Text);
         Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
@@ -1449,10 +1455,10 @@ public class CommandBarFlyoutApiTests
             "GameControllerInputMode",
             "OverflowTextLabel.Padding");
 
-        Assert.AreEqual(56.0, button.Width);
-        Assert.AreEqual(48.0, button.Height);
-        Assert.AreEqual(56.0, contentRoot.Width);
-        Assert.AreEqual(48.0, contentRoot.MinHeight);
+        Assert.AreEqual(PrimaryCommandTemplateWidth, button.Width);
+        Assert.AreEqual(PrimaryCommandHeight, button.Height);
+        Assert.AreEqual(PrimaryCommandTemplateWidth, contentRoot.Width);
+        Assert.AreEqual(PrimaryCommandHeight, contentRoot.MinHeight);
         Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
         Assert.AreEqual("Accept", textLabel.Text);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
@@ -1473,7 +1479,7 @@ public class CommandBarFlyoutApiTests
 
         Assert.IsTrue(VisualStateManager.GoToState(button, "FullSize", false));
 
-        Assert.AreEqual(56.0, contentRoot.Width);
+        Assert.AreEqual(PrimaryCommandTemplateWidth, contentRoot.Width);
         Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
         Assert.IsTrue(double.IsNaN(contentViewbox.Width));
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
@@ -1556,10 +1562,10 @@ public class CommandBarFlyoutApiTests
             "OverflowTextLabel.Padding",
             "OverflowCheckGlyph.Margin");
 
-        Assert.AreEqual(56.0, button.Width);
-        Assert.AreEqual(48.0, button.Height);
-        Assert.AreEqual(56.0, contentRoot.Width);
-        Assert.AreEqual(48.0, contentRoot.MinHeight);
+        Assert.AreEqual(PrimaryCommandTemplateWidth, button.Width);
+        Assert.AreEqual(PrimaryCommandHeight, button.Height);
+        Assert.AreEqual(PrimaryCommandTemplateWidth, contentRoot.Width);
+        Assert.AreEqual(PrimaryCommandHeight, contentRoot.MinHeight);
         Assert.AreEqual(Visibility.Collapsed, overflowCheckGlyph.Visibility);
         Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
         Assert.AreEqual("Accept", textLabel.Text);
@@ -1584,7 +1590,7 @@ public class CommandBarFlyoutApiTests
 
         Assert.IsTrue(VisualStateManager.GoToState(button, "FullSize", false));
 
-        Assert.AreEqual(56.0, contentRoot.Width);
+        Assert.AreEqual(PrimaryCommandTemplateWidth, contentRoot.Width);
         Assert.IsTrue(double.IsPositiveInfinity(contentViewbox.MaxWidth));
         Assert.AreEqual(Visibility.Collapsed, overflowCheckGlyph.Visibility);
         Assert.AreEqual(Visibility.Visible, textLabel.Visibility);

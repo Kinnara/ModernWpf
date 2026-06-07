@@ -10,6 +10,7 @@ param(
     [int]$Height = 820,
     [int]$TimeoutSeconds = 30,
     [int]$ModernWpfRetries = 1,
+    [string]$WinUIReferenceRunDir,
     [switch]$Build,
     [switch]$IncludeInteractions,
     [switch]$FailOnDifference
@@ -172,6 +173,11 @@ public static class GalleryVisualNative
         mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
         System.Threading.Thread.Sleep(80);
         mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
+    }
+
+    public static void MoveCursor(int x, int y)
+    {
+        SetCursorPos(x, y);
     }
 
     public static void PressSpace()
@@ -2942,6 +2948,76 @@ function Get-ElementWindowBounds($window, $element) {
     }
 }
 
+function Merge-WindowBounds($left, $right) {
+    if ($null -eq $left -or !$left.Found) {
+        return $right
+    }
+
+    if ($null -eq $right -or !$right.Found) {
+        return $left
+    }
+
+    $x = [Math]::Min([int]$left.X, [int]$right.X)
+    $y = [Math]::Min([int]$left.Y, [int]$right.Y)
+    $rightEdge = [Math]::Max([int]$left.X + [int]$left.Width, [int]$right.X + [int]$right.Width)
+    $bottomEdge = [Math]::Max([int]$left.Y + [int]$left.Height, [int]$right.Y + [int]$right.Height)
+    return [ordered]@{
+        Found = $true
+        Reason = ""
+        X = $x
+        Y = $y
+        Width = [Math]::Max(1, $rightEdge - $x)
+        Height = [Math]::Max(1, $bottomEdge - $y)
+        ChangedSamples = 0
+    }
+}
+
+function Get-CommandBarFlyoutOpenSurfaceBounds($window) {
+    $bounds = $null
+    foreach ($name in @("Share", "Save", "Delete", "Resize", "Move")) {
+        $element = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
+        $elementBounds = Get-ElementWindowBounds $window $element
+        if ($null -ne $elementBounds -and $elementBounds.Found) {
+            $bounds = Merge-WindowBounds $bounds $elementBounds
+        }
+    }
+
+    $moreButton = Find-CommandBarFlyoutMoreButton $window
+    $moreButtonBounds = Get-ElementWindowBounds $window $moreButton
+    if ($null -ne $moreButtonBounds -and $moreButtonBounds.Found) {
+        $bounds = Merge-WindowBounds $bounds $moreButtonBounds
+    }
+
+    return $bounds
+}
+
+function Save-CommandBarFlyoutOpenSurfaceCrop($window, [string]$screenshot, [string]$path) {
+    $bounds = Get-CommandBarFlyoutOpenSurfaceBounds $window
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = "CommandBarFlyoutOpenSurface"
+            Screenshot = ""
+            Bounds = $bounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    $expandedBounds = Save-Crop $screenshot $bounds $path 6
+    return [ordered]@{
+        Found = $true
+        Source = "CommandBarFlyoutOpenSurface"
+        Screenshot = $path
+        Bounds = $expandedBounds
+        Width = $expandedBounds.Width
+        Height = $expandedBounds.Height
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+    }
+}
+
 function Compare-Images([string]$leftPath, [string]$rightPath) {
     $left = [System.Drawing.Bitmap]::FromFile($leftPath)
     $right = [System.Drawing.Bitmap]::FromFile($rightPath)
@@ -3418,6 +3494,43 @@ function Test-ControlRequiresPopupWindowOpenProof([string]$control) {
     }
 }
 
+function Test-ControlRequiresReferenceInteractionCropParity([string]$control) {
+    switch ($control) {
+        "CommandBarFlyout" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control) {
+    switch ($control) {
+        default { return 24.0 }
+    }
+}
+
+function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control) {
+    switch ($control) {
+        "CommandBarFlyout" { return 12.0 }
+        default { return 24.0 }
+    }
+}
+
+function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control) {
+    switch ($control) {
+        "CommandBarFlyout" { return 8 }
+        default { return 24 }
+    }
+}
+
+function Set-VisualCheckReferenceFailure($result, [string]$message) {
+    $result["Status"] = "Failed"
+    if ($result.Contains("LastException") -and ![string]::IsNullOrWhiteSpace([string]$result.LastException)) {
+        $result["LastException"] = "$($result.LastException); $message"
+    }
+    else {
+        $result["LastException"] = $message
+    }
+}
+
 function Close-PreparedOpenInteractionState($window, [string]$control) {
     if ($control -ne "TeachingTip") {
         return
@@ -3483,6 +3596,18 @@ function Open-CommandBarFlyoutSecondaryCommands($window) {
     } while ((Get-Date) -lt $deadline)
 
     return $false
+}
+
+function Move-CursorAwayFromInteractionSurface($window) {
+    try {
+        $rect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+        [GalleryVisualNative]::MoveCursor(
+            [int]($rect.Left + 20),
+            [int]($rect.Top + 20))
+        Start-Sleep -Milliseconds 120
+    }
+    catch {
+    }
 }
 
 function Get-ElementNativeWindowHandle($element) {
@@ -4203,6 +4328,9 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     $commandBarFlyoutSecondaryExpanded = $false
     if ($control -eq "CommandBarFlyout" -and $invoked) {
         $commandBarFlyoutSecondaryExpanded = Open-CommandBarFlyoutSecondaryCommands $window
+        if ($commandBarFlyoutSecondaryExpanded) {
+            Move-CursorAwayFromInteractionSurface $window
+        }
     }
 
     $frames = New-Object System.Collections.Generic.List[object]
@@ -4426,6 +4554,15 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
             $visualOpened = $openPopupTrusted
             if ($openPopupTrusted) {
                 $crop = $openPopupCrop
+            }
+        }
+
+        if ($control -eq "CommandBarFlyout" -and $commandBarFlyoutSecondaryExpanded) {
+            $surfaceCropPath = Join-Path $caseDir ("{0}-{1}-open-surface-crop.png" -f $app.ToLowerInvariant(), $control)
+            $surfaceCrop = Save-CommandBarFlyoutOpenSurfaceCrop $window $selectedFrame.Screenshot $surfaceCropPath
+            if ($null -ne $surfaceCrop -and $surfaceCrop.Found -and $surfaceCrop.NonBlank) {
+                $crop = $surfaceCrop
+                $visualOpened = $true
             }
         }
     }
@@ -5585,6 +5722,68 @@ function Test-WinUIReferenceThemeProbeSucceeded($themeProbe) {
     return $reason.Contains("already matched")
 }
 
+function ConvertTo-OrderedDictionaryFromJsonValue($value) {
+    if ($null -eq $value) {
+        return $null
+    }
+
+    if ($value -is [System.Management.Automation.PSCustomObject]) {
+        $map = [ordered]@{}
+        foreach ($property in $value.PSObject.Properties) {
+            $map[$property.Name] = ConvertTo-OrderedDictionaryFromJsonValue $property.Value
+        }
+        return $map
+    }
+
+    if ($value -is [System.Array]) {
+        $items = New-Object System.Collections.Generic.List[object]
+        foreach ($item in $value) {
+            $items.Add((ConvertTo-OrderedDictionaryFromJsonValue $item))
+        }
+        return $items.ToArray()
+    }
+
+    return $value
+}
+
+function Assert-CachedReferenceFileExists([string]$path, [string]$description) {
+    if ([string]::IsNullOrWhiteSpace($path) -or !(Test-Path $path)) {
+        throw "Cached WinUI reference $description was missing: '$path'. Refresh the WinUI reference run."
+    }
+}
+
+function Get-CachedWinUIReferenceResult([string]$control) {
+    if ([string]::IsNullOrWhiteSpace($WinUIReferenceRunDir)) {
+        return $null
+    }
+
+    $resolvedRunDir = (Resolve-Path $WinUIReferenceRunDir).Path
+    $cachedReport = Join-Path $resolvedRunDir "report.json"
+    if (!(Test-Path $cachedReport)) {
+        throw "Cached WinUI reference report was not found at '$cachedReport'."
+    }
+
+    $cachedResults = @(Get-Content -Path $cachedReport -Raw | ConvertFrom-Json)
+    $match = @($cachedResults | Where-Object { $_.App -eq "WinUI3Gallery" -and $_.Control -eq $control } | Select-Object -Last 1)
+    if ($match.Count -eq 0) {
+        throw "Cached WinUI reference report '$cachedReport' does not contain control '$control'."
+    }
+
+    $result = ConvertTo-OrderedDictionaryFromJsonValue $match[0]
+    Assert-CachedReferenceFileExists ([string]$result.Screenshot) "$control screenshot"
+    if ($result.Contains("StaticCrops") -and $result.StaticCrops.Primary.Found) {
+        Assert-CachedReferenceFileExists ([string]$result.StaticCrops.Primary.Screenshot) "$control primary crop"
+    }
+    if ($result.Contains("Interaction") -and $null -ne $result.Interaction -and
+        $result.Interaction.Crop.Found) {
+        Assert-CachedReferenceFileExists ([string]$result.Interaction.Crop.Screenshot) "$control interaction crop"
+    }
+
+    $result["ReferenceCacheReused"] = $true
+    $result["ReferenceSourceRunDir"] = $resolvedRunDir
+    return $result
+}
+
 $runDir = New-RunDirectory
 $results = New-Object System.Collections.Generic.List[object]
 
@@ -5632,23 +5831,33 @@ foreach ($control in $Controls) {
     if ($Reference -eq "InstalledWinUI3Gallery") {
         $referenceResult = $null
         $lastReferenceError = ""
-        foreach ($referenceAttempt in 1..3) {
+        if (![string]::IsNullOrWhiteSpace($WinUIReferenceRunDir)) {
             try {
-                $referenceResult = Capture-WinUIReference $control $caseDir
-                if (!$referenceResult.Contains("Attempt")) {
-                    $referenceResult.Add("Attempt", $referenceAttempt)
-                }
-                if ($referenceResult.Status -eq "Passed") {
-                    break
-                }
-
-                $lastReferenceError = $referenceResult.LastException
-                Start-Sleep -Milliseconds (500 * $referenceAttempt)
+                $referenceResult = Get-CachedWinUIReferenceResult $control
             }
             catch {
                 $lastReferenceError = $_.Exception.Message
-                $referenceResult = $null
-                Start-Sleep -Milliseconds (500 * $referenceAttempt)
+            }
+        }
+        else {
+            foreach ($referenceAttempt in 1..3) {
+                try {
+                    $referenceResult = Capture-WinUIReference $control $caseDir
+                    if (!$referenceResult.Contains("Attempt")) {
+                        $referenceResult.Add("Attempt", $referenceAttempt)
+                    }
+                    if ($referenceResult.Status -eq "Passed") {
+                        break
+                    }
+
+                    $lastReferenceError = $referenceResult.LastException
+                    Start-Sleep -Milliseconds (500 * $referenceAttempt)
+                }
+                catch {
+                    $lastReferenceError = $_.Exception.Message
+                    $referenceResult = $null
+                    Start-Sleep -Milliseconds (500 * $referenceAttempt)
+                }
             }
         }
 
@@ -5678,8 +5887,7 @@ foreach ($control in $Controls) {
         $comparison = Compare-Images $modern.Screenshot $referenceCapture.Screenshot
         $modern["ReferenceComparison"] = $comparison
         if ($FailOnDifference -and $comparison.Comparable -and $comparison.MeanDelta -gt 24) {
-            $modern["Status"] = "Failed"
-            $modern["LastException"] = "Mean pixel delta $($comparison.MeanDelta) exceeded visual threshold 24."
+            Set-VisualCheckReferenceFailure $modern "Mean pixel delta $($comparison.MeanDelta) exceeded visual threshold 24."
         }
     }
     if ($null -ne $modern -and $null -ne $referenceCapture -and
@@ -5692,6 +5900,13 @@ foreach ($control in $Controls) {
             ModernWpfHeight = $modern.StaticCrops.Primary.Height
             ReferenceWidth = $referenceCapture.StaticCrops.Primary.Width
             ReferenceHeight = $referenceCapture.StaticCrops.Primary.Height
+        }
+
+        $primaryThreshold = Get-ReferencePrimaryCropMeanDeltaThreshold $control
+        if ($FailOnDifference -and
+            $modern.PrimaryCropReferenceComparison.Comparable -and
+            [double]$modern.PrimaryCropReferenceComparison.MeanDelta -gt $primaryThreshold) {
+            Set-VisualCheckReferenceFailure $modern "Primary crop delta $($modern.PrimaryCropReferenceComparison.MeanDelta) exceeded visual threshold $primaryThreshold."
         }
     }
     if ($null -ne $modern -and $null -ne $referenceCapture -and
@@ -5723,6 +5938,45 @@ foreach ($control in $Controls) {
                 ReferenceHeight = $referenceCapture.Interaction.Crop.Height
             }
         }
+
+        $requiresInteractionCropParity = Test-ControlRequiresReferenceInteractionCropParity $control
+        if ($requiresInteractionCropParity) {
+            if ($null -eq $modern.Interaction.Crop -or
+                $null -eq $referenceCapture.Interaction.Crop -or
+                !$modern.Interaction.Crop.Found -or
+                !$referenceCapture.Interaction.Crop.Found) {
+                Set-VisualCheckReferenceFailure $modern "$control interaction reference crop was required but unavailable."
+            }
+            elseif ($modern.Interaction.Crop.Source -ne $referenceCapture.Interaction.Crop.Source) {
+                Set-VisualCheckReferenceFailure $modern "$control interaction crop sources differed: ModernWpf '$($modern.Interaction.Crop.Source)' vs reference '$($referenceCapture.Interaction.Crop.Source)'."
+            }
+            elseif (!$modern.Contains("InteractionCropReferenceComparison") -or !$modern.InteractionCropReferenceComparison.Comparable) {
+                Set-VisualCheckReferenceFailure $modern "$control interaction crop comparison was not comparable."
+            }
+            else {
+                $interactionCropThreshold = Get-ReferenceInteractionCropMeanDeltaThreshold $control
+                if ([double]$modern.InteractionCropReferenceComparison.MeanDelta -gt $interactionCropThreshold) {
+                    Set-VisualCheckReferenceFailure $modern "$control interaction crop delta $($modern.InteractionCropReferenceComparison.MeanDelta) exceeded visual threshold $interactionCropThreshold."
+                }
+
+                if ($modern.Contains("InteractionCropSize")) {
+                    $interactionSizeDelta = [Math]::Abs([int]$modern.InteractionCropSize.ModernWpfWidth - [int]$modern.InteractionCropSize.ReferenceWidth) +
+                        [Math]::Abs([int]$modern.InteractionCropSize.ModernWpfHeight - [int]$modern.InteractionCropSize.ReferenceHeight)
+                    $interactionSizeThreshold = Get-ReferenceInteractionCropSizeDeltaThreshold $control
+                    if ($interactionSizeDelta -gt $interactionSizeThreshold) {
+                        Set-VisualCheckReferenceFailure $modern "$control interaction crop size delta $interactionSizeDelta exceeded visual threshold $interactionSizeThreshold."
+                    }
+                }
+            }
+        }
+        elseif ($FailOnDifference -and
+            $modern.Contains("InteractionCropReferenceComparison") -and
+            $modern.InteractionCropReferenceComparison.Comparable) {
+            $interactionCropThreshold = Get-ReferenceInteractionCropMeanDeltaThreshold $control
+            if ([double]$modern.InteractionCropReferenceComparison.MeanDelta -gt $interactionCropThreshold) {
+                Set-VisualCheckReferenceFailure $modern "$control interaction crop delta $($modern.InteractionCropReferenceComparison.MeanDelta) exceeded visual threshold $interactionCropThreshold."
+            }
+        }
     }
 }
 
@@ -5736,6 +5990,9 @@ $markdown.Add("")
 $markdown.Add("- Theme: $Theme")
 $markdown.Add("- Size: ${Width}x${Height}")
 $markdown.Add("- Reference: $Reference")
+if (![string]::IsNullOrWhiteSpace($WinUIReferenceRunDir)) {
+    $markdown.Add("- WinUI reference run: $((Resolve-Path $WinUIReferenceRunDir).Path)")
+}
 $markdown.Add("")
 
 $controlScores = @{}

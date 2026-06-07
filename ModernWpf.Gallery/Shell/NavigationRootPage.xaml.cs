@@ -118,6 +118,7 @@ namespace ModernWpf.Gallery.Shell
         private const double DefaultGroupNavigationContentLeftMargin = 8;
         private const double GroupNavigationDisclosureColumnWidth = 24;
         private const double GroupNavigationChevronLeftOffset = 0;
+        private const string GroupNavigationDisclosureChevronTag = "GalleryNavigationDisclosureChevron";
         private const double DefaultTopLevelNavigationContentVerticalOffset = 0;
         private const double DefaultChildNavigationContentVerticalOffset = 16;
         private static readonly Thickness DefaultNavigationSelectionIndicatorMargin = new Thickness(0);
@@ -353,6 +354,11 @@ namespace ModernWpf.Gallery.Shell
 
         private void OnGroupNavigationItemPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
+            if (IsGroupNavigationDisclosureChevronSource(e.OriginalSource))
+            {
+                return;
+            }
+
             if (sender is NavigationViewItem item && e.ChangedButton == MouseButton.Left)
             {
                 _pendingGroupExpansionStates[item] = !item.IsExpanded;
@@ -525,10 +531,13 @@ namespace ModernWpf.Gallery.Shell
                 FontSize = 10,
                 Margin = new Thickness(GroupNavigationChevronLeftOffset, verticalOffset, 0, 0),
                 Focusable = false,
+                Tag = GroupNavigationDisclosureChevronTag,
                 Text = "\uE76C",
                 RenderTransformOrigin = new Point(0.5, 0.5),
                 RenderTransform = new RotateTransform()
             };
+            chevron.MouseLeftButtonDown += OnGroupNavigationDisclosureChevronMouseLeftButtonDown;
+            chevron.MouseLeftButtonUp += OnGroupNavigationDisclosureChevronMouseLeftButtonUp;
 
             var fontFamily = Application.Current.TryFindResource("SymbolThemeFontFamily") as FontFamily;
             if (fontFamily != null)
@@ -547,6 +556,45 @@ namespace ModernWpf.Gallery.Shell
 
             Grid.SetColumn(chevron, 0);
             grid.Children.Add(chevron);
+        }
+
+        private static void OnGroupNavigationDisclosureChevronMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                e.Handled = true;
+            }
+        }
+
+        private static void OnGroupNavigationDisclosureChevronMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Left ||
+                sender is not DependencyObject source ||
+                FindVisualAncestor<NavigationViewItem>(source) is not { } item)
+            {
+                return;
+            }
+
+            item.IsExpanded = !item.IsExpanded;
+            item.Focus();
+            e.Handled = true;
+        }
+
+        private static bool IsGroupNavigationDisclosureChevronSource(object source)
+        {
+            var element = source as DependencyObject;
+            while (element != null)
+            {
+                if (element is TextBlock { Tag: string tag } &&
+                    string.Equals(tag, GroupNavigationDisclosureChevronTag, StringComparison.Ordinal))
+                {
+                    return true;
+                }
+
+                element = VisualTreeHelper.GetParent(element);
+            }
+
+            return false;
         }
 
         private void SuppressNavigationViewDefaultExpandGlyph()
@@ -1175,6 +1223,23 @@ namespace ModernWpf.Gallery.Shell
                 {
                     return descendant;
                 }
+            }
+
+            return null;
+        }
+
+        private static T FindVisualAncestor<T>(DependencyObject element)
+            where T : DependencyObject
+        {
+            var parent = VisualTreeHelper.GetParent(element);
+            while (parent != null)
+            {
+                if (parent is T value)
+                {
+                    return value;
+                }
+
+                parent = VisualTreeHelper.GetParent(parent);
             }
 
             return null;

@@ -941,6 +941,34 @@ public class TemplateParityTests
         Assert.IsFalse(text.Contains("DataGridCellPresenter", StringComparison.Ordinal));
     }
 
+    [TestMethod]
+    public void CommandBarFlyoutTemplateKeepsWinUISourceAnimationShape()
+    {
+        var repoRoot = FindRepoRoot();
+        var commandBarFlyoutTemplate = File.ReadAllText(Path.Combine(
+            repoRoot,
+            "ModernWpf.Controls",
+            "CommandBarFlyout",
+            "CommandBarFlyout.xaml"));
+        var commandBarTemplate = File.ReadAllText(Path.Combine(
+            repoRoot,
+            "ModernWpf.Controls",
+            "CommandBar",
+            "CommandBar.xaml"));
+
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetName=\"OuterContentRootClipTransform\" Storyboard.TargetProperty=\"X\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetName=\"OuterOverflowContentRootClipTransform\" Storyboard.TargetProperty=\"X\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Path=FlyoutTemplateSettings.OpenAnimationStartPosition", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Path=FlyoutTemplateSettings.OpenAnimationEndPosition", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetName=\"MoreButtonTransform\" Storyboard.TargetProperty=\"X\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetName=\"ContentRootClipTransform\" Storyboard.TargetProperty=\"X\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetName=\"OverflowContentRootClipTransform\" Storyboard.TargetProperty=\"Y\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("ControlNormalAnimationDuration", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("ControlFastAnimationAfterDuration", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("PopupAnimation=\"{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarTemplate.Contains("PopupAnimation=\"{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}\"", StringComparison.Ordinal));
+    }
+
     private static string FindRepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

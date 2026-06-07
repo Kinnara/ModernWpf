@@ -4026,11 +4026,11 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "function Get-ShellNavigationDisclosureClickPoint($item)",
                 "$rect = $item.Current.BoundingRectangle",
-                "$rect.X + [Math]::Min(30.0",
-                "Source = \"DisclosureGlyph\"",
+                "$rect.X + ($rect.Width * 0.5)",
+                "Source = \"GroupRowBody\"",
                 "function Invoke-ShellNavigationDisclosure($window, $navigationView, [string]$name, [string]$targetState)",
                 "$point = Get-ShellNavigationDisclosureClickPoint $item",
-                "[GalleryRecordingNative]::HoldClickOverWindow($window.Current.NativeWindowHandle, $point.X, $point.Y, 120)",
+                "[GalleryRecordingNative]::HoldClick($point.X, $point.Y, 120)",
                 "StateAfterClick = $stateAfterClick",
                 "UsedAutomationFallback = $usedAutomationFallback");
             AssertContainsInOrder(

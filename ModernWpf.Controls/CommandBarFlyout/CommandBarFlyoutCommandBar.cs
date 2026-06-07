@@ -133,12 +133,14 @@ namespace ModernWpf.Controls.Primitives
                 StopCloseAnimation();
                 SetOpacity(1);
                 UpdateInputDeviceTypeUsedToOpen();
+                UpdateCommandOverflowStyleParams();
                 Opening?.Invoke(this, null);
             }
             else
             {
                 Closing?.Invoke(this, null);
                 m_inputModeUsedToOpen = AppBarButtonInputMode.Default;
+                UpdateCommandOverflowStyleParams();
                 m_secondaryItemsRootSized = false;
                 StopCloseAnimation();
                 StopOpenAnimation();
@@ -193,6 +195,7 @@ namespace ModernWpf.Controls.Primitives
             m_secondaryItemsPanel = GetTemplateChild(SecondaryItemsPanelName) as Panel;
             m_moreButton = GetTemplateChild("MoreButton") as ButtonBase;
             m_overflowPopup = GetTemplateChild(OverflowPopupName) as Popup;
+            m_outerOverflowContentRootShadowChrome = GetTemplateChild("OuterOverflowContentRootShadowChrome") as ThemeShadowChrome;
 
             if (m_layoutRoot != null)
             {
@@ -891,7 +894,7 @@ namespace ModernWpf.Controls.Primitives
                 flyoutTemplateSettings.WidthExpansionAnimationEndPosition = -flyoutTemplateSettings.WidthExpansionDelta;
                 flyoutTemplateSettings.ContentClipRect = new Rect(0, 0, expandedWidth, primaryItemsRootDesiredSize.Height);
                 flyoutTemplateSettings.CurrentWidth = IsOpen ? expandedWidth : collapsedWidth;
-                UpdateOverflowPopupHorizontalOffset(collapsedWidth, expandedWidth);
+                UpdateOverflowPopupOffset(collapsedWidth, expandedWidth);
 
                 bool isPlayingCloseAnimation = m_closingStoryboard != null && m_closingStoryboardState == ClockState.Active;
 
@@ -926,7 +929,7 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private void UpdateOverflowPopupHorizontalOffset(double collapsedWidth, double expandedWidth)
+        private void UpdateOverflowPopupOffset(double collapsedWidth, double expandedWidth)
         {
             if (m_overflowPopup == null)
             {
@@ -936,17 +939,38 @@ namespace ModernWpf.Controls.Primitives
             if (PrimaryCommands.Count > 0)
             {
                 m_overflowPopup.HorizontalOffset = (collapsedWidth - expandedWidth) / 2.0 - GetOverflowPopupAlignmentCorrection();
+                m_overflowPopup.VerticalOffset = -GetOverflowPopupVerticalAlignmentCorrection();
             }
             else
             {
                 m_overflowPopup.HorizontalOffset = 0;
+                m_overflowPopup.VerticalOffset = 0;
             }
         }
 
         private double GetOverflowPopupAlignmentCorrection()
         {
-            // The visible overflow root is inset by the command bar border and the overflow presenter border.
-            return BorderThickness.Left + BorderThickness.Right + BorderThickness.Right;
+            // The visible overflow root is inset by the popup shadow and by the source ellipsis button's
+            // right-side inner margin. Include both so the WPF popup content, not just the template
+            // element bounds, lines up with the primary command surface.
+            var popupShadowInset = m_outerOverflowContentRootShadowChrome?.PopupPositionShadowPadding.Left ?? 0;
+            return popupShadowInset + BorderThickness.Left + BorderThickness.Right + BorderThickness.Right + GetOverflowPopupEllipsisInset();
+        }
+
+        private double GetOverflowPopupVerticalAlignmentCorrection()
+        {
+            var popupShadowInset = m_outerOverflowContentRootShadowChrome?.PopupPositionShadowPadding.Top ?? 0;
+            return popupShadowInset + BorderThickness.Bottom + BorderThickness.Bottom;
+        }
+
+        private double GetOverflowPopupEllipsisInset()
+        {
+            if (TryFindResource("CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin") is Thickness margin)
+            {
+                return margin.Right;
+            }
+
+            return 6;
         }
 
 #if NET48_OR_NEWER
@@ -1455,9 +1479,7 @@ namespace ModernWpf.Controls.Primitives
 
         private bool AreCommandBarFlyoutAnimationsEnabled()
         {
-            return SharedHelpers.IsAnimationsEnabled &&
-                   TryGetOwningFlyout(out var owningFlyout) &&
-                   owningFlyout.AreOpenCloseAnimationsEnabled;
+            return SharedHelpers.IsAnimationsEnabled;
         }
 
         private void UpdateOverflowPopupVisibility(bool isOpen)
@@ -1532,6 +1554,7 @@ namespace ModernWpf.Controls.Primitives
         private Panel m_secondaryItemsPanel;
         private ButtonBase m_moreButton;
         private Popup m_overflowPopup;
+        private ThemeShadowChrome m_outerOverflowContentRootShadowChrome;
         private RoutedEventHandlerRevoker m_firstItemLoadedRevoker;
         private readonly List<RoutedEventHandlerRevoker> m_itemLoadedRevokers = new();
         private readonly List<(FrameworkElement Element, SizeChangedEventHandler Handler)> m_itemSizeChangedHandlers = new();

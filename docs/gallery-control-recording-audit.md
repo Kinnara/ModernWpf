@@ -97,6 +97,11 @@ ported WinUI controls use `Run-GalleryVisualChecks.ps1` with
 evidence for WPF controls such as Button, CheckBox, Slider, TextBox,
 PasswordBox, or RichTextEdit.
 
+For ported WinUI controls where animation, popup lifetime, or transition
+geometry is under review, source XAML parity is not enough. Record a ModernWpf
+clip and a WinUI Gallery reference clip for the same interaction path, then
+compare the dense frame sheets or MP4s before accepting the fix.
+
 ## Recorder
 
 Use the per-control recorder:
@@ -118,6 +123,13 @@ Controls that require motion proof can opt into preserved animations and record
 `AnimationEvidence` in the manifest while the normal visual-test artifact path
 keeps indeterminate visuals stabilized.
 
+Rendered recordings can capture slower than real time when popup composition is
+expensive. The recorder now records the scale from wall-clock interaction time
+to encoded MP4 time and normalizes open-repeat evidence timestamps before
+selecting poster frames. WinUI reference video for CommandBarFlyout uses
+`Record-WinUIReferenceCommandBarFlyout.ps1`, which records the installed WinUI
+Gallery with ffmpeg `gdigrab` so the reference MP4 keeps real elapsed time.
+
 Rendered MP4 output supports `-VideoEncoder Auto|libx264|h264_nvenc|h264_qsv|h264_amf`
 and `-BenchmarkEncoders`. The current machine benchmark for a 6.6s Menu clip
 showed `libx264` faster than NVENC (`0.329s` versus `0.954s`), with QSV/AMF
@@ -125,6 +137,70 @@ unavailable, so `Auto` prefers `libx264` unless a benchmark or explicit encoder
 request says otherwise.
 
 ## Current Focused Fix Round
+
+Round 140 restores CommandBarFlyout WinUI parity after user review found that
+the previous repeat-open work made the control worse:
+
+- Root cause: the earlier CommandBarFlyout flicker/repeat-open fixes optimized
+  for recorder stability and encoded the wrong contract. `3cec48aa` replaced
+  WinUI-style clip/position storyboards with instant opacity changes, and
+  `17dffbec` forced popup animation to `None` and tied internal command-bar
+  transitions to the owning flyout's disabled outer open/close animation flag.
+  The test `FlyoutAnimationsDoNotClipVisibleCommandSurfaces` then asserted the
+  broken behavior by requiring the source clip transforms to be absent.
+- Product fix: `CommandBarFlyout.xaml` again animates
+  `OuterContentRootClipTransform`, `OuterOverflowContentRootClipTransform`,
+  `MoreButtonTransform`, `ContentRootClipTransform`, and
+  `OverflowContentRootClipTransform` with the WinUI source timing resources.
+  CommandBar and CommandBarFlyout overflow popups again use
+  `SystemParameters.MenuPopupAnimationKey`. The flyout command bar now keeps
+  its internal transitions governed by `SharedHelpers.IsAnimationsEnabled`
+  rather than the outer flyout fade flag, while preserving the repeat-open
+  state synchronization. Opening and closing also reapply overflow style params
+  so secondary commands get the captured input-mode state.
+- Guard fix: the CommandBarFlyout API test now requires the WinUI storyboard
+  targets instead of rejecting them, and `TemplateParityTests` source-guards the
+  restored storyboard shape plus popup animation resource.
+- Recorder/reference fix: `CommandBarFlyout` now opts into preserved animated
+  visual proof and at least 30fps recording. The rendered recorder normalizes
+  event timestamps when encoded MP4 time is shorter than wall-clock capture
+  time. A focused WinUI reference recorder was added for CommandBarFlyout and
+  records the installed WinUI Gallery at the same top-left capture rect.
+- Screenshot harness fix: the earlier visual comparison missed the secondary
+  menu edge drift because CommandBarFlyout did not require a comparable
+  open-surface interaction crop, and the old interaction crop could compare
+  `PopupWindow` against `ScreenElement` or fall back to broad window pixels.
+  `Run-GalleryVisualChecks.ps1` now supports a cached WinUI reference run,
+  crops the union of the primary commands, ellipsis, and expanded secondary
+  commands as `CommandBarFlyoutOpenSurface`, and fails CommandBarFlyout when
+  that crop source, mean delta, or crop size diverges from the reference.
+- Alignment fix: the WPF popup shadow chrome reserves layout padding that WinUI
+  `OuterOverflowContentRootV2` does not. `CommandBarFlyoutCommandBar` now
+  compensates both horizontal and vertical popup offsets for the reserved
+  shadow inset, border, and ellipsis inner margin. The primary command geometry
+  is tuned to the local WinUI source shape as rendered by WPF, producing the
+  same `229x136` open-surface crop as the cached WinUI Gallery reference.
+- Verification:
+  - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --framework net8.0-windows7.0 --filter "FullyQualifiedName~CommandBarFlyoutApiTests"` passed 26/26.
+  - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --framework net8.0-windows7.0 --filter "FullyQualifiedName~TemplateParityTests.CommandBarFlyoutTemplateKeepsWinUISourceAnimationShape"` passed.
+  - ModernWpf Dark recording
+    `artifacts/gallery-recordings/20260607-115923-940/report.md` passed with
+    `AnimationEvidence=true`, `OpenRepeatEvidence=true`,
+    `FirstCommandBarFlyoutSecondaryExpanded=true`, and
+    `SecondCommandBarFlyoutSecondaryExpanded=true`.
+  - WinUI Gallery Dark reference recording
+    `artifacts/winui-reference-recordings/20260607-120202-437/winui-commandbarflyout-reference.json`
+    passed first open, secondary expansion, close, second open, and second
+    secondary expansion; the reference MP4 is 8.0s at
+    `artifacts/winui-reference-recordings/20260607-120202-437/CommandBarFlyout/winui3-dark-commandbarflyout.mp4`.
+  - Static/interaction WinUI comparison
+    `artifacts/visual-checks/20260607-120249-908-51540/report.md` passed for
+    CommandBarFlyout with primary crop `454x302` vs `453x302`, primary crop
+    delta `4.99`, and interaction delta `19.95`.
+  - Follow-up cached WinUI comparison
+    `artifacts/visual-checks/20260607-125158-141-166312/report.md` passed after
+    the final alignment adjustment, with the focused open-surface crop exactly
+    `229x136` vs `229x136` and interaction crop delta `11.54`.
 
 Round 139 moves recorder proof windows to the top-left screen origin:
 

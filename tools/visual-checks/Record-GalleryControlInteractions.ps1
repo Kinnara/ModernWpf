@@ -1605,7 +1605,7 @@ function Test-ControlSupportsScrollInteraction([string]$control) {
 }
 
 function Test-ControlRequiresAnimatedVisualProof([string]$control) {
-    return $control -eq "ProgressRing"
+    return $control -eq "ProgressRing" -or $control -eq "CommandBarFlyout"
 }
 
 function Test-ControlRequiresDenseTransitionReview([string]$control, [string]$interactionKind) {
@@ -1848,9 +1848,9 @@ function Test-ElementVisible($element) {
 function Get-ShellNavigationDisclosureClickPoint($item) {
     $rect = $item.Current.BoundingRectangle
     return [ordered]@{
-        X = [int][Math]::Round($rect.X + [Math]::Min(30.0, [Math]::Max(8.0, $rect.Width * 0.14)))
+        X = [int][Math]::Round($rect.X + ($rect.Width * 0.5))
         Y = [int][Math]::Round($rect.Y + 20.0)
-        Source = "DisclosureGlyph"
+        Source = "GroupRowBody"
     }
 }
 
@@ -1892,7 +1892,7 @@ function Invoke-ShellNavigationDisclosure($window, $navigationView, [string]$nam
         }
 
         $point = Get-ShellNavigationDisclosureClickPoint $item
-        [GalleryRecordingNative]::HoldClickOverWindow($window.Current.NativeWindowHandle, $point.X, $point.Y, 120)
+        [GalleryRecordingNative]::HoldClick($point.X, $point.Y, 120)
         Start-Sleep -Milliseconds 250
         $stateAfterClick = Get-ExpandCollapseStateName $item
         $usedAutomationFallback = $false
@@ -5307,6 +5307,41 @@ function Request-RecordingStop($recordingJob) {
     New-Item -ItemType File -Path $recordingJob.StopFile -Force | Out-Null
 }
 
+function Normalize-InteractionResultVideoTimestamps($interactionResult, $recordingResult, $recordingStopWallClockSeconds) {
+    if ($null -eq $interactionResult -or
+        $null -eq $recordingResult -or
+        !$recordingResult.PSObject.Properties["DurationSeconds"] -or
+        $null -eq $recordingResult.DurationSeconds -or
+        $null -eq $recordingStopWallClockSeconds) {
+        return
+    }
+
+    $videoSeconds = [double]$recordingResult.DurationSeconds
+    $wallSeconds = [double]$recordingStopWallClockSeconds
+    if ($videoSeconds -le 0 -or $wallSeconds -le 0 -or $videoSeconds -ge ($wallSeconds - 0.25)) {
+        return
+    }
+
+    $scale = $videoSeconds / $wallSeconds
+    foreach ($field in @(
+            "InitialVisualSeconds",
+            "FirstOpenStartSeconds",
+            "FirstOpenVisualSeconds",
+            "ClosedVisualSeconds",
+            "SecondOpenStartSeconds",
+            "SecondOpenVisualSeconds")) {
+        if ($interactionResult.Contains($field) -and $null -ne $interactionResult[$field]) {
+            $original = [double]$interactionResult[$field]
+            $interactionResult["${field}WallClock"] = [Math]::Round($original, 3)
+            $interactionResult[$field] = [Math]::Round($original * $scale, 3)
+        }
+    }
+
+    $interactionResult["VideoTimestampScale"] = [Math]::Round($scale, 4)
+    $interactionResult["RecordingStopWallClockSeconds"] = [Math]::Round($wallSeconds, 3)
+    $interactionResult["EncodedVideoDurationSeconds"] = [Math]::Round($videoSeconds, 3)
+}
+
 function Wait-RecordingJob($recordingJob, [int]$durationSeconds) {
     $job = if ($null -ne $recordingJob -and $recordingJob -is [System.Collections.IDictionary] -and $recordingJob.Contains("Job")) { $recordingJob.Job } else { $recordingJob }
     $timeout = [Math]::Max(($durationSeconds * 3) + 45, 60)
@@ -5878,6 +5913,10 @@ function Get-PosterFrameIntervalSeconds([string]$control, [string]$interactionKi
 }
 
 function Get-ControlRecordingFrameRate([string]$control, [string]$interactionKind) {
+    if ($control -eq "CommandBarFlyout" -and $interactionKind -eq "OpenRepeat") {
+        return [Math]::Max(30, $FrameRate)
+    }
+
     if ($control -eq "ThemeShadow" -and $interactionKind -eq "Value") {
         return [Math]::Max(30, $FrameRate)
     }
@@ -7691,6 +7730,7 @@ foreach ($control in $Controls) {
         }
 
         Start-Sleep -Milliseconds 350
+        $recordingStopWallClockSeconds = Get-RecordingElapsedSeconds
         Request-RecordingStop $recordingJob
         Start-Sleep -Milliseconds 250
         Close-GalleryRecordingProcess $process
@@ -7699,6 +7739,7 @@ foreach ($control in $Controls) {
         if ($null -eq $recordingResult -or !(Test-Path $recordingPath)) {
             throw "Recorder did not produce '$recordingPath'."
         }
+        Normalize-InteractionResultVideoTimestamps $interactionResult $recordingResult $recordingStopWallClockSeconds
 
         $posterFrameIntervalSeconds = Get-PosterFrameIntervalSeconds $control $interactionKind
         $frames = Export-PosterFrames $recordingPath $caseDir $posterFrameIntervalSeconds

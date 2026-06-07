@@ -112,9 +112,10 @@ namespace ModernWpf.Controls
 
             EnsurePresenter();
             var effectivePlacement = GetEffectivePlacement();
+            Point absolutePlacementPoint = default;
             var hasAbsolutePlacementPoint =
                 placement == PlacementMode.Custom &&
-                TryGetAbsolutePlacementPoint(placementTarget, effectivePlacement, out var absolutePlacementPoint);
+                TryGetAbsolutePlacementPoint(placementTarget, effectivePlacement, out absolutePlacementPoint);
             m_presenter.SetCurrentValue(CustomPopupPlacementHelper.PlacementProperty, (CustomPlacementMode)effectivePlacement);
 
             if (m_presenter.IsOpen)

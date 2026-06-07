@@ -130,6 +130,17 @@ The script launches ModernWpf Gallery with `--visual-test`, `--route`, `--theme`
 
 With `-IncludeInteractions`, the TeachingTip pass first closes any `--open-interactions` prepared TeachingTip state, captures a closed baseline, opens the sample, then captures 0ms, 150ms, 300ms, and 450ms screen-rect frames. Screen capture is used for those frames when available so popup content is included. The interaction probe records UIA evidence or trusted visual delta evidence, and reports normalized crop delta and crop size differences against the reference Gallery when both sides have comparable crops.
 
+For focused WinUI parity loops, pass `-WinUIReferenceRunDir` with a previous
+`Run-GalleryVisualChecks.ps1` output directory to reuse the installed WinUI
+Gallery capture instead of relaunching the reference app every iteration. The
+cached report and referenced screenshots are validated before use. For
+CommandBarFlyout, interaction parity is strict: the harness crops the open
+surface from the union of the primary commands, ellipsis, and expanded
+secondary commands, requires both ModernWpf and WinUI to use that
+`CommandBarFlyoutOpenSurface` crop source, and fails on crop delta or crop-size
+drift. This catches secondary-menu gaps and edge misalignment that broad
+full-window screenshots can hide.
+
 Static window captures use `PrintWindow` first and fall back to an activated screen-rect capture when `PrintWindow` returns a blank image. If a capture returns a nonblank but invalid reference surface, such as a desktop/wallpaper or Mica backdrop crop from a WinUI composition window, the harness rejects the result when the primary crop has very low visible luminance variation and fails the run instead of reporting false parity.
 
 Static comparisons include primary sample crops for each curated control. The ModernWpf Gallery also writes rendered `GallerySample_*` and `GalleryContentHost` element artifacts under `modernwpf-artifacts/` during visual-test launches; the harness uses those rendered element artifacts before falling back to window screenshot crops. The report ranks controls by primary crop delta plus crop-size mismatch so visual triage can focus on real control-level differences instead of full-window shell noise.

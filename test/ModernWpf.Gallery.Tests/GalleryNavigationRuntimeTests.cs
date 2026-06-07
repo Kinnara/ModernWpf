@@ -386,6 +386,55 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
+        [TestMethod]
+        public void ShellNavigationDisclosureChevronTogglesExpansionWhenClicked()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new NavigationRootPage();
+                page.DataContext = new { ViewModel = new MainWindowViewModel(page.GoBack, page.OpenSettings, page.GoForward) };
+
+                RenderPage(page, () =>
+                {
+                    var navigation = GetNavigationView(page);
+                    var designGuidanceItem = navigation.MenuItems
+                        .OfType<NavigationViewItem>()
+                        .Single(item => string.Equals(GetNavigationItemText(item), "Design Guidance", StringComparison.Ordinal));
+                    var designGuidanceChevron = GetNavigationDisclosureChevron(designGuidanceItem);
+                    var designGuidanceChildItem = designGuidanceItem.MenuItems
+                        .OfType<NavigationViewItem>()
+                        .Single(item => string.Equals(GetNavigationItemText(item), "Colors", StringComparison.Ordinal));
+                    var samplesItem = navigation.MenuItems
+                        .OfType<NavigationViewItem>()
+                        .Single(item => string.Equals(GetNavigationItemText(item), "Samples", StringComparison.Ordinal));
+
+                    Assert.IsFalse(designGuidanceItem.IsExpanded);
+                    Assert.IsFalse(designGuidanceItem.IsSelected);
+                    Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
+
+                    RaiseMouseClick(designGuidanceChevron, timestamp: 1);
+                    WpfTestHost.DoEvents();
+                    page.UpdateLayout();
+
+                    Assert.IsTrue(designGuidanceItem.IsExpanded, "Clicking the visible shell disclosure glyph should expand the group.");
+                    Assert.IsFalse(designGuidanceItem.IsSelected, "Chevron-only expansion should not navigate/select the group row.");
+                    Assert.AreEqual(90d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
+                    AssertExpandedNavigationChildVisible(page, designGuidanceItem, designGuidanceChildItem, samplesItem, "Colors");
+                    Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(DashboardPage));
+
+                    RaiseMouseClick(designGuidanceChevron, timestamp: 4);
+                    WpfTestHost.DoEvents();
+                    page.UpdateLayout();
+
+                    Assert.IsFalse(designGuidanceItem.IsExpanded, "Clicking the visible shell disclosure glyph again should collapse the group.");
+                    Assert.IsFalse(designGuidanceItem.IsSelected);
+                    Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
+                    AssertCollapsedNavigationChildrenReleased(page, designGuidanceItem, designGuidanceChildItem, samplesItem, "Colors");
+                    Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(DashboardPage));
+                });
+            });
+        }
+
         private static void AssertVisualTestStatusNamesRemoved(NavigationRootPage root)
         {
             Assert.IsNull(root.FindName("VisualTestStatusPanel"));
@@ -1777,6 +1826,32 @@ namespace ModernWpf.Gallery.Tests
             var navigation = root.Children.OfType<NavigationView>().Single();
             Assert.AreEqual(string.Empty, navigation.Name);
             return navigation;
+        }
+
+        private static void RaiseMouseClick(UIElement element, int timestamp)
+        {
+            var previewMouseDown = new MouseButtonEventArgs(Mouse.PrimaryDevice, timestamp, MouseButton.Left)
+            {
+                RoutedEvent = UIElement.PreviewMouseLeftButtonDownEvent,
+                Source = element
+            };
+            element.RaiseEvent(previewMouseDown);
+
+            var mouseDown = new MouseButtonEventArgs(Mouse.PrimaryDevice, timestamp + 1, MouseButton.Left)
+            {
+                RoutedEvent = UIElement.MouseLeftButtonDownEvent,
+                Source = element
+            };
+            element.RaiseEvent(mouseDown);
+            Assert.IsTrue(mouseDown.Handled);
+
+            var mouseUp = new MouseButtonEventArgs(Mouse.PrimaryDevice, timestamp + 2, MouseButton.Left)
+            {
+                RoutedEvent = UIElement.MouseLeftButtonUpEvent,
+                Source = element
+            };
+            element.RaiseEvent(mouseUp);
+            Assert.IsTrue(mouseUp.Handled);
         }
 
         private static void InvokeNavigationViewItem(NavigationView navigation, NavigationViewItem item)

@@ -886,6 +886,45 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void ExpandCollapseChevronMouseClickTogglesItemExpansion()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var parentItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "ParentItem",
+                IsExpanded = false
+            };
+            parentItem.MenuItems.Add(new ModernWpf.Controls.NavigationViewItem { Content = "ChildItem" });
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Width = 1008,
+                IsSettingsVisible = false
+            };
+            navView.MenuItems.Add(parentItem);
+
+            using var host = new TestWindowHost(navView);
+
+            var presenter = VisualTreeTestHelper.FindDescendant<ModernWpf.Controls.Primitives.NavigationViewItemPresenter>(parentItem);
+            Assert.IsNotNull(presenter);
+
+            var chevron = FindNamedDescendant<FrameworkElement>(presenter!, "ExpandCollapseChevron");
+            Assert.AreEqual(Visibility.Visible, chevron.Visibility);
+
+            RaiseChevronClick(chevron, timestamp: 1);
+            host.UpdateLayout();
+            Assert.IsTrue(parentItem.IsExpanded);
+
+            RaiseChevronClick(chevron, timestamp: 3);
+            host.UpdateLayout();
+            Assert.IsFalse(parentItem.IsExpanded);
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewItemTemplateUsesWinUIPresenterSlots()
     {
         WpfTestHost.Run(() =>
@@ -2413,6 +2452,25 @@ public class NavigationViewApiTests
         Assert.AreSame(button.TryFindResource("NavigationViewButtonBackgroundDisabled"), layoutRoot.Background);
         Assert.AreSame(button.TryFindResource("NavigationViewButtonForegroundDisabled"), contentPresenter.Foreground);
         Assert.AreEqual("Normal", ModernWpf.Controls.AnimatedIcon.GetState(icon));
+    }
+
+    private static void RaiseChevronClick(UIElement chevron, int timestamp)
+    {
+        var mouseDown = new MouseButtonEventArgs(Mouse.PrimaryDevice, timestamp, MouseButton.Left)
+        {
+            RoutedEvent = UIElement.MouseLeftButtonDownEvent,
+            Source = chevron
+        };
+        chevron.RaiseEvent(mouseDown);
+        Assert.IsTrue(mouseDown.Handled);
+
+        var mouseUp = new MouseButtonEventArgs(Mouse.PrimaryDevice, timestamp + 1, MouseButton.Left)
+        {
+            RoutedEvent = UIElement.MouseLeftButtonUpEvent,
+            Source = chevron
+        };
+        chevron.RaiseEvent(mouseUp);
+        Assert.IsTrue(mouseUp.Handled);
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
