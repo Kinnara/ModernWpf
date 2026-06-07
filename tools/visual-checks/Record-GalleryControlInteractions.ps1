@@ -560,6 +560,26 @@ function Find-WindowByProcessId([int]$processId) {
         }
     }
 
+    if ($null -eq $bestWindow) {
+        try {
+            $process = [System.Diagnostics.Process]::GetProcessById($processId)
+            $process.Refresh()
+            if ($process.MainWindowHandle -ne [IntPtr]::Zero) {
+                $candidate = [System.Windows.Automation.AutomationElement]::FromHandle($process.MainWindowHandle)
+                if ($null -ne $candidate -and $candidate.Current.ProcessId -eq $processId) {
+                    $rect = [GalleryRecordingNative]::GetRect([IntPtr]$candidate.Current.NativeWindowHandle)
+                    $width = $rect.Right - $rect.Left
+                    $height = $rect.Bottom - $rect.Top
+                    if ($width -ge 400 -and $height -ge 300) {
+                        $bestWindow = $candidate
+                    }
+                }
+            }
+        }
+        catch {
+        }
+    }
+
     return $bestWindow
 }
 

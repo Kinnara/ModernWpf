@@ -126,6 +126,30 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 138 hardens CommandBarFlyout startup recording proof after a current-tree
+rerun exposed a harness lookup failure:
+
+- A focused Dark CommandBarFlyout run
+  `artifacts/gallery-recordings/20260607-105249-061/report.md` failed before
+  recording with `Timed out waiting for ModernWpf Gallery window`, even though
+  the Gallery had already rendered `Ready:item/CommandBarFlyout` and wrote
+  nonblank page artifacts. The artifact window bounds were still on the far
+  right desktop before the recorder moved the window, so this was a UIA
+  top-level window discovery miss, not the repeat-open product crash.
+- Recorder fix: `Find-WindowByProcessId` now falls back to the process
+  `MainWindowHandle` and `AutomationElement.FromHandle` when UIA root-child
+  enumeration returns no suitably sized Gallery window. The existing scoring
+  path still chooses the real Gallery window over input overlays when UIA does
+  enumerate top-level windows.
+- Final proof:
+  `artifacts/gallery-recordings/20260607-110343-332/report.md` passed with a
+  9.9s rendered MP4, `OpenRepeatEvidence=true`,
+  `FirstCommandBarFlyoutSecondaryExpanded=true`,
+  `SecondCommandBarFlyoutSecondaryExpanded=true`, close proof through
+  `SecondaryCommand`, and baseline-delta frames `t2500` / `t4500` / `t8000`.
+  Reviewed full-size frames show the first-open and second-open command bar
+  plus secondary menu aligned, and the closed frame contains no stale popup.
+
 Round 137 corrects the ThemeShadow depth-change evidence after user review:
 
 - User review again flagged the ThemeShadow result as wrong because the visible
@@ -2361,6 +2385,8 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260606-210129-330/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; Dark recording proves text input on the official one-line RichTextBox with `AfterOutput=ModernWpf rich text`, `InputMethod=WindowMessage`, and local delta `6.395` |
 | `artifacts/gallery-recordings/20260606-210310-713/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; Light recording proves text input on the official one-line RichTextBox with `AfterOutput=ModernWpf rich text`, `InputMethod=WindowMessage`, and local delta `1.932` |
 | `artifacts/gallery-recordings/20260607-104048-093/report.md` | ThemeShadow | 1 passed, 0 needs review, 0 failed; final envelope-aware proof keeps all layout bounds and card edges fixed while explicitly recording source-like shadow-envelope growth `27,39,218,214 -> 16,30,240,242`, `ShadowEnvelopeDelta=28`, dense video `MaxCardEdgeShift=0`, and `MaxCardMeanDelta=0.096` |
+| `artifacts/gallery-recordings/20260607-105249-061/report.md` | CommandBarFlyout | Superseded failed harness run; the Gallery rendered `Ready:item/CommandBarFlyout` and nonblank page artifacts, but UIA top-level window discovery missed the process window before recording started |
+| `artifacts/gallery-recordings/20260607-110343-332/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed; Round 138 rerun after the process-main-window fallback produced a 9.9s rendered MP4 with first-open, closed, and second-open frames `t2500` / `t4500` / `t8000`, secondary menu expanded on both opens, and no stale popup in the closed frame |
 | `artifacts/gallery-recordings/20260607-064517-766/report.md` | ThemeShadow | Superseded pass; it proved `RangeValuePatternAnimated`, MP4-local visual evidence, stable caster bounds, artifact card edges, and dense card stability, but did not report the shadow envelope separately from layout stability |
 | `artifacts/gallery-recordings/20260607-064041-678/report.md` | ThemeShadow | Expected failed rerun after requiring video proof; value changed and artifacts redrew, but MP4 frames were static with `ThemeShadowVideoVisualEvidence=false`, `MaxFrameDelta=0`, and `MaxLocalFrameDelta=0`, exposing the slow warm-up false pass |
 | `artifacts/gallery-recordings/20260606-213340-698/report.md` | ThemeShadow | 1 passed, 0 needs review, 0 failed; supersedes the Round 119 false pass by moving value `32 -> 64`, proving `ThemeShadowVisualEvidence=true` from the sample root, and keeping root, example grid, shadow chrome, card, and slider bounds fixed |
@@ -2506,4 +2532,4 @@ proof on top of these static route captures.
 | Menus & toolbars | AppBarSeparator | `item/AppBarSeparator` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-073924-914/AppBarSeparator/light-appbarseparator.mp4` | Latest Light rendered static route remains appropriate because the sample command bar has no state/output-changing action. Reviewed `t9500` shows visible separators and aligned AppBar commands. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/AppBarSeparator/dark-appbarseparator.mp4`. |
 | Menus & toolbars | AppBarToggleButton | `item/AppBarToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-074841-162/AppBarToggleButton/light-appbartogglebutton.mp4` | Latest Light rendered rerun toggles Off to On with local visual delta `44.826`; reviewed frame `t9500` shows the first symbol AppBarToggleButton checked and output `IsChecked = True`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-040225-951/AppBarToggleButton/dark-appbartogglebutton.mp4`. |
 | Menus & toolbars | CommandBar | `item/CommandBar` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-061229-078/CommandBar/light-commandbar.mp4` | Product popup state is now synchronized with `IsOpen` and the recorder no longer depends on UIA exposing the second-open overflow item. Latest Light 24s rendered run passes with `OpenRepeatEvidence=true`, `CloseMethod=SampleCloseButton`, frames `t9500` / `t13500` / `t20000`, deltas `4.17` / `0.005` / `4.181`, and local delta `4.181`; reviewed frames show aligned first-open and second-open overflow plus a clean closed frame. Current Dark proof is `artifacts/gallery-recordings/20260606-100047-740/CommandBar/dark-commandbar.mp4` with frames `t9500` / `t13500` / `t19500`, deltas `9.838` / `0.0` / `9.99`, and local delta `10.033`. |
-| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Fixed + screen recorder anchor hardened | `artifacts/gallery-recordings/20260606-093650-021/CommandBarFlyout/light-commandbarflyout.mp4` | Product popup state is synchronized with `IsOpen`, WPF popup animation is disabled, Escape hides the owning flyout, and secondary transitions respect the owning flyout animation gate. Latest Light 24s rendered run passes with `OpenRepeatEvidence=true`, `CloseMethod=SecondaryCommand`, frames `t4000` / `t6500` / `t13500`, deltas `2.803` / `0.0` / `2.8`, and local delta `2.913`; reviewed first-open and second-open frames show the command bar and secondary menu aligned with no repeat-open crash frame. Current Dark rerun `artifacts/gallery-recordings/20260606-094947-158/CommandBarFlyout/dark-commandbarflyout.mp4` matches the user-video scenario and passes with deltas `12.359` / `0.0` / `12.363`, local delta `12.434`, and clean open/closed/open frames. Rejected screen-mode run `artifacts/gallery-recordings/20260606-093304-563/report.md` captured wallpaper/black frames and now drives a recorder anchor guard. |
+| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Fixed + recorder window discovery hardened | Light: `artifacts/gallery-recordings/20260606-093650-021/CommandBarFlyout/light-commandbarflyout.mp4`; Dark: `artifacts/gallery-recordings/20260607-110343-332/CommandBarFlyout/dark-commandbarflyout.mp4` | Product popup state is synchronized with `IsOpen`, WPF popup animation is disabled, Escape hides the owning flyout, and secondary transitions respect the owning flyout animation gate. Latest Light 24s rendered run passes with `OpenRepeatEvidence=true`, `CloseMethod=SecondaryCommand`, frames `t4000` / `t6500` / `t13500`, deltas `2.803` / `0.0` / `2.8`, and local delta `2.913`; reviewed first-open and second-open frames show the command bar and secondary menu aligned with no repeat-open crash frame. Round 138 current Dark rerun passes after the process-main-window fallback with a 9.9s rendered MP4, `OpenRepeatEvidence=true`, frames `t2500` / `t4500` / `t8000`, `FirstCommandBarFlyoutSecondaryExpanded=true`, `SecondCommandBarFlyoutSecondaryExpanded=true`, local delta `12.347`, and clean full-size first-open, closed, and second-open frames. Superseded failed run `artifacts/gallery-recordings/20260607-105249-061/report.md` proved the old window lookup could miss a ready rendered Gallery window before recording started. Rejected screen-mode run `artifacts/gallery-recordings/20260606-093304-563/report.md` captured wallpaper/black frames and still drives the screen-recorder anchor guard. |

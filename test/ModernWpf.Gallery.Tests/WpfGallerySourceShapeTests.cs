@@ -4001,6 +4001,10 @@ namespace ModernWpf.Gallery.Tests
                 "if ($width -lt 400 -or $height -lt 300)",
                 "if ($window.Current.Name -eq \"WPF Gallery\")",
                 "if ($window.Current.ClassName -eq \"Window\")",
+                "if ($null -eq $bestWindow)",
+                "[System.Diagnostics.Process]::GetProcessById($processId)",
+                "$process.MainWindowHandle",
+                "[System.Windows.Automation.AutomationElement]::FromHandle($process.MainWindowHandle)",
                 "return $bestWindow");
         }
 
