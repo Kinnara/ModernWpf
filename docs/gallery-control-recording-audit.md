@@ -126,6 +126,43 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 128 refreshes official-WPF parity and fixes the split-button open-repeat
+recorder timeout:
+
+- Fresh Dark official-WPF parity for Layout/Navigation native WPF pages passed
+  at `artifacts/wpf-gallery-visual-audit/20260607-024532-975-249408/report.md`.
+  `Expander`, `Grid`, `ResizeGrip`, `GridSplitter`, `GroupBox`,
+  `StackPanel`, `Border`, `Menu`, `TabControl`, `Frame`, and
+  `NavigationWindow` all matched the official WPF direct host with content
+  delta `0`.
+- Fresh Dark official-WPF parity for remaining native WPF pages passed at
+  `artifacts/wpf-gallery-visual-audit/20260607-024724-844-83040/report.md`.
+  Most cases matched at content delta `0`; the tiny sampled deltas on
+  `Slider`, `TreeView`, and `Clipboard` were below the pass threshold and did
+  not show a visible layout mismatch on the captured crops.
+- Dark interaction batch
+  `artifacts/gallery-recordings/20260607-025015-188/report.md` passed
+  `TeachingTip`, `ComboBox`, `DatePicker`, `DropDownButton`, `ToolTip`, and
+  `AutoSuggestBox`, but failed `SplitButton` and `ToggleSplitButton`. Root
+  cause was a recorder close-path defect: the first flyout stayed open until
+  the end of the 18s recording while the verifier tried slower close methods,
+  then the second-open visual timestamp landed outside the actual clip. For
+  `ToggleSplitButton`, closing through the `Bulleted list` leaf also changed
+  the toggle state, poisoning the closed-frame baseline.
+- `Record-GalleryControlInteractions.ps1` now tries
+  `ExpandCollapsePattern.Collapse()` before trigger/escape/bounds/leaf close
+  for fast split-button popup bounds. This uses the control automation contract
+  and closes without selecting a flyout item.
+- Focused rerun
+  `artifacts/gallery-recordings/20260607-030239-820/report.md` passes both
+  controls. `SplitButton` records `CloseMethod=CollapsePattern` with frames
+  `t1000` / `t5000` / `t11000` / `t15500`, deltas
+  `21.416` / `0.019` / `11.952`, and `SecondOpenVisualSeconds=16.69` inside
+  the 17.2s clip. `ToggleSplitButton` also records
+  `CloseMethod=CollapsePattern`, keeps toggle state `Off` through closed and
+  second-open states, and proves frames `t1000` / `t4500` / `t10500` /
+  `t15500` with deltas `8.923` / `0.062` / `8.94`.
+
 Round 127 tightens ThemeShadow depth-change layout-shift detection after user
 review rejected the Round 126 conclusion:
 
@@ -1892,6 +1929,10 @@ Latest focused evidence:
 
 | Run | Controls | Result |
 | --- | --- | --- |
+| `artifacts/gallery-recordings/20260607-030239-820/report.md` | SplitButton, ToggleSplitButton | 2 passed, 0 needs review, 0 failed; close now uses `CollapsePattern`, keeps the second-open frames inside the 17.2s clips, and avoids changing ToggleSplitButton state while closing |
+| `artifacts/gallery-recordings/20260607-025015-188/report.md` | TeachingTip, ComboBox, DatePicker, DropDownButton, SplitButton, ToggleSplitButton, ToolTip, AutoSuggestBox | 6 passed, 0 needs review, 2 failed; failure exposed that SplitButton/ToggleSplitButton close/reopen timing could run past the 18s recording window |
+| `artifacts/wpf-gallery-visual-audit/20260607-024532-975-249408/report.md` | Expander, Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border, Menu, TabControl, Frame, NavigationWindow | Official WPF Gallery Dark comparison passed with exact content delta `0` for all 11 native WPF layout/navigation pages |
+| `artifacts/wpf-gallery-visual-audit/20260607-024724-844-83040/report.md` | Button, CheckBox, ComboBox, RadioButton, Slider, DataGrid, ListBox, ListView, TreeView, Calendar, DatePicker, ProgressBar, ToolTip, Label, TextBox, TextBlock, RichTextEdit, PasswordBox, Hyperlink, FileAndFolderDialogs, MessageBox, Clipboard | Official WPF Gallery Dark comparison passed for all 22 native WPF pages; visible crops matched, with only tiny sampled deltas on Slider, TreeView, and Clipboard |
 | `artifacts/wpf-gallery-visual-audit/20260606-210055-915-20200/report.md` | RichTextEdit | Official WPF Gallery Dark comparison passed with exact content delta `0`, changed samples `0/41230`, max RGB diff `0`, and matching `868x758` crops after restoring the official one-line RichTextBox |
 | `artifacts/wpf-gallery-visual-audit/20260606-210239-299-178336/report.md` | RichTextEdit | Official WPF Gallery Light comparison passed with exact content delta `0`, changed samples `0/41230`, max RGB diff `0`, and matching `868x758` crops |
 | `artifacts/visual-checks/20260606-204833-477-177172/report.md` | ThemeShadow | 2 app/control rows passed; WinUI-reference primary crops match at `557x272` with delta `1.26` after restoring the source-like `36px` caster layout |
@@ -2129,8 +2170,8 @@ proof on top of these static route captures.
 | Basic input | RepeatButton | `item/RepeatButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/RepeatButton/light-repeatbutton.mp4` | Latest Light rendered rerun changes output from `Control output` to `Number of clicks: 1` with local visual delta `0.669`; reviewed frame `t9500` shows the click count. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/RepeatButton/dark-repeatbutton.mp4` with `OutputEvidence=true`, output `Number of clicks: 1`, and local delta `1.002`. |
 | Basic input | ToggleButton | `item/ToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/ToggleButton/light-togglebutton.mp4` | Latest Light rendered rerun toggles Off to On with local visual delta `48.038`; reviewed frame `t9500` shows the checked ToggleButton and output text `On`. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/ToggleButton/dark-togglebutton.mp4` with `StateEvidence=true`, `AfterState=On`, and local delta `33.918`. |
 | Basic input | DropDownButton | `item/DropDownButton` | Recorded + screenshot guard | Recorder hardened + screenshot false-pass rejected | `artifacts/gallery-recordings/20260606-122924-332/DropDownButton/dark-dropdownbutton.mp4` | Latest Dark recording keeps DropDownButton on the reliable `Send` leaf-item close path after rejected fast-bounds attempt `20260606-122326-155`. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=LeafCloseItem:Invoke`, frames `t2000` / `t4000` / `t8500`, deltas `12.612` / `0.478` / `12.5`, and local delta `12.63`; reviewed frames show open, closed, and second-open menu states aligned under the trigger. Round 107 screenshot guard `artifacts/visual-checks/20260606-160227-645-194344/report.md` intentionally fails the WinUI popup screenshot path instead of accepting the old page-behind/wallpaper crop, so popup overlay parity remains recording-backed unless a real popup-window screenshot is captured. Latest Light proof remains `artifacts/gallery-recordings/20260606-064251-054/DropDownButton/light-dropdownbutton.mp4`. |
-| Basic input | SplitButton | `item/SplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-122109-523/SplitButton/dark-splitbutton.mp4` | Latest Dark rendered run uses the fast popup path and event-window proof. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=FastPopupEscape`, frames `t2000` / `t4000` / `t11000`, deltas `21.39` / `0.03` / `21.428`, and local delta `35.623`; reviewed frames show first open, closed state, and second open with the color menu aligned under the trigger. This supersedes failed run `20260606-115448-915`, where UIA search pushed close/reopen outside the fixed recording window. Latest Light proof remains `artifacts/gallery-recordings/20260606-064538-234/SplitButton/light-splitbutton.mp4`. |
-| Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-122326-155/ToggleSplitButton/dark-togglesplitbutton.mp4` | Latest Dark rendered run uses the fast popup path and event-window proof. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=FastPopupBoundsClick`, frames `t2000` / `t4500` / `t14500`, deltas `8.97` / `0.186` / `8.997`, opened-element local delta `12.26`, and trigger-region local delta `15.369`; reviewed frames show open, closed, and second-open compact menu states. Latest Light proof remains `artifacts/gallery-recordings/20260606-064806-277/ToggleSplitButton/light-togglesplitbutton.mp4`. |
+| Basic input | SplitButton | `item/SplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260607-030239-820/SplitButton/dark-splitbutton.mp4` | Latest Dark rerun closes with `CloseMethod=CollapsePattern` before slower fallback paths, keeping open/closed/open proof inside the clip. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, frames `t1000` / `t5000` / `t11000` / `t15500`, deltas `21.416` / `0.019` / `11.952`, local delta `21.437`, and `SecondOpenVisualSeconds=16.69` inside the 17.2s recording. This supersedes failed run `artifacts/gallery-recordings/20260607-025015-188/report.md`, where the close path pushed the second-open visual timestamp outside the 18s video. Latest Light proof remains `artifacts/gallery-recordings/20260606-064538-234/SplitButton/light-splitbutton.mp4`. |
+| Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260607-030239-820/ToggleSplitButton/dark-togglesplitbutton.mp4` | Latest Dark rerun closes with `CloseMethod=CollapsePattern`, so the verifier no longer selects `Bulleted list` merely to close the flyout. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, frames `t1000` / `t4500` / `t10500` / `t15500`, deltas `8.923` / `0.062` / `8.94`, local delta `9.015`, `SecondOpenVisualSeconds=16.637`, and toggle state `Off` before open, after close, and after second open. This supersedes failed run `artifacts/gallery-recordings/20260607-025015-188/report.md`, where leaf-item close changed state and missed the recording window. Latest Light proof remains `artifacts/gallery-recordings/20260606-064806-277/ToggleSplitButton/light-togglesplitbutton.mp4`. |
 | Basic input | ToggleSwitch | `item/ToggleSwitch` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-152649-903-244144/report.md` | Round 106 screenshot review caught missing default `On`/`Off` content in the simple sample and a stale rendered-artifact crop path that made the thumb look left after toggling. The sample now uses default ToggleSwitch content, and state interactions prefer live UIA crops with a ToggleSwitch thumb-endpoint pixel check. Reviewed `artifacts/visual-checks/20260606-152649-903-244144/ToggleSwitch/modernwpf-ToggleSwitch-state-after-crop.png` shows `On` text and the thumb on the right. Older Light/Dark recordings remain useful motion proof but predate this screenshot harness fix. |
 | Text | NumberBox | `item/NumberBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/NumberBox/light-numberbox.mp4` | Latest Light rendered rerun reaches value `20` from `10` with local visual delta `0.307`; reviewed frame `t9500` shows the updated value in the spin-button sample, so this remains rendered value proof rather than UIA-only proof. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/NumberBox/dark-numberbox.mp4` with `ValueEvidence=true`, value `10` to `20`, and local delta `0.377`. |
 | Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-074841-162/AutoSuggestBox/light-autosuggestbox.mp4` | Latest Light rendered rerun uses an 18s capture and requires both UIA and final-frame visual close proof. Manifest records `SuggestionInvokeMethod=InvokePattern`, `SuggestionClosed=true`, `TextVisualClosedEvidence.Closed=true`, final frame `t17500`, final delta `0.941`, local visual delta `10.307`, and output `Aegean`; reviewed `t9500` shows the popup open during selection and reviewed `t17500` shows it gone with `Aegean` rendered in the text box and output. Current Dark proof is `artifacts/gallery-recordings/20260606-113018-274/AutoSuggestBox/dark-autosuggestbox.mp4` with `SuggestionClosed=true`, `TextVisualClosedEvidence.Closed=true`, output `Aegean`, local delta `11.377`, and reviewed final frame `t17500` showing the suggestion popup gone. The rejected `20260606-041123-086` row is kept only as false-pass evidence. |

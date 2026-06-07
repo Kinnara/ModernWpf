@@ -4107,6 +4107,7 @@ namespace ModernWpf.Gallery.Tests
                 "Close-WithVerifiedKeyboardSelection $window $trigger $openNames $control 1 \"KeyboardDownEnter\" $visualCloseContext",
                 "Close-WithVerifiedOpenedElementClick $window $trigger $openNames $control 0.78 0.46 \"DayCellClick\" $visualCloseContext",
                 "if ((Test-ControlUsesFastOpenRepeatPopupBounds $control) -and ![string]::IsNullOrWhiteSpace($openedBoundsHint))",
+                "Close-WithVerifiedCollapsePattern $window $trigger $openNames $control $visualCloseContext",
                 "Close-WithVerifiedTriggerToggle $window $trigger $openNames $control \"FastPopupTriggerToggle\" $visualCloseContext",
                 "Close-WithVerifiedEscape $window $trigger $openNames $control \"FastPopupEscape\" $visualCloseContext",
                 "Close-WithVerifiedBoundsClick $window $trigger $openNames $control $openedBoundsHint \"FastPopupBoundsClick\" $visualCloseContext",

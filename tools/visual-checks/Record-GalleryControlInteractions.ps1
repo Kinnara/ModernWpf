@@ -3256,6 +3256,11 @@ function Close-OpenInteractionElement($window, [string]$control, $trigger, [stri
     }
 
     if ((Test-ControlUsesFastOpenRepeatPopupBounds $control) -and ![string]::IsNullOrWhiteSpace($openedBoundsHint)) {
+        $collapseClose = Close-WithVerifiedCollapsePattern $window $trigger $openNames $control $visualCloseContext
+        if ($collapseClose.Closed) {
+            return $collapseClose
+        }
+
         $triggerClose = Close-WithVerifiedTriggerToggle $window $trigger $openNames $control "FastPopupTriggerToggle" $visualCloseContext
         if ($triggerClose.Closed) {
             return $triggerClose
