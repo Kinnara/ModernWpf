@@ -417,6 +417,72 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromePopupPositionPaddingDoesNotFollowDepthWhilePopupIsHosted()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var root = new Grid
+            {
+                Width = 160,
+                Height = 120,
+                Background = Brushes.White
+            };
+            using var host = new TestWindowHost(root, width: 160, height: 120);
+
+            var chrome = new ThemeShadowChrome
+            {
+                Depth = 32,
+                TranslationZ = 32,
+                Child = new Border
+                {
+                    Width = 50,
+                    Height = 20,
+                    Background = Brushes.Transparent
+                }
+            };
+            var popup = new Popup
+            {
+                AllowsTransparency = true,
+                Child = chrome,
+                Placement = PlacementMode.Bottom,
+                PlacementTarget = root
+            };
+            root.Children.Add(popup);
+
+            try
+            {
+                Assert.AreEqual(new Thickness(16, 8, 16, 24), chrome.PopupPositionShadowPadding);
+
+                chrome.TranslationZ = 64;
+                Assert.AreEqual(new Thickness(32, 16, 32, 48), chrome.PopupPositionShadowPadding);
+
+                popup.IsOpen = true;
+                WpfTestHost.DoEvents();
+                chrome.UpdateLayout();
+
+                var hostedPadding = chrome.PopupPositionShadowPadding;
+                Assert.AreEqual(new Thickness(32, 16, 32, 48), hostedPadding);
+
+                chrome.TranslationZ = 16;
+                WpfTestHost.DoEvents();
+                chrome.UpdateLayout();
+
+                Assert.AreEqual(16, chrome.Depth);
+                Assert.AreEqual(new Thickness(8, 4, 8, 12), chrome.PopupShadowPadding);
+                Assert.AreEqual(
+                    hostedPadding,
+                    chrome.PopupPositionShadowPadding,
+                    "Changing ThemeShadow depth while a popup is hosted should not change the placement padding and shift the popup layout.");
+            }
+            finally
+            {
+                popup.IsOpen = false;
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromePopupInsetsAreNotDoubleAppliedAsChildMargin()
     {
         WpfTestHost.Run(() =>

@@ -71,6 +71,7 @@ namespace ModernWpf.Controls.Primitives
             if (IsInitialized)
             {
                 ClearReservedLayoutShadowPadding();
+                ClearPopupPositionShadowPadding();
 
                 if (IsShadowEnabled)
                 {
@@ -293,6 +294,7 @@ namespace ModernWpf.Controls.Primitives
             if (IsInitialized)
             {
                 ClearReservedLayoutShadowPadding();
+                ClearPopupPositionShadowPadding();
                 UpdateShadow(invalidateLayout: ReservesShadowSpace);
                 UpdatePopupMargin();
             }
@@ -325,6 +327,7 @@ namespace ModernWpf.Controls.Primitives
             if (IsInitialized)
             {
                 ClearReservedLayoutShadowPadding();
+                ClearPopupPositionShadowPadding();
                 UpdateShadow(invalidateLayout: true);
                 UpdatePopupMargin();
             }
@@ -386,7 +389,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPopupMarginChanged(DependencyPropertyChangedEventArgs e)
         {
-            if (_parentPopupControl != null)
+            if (_parentPopupControl != null && _popupPositioner == null)
             {
                 PositionParentPopupControl();
             }
@@ -709,7 +712,7 @@ namespace ModernWpf.Controls.Primitives
 
         private Thickness LayoutShadowPadding => ReservesShadowSpace ? GetReservedLayoutShadowPadding() : new Thickness();
 
-        private Thickness PopupPositionShadowPadding => ReservesShadowSpace ? GetReservedLayoutShadowPadding() : PopupShadowPadding;
+        internal Thickness PopupPositionShadowPadding => GetPopupPositionShadowPadding();
 
         private Thickness GetReservedLayoutShadowPadding()
         {
@@ -724,6 +727,26 @@ namespace ModernWpf.Controls.Primitives
         private void ClearReservedLayoutShadowPadding()
         {
             _reservedLayoutShadowPadding = null;
+        }
+
+        private Thickness GetPopupPositionShadowPadding()
+        {
+            if (_parentPopupControl == null)
+            {
+                return ReservesShadowSpace ? GetReservedLayoutShadowPadding() : PopupShadowPadding;
+            }
+
+            if (!_popupPositionShadowPadding.HasValue)
+            {
+                _popupPositionShadowPadding = ReservesShadowSpace ? GetReservedLayoutShadowPadding() : PopupShadowPadding;
+            }
+
+            return _popupPositionShadowPadding.Value;
+        }
+
+        private void ClearPopupPositionShadowPadding()
+        {
+            _popupPositionShadowPadding = null;
         }
 
         private static double SubtractConstraintPadding(double value, double padding)
@@ -766,6 +789,8 @@ namespace ModernWpf.Controls.Primitives
             {
                 return;
             }
+
+            ClearPopupPositionShadowPadding();
 
             if (_popupPositioner != null)
             {
@@ -816,6 +841,9 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
+            ClearPopupPositionShadowPadding();
+            UpdatePopupMargin();
+
             if (_popupPositioner == null)
             {
                 PositionParentPopupControl();
@@ -824,6 +852,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnParentPopupControlClosed(object sender, EventArgs e)
         {
+            ClearPopupPositionShadowPadding();
             ClearMarginAdjustment();
             ResetTransform();
         }
@@ -1210,6 +1239,7 @@ namespace ModernWpf.Controls.Primitives
         private PopupPositioner _popupPositioner;
         private UIElement _shadowOpacitySource;
         private Thickness? _reservedLayoutShadowPadding;
+        private Thickness? _popupPositionShadowPadding;
         private bool _isShadowOpacityRenderingHooked;
         private bool _updatingShadowAlias;
         private bool _updatingTranslationZAlias;

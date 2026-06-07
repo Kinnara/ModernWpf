@@ -126,6 +126,34 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 134 fixes the remaining ThemeShadow depth-driven popup layout shift:
+
+- User review rejected the previous ThemeShadow conclusion because changing
+  depth could still move hosted popup layout. The missed path was
+  `ThemeShadowChrome` popup positioning: reserved layout padding was frozen, but
+  non-reserved popup placement padding still followed live `Depth` and could
+  re-run edge alignment while a popup/flyout was already placed.
+- Product fix: `ThemeShadowChrome.PopupPositionShadowPadding` now caches the
+  placement inset while hosted by a popup. `Depth` / `TranslationZ` changes
+  redraw the shadow but no longer change the popup placement padding. The cache
+  is cleared for shadow host/inset mode changes, when the popup host changes,
+  and when the popup closes so a later open can use the current depth.
+- Guard tests passed:
+  `LayoutCompatibilityApiTests.ThemeShadowChrome` for `net8.0-windows7.0`,
+  including the new
+  `ThemeShadowChromePopupPositionPaddingDoesNotFollowDepthWhilePopupIsHosted`
+  regression. The ThemeShadow Gallery sample guard and recorder source-shape
+  guard also passed for `net8.0-windows7.0` and `net10.0-windows7.0`.
+- Fresh Light recording
+  `artifacts/gallery-recordings/20260607-052009-821/report.md` passes for the
+  Gallery ThemeShadow slider path. The clip still has zero `PrintWindow` frame
+  delta for the shadow itself, so the accepted visual evidence is the rendered
+  before/after artifact set: root/card bounds are stable, the card edge remains
+  `36,36,200,200`, and artifact `rootDelta=1.192` proves the shadow redraw.
+  This round therefore treats the product popup-placement regression test plus
+  rendered artifacts as the blocking proof for the reported depth layout shift,
+  not the low-delta MP4 frames alone.
+
 Round 133 restores the broad Gallery source-shape verification gate:
 
 - After the ThemeShadow round, the full `WpfGallerySourceShapeTests` sweep still
