@@ -126,6 +126,36 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 127 tightens ThemeShadow depth-change layout-shift detection after user
+review rejected the Round 126 conclusion:
+
+- The prior dense-frame check still used sampled mean color inside the fixed
+  200x200 card region. That could prove the card pixels stayed mostly similar,
+  but it did not directly locate the rendered card edges in every decoded frame.
+  A short visible card/layout jump could therefore be missed or diluted.
+- `Record-GalleryControlInteractions.ps1` now detects the ThemeShadow card edge
+  rectangle in each dense frame around the caster, compares it with the
+  baseline card edge rectangle, and fails ThemeShadow value proof if the maximum
+  edge shift exceeds `1px` or if card edges cannot be detected. The manifest now
+  records `BaselineCardEdgeBounds`, `MaxCardEdgeShift`,
+  `CardEdgeShiftThreshold`, `CardEdgeStable`, and `CardEdgesDetected`.
+- Fresh Light verification
+  `artifacts/gallery-recordings/20260607-022637-460/report.md` passes with
+  `ThemeShadowDenseFrameStabilityEvidence=true`, `FrameCount=193`,
+  `MaxCardMeanDelta=0.128`, `BaselineCardEdgeBounds=570,428,200,200`, and
+  `MaxCardEdgeShift=0`. The before/after rendered artifact bounds remain
+  identical for root, example grid, shadow chrome, card, and slider.
+- Fresh Dark verification
+  `artifacts/gallery-recordings/20260607-022945-246/report.md` passes with
+  `ThemeShadowDenseFrameStabilityEvidence=true`, `FrameCount=192`,
+  `MaxCardMeanDelta=0.042`, `BaselineCardEdgeBounds=570,428,200,200`, and
+  `MaxCardEdgeShift=0`.
+- Current conclusion: the latest recordings do not reproduce an actual card or
+  layout move in either theme. The visible motion in these runs is the shadow
+  envelope expanding with depth, which is separately backed by the temporary
+  WinUI source-geometry depth captures. The harness now has a direct fail-fast
+  check for the actual card-edge/layout-shift failure class.
+
 Round 126 tightens ThemeShadow depth-change evidence after the latest user
 review:
 
@@ -2111,7 +2141,7 @@ proof on top of these static route captures.
 | Layout | Expander | `item/Expander` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/Expander/light-expander.mp4` | Latest Light rendered run records expansion evidence with whole-frame/local deltas `0.305` / `5.512`; reviewed frame `t9500` shows the expected content visible after expansion. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/Expander/dark-expander.mp4`. |
 | Media | PersonPicture | `item/PersonPicture` | Recorded + screenshot | Fixed profile-image parity | `artifacts/visual-checks/20260606-193052-521-96680/report.md` | Round 117 fixes the profile-image sample to render the packaged shoulder-tap PNG used by the WinUI Gallery snippet/reference, replacing the old local dashboard portrait. The screenshot harness now crops the full WinUI avatar from rendered pixels instead of the `ProfileImageRadio` row or stale offsets; focused Dark parity passed with primary crop delta `0.35` and matching `96x96` crops. Latest Light interaction proof remains `artifacts/gallery-recordings/20260606-073924-914/PersonPicture/light-personpicture.mp4`, which selects `Display Name` and reviewed `t9500` shows the avatar changed to `JD`; previous Dark interaction proof remains `artifacts/gallery-recordings/20260606-052421-356/PersonPicture/dark-personpicture.mp4`. |
 | Styles | IconElement | `item/IconElement` | Recorded + screenshot | Fixed options chrome | `artifacts/visual-checks/20260606-202525-061-150024/report.md` | Round 118 moves the `Monochrome` checkbox out of `ExampleContent` and into `ControlExample.OptionsContent`, so the first sample renders a template-level side options panel with `200-320px` width, card background, divider, and `16px` padding. Latest focused Dark screenshot parity passed with matching `590x118` primary crops and delta `13.08`; reviewed full-page captures show the side panel aligned with the sample row. Latest Light interaction proof remains `artifacts/gallery-recordings/20260606-073924-914/IconElement/light-iconelement.mp4`, which toggles `Monochrome` Off -> On with local visual delta `4.175`; previous Dark interaction proof remains `artifacts/gallery-recordings/20260606-052421-356/IconElement/dark-iconelement.mp4`. |
-| Styles | ThemeShadow | `item/ThemeShadow` | Recorded + screenshot | Fixed options chrome + source-layout-stable depth change; recorder hardened | `artifacts/gallery-recordings/20260607-020732-533/report.md` | Round 126 replaces the old synthetic `RangeValuePattern.SetValue` proof with rendered Slider input evidence. Latest Light recording moves depth `32 -> 64`, records `ValueInputMethod=SliderKeyboardEndAfterDragMiss`, `ThemeShadowVisualEvidence=true`, `ThemeShadowCasterStabilityEvidence=true`, and `ThemeShadowDenseFrameStabilityEvidence=true`, and proves root, example grid, shadow chrome, card, and slider bounds are identical before and after the depth change. Reviewed frames show the card and surrounding layout fixed while the shadow envelope expands. Temporary WinUI source captures in `artifacts/theme-shadow-depth-check/winui-depth32-64/` verify that the official `36,36,200,200` caster also expands its envelope at depth `64`. Latest Light WinUI-reference screenshot parity remains `artifacts/visual-checks/20260606-214802-529-203260/report.md`; latest Dark parity remains `artifacts/visual-checks/20260606-213646-251-68508/report.md`. |
+| Styles | ThemeShadow | `item/ThemeShadow` | Recorded + screenshot | Fixed options chrome + source-layout-stable depth change; recorder hardened | Light: `artifacts/gallery-recordings/20260607-022637-460/report.md`; Dark: `artifacts/gallery-recordings/20260607-022945-246/report.md` | Round 127 adds dense-frame card-edge detection so depth-change proof fails if the rendered card edge moves by more than `1px` or cannot be detected. Latest Light and Dark recordings move depth `32 -> 64`, record `ValueInputMethod=SliderKeyboardEndAfterDragMiss`, `ThemeShadowVisualEvidence=true`, `ThemeShadowCasterStabilityEvidence=true`, `ThemeShadowDenseFrameStabilityEvidence=true`, and `MaxCardEdgeShift=0`; before/after root, example grid, shadow chrome, card, and slider bounds are identical. The visible shadow envelope expands, and temporary WinUI source captures in `artifacts/theme-shadow-depth-check/winui-depth32-64/` verify that the official `36,36,200,200` caster also expands its envelope at depth `64`. Latest Light WinUI-reference screenshot parity remains `artifacts/visual-checks/20260606-214802-529-203260/report.md`; latest Dark parity remains `artifacts/visual-checks/20260606-213646-251-68508/report.md`. |
 | Windowing | TitleBar | `item/TitleBar` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-073924-914/TitleBar/light-titlebar.mp4` | Latest Light rendered run toggles `IsBackButtonVisible` and requires the preview Back button to become visible. Manifest records `BeforeState=Off`, `AfterState=On`, `BeforeExpectedElementVisible=false`, `AfterExpectedElementVisible=true`, `ExpectedElementChanged=true`, whole-frame delta `0.127`, and local visual delta `8.509`; reviewed frame `t9500` shows the Back preview button. The previous dark proof remains at `artifacts/gallery-recordings/20260606-021439-880/TitleBar/dark-titlebar.mp4`. |
 | Status & info | InfoBadge | `item/InfoBadge` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-171020-087-82140/report.md` | Round 108 fixed the base InfoBadge auto corner radius and Round 109 fixed the embedded NavigationView sample by refreshing `TemplateSettings.OpenPaneLength` during arrange. `InfoBadgeSampleMatchesWinUIGalleryExamples` now asserts rendered bounds for the nested `Inbox` item and `5` badge plus visible `Home`, `Account`, and `Inbox` text. The screenshot harness uses the embedded NavigationView artifact as the required primary crop with variation threshold `8.0`; reviewed `modernwpf-artifacts/GallerySample_InfoBadge_NavigationView.png` shows `Home`, `Account`, `Inbox`, `Settings`, and the `5` badge. Older Light/Dark recordings still prove the opacity-toggle interaction path, but embedded-badge static parity is now screenshot-backed. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/InfoBar/light-infobar.mp4` | Latest Light rendered rerun toggles `Is Open` from On to Off with local visual delta `4.173` and whole-frame delta `0.192`; reviewed frame `t9500` shows the first InfoBar sample closed while later samples remain aligned. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/InfoBar/dark-infobar.mp4`. |

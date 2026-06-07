@@ -5888,8 +5888,141 @@ function Compare-ImageRegionMeanDeltaSampled($baseline, $current, $region, [int]
     }
 }
 
+function Format-FrameRectangle($region) {
+    if ($null -eq $region) {
+        return ""
+    }
+
+    return ("{0},{1},{2},{3}" -f $region.X, $region.Y, $region.Width, $region.Height)
+}
+
+function Get-FrameRectangleMaxDelta($first, $second) {
+    if ($null -eq $first -or $null -eq $second) {
+        return $null
+    }
+
+    return [Math]::Max(
+        [Math]::Max([Math]::Abs([int]$first.X - [int]$second.X), [Math]::Abs([int]$first.Y - [int]$second.Y)),
+        [Math]::Max([Math]::Abs([int]$first.Width - [int]$second.Width), [Math]::Abs([int]$first.Height - [int]$second.Height)))
+}
+
+function Get-LumaMedian([double[]]$values) {
+    if ($null -eq $values -or $values.Count -eq 0) {
+        return $null
+    }
+
+    $ordered = @($values | Sort-Object)
+    $middle = [int][Math]::Floor($ordered.Count / 2)
+    if (($ordered.Count % 2) -eq 0) {
+        return (($ordered[$middle - 1] + $ordered[$middle]) / 2.0)
+    }
+
+    return $ordered[$middle]
+}
+
+function Get-ThemeShadowCardEdgeBounds($bitmap, $region) {
+    if ($null -eq $bitmap -or $null -eq $region) {
+        return $null
+    }
+
+    $margin = 32
+    $left = [Math]::Max(0, [int]$region.X - $margin)
+    $top = [Math]::Max(0, [int]$region.Y - $margin)
+    $right = [Math]::Min($bitmap.Width, [int]$region.X + [int]$region.Width + $margin)
+    $bottom = [Math]::Min($bitmap.Height, [int]$region.Y + [int]$region.Height + $margin)
+    if (($right - $left) -le 8 -or ($bottom - $top) -le 8) {
+        return $null
+    }
+
+    $centerX = [Math]::Max(0, [Math]::Min($bitmap.Width - 1, [int]([double]$region.X + ([double]$region.Width / 2.0))))
+    $centerY = [Math]::Max(0, [Math]::Min($bitmap.Height - 1, [int]([double]$region.Y + ([double]$region.Height / 2.0))))
+    $cardLuma = Get-PixelLuma ($bitmap.GetPixel($centerX, $centerY))
+
+    $backgroundSamples = New-Object System.Collections.Generic.List[double]
+    $samplePoints = @(
+        @([int]$left, $centerY),
+        @([int]($right - 1), $centerY),
+        @($centerX, [int]$top),
+        @($centerX, [int]($bottom - 1)),
+        @([int]$left, [int]$top),
+        @([int]($right - 1), [int]$top),
+        @([int]$left, [int]($bottom - 1)),
+        @([int]($right - 1), [int]($bottom - 1))
+    )
+    foreach ($point in $samplePoints) {
+        $x = [Math]::Max(0, [Math]::Min($bitmap.Width - 1, [int]$point[0]))
+        $y = [Math]::Max(0, [Math]::Min($bitmap.Height - 1, [int]$point[1]))
+        $backgroundSamples.Add((Get-PixelLuma ($bitmap.GetPixel($x, $y))))
+    }
+
+    $backgroundLuma = Get-LumaMedian $backgroundSamples.ToArray()
+    if ($null -eq $backgroundLuma -or [Math]::Abs($cardLuma - [double]$backgroundLuma) -lt 2.0) {
+        return $null
+    }
+
+    $threshold = [double]$backgroundLuma + (($cardLuma - [double]$backgroundLuma) * 0.6)
+    $cardIsBrighter = $cardLuma -gt [double]$backgroundLuma
+    $columnCounts = @{}
+    $rowCounts = @{}
+
+    for ($x = $left; $x -lt $right; $x++) {
+        $columnCounts[$x] = 0
+    }
+    for ($y = $top; $y -lt $bottom; $y++) {
+        $rowCounts[$y] = 0
+    }
+
+    for ($y = $top; $y -lt $bottom; $y++) {
+        for ($x = $left; $x -lt $right; $x++) {
+            $luma = Get-PixelLuma ($bitmap.GetPixel($x, $y))
+            $isCardPixel = if ($cardIsBrighter) { $luma -ge $threshold } else { $luma -le $threshold }
+            if ($isCardPixel) {
+                $columnCounts[$x] = [int]$columnCounts[$x] + 1
+                $rowCounts[$y] = [int]$rowCounts[$y] + 1
+            }
+        }
+    }
+
+    $minColumnHits = [Math]::Max(20, [int]([double]$region.Height * 0.45))
+    $minRowHits = [Math]::Max(20, [int]([double]$region.Width * 0.45))
+
+    $xStart = $null
+    $xEnd = $null
+    for ($x = $left; $x -lt $right; $x++) {
+        if ([int]$columnCounts[$x] -ge $minColumnHits) {
+            if ($null -eq $xStart) {
+                $xStart = $x
+            }
+            $xEnd = $x
+        }
+    }
+
+    $yStart = $null
+    $yEnd = $null
+    for ($y = $top; $y -lt $bottom; $y++) {
+        if ([int]$rowCounts[$y] -ge $minRowHits) {
+            if ($null -eq $yStart) {
+                $yStart = $y
+            }
+            $yEnd = $y
+        }
+    }
+
+    if ($null -eq $xStart -or $null -eq $xEnd -or $null -eq $yStart -or $null -eq $yEnd) {
+        return $null
+    }
+
+    return [pscustomobject]@{
+        X = [int]$xStart
+        Y = [int]$yStart
+        Width = [int]($xEnd - $xStart + 1)
+        Height = [int]($yEnd - $yStart + 1)
+    }
+}
+
 function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recordingResult, $interactionResult) {
     $cardDeltaThreshold = 2.0
+    $cardEdgeShiftThreshold = 1.0
     $sampleStep = 6
 
     if ($SkipFrameExtraction) {
@@ -5898,6 +6031,7 @@ function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recor
             Stable = $false
             Reason = "Frame extraction was skipped."
             CardDeltaThreshold = $cardDeltaThreshold
+            CardEdgeShiftThreshold = $cardEdgeShiftThreshold
         }
     }
 
@@ -5907,6 +6041,7 @@ function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recor
             Stable = $false
             Reason = "Recorder capture rectangle was not reported."
             CardDeltaThreshold = $cardDeltaThreshold
+            CardEdgeShiftThreshold = $cardEdgeShiftThreshold
         }
     }
 
@@ -5916,6 +6051,7 @@ function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recor
             Stable = $false
             Reason = "ThemeShadow caster bounds were not reported."
             CardDeltaThreshold = $cardDeltaThreshold
+            CardEdgeShiftThreshold = $cardEdgeShiftThreshold
         }
     }
 
@@ -5927,6 +6063,7 @@ function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recor
             Stable = $false
             Reason = "ThemeShadow caster or capture bounds could not be parsed."
             CardDeltaThreshold = $cardDeltaThreshold
+            CardEdgeShiftThreshold = $cardEdgeShiftThreshold
         }
     }
 
@@ -5944,6 +6081,7 @@ function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recor
             Reason = "Fewer than two dense ThemeShadow frames were decoded."
             FrameCount = $framePaths.Count
             CardDeltaThreshold = $cardDeltaThreshold
+            CardEdgeShiftThreshold = $cardEdgeShiftThreshold
         }
     }
 
@@ -5957,11 +6095,31 @@ function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recor
                 Reason = "ThemeShadow caster bounds could not be converted into frame coordinates."
                 FrameCount = $framePaths.Count
                 CardDeltaThreshold = $cardDeltaThreshold
+                CardEdgeShiftThreshold = $cardEdgeShiftThreshold
+            }
+        }
+
+        $baselineCardBounds = Get-ThemeShadowCardEdgeBounds $baseline $region
+        if ($null -eq $baselineCardBounds) {
+            return [ordered]@{
+                Generated = $true
+                Stable = $false
+                Reason = "ThemeShadow card edges could not be detected in the baseline dense frame."
+                FrameCount = $framePaths.Count
+                FrameRate = $targetFps
+                Bounds = $interactionResult.ThemeShadowCasterBeforeBounds
+                FrameRegion = (Format-FrameRectangle $region)
+                BaselineFrame = [IO.Path]::GetFileNameWithoutExtension($framePaths[0])
+                CardDeltaThreshold = $cardDeltaThreshold
+                CardEdgeShiftThreshold = $cardEdgeShiftThreshold
             }
         }
 
         $maxCardMeanDelta = 0.0
+        $maxCardEdgeShift = 0.0
         $worstFrame = [IO.Path]::GetFileNameWithoutExtension($framePaths[0])
+        $worstEdgeFrame = [IO.Path]::GetFileNameWithoutExtension($framePaths[0])
+        $cardEdgesDetected = $true
 
         for ($i = 1; $i -lt $framePaths.Count; $i++) {
             $current = [System.Drawing.Bitmap]::FromFile($framePaths[$i])
@@ -5976,23 +6134,44 @@ function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recor
                     $maxCardMeanDelta = $meanDelta
                     $worstFrame = [IO.Path]::GetFileNameWithoutExtension($framePaths[$i])
                 }
+
+                $currentCardBounds = Get-ThemeShadowCardEdgeBounds $current $region
+                $edgeShift = Get-FrameRectangleMaxDelta $baselineCardBounds $currentCardBounds
+                if ($null -eq $edgeShift) {
+                    $cardEdgesDetected = $false
+                    $worstEdgeFrame = [IO.Path]::GetFileNameWithoutExtension($framePaths[$i])
+                    continue
+                }
+
+                if ([double]$edgeShift -gt $maxCardEdgeShift) {
+                    $maxCardEdgeShift = [double]$edgeShift
+                    $worstEdgeFrame = [IO.Path]::GetFileNameWithoutExtension($framePaths[$i])
+                }
             }
             finally {
                 $current.Dispose()
             }
         }
 
+        $cardEdgeStable = $cardEdgesDetected -and ([double]$maxCardEdgeShift -le $cardEdgeShiftThreshold)
+
         return [ordered]@{
             Generated = $true
-            Stable = ([double]$maxCardMeanDelta -le $cardDeltaThreshold)
+            Stable = (([double]$maxCardMeanDelta -le $cardDeltaThreshold) -and $cardEdgeStable)
             FrameCount = $framePaths.Count
             FrameRate = $targetFps
             Bounds = $interactionResult.ThemeShadowCasterBeforeBounds
-            FrameRegion = ("{0},{1},{2},{3}" -f $region.X, $region.Y, $region.Width, $region.Height)
+            FrameRegion = (Format-FrameRectangle $region)
+            BaselineCardEdgeBounds = (Format-FrameRectangle $baselineCardBounds)
             BaselineFrame = [IO.Path]::GetFileNameWithoutExtension($framePaths[0])
             WorstFrame = $worstFrame
+            WorstEdgeFrame = $worstEdgeFrame
             MaxCardMeanDelta = [Math]::Round($maxCardMeanDelta, 3)
             CardDeltaThreshold = $cardDeltaThreshold
+            MaxCardEdgeShift = [Math]::Round($maxCardEdgeShift, 3)
+            CardEdgeShiftThreshold = $cardEdgeShiftThreshold
+            CardEdgeStable = $cardEdgeStable
+            CardEdgesDetected = $cardEdgesDetected
             SampleStep = $sampleStep
         }
     }
@@ -7491,7 +7670,7 @@ foreach ($control in $Controls) {
         !$themeShadowDenseFrameStabilityEvidence) {
         $status = "Failed"
         if ($null -ne $themeShadowDenseFrameStability -and $themeShadowDenseFrameStability.Contains("Generated") -and $themeShadowDenseFrameStability.Generated) {
-            $notes.Add(("ThemeShadow rendered card changed too much in dense video frames, indicating a visible layout shift. WorstFrame={0}; cardDelta={1}; threshold={2}." -f $themeShadowDenseFrameStability.WorstFrame, $themeShadowDenseFrameStability.MaxCardMeanDelta, $themeShadowDenseFrameStability.CardDeltaThreshold))
+            $notes.Add(("ThemeShadow rendered card moved or changed too much in dense video frames, indicating a visible layout shift. WorstFrame={0}; cardDelta={1}; threshold={2}; worstEdgeFrame={3}; edgeShift={4}; edgeThreshold={5}; baselineEdge={6}." -f $themeShadowDenseFrameStability.WorstFrame, $themeShadowDenseFrameStability.MaxCardMeanDelta, $themeShadowDenseFrameStability.CardDeltaThreshold, $themeShadowDenseFrameStability.WorstEdgeFrame, $themeShadowDenseFrameStability.MaxCardEdgeShift, $themeShadowDenseFrameStability.CardEdgeShiftThreshold, $themeShadowDenseFrameStability.BaselineCardEdgeBounds))
         }
         else {
             $reason = if ($null -ne $themeShadowDenseFrameStability -and $themeShadowDenseFrameStability.Contains("Reason")) { $themeShadowDenseFrameStability.Reason } else { "Dense rendered-card stability evidence was not generated." }
@@ -7592,7 +7771,7 @@ foreach ($control in $Controls) {
         $dragEndPoint = if ($null -ne $interactionResult -and $interactionResult.Contains("DragEndPoint")) { $interactionResult.DragEndPoint } else { "" }
         $notes.Add(("ThemeShadow card/caster bounds stayed fixed while depth changed through {0} ({1}->{2}). Caster before={3}; after={4}. The visible shadow envelope may expand with depth; live WinUI source-geometry captures show the same behavior." -f $valueInputMethod, $dragStartPoint, $dragEndPoint, $beforeCasterBounds, $afterCasterBounds))
         if ($null -ne $themeShadowDenseFrameStability -and $themeShadowDenseFrameStability.Contains("Generated") -and $themeShadowDenseFrameStability.Generated) {
-            $notes.Add(("Dense ThemeShadow video frames kept the rendered card fixed. Frames={0}; cardDelta={1}; threshold={2}." -f $themeShadowDenseFrameStability.FrameCount, $themeShadowDenseFrameStability.MaxCardMeanDelta, $themeShadowDenseFrameStability.CardDeltaThreshold))
+            $notes.Add(("Dense ThemeShadow video frames kept the rendered card fixed. Frames={0}; cardDelta={1}; threshold={2}; edgeShift={3}; edgeThreshold={4}; baselineEdge={5}." -f $themeShadowDenseFrameStability.FrameCount, $themeShadowDenseFrameStability.MaxCardMeanDelta, $themeShadowDenseFrameStability.CardDeltaThreshold, $themeShadowDenseFrameStability.MaxCardEdgeShift, $themeShadowDenseFrameStability.CardEdgeShiftThreshold, $themeShadowDenseFrameStability.BaselineCardEdgeBounds))
         }
     }
 
