@@ -126,6 +126,46 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 136 fixes the ThemeShadow recording false pass found after user review:
+
+- User review rejected the Round 135 conclusion because the layout still looked
+  shifted after changing depth. The measured product bounds were stable, but the
+  accepted MP4 was not valid motion proof: the rendered recorder warm-up scanned
+  every full-size live frame with `Get-ImageStats`, which could consume the
+  entire 4s clip before the ThemeShadow interaction started. That produced a
+  static video with artifact-only evidence.
+- Product/sample fix: the ThemeShadow Gallery sample now matches the official
+  WinUI sample shape by putting the fixed 36px source padding on
+  `Example3Grid` and removing the compensating margins from `ShadowCastGrid`
+  and `ThemeShadowChrome`. The caster/card slot stays fixed at the padded
+  position while the visible shadow envelope changes with depth.
+- Product guard added:
+  `LayoutCompatibilityApiTests.ThemeShadowChromeDepthChangeDoesNotMoveGalleryPaddedCardEdges`
+  renders the same padded 272x272 host shape as the Gallery sample and asserts
+  the painted 200x200 card edge stays at `36,36,200,200` when depth changes
+  from `32` to `64`.
+- Recorder fix: ThemeShadow now uses `RangeValuePatternAnimated` so the depth
+  transition happens inside the captured clip. The warm-up wait now counts live
+  frames and validates only the latest nonblank frame, avoiding the slow
+  all-frame scan that delayed the interaction past the recording window.
+  ThemeShadow visual acceptance now requires MP4-local sample-root delta;
+  before/after artifacts alone can no longer pass the control.
+- Failed proof before the fix:
+  `artifacts/gallery-recordings/20260607-064041-678/report.md` failed with
+  `ThemeShadowVideoVisualEvidence=false`, `MaxFrameDelta=0`,
+  `MaxLocalFrameDelta=0`, and artifact `rootDelta=1.192`. The product bounds
+  were stable, but the video was still static, so the run was correctly
+  rejected.
+- Passing proof after the fix:
+  `artifacts/gallery-recordings/20260607-064517-766/report.md` passes with
+  `BeforeValue=32`, `AfterValue=64`, `ValueInputMethod=RangeValuePatternAnimated`,
+  `ThemeShadowVideoVisualEvidence=true`, `ThemeShadowArtifactVisualEvidence=true`,
+  `ThemeShadowArtifactCardStabilityEvidence=true`, and
+  `ThemeShadowDenseFrameStabilityEvidence=true`. The card/caster bounds remain
+  `570.0,428.0,200.0,200.0` before and after; artifact card edges remain
+  `36,36,200,200`; dense video analysis reports `MaxCardEdgeShift=0` and
+  `MaxCardMeanDelta=0.096`.
+
 Round 135 tightens ThemeShadow depth-shift proof and exposes a ShellNavigation
 pointer-proof gap:
 
@@ -2291,6 +2331,8 @@ Latest focused evidence:
 | `artifacts/gallery-recordings/20260606-141752-321/report.md` | SelectorBar | 1 passed, 0 needs review, 0 failed; post-fix Dark rerun shows readable dark `SamplePage1` text in frame `t4000` |
 | `artifacts/gallery-recordings/20260606-210129-330/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; Dark recording proves text input on the official one-line RichTextBox with `AfterOutput=ModernWpf rich text`, `InputMethod=WindowMessage`, and local delta `6.395` |
 | `artifacts/gallery-recordings/20260606-210310-713/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; Light recording proves text input on the official one-line RichTextBox with `AfterOutput=ModernWpf rich text`, `InputMethod=WindowMessage`, and local delta `1.932` |
+| `artifacts/gallery-recordings/20260607-064517-766/report.md` | ThemeShadow | 1 passed, 0 needs review, 0 failed; supersedes the artifact-only false pass with `RangeValuePatternAnimated`, MP4-local `ThemeShadowVideoVisualEvidence=true`, stable caster bounds `570.0,428.0,200.0,200.0`, artifact card edges `36,36,200,200`, dense video `MaxCardEdgeShift=0`, and `MaxCardMeanDelta=0.096` |
+| `artifacts/gallery-recordings/20260607-064041-678/report.md` | ThemeShadow | Expected failed rerun after requiring video proof; value changed and artifacts redrew, but MP4 frames were static with `ThemeShadowVideoVisualEvidence=false`, `MaxFrameDelta=0`, and `MaxLocalFrameDelta=0`, exposing the slow warm-up false pass |
 | `artifacts/gallery-recordings/20260606-213340-698/report.md` | ThemeShadow | 1 passed, 0 needs review, 0 failed; supersedes the Round 119 false pass by moving value `32 -> 64`, proving `ThemeShadowVisualEvidence=true` from the sample root, and keeping root, example grid, shadow chrome, card, and slider bounds fixed |
 | `artifacts/gallery-recordings/20260606-204907-388/report.md` | ThemeShadow | Superseded false pass; value moved only `32 -> 42`, and local visual delta was not required to come from the ThemeShadow sample root |
 | `artifacts/gallery-recordings/20260606-202416-952/report.md` | ThemeShadow | Superseded false pass; value moved `32 -> 42`, but the layout-stability gate only checked `ShadowRect` and missed the broader source-layout shift |
@@ -2404,7 +2446,7 @@ proof on top of these static route captures.
 | Layout | Expander | `item/Expander` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/Expander/light-expander.mp4` | Latest Light rendered run records expansion evidence with whole-frame/local deltas `0.305` / `5.512`; reviewed frame `t9500` shows the expected content visible after expansion. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/Expander/dark-expander.mp4`. |
 | Media | PersonPicture | `item/PersonPicture` | Recorded + screenshot | Fixed profile-image parity | `artifacts/visual-checks/20260606-193052-521-96680/report.md` | Round 117 fixes the profile-image sample to render the packaged shoulder-tap PNG used by the WinUI Gallery snippet/reference, replacing the old local dashboard portrait. The screenshot harness now crops the full WinUI avatar from rendered pixels instead of the `ProfileImageRadio` row or stale offsets; focused Dark parity passed with primary crop delta `0.35` and matching `96x96` crops. Latest Light interaction proof remains `artifacts/gallery-recordings/20260606-073924-914/PersonPicture/light-personpicture.mp4`, which selects `Display Name` and reviewed `t9500` shows the avatar changed to `JD`; previous Dark interaction proof remains `artifacts/gallery-recordings/20260606-052421-356/PersonPicture/dark-personpicture.mp4`. |
 | Styles | IconElement | `item/IconElement` | Recorded + screenshot | Fixed options chrome | `artifacts/visual-checks/20260606-202525-061-150024/report.md` | Round 118 moves the `Monochrome` checkbox out of `ExampleContent` and into `ControlExample.OptionsContent`, so the first sample renders a template-level side options panel with `200-320px` width, card background, divider, and `16px` padding. Latest focused Dark screenshot parity passed with matching `590x118` primary crops and delta `13.08`; reviewed full-page captures show the side panel aligned with the sample row. Latest Light interaction proof remains `artifacts/gallery-recordings/20260606-073924-914/IconElement/light-iconelement.mp4`, which toggles `Monochrome` Off -> On with local visual delta `4.175`; previous Dark interaction proof remains `artifacts/gallery-recordings/20260606-052421-356/IconElement/dark-iconelement.mp4`. |
-| Styles | ThemeShadow | `item/ThemeShadow` | Recorded + screenshot | Fixed options chrome + source-layout-stable depth change; reserved-space layout fixed; recorder hardened | Light: `artifacts/gallery-recordings/20260607-042421-900/report.md`; Dark: `artifacts/gallery-recordings/20260607-032841-062/report.md` | Round 131 hardens the ThemeShadow depth proof against idle video frames: the recorder now saves before/after rendered artifacts, requires artifact visual delta, and checks painted card-edge stability. Latest Light recording moves depth `32 -> 64` with `ThemeShadowArtifactVisualEvidence=true`, `ThemeShadowArtifactCardStabilityEvidence=true`, artifact `rootDelta=1.192`, fixed artifact card edges `36,36,200,200`, identical UIA root/grid/chrome/card/slider bounds, `ThemeShadowDenseFrameStabilityEvidence=true`, and `MaxCardEdgeShift=0`. Round 130 remains the product fix for reserved-space hosts: `ThemeShadowChrome` freezes reserved layout padding for the current host so `Depth` / `TranslationZ` changes redraw the shadow without resizing the chrome, moving the child, or changing popup-position padding. The previous Dark recording remains valid for the source-style sample path with `MaxCardEdgeShift=1` within the `1px` threshold. Latest Light WinUI-reference screenshot parity remains `artifacts/visual-checks/20260606-214802-529-203260/report.md`; latest Dark parity remains `artifacts/visual-checks/20260606-213646-251-68508/report.md`. |
+| Styles | ThemeShadow | `item/ThemeShadow` | Recorded + screenshot | Fixed options chrome + source-layout-stable depth change; reserved-space layout fixed; recorder hardened | Light: `artifacts/gallery-recordings/20260607-064517-766/report.md`; Dark: `artifacts/gallery-recordings/20260607-032841-062/report.md` | Round 136 supersedes the artifact-only proof: ThemeShadow depth now changes through `RangeValuePatternAnimated` inside the MP4, and the pass requires `ThemeShadowVideoVisualEvidence=true` plus artifact and dense-frame stability. Latest Light proof moves value `32 -> 64`, keeps caster bounds fixed at `570.0,428.0,200.0,200.0`, keeps artifact card edges fixed at `36,36,200,200`, reports dense video `MaxCardEdgeShift=0` and `MaxCardMeanDelta=0.096`, and records `ThemeShadowArtifactVisualEvidence=true`, `ThemeShadowArtifactCardStabilityEvidence=true`, and `ThemeShadowDenseFrameStabilityEvidence=true`. The Gallery sample now uses the source-shaped padded host, and `ThemeShadowChromeDepthChangeDoesNotMoveGalleryPaddedCardEdges` pins that layout. Round 130 remains the product fix for reserved-space hosts. Latest Light WinUI-reference screenshot parity remains `artifacts/visual-checks/20260606-214802-529-203260/report.md`; latest Dark parity remains `artifacts/visual-checks/20260606-213646-251-68508/report.md`. |
 | Windowing | TitleBar | `item/TitleBar` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-073924-914/TitleBar/light-titlebar.mp4` | Latest Light rendered run toggles `IsBackButtonVisible` and requires the preview Back button to become visible. Manifest records `BeforeState=Off`, `AfterState=On`, `BeforeExpectedElementVisible=false`, `AfterExpectedElementVisible=true`, `ExpectedElementChanged=true`, whole-frame delta `0.127`, and local visual delta `8.509`; reviewed frame `t9500` shows the Back preview button. The previous dark proof remains at `artifacts/gallery-recordings/20260606-021439-880/TitleBar/dark-titlebar.mp4`. |
 | Status & info | InfoBadge | `item/InfoBadge` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-171020-087-82140/report.md` | Round 108 fixed the base InfoBadge auto corner radius and Round 109 fixed the embedded NavigationView sample by refreshing `TemplateSettings.OpenPaneLength` during arrange. `InfoBadgeSampleMatchesWinUIGalleryExamples` now asserts rendered bounds for the nested `Inbox` item and `5` badge plus visible `Home`, `Account`, and `Inbox` text. The screenshot harness uses the embedded NavigationView artifact as the required primary crop with variation threshold `8.0`; reviewed `modernwpf-artifacts/GallerySample_InfoBadge_NavigationView.png` shows `Home`, `Account`, `Inbox`, `Settings`, and the `5` badge. Older Light/Dark recordings still prove the opacity-toggle interaction path, but embedded-badge static parity is now screenshot-backed. |
 | Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/InfoBar/light-infobar.mp4` | Latest Light rendered rerun toggles `Is Open` from On to Off with local visual delta `4.173` and whole-frame delta `0.192`; reviewed frame `t9500` shows the first InfoBar sample closed while later samples remain aligned. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/InfoBar/dark-infobar.mp4`. |

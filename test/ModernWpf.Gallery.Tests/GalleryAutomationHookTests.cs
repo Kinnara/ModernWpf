@@ -3134,16 +3134,17 @@ namespace ModernWpf.Gallery.Tests
 
                     var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
                     Assert.AreEqual(1, root.Children.Count);
-                    Assert.IsInstanceOfType(root.Children[0], typeof(Grid));
+                    Assert.IsInstanceOfType(root.Children[0], typeof(Mux.GridEx));
                     var optionsPanel = (StackPanel)page.Examples[0].OptionsContent;
                     Assert.AreEqual(2, optionsPanel.Children.Count);
                     var sliderHeader = (TextBlock)optionsPanel.Children[0];
                     Assert.AreEqual("Z-translation", sliderHeader.Text);
                     Assert.AreEqual(new Thickness(0, 0, 0, 10), sliderHeader.Margin);
 
-                    var exampleGrid = FindNamedDescendant<Grid>(page, "Example3Grid");
+                    var exampleGrid = FindNamedDescendant<Mux.GridEx>(page, "Example3Grid");
                     Assert.IsNotNull(exampleGrid);
                     Assert.AreSame(exampleGrid, FindByAutomationId(page, "GallerySample_ThemeShadow_Example3Grid"));
+                    Assert.AreEqual(new Thickness(36), exampleGrid.Padding);
                     Assert.AreEqual(272d, exampleGrid.MinWidth);
                     Assert.AreEqual(272d, exampleGrid.MinHeight);
 
@@ -3151,14 +3152,14 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(shadowCastGrid);
                     Assert.AreSame(shadowCastGrid, exampleGrid.Children[0]);
                     Assert.AreSame(shadowCastGrid, FindByAutomationId(page, "GallerySample_ThemeShadow_ShadowCastGrid"));
-                    Assert.AreEqual(new Thickness(36), shadowCastGrid.Margin);
+                    Assert.AreEqual(new Thickness(), shadowCastGrid.Margin);
 
                     var shadow = FindNamedDescendant<ThemeShadowChrome>(page, "shadow");
                     Assert.IsNotNull(shadow);
                     Assert.AreSame(shadow, FindByAutomationId(page, "GallerySample_ThemeShadow_ShadowChrome"));
                     Assert.AreEqual(32d, shadow.Depth);
                     Assert.AreEqual(32d, shadow.TranslationZ);
-                    Assert.AreEqual(new Thickness(36), shadow.Margin);
+                    Assert.AreEqual(new Thickness(), shadow.Margin);
                     Assert.IsFalse(shadow.ReservesShadowSpace);
                     Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Default, shadow.WindowedPopupInsetMode);
                     Assert.AreEqual(HorizontalAlignment.Left, shadow.HorizontalAlignment);

@@ -307,8 +307,7 @@ namespace ModernWpf.Gallery.Pages
 
             var shadowCastGrid = new Grid
             {
-                Name = "ShadowCastGrid",
-                Margin = new Thickness(36)
+                Name = "ShadowCastGrid"
             };
             GalleryAutomation.WithAutomationId(shadowCastGrid, GalleryAutomation.SampleElementId("ThemeShadow", "ShadowCastGrid"));
 
@@ -328,7 +327,6 @@ namespace ModernWpf.Gallery.Pages
                 Depth = 32,
                 TranslationZ = 32,
                 Child = shadowRect,
-                Margin = new Thickness(36),
                 ReservesShadowSpace = false,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top
@@ -336,9 +334,10 @@ namespace ModernWpf.Gallery.Pages
             shadow.SetResourceReference(ThemeShadowChrome.CornerRadiusProperty, "OverlayCornerRadius");
             GalleryAutomation.WithAutomationId(shadow, GalleryAutomation.SampleElementId("ThemeShadow", "ShadowChrome"));
 
-            var exampleGrid = new Grid
+            var exampleGrid = new Mux.GridEx
             {
                 Name = "Example3Grid",
+                Padding = new Thickness(36),
                 MinWidth = 272,
                 MinHeight = 272
             };

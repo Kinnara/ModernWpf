@@ -320,6 +320,54 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromeDepthChangeDoesNotMoveGalleryPaddedCardEdges()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var card = new Border
+            {
+                Width = 200,
+                Height = 200,
+                Background = new SolidColorBrush(Color.FromRgb(220, 32, 32))
+            };
+            var chrome = new ThemeShadowChrome
+            {
+                Depth = 32,
+                TranslationZ = 32,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Child = card
+            };
+            var exampleGrid = new ModernGridEx
+            {
+                Width = 272,
+                Height = 272,
+                Padding = new Thickness(36),
+                Background = Brushes.White
+            };
+            exampleGrid.Children.Add(new Grid());
+            exampleGrid.Children.Add(chrome);
+
+            ArrangeElement(exampleGrid, 272, 272);
+            var before = RenderShadowSnapshotBitmap(exampleGrid, 272, 272);
+            var beforeCardBounds = MeasureRenderedColorBounds(before, color => color.R > 180 && color.G < 80 && color.B < 80);
+
+            chrome.TranslationZ = 64;
+            exampleGrid.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var after = RenderShadowSnapshotBitmap(exampleGrid, 272, 272);
+            var afterCardBounds = MeasureRenderedColorBounds(after, color => color.R > 180 && color.G < 80 && color.B < 80);
+            var visualDelta = CompareRenderedMeanDelta(before, after);
+
+            Assert.AreEqual(new Point(36, 36), chrome.TranslatePoint(new Point(), exampleGrid));
+            Assert.AreEqual(new Int32Rect(36, 36, 200, 200), beforeCardBounds);
+            Assert.AreEqual(beforeCardBounds, afterCardBounds, "Changing ThemeShadow depth must not move the gallery sample card edges.");
+            Assert.IsTrue(visualDelta > 0.1, $"Changing ThemeShadow depth should visibly redraw the gallery sample shadow. Delta={visualDelta}.");
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromeCanReservePopupLayoutSpaceWhenOptedIn()
     {
         WpfTestHost.Run(() =>

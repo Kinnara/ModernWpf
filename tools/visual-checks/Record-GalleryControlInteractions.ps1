@@ -485,6 +485,37 @@ function Wait-Until([scriptblock]$Probe, [int]$TimeoutSeconds, [string]$Descript
     throw "Timed out waiting for $Description."
 }
 
+function Wait-LiveRecordingWarmupFrames([int]$frameRate, [double]$warmupSeconds, [int]$timeoutSeconds) {
+    if ([string]::IsNullOrWhiteSpace($script:GalleryLiveFrameDirectory)) {
+        return $false
+    }
+
+    $requiredFrameCount = [Math]::Max(2, [int][Math]::Ceiling([Math]::Max(1, $frameRate) * $warmupSeconds))
+    [void](Wait-Until -TimeoutSeconds $timeoutSeconds -Description "live recorder warm-up frames" -Probe {
+            if (!(Test-Path -LiteralPath $script:GalleryLiveFrameDirectory)) {
+                return $false
+            }
+
+            $frames = @(Get-ChildItem -LiteralPath $script:GalleryLiveFrameDirectory -Filter "frame-*.png" -File -ErrorAction SilentlyContinue |
+                    Where-Object { $_.Length -gt 0 } |
+                    Sort-Object Name)
+            if ($frames.Count -lt $requiredFrameCount) {
+                return $false
+            }
+
+            $latestFrame = $frames[$frames.Count - 1]
+            try {
+                $stats = Get-ImageStats $latestFrame.FullName
+                return $null -ne $stats -and $stats.NonBlank
+            }
+            catch {
+                return $false
+            }
+        })
+
+    return $true
+}
+
 function Find-WindowByProcessId([int]$processId) {
     $condition = New-Object System.Windows.Automation.PropertyCondition(
         [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
@@ -4197,97 +4228,17 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
             $dragEndPoint = ""
             $sliderClickablePoint = ""
             if ($control -eq "ThemeShadow") {
-                $sliderBounds = ConvertFrom-BoundingRectangleString $targetBounds
-                if ($null -ne $sliderBounds -and $sliderBounds.Width -gt 0 -and $sliderBounds.Height -gt 0) {
-                    $range = $pattern.Current
-                    $minimum = [double]$range.Minimum
-                    $maximum = [double]$range.Maximum
-                    $beforeValue = if ($null -ne $before) { [double]$before } else { $minimum }
-                    $denominator = $maximum - $minimum
-                    $startFraction = if ([Math]::Abs($denominator) -gt 0.000001) {
-                        [Math]::Max(0.0, [Math]::Min(1.0, ($beforeValue - $minimum) / $denominator))
-                    }
-                    else {
-                        0.0
-                    }
-                    $targetFraction = if ([Math]::Abs($denominator) -gt 0.000001) {
-                        [Math]::Max(0.0, [Math]::Min(1.0, ([double]$target - $minimum) / $denominator))
-                    }
-                    else {
-                        1.0
-                    }
-                    $smallChangeValue = [double]$range.SmallChange
-                    $smallChange = if ($smallChangeValue -gt 0 -and ![double]::IsNaN($smallChangeValue)) {
-                        $smallChangeValue
-                    }
-                    else {
-                        1.0
-                    }
-                    $startX = [int][Math]::Round($sliderBounds.X + ($sliderBounds.Width * $startFraction))
-                    $endX = [int][Math]::Round($sliderBounds.X + ($sliderBounds.Width * $targetFraction))
-                    $y = [int][Math]::Round($sliderBounds.Y + ($sliderBounds.Height / 2.0))
-                    $startX = [Math]::Max([int]$sliderBounds.X + 4, [Math]::Min([int]($sliderBounds.X + $sliderBounds.Width - 4), $startX))
-                    $endX = [Math]::Max([int]$sliderBounds.X + 4, [Math]::Min([int]($sliderBounds.X + $sliderBounds.Width - 4), $endX))
-                    $clickablePoint = New-Object System.Windows.Point
-                    if ($sampleElement.TryGetClickablePoint([ref]$clickablePoint)) {
-                        $startX = [int][Math]::Round($clickablePoint.X)
-                        $sliderClickablePoint = ("{0},{1}" -f $startX, ([int][Math]::Round($clickablePoint.Y)))
-                    }
-                    [GalleryRecordingNative]::Drag($startX, $y, $endX, $y, 24, 20)
-                    $valueInputMethod = "SliderDrag"
-                    $dragStartPoint = "$startX,$y"
-                    $dragEndPoint = "$endX,$y"
-                    Start-Sleep -Milliseconds 150
-                    $afterDrag = Get-NumericValue $sampleElement
-                    if ($null -eq $afterDrag -or [Math]::Abs(([double]$afterDrag) - ([double]$target)) -gt 0.001) {
-                        try {
-                            $sampleElement.SetFocus()
-                        }
-                        catch {
-                        }
-
-                        if (![string]::IsNullOrWhiteSpace($sliderClickablePoint)) {
-                            [GalleryRecordingNative]::Click($startX, $y)
-                            Start-Sleep -Milliseconds 100
-                        }
-                        [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
-                        $valueInputMethod = "SliderKeyboardStepAfterDragMiss"
-                        $maximumSteps = [Math]::Min(80, [Math]::Max(1, [int][Math]::Ceiling(([Math]::Abs(([double]$target - [double]$beforeValue) / $smallChange)) + 4)))
-                        for ($step = 0; $step -lt $maximumSteps; $step++) {
-                            [GalleryRecordingNative]::Right()
-                            Start-Sleep -Milliseconds 35
-
-                            $afterStep = Get-NumericValue $sampleElement
-                            if ($null -ne $afterStep -and [Math]::Abs(([double]$afterStep) - ([double]$target)) -le 0.001) {
-                                break
-                            }
-                        }
-
-                        $afterKeyboardStep = Get-NumericValue $sampleElement
-                        if ($null -eq $afterKeyboardStep -or [Math]::Abs(([double]$afterKeyboardStep) - ([double]$target)) -gt 0.001) {
-                            $valueInputMethod = "RangeValuePatternStepAfterInputMiss"
-                            $currentValue = if ($null -ne $afterKeyboardStep) { [double]$afterKeyboardStep } else { [double]$beforeValue }
-                            $direction = if ([double]$target -ge $currentValue) { 1.0 } else { -1.0 }
-                            $patternStep = [Math]::Max($smallChange, [Math]::Abs(([double]$target - $currentValue) / 16.0))
-                            for ($step = 0; $step -lt 32; $step++) {
-                                if ([Math]::Abs($currentValue - [double]$target) -le 0.001) {
-                                    break
-                                }
-
-                                $currentValue += $direction * $patternStep
-                                if (($direction -gt 0 -and $currentValue -gt [double]$target) -or
-                                    ($direction -lt 0 -and $currentValue -lt [double]$target)) {
-                                    $currentValue = [double]$target
-                                }
-
-                                $pattern.SetValue($currentValue)
-                                Start-Sleep -Milliseconds 35
-                            }
-                        }
-                    }
-                }
-                else {
-                    $valueInputMethod = "SliderDragUnavailable"
+                $range = $pattern.Current
+                $minimum = [double]$range.Minimum
+                $maximum = [double]$range.Maximum
+                $startValue = if ($null -ne $before) { [double]$before } else { [double]$range.Value }
+                $targetValue = [Math]::Max($minimum, [Math]::Min($maximum, [double]$target))
+                $valueInputMethod = "RangeValuePatternAnimated"
+                $steps = 18
+                for ($step = 1; $step -le $steps; $step++) {
+                    $currentValue = $startValue + (($targetValue - $startValue) * ($step / [double]$steps))
+                    $pattern.SetValue($currentValue)
+                    Start-Sleep -Milliseconds 45
                 }
             }
             else {
@@ -7615,7 +7566,7 @@ foreach ($control in $Controls) {
         $recordingFrameRate = Get-ControlRecordingFrameRate $control $interactionKind
         $recordingJob = Start-RecordingJob $window.Current.ProcessId ([IntPtr]$window.Current.NativeWindowHandle) $recordingPath $CaptureMode $recordingDurationSeconds $VideoEncoder ([bool]$BenchmarkEncoders) $recordingFrameRate
         $script:GalleryRecordingStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-        Start-Sleep -Milliseconds 1500
+        [void](Wait-LiveRecordingWarmupFrames $recordingFrameRate 0.4 15)
         $interactionResult = Invoke-RecordedInteraction $window $control $sampleElement $artifactDir
         $process.Refresh()
         if ($process.HasExited) {
@@ -7791,7 +7742,7 @@ foreach ($control in $Controls) {
     $layoutStabilityEvidence = Test-LayoutStabilityEvidence $interactionResult
     $themeShadowVideoVisualEvidence = Test-ThemeShadowVisualEvidence $localFrameDeltas
     $themeShadowArtifactVisualEvidence = Test-ThemeShadowArtifactVisualEvidence $interactionResult
-    $themeShadowVisualEvidence = $themeShadowVideoVisualEvidence -or $themeShadowArtifactVisualEvidence
+    $themeShadowVisualEvidence = $themeShadowVideoVisualEvidence
     $themeShadowCasterStabilityEvidence = Test-ThemeShadowCasterStabilityEvidence $interactionResult
     $themeShadowDenseFrameStabilityEvidence = Test-ThemeShadowDenseFrameStabilityEvidence $themeShadowDenseFrameStability
     $themeShadowArtifactCardStabilityEvidence = Test-ThemeShadowArtifactCardStabilityEvidence $interactionResult
@@ -7861,11 +7812,9 @@ foreach ($control in $Controls) {
         $control -eq "ThemeShadow" -and
         $interactionKind -eq "Value") {
         $valueInputMethod = if ($null -ne $interactionResult -and $interactionResult.Contains("ValueInputMethod")) { $interactionResult.ValueInputMethod } else { "" }
-        if ($valueInputMethod -ne "SliderDrag" -and
-            $valueInputMethod -ne "SliderKeyboardStepAfterDragMiss" -and
-            $valueInputMethod -ne "RangeValuePatternStepAfterInputMiss") {
+        if ($valueInputMethod -ne "RangeValuePatternAnimated") {
             $status = "Failed"
-            $notes.Add(("ThemeShadow depth interaction used {0}; expected rendered slider input or stepped rendered value transition." -f $valueInputMethod))
+            $notes.Add(("ThemeShadow depth interaction used {0}; expected animated RangeValuePattern transition inside the recorded clip." -f $valueInputMethod))
         }
     }
 
@@ -8051,7 +8000,7 @@ foreach ($control in $Controls) {
             $notes.Add("Interactive recording produced low poster-frame delta and no local rendered change inside recorded interaction bounds.")
         }
         elseif ($layoutStabilityEvidenceAccepted -and !$localVisualEvidence) {
-            $notes.Add("ThemeShadow target value was reached and before/after artifacts proved visual change plus card-edge stability despite low local video delta.")
+            $notes.Add("ThemeShadow target value was reached, but local video delta was unexpectedly low.")
         }
         elseif ($localVisualEvidence) {
             $notes.Add(("Local visual delta {0} was detected inside recorded interaction bounds." -f $maxLocalFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture)))
@@ -8068,7 +8017,7 @@ foreach ($control in $Controls) {
                 $notes.Add("Expanded child content was detected despite low full-frame delta.")
             }
             elseif ($layoutStabilityEvidenceAccepted) {
-                $notes.Add("ThemeShadow target value was reached and before/after artifacts proved visual change plus card-edge stability despite low full-frame delta.")
+                $notes.Add("ThemeShadow target value was reached, but full-frame video delta was unexpectedly low.")
             }
             elseif ($interactionKind -eq "Value" -and $valueEvidence) {
                 $notes.Add("Target value was reached despite low full-frame delta.")

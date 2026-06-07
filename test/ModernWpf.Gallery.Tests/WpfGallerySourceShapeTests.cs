@@ -2683,19 +2683,18 @@ namespace ModernWpf.Gallery.Tests
                 "Depth = 32",
                 "TranslationZ = 32",
                 "Child = shadowRect",
-                "Margin = new Thickness(36)",
                 "ReservesShadowSpace = false");
             AssertContainsInOrder(
                 source,
                 "var shadowCastGrid = new Grid",
                 "Name = \"ShadowCastGrid\"",
-                "Margin = new Thickness(36)",
                 "GalleryAutomation.WithAutomationId(shadowCastGrid, GalleryAutomation.SampleElementId(\"ThemeShadow\", \"ShadowCastGrid\"));");
             AssertContainsInOrder(
                 source,
                 "GalleryAutomation.WithAutomationId(shadow, GalleryAutomation.SampleElementId(\"ThemeShadow\", \"ShadowChrome\"));",
-                "var exampleGrid = new Grid",
+                "var exampleGrid = new Mux.GridEx",
                 "Name = \"Example3Grid\"",
+                "Padding = new Thickness(36)",
                 "MinWidth = 272",
                 "MinHeight = 272",
                 "GalleryAutomation.WithAutomationId(exampleGrid, GalleryAutomation.SampleElementId(\"ThemeShadow\", \"Example3Grid\"));");
@@ -4556,6 +4555,21 @@ namespace ModernWpf.Gallery.Tests
                 "\"PersonPicture\" { return \"Display Name\" }");
             AssertContainsInOrder(
                 source,
+                "function Wait-Until([scriptblock]$Probe, [int]$TimeoutSeconds, [string]$Description)",
+                "function Wait-LiveRecordingWarmupFrames([int]$frameRate, [double]$warmupSeconds, [int]$timeoutSeconds)",
+                "live recorder warm-up frames",
+                "$latestFrame = $frames[$frames.Count - 1]",
+                "Get-ImageStats $latestFrame.FullName",
+                "function Find-WindowByProcessId([int]$processId)");
+            AssertContainsInOrder(
+                source,
+                "$script:GalleryLiveFrameDirectory = Join-Path",
+                "$recordingFrameRate = Get-ControlRecordingFrameRate $control $interactionKind",
+                "$recordingJob = Start-RecordingJob",
+                "Wait-LiveRecordingWarmupFrames $recordingFrameRate 0.4 15",
+                "$interactionResult = Invoke-RecordedInteraction $window $control $sampleElement $artifactDir");
+            AssertContainsInOrder(
+                source,
                 "function Test-ControlSupportsValueInteraction([string]$control)",
                 "\"ThemeShadow\" { return $true }",
                 "function Get-ControlInteractionKind([string]$control)",
@@ -4602,12 +4616,9 @@ namespace ModernWpf.Gallery.Tests
                 "\"ThemeShadow\" { 64.0 }",
                 "$valueInputMethod = \"RangeValuePattern\"",
                 "if ($control -eq \"ThemeShadow\")",
-                "$sampleElement.TryGetClickablePoint([ref]$clickablePoint)",
-                "[GalleryRecordingNative]::Drag($startX, $y, $endX, $y, 24, 20)",
-                "$valueInputMethod = \"SliderDrag\"",
-                "$valueInputMethod = \"SliderKeyboardStepAfterDragMiss\"",
-                "[GalleryRecordingNative]::Right()",
-                "$valueInputMethod = \"RangeValuePatternStepAfterInputMiss\"",
+                "$targetValue = [Math]::Max($minimum, [Math]::Min($maximum, [double]$target))",
+                "$valueInputMethod = \"RangeValuePatternAnimated\"",
+                "for ($step = 1; $step -le $steps; $step++)",
                 "$pattern.SetValue($currentValue)",
                 "$themeShadowCasterAfterBounds = if ($control -eq \"ThemeShadow\"",
                 "$themeShadowCasterStable = if ($control -eq \"ThemeShadow\"",
@@ -4659,7 +4670,7 @@ namespace ModernWpf.Gallery.Tests
                 "$layoutStabilityEvidence = Test-LayoutStabilityEvidence $interactionResult",
                 "$themeShadowVideoVisualEvidence = Test-ThemeShadowVisualEvidence $localFrameDeltas",
                 "$themeShadowArtifactVisualEvidence = Test-ThemeShadowArtifactVisualEvidence $interactionResult",
-                "$themeShadowVisualEvidence = $themeShadowVideoVisualEvidence -or $themeShadowArtifactVisualEvidence",
+                "$themeShadowVisualEvidence = $themeShadowVideoVisualEvidence",
                 "$themeShadowCasterStabilityEvidence = Test-ThemeShadowCasterStabilityEvidence $interactionResult",
                 "$themeShadowDenseFrameStabilityEvidence = Test-ThemeShadowDenseFrameStabilityEvidence $themeShadowDenseFrameStability",
                 "$themeShadowArtifactCardStabilityEvidence = Test-ThemeShadowArtifactCardStabilityEvidence $interactionResult",
@@ -4672,7 +4683,7 @@ namespace ModernWpf.Gallery.Tests
                 "$themeShadowArtifactCardStabilityEvidence -and",
                 "$themeShadowDenseFrameStabilityEvidence -and",
                 "$themeShadowVisualEvidence",
-                "ThemeShadow depth interaction used {0}; expected rendered slider input or stepped rendered value transition.",
+                "ThemeShadow depth interaction used {0}; expected animated RangeValuePattern transition inside the recorded clip.",
                 "ThemeShadow depth changed but one or more sample bounds moved or could not be proven stable.",
                 "ThemeShadow depth changed but the card/caster bounds moved or were not measured.",
                 "ThemeShadow before/after rendered artifacts show the card edge moved or could not be proven stable.",
