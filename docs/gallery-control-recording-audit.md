@@ -126,6 +126,42 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 132 corrects the ThemeShadow depth-change layout proof after user review:
+
+- User review again reported a visible layout shift after changing depth. The
+  missing contract was the receiver/content grid, not only the card. Official
+  WinUI Gallery uses `Example3Grid Padding="36"` around both `ShadowCastGrid`
+  and `ShadowRect`; the WPF port cannot set `Grid.Padding`, so the receiver now
+  carries the same `36px` inset as the caster and has its own automation id.
+- Product fix: the ThemeShadow Gallery sample now exposes
+  `GallerySample_ThemeShadow_ShadowCastGrid` and keeps that receiver in the
+  same padded content area as the card. `ThemeShadowChrome` also invalidates
+  the shadow background visual when depth changes so the sample can redraw the
+  shadow without layout invalidation.
+- Guard tests passed:
+  `GalleryAutomationHookTests.ThemeShadowSampleMatchesWinUIGalleryExample` for
+  `net8.0-windows7.0` and `net10.0-windows7.0`; it now asserts the receiver
+  bounds, sample/card rendered pixel bounds, and visible shadow redraw before
+  and after changing the slider from `32` to `64`.
+  `LayoutCompatibilityApiTests.ThemeShadowChrome` passed for
+  `net8.0-windows7.0`, and the focused source-shape guards
+  `StylesSamplesUseWinUIGalleryOptionsChrome` and
+  `GalleryInteractionRecorderDoesNotLeaveInteractiveModernPagesStatic` passed
+  for both Gallery test target frameworks.
+- Fresh Light recording
+  `artifacts/gallery-recordings/20260607-045556-280/report.md` passes with
+  `LayoutStabilityTargetAutomationIds` including
+  `GallerySample_ThemeShadow_ShadowCastGrid`. Before and after rendered bounds
+  are identical for the root (`534,392,557,272`), example grid
+  (`534,392,557,272`), receiver grid (`570,428,485,200`), chrome/card
+  (`570,428,200,200`), and slider (`1124,421,200,32`). Artifact evidence shows
+  `rootDelta=1.192`, `edgeShift=0`, and card edges fixed at `36,36,200,200`
+  while the shadow envelope deepens.
+- Broad `WpfGallerySourceShapeTests` still has two pre-existing stale
+  string-shape failures in the visual-check default-control and recorder-tail
+  assertions. They are not part of this ThemeShadow round; the ThemeShadow
+  source-shape checks above passed.
+
 Round 131 corrects the ThemeShadow recording false-negative/false-positive edge:
 
 - User review still perceived the ThemeShadow depth change as a layout shift.

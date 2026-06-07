@@ -2687,6 +2687,12 @@ namespace ModernWpf.Gallery.Tests
                 "ReservesShadowSpace = false");
             AssertContainsInOrder(
                 source,
+                "var shadowCastGrid = new Grid",
+                "Name = \"ShadowCastGrid\"",
+                "Margin = new Thickness(36)",
+                "GalleryAutomation.WithAutomationId(shadowCastGrid, GalleryAutomation.SampleElementId(\"ThemeShadow\", \"ShadowCastGrid\"));");
+            AssertContainsInOrder(
+                source,
                 "GalleryAutomation.WithAutomationId(shadow, GalleryAutomation.SampleElementId(\"ThemeShadow\", \"ShadowChrome\"));",
                 "var exampleGrid = new Grid",
                 "Name = \"Example3Grid\"",
@@ -4521,6 +4527,7 @@ namespace ModernWpf.Gallery.Tests
                 "function Get-LayoutStabilityTargetAutomationIds([string]$control)",
                 "\"GallerySample_ThemeShadow_Root\"",
                 "\"GallerySample_ThemeShadow_Example3Grid\"",
+                "\"GallerySample_ThemeShadow_ShadowCastGrid\"",
                 "\"GallerySample_ThemeShadow_ShadowChrome\"",
                 "\"GallerySample_ThemeShadow_ShadowRect\"",
                 "\"GallerySample_ThemeShadow_TranslationSlider\"",

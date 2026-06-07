@@ -601,6 +601,8 @@ namespace ModernWpf.Controls.Primitives
             if (_shadow != null)
             {
                 _shadow.Depth = Depth;
+                _background.InvalidateVisual();
+                InvalidateVisual();
             }
 
             if (invalidateLayout)

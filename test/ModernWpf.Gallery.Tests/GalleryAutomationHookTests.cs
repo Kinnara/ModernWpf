@@ -14,6 +14,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Controls;
@@ -129,6 +130,7 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
+                    WaitForRendering();
 
                     var slider = FindNamedDescendant<Slider>(page, "SimpleSlider");
 
@@ -3148,6 +3150,8 @@ namespace ModernWpf.Gallery.Tests
                     var shadowCastGrid = FindNamedDescendant<Grid>(page, "ShadowCastGrid");
                     Assert.IsNotNull(shadowCastGrid);
                     Assert.AreSame(shadowCastGrid, exampleGrid.Children[0]);
+                    Assert.AreSame(shadowCastGrid, FindByAutomationId(page, "GallerySample_ThemeShadow_ShadowCastGrid"));
+                    Assert.AreEqual(new Thickness(36), shadowCastGrid.Margin);
 
                     var shadow = FindNamedDescendant<ThemeShadowChrome>(page, "shadow");
                     Assert.IsNotNull(shadow);
@@ -3181,9 +3185,17 @@ namespace ModernWpf.Gallery.Tests
 
                     var beforeRootBounds = GetRelativeBounds(root, page);
                     var beforeGridBounds = GetRelativeBounds(exampleGrid, page);
+                    var beforeReceiverBounds = GetRelativeBounds(shadowCastGrid, exampleGrid);
                     var beforeShadowBounds = GetRelativeBounds(shadow, exampleGrid);
                     var beforeRectBounds = GetRelativeBounds(shadowRect, exampleGrid);
                     var beforeSliderBounds = GetRelativeBounds(slider, page);
+                    var beforeRenderedSample = RenderElementBitmap(root);
+                    var beforeRenderedCardBounds = MeasureRenderedColorBounds(beforeRenderedSample, color => color.R > 245 && color.G > 245 && color.B > 245);
+                    AssertRectNear(
+                        new Rect(36, 36, Math.Max(0, exampleGrid.ActualWidth - 72), Math.Max(0, exampleGrid.ActualHeight - 72)),
+                        beforeReceiverBounds,
+                        0.5,
+                        "ThemeShadow receiver should preserve the WinUI sample's 36px padded content layout.");
                     AssertRectNear(new Rect(36, 36, 200, 200), beforeShadowBounds, 0.5, "ThemeShadow chrome should preserve the WinUI sample's 36px caster layout.");
                     AssertRectNear(new Rect(36, 36, 200, 200), beforeRectBounds, 0.5, "ThemeShadow caster should preserve the WinUI sample's 36px layout.");
 
@@ -3191,18 +3203,26 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
+                    WaitForRendering();
                     var afterRootBounds = GetRelativeBounds(root, page);
                     var afterGridBounds = GetRelativeBounds(exampleGrid, page);
+                    var afterReceiverBounds = GetRelativeBounds(shadowCastGrid, exampleGrid);
                     var afterShadowBounds = GetRelativeBounds(shadow, exampleGrid);
                     var afterRectBounds = GetRelativeBounds(shadowRect, exampleGrid);
                     var afterSliderBounds = GetRelativeBounds(slider, page);
+                    var afterRenderedSample = RenderElementBitmap(root);
+                    var afterRenderedCardBounds = MeasureRenderedColorBounds(afterRenderedSample, color => color.R > 245 && color.G > 245 && color.B > 245);
+                    var renderedDelta = CompareRenderedMeanDelta(beforeRenderedSample, afterRenderedSample);
                     Assert.AreEqual(64d, shadow.Depth);
                     Assert.AreEqual(64d, shadow.TranslationZ);
                     AssertRectNear(beforeRootBounds, afterRootBounds, 0.5, "Changing ThemeShadow depth should not move the sample root.");
                     AssertRectNear(beforeGridBounds, afterGridBounds, 0.5, "Changing ThemeShadow depth should not move the example grid.");
+                    AssertRectNear(beforeReceiverBounds, afterReceiverBounds, 0.5, "Changing ThemeShadow depth should not move the receiver grid.");
                     AssertRectNear(beforeShadowBounds, afterShadowBounds, 0.5, "Changing ThemeShadow depth should not move the shadow chrome.");
                     AssertRectNear(beforeRectBounds, afterRectBounds, 0.5, "Changing ThemeShadow depth should not move the sample card.");
                     AssertRectNear(beforeSliderBounds, afterSliderBounds, 0.5, "Changing ThemeShadow depth should not move the options slider.");
+                    Assert.AreEqual(beforeRenderedCardBounds, afterRenderedCardBounds, "Changing ThemeShadow depth should not move the rendered card pixels.");
+                    Assert.IsTrue(renderedDelta > 0.1, $"Changing ThemeShadow depth should visibly redraw the sample shadow. Delta={renderedDelta}.");
                 }
                 finally
                 {
@@ -4438,6 +4458,137 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(expected.Y, actual.Y, tolerance, message + " Y");
             Assert.AreEqual(expected.Width, actual.Width, tolerance, message + " Width");
             Assert.AreEqual(expected.Height, actual.Height, tolerance, message + " Height");
+        }
+
+        private static BitmapSource RenderElementBitmap(FrameworkElement element)
+        {
+            element.UpdateLayout();
+
+            var width = Math.Max(1, (int)Math.Ceiling(element.ActualWidth));
+            var height = Math.Max(1, (int)Math.Ceiling(element.ActualHeight));
+            var drawingVisual = new DrawingVisual();
+            var visualBrush = new VisualBrush(element)
+            {
+                AlignmentX = AlignmentX.Left,
+                AlignmentY = AlignmentY.Top,
+                Stretch = Stretch.None,
+                Viewbox = new Rect(0, 0, width, height),
+                ViewboxUnits = BrushMappingMode.Absolute,
+                Viewport = new Rect(0, 0, width, height),
+                ViewportUnits = BrushMappingMode.Absolute
+            };
+
+            using (var drawingContext = drawingVisual.RenderOpen())
+            {
+                drawingContext.DrawRectangle(
+                    element.TryFindResource("SolidBackgroundFillColorBaseBrush") as Brush
+                        ?? new SolidColorBrush(Color.FromRgb(0xF3, 0xF3, 0xF3)),
+                    null,
+                    new Rect(0, 0, width, height));
+                drawingContext.DrawRectangle(
+                    visualBrush,
+                    null,
+                    new Rect(0, 0, width, height));
+            }
+
+            var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(drawingVisual);
+            return bitmap;
+        }
+
+        private static void WaitForRendering()
+        {
+            var frame = new DispatcherFrame();
+            var rendered = false;
+            EventHandler renderingHandler = (_, _) =>
+            {
+                rendered = true;
+                frame.Continue = false;
+            };
+            var timer = new DispatcherTimer(DispatcherPriority.Background)
+            {
+                Interval = TimeSpan.FromMilliseconds(250)
+            };
+            timer.Tick += (_, _) => frame.Continue = false;
+
+            try
+            {
+                CompositionTarget.Rendering += renderingHandler;
+                timer.Start();
+                Dispatcher.PushFrame(frame);
+            }
+            finally
+            {
+                timer.Stop();
+                CompositionTarget.Rendering -= renderingHandler;
+            }
+
+            Assert.IsTrue(rendered, "Timed out waiting for a WPF render tick.");
+        }
+
+        private static Int32Rect MeasureRenderedColorBounds(BitmapSource source, Func<Color, bool> predicate)
+        {
+            BitmapSource bitmap = source.Format == PixelFormats.Bgra32
+                ? source
+                : new FormatConvertedBitmap(source, PixelFormats.Bgra32, null, 0);
+            var stride = bitmap.PixelWidth * 4;
+            var pixels = new byte[stride * bitmap.PixelHeight];
+            bitmap.CopyPixels(pixels, stride, 0);
+
+            var minX = bitmap.PixelWidth;
+            var minY = bitmap.PixelHeight;
+            var maxX = -1;
+            var maxY = -1;
+
+            for (var y = 0; y < bitmap.PixelHeight; y++)
+            {
+                var row = y * stride;
+                for (var x = 0; x < bitmap.PixelWidth; x++)
+                {
+                    var index = row + (x * 4);
+                    var color = Color.FromArgb(pixels[index + 3], pixels[index + 2], pixels[index + 1], pixels[index]);
+                    if (predicate(color))
+                    {
+                        minX = Math.Min(minX, x);
+                        minY = Math.Min(minY, y);
+                        maxX = Math.Max(maxX, x);
+                        maxY = Math.Max(maxY, y);
+                    }
+                }
+            }
+
+            return maxX < minX || maxY < minY
+                ? Int32Rect.Empty
+                : new Int32Rect(minX, minY, maxX - minX + 1, maxY - minY + 1);
+        }
+
+        private static double CompareRenderedMeanDelta(BitmapSource first, BitmapSource second)
+        {
+            BitmapSource firstBitmap = first.Format == PixelFormats.Bgra32
+                ? first
+                : new FormatConvertedBitmap(first, PixelFormats.Bgra32, null, 0);
+            BitmapSource secondBitmap = second.Format == PixelFormats.Bgra32
+                ? second
+                : new FormatConvertedBitmap(second, PixelFormats.Bgra32, null, 0);
+
+            Assert.AreEqual(firstBitmap.PixelWidth, secondBitmap.PixelWidth);
+            Assert.AreEqual(firstBitmap.PixelHeight, secondBitmap.PixelHeight);
+
+            var stride = firstBitmap.PixelWidth * 4;
+            var firstPixels = new byte[stride * firstBitmap.PixelHeight];
+            var secondPixels = new byte[stride * secondBitmap.PixelHeight];
+            firstBitmap.CopyPixels(firstPixels, stride, 0);
+            secondBitmap.CopyPixels(secondPixels, stride, 0);
+
+            long sum = 0;
+            for (var i = 0; i < firstPixels.Length; i += 4)
+            {
+                sum += Math.Abs(firstPixels[i] - secondPixels[i]);
+                sum += Math.Abs(firstPixels[i + 1] - secondPixels[i + 1]);
+                sum += Math.Abs(firstPixels[i + 2] - secondPixels[i + 2]);
+            }
+
+            return sum / (double)(firstBitmap.PixelWidth * firstBitmap.PixelHeight * 3);
         }
 
         private static DependencyObject FindByAutomationId(DependencyObject root, string automationId)

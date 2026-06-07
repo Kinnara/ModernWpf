@@ -832,6 +832,7 @@ function Get-LayoutStabilityTargetAutomationIds([string]$control) {
             return @(
                 "GallerySample_ThemeShadow_Root",
                 "GallerySample_ThemeShadow_Example3Grid",
+                "GallerySample_ThemeShadow_ShadowCastGrid",
                 "GallerySample_ThemeShadow_ShadowChrome",
                 "GallerySample_ThemeShadow_ShadowRect",
                 "GallerySample_ThemeShadow_TranslationSlider")

@@ -307,8 +307,10 @@ namespace ModernWpf.Gallery.Pages
 
             var shadowCastGrid = new Grid
             {
-                Name = "ShadowCastGrid"
+                Name = "ShadowCastGrid",
+                Margin = new Thickness(36)
             };
+            GalleryAutomation.WithAutomationId(shadowCastGrid, GalleryAutomation.SampleElementId("ThemeShadow", "ShadowCastGrid"));
 
             var shadowRect = new Border
             {
