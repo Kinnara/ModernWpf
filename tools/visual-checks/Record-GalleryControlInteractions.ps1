@@ -984,6 +984,9 @@ function Get-ThemeShadowArtifactEvidence([string]$beforeSnapshotDir, [string]$af
         $beforeCardEdgeBounds = Get-ThemeShadowCardEdgeBounds $beforeBitmap $beforeRegion
         $afterCardEdgeBounds = Get-ThemeShadowCardEdgeBounds $afterBitmap $afterRegion
         $edgeShift = Get-FrameRectangleMaxDelta $beforeCardEdgeBounds $afterCardEdgeBounds
+        $beforeShadowEnvelopeBounds = Get-ThemeShadowShadowEnvelopeBounds $beforeBitmap $beforeRegion 1
+        $afterShadowEnvelopeBounds = Get-ThemeShadowShadowEnvelopeBounds $afterBitmap $afterRegion 1
+        $shadowEnvelopeDelta = Get-FrameRectangleMaxDelta $beforeShadowEnvelopeBounds $afterShadowEnvelopeBounds
     }
     finally {
         $beforeBitmap.Dispose()
@@ -1004,6 +1007,10 @@ function Get-ThemeShadowArtifactEvidence([string]$beforeSnapshotDir, [string]$af
         CardEdgeShift = $edgeShift
         CardEdgesStable = $null -ne $edgeShift -and $edgeShift -le 1.0
         CardEdgeShiftThreshold = 1.0
+        BeforeShadowEnvelopeBounds = Format-FrameRectangle $beforeShadowEnvelopeBounds
+        AfterShadowEnvelopeBounds = Format-FrameRectangle $afterShadowEnvelopeBounds
+        ShadowEnvelopeDelta = $shadowEnvelopeDelta
+        ShadowEnvelopeChanged = $null -ne $shadowEnvelopeDelta -and [double]$shadowEnvelopeDelta -gt 1.0
     }
 }
 
@@ -6158,6 +6165,92 @@ function Get-ThemeShadowCardEdgeBounds($bitmap, $region) {
     }
 }
 
+function Get-ThemeShadowShadowEnvelopeBounds($bitmap, $cardRegion, [int]$sampleStep = 3) {
+    if ($null -eq $bitmap -or $null -eq $cardRegion) {
+        return $null
+    }
+
+    $sampleStep = [Math]::Max(1, $sampleStep)
+    $margin = 96
+    $left = [Math]::Max(0, [int]$cardRegion.X - $margin)
+    $top = [Math]::Max(0, [int]$cardRegion.Y - $margin)
+    $right = [Math]::Min($bitmap.Width, [int]$cardRegion.X + [int]$cardRegion.Width + $margin)
+    $bottom = [Math]::Min($bitmap.Height, [int]$cardRegion.Y + [int]$cardRegion.Height + $margin)
+    if (($right - $left) -le 8 -or ($bottom - $top) -le 8) {
+        return $null
+    }
+
+    $backgroundSamples = New-Object System.Collections.Generic.List[double]
+    $samplePoints = @(
+        @([int]$left, [int]$top),
+        @([int]($right - 1), [int]$top),
+        @([int]$left, [int]($bottom - 1)),
+        @([int]($right - 1), [int]($bottom - 1)),
+        @([int](($left + $right) / 2), [int]$top),
+        @([int](($left + $right) / 2), [int]($bottom - 1))
+    )
+    foreach ($point in $samplePoints) {
+        $x = [Math]::Max(0, [Math]::Min($bitmap.Width - 1, [int]$point[0]))
+        $y = [Math]::Max(0, [Math]::Min($bitmap.Height - 1, [int]$point[1]))
+        $backgroundSamples.Add((Get-PixelLuma ($bitmap.GetPixel($x, $y))))
+    }
+
+    $backgroundLuma = Get-LumaMedian $backgroundSamples.ToArray()
+    if ($null -eq $backgroundLuma) {
+        return $null
+    }
+
+    $ignoredLeft = [int]$cardRegion.X - 1
+    $ignoredTop = [int]$cardRegion.Y - 1
+    $ignoredRight = [int]$cardRegion.X + [int]$cardRegion.Width + 1
+    $ignoredBottom = [int]$cardRegion.Y + [int]$cardRegion.Height + 1
+    $threshold = 1.5
+    $xStart = $null
+    $xEnd = $null
+    $yStart = $null
+    $yEnd = $null
+    $pixelCount = 0
+
+    for ($y = $top; $y -lt $bottom; $y += $sampleStep) {
+        for ($x = $left; $x -lt $right; $x += $sampleStep) {
+            if ($x -ge $ignoredLeft -and $x -lt $ignoredRight -and
+                $y -ge $ignoredTop -and $y -lt $ignoredBottom) {
+                continue
+            }
+
+            $luma = Get-PixelLuma ($bitmap.GetPixel($x, $y))
+            if ([Math]::Abs([double]$luma - [double]$backgroundLuma) -lt $threshold) {
+                continue
+            }
+
+            if ($null -eq $xStart -or $x -lt $xStart) {
+                $xStart = $x
+            }
+            if ($null -eq $xEnd -or $x -gt $xEnd) {
+                $xEnd = $x
+            }
+            if ($null -eq $yStart -or $y -lt $yStart) {
+                $yStart = $y
+            }
+            if ($null -eq $yEnd -or $y -gt $yEnd) {
+                $yEnd = $y
+            }
+            $pixelCount++
+        }
+    }
+
+    if ($pixelCount -lt 25 -or $null -eq $xStart -or $null -eq $xEnd -or $null -eq $yStart -or $null -eq $yEnd) {
+        return $null
+    }
+
+    return [pscustomobject]@{
+        X = [int]$xStart
+        Y = [int]$yStart
+        Width = [int]($xEnd - $xStart + $sampleStep)
+        Height = [int]($yEnd - $yStart + $sampleStep)
+    }
+}
+
 function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recordingResult, $interactionResult) {
     $cardDeltaThreshold = 2.0
     $cardEdgeShiftThreshold = 1.0
@@ -7273,6 +7366,10 @@ function Test-ThemeShadowArtifactVisualEvidence($interactionResult) {
         return $false
     }
 
+    if ($evidence.Contains("ShadowEnvelopeChanged")) {
+        return [bool]$evidence.Generated -and [bool]$evidence.VisualChanged -and [bool]$evidence.ShadowEnvelopeChanged
+    }
+
     return [bool]$evidence.Generated -and [bool]$evidence.VisualChanged
 }
 
@@ -7984,7 +8081,7 @@ foreach ($control in $Controls) {
         $notes.Add(("ThemeShadow card/caster bounds stayed fixed while depth changed through {0} ({1}->{2}). Caster before={3}; after={4}. The visible shadow envelope may expand with depth; live WinUI source-geometry captures show the same behavior." -f $valueInputMethod, $dragStartPoint, $dragEndPoint, $beforeCasterBounds, $afterCasterBounds))
         $artifactEvidence = Get-ThemeShadowArtifactEvidenceFromInteraction $interactionResult
         if ($null -ne $artifactEvidence -and $artifactEvidence.Contains("Generated") -and $artifactEvidence.Generated) {
-            $notes.Add(("Before/after ThemeShadow artifacts changed visually and kept the rendered card edge fixed. rootDelta={0}; edgeShift={1}; beforeEdge={2}; afterEdge={3}." -f $artifactEvidence.RootMeanDelta, $artifactEvidence.CardEdgeShift, $artifactEvidence.BeforeCardEdgeBounds, $artifactEvidence.AfterCardEdgeBounds))
+            $notes.Add(("Before/after ThemeShadow artifacts changed visually and kept the rendered card edge fixed. rootDelta={0}; edgeShift={1}; beforeEdge={2}; afterEdge={3}; shadowEnvelope={4}->{5}; envelopeDelta={6}." -f $artifactEvidence.RootMeanDelta, $artifactEvidence.CardEdgeShift, $artifactEvidence.BeforeCardEdgeBounds, $artifactEvidence.AfterCardEdgeBounds, $artifactEvidence.BeforeShadowEnvelopeBounds, $artifactEvidence.AfterShadowEnvelopeBounds, $artifactEvidence.ShadowEnvelopeDelta))
         }
         if ($null -ne $themeShadowDenseFrameStability -and $themeShadowDenseFrameStability.Contains("Generated") -and $themeShadowDenseFrameStability.Generated) {
             $notes.Add(("Dense ThemeShadow video frames kept the rendered card fixed. Frames={0}; cardDelta={1}; threshold={2}; edgeShift={3}; edgeThreshold={4}; baselineEdge={5}." -f $themeShadowDenseFrameStability.FrameCount, $themeShadowDenseFrameStability.MaxCardMeanDelta, $themeShadowDenseFrameStability.CardDeltaThreshold, $themeShadowDenseFrameStability.MaxCardEdgeShift, $themeShadowDenseFrameStability.CardEdgeShiftThreshold, $themeShadowDenseFrameStability.BaselineCardEdgeBounds))
