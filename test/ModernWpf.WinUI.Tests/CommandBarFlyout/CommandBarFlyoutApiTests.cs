@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
@@ -18,10 +19,12 @@ namespace ModernWpf.WinUI.Tests.CommandBarFlyouts;
 [TestClass]
 public class CommandBarFlyoutApiTests
 {
-    private const double PrimaryCommandTemplateWidth = 57.67;
-    private const double PrimaryCommandActualWidth = 58.0;
+    private const double PrimaryCommandTemplateWidth = 60.0;
+    private const double PrimaryCommandActualWidth = 60.0;
     private const double PrimaryCommandHeight = 55.0;
-    private const double CommandBarPrimarySurfaceHeight = 57.0;
+    private const double PrimaryCommandContentMinWidth = 40.0;
+    private const double PrimaryLabelPanelWidth = 60.0;
+    private const double CommandBarPrimarySurfaceHeight = 62.0;
 
     private enum CommandBarSizingOptions
     {
@@ -614,6 +617,7 @@ public class CommandBarFlyoutApiTests
 
                 Assert.AreEqual(32.0, overflowShadow.Depth);
                 Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, overflowShadow.WindowedPopupInsetMode);
+                Assert.IsFalse(overflowShadow.ReservesShadowSpace);
                 commandBar.ClearShadow();
                 Assert.IsFalse(overflowShadow.IsShadowEnabled);
             }
@@ -658,21 +662,41 @@ public class CommandBarFlyoutApiTests
                 host.UpdateLayout();
 
                 Assert.AreSame(commandBar.TryFindResource("CommandBarFlyoutBackground"), commandBar.Background);
+                Assert.AreSame(commandBar.TryFindResource("CommandBarFlyoutSystemBackdrop"), commandBar.SystemBackdrop);
                 Assert.AreSame(commandBar.TryFindResource("CommandBarFlyoutForeground"), commandBar.Foreground);
                 Assert.AreSame(commandBar.TryFindResource("CommandBarFlyoutBorderBrush"), commandBar.BorderBrush);
                 Assert.AreEqual(commandBar.TryFindResource("CommandBarFlyoutBorderThemeThickness"), commandBar.BorderThickness);
                 Assert.AreEqual(440d, commandBar.MaxWidth);
                 Assert.AreEqual(CommandBarPrimarySurfaceHeight, commandBar.Height);
                 Assert.AreEqual(commandBar.TryFindResource("OverlayCornerRadius"), commandBar.CornerRadius);
+
+                var contentRoot = FindTemplateChild<System.Windows.Controls.Grid>(commandBar, "ContentRoot");
+                var primaryBackdropRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "PrimaryItemsSystemBackdropRoot");
+                var overflowBackdropRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OverflowPopupSystemBackdropRoot");
+                var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OverflowContentRoot");
+                Assert.AreSame(commandBar.Background, contentRoot.Background);
+                Assert.AreSame(commandBar.SystemBackdrop, primaryBackdropRoot.Background);
+                Assert.AreSame(commandBar.SystemBackdrop, overflowBackdropRoot.Background);
+                Assert.AreSame(commandBar.Background, overflowContentRoot.Background);
             }
             finally
             {
                 HideAndWait(commandBarFlyout);
             }
 
-            AssertThemeResourceReference("Light", "CommandBarFlyoutBackground", "AcrylicInAppFillColorDefaultBrush");
-            AssertThemeResourceReference("Dark", "CommandBarFlyoutBackground", "AcrylicInAppFillColorDefaultBrush");
+            AssertThemeResourceReference("Light", "CommandBarFlyoutBackground", "DesktopAcrylicTransparentBrush");
+            AssertThemeResourceReference("Dark", "CommandBarFlyoutBackground", "DesktopAcrylicTransparentBrush");
             AssertThemeResourceReference("HighContrast", "CommandBarFlyoutBackground", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceReference("Light", "CommandBarFlyoutSystemBackdrop", "AcrylicBackgroundFillColorDefaultBackdrop");
+            AssertThemeResourceReference("Dark", "CommandBarFlyoutSystemBackdrop", "AcrylicBackgroundFillColorDefaultBackdrop");
+            AssertThemeResourceReference("HighContrast", "CommandBarFlyoutSystemBackdrop", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeResourceReference("Light", "AcrylicBackgroundFillColorDefaultBackdrop", "AcrylicBackgroundFillColorDefaultBrush");
+            AssertThemeResourceReference("Dark", "AcrylicBackgroundFillColorDefaultBackdrop", "AcrylicBackgroundFillColorDefaultBrush");
+            AssertThemeResourceReference("HighContrast", "AcrylicBackgroundFillColorDefaultBackdrop", "SystemControlBackgroundBaseLowBrush");
+            AssertThemeSolidColorBrush("Light", "DesktopAcrylicTransparentBrush", Color.FromArgb(0, 0, 0, 0));
+            AssertThemeSolidColorBrush("Dark", "DesktopAcrylicTransparentBrush", Color.FromArgb(0, 0, 0, 0));
+            AssertThemeSolidColorBrush("Light", "AcrylicBackgroundFillColorDefaultBrush", Color.FromRgb(0xF9, 0xF9, 0xF9));
+            AssertThemeSolidColorBrush("Dark", "AcrylicBackgroundFillColorDefaultBrush", Color.FromRgb(0x2C, 0x2C, 0x2C));
             AssertThemeResourceValue("Light", "CommandBarFlyoutBorderThemeThickness", new Thickness(1));
             AssertThemeResourceValue("Dark", "CommandBarFlyoutBorderThemeThickness", new Thickness(1));
             AssertThemeResourceValue("HighContrast", "CommandBarFlyoutBorderThemeThickness", new Thickness(1));
@@ -1132,11 +1156,15 @@ public class CommandBarFlyoutApiTests
     private static void AssertOverflowEdgesAligned(CommandBarFlyoutCommandBar commandBar)
     {
         var primaryItemsRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "PrimaryItemsRoot");
-        var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OuterOverflowContentRoot");
+        var outerOverflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OuterOverflowContentRoot");
+        var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OverflowContentRoot");
+        var overflowShadow = FindTemplateChild<ThemeShadowChrome>(commandBar, "OuterOverflowContentRootShadowChrome");
 
         var primaryLeft = primaryItemsRoot.PointToScreen(new Point(0, 0)).X;
         var primaryRight = primaryItemsRoot.PointToScreen(new Point(primaryItemsRoot.ActualWidth, 0)).X;
         var primaryBottom = primaryItemsRoot.PointToScreen(new Point(0, primaryItemsRoot.ActualHeight)).Y;
+        var outerOverflowLeft = outerOverflowContentRoot.PointToScreen(new Point(0, 0)).X;
+        var outerOverflowRight = outerOverflowContentRoot.PointToScreen(new Point(outerOverflowContentRoot.ActualWidth, 0)).X;
         var overflowLeft = overflowContentRoot.PointToScreen(new Point(0, 0)).X;
         var overflowRight = overflowContentRoot.PointToScreen(new Point(overflowContentRoot.ActualWidth, 0)).X;
         var overflowTop = overflowContentRoot.PointToScreen(new Point(0, 0)).Y;
@@ -1145,11 +1173,12 @@ public class CommandBarFlyoutApiTests
             primaryRight - primaryLeft,
             overflowRight - overflowLeft,
             1.0,
-            $"Expected expanded CommandBarFlyout overflow width to match the primary command strip width. PrimaryWidth={primaryRight - primaryLeft}, OverflowWidth={overflowRight - overflowLeft}.");
+            $"Expected expanded CommandBarFlyout visible overflow width to match the primary command strip width. PrimaryWidth={primaryRight - primaryLeft}, OverflowWidth={overflowRight - overflowLeft}, OuterOverflowWidth={outerOverflowRight - outerOverflowLeft}.");
+        var expectedHorizontalGap = overflowShadow.ReservesShadowSpace ? 0 : -overflowShadow.PopupShadowPadding.Left;
         var horizontalGap = overflowLeft - primaryLeft;
         Assert.IsTrue(
-            horizontalGap <= 1.0 && horizontalGap >= -8.0,
-            $"Expected expanded CommandBarFlyout overflow to avoid a visible right-shift from the primary command strip. PrimaryLeft={primaryLeft}, OverflowLeft={overflowLeft}, HorizontalGap={horizontalGap}.");
+            Math.Abs(horizontalGap - expectedHorizontalGap) <= 1.0,
+            $"Expected expanded CommandBarFlyout visible overflow surface to align with the primary command strip. PrimaryLeft={primaryLeft}, OverflowLeft={overflowLeft}, OuterOverflowLeft={outerOverflowLeft}, HorizontalGap={horizontalGap}, ExpectedHorizontalGap={expectedHorizontalGap}.");
         var joinGap = overflowTop - primaryBottom;
         Assert.IsTrue(
             joinGap <= 1.0 && joinGap >= -4.0,
@@ -1318,14 +1347,20 @@ public class CommandBarFlyoutApiTests
     {
         var root = FindTemplateChild<System.Windows.Controls.Grid>(button, "Root");
         var contentRoot = FindTemplateChild<System.Windows.Controls.Grid>(button, "ContentRoot");
+        var iconAndLabelPanel = FindTemplateChild<System.Windows.Controls.Grid>(button, "IconAndLabelPanel");
         var textLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "TextLabel");
         var overflowTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "OverflowTextLabel");
 
         AssertCurrentState(root, "ApplicationViewStates", "FullSize");
+        AssertCurrentState(root, "PrimaryLabelStates", "HasPrimaryLabels");
         Assert.AreEqual(PrimaryCommandActualWidth, button.ActualWidth);
         Assert.AreEqual(PrimaryCommandHeight, button.ActualHeight);
-        Assert.AreEqual(PrimaryCommandTemplateWidth, contentRoot.Width);
+        Assert.IsTrue(double.IsNaN(contentRoot.Width));
+        Assert.AreEqual(PrimaryCommandContentMinWidth, contentRoot.MinWidth);
         Assert.AreEqual(PrimaryCommandHeight, contentRoot.MinHeight);
+        Assert.AreEqual(PrimaryLabelPanelWidth, iconAndLabelPanel.Width);
+        Assert.AreEqual(new Thickness(0, 9, 0, 0), iconAndLabelPanel.Margin);
+        Assert.AreEqual(VerticalAlignment.Top, iconAndLabelPanel.VerticalAlignment);
         Assert.AreEqual(expectedLabel, textLabel.Text);
         Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
@@ -1369,6 +1404,7 @@ public class CommandBarFlyoutApiTests
     {
         var root = FindTemplateChild<System.Windows.Controls.Grid>(button, "Root");
         var contentRoot = FindTemplateChild<System.Windows.Controls.Grid>(button, "ContentRoot");
+        var iconAndLabelPanel = FindTemplateChild<System.Windows.Controls.Grid>(button, "IconAndLabelPanel");
         var contentViewbox = FindTemplateChild<System.Windows.Controls.Viewbox>(button, "ContentViewbox");
         var textLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "TextLabel");
         var overflowTextLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "OverflowTextLabel");
@@ -1454,15 +1490,30 @@ public class CommandBarFlyoutApiTests
             "InputModeStates",
             "GameControllerInputMode",
             "OverflowTextLabel.Padding");
+        AssertStateSetter(
+            root,
+            "PrimaryLabelStates",
+            "HasPrimaryLabels",
+            "IconAndLabelPanel.Margin",
+            "IconAndLabelPanel.VerticalAlignment",
+            "IconAndLabelPanel.Width",
+            "TextLabel.Visibility");
 
         Assert.AreEqual(PrimaryCommandTemplateWidth, button.Width);
         Assert.AreEqual(PrimaryCommandHeight, button.Height);
-        Assert.AreEqual(PrimaryCommandTemplateWidth, contentRoot.Width);
+        Assert.IsTrue(double.IsNaN(contentRoot.Width));
+        Assert.AreEqual(PrimaryCommandContentMinWidth, contentRoot.MinWidth);
         Assert.AreEqual(PrimaryCommandHeight, contentRoot.MinHeight);
-        Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
+        Assert.AreEqual(Visibility.Collapsed, textLabel.Visibility);
         Assert.AreEqual("Accept", textLabel.Text);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
-        Assert.AreEqual(new Thickness(0, 5, 0, 7), overflowTextLabel.Padding);
+        Assert.AreEqual(new Thickness(0, 6, 0, 7), overflowTextLabel.Padding);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "HasPrimaryLabels", false));
+        Assert.AreEqual(PrimaryLabelPanelWidth, iconAndLabelPanel.Width);
+        Assert.AreEqual(new Thickness(0, 9, 0, 0), iconAndLabelPanel.Margin);
+        Assert.AreEqual(VerticalAlignment.Top, iconAndLabelPanel.VerticalAlignment);
+        Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
 
         Assert.IsTrue(VisualStateManager.GoToState(button, "OverflowWithToggleButtonsAndMenuIcons", false));
 
@@ -1477,10 +1528,11 @@ public class CommandBarFlyoutApiTests
         Assert.AreEqual(Visibility.Visible, overflowTextLabel.Visibility);
         Assert.AreEqual(new Thickness(67, 0, 12, 0), overflowTextLabel.Margin);
 
+        Assert.IsTrue(VisualStateManager.GoToState(button, "NoPrimaryLabels", false));
         Assert.IsTrue(VisualStateManager.GoToState(button, "FullSize", false));
 
-        Assert.AreEqual(PrimaryCommandTemplateWidth, contentRoot.Width);
-        Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
+        Assert.IsTrue(double.IsNaN(contentRoot.Width));
+        Assert.AreEqual(Visibility.Collapsed, textLabel.Visibility);
         Assert.IsTrue(double.IsNaN(contentViewbox.Width));
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
 
@@ -1488,13 +1540,14 @@ public class CommandBarFlyoutApiTests
         Assert.AreEqual(new Thickness(0, 9, 0, 11), overflowTextLabel.Padding);
 
         Assert.IsTrue(VisualStateManager.GoToState(button, "InputModeDefault", false));
-        Assert.AreEqual(new Thickness(0, 5, 0, 7), overflowTextLabel.Padding);
+        Assert.AreEqual(new Thickness(0, 6, 0, 7), overflowTextLabel.Padding);
     }
 
     private static void VerifyAppBarToggleButtonApplicationViewStates(AppBarToggleButton button)
     {
         var root = FindTemplateChild<System.Windows.Controls.Grid>(button, "Root");
         var contentRoot = FindTemplateChild<System.Windows.Controls.Grid>(button, "ContentRoot");
+        var iconAndLabelPanel = FindTemplateChild<System.Windows.Controls.Grid>(button, "IconAndLabelPanel");
         var contentViewbox = FindTemplateChild<System.Windows.Controls.Viewbox>(button, "ContentViewbox");
         var overflowCheckGlyph = FindTemplateChild<FrameworkElement>(button, "OverflowCheckGlyph");
         var textLabel = FindTemplateChild<System.Windows.Controls.TextBlock>(button, "TextLabel");
@@ -1561,17 +1614,32 @@ public class CommandBarFlyoutApiTests
             "GameControllerInputMode",
             "OverflowTextLabel.Padding",
             "OverflowCheckGlyph.Margin");
+        AssertStateSetter(
+            root,
+            "PrimaryLabelStates",
+            "HasPrimaryLabels",
+            "IconAndLabelPanel.Margin",
+            "IconAndLabelPanel.VerticalAlignment",
+            "IconAndLabelPanel.Width",
+            "TextLabel.Visibility");
 
         Assert.AreEqual(PrimaryCommandTemplateWidth, button.Width);
         Assert.AreEqual(PrimaryCommandHeight, button.Height);
-        Assert.AreEqual(PrimaryCommandTemplateWidth, contentRoot.Width);
+        Assert.IsTrue(double.IsNaN(contentRoot.Width));
+        Assert.AreEqual(PrimaryCommandContentMinWidth, contentRoot.MinWidth);
         Assert.AreEqual(PrimaryCommandHeight, contentRoot.MinHeight);
         Assert.AreEqual(Visibility.Collapsed, overflowCheckGlyph.Visibility);
-        Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
+        Assert.AreEqual(Visibility.Collapsed, textLabel.Visibility);
         Assert.AreEqual("Accept", textLabel.Text);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
         Assert.AreEqual(new Thickness(15, 4, 14, 4), overflowCheckGlyph.Margin);
-        Assert.AreEqual(new Thickness(0, 5, 0, 7), overflowTextLabel.Padding);
+        Assert.AreEqual(new Thickness(0, 6, 0, 7), overflowTextLabel.Padding);
+
+        Assert.IsTrue(VisualStateManager.GoToState(button, "HasPrimaryLabels", false));
+        Assert.AreEqual(PrimaryLabelPanelWidth, iconAndLabelPanel.Width);
+        Assert.AreEqual(new Thickness(0, 9, 0, 0), iconAndLabelPanel.Margin);
+        Assert.AreEqual(VerticalAlignment.Top, iconAndLabelPanel.VerticalAlignment);
+        Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
 
         Assert.IsTrue(VisualStateManager.GoToState(button, "OverflowWithMenuIcons", false));
 
@@ -1588,12 +1656,13 @@ public class CommandBarFlyoutApiTests
         Assert.AreEqual(Visibility.Visible, overflowTextLabel.Visibility);
         Assert.AreEqual(new Thickness(67, 0, 12, 0), overflowTextLabel.Margin);
 
+        Assert.IsTrue(VisualStateManager.GoToState(button, "NoPrimaryLabels", false));
         Assert.IsTrue(VisualStateManager.GoToState(button, "FullSize", false));
 
-        Assert.AreEqual(PrimaryCommandTemplateWidth, contentRoot.Width);
+        Assert.IsTrue(double.IsNaN(contentRoot.Width));
         Assert.IsTrue(double.IsPositiveInfinity(contentViewbox.MaxWidth));
         Assert.AreEqual(Visibility.Collapsed, overflowCheckGlyph.Visibility);
-        Assert.AreEqual(Visibility.Visible, textLabel.Visibility);
+        Assert.AreEqual(Visibility.Collapsed, textLabel.Visibility);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
 
         Assert.IsTrue(VisualStateManager.GoToState(button, "GameControllerInputMode", false));
@@ -1602,7 +1671,7 @@ public class CommandBarFlyoutApiTests
 
         Assert.IsTrue(VisualStateManager.GoToState(button, "InputModeDefault", false));
         Assert.AreEqual(new Thickness(15, 4, 14, 4), overflowCheckGlyph.Margin);
-        Assert.AreEqual(new Thickness(0, 5, 0, 7), overflowTextLabel.Padding);
+        Assert.AreEqual(new Thickness(0, 6, 0, 7), overflowTextLabel.Padding);
     }
 
     private static void VerifyAppBarButtonCommonStates(AppBarButton button)
@@ -1882,6 +1951,7 @@ public class CommandBarFlyoutApiTests
         Assert.IsFalse(overflowShadow.IsShadowEnabled);
         Assert.AreEqual(32.0, overflowShadow.Depth);
         Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, overflowShadow.WindowedPopupInsetMode);
+        Assert.IsFalse(overflowShadow.ReservesShadowSpace);
         Assert.AreEqual(new Thickness(10, 2, 10, 18), overflowShadow.PopupShadowPadding);
         Assert.AreEqual(outerOverflowContentRoot.CornerRadius, overflowShadow.CornerRadius);
 
@@ -1990,6 +2060,15 @@ public class CommandBarFlyoutApiTests
         var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
         Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
         Assert.AreEqual(expectedValue, themeDictionary[resourceKey]);
+    }
+
+    private static void AssertThemeSolidColorBrush(string themeName, string resourceKey, Color expectedColor)
+    {
+        var themeDictionary = ThemeResources.Current.GetThemeDictionary(themeName);
+        Assert.IsTrue(themeDictionary.Contains(resourceKey), $"{themeName} is missing {resourceKey}.");
+        var brush = themeDictionary[resourceKey] as SolidColorBrush
+            ?? throw new AssertFailedException($"{themeName}:{resourceKey} should be a SolidColorBrush.");
+        Assert.AreEqual(expectedColor, brush.Color, $"{themeName}:{resourceKey}");
     }
 
     private static T FindDescendant<T>(DependencyObject root)

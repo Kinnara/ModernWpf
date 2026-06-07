@@ -12,6 +12,54 @@ Run the unit/runtime checks:
 dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj -f net8.0-windows7.0 --no-restore
 ```
 
+## Common Commands
+
+After code changes that affect Gallery visuals, build the Gallery first. If the
+visual script's `-Build` path fails without useful output, run this direct build
+and then rerun the visual script without `-Build`:
+
+```powershell
+dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj -f net8.0-windows7.0 -c Debug --no-restore
+```
+
+Run the focused CommandBarFlyout test class:
+
+```powershell
+dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --framework net8.0-windows7.0 --filter "FullyQualifiedName~CommandBarFlyoutApiTests"
+```
+
+Run the focused CommandBarFlyout alignment and second-open regression test:
+
+```powershell
+dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --framework net8.0-windows7.0 --filter "FullyQualifiedName~CommandBarFlyoutApiTests.ExpandedFlyoutOverflowAlignsAndSurvivesSecondOpen"
+```
+
+Run CommandBarFlyout static plus interaction visual parity against a cached
+WinUI reference. The requested `-Theme` must match the cached reference run:
+
+```powershell
+.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CommandBarFlyout -Theme Dark -WinUIReferenceRunDir .\artifacts\visual-checks\<winui-reference-run> -TimeoutSeconds 20 -ModernWpfRetries 0 -IncludeInteractions
+```
+
+Refresh a CommandBarFlyout WinUI reference when the installed reference app,
+theme, or capture machine changes. Do this once, then reuse the output directory
+with `-WinUIReferenceRunDir` for fast ModernWpf iterations:
+
+```powershell
+.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls CommandBarFlyout -Theme Dark -Reference InstalledWinUI3Gallery -TimeoutSeconds 30 -IncludeInteractions
+```
+
+Run a CommandBarFlyout recording proof when animation, flicker, close behavior,
+or repeat-open behavior is under review:
+
+```powershell
+.\tools\visual-checks\Record-GalleryControlInteractions.ps1 -Controls CommandBarFlyout -Theme Dark -DurationSeconds 8 -FrameRate 10 -Build
+```
+
+Use `-Controls`, not `-Scenario`, with `Run-GalleryVisualChecks.ps1`. The visual
+script launches the Gallery as a normal window, moves it to `60,60`, captures,
+and then closes it in `finally`; a focused run can be visible only briefly.
+
 Run the local WinUI-backed visual pass for ported WinUI controls:
 
 ```powershell
@@ -135,11 +183,12 @@ For focused WinUI parity loops, pass `-WinUIReferenceRunDir` with a previous
 Gallery capture instead of relaunching the reference app every iteration. The
 cached report and referenced screenshots are validated before use. For
 CommandBarFlyout, interaction parity is strict: the harness crops the open
-surface from the union of the primary commands, ellipsis, and expanded
-secondary commands, requires both ModernWpf and WinUI to use that
-`CommandBarFlyoutOpenSurface` crop source, and fails on crop delta or crop-size
-drift. This catches secondary-menu gaps and edge misalignment that broad
-full-window screenshots can hide.
+surface from the screen-bounds union of the primary commands, ellipsis, and
+expanded secondary commands, requires both ModernWpf and WinUI to use that
+`CommandBarFlyoutOpenSurfaceScreen` crop source, and fails on crop delta,
+crop-size drift, or a missing/low-variation combined crop. This catches
+secondary-menu gaps and edge misalignment that broad full-window screenshots or
+secondary-popup-only captures can hide.
 
 Static window captures use `PrintWindow` first and fall back to an activated screen-rect capture when `PrintWindow` returns a blank image. If a capture returns a nonblank but invalid reference surface, such as a desktop/wallpaper or Mica backdrop crop from a WinUI composition window, the harness rejects the result when the primary crop has very low visible luminance variation and fails the run instead of reporting false parity.
 
@@ -156,6 +205,7 @@ Latest full static reference runs with usable installed WinUI Gallery crops:
 
 Findings:
 
+- `CommandBarFlyout` open-surface join and edge alignment are fixed in the current branch. The focused ModernWpf interaction capture passes at `artifacts/visual-checks/20260607-163906-967-188756/report.md`; the open-surface crop has continuous row coverage across the primary/secondary join and a `229` px painted width. The cached WinUI reference at `artifacts/visual-checks/20260607-121845-471-226920` is still useful for manual pixel review, but its interaction crop source predates the stricter `CommandBarFlyoutOpenSurfaceScreen` source and fails the refreshed harness source check until a new installed WinUI capture can be recorded.
 - `InfoBar` is the current control/resource fix baseline. Primary crop delta is about `9.8` in Dark and `9.66` in Light, with only a 3 px height difference against WinUI Gallery.
 - `Button` sample parity is fixed in the current branch. Focused checks now report `165x32` vs `166x32`, with primary crop deltas of `10.18` in Dark (`artifacts/visual-checks/20260513-021319/report.md`) and `10.08` in Light (`artifacts/visual-checks/20260513-021337/report.md`).
 - `ComboBox` sample parity is fixed in the current branch. Focused checks now report `200x59` vs `208x64`, with primary crop deltas of `6.22` in Dark (`artifacts/visual-checks/20260513-022103/report.md`) and `6.1` in Light (`artifacts/visual-checks/20260513-022005/report.md`).

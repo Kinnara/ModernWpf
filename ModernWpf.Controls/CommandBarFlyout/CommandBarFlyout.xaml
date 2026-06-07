@@ -16,9 +16,9 @@
 
     <Thickness x:Key="CommandBarFlyoutAppBarButtonInnerBorderMargin">2</Thickness>
     <Thickness x:Key="CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin">2,2,6,2</Thickness>
-    <!-- WPF rounds this to a 58px actual width; with three primary commands and the ellipsis it matches WinUI's 229px open surface. -->
-    <sys:Double x:Key="CommandBarFlyoutPrimaryAppBarButtonWidth">57.67</sys:Double>
+    <sys:Double x:Key="CommandBarFlyoutPrimaryAppBarButtonWidth">60</sys:Double>
     <sys:Double x:Key="CommandBarFlyoutPrimaryAppBarButtonHeight">55</sys:Double>
+    <sys:Double x:Key="CommandBarFlyoutPrimaryLabelPanelWidth">60</sys:Double>
 
     <Style x:Key="CommandBarFlyoutAppBarButtonStyleBase" TargetType="local:AppBarButton">
         <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutAppBarButtonBackground}" />
@@ -194,6 +194,17 @@
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="PrimaryLabelStates">
+                                <VisualState x:Name="NoPrimaryLabels" />
+                                <ui:VisualStateEx x:Name="HasPrimaryLabels">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="IconAndLabelPanel.Margin" Value="0,9,0,0" />
+                                        <ui:VisualStateSetter Target="IconAndLabelPanel.VerticalAlignment" Value="Top" />
+                                        <ui:VisualStateSetter Target="IconAndLabelPanel.Width" Value="{StaticResource CommandBarFlyoutPrimaryLabelPanelWidth}" />
+                                        <ui:VisualStateSetter Target="TextLabel.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
                         <ui:BorderEx x:Name="AppBarButtonInnerBorder"
@@ -212,40 +223,43 @@
 
                         <Grid
                             x:Name="ContentRoot"
-                            Width="{StaticResource CommandBarFlyoutPrimaryAppBarButtonWidth}"
+                            MinWidth="40"
                             MinHeight="{StaticResource CommandBarFlyoutPrimaryAppBarButtonHeight}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Viewbox
-                                x:Name="ContentViewbox"
-                                Height="16"
-                                Margin="0,5,0,0"
-                                HorizontalAlignment="Stretch">
-                                <ui:ContentPresenterEx
-                                    x:Name="Content"
-                                    Content="{TemplateBinding Icon}"
-                                    Foreground="{TemplateBinding Foreground}" />
-                            </Viewbox>
-                            <TextBlock
-                                x:Name="TextLabel"
-                                Grid.Row="1"
-                                Text="{TemplateBinding Label}"
-                                Style="{DynamicResource CaptionTextBlockStyle}"
-                                Foreground="{TemplateBinding Foreground}"
-                                FontFamily="{TemplateBinding FontFamily}"
-                                TextAlignment="Center"
-                                TextWrapping="NoWrap"
-                                TextTrimming="CharacterEllipsis"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                Margin="2,0,2,4" />
+                            <Grid
+                                x:Name="IconAndLabelPanel"
+                                VerticalAlignment="Center">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Viewbox
+                                    x:Name="ContentViewbox"
+                                    Height="16"
+                                    HorizontalAlignment="Stretch">
+                                    <ui:ContentPresenterEx
+                                        x:Name="Content"
+                                        Content="{TemplateBinding Icon}"
+                                        Foreground="{TemplateBinding Foreground}" />
+                                </Viewbox>
+                                <TextBlock
+                                    x:Name="TextLabel"
+                                    Grid.Row="1"
+                                    Text="{TemplateBinding Label}"
+                                    Style="{DynamicResource CaptionTextBlockStyle}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    TextAlignment="Center"
+                                    TextWrapping="Wrap"
+                                    TextTrimming="None"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,6,0,2"
+                                    Visibility="Collapsed" />
+                            </Grid>
                             <TextBlock
                                 x:Name="OverflowTextLabel"
                                 Text="{TemplateBinding Label}"
@@ -254,14 +268,15 @@
                                 FontFamily="{TemplateBinding FontFamily}"
                                 TextAlignment="Left"
                                 TextWrapping="NoWrap"
+                                TextTrimming="None"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Margin="12,0,12,0"
-                                Padding="0,5,0,7"
+                                Padding="0,6,0,7"
                                 Visibility="Collapsed" />
                             <TextBlock
                                 x:Name="KeyboardAcceleratorTextLabel"
-                                Grid.Column="2"
+                                Grid.Column="1"
                                 Style="{DynamicResource CaptionTextBlockStyle}"
                                 Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
                                 MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.KeyboardAcceleratorTextMinWidth}"
@@ -526,6 +541,17 @@
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="PrimaryLabelStates">
+                                <VisualState x:Name="NoPrimaryLabels" />
+                                <ui:VisualStateEx x:Name="HasPrimaryLabels">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="IconAndLabelPanel.Margin" Value="0,9,0,0" />
+                                        <ui:VisualStateSetter Target="IconAndLabelPanel.VerticalAlignment" Value="Top" />
+                                        <ui:VisualStateSetter Target="IconAndLabelPanel.Width" Value="{StaticResource CommandBarFlyoutPrimaryLabelPanelWidth}" />
+                                        <ui:VisualStateSetter Target="TextLabel.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
                         <ui:BorderEx x:Name="AppBarButtonInnerBorder"
@@ -544,17 +570,12 @@
 
                         <Grid
                             x:Name="ContentRoot"
-                            Width="{StaticResource CommandBarFlyoutPrimaryAppBarButtonWidth}"
+                            MinWidth="40"
                             MinHeight="{StaticResource CommandBarFlyoutPrimaryAppBarButtonHeight}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
                             <ui:FontIconFallback
                                 x:Name="OverflowCheckGlyph"
                                 Data="{StaticResource Accept}"
@@ -566,29 +587,36 @@
                                 Margin="15,4,14,4"
                                 Opacity="0"
                                 Visibility="Collapsed" />
-                            <Viewbox
-                                x:Name="ContentViewbox"
-                                Height="16"
-                                Margin="0,5,0,0"
-                                HorizontalAlignment="Stretch">
-                                <ui:ContentPresenterEx
-                                    x:Name="Content"
-                                    Content="{TemplateBinding Icon}"
-                                    Foreground="{TemplateBinding Foreground}" />
-                            </Viewbox>
-                            <TextBlock
-                                x:Name="TextLabel"
-                                Grid.Row="1"
-                                Text="{TemplateBinding Label}"
-                                Style="{DynamicResource CaptionTextBlockStyle}"
-                                Foreground="{TemplateBinding Foreground}"
-                                FontFamily="{TemplateBinding FontFamily}"
-                                TextAlignment="Center"
-                                TextWrapping="NoWrap"
-                                TextTrimming="CharacterEllipsis"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                Margin="2,0,2,4" />
+                            <Grid
+                                x:Name="IconAndLabelPanel"
+                                VerticalAlignment="Top">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Viewbox
+                                    x:Name="ContentViewbox"
+                                    Height="16"
+                                    HorizontalAlignment="Stretch">
+                                    <ui:ContentPresenterEx
+                                        x:Name="Content"
+                                        Content="{TemplateBinding Icon}"
+                                        Foreground="{TemplateBinding Foreground}" />
+                                </Viewbox>
+                                <TextBlock
+                                    x:Name="TextLabel"
+                                    Grid.Row="1"
+                                    Text="{TemplateBinding Label}"
+                                    Style="{DynamicResource CaptionTextBlockStyle}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    TextAlignment="Center"
+                                    TextWrapping="Wrap"
+                                    TextTrimming="None"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,6,0,2"
+                                    Visibility="Collapsed" />
+                            </Grid>
                             <TextBlock
                                 x:Name="OverflowTextLabel"
                                 Text="{TemplateBinding Label}"
@@ -597,14 +625,15 @@
                                 FontFamily="{TemplateBinding FontFamily}"
                                 TextAlignment="Left"
                                 TextWrapping="NoWrap"
+                                TextTrimming="None"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Margin="39,0,12,0"
-                                Padding="0,5,0,7"
+                                Padding="0,6,0,7"
                                 Visibility="Collapsed" />
                             <TextBlock
                                 x:Name="KeyboardAcceleratorTextLabel"
-                                Grid.Column="2"
+                                Grid.Column="1"
                                 Style="{DynamicResource CaptionTextBlockStyle}"
                                 Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
                                 MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.KeyboardAcceleratorTextMinWidth}"
@@ -671,6 +700,7 @@
     </Style>
 
     <Style TargetType="primitives:CommandBarFlyoutCommandBar">
+        <Setter Property="SystemBackdrop" Value="{DynamicResource CommandBarFlyoutSystemBackdrop}" />
         <Setter Property="Background" Value="{DynamicResource CommandBarFlyoutBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource CommandBarFlyoutForeground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource CommandBarFlyoutBorderBrush}" />
@@ -996,6 +1026,7 @@
                             Margin="{TemplateBinding Padding}"
                             MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.CurrentWidth}"
                             Height="{TemplateBinding Height}"
+                            Background="{TemplateBinding SystemBackdrop}"
                             CornerRadius="{Binding ElementName=LayoutRoot, Path=CornerRadius}">
                             <Border.Clip>
                                 <RectangleGeometry
@@ -1027,7 +1058,12 @@
                                     </RectangleGeometry>
                                 </Grid.Clip>
                                 <Border
+                                    x:Name="PrimaryItemsSystemBackdropRoot"
+                                    Background="{TemplateBinding SystemBackdrop}"
+                                    CornerRadius="{Binding ElementName=PrimaryItemsRoot, Path=CornerRadius}" />
+                                <Border
                                     x:Name="PrimaryItemsRoot"
+                                    Background="{TemplateBinding SystemBackdrop}"
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     CornerRadius="{TemplateBinding CornerRadius}">
@@ -1039,7 +1075,7 @@
                                         <StackPanel
                                             x:Name="PrimaryItemsPanel"
                                             Height="{StaticResource CommandBarFlyoutPrimaryAppBarButtonHeight}"
-                                            Margin="0"
+                                            Margin="3,2,0,3"
                                             Grid.Column="0"
                                             Orientation="Horizontal"
                                             HorizontalAlignment="Left"
@@ -1081,67 +1117,75 @@
                                         x:Name="OuterOverflowContentRootShadowChrome"
                                         IsShadowEnabled="False"
                                         WindowedPopupInsetMode="Medium"
-                                        ReservesShadowSpace="True"
+                                        ReservesShadowSpace="False"
                                         CornerRadius="{Binding ElementName=OuterOverflowContentRoot, Path=CornerRadius}"
                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
                                         <Border
                                             x:Name="OuterOverflowContentRoot"
+                                            Background="{TemplateBinding SystemBackdrop}"
+                                            Margin="0,-2,0,2"
                                             Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.ExpandedWidth}">
-                                            <Border.Clip>
-                                                <RectangleGeometry
-                                                    x:Name="OuterOverflowContentRootClip"
-                                                    Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OverflowContentClipRect}">
-                                                    <RectangleGeometry.Transform>
-                                                        <TranslateTransform x:Name="OuterOverflowContentRootClipTransform" />
-                                                    </RectangleGeometry.Transform>
-                                                </RectangleGeometry>
-                                            </Border.Clip>
-                                            <Border
-                                                x:Name="OverflowContentRoot"
-                                                HorizontalAlignment="Stretch"
-                                                Background="{TemplateBinding Background}"
-                                                CornerRadius="{Binding ElementName=OuterOverflowContentRoot, Path=CornerRadius}">
-                                                <Border.Clip>
+                                            <Grid>
+                                                <Grid.Clip>
                                                     <RectangleGeometry
-                                                        x:Name="OverflowContentRootClip"
+                                                        x:Name="OuterOverflowContentRootClip"
                                                         Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OverflowContentClipRect}">
                                                         <RectangleGeometry.Transform>
-                                                            <!--
-                                                            If you have a value set by a binding and then animate that value,
-                                                            the animation will clear the binding.  Because of that, we need to have
-                                                            two translate transforms - one that we bind to a property,
-                                                            and another that we can animate.
-                                                            -->
-                                                            <TransformGroup>
-                                                                <TranslateTransform X="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionDelta}" />
-                                                                <TranslateTransform x:Name="OverflowContentRootClipTransform" />
-                                                            </TransformGroup>
+                                                            <TranslateTransform x:Name="OuterOverflowContentRootClipTransform" />
                                                         </RectangleGeometry.Transform>
                                                     </RectangleGeometry>
-                                                </Border.Clip>
-                                                <Grid>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto" />
-                                                        <RowDefinition />
-                                                        <RowDefinition Height="Auto" />
-                                                    </Grid.RowDefinitions>
-                                                    <primitives:CommandBarOverflowPresenter
-                                                        Grid.Row="1"
-                                                        x:Name="SecondaryItemsControl"
-                                                        Style="{TemplateBinding OverflowPresenterStyle}"
-                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                        BorderThickness="{DynamicResource CommandBarFlyoutBorderThemeThickness}"
-                                                        IsTabStop="False">
-                                                        <primitives:CommandBarFlyoutOverflowPanel
-                                                            x:Name="SecondaryItemsPanel"
-                                                            Focusable="False"
-                                                            FocusVisualStyle="{x:Null}"
-                                                            KeyboardNavigation.TabNavigation="Once"
-                                                            KeyboardNavigation.DirectionalNavigation="Cycle"
-                                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                                    </primitives:CommandBarOverflowPresenter>
-                                                </Grid>
-                                            </Border>
+                                                </Grid.Clip>
+                                                <Border
+                                                    x:Name="OverflowPopupSystemBackdropRoot"
+                                                    Background="{TemplateBinding SystemBackdrop}"
+                                                    CornerRadius="{Binding ElementName=OuterOverflowContentRoot, Path=CornerRadius}" />
+                                                <Border
+                                                    x:Name="OverflowContentRoot"
+                                                    HorizontalAlignment="Stretch"
+                                                    Background="{TemplateBinding Background}"
+                                                    CornerRadius="{Binding ElementName=OuterOverflowContentRoot, Path=CornerRadius}">
+                                                    <Border.Clip>
+                                                        <RectangleGeometry
+                                                            x:Name="OverflowContentRootClip"
+                                                            Rect="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.OverflowContentClipRect}">
+                                                            <RectangleGeometry.Transform>
+                                                                <!--
+                                                                If you have a value set by a binding and then animate that value,
+                                                                the animation will clear the binding.  Because of that, we need to have
+                                                                two translate transforms - one that we bind to a property,
+                                                                and another that we can animate.
+                                                                -->
+                                                                <TransformGroup>
+                                                                    <TranslateTransform X="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=FlyoutTemplateSettings.WidthExpansionDelta}" />
+                                                                    <TranslateTransform x:Name="OverflowContentRootClipTransform" />
+                                                                </TransformGroup>
+                                                            </RectangleGeometry.Transform>
+                                                        </RectangleGeometry>
+                                                    </Border.Clip>
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto" />
+                                                            <RowDefinition />
+                                                            <RowDefinition Height="Auto" />
+                                                        </Grid.RowDefinitions>
+                                                        <primitives:CommandBarOverflowPresenter
+                                                            Grid.Row="1"
+                                                            x:Name="SecondaryItemsControl"
+                                                            Style="{TemplateBinding OverflowPresenterStyle}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{DynamicResource CommandBarFlyoutBorderThemeThickness}"
+                                                            IsTabStop="False">
+                                                            <primitives:CommandBarFlyoutOverflowPanel
+                                                                x:Name="SecondaryItemsPanel"
+                                                                Focusable="False"
+                                                                FocusVisualStyle="{x:Null}"
+                                                                KeyboardNavigation.TabNavigation="Once"
+                                                                KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                        </primitives:CommandBarOverflowPresenter>
+                                                    </Grid>
+                                                </Border>
+                                            </Grid>
                                         </Border>
                                     </ui:ThemeShadowChrome>
                                 </ui:PopupEx>

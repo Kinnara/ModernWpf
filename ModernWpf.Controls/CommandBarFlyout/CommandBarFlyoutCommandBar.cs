@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
@@ -113,6 +114,19 @@ namespace ModernWpf.Controls.Primitives
         public ObservableCollection<ICommandBarElement> PrimaryCommands { get; }
 
         public ObservableCollection<ICommandBarElement> SecondaryCommands { get; }
+
+        public static readonly DependencyProperty SystemBackdropProperty =
+            DependencyProperty.Register(
+                nameof(SystemBackdrop),
+                typeof(Brush),
+                typeof(CommandBarFlyoutCommandBar),
+                new PropertyMetadata(null));
+
+        public Brush SystemBackdrop
+        {
+            get => (Brush)GetValue(SystemBackdropProperty);
+            set => SetValue(SystemBackdropProperty, value);
+        }
 
         private static void OnDefaultLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -950,16 +964,20 @@ namespace ModernWpf.Controls.Primitives
 
         private double GetOverflowPopupAlignmentCorrection()
         {
-            // The visible overflow root is inset by the popup shadow and by the source ellipsis button's
-            // right-side inner margin. Include both so the WPF popup content, not just the template
-            // element bounds, lines up with the primary command surface.
-            var popupShadowInset = m_outerOverflowContentRootShadowChrome?.PopupPositionShadowPadding.Left ?? 0;
-            return popupShadowInset + BorderThickness.Left + BorderThickness.Right + BorderThickness.Right + GetOverflowPopupEllipsisInset();
+            // The WPF shadow host reserves popup space that WinUI's render-only shadow does not include
+            // in layout. Compensate for that reserved inset plus the source ellipsis margin so the
+            // visible overflow surface lines up with the primary command surface.
+            var popupShadowInset = m_outerOverflowContentRootShadowChrome?.ReservesShadowSpace == true
+                ? m_outerOverflowContentRootShadowChrome.PopupPositionShadowPadding.Left
+                : 0;
+            return popupShadowInset + BorderThickness.Left + BorderThickness.Right + BorderThickness.Right + BorderThickness.Left + GetOverflowPopupEllipsisInset();
         }
 
         private double GetOverflowPopupVerticalAlignmentCorrection()
         {
-            var popupShadowInset = m_outerOverflowContentRootShadowChrome?.PopupPositionShadowPadding.Top ?? 0;
+            var popupShadowInset = m_outerOverflowContentRootShadowChrome?.ReservesShadowSpace == true
+                ? m_outerOverflowContentRootShadowChrome.PopupPositionShadowPadding.Top
+                : 0;
             return popupShadowInset + BorderThickness.Bottom + BorderThickness.Bottom;
         }
 

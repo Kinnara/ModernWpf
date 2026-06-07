@@ -140,10 +140,12 @@
     <SolidColorBrush x:Key="SystemControlPageTextChromeBlackMediumLowBrush" Color="{m:StaticColor SystemChromeBlackMediumLowColor}" />
     <SolidColorBrush x:Key="SystemControlErrorTextForegroundBrush" Color="{m:StaticColor SystemErrorTextColor}" />
     <SolidColorBrush x:Key="SystemControlTransientBorderBrush" Color="#000000" Opacity="0.14" />
-    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultBrush" Color="{m:StaticColor SystemChromeMediumLowColor}" />
-    <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
-    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="#2B2B2B" />
-    <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultBrush" Color="#FFF9F9F9" />
+    <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="#FFF9F9F9" />
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="#FF2C2C2C" />
+    <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="#FFEEEEEE" />
+    <SolidColorBrush x:Key="DesktopAcrylicTransparentBrush" Color="#00000000" />
+    <m:StaticResource x:Key="AcrylicBackgroundFillColorDefaultBackdrop" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
     <SolidColorBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" Color="{m:DynamicColor SystemAccentColorLight3}" Opacity="0.8" />
     <SolidColorBrush x:Key="AccentAcrylicBackgroundFillColorDefaultBrush" Color="{m:DynamicColor SystemAccentColorLight3}" Opacity="0.9" />
     <m:StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
@@ -902,7 +904,8 @@
     <Thickness x:Key="CommandBarOverflowPresenterBorderUpPadding">0</Thickness>
 
     <!-- Resources for CommandBarFlyout -->
-    <m:StaticResource x:Key="CommandBarFlyoutBackground" ResourceKey="AcrylicInAppFillColorDefaultBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutBackground" ResourceKey="DesktopAcrylicTransparentBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutSystemBackdrop" ResourceKey="AcrylicBackgroundFillColorDefaultBackdrop"/>
     <m:StaticResource x:Key="CommandBarFlyoutForeground" ResourceKey="TextFillColorPrimaryBrush"/>
     <m:StaticResource x:Key="CommandBarFlyoutBorderBrush" ResourceKey="ControlStrokeColorDefaultBrush"/>
     <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackground" ResourceKey="SubtleFillColorTransparentBrush"/>

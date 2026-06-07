@@ -153,6 +153,8 @@
     <SolidColorBrush x:Key="AcrylicInAppFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorDefaultInverseBrush" Color="{m:ThemeResource SystemColorWindowTextColor}" />
     <SolidColorBrush x:Key="AcrylicBackgroundFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
+    <SolidColorBrush x:Key="DesktopAcrylicTransparentBrush" Color="#00000000" />
+    <m:StaticResource x:Key="AcrylicBackgroundFillColorDefaultBackdrop" ResourceKey="SystemControlBackgroundBaseLowBrush" />
     <SolidColorBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
     <SolidColorBrush x:Key="AccentAcrylicBackgroundFillColorDefaultBrush" Color="{m:ThemeResource SystemColorWindowColor}"/>
     <m:StaticResource x:Key="SystemControlDescriptionTextForegroundBrush" ResourceKey="SystemControlPageTextBaseMediumBrush" />
@@ -883,6 +885,7 @@
 
     <!-- Resources for CommandBarFlyout -->
     <m:StaticResource x:Key="CommandBarFlyoutBackground" ResourceKey="SystemControlBackgroundBaseLowBrush"/>
+    <m:StaticResource x:Key="CommandBarFlyoutSystemBackdrop" ResourceKey="SystemControlBackgroundBaseLowBrush"/>
     <m:StaticResource x:Key="CommandBarFlyoutForeground" ResourceKey="SystemControlForegroundBaseHighBrush"/>
     <m:StaticResource x:Key="CommandBarFlyoutBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush"/>
     <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackground" ResourceKey="SystemControlForegroundTransparentBrush"/>

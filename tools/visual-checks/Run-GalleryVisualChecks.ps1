@@ -2972,20 +2972,42 @@ function Merge-WindowBounds($left, $right) {
     }
 }
 
-function Get-CommandBarFlyoutOpenSurfaceBounds($window) {
-    $bounds = $null
+function Get-CommandBarFlyoutOpenSurfaceElements($window) {
+    $elements = New-Object System.Collections.Generic.List[object]
     foreach ($name in @("Share", "Save", "Delete", "Resize", "Move")) {
         $element = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
+        if (Test-AutomationElementUsable $element) {
+            $elements.Add($element)
+        }
+    }
+
+    $moreButton = Find-CommandBarFlyoutMoreButton $window
+    if (Test-AutomationElementUsable $moreButton) {
+        $elements.Add($moreButton)
+    }
+
+    return $elements.ToArray()
+}
+
+function Get-CommandBarFlyoutOpenSurfaceBounds($window) {
+    $bounds = $null
+    foreach ($element in @(Get-CommandBarFlyoutOpenSurfaceElements $window)) {
         $elementBounds = Get-ElementWindowBounds $window $element
         if ($null -ne $elementBounds -and $elementBounds.Found) {
             $bounds = Merge-WindowBounds $bounds $elementBounds
         }
     }
 
-    $moreButton = Find-CommandBarFlyoutMoreButton $window
-    $moreButtonBounds = Get-ElementWindowBounds $window $moreButton
-    if ($null -ne $moreButtonBounds -and $moreButtonBounds.Found) {
-        $bounds = Merge-WindowBounds $bounds $moreButtonBounds
+    return $bounds
+}
+
+function Get-CommandBarFlyoutOpenSurfaceScreenBounds($window) {
+    $bounds = $null
+    foreach ($element in @(Get-CommandBarFlyoutOpenSurfaceElements $window)) {
+        $elementBounds = Get-ElementScreenBounds $element 0
+        if ($null -ne $elementBounds -and $elementBounds.Found) {
+            $bounds = Merge-WindowBounds $bounds $elementBounds
+        }
     }
 
     return $bounds
@@ -3016,6 +3038,214 @@ function Save-CommandBarFlyoutOpenSurfaceCrop($window, [string]$screenshot, [str
         NonBlank = Test-ImageNotBlank $path
         VisibleStdDev = Get-ImageVisibleStdDev $path
     }
+}
+
+function Save-CommandBarFlyoutOpenSurfaceWindowCompositeCrop($window, $bounds, [string]$path, [string]$screenCaptureError) {
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = "CommandBarFlyoutOpenSurfaceScreen"
+            Screenshot = ""
+            Bounds = $bounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+            CaptureMethod = "WindowComposite"
+            Error = $screenCaptureError
+        }
+    }
+
+    $elements = @(Get-CommandBarFlyoutOpenSurfaceElements $window)
+    $handles = New-Object System.Collections.Generic.List[IntPtr]
+    $seenHandles = @{}
+    foreach ($element in $elements) {
+        $handle = Get-ElementNativeWindowHandle $element
+        if ($handle -eq [IntPtr]::Zero) {
+            continue
+        }
+
+        $key = $handle.ToInt64().ToString()
+        if (!$seenHandles.ContainsKey($key)) {
+            $seenHandles[$key] = $true
+            $handles.Add($handle)
+        }
+    }
+
+    if ($handles.Count -eq 0) {
+        return [ordered]@{
+            Found = $false
+            Source = "CommandBarFlyoutOpenSurfaceScreen"
+            Screenshot = ""
+            Bounds = $bounds
+            Width = $bounds.Width
+            Height = $bounds.Height
+            NonBlank = $false
+            CaptureMethod = "WindowComposite"
+            Error = if ([string]::IsNullOrWhiteSpace($screenCaptureError)) { "No popup window handles were found for the CommandBarFlyout open surface." } else { $screenCaptureError }
+        }
+    }
+
+    $bitmap = [System.Drawing.Bitmap]::new($bounds.Width, $bounds.Height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+    $tempPaths = New-Object System.Collections.Generic.List[string]
+    $drawn = $false
+    try {
+        $graphics.Clear([System.Drawing.Color]::Transparent)
+        for ($index = 0; $index -lt $handles.Count; $index++) {
+            $handle = $handles[$index]
+            $tempPath = Join-Path (Split-Path $path -Parent) ("{0}-window-{1}.png" -f [System.IO.Path]::GetFileNameWithoutExtension($path), $index)
+            $tempPaths.Add($tempPath)
+            try {
+                Capture-Window $handle $tempPath -SkipActivate
+                if (!(Test-Path $tempPath)) {
+                    continue
+                }
+
+                $windowRect = [GalleryVisualNative]::GetRect($handle)
+                $sourceLeft = [Math]::Max([int]$bounds.X, [int]$windowRect.Left)
+                $sourceTop = [Math]::Max([int]$bounds.Y, [int]$windowRect.Top)
+                $sourceRight = [Math]::Min([int]$bounds.X + [int]$bounds.Width, [int]$windowRect.Right)
+                $sourceBottom = [Math]::Min([int]$bounds.Y + [int]$bounds.Height, [int]$windowRect.Bottom)
+                if ($sourceRight -le $sourceLeft -or $sourceBottom -le $sourceTop) {
+                    continue
+                }
+
+                $windowBitmap = [System.Drawing.Bitmap]::FromFile($tempPath)
+                try {
+                    $sourceRect = [System.Drawing.Rectangle]::new(
+                        $sourceLeft - [int]$windowRect.Left,
+                        $sourceTop - [int]$windowRect.Top,
+                        $sourceRight - $sourceLeft,
+                        $sourceBottom - $sourceTop)
+                    $destinationRect = [System.Drawing.Rectangle]::new(
+                        $sourceLeft - [int]$bounds.X,
+                        $sourceTop - [int]$bounds.Y,
+                        $sourceRight - $sourceLeft,
+                        $sourceBottom - $sourceTop)
+                    $graphics.DrawImage($windowBitmap, $destinationRect, $sourceRect, [System.Drawing.GraphicsUnit]::Pixel)
+                    $drawn = $true
+                }
+                finally {
+                    $windowBitmap.Dispose()
+                }
+            }
+            catch {
+            }
+        }
+
+        if ($drawn) {
+            $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+        }
+    }
+    finally {
+        $graphics.Dispose()
+        $bitmap.Dispose()
+        foreach ($tempPath in $tempPaths) {
+            try {
+                Remove-Item -LiteralPath $tempPath -Force -ErrorAction SilentlyContinue
+            }
+            catch {
+            }
+        }
+    }
+
+    if (!$drawn -or !(Test-Path $path)) {
+        return [ordered]@{
+            Found = $false
+            Source = "CommandBarFlyoutOpenSurfaceScreen"
+            Screenshot = ""
+            Bounds = $bounds
+            Width = $bounds.Width
+            Height = $bounds.Height
+            NonBlank = $false
+            CaptureMethod = "WindowComposite"
+            Error = if ([string]::IsNullOrWhiteSpace($screenCaptureError)) { "No popup window pixels intersected the CommandBarFlyout open surface bounds." } else { $screenCaptureError }
+        }
+    }
+
+    return [ordered]@{
+        Found = $true
+        Source = "CommandBarFlyoutOpenSurfaceScreen"
+        Screenshot = $path
+        Bounds = $bounds
+        Width = $bounds.Width
+        Height = $bounds.Height
+        ChangedSamples = 0
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+        CaptureMethod = "WindowComposite"
+        Error = $screenCaptureError
+    }
+}
+
+function Save-CommandBarFlyoutOpenSurfaceScreenCrop($window, [string]$path) {
+    $bounds = Get-CommandBarFlyoutOpenSurfaceScreenBounds $window
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = "CommandBarFlyoutOpenSurfaceScreen"
+            Screenshot = ""
+            Bounds = $bounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    $left = [int]$bounds.X - 6
+    $top = [int]$bounds.Y - 6
+    $right = [int]$bounds.X + [int]$bounds.Width + 6
+    $bottom = [int]$bounds.Y + [int]$bounds.Height + 6
+    try {
+        Add-Type -AssemblyName System.Windows.Forms -ErrorAction SilentlyContinue
+        $virtualScreen = [System.Windows.Forms.SystemInformation]::VirtualScreen
+        $left = [Math]::Max($virtualScreen.Left, $left)
+        $top = [Math]::Max($virtualScreen.Top, $top)
+        $right = [Math]::Min($virtualScreen.Right, $right)
+        $bottom = [Math]::Min($virtualScreen.Bottom, $bottom)
+    }
+    catch {
+    }
+
+    $expandedBounds = [ordered]@{
+        Found = $true
+        Reason = ""
+        X = $left
+        Y = $top
+        Width = [Math]::Max(1, $right - $left)
+        Height = [Math]::Max(1, $bottom - $top)
+        ChangedSamples = 0
+    }
+
+    try {
+        Capture-ScreenBounds $expandedBounds.X $expandedBounds.Y $expandedBounds.Width $expandedBounds.Height $path
+    }
+    catch {
+        return Save-CommandBarFlyoutOpenSurfaceWindowCompositeCrop $window $expandedBounds $path $_.Exception.Message
+    }
+
+    $result = [ordered]@{
+        Found = $true
+        Source = "CommandBarFlyoutOpenSurfaceScreen"
+        Screenshot = $path
+        Bounds = $expandedBounds
+        Width = $expandedBounds.Width
+        Height = $expandedBounds.Height
+        ChangedSamples = 0
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+        CaptureMethod = "ScreenBounds"
+    }
+
+    if (Test-ScreenElementPopupCropHasContent $result) {
+        return $result
+    }
+
+    return Save-CommandBarFlyoutOpenSurfaceWindowCompositeCrop `
+        $window `
+        $expandedBounds `
+        $path `
+        "Screen bounds capture did not contain enough visible CommandBarFlyout content."
 }
 
 function Compare-Images([string]$leftPath, [string]$rightPath) {
@@ -4326,6 +4556,8 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     }
     $invoked = Invoke-ElementUntilOpen $window $triggerElement $openNames $control
     $commandBarFlyoutSecondaryExpanded = $false
+    $commandBarFlyoutSurfaceCrop = $null
+    $commandBarFlyoutSurfaceVisualTrusted = $false
     if ($control -eq "CommandBarFlyout" -and $invoked) {
         $commandBarFlyoutSecondaryExpanded = Open-CommandBarFlyoutSecondaryCommands $window
         if ($commandBarFlyoutSecondaryExpanded) {
@@ -4559,11 +4791,16 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
 
         if ($control -eq "CommandBarFlyout" -and $commandBarFlyoutSecondaryExpanded) {
             $surfaceCropPath = Join-Path $caseDir ("{0}-{1}-open-surface-crop.png" -f $app.ToLowerInvariant(), $control)
-            $surfaceCrop = Save-CommandBarFlyoutOpenSurfaceCrop $window $selectedFrame.Screenshot $surfaceCropPath
-            if ($null -ne $surfaceCrop -and $surfaceCrop.Found -and $surfaceCrop.NonBlank) {
-                $crop = $surfaceCrop
+            $commandBarFlyoutSurfaceCrop = Save-CommandBarFlyoutOpenSurfaceScreenCrop $window $surfaceCropPath
+            if (Test-ScreenElementPopupCropHasContent $commandBarFlyoutSurfaceCrop) {
+                $crop = $commandBarFlyoutSurfaceCrop
                 $visualOpened = $true
             }
+            else {
+                $crop = $commandBarFlyoutSurfaceCrop
+                $visualOpened = $false
+            }
+            $commandBarFlyoutSurfaceVisualTrusted = $visualOpened
         }
     }
 
@@ -4598,8 +4835,8 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose an opened menu item." } elseif (!$visualOpened) { "$control exposed opened menu UIA but no nonblank popup item pixels were captured." } else { "" }
     }
     elseif ($control -eq "CommandBarFlyout") {
-        $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif (!$commandBarFlyoutSecondaryExpanded) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
-        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif (!$commandBarFlyoutSecondaryExpanded) { "$control primary flyout opened, but the MoreButton did not expose Resize/Move secondary commands." } elseif ($null -eq $openElement) { "$control did not expose secondary command UIA after opening MoreButton." } elseif (!$visualOpened) { "$control exposed secondary command UIA but no nonblank popup pixels were captured." } else { "" }
+        $status = if (!$baselineNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif (!$commandBarFlyoutSecondaryExpanded) { "Failed" } elseif ($null -ne $openElement -and $commandBarFlyoutSurfaceVisualTrusted) { "Passed" } else { "Failed" }
+        $notes = if (!$baselineNonBlank) { "$control open interaction baseline screenshot was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif (!$commandBarFlyoutSecondaryExpanded) { "$control primary flyout opened, but the MoreButton did not expose Resize/Move secondary commands." } elseif ($null -eq $openElement) { "$control did not expose secondary command UIA after opening MoreButton." } elseif (!$commandBarFlyoutSurfaceVisualTrusted) { "$control exposed secondary command UIA but no trusted combined primary/secondary screen crop was captured." } else { "" }
     }
     elseif (Test-ControlRequiresPopupWindowOpenProof $control) {
         $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
@@ -4648,6 +4885,8 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
         OpenPopupSize = $openPopupSize
         OpenPopupCrop = $openPopupCrop
         CommandBarFlyoutSecondaryExpanded = $commandBarFlyoutSecondaryExpanded
+        CommandBarFlyoutSurfaceCrop = $commandBarFlyoutSurfaceCrop
+        CommandBarFlyoutSurfaceVisualTrusted = $commandBarFlyoutSurfaceVisualTrusted
         SelectedFrameDelayMs = $(if ($null -ne $selectedFrame) { $selectedFrame.DelayMs } else { $null })
         SelectedFrameScreenshot = $(if ($null -ne $selectedFrame) { $selectedFrame.Screenshot } else { "" })
         Notes = $notes
