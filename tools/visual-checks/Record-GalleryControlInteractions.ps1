@@ -173,6 +173,8 @@ public static class GalleryRecordingNative
     private const uint MOUSEEVENTF_WHEEL = 0x0800;
     private const uint WM_MOUSEMOVE = 0x0200;
     private const uint WM_MOUSEHOVER = 0x02A1;
+    private const uint WM_KEYDOWN = 0x0100;
+    private const uint WM_KEYUP = 0x0101;
     private const uint WM_CHAR = 0x0102;
     private const uint KEYEVENTF_KEYUP = 0x0002;
     private const uint KEYEVENTF_UNICODE = 0x0004;
@@ -262,6 +264,40 @@ public static class GalleryRecordingNative
         SendMouseInput(MOUSEEVENTF_LEFTUP);
     }
 
+    public static void Drag(int startX, int startY, int endX, int endY, int steps, int stepDelayMilliseconds)
+    {
+        if (steps < 1)
+        {
+            steps = 1;
+        }
+
+        SetCursorPos(startX, startY);
+        mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);
+        int previousX = startX;
+        int previousY = startY;
+        for (int i = 1; i <= steps; i++)
+        {
+            double progress = (double)i / steps;
+            int x = (int)Math.Round(startX + ((endX - startX) * progress));
+            int y = (int)Math.Round(startY + ((endY - startY) * progress));
+            SetCursorPos(x, y);
+            mouse_event(
+                MOUSEEVENTF_MOVE,
+                unchecked((uint)(x - previousX)),
+                unchecked((uint)(y - previousY)),
+                0,
+                UIntPtr.Zero);
+            previousX = x;
+            previousY = y;
+            if (stepDelayMilliseconds > 0)
+            {
+                System.Threading.Thread.Sleep(stepDelayMilliseconds);
+            }
+        }
+
+        mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);
+    }
+
     private static void SendMouseInput(uint flags)
     {
         var inputs = new INPUT[1];
@@ -296,6 +332,12 @@ public static class GalleryRecordingNative
     public static void End()
     {
         KeyPress(VK_END);
+    }
+
+    public static void EndOverWindow(IntPtr hWnd)
+    {
+        PostMessage(hWnd, WM_KEYDOWN, new UIntPtr(VK_END), IntPtr.Zero);
+        PostMessage(hWnd, WM_KEYUP, new UIntPtr(VK_END), IntPtr.Zero);
     }
 
     public static void Enter()
@@ -4016,7 +4058,69 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
                 "ThemeShadow" { 64.0 }
                 default { [double]$pattern.Current.Value + 10.0 }
             }
-            $pattern.SetValue($target)
+            $valueInputMethod = "RangeValuePattern"
+            $dragStartPoint = ""
+            $dragEndPoint = ""
+            $sliderClickablePoint = ""
+            if ($control -eq "ThemeShadow") {
+                $sliderBounds = ConvertFrom-BoundingRectangleString $targetBounds
+                if ($null -ne $sliderBounds -and $sliderBounds.Width -gt 0 -and $sliderBounds.Height -gt 0) {
+                    $range = $pattern.Current
+                    $minimum = [double]$range.Minimum
+                    $maximum = [double]$range.Maximum
+                    $beforeValue = if ($null -ne $before) { [double]$before } else { $minimum }
+                    $denominator = $maximum - $minimum
+                    $startFraction = if ([Math]::Abs($denominator) -gt 0.000001) {
+                        [Math]::Max(0.0, [Math]::Min(1.0, ($beforeValue - $minimum) / $denominator))
+                    }
+                    else {
+                        0.0
+                    }
+                    $targetFraction = if ([Math]::Abs($denominator) -gt 0.000001) {
+                        [Math]::Max(0.0, [Math]::Min(1.0, ([double]$target - $minimum) / $denominator))
+                    }
+                    else {
+                        1.0
+                    }
+                    $startX = [int][Math]::Round($sliderBounds.X + ($sliderBounds.Width * $startFraction))
+                    $endX = [int][Math]::Round($sliderBounds.X + ($sliderBounds.Width * $targetFraction))
+                    $y = [int][Math]::Round($sliderBounds.Y + ($sliderBounds.Height / 2.0))
+                    $startX = [Math]::Max([int]$sliderBounds.X + 4, [Math]::Min([int]($sliderBounds.X + $sliderBounds.Width - 4), $startX))
+                    $endX = [Math]::Max([int]$sliderBounds.X + 4, [Math]::Min([int]($sliderBounds.X + $sliderBounds.Width - 4), $endX))
+                    $clickablePoint = New-Object System.Windows.Point
+                    if ($sampleElement.TryGetClickablePoint([ref]$clickablePoint)) {
+                        $startX = [int][Math]::Round($clickablePoint.X)
+                        $sliderClickablePoint = ("{0},{1}" -f $startX, ([int][Math]::Round($clickablePoint.Y)))
+                    }
+                    [GalleryRecordingNative]::Drag($startX, $y, $endX, $y, 24, 20)
+                    $valueInputMethod = "SliderDrag"
+                    $dragStartPoint = "$startX,$y"
+                    $dragEndPoint = "$endX,$y"
+                    Start-Sleep -Milliseconds 150
+                    $afterDrag = Get-NumericValue $sampleElement
+                    if ($null -eq $afterDrag -or [Math]::Abs(([double]$afterDrag) - ([double]$target)) -gt 0.001) {
+                        try {
+                            $sampleElement.SetFocus()
+                        }
+                        catch {
+                        }
+
+                        if (![string]::IsNullOrWhiteSpace($sliderClickablePoint)) {
+                            [GalleryRecordingNative]::Click($startX, $y)
+                            Start-Sleep -Milliseconds 100
+                        }
+                        [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
+                        [GalleryRecordingNative]::EndOverWindow($window.Current.NativeWindowHandle)
+                        $valueInputMethod = "SliderKeyboardEndAfterDragMiss"
+                    }
+                }
+                else {
+                    $valueInputMethod = "SliderDragUnavailable"
+                }
+            }
+            else {
+                $pattern.SetValue($target)
+            }
             Start-Sleep -Milliseconds 250
             $after = Get-NumericValue $sampleElement
             if ($hasLayoutStabilityTargets) {
@@ -4047,6 +4151,10 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
                 BeforeValue = $before
                 AfterValue = $after
                 TargetValue = $target
+                ValueInputMethod = $valueInputMethod
+                DragStartPoint = $dragStartPoint
+                DragEndPoint = $dragEndPoint
+                SliderClickablePoint = $sliderClickablePoint
                 TargetReached = $null -ne $after -and [Math]::Abs(([double]$after) - ([double]$target)) -lt 0.001
                 LayoutStabilityTargetAutomationIds = $layoutStabilityTargetAutomationIds
                 LayoutStabilitySource = if ($hasLayoutStabilityTargets) { "RenderedArtifactBounds" } else { "" }
@@ -7331,6 +7439,16 @@ foreach ($control in $Controls) {
 
     if ($status -eq "Passed" -and
         $control -eq "ThemeShadow" -and
+        $interactionKind -eq "Value") {
+        $valueInputMethod = if ($null -ne $interactionResult -and $interactionResult.Contains("ValueInputMethod")) { $interactionResult.ValueInputMethod } else { "" }
+        if ($valueInputMethod -ne "SliderDrag" -and $valueInputMethod -ne "SliderKeyboardEndAfterDragMiss") {
+            $status = "Failed"
+            $notes.Add(("ThemeShadow depth interaction used {0}; expected rendered slider input." -f $valueInputMethod))
+        }
+    }
+
+    if ($status -eq "Passed" -and
+        $control -eq "ThemeShadow" -and
         $interactionKind -eq "Value" -and
         $valueEvidence -and
         !$layoutStabilityEvidence) {
@@ -7469,7 +7587,10 @@ foreach ($control in $Controls) {
         $layoutStabilityEvidenceAccepted) {
         $beforeCasterBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("ThemeShadowCasterBeforeBounds")) { $interactionResult.ThemeShadowCasterBeforeBounds } else { "" }
         $afterCasterBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("ThemeShadowCasterAfterBounds")) { $interactionResult.ThemeShadowCasterAfterBounds } else { "" }
-        $notes.Add(("ThemeShadow card/caster bounds stayed fixed while depth changed. Caster before={0}; after={1}. The visible shadow envelope may expand with depth; live WinUI source-geometry captures show the same behavior." -f $beforeCasterBounds, $afterCasterBounds))
+        $valueInputMethod = if ($null -ne $interactionResult -and $interactionResult.Contains("ValueInputMethod")) { $interactionResult.ValueInputMethod } else { "" }
+        $dragStartPoint = if ($null -ne $interactionResult -and $interactionResult.Contains("DragStartPoint")) { $interactionResult.DragStartPoint } else { "" }
+        $dragEndPoint = if ($null -ne $interactionResult -and $interactionResult.Contains("DragEndPoint")) { $interactionResult.DragEndPoint } else { "" }
+        $notes.Add(("ThemeShadow card/caster bounds stayed fixed while depth changed through {0} ({1}->{2}). Caster before={3}; after={4}. The visible shadow envelope may expand with depth; live WinUI source-geometry captures show the same behavior." -f $valueInputMethod, $dragStartPoint, $dragEndPoint, $beforeCasterBounds, $afterCasterBounds))
         if ($null -ne $themeShadowDenseFrameStability -and $themeShadowDenseFrameStability.Contains("Generated") -and $themeShadowDenseFrameStability.Generated) {
             $notes.Add(("Dense ThemeShadow video frames kept the rendered card fixed. Frames={0}; cardDelta={1}; threshold={2}." -f $themeShadowDenseFrameStability.FrameCount, $themeShadowDenseFrameStability.MaxCardMeanDelta, $themeShadowDenseFrameStability.CardDeltaThreshold))
         }

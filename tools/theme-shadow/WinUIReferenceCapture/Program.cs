@@ -914,14 +914,20 @@ public sealed partial class CaptureApp : Application
             var width = canvasSize.GetProperty("width").GetInt32();
             var height = canvasSize.GetProperty("height").GetInt32();
             var mask = ReadMask(Path.Combine(referenceDirectory, fileBase + ".mask.txt"), name, width, height);
+            var depth = element.TryGetProperty("depth", out var depthElement)
+                ? depthElement.GetSingle()
+                : GetDepth(fileBase);
+            var cornerRadius = element.TryGetProperty("cornerRadius", out var cornerRadiusElement)
+                ? cornerRadiusElement.GetDouble()
+                : GetCornerRadius(fileBase);
             targets.Add(new CaptureTarget(
                 name,
                 fileBase,
                 width,
                 height,
                 mask,
-                GetDepth(fileBase),
-                GetCornerRadius(fileBase)));
+                depth,
+                cornerRadius));
         }
 
         return targets;

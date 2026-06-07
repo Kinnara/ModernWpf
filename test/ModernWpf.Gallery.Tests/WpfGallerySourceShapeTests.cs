@@ -4504,6 +4504,16 @@ namespace ModernWpf.Gallery.Tests
                 "if (Test-ControlSupportsValueInteraction $control) { return \"Value\" }");
             AssertContainsInOrder(
                 source,
+                "public static void Drag(int startX, int startY, int endX, int endY, int steps, int stepDelayMilliseconds)",
+                "mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, UIntPtr.Zero);",
+                "mouse_event(",
+                "MOUSEEVENTF_MOVE,",
+                "mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, UIntPtr.Zero);",
+                "public static void EndOverWindow(IntPtr hWnd)",
+                "PostMessage(hWnd, WM_KEYDOWN, new UIntPtr(VK_END), IntPtr.Zero);",
+                "PostMessage(hWnd, WM_KEYUP, new UIntPtr(VK_END), IntPtr.Zero);");
+            AssertContainsInOrder(
+                source,
                 "function Test-BoundingRectangleStringsNearlyEqual([string]$before, [string]$after, [double]$tolerance)",
                 "$beforeRect = ConvertFrom-BoundingRectangleString $before",
                 "$afterRect = ConvertFrom-BoundingRectangleString $after",
@@ -4528,6 +4538,13 @@ namespace ModernWpf.Gallery.Tests
                 "$themeShadowVisualBounds = if ($control -eq \"ThemeShadow\"",
                 "$themeShadowCasterBeforeBounds = if ($control -eq \"ThemeShadow\"",
                 "\"ThemeShadow\" { 64.0 }",
+                "$valueInputMethod = \"RangeValuePattern\"",
+                "if ($control -eq \"ThemeShadow\")",
+                "$sampleElement.TryGetClickablePoint([ref]$clickablePoint)",
+                "[GalleryRecordingNative]::Drag($startX, $y, $endX, $y, 24, 20)",
+                "$valueInputMethod = \"SliderDrag\"",
+                "[GalleryRecordingNative]::EndOverWindow($window.Current.NativeWindowHandle)",
+                "$valueInputMethod = \"SliderKeyboardEndAfterDragMiss\"",
                 "$themeShadowCasterAfterBounds = if ($control -eq \"ThemeShadow\"",
                 "$themeShadowCasterStable = if ($control -eq \"ThemeShadow\"",
                 "ThemeShadowVisualBounds = $themeShadowVisualBounds",
@@ -4535,6 +4552,10 @@ namespace ModernWpf.Gallery.Tests
                 "ThemeShadowCasterAfterBounds = $themeShadowCasterAfterBounds",
                 "ThemeShadowCasterStable = $themeShadowCasterStable",
                 "ThemeShadowSourceGeometryReference = if ($control -eq \"ThemeShadow\")",
+                "ValueInputMethod = $valueInputMethod",
+                "DragStartPoint = $dragStartPoint",
+                "DragEndPoint = $dragEndPoint",
+                "SliderClickablePoint = $sliderClickablePoint",
                 "LayoutStabilityTargetAutomationIds = $layoutStabilityTargetAutomationIds",
                 "LayoutStabilitySource = if ($hasLayoutStabilityTargets) { \"RenderedArtifactBounds\" } else { \"\" }",
                 "BeforeLayoutBounds = $beforeLayoutBounds",
@@ -4569,6 +4590,7 @@ namespace ModernWpf.Gallery.Tests
                 "$themeShadowCasterStabilityEvidence -and",
                 "$themeShadowDenseFrameStabilityEvidence -and",
                 "$themeShadowVisualEvidence",
+                "ThemeShadow depth interaction used {0}; expected rendered slider input.",
                 "ThemeShadow depth changed but one or more sample bounds moved or could not be proven stable.",
                 "ThemeShadow depth changed but the card/caster bounds moved or were not measured.",
                 "ThemeShadow depth changed but no rendered sample-root visual delta was proven.",
@@ -4699,6 +4721,29 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 source.Contains("if ($control -eq \"ToolTip\") { return \"PreparedOpen\" }", StringComparison.Ordinal),
                 "ToolTip should not pass from an already-opened diagnostic tooltip.");
+        }
+
+        [TestMethod]
+        public void ThemeShadowWinUIReferenceCaptureSupportsManifestDepth()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "theme-shadow",
+                "WinUIReferenceCapture",
+                "Program.cs"));
+
+            AssertContainsInOrder(
+                source,
+                "var depth = element.TryGetProperty(\"depth\", out var depthElement)",
+                "? depthElement.GetSingle()",
+                ": GetDepth(fileBase);",
+                "var cornerRadius = element.TryGetProperty(\"cornerRadius\", out var cornerRadiusElement)",
+                "? cornerRadiusElement.GetDouble()",
+                ": GetCornerRadius(fileBase);",
+                "mask,",
+                "depth,",
+                "cornerRadius));");
         }
 
         [TestMethod]
