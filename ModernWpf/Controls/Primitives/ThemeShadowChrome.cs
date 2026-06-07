@@ -814,6 +814,21 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
+        internal bool HasWindowedPopupPlacementBounds =>
+            IsShadowEnabled &&
+            ReservesShadowSpace &&
+            Child != null;
+
+        internal Rect GetWindowedPopupPlacementBounds(Size hostSize)
+        {
+            var padding = LayoutShadowPadding;
+            return new Rect(
+                padding.Left,
+                padding.Top,
+                Math.Max(0, hostSize.Width - padding.Left - padding.Right),
+                Math.Max(0, hostSize.Height - padding.Top - padding.Bottom));
+        }
+
         private void OnParentPopupControlOpened(object sender, EventArgs e)
         {
             if (_popupPositioner != null)
