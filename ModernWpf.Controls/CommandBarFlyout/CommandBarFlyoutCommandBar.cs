@@ -16,7 +16,7 @@ namespace ModernWpf.Controls.Primitives
 {
     [TemplatePart(Name = PrimaryItemsPanelName, Type = typeof(Panel))]
     [TemplatePart(Name = SecondaryItemsPanelName, Type = typeof(Panel))]
-    [TemplatePart(Name = OverflowPopupName, Type = typeof(Popup))]
+    [TemplatePart(Name = OverflowPopupName, Type = typeof(WindowedPopup))]
     public partial class CommandBarFlyoutCommandBar : Control
     {
         static CommandBarFlyoutCommandBar()
@@ -52,6 +52,15 @@ namespace ModernWpf.Controls.Primitives
 
             Loaded += delegate
             {
+                Dispatcher.BeginInvoke(() =>
+                {
+                    if (IsLoaded)
+                    {
+                        UpdateOverflowPopupVisibility(IsOpen);
+                        UpdateUI(false);
+                    }
+                }, DispatcherPriority.Background);
+
                 UpdateUI();
 
                 if (TryGetOwningFlyout(out var owningFlyout) &&
@@ -140,7 +149,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnIsOpenChanged(bool isOpen)
         {
-            UpdateOverflowPopupVisibility(isOpen);
+            UpdateOverflowPopupVisibility(isOpen, allowOpen: IsLoaded || !isOpen);
 
             if (isOpen)
             {
@@ -197,6 +206,13 @@ namespace ModernWpf.Controls.Primitives
         public override void OnApplyTemplate()
         {
             DetachEventHandlers();
+
+            if (m_overflowPopup != null)
+            {
+                m_overflowPopup.PlacementTarget = null;
+                m_overflowPopup.DesiredPlacement = PopupPlacementMode.Auto;
+            }
+
             ClearPanelChildren(m_primaryItemsPanel);
             ClearPanelChildren(m_secondaryItemsPanel);
 
@@ -208,13 +224,17 @@ namespace ModernWpf.Controls.Primitives
             m_primaryItemsPanel = GetTemplateChild(PrimaryItemsPanelName) as Panel;
             m_secondaryItemsPanel = GetTemplateChild(SecondaryItemsPanelName) as Panel;
             m_moreButton = GetTemplateChild("MoreButton") as ButtonBase;
-            m_overflowPopup = GetTemplateChild(OverflowPopupName) as Popup;
+            m_overflowPopup = GetTemplateChild(OverflowPopupName) as WindowedPopup;
             m_outerOverflowContentRootShadowChrome = GetTemplateChild("OuterOverflowContentRootShadowChrome") as ThemeShadowChrome;
+            m_overflowTopJoinSeparator = GetTemplateChild("OverflowTopJoinSeparator") as FrameworkElement;
+            m_overflowBottomJoinSeparator = GetTemplateChild("OverflowBottomJoinSeparator") as FrameworkElement;
 
             if (m_layoutRoot != null)
             {
-                m_openingStoryboard = m_layoutRoot.Resources["OpeningStoryboard"] as Storyboard;
-                m_closingStoryboard = m_layoutRoot.Resources["ClosingStoryboard"] as Storyboard;
+                m_openingStoryboard = GetLayoutRootStoryboard("OpeningOpacityStoryboard") ??
+                    GetLayoutRootStoryboard("OpeningStoryboard");
+                m_closingStoryboard = GetLayoutRootStoryboard("ClosingOpacityStoryboard") ??
+                    GetLayoutRootStoryboard("ClosingStoryboard");
                 m_collapsedToExpandedUpStoryboard = m_layoutRoot.Resources["CollapsedToExpandedUpStoryboard"] as Storyboard;
                 m_collapsedToExpandedDownStoryboard = m_layoutRoot.Resources["CollapsedToExpandedDownStoryboard"] as Storyboard;
                 m_expandedUpToCollapsedStoryboard = m_layoutRoot.Resources["ExpandedUpToCollapsedStoryboard"] as Storyboard;
@@ -237,9 +257,10 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
-            if (m_overflowPopup is PopupEx popupEx)
+            if (m_overflowPopup != null)
             {
-                popupEx.SuppressFadeAnimation = true;
+                m_overflowPopup.PlacementTarget = m_primaryItemsRoot;
+                m_overflowPopup.DesiredPlacement = PopupPlacementMode.BottomEdgeAlignedLeft;
             }
 
             BindOwningFlyoutPresenterToCornerRadius();
@@ -248,7 +269,7 @@ namespace ModernWpf.Controls.Primitives
             AttachItemEventHandlers();
             UpdateHasOverflowItems();
             UpdateFlowsFromAndFlowsTo();
-            UpdateOverflowPopupVisibility(IsOpen);
+            UpdateOverflowPopupVisibility(IsOpen, allowOpen: IsLoaded);
             UpdateUI(false);
         }
 
@@ -298,6 +319,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_overflowPopup.Opened += OverflowPopupOpened;
                 m_overflowPopup.Closed += OverflowPopupClosed;
+                m_overflowPopup.ActualPlacementChanged += OverflowPopupActualPlacementChanged;
             }
 
             if (m_openingStoryboard != null)
@@ -342,6 +364,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 m_overflowPopup.Opened -= OverflowPopupOpened;
                 m_overflowPopup.Closed -= OverflowPopupClosed;
+                m_overflowPopup.ActualPlacementChanged -= OverflowPopupActualPlacementChanged;
             }
 
             m_firstItemLoadedRevoker?.Revoke();
@@ -629,6 +652,14 @@ namespace ModernWpf.Controls.Primitives
 
         internal bool IsOverflowPopupOpenDown()
         {
+            if (m_overflowPopup != null &&
+                m_overflowPopup.ActualPlacement != PopupPlacementMode.Auto)
+            {
+                return m_overflowPopup.ActualPlacement != PopupPlacementMode.Top &&
+                       m_overflowPopup.ActualPlacement != PopupPlacementMode.TopEdgeAlignedLeft &&
+                       m_overflowPopup.ActualPlacement != PopupPlacementMode.TopEdgeAlignedRight;
+            }
+
             if (m_secondaryItemsRoot != null)
             {
                 var popupTop = m_secondaryItemsRoot.TranslatePoint(new Point(0, 0), this);
@@ -718,15 +749,7 @@ namespace ModernWpf.Controls.Primitives
                     return;
                 }
 
-                bool shouldExpandUp = false;
-
-                if (m_secondaryItemsRoot != null && IsVisible && m_secondaryItemsRoot.IsVisible)
-                {
-                    UpdateLayout();
-
-                    var overflowPopupTop = m_secondaryItemsRoot.TranslatePoint(new Point(), this);
-                    shouldExpandUp = overflowPopupTop.Y < 0;
-                }
+                bool shouldExpandUp = !IsOverflowPopupOpenDown();
 
                 if (isForSizeChange)
                 {
@@ -764,6 +787,7 @@ namespace ModernWpf.Controls.Primitives
                         this,
                         shouldExpandUp ? "ExpandedUpWithPrimaryCommands" : "ExpandedDownWithPrimaryCommands",
                         useTransitions);
+                    UpdateOverflowJoinSeparatorVisibility(shouldExpandUp, hasPrimaryCommands: true);
                 }
                 else
                 {
@@ -771,6 +795,7 @@ namespace ModernWpf.Controls.Primitives
                         this,
                         shouldExpandUp ? "ExpandedUpWithoutPrimaryCommands" : "ExpandedDownWithoutPrimaryCommands",
                         useTransitions);
+                    UpdateOverflowJoinSeparatorVisibility(shouldExpandUp, hasPrimaryCommands: false);
                 }
             }
             else
@@ -778,6 +803,7 @@ namespace ModernWpf.Controls.Primitives
                 StopOpenAnimation();
                 VisualStateManager.GoToState(this, "Default", useTransitions);
                 VisualStateManager.GoToState(this, "Collapsed", useTransitions);
+                UpdateOverflowJoinSeparatorVisibility(shouldExpandUp: false, hasPrimaryCommands: false);
             }
 
             UpdatePrimaryLabelStates(useTransitions);
@@ -908,7 +934,7 @@ namespace ModernWpf.Controls.Primitives
                 flyoutTemplateSettings.WidthExpansionAnimationEndPosition = -flyoutTemplateSettings.WidthExpansionDelta;
                 flyoutTemplateSettings.ContentClipRect = new Rect(0, 0, expandedWidth, primaryItemsRootDesiredSize.Height);
                 flyoutTemplateSettings.CurrentWidth = IsOpen ? expandedWidth : collapsedWidth;
-                UpdateOverflowPopupOffset(collapsedWidth, expandedWidth);
+                UpdateOverflowPopupOffset();
 
                 bool isPlayingCloseAnimation = m_closingStoryboard != null && m_closingStoryboardState == ClockState.Active;
 
@@ -943,52 +969,28 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private void UpdateOverflowPopupOffset(double collapsedWidth, double expandedWidth)
+        private void UpdateOverflowPopupOffset()
         {
             if (m_overflowPopup == null)
             {
                 return;
             }
 
-            if (PrimaryCommands.Count > 0)
-            {
-                m_overflowPopup.HorizontalOffset = (collapsedWidth - expandedWidth) / 2.0 - GetOverflowPopupAlignmentCorrection();
-                m_overflowPopup.VerticalOffset = -GetOverflowPopupVerticalAlignmentCorrection();
-            }
-            else
-            {
-                m_overflowPopup.HorizontalOffset = 0;
-                m_overflowPopup.VerticalOffset = 0;
-            }
+            m_overflowPopup.HorizontalOffset = 0;
+            m_overflowPopup.VerticalOffset = 0;
         }
 
-        private double GetOverflowPopupAlignmentCorrection()
+        private void UpdateOverflowJoinSeparatorVisibility(bool shouldExpandUp, bool hasPrimaryCommands)
         {
-            // The WPF shadow host reserves popup space that WinUI's render-only shadow does not include
-            // in layout. Compensate for that reserved inset plus the source ellipsis margin so the
-            // visible overflow surface lines up with the primary command surface.
-            var popupShadowInset = m_outerOverflowContentRootShadowChrome?.ReservesShadowSpace == true
-                ? m_outerOverflowContentRootShadowChrome.PopupPositionShadowPadding.Left
-                : 0;
-            return popupShadowInset + BorderThickness.Left + BorderThickness.Right + BorderThickness.Right + BorderThickness.Left + GetOverflowPopupEllipsisInset();
-        }
+            var topVisibility = IsOpen && m_secondaryItemsRootSized && hasPrimaryCommands && !shouldExpandUp
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+            var bottomVisibility = IsOpen && m_secondaryItemsRootSized && hasPrimaryCommands && shouldExpandUp
+                ? Visibility.Visible
+                : Visibility.Collapsed;
 
-        private double GetOverflowPopupVerticalAlignmentCorrection()
-        {
-            var popupShadowInset = m_outerOverflowContentRootShadowChrome?.ReservesShadowSpace == true
-                ? m_outerOverflowContentRootShadowChrome.PopupPositionShadowPadding.Top
-                : 0;
-            return popupShadowInset + BorderThickness.Bottom + BorderThickness.Bottom;
-        }
-
-        private double GetOverflowPopupEllipsisInset()
-        {
-            if (TryFindResource("CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin") is Thickness margin)
-            {
-                return margin.Right;
-            }
-
-            return 6;
+            m_overflowTopJoinSeparator?.SetCurrentValue(VisibilityProperty, topVisibility);
+            m_overflowBottomJoinSeparator?.SetCurrentValue(VisibilityProperty, bottomVisibility);
         }
 
 #if NET48_OR_NEWER
@@ -1380,6 +1382,11 @@ namespace ModernWpf.Controls.Primitives
             Closed?.Invoke(this, null);
         }
 
+        private void OverflowPopupActualPlacementChanged(object sender, object e)
+        {
+            UpdateUI(false);
+        }
+
         private void MoreButtonChecked(object sender, RoutedEventArgs e)
         {
             if (!IsOpen)
@@ -1458,18 +1465,25 @@ namespace ModernWpf.Controls.Primitives
 
         private void StopCloseAnimation()
         {
+            bool wasClosing = m_closingStoryboard != null && m_closingStoryboardState == ClockState.Active;
+
             if (m_closingStoryboardCompletedCallback != null && m_closingStoryboard != null)
             {
                 m_closingStoryboard.Completed -= m_closingStoryboardCompletedCallback;
                 m_closingStoryboardCompletedCallback = null;
             }
 
-            if (m_closingStoryboard != null && m_closingStoryboardState == ClockState.Active)
+            if (wasClosing)
             {
                 m_closingStoryboard.Stop(m_layoutRoot);
             }
 
             m_closingStoryboardState = null;
+
+            if (wasClosing)
+            {
+                SetOpacity(1);
+            }
         }
 
         private void OnMouseDown(object sender, MouseButtonEventArgs e)
@@ -1500,7 +1514,7 @@ namespace ModernWpf.Controls.Primitives
             return SharedHelpers.IsAnimationsEnabled;
         }
 
-        private void UpdateOverflowPopupVisibility(bool isOpen)
+        private void UpdateOverflowPopupVisibility(bool isOpen, bool allowOpen = true)
         {
             bool shouldShowOverflow = isOpen && SecondaryCommands.Count > 0;
 
@@ -1514,16 +1528,16 @@ namespace ModernWpf.Controls.Primitives
                 return;
             }
 
-            if (shouldShowOverflow)
+            if (shouldShowOverflow && allowOpen)
             {
                 if (!m_overflowPopup.IsOpen)
                 {
-                    m_overflowPopup.SetCurrentValue(Popup.IsOpenProperty, true);
+                    m_overflowPopup.SetCurrentValue(WindowedPopup.IsOpenProperty, true);
                 }
             }
             else if (m_overflowPopup.IsOpen)
             {
-                m_overflowPopup.SetCurrentValue(Popup.IsOpenProperty, false);
+                m_overflowPopup.SetCurrentValue(WindowedPopup.IsOpenProperty, false);
             }
         }
 
@@ -1534,10 +1548,25 @@ namespace ModernWpf.Controls.Primitives
                 m_layoutRoot.Opacity = value;
             }
 
+            if (m_outerOverflowContentRootShadowChrome != null)
+            {
+                m_outerOverflowContentRootShadowChrome.Opacity = value;
+            }
+
             if (m_secondaryItemsRoot != null)
             {
                 m_secondaryItemsRoot.Opacity = value;
             }
+        }
+
+        private Storyboard GetLayoutRootStoryboard(string key)
+        {
+            if (m_layoutRoot?.Resources.Contains(key) == true)
+            {
+                return m_layoutRoot.Resources[key] as Storyboard;
+            }
+
+            return null;
         }
 
         private void UpdateHasOverflowItems()
@@ -1571,8 +1600,10 @@ namespace ModernWpf.Controls.Primitives
         private Panel m_primaryItemsPanel;
         private Panel m_secondaryItemsPanel;
         private ButtonBase m_moreButton;
-        private Popup m_overflowPopup;
+        private WindowedPopup m_overflowPopup;
         private ThemeShadowChrome m_outerOverflowContentRootShadowChrome;
+        private FrameworkElement m_overflowTopJoinSeparator;
+        private FrameworkElement m_overflowBottomJoinSeparator;
         private RoutedEventHandlerRevoker m_firstItemLoadedRevoker;
         private readonly List<RoutedEventHandlerRevoker> m_itemLoadedRevokers = new();
         private readonly List<(FrameworkElement Element, SizeChangedEventHandler Handler)> m_itemSizeChangedHandlers = new();

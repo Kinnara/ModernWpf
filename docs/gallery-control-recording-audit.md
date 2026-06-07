@@ -138,6 +138,47 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 141 updates CommandBarFlyout animation parity to current WinUI source:
+
+- Source finding: the local WinUI checkout
+  `D:\repos\microsoft-ui-xaml` (`winui3/release/1.8.1-223-gc70471c51`)
+  now prefers `OpeningOpacityStoryboard` / `ClosingOpacityStoryboard` in
+  `CommandBarFlyoutCommandBar.cpp` and only falls back to the older
+  `OpeningStoryboard` / `ClosingStoryboard` clip path when the opacity
+  resources are absent. Tag checks show `OpeningOpacityStoryboard` is present
+  by `winui3/release/1.6-experimental1` and `winui3/release/1.6-preview1`,
+  but absent from `winui3/release/1.5-preview1` and
+  `winui3/release/1.5.9`. This is a WinUI 1.6-era change, not a new 1.8-only
+  change.
+- Product fix: ModernWpf now uses opacity-only outer open/close storyboards
+  for `CommandBarFlyout`, fading the visible WPF equivalents of WinUI's
+  `LayoutRoot` and popup surface. Because `WindowedPopup` rehosts its child in
+  a separate `HwndSource`, the popup fade targets
+  `OuterOverflowContentRootShadowChrome` rather than the placeholder
+  `WindowedPopup` element. The secondary-menu expand/collapse storyboards stay
+  intact; current WinUI still carries `CollapsedToExpandedUp/Down` and
+  `ExpandedUp/DownToCollapsed` transitions for that path.
+- Robustness fix: stopping an active hold-end close storyboard now restores
+  opacity, so an interrupted close or callback-order difference cannot leave
+  the command bar transparent on the next open. The focused tests now wait for
+  the short fade to complete before sampling layout opacity.
+- Verification:
+  - `dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj -f net8.0-windows7.0 -c Debug --no-restore -v minimal /nodeReuse:false` passed.
+  - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --framework net8.0-windows7.0 --filter "FullyQualifiedName~CommandBarFlyoutApiTests" -v minimal /nodeReuse:false` passed 26/26.
+  - `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj -f net8.0-windows7.0 -c Debug --no-restore -v minimal /nodeReuse:false` passed.
+  - Cached WinUI static parity:
+    `artifacts/visual-checks/20260607-201010-303-80700/report.md` passed
+    using WinUI reference run `artifacts/visual-checks/20260607-121845-471-226920`;
+    primary crop delta remained `4.99` with `454x302` vs `453x302`.
+  - ModernWpf interaction visual check:
+    `artifacts/visual-checks/20260607-201033-613-84848/report.md` passed,
+    with open-surface crop
+    `artifacts/visual-checks/20260607-201033-613-84848/CommandBarFlyout/modernwpf-CommandBarFlyout-open-surface-crop.png`.
+  - ModernWpf rendered MP4 recording:
+    `artifacts/gallery-recordings/20260607-201107-062/report.md` passed
+    `OpenRepeat` in 4.0s actual recording time with dense transition review
+    `artifacts/gallery-recordings/20260607-201107-062/CommandBarFlyout/analysis/dense-transition-review.jpg`.
+
 Round 140 restores CommandBarFlyout WinUI parity after user review found that
 the previous repeat-open work made the control worse:
 

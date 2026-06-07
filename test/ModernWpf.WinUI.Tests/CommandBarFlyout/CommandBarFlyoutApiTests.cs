@@ -421,8 +421,8 @@ public class CommandBarFlyoutApiTests
                 host.UpdateLayout();
 
                 var layoutRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "LayoutRoot");
-                var openingStoryboard = layoutRoot.Resources["OpeningStoryboard"] as Storyboard;
-                var closingStoryboard = layoutRoot.Resources["ClosingStoryboard"] as Storyboard;
+                var openingStoryboard = layoutRoot.Resources["OpeningOpacityStoryboard"] as Storyboard;
+                var closingStoryboard = layoutRoot.Resources["ClosingOpacityStoryboard"] as Storyboard;
                 var collapsedToExpandedUpStoryboard = layoutRoot.Resources["CollapsedToExpandedUpStoryboard"] as Storyboard;
                 var expandedUpToCollapsedStoryboard = layoutRoot.Resources["ExpandedUpToCollapsedStoryboard"] as Storyboard;
                 var collapsedToExpandedDownStoryboard = layoutRoot.Resources["CollapsedToExpandedDownStoryboard"] as Storyboard;
@@ -435,10 +435,10 @@ public class CommandBarFlyoutApiTests
                 Assert.IsNotNull(collapsedToExpandedDownStoryboard);
                 Assert.IsNotNull(expandedDownToCollapsedStoryboard);
 
-                AssertStoryboardTargets(openingStoryboard!, "OuterContentRootClipTransform", "X");
-                AssertStoryboardTargets(openingStoryboard!, "OuterOverflowContentRootClipTransform", "X");
-                AssertStoryboardTargets(closingStoryboard!, "OuterContentRootClipTransform", "X");
-                AssertStoryboardTargets(closingStoryboard!, "OuterOverflowContentRootClipTransform", "X");
+                AssertStoryboardTargets(openingStoryboard!, "LayoutRoot", "Opacity");
+                AssertStoryboardTargets(openingStoryboard!, "OuterOverflowContentRootShadowChrome", "Opacity");
+                AssertStoryboardTargets(closingStoryboard!, "LayoutRoot", "Opacity");
+                AssertStoryboardTargets(closingStoryboard!, "OuterOverflowContentRootShadowChrome", "Opacity");
 
                 VerifySecondaryMenuStoryboard(collapsedToExpandedUpStoryboard!, shouldShow: true);
                 VerifySecondaryMenuStoryboard(expandedUpToCollapsedStoryboard!, shouldShow: false);
@@ -488,7 +488,7 @@ public class CommandBarFlyoutApiTests
 
             HideAndWait(commandBarFlyout);
             AssertLayoutOpacity(commandBar, 1.0);
-            Assert.IsFalse(FindTemplateChild<Popup>(commandBar, "OverflowPopup").IsOpen);
+            Assert.IsFalse(FindTemplateChild<WindowedPopup>(commandBar, "OverflowPopup").IsOpen);
 
             commandBarFlyout.ShowAt(target);
             WpfTestHost.DoEvents();
@@ -1022,7 +1022,7 @@ public class CommandBarFlyoutApiTests
 
             commandBar.IsOpen = false;
             host.UpdateLayout();
-            WaitFor(() => !FindTemplateChild<Popup>(commandBar, "OverflowPopup").IsOpen, "CommandBarFlyout overflow popup did not close.");
+            WaitFor(() => !FindTemplateChild<WindowedPopup>(commandBar, "OverflowPopup").IsOpen, "CommandBarFlyout overflow popup did not close.");
 
             secondaryRoot = FindTemplateChild<System.Windows.Controls.Grid>(secondaryButton, "Root");
             secondaryToggleRoot = FindTemplateChild<System.Windows.Controls.Grid>(secondaryToggleButton, "Root");
@@ -1129,13 +1129,17 @@ public class CommandBarFlyoutApiTests
             return;
         }
 
+        var commandBar = commandBarFlyout.GetPresenter()?.Content as CommandBarFlyoutCommandBar;
+
         commandBarFlyout.Hide();
-        WaitFor(() => !commandBarFlyout.IsOpen, "CommandBarFlyout did not close.");
+        WaitFor(
+            () => !commandBarFlyout.IsOpen && (commandBar == null || IsLayoutOpacity(commandBar, 1.0)),
+            "CommandBarFlyout did not close and reset opacity.");
     }
 
     private static void WaitForExpandedOverflow(CommandBarFlyoutCommandBar commandBar, TestWindowHost host)
     {
-        var overflowPopup = FindTemplateChild<Popup>(commandBar, "OverflowPopup");
+        var overflowPopup = FindTemplateChild<WindowedPopup>(commandBar, "OverflowPopup");
         var primaryItemsRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "PrimaryItemsRoot");
         var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OuterOverflowContentRoot");
 
@@ -1147,6 +1151,7 @@ public class CommandBarFlyoutApiTests
         WaitFor(
             () => commandBar.IsOpen &&
                   overflowPopup.IsOpen &&
+                  IsLayoutOpacity(commandBar, 1.0) &&
                   primaryItemsRoot.ActualWidth > 0 &&
                   overflowContentRoot.ActualWidth > 0 &&
                   overflowContentRoot.IsVisible,
@@ -1174,7 +1179,7 @@ public class CommandBarFlyoutApiTests
             overflowRight - overflowLeft,
             1.0,
             $"Expected expanded CommandBarFlyout visible overflow width to match the primary command strip width. PrimaryWidth={primaryRight - primaryLeft}, OverflowWidth={overflowRight - overflowLeft}, OuterOverflowWidth={outerOverflowRight - outerOverflowLeft}.");
-        var expectedHorizontalGap = overflowShadow.ReservesShadowSpace ? 0 : -overflowShadow.PopupShadowPadding.Left;
+        var expectedHorizontalGap = 0;
         var horizontalGap = overflowLeft - primaryLeft;
         Assert.IsTrue(
             Math.Abs(horizontalGap - expectedHorizontalGap) <= 1.0,
@@ -1188,10 +1193,23 @@ public class CommandBarFlyoutApiTests
     private static void AssertLayoutOpacity(CommandBarFlyoutCommandBar commandBar, double expected)
     {
         var layoutRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "LayoutRoot");
+        var overflowShadow = FindTemplateChild<ThemeShadowChrome>(commandBar, "OuterOverflowContentRootShadowChrome");
         var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OverflowContentRoot");
 
         Assert.AreEqual(expected, layoutRoot.Opacity, 0.001, "CommandBarFlyout layout root opacity was not reset.");
+        Assert.AreEqual(expected, overflowShadow.Opacity, 0.001, "CommandBarFlyout overflow popup chrome opacity was not reset.");
         Assert.AreEqual(expected, overflowContentRoot.Opacity, 0.001, "CommandBarFlyout overflow content opacity was not reset.");
+    }
+
+    private static bool IsLayoutOpacity(CommandBarFlyoutCommandBar commandBar, double expected)
+    {
+        var layoutRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "LayoutRoot");
+        var overflowShadow = FindTemplateChild<ThemeShadowChrome>(commandBar, "OuterOverflowContentRootShadowChrome");
+        var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OverflowContentRoot");
+
+        return Math.Abs(layoutRoot.Opacity - expected) <= 0.001 &&
+               Math.Abs(overflowShadow.Opacity - expected) <= 0.001 &&
+               Math.Abs(overflowContentRoot.Opacity - expected) <= 0.001;
     }
 
     private static bool StoryboardTargets(Storyboard storyboard, string targetName, string targetProperty)
@@ -1887,10 +1905,12 @@ public class CommandBarFlyoutApiTests
     {
         var layoutRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "LayoutRoot");
         var primaryItemsRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "PrimaryItemsRoot");
-        var overflowPopup = FindTemplateChild<System.Windows.Controls.Primitives.Popup>(commandBar, "OverflowPopup");
+        var overflowPopup = FindTemplateChild<WindowedPopup>(commandBar, "OverflowPopup");
         var overflowShadow = FindTemplateChild<ThemeShadowChrome>(commandBar, "OuterOverflowContentRootShadowChrome");
         var outerOverflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OuterOverflowContentRoot");
         var overflowContentRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OverflowContentRoot");
+        var overflowTopJoinSeparator = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OverflowTopJoinSeparator");
+        var overflowBottomJoinSeparator = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "OverflowBottomJoinSeparator");
         var secondaryItemsControl = FindTemplateChild<CommandBarOverflowPresenter>(commandBar, "SecondaryItemsControl");
         var overflowPanel = FindTemplateChild<CommandBarFlyoutOverflowPanel>(commandBar, "SecondaryItemsPanel");
 
@@ -1903,8 +1923,9 @@ public class CommandBarFlyoutApiTests
             layoutRoot,
             "AvailableCommandsStates",
             "SecondaryCommandsOnly",
-            "PrimaryItemsRoot.Visibility",
-            "OverflowPopup.Placement",
+            "PrimaryItemsRoot.Opacity",
+            "PrimaryItemsRoot.IsHitTestVisible",
+            "PrimaryItemsRoot.Height",
             "SecondaryItemsPanel.Focusable");
         AssertStateSetter(
             layoutRoot,
@@ -1914,7 +1935,9 @@ public class CommandBarFlyoutApiTests
             "LayoutRoot.CornerRadius",
             "PrimaryItemsRoot.CornerRadius",
             "OuterOverflowContentRoot.CornerRadius",
-            "SecondaryItemsControl.CornerRadius");
+            "SecondaryItemsControl.CornerRadius",
+            "OverflowTopJoinSeparator.Visibility",
+            "OverflowBottomJoinSeparator.Visibility");
         AssertStateSetter(
             layoutRoot,
             "CombinedStates",
@@ -1923,7 +1946,9 @@ public class CommandBarFlyoutApiTests
             "LayoutRoot.CornerRadius",
             "PrimaryItemsRoot.CornerRadius",
             "OuterOverflowContentRoot.CornerRadius",
-            "SecondaryItemsControl.CornerRadius");
+            "SecondaryItemsControl.CornerRadius",
+            "OverflowTopJoinSeparator.Visibility",
+            "OverflowBottomJoinSeparator.Visibility");
         AssertStateSetter(
             layoutRoot,
             "CombinedStates",
@@ -1932,7 +1957,9 @@ public class CommandBarFlyoutApiTests
             "LayoutRoot.CornerRadius",
             "PrimaryItemsRoot.CornerRadius",
             "OuterOverflowContentRoot.CornerRadius",
-            "SecondaryItemsControl.CornerRadius");
+            "SecondaryItemsControl.CornerRadius",
+            "OverflowTopJoinSeparator.Visibility",
+            "OverflowBottomJoinSeparator.Visibility");
         AssertStateSetter(
             layoutRoot,
             "CombinedStates",
@@ -1941,7 +1968,9 @@ public class CommandBarFlyoutApiTests
             "LayoutRoot.CornerRadius",
             "PrimaryItemsRoot.CornerRadius",
             "OuterOverflowContentRoot.CornerRadius",
-            "SecondaryItemsControl.CornerRadius");
+            "SecondaryItemsControl.CornerRadius",
+            "OverflowTopJoinSeparator.Visibility",
+            "OverflowBottomJoinSeparator.Visibility");
         AssertStateSetter(
             layoutRoot,
             "OuterOverflowContentRootShadowStates",
@@ -1970,15 +1999,27 @@ public class CommandBarFlyoutApiTests
         Assert.AreEqual(Visibility.Visible, overflowContentRoot.Visibility);
 
         Assert.AreEqual(Visibility.Visible, primaryItemsRoot.Visibility);
-        Assert.AreEqual(PlacementMode.Bottom, overflowPopup.Placement);
+        Assert.AreEqual(1.0, primaryItemsRoot.Opacity);
+        Assert.IsTrue(primaryItemsRoot.IsHitTestVisible);
+        Assert.IsTrue(double.IsNaN(primaryItemsRoot.Height));
+        Assert.AreEqual(PopupPlacementMode.BottomEdgeAlignedLeft, overflowPopup.DesiredPlacement);
+        Assert.AreSame(primaryItemsRoot, overflowPopup.PlacementTarget);
         Assert.IsFalse(overflowPanel.Focusable);
         Assert.IsTrue(VisualStateManager.GoToState(commandBar, "SecondaryCommandsOnly", false));
-        Assert.AreEqual(Visibility.Collapsed, primaryItemsRoot.Visibility);
-        Assert.AreEqual(PlacementMode.Relative, overflowPopup.Placement);
+        Assert.AreEqual(Visibility.Visible, primaryItemsRoot.Visibility);
+        Assert.AreEqual(0.0, primaryItemsRoot.Opacity);
+        Assert.IsFalse(primaryItemsRoot.IsHitTestVisible);
+        Assert.AreEqual(0.0, primaryItemsRoot.Height);
+        Assert.AreEqual(PopupPlacementMode.BottomEdgeAlignedLeft, overflowPopup.DesiredPlacement);
+        Assert.AreSame(primaryItemsRoot, overflowPopup.PlacementTarget);
         Assert.IsTrue(overflowPanel.Focusable);
         Assert.IsTrue(VisualStateManager.GoToState(commandBar, "BothCommands", false));
         Assert.AreEqual(Visibility.Visible, primaryItemsRoot.Visibility);
-        Assert.AreEqual(PlacementMode.Bottom, overflowPopup.Placement);
+        Assert.AreEqual(1.0, primaryItemsRoot.Opacity);
+        Assert.IsTrue(primaryItemsRoot.IsHitTestVisible);
+        Assert.IsTrue(double.IsNaN(primaryItemsRoot.Height));
+        Assert.AreEqual(PopupPlacementMode.BottomEdgeAlignedLeft, overflowPopup.DesiredPlacement);
+        Assert.AreSame(primaryItemsRoot, overflowPopup.PlacementTarget);
         Assert.IsFalse(overflowPanel.Focusable);
 
         var topCornerRadius = new CornerRadius(2, 4, 0, 0);
@@ -1990,6 +2031,8 @@ public class CommandBarFlyoutApiTests
         Assert.AreEqual(bottomCornerRadius, primaryItemsRoot.CornerRadius);
         Assert.AreEqual(topCornerRadius, outerOverflowContentRoot.CornerRadius);
         Assert.AreEqual(topCornerRadius, secondaryItemsControl.CornerRadius);
+        Assert.AreEqual(Visibility.Collapsed, overflowTopJoinSeparator.Visibility);
+        Assert.AreEqual(Visibility.Visible, overflowBottomJoinSeparator.Visibility);
 
         Assert.IsTrue(VisualStateManager.GoToState(commandBar, "ExpandedDownWithPrimaryCommands", false));
         Assert.AreEqual(commandBar.TryFindResource("CommandBarFlyoutBorderDownThemeThickness"), secondaryItemsControl.BorderThickness);
@@ -1997,6 +2040,8 @@ public class CommandBarFlyoutApiTests
         Assert.AreEqual(topCornerRadius, primaryItemsRoot.CornerRadius);
         Assert.AreEqual(bottomCornerRadius, outerOverflowContentRoot.CornerRadius);
         Assert.AreEqual(bottomCornerRadius, secondaryItemsControl.CornerRadius);
+        Assert.AreEqual(Visibility.Visible, overflowTopJoinSeparator.Visibility);
+        Assert.AreEqual(Visibility.Collapsed, overflowBottomJoinSeparator.Visibility);
 
         Assert.IsTrue(VisualStateManager.GoToState(commandBar, "ExpandedUpWithoutPrimaryCommands", false));
         Assert.AreEqual(commandBar.TryFindResource("CommandBarFlyoutBorderThemeThickness"), secondaryItemsControl.BorderThickness);
@@ -2004,6 +2049,8 @@ public class CommandBarFlyoutApiTests
         Assert.AreEqual(commandBar.CornerRadius, primaryItemsRoot.CornerRadius);
         Assert.AreEqual(commandBar.CornerRadius, outerOverflowContentRoot.CornerRadius);
         Assert.AreEqual(commandBar.CornerRadius, secondaryItemsControl.CornerRadius);
+        Assert.AreEqual(Visibility.Collapsed, overflowTopJoinSeparator.Visibility);
+        Assert.AreEqual(Visibility.Collapsed, overflowBottomJoinSeparator.Visibility);
     }
 
     private static VisualStateEx AssertStateSetter(
@@ -2090,6 +2137,16 @@ public class CommandBarFlyoutApiTests
                 yield return child;
 
                 foreach (var popupChildDescendant in EnumerateDescendantsIncludingPopupChildren(child))
+                {
+                    yield return popupChildDescendant;
+                }
+            }
+
+            if (descendant is WindowedPopup { Child: { } windowedPopupChild })
+            {
+                yield return windowedPopupChild;
+
+                foreach (var popupChildDescendant in EnumerateDescendantsIncludingPopupChildren(windowedPopupChild))
                 {
                     yield return popupChildDescendant;
                 }
