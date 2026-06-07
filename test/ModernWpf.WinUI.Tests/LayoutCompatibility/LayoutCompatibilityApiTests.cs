@@ -274,6 +274,52 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromeDepthChangeDoesNotMoveRenderedCardEdges()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var card = new Border
+            {
+                Width = 200,
+                Height = 200,
+                Background = new SolidColorBrush(Color.FromRgb(220, 32, 32))
+            };
+            var root = new Grid
+            {
+                Width = 272,
+                Height = 272,
+                Background = Brushes.White
+            };
+            var chrome = new ThemeShadowChrome
+            {
+                Depth = 32,
+                TranslationZ = 32,
+                Margin = new Thickness(36),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Child = card
+            };
+            root.Children.Add(chrome);
+
+            ArrangeElement(root, 272, 272);
+            var before = RenderShadowSnapshotBitmap(root, 272, 272);
+            var beforeCardBounds = MeasureRenderedColorBounds(before, color => color.R > 180 && color.G < 80 && color.B < 80);
+
+            chrome.TranslationZ = 64;
+            root.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var after = RenderShadowSnapshotBitmap(root, 272, 272);
+            var afterCardBounds = MeasureRenderedColorBounds(after, color => color.R > 180 && color.G < 80 && color.B < 80);
+            var visualDelta = CompareRenderedMeanDelta(before, after);
+
+            Assert.AreEqual(new Int32Rect(36, 36, 200, 200), beforeCardBounds);
+            Assert.AreEqual(beforeCardBounds, afterCardBounds, "Changing ThemeShadow depth must not move the painted caster/card edges.");
+            Assert.IsTrue(visualDelta > 0.1, $"Changing ThemeShadow depth should visibly redraw the shadow. Delta={visualDelta}.");
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromeCanReservePopupLayoutSpaceWhenOptedIn()
     {
         WpfTestHost.Run(() =>
@@ -5538,6 +5584,76 @@ public class LayoutCompatibilityApiTests
         var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
         bitmap.Render(element);
         return bitmap;
+    }
+
+    private static Int32Rect MeasureRenderedColorBounds(BitmapSource bitmap, Func<Color, bool> predicate)
+    {
+        int width = bitmap.PixelWidth;
+        int height = bitmap.PixelHeight;
+        var pixels = new byte[width * height * 4];
+        bitmap.CopyPixels(pixels, width * 4, 0);
+
+        int minX = width;
+        int minY = height;
+        int maxX = -1;
+        int maxY = -1;
+
+        for (int y = 0; y < height; y++)
+        {
+            int rowOffset = y * width * 4;
+            for (int x = 0; x < width; x++)
+            {
+                int index = rowOffset + (x * 4);
+                var color = Color.FromArgb(pixels[index + 3], pixels[index + 2], pixels[index + 1], pixels[index]);
+                if (!predicate(color))
+                {
+                    continue;
+                }
+
+                minX = Math.Min(minX, x);
+                minY = Math.Min(minY, y);
+                maxX = Math.Max(maxX, x);
+                maxY = Math.Max(maxY, y);
+            }
+        }
+
+        return maxX < minX || maxY < minY
+            ? new Int32Rect()
+            : new Int32Rect(minX, minY, maxX - minX + 1, maxY - minY + 1);
+    }
+
+    private static double CompareRenderedMeanDelta(BitmapSource first, BitmapSource second)
+    {
+        int width = Math.Min(first.PixelWidth, second.PixelWidth);
+        int height = Math.Min(first.PixelHeight, second.PixelHeight);
+        var firstPixels = new byte[first.PixelWidth * first.PixelHeight * 4];
+        var secondPixels = new byte[second.PixelWidth * second.PixelHeight * 4];
+        first.CopyPixels(firstPixels, first.PixelWidth * 4, 0);
+        second.CopyPixels(secondPixels, second.PixelWidth * 4, 0);
+
+        double sum = 0;
+        int count = 0;
+        for (int y = 0; y < height; y++)
+        {
+            int firstRowOffset = y * first.PixelWidth * 4;
+            int secondRowOffset = y * second.PixelWidth * 4;
+            for (int x = 0; x < width; x++)
+            {
+                int firstIndex = firstRowOffset + (x * 4);
+                int secondIndex = secondRowOffset + (x * 4);
+                double firstLuma = GetPremultipliedPixelLuma(firstPixels, firstIndex);
+                double secondLuma = GetPremultipliedPixelLuma(secondPixels, secondIndex);
+                sum += Math.Abs(firstLuma - secondLuma);
+                count++;
+            }
+        }
+
+        return count == 0 ? 0 : sum / count;
+    }
+
+    private static double GetPremultipliedPixelLuma(byte[] pixels, int index)
+    {
+        return (0.2126 * pixels[index + 2]) + (0.7152 * pixels[index + 1]) + (0.0722 * pixels[index]);
     }
 
     private static RenderedShadowPixelStats MeasureShadowPixels(BitmapSource bitmap)

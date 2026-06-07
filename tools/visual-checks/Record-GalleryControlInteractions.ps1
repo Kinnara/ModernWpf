@@ -854,6 +854,107 @@ function Get-RenderedArtifactBoundsMap($window, [string]$artifactDir, [string[]]
     return $boundsById
 }
 
+function Copy-RenderedArtifactSnapshot([string]$artifactDir, [string]$snapshotName, [string[]]$automationIds) {
+    if ([string]::IsNullOrWhiteSpace($artifactDir) -or [string]::IsNullOrWhiteSpace($snapshotName)) {
+        return ""
+    }
+
+    $snapshotDir = Join-Path $artifactDir $snapshotName
+    New-Item -ItemType Directory -Force -Path $snapshotDir | Out-Null
+    foreach ($automationId in $automationIds) {
+        foreach ($extension in @(".png", ".bounds.txt")) {
+            $source = Join-Path $artifactDir ("{0}{1}" -f $automationId, $extension)
+            if (Test-Path $source) {
+                Copy-Item -LiteralPath $source -Destination (Join-Path $snapshotDir ([IO.Path]::GetFileName($source))) -Force
+            }
+        }
+    }
+
+    return $snapshotDir
+}
+
+function Get-RenderedArtifactSnapshotPath([string]$snapshotDir, [string]$automationId, [string]$extension) {
+    if ([string]::IsNullOrWhiteSpace($snapshotDir) -or [string]::IsNullOrWhiteSpace($automationId)) {
+        return ""
+    }
+
+    return Join-Path $snapshotDir ("{0}{1}" -f $automationId, $extension)
+}
+
+function ConvertTo-RelativeRectangle($outerBounds, $innerBounds) {
+    if ($null -eq $outerBounds -or $null -eq $innerBounds) {
+        return $null
+    }
+
+    return [pscustomobject]@{
+        X = [int][Math]::Round($innerBounds.X - $outerBounds.X)
+        Y = [int][Math]::Round($innerBounds.Y - $outerBounds.Y)
+        Width = [int][Math]::Round($innerBounds.Width)
+        Height = [int][Math]::Round($innerBounds.Height)
+    }
+}
+
+function Get-ThemeShadowArtifactEvidence([string]$beforeSnapshotDir, [string]$afterSnapshotDir) {
+    $rootId = "GallerySample_ThemeShadow_Root"
+    $cardId = "GallerySample_ThemeShadow_ShadowRect"
+    $beforeRootPath = Get-RenderedArtifactSnapshotPath $beforeSnapshotDir $rootId ".png"
+    $afterRootPath = Get-RenderedArtifactSnapshotPath $afterSnapshotDir $rootId ".png"
+    $beforeRootBoundsPath = Get-RenderedArtifactSnapshotPath $beforeSnapshotDir $rootId ".bounds.txt"
+    $afterRootBoundsPath = Get-RenderedArtifactSnapshotPath $afterSnapshotDir $rootId ".bounds.txt"
+    $beforeCardBoundsPath = Get-RenderedArtifactSnapshotPath $beforeSnapshotDir $cardId ".bounds.txt"
+    $afterCardBoundsPath = Get-RenderedArtifactSnapshotPath $afterSnapshotDir $cardId ".bounds.txt"
+
+    if (!(Test-Path $beforeRootPath) -or !(Test-Path $afterRootPath) -or
+        !(Test-Path $beforeRootBoundsPath) -or !(Test-Path $afterRootBoundsPath) -or
+        !(Test-Path $beforeCardBoundsPath) -or !(Test-Path $afterCardBoundsPath)) {
+        return [ordered]@{
+            Generated = $false
+            Reason = "Missing ThemeShadow before/after rendered artifact snapshot files."
+        }
+    }
+
+    $beforeRootBounds = ConvertFrom-BoundingRectangleString ((Get-Content -LiteralPath $beforeRootBoundsPath -Raw).Trim())
+    $afterRootBounds = ConvertFrom-BoundingRectangleString ((Get-Content -LiteralPath $afterRootBoundsPath -Raw).Trim())
+    $beforeCardBounds = ConvertFrom-BoundingRectangleString ((Get-Content -LiteralPath $beforeCardBoundsPath -Raw).Trim())
+    $afterCardBounds = ConvertFrom-BoundingRectangleString ((Get-Content -LiteralPath $afterCardBoundsPath -Raw).Trim())
+    $beforeRegion = ConvertTo-RelativeRectangle $beforeRootBounds $beforeCardBounds
+    $afterRegion = ConvertTo-RelativeRectangle $afterRootBounds $afterCardBounds
+    if ($null -eq $beforeRegion -or $null -eq $afterRegion) {
+        return [ordered]@{
+            Generated = $false
+            Reason = "ThemeShadow before/after rendered artifact bounds could not be parsed."
+        }
+    }
+
+    $beforeBitmap = [System.Drawing.Bitmap]::FromFile((Resolve-Path $beforeRootPath).Path)
+    $afterBitmap = [System.Drawing.Bitmap]::FromFile((Resolve-Path $afterRootPath).Path)
+    try {
+        $beforeCardEdgeBounds = Get-ThemeShadowCardEdgeBounds $beforeBitmap $beforeRegion
+        $afterCardEdgeBounds = Get-ThemeShadowCardEdgeBounds $afterBitmap $afterRegion
+        $edgeShift = Get-FrameRectangleMaxDelta $beforeCardEdgeBounds $afterCardEdgeBounds
+    }
+    finally {
+        $beforeBitmap.Dispose()
+        $afterBitmap.Dispose()
+    }
+
+    $rootMeanDelta = Compare-ImageMeanDelta $beforeRootPath $afterRootPath
+    return [ordered]@{
+        Generated = $true
+        BeforeRoot = $beforeRootPath
+        AfterRoot = $afterRootPath
+        RootMeanDelta = $rootMeanDelta
+        VisualChanged = $null -ne $rootMeanDelta -and $rootMeanDelta -gt 0.1
+        BeforeCardRegion = Format-FrameRectangle $beforeRegion
+        AfterCardRegion = Format-FrameRectangle $afterRegion
+        BeforeCardEdgeBounds = Format-FrameRectangle $beforeCardEdgeBounds
+        AfterCardEdgeBounds = Format-FrameRectangle $afterCardEdgeBounds
+        CardEdgeShift = $edgeShift
+        CardEdgesStable = $null -ne $edgeShift -and $edgeShift -le 1.0
+        CardEdgeShiftThreshold = 1.0
+    }
+}
+
 function Get-BoundingRectangleMapValue($boundsById, [string]$automationId) {
     if ($null -eq $boundsById -or [string]::IsNullOrWhiteSpace($automationId)) {
         return ""
@@ -4048,6 +4149,12 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
     $targetBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
     $beforeLayoutBoundsById = if ($hasLayoutStabilityTargets) { Get-RenderedArtifactBoundsMap $window $artifactDir $layoutStabilityTargetAutomationIds } else { $null }
     $beforeLayoutBounds = Format-BoundingRectangleMap $beforeLayoutBoundsById
+    $beforeArtifactSnapshotDir = if ($control -eq "ThemeShadow" -and $hasLayoutStabilityTargets) {
+        Copy-RenderedArtifactSnapshot $artifactDir "before-depth-change" $layoutStabilityTargetAutomationIds
+    }
+    else {
+        ""
+    }
     $themeShadowVisualBounds = if ($control -eq "ThemeShadow" -and $hasLayoutStabilityTargets -and $null -ne $beforeLayoutBoundsById) {
         Get-BoundingRectangleMapValue $beforeLayoutBoundsById "GallerySample_ThemeShadow_Root"
     }
@@ -4177,6 +4284,18 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
             }
             $afterLayoutBoundsById = if ($hasLayoutStabilityTargets) { Get-RenderedArtifactBoundsMap $window $artifactDir $layoutStabilityTargetAutomationIds } else { $null }
             $afterLayoutBounds = Format-BoundingRectangleMap $afterLayoutBoundsById
+            $afterArtifactSnapshotDir = if ($control -eq "ThemeShadow" -and $hasLayoutStabilityTargets) {
+                Copy-RenderedArtifactSnapshot $artifactDir "after-depth-change" $layoutStabilityTargetAutomationIds
+            }
+            else {
+                ""
+            }
+            $themeShadowArtifactEvidence = if ($control -eq "ThemeShadow" -and $hasLayoutStabilityTargets) {
+                Get-ThemeShadowArtifactEvidence $beforeArtifactSnapshotDir $afterArtifactSnapshotDir
+            }
+            else {
+                $null
+            }
             $themeShadowCasterAfterBounds = if ($control -eq "ThemeShadow" -and $hasLayoutStabilityTargets) {
                 Get-BoundingRectangleMapValue $afterLayoutBoundsById "GallerySample_ThemeShadow_ShadowRect"
             }
@@ -4207,6 +4326,9 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
                 TargetReached = $null -ne $after -and [Math]::Abs(([double]$after) - ([double]$target)) -lt 0.001
                 LayoutStabilityTargetAutomationIds = $layoutStabilityTargetAutomationIds
                 LayoutStabilitySource = if ($hasLayoutStabilityTargets) { "RenderedArtifactBounds" } else { "" }
+                BeforeArtifactSnapshotDir = $beforeArtifactSnapshotDir
+                AfterArtifactSnapshotDir = $afterArtifactSnapshotDir
+                ThemeShadowArtifactEvidence = $themeShadowArtifactEvidence
                 BeforeLayoutBounds = $beforeLayoutBounds
                 AfterLayoutBounds = $afterLayoutBounds
                 LayoutStable = Test-BoundingRectangleMapsNearlyEqual $beforeLayoutBoundsById $afterLayoutBoundsById 1.0
@@ -7158,6 +7280,32 @@ function Test-ThemeShadowVisualEvidence($localFrameDeltas) {
     return $null -ne $delta -and [double]$delta -ge 0.05
 }
 
+function Get-ThemeShadowArtifactEvidenceFromInteraction($interactionResult) {
+    if ($null -eq $interactionResult -or !$interactionResult.Contains("ThemeShadowArtifactEvidence")) {
+        return $null
+    }
+
+    return $interactionResult.ThemeShadowArtifactEvidence
+}
+
+function Test-ThemeShadowArtifactVisualEvidence($interactionResult) {
+    $evidence = Get-ThemeShadowArtifactEvidenceFromInteraction $interactionResult
+    if ($null -eq $evidence -or !$evidence.Contains("Generated") -or !$evidence.Contains("VisualChanged")) {
+        return $false
+    }
+
+    return [bool]$evidence.Generated -and [bool]$evidence.VisualChanged
+}
+
+function Test-ThemeShadowArtifactCardStabilityEvidence($interactionResult) {
+    $evidence = Get-ThemeShadowArtifactEvidenceFromInteraction $interactionResult
+    if ($null -eq $evidence -or !$evidence.Contains("Generated") -or !$evidence.Contains("CardEdgesStable")) {
+        return $false
+    }
+
+    return [bool]$evidence.Generated -and [bool]$evidence.CardEdgesStable
+}
+
 function Test-ThemeShadowCasterStabilityEvidence($interactionResult) {
     if ($null -eq $interactionResult -or !$interactionResult.Contains("ThemeShadowCasterStable")) {
         return $false
@@ -7613,15 +7761,19 @@ foreach ($control in $Controls) {
     $expansionEvidence = Test-ExpansionEvidence $interactionResult
     $valueEvidence = Test-ValueEvidence $interactionResult
     $layoutStabilityEvidence = Test-LayoutStabilityEvidence $interactionResult
-    $themeShadowVisualEvidence = Test-ThemeShadowVisualEvidence $localFrameDeltas
+    $themeShadowVideoVisualEvidence = Test-ThemeShadowVisualEvidence $localFrameDeltas
+    $themeShadowArtifactVisualEvidence = Test-ThemeShadowArtifactVisualEvidence $interactionResult
+    $themeShadowVisualEvidence = $themeShadowVideoVisualEvidence -or $themeShadowArtifactVisualEvidence
     $themeShadowCasterStabilityEvidence = Test-ThemeShadowCasterStabilityEvidence $interactionResult
     $themeShadowDenseFrameStabilityEvidence = Test-ThemeShadowDenseFrameStabilityEvidence $themeShadowDenseFrameStability
+    $themeShadowArtifactCardStabilityEvidence = Test-ThemeShadowArtifactCardStabilityEvidence $interactionResult
     $layoutStabilityEvidenceAccepted =
         $control -eq "ThemeShadow" -and
         $interactionKind -eq "Value" -and
         $valueEvidence -and
         $layoutStabilityEvidence -and
         $themeShadowCasterStabilityEvidence -and
+        $themeShadowArtifactCardStabilityEvidence -and
         $themeShadowDenseFrameStabilityEvidence -and
         $themeShadowVisualEvidence
     $selectionEvidence = Test-SelectionEvidence $interactionResult
@@ -7717,11 +7869,31 @@ foreach ($control in $Controls) {
         $interactionKind -eq "Value" -and
         $valueEvidence -and
         $layoutStabilityEvidence -and
+        $themeShadowCasterStabilityEvidence -and
+        !$themeShadowArtifactCardStabilityEvidence) {
+        $status = "Failed"
+        $artifactEvidence = Get-ThemeShadowArtifactEvidenceFromInteraction $interactionResult
+        if ($null -ne $artifactEvidence -and $artifactEvidence.Contains("Generated") -and $artifactEvidence.Generated) {
+            $notes.Add(("ThemeShadow before/after rendered artifacts show the card edge moved or could not be proven stable. BeforeEdge={0}; afterEdge={1}; edgeShift={2}; threshold={3}." -f $artifactEvidence.BeforeCardEdgeBounds, $artifactEvidence.AfterCardEdgeBounds, $artifactEvidence.CardEdgeShift, $artifactEvidence.CardEdgeShiftThreshold))
+        }
+        else {
+            $reason = if ($null -ne $artifactEvidence -and $artifactEvidence.Contains("Reason")) { $artifactEvidence.Reason } else { "Before/after rendered artifact evidence was not generated." }
+            $notes.Add(("ThemeShadow depth changed but before/after rendered artifacts did not prove the card stayed fixed. {0}" -f $reason))
+        }
+    }
+
+    if ($status -eq "Passed" -and
+        $control -eq "ThemeShadow" -and
+        $interactionKind -eq "Value" -and
+        $valueEvidence -and
+        $layoutStabilityEvidence -and
         !$themeShadowVisualEvidence) {
         $status = "Failed"
         $visualDelta = Get-LocalFrameDeltaByName $localFrameDeltas "ThemeShadowVisualBounds"
         $visualBounds = if ($null -ne $interactionResult -and $interactionResult.Contains("ThemeShadowVisualBounds")) { $interactionResult.ThemeShadowVisualBounds } else { "" }
-        $notes.Add(("ThemeShadow depth changed but no rendered sample-root visual delta was proven. Bounds={0}; delta={1}." -f $visualBounds, $visualDelta))
+        $artifactEvidence = Get-ThemeShadowArtifactEvidenceFromInteraction $interactionResult
+        $artifactDelta = if ($null -ne $artifactEvidence -and $artifactEvidence.Contains("RootMeanDelta")) { $artifactEvidence.RootMeanDelta } else { "" }
+        $notes.Add(("ThemeShadow depth changed but no rendered sample-root visual delta was proven. Bounds={0}; videoDelta={1}; artifactRootDelta={2}." -f $visualBounds, $visualDelta, $artifactDelta))
     }
 
     if ($status -eq "Passed" -and
@@ -7833,6 +8005,10 @@ foreach ($control in $Controls) {
         $dragStartPoint = if ($null -ne $interactionResult -and $interactionResult.Contains("DragStartPoint")) { $interactionResult.DragStartPoint } else { "" }
         $dragEndPoint = if ($null -ne $interactionResult -and $interactionResult.Contains("DragEndPoint")) { $interactionResult.DragEndPoint } else { "" }
         $notes.Add(("ThemeShadow card/caster bounds stayed fixed while depth changed through {0} ({1}->{2}). Caster before={3}; after={4}. The visible shadow envelope may expand with depth; live WinUI source-geometry captures show the same behavior." -f $valueInputMethod, $dragStartPoint, $dragEndPoint, $beforeCasterBounds, $afterCasterBounds))
+        $artifactEvidence = Get-ThemeShadowArtifactEvidenceFromInteraction $interactionResult
+        if ($null -ne $artifactEvidence -and $artifactEvidence.Contains("Generated") -and $artifactEvidence.Generated) {
+            $notes.Add(("Before/after ThemeShadow artifacts changed visually and kept the rendered card edge fixed. rootDelta={0}; edgeShift={1}; beforeEdge={2}; afterEdge={3}." -f $artifactEvidence.RootMeanDelta, $artifactEvidence.CardEdgeShift, $artifactEvidence.BeforeCardEdgeBounds, $artifactEvidence.AfterCardEdgeBounds))
+        }
         if ($null -ne $themeShadowDenseFrameStability -and $themeShadowDenseFrameStability.Contains("Generated") -and $themeShadowDenseFrameStability.Generated) {
             $notes.Add(("Dense ThemeShadow video frames kept the rendered card fixed. Frames={0}; cardDelta={1}; threshold={2}; edgeShift={3}; edgeThreshold={4}; baselineEdge={5}." -f $themeShadowDenseFrameStability.FrameCount, $themeShadowDenseFrameStability.MaxCardMeanDelta, $themeShadowDenseFrameStability.CardDeltaThreshold, $themeShadowDenseFrameStability.MaxCardEdgeShift, $themeShadowDenseFrameStability.CardEdgeShiftThreshold, $themeShadowDenseFrameStability.BaselineCardEdgeBounds))
         }
@@ -7847,7 +8023,7 @@ foreach ($control in $Controls) {
             $notes.Add("Interactive recording produced low poster-frame delta and no local rendered change inside recorded interaction bounds.")
         }
         elseif ($layoutStabilityEvidenceAccepted -and !$localVisualEvidence) {
-            $notes.Add("ThemeShadow target value was reached and sample bounds stayed stable despite low local rendered delta.")
+            $notes.Add("ThemeShadow target value was reached and before/after artifacts proved visual change plus card-edge stability despite low local video delta.")
         }
         elseif ($localVisualEvidence) {
             $notes.Add(("Local visual delta {0} was detected inside recorded interaction bounds." -f $maxLocalFrameDelta.ToString([Globalization.CultureInfo]::InvariantCulture)))
@@ -7864,7 +8040,7 @@ foreach ($control in $Controls) {
                 $notes.Add("Expanded child content was detected despite low full-frame delta.")
             }
             elseif ($layoutStabilityEvidenceAccepted) {
-                $notes.Add("ThemeShadow target value was reached and sample bounds stayed stable despite low full-frame delta.")
+                $notes.Add("ThemeShadow target value was reached and before/after artifacts proved visual change plus card-edge stability despite low full-frame delta.")
             }
             elseif ($interactionKind -eq "Value" -and $valueEvidence) {
                 $notes.Add("Target value was reached despite low full-frame delta.")
@@ -7929,6 +8105,9 @@ foreach ($control in $Controls) {
         ValueEvidence = $valueEvidence
         LayoutStabilityEvidence = $layoutStabilityEvidence
         ThemeShadowCasterStabilityEvidence = $themeShadowCasterStabilityEvidence
+        ThemeShadowVideoVisualEvidence = $themeShadowVideoVisualEvidence
+        ThemeShadowArtifactVisualEvidence = $themeShadowArtifactVisualEvidence
+        ThemeShadowArtifactCardStabilityEvidence = $themeShadowArtifactCardStabilityEvidence
         ThemeShadowDenseFrameStabilityEvidence = $themeShadowDenseFrameStabilityEvidence
         ThemeShadowDenseFrameStability = $themeShadowDenseFrameStability
         ThemeShadowVisualEvidence = $themeShadowVisualEvidence
