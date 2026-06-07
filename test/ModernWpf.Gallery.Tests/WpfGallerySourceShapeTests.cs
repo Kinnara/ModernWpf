@@ -3299,7 +3299,16 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "[string[]]$Controls = @(",
-                "\"Button\", \"CheckBox\", \"ComboBox\", \"RadioButton\", \"Slider\"");
+                "\"TeachingTip\", \"ColorPicker\", \"HyperlinkButton\", \"RatingControl\", \"RepeatButton\", \"ToggleButton\"",
+                "\"CommandBar\", \"CommandBarFlyout\")",
+                "$WpfGalleryOnlyVisualAuditCases = @(",
+                "\"Button\"",
+                "\"CheckBox\"",
+                "\"ComboBox\"",
+                "\"RadioButton\"",
+                "\"Slider\"",
+                "$wrongReferenceControls = @($Controls | Where-Object { $WpfGalleryOnlyVisualAuditCases -contains $_ })",
+                "throw \"Run-GalleryVisualChecks.ps1 uses the WinUI Gallery reference.");
             AssertContainsInOrder(
                 source,
                 "function Test-ControlSupportsStateInteraction([string]$control)",
@@ -3880,7 +3889,7 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "[string]$VideoEncoder = \"Auto\"",
                 "[switch]$BenchmarkEncoders",
-                "function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$outputPath, [string]$captureMode, [int]$durationSeconds, [string]$videoEncoder, [bool]$benchmarkEncoders)",
+                "function Start-RecordingJob([int]$processId, [IntPtr]$windowHandle, [string]$outputPath, [string]$captureMode, [int]$durationSeconds, [string]$videoEncoder, [bool]$benchmarkEncoders, [int]$frameRate)",
                 "$stopFile = Join-Path (Split-Path -Parent $outputPath)",
                 "-VideoEncoder $encoder",
                 "-BenchmarkEncoders:$benchmark",
@@ -3894,6 +3903,8 @@ namespace ModernWpf.Gallery.Tests
                 "function Close-GalleryRecordingProcess($process)");
             AssertContainsInOrder(
                 source,
+                "$recordingFrameRate = Get-ControlRecordingFrameRate $control $interactionKind",
+                "$recordingJob = Start-RecordingJob $window.Current.ProcessId ([IntPtr]$window.Current.NativeWindowHandle) $recordingPath $CaptureMode $recordingDurationSeconds $VideoEncoder ([bool]$BenchmarkEncoders) $recordingFrameRate",
                 "$interactionResult = Invoke-RecordedInteraction $window $control $sampleElement $artifactDir",
                 "Start-Sleep -Milliseconds 350",
                 "Request-RecordingStop $recordingJob",

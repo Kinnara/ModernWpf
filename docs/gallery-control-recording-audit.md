@@ -126,6 +126,28 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 133 restores the broad Gallery source-shape verification gate:
+
+- After the ThemeShadow round, the full `WpfGallerySourceShapeTests` sweep still
+  failed in two stale harness guards. Those failures were not product visuals,
+  but they weakened the audit because the broad source-shape gate could no
+  longer be used as a clean regression check.
+- `GalleryVisualChecksTogglesCommonStateInteractionControls` now reflects the
+  current split between visual-check families: `Run-GalleryVisualChecks.ps1`
+  defaults to ported WinUI controls, and WPF-only controls such as `Button`,
+  `CheckBox`, `ComboBox`, `RadioButton`, and `Slider` are explicitly rejected
+  there so they must use `Run-WpfGalleryVisualAudit.ps1` with the official WPF
+  Gallery reference.
+- `GalleryInteractionRecorderStopsRecordingAfterEvidenceTail` now pins the
+  current recording contract, including the per-control frame-rate argument
+  passed into `Start-RecordingJob`. This keeps the shortened-tail recorder
+  check aligned with the faster per-control capture path.
+- Guard tests passed:
+  `GalleryVisualChecksTogglesCommonStateInteractionControls`,
+  `GalleryInteractionRecorderStopsRecordingAfterEvidenceTail`, and the full
+  `WpfGallerySourceShapeTests` class for both `net8.0-windows7.0` and
+  `net10.0-windows7.0`.
+
 Round 132 corrects the ThemeShadow depth-change layout proof after user review:
 
 - User review again reported a visible layout shift after changing depth. The
