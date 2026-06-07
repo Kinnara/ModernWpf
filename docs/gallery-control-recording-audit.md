@@ -126,6 +126,36 @@ request says otherwise.
 
 ## Current Focused Fix Round
 
+Round 125 adds the missing Light official-WPF Layout/Navigation parity sweep:
+
+- Ran `Run-WpfGalleryVisualAudit.ps1` against `OfficialWpfGallery` for
+  `Expander`, `Grid`, `ResizeGrip`, `GridSplitter`, `GroupBox`, `StackPanel`,
+  `Border`, `Menu`, `TabControl`, `Frame`, and `NavigationWindow` in Light.
+- Fresh report
+  `artifacts/wpf-gallery-visual-audit/20260607-014124-246-45224/report.md`
+  passes all eleven cases. All cases are exact except `GridSplitter`, which
+  has content delta `0.24`, `392/41230` changed samples (`0.951%`), and max
+  RGB diff `75`.
+- Manual crop review of `GridSplitter` shows the ModernWpf and official WPF
+  content panes structurally aligned; the small delta is confined to rendered
+  text/splitter antialiasing rather than layout drift.
+- This complements the existing Dark Layout/Navigation sweep
+  `artifacts/wpf-gallery-visual-audit/20260606-211239-749-221832/report.md`.
+
+Round 124 adds the missing Light official-WPF design-page parity sweep:
+
+- Ran `Run-WpfGalleryVisualAudit.ps1` against `OfficialWpfGallery` for
+  `Color`, `Typography`, `Spacing`, `Geometry`, and `Iconography` in Light.
+- Fresh report
+  `artifacts/wpf-gallery-visual-audit/20260607-013757-864-141012/report.md`
+  passes all five cases. Content deltas: Color `0.05`, Typography `0`,
+  Spacing `0`, Geometry `0`, Iconography `0.23`.
+- The Color max RGB diff is localized to a tiny text/swatch antialiasing row:
+  only `55/41230` sampled points changed (`0.133%`), and manual crop review
+  shows the ModernWpf and official WPF content panes are visually aligned.
+- This complements the existing Dark design sweep
+  `artifacts/wpf-gallery-visual-audit/20260606-214219-071-231680/report.md`.
+
 Round 123 corrects the ThemeShadow layout-shift evidence after user review:
 
 - User review rejected the Round 122 conclusion because the visible check still
@@ -144,6 +174,11 @@ Round 123 corrects the ThemeShadow layout-shift evidence after user review:
   `FrameCount=151`, `MaxCardMeanDelta=0.128`, and
   `CardDeltaThreshold=2.0`. The visible shadow envelope still expands with
   depth, but the rendered 200x200 card did not shift in the dense video frames.
+- Fresh Dark verification
+  `artifacts/gallery-recordings/20260607-014327-209/report.md` passes with
+  `ThemeShadowDenseFrameStabilityEvidence=true`, `FrameRate=30`,
+  `FrameCount=42`, `MaxCardMeanDelta=0.042`, and
+  `CardDeltaThreshold=2.0`.
 
 Round 122 corrects the ThemeShadow depth-change interpretation:
 
