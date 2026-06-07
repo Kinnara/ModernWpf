@@ -203,6 +203,14 @@ namespace ModernWpf.Controls.Primitives
                 return;
             }
 
+            if (PlacementTarget != null &&
+                DesiredPlacement != PopupPlacementMode.Auto &&
+                !IsConnectedToPresentationSource(PlacementTarget))
+            {
+                SetCurrentValue(IsOpenProperty, false);
+                return;
+            }
+
             UpdatePlacementTargetHandlers();
             var placement = CalculatePlacement();
 
@@ -224,13 +232,18 @@ namespace ModernWpf.Controls.Primitives
                 _root.Child = null;
             }
 
-            if (_source != null)
+            var source = _source;
+            if (source != null)
             {
-                _source.RemoveHook(WndProc);
-                _source.RootVisual = null;
-                _source.Dispose();
                 _source = null;
                 _root = null;
+                if (!source.IsDisposed)
+                {
+                    source.RemoveHook(WndProc);
+                    source.RootVisual = null;
+                    source.Dispose();
+                }
+
                 Closed?.Invoke(this, EventArgs.Empty);
             }
         }
@@ -239,6 +252,14 @@ namespace ModernWpf.Controls.Primitives
         {
             if (!IsOpen || _source == null || _source.IsDisposed)
             {
+                return;
+            }
+
+            if (PlacementTarget != null &&
+                DesiredPlacement != PopupPlacementMode.Auto &&
+                !IsConnectedToPresentationSource(PlacementTarget))
+            {
+                SetCurrentValue(IsOpenProperty, false);
                 return;
             }
 
@@ -251,7 +272,7 @@ namespace ModernWpf.Controls.Primitives
             var placementTarget = PlacementTarget;
             var desiredPlacement = DesiredPlacement;
 
-            if (child == null || placementTarget == null || desiredPlacement == PopupPlacementMode.Auto)
+            if (child == null)
             {
                 SetActualPlacement(PopupPlacementMode.Auto);
                 return new PlacementResult();
@@ -260,11 +281,27 @@ namespace ModernWpf.Controls.Primitives
             child.Measure(InfiniteSize);
             var hostSize = GetMeasuredHostSize(child);
             var contentBounds = GetPlacementBounds(child, hostSize);
-            var targetBounds = GetTargetScreenBounds(placementTarget);
-            var transformToDevice = GetTransformToDevice(placementTarget);
+            var placementAnchor = placementTarget ?? GetPlacementAnchor();
+            var transformToDevice = GetTransformToDevice(placementAnchor);
             var hostSizeDevice = TransformSize(transformToDevice, hostSize);
             var contentOffsetDevice = TransformPoint(transformToDevice, contentBounds.TopLeft);
             var contentSizeDevice = TransformSize(transformToDevice, contentBounds.Size);
+
+            if (placementTarget == null || desiredPlacement == PopupPlacementMode.Auto)
+            {
+                SetActualPlacement(PopupPlacementMode.Auto);
+                var origin = GetClientAreaScreenOrigin(placementAnchor);
+                var absoluteOffsetDevice = TransformPoint(transformToDevice, new Point(HorizontalOffset, VerticalOffset));
+                return new PlacementResult
+                {
+                    X = DoubleToInt(origin.X + absoluteOffsetDevice.X),
+                    Y = DoubleToInt(origin.Y + absoluteOffsetDevice.Y),
+                    Width = Math.Max(1, DoubleToInt(hostSizeDevice.Width)),
+                    Height = Math.Max(1, DoubleToInt(hostSizeDevice.Height))
+                };
+            }
+
+            var targetBounds = GetTargetScreenBounds(placementTarget);
             var availableRect = GetAvailableScreenRect(targetBounds);
             var flowDirection = FlowDirection;
 
@@ -358,7 +395,7 @@ namespace ModernWpf.Controls.Primitives
             parameters.SetPosition(placement.X, placement.Y);
             parameters.SetSize(Math.Max(1, placement.Width), Math.Max(1, placement.Height));
 
-            var parent = GetParentWindowHandle(PlacementTarget);
+            var parent = GetParentWindowHandle(GetPlacementAnchor());
             if (parent != IntPtr.Zero)
             {
                 parameters.ParentWindow = parent;
@@ -371,6 +408,11 @@ namespace ModernWpf.Controls.Primitives
             }
 
             return source;
+        }
+
+        private Visual GetPlacementAnchor()
+        {
+            return PlacementTarget ?? this;
         }
 
         private void UpdatePlacementTargetHandlers()
@@ -459,6 +501,21 @@ namespace ModernWpf.Controls.Primitives
             return new Rect(topLeft, bottomRight);
         }
 
+        private static Point GetClientAreaScreenOrigin(Visual visual)
+        {
+            if (visual != null &&
+                PresentationSource.FromVisual(visual) is HwndSource source)
+            {
+                var point = new POINT();
+                if (ClientToScreen(source.Handle, ref point))
+                {
+                    return new Point(point.X, point.Y);
+                }
+            }
+
+            return new Point();
+        }
+
         private static Rect GetAvailableScreenRect(Rect targetBounds)
         {
             var nativeBounds = new RECT
@@ -492,6 +549,11 @@ namespace ModernWpf.Controls.Primitives
             }
 
             return Matrix.Identity;
+        }
+
+        private static bool IsConnectedToPresentationSource(Visual visual)
+        {
+            return visual != null && PresentationSource.FromVisual(visual) != null;
         }
 
         private static Size TransformSize(Matrix transform, Size size)
@@ -852,6 +914,13 @@ namespace ModernWpf.Controls.Primitives
         }
 
         [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            public int X;
+            public int Y;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
         private struct RECT
         {
             public int Left;
@@ -933,5 +1002,8 @@ namespace ModernWpf.Controls.Primitives
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool GetMonitorInfo(IntPtr monitor, [In, Out] MONITORINFO monitorInfo);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool ClientToScreen(IntPtr hWnd, ref POINT point);
     }
 }

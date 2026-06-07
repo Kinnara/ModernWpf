@@ -74,3 +74,30 @@ Explicit non-goals for the first version:
 - Whether light-dismiss and capture should live in the primitive or in flyout layers. WPF `Popup` couples them, but a fresh primitive may be cleaner if it only hosts and positions.
 - How much parent-popup adjustment from WinUI is needed for nested popup scenarios. CommandBarFlyout likely needs placement and actual-placement reporting first.
 - Which controls should migrate first after the primitive exists. CommandBarFlyout is the immediate target; MenuFlyout/FlyoutBase should be evaluated after focused tests.
+
+## Test Port Status
+
+Added coverage in `test\ModernWpf.WinUI.Tests\Popup\WindowedPopupApiTests.cs`:
+
+- WinUI enum value order for `PopupPlacementMode`.
+- Anchored placement for all non-`Auto` WinUI placement modes.
+- Absolute popup open/close/reopen with `HorizontalOffset` and `VerticalOffset`.
+- Live offset changes while open.
+- Anchored offsets after placement calculation.
+- Placement target layout updates.
+- Placement target unload cleanup.
+- Child resize while open, including HWND size tracking.
+- Child replacement while open.
+- ThemeShadowChrome reserved placement bounds.
+- Out-of-bounds placement flip before show.
+- `WM_MOUSEACTIVATE` returns `MA_NOACTIVATE`.
+
+Remaining WinUI test areas to port before relying on this as the shared flyout popup:
+
+- RTL geometry and input-coordinate parity from `WindowedPopupRTL` and `WindowedPopupPointerInputCoordsRTL`.
+- Pointer, keyboard, and UIA input through the popup HWND from `WindowedPopupInput` and `WindowedPopupUIATree`.
+- Nested popup HWND bounds from `WindowedPopupHWNDBoundsNested`.
+- Parent popup adjustment behavior from `TallPopupPlacedRelativeToAnotherPopupIsBroughtInView`.
+- "Do not flip after size increase" behavior from `PopupSizeIncreaseDoesntChangePosition`.
+- Per-monitor DPI behavior from `WindowedPopupHighDPI`.
+- Light-dismiss and overlay tests once the primitive or flyout layer owns dismiss semantics.
