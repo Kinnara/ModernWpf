@@ -185,7 +185,7 @@ namespace ModernWpf.Controls.Primitives
 
             if (IsInitialized)
             {
-                UpdateShadow();
+                UpdateShadow(invalidateLayout: ReservesShadowSpace);
                 UpdatePopupMargin();
             }
         }
@@ -290,7 +290,7 @@ namespace ModernWpf.Controls.Primitives
         {
             if (IsInitialized)
             {
-                UpdateShadow();
+                UpdateShadow(invalidateLayout: ReservesShadowSpace);
                 UpdatePopupMargin();
             }
         }
@@ -321,7 +321,7 @@ namespace ModernWpf.Controls.Primitives
         {
             if (IsInitialized)
             {
-                UpdateShadow();
+                UpdateShadow(invalidateLayout: true);
             }
         }
 
@@ -591,15 +591,18 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
-        private void UpdateShadow()
+        private void UpdateShadow(bool invalidateLayout)
         {
             if (_shadow != null)
             {
                 _shadow.Depth = Depth;
             }
 
-            InvalidateMeasure();
-            InvalidateArrange();
+            if (invalidateLayout)
+            {
+                InvalidateMeasure();
+                InvalidateArrange();
+            }
         }
 
         private void UpdateShadowOpacitySource()

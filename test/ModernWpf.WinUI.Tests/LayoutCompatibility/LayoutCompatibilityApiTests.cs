@@ -232,6 +232,48 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ThemeShadowChromeDepthChangeDoesNotRemeasureDefaultSourceLayout()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var child = new LayoutProbeElement
+            {
+                Width = 200,
+                Height = 200
+            };
+            var root = new Grid
+            {
+                Width = 272,
+                Height = 272,
+                Background = Brushes.White
+            };
+            var chrome = new ThemeShadowChrome
+            {
+                Depth = 32,
+                TranslationZ = 32,
+                Margin = new Thickness(36),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Child = child
+            };
+            root.Children.Add(chrome);
+
+            ArrangeElement(root, 272, 272);
+            child.ResetLayoutCounts();
+
+            chrome.TranslationZ = 64;
+            root.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(chrome.ReservesShadowSpace);
+            Assert.AreEqual(0, child.MeasureOverrideCount, "Changing default ThemeShadow depth should be render-only for the caster layout.");
+            Assert.AreEqual(0, child.ArrangeOverrideCount, "Changing default ThemeShadow depth should not rearrange the caster layout.");
+            Assert.AreEqual(new Point(36, 36), chrome.TranslatePoint(new Point(), root));
+            Assert.AreEqual(new Point(36, 36), child.TranslatePoint(new Point(), root));
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromeCanReservePopupLayoutSpaceWhenOptedIn()
     {
         WpfTestHost.Run(() =>
@@ -5126,6 +5168,33 @@ public class LayoutCompatibilityApiTests
         element.Measure(new Size(width, height));
         element.Arrange(new Rect(0, 0, width, height));
         element.UpdateLayout();
+    }
+
+    private sealed class LayoutProbeElement : FrameworkElement
+    {
+        public int MeasureOverrideCount { get; private set; }
+
+        public int ArrangeOverrideCount { get; private set; }
+
+        public void ResetLayoutCounts()
+        {
+            MeasureOverrideCount = 0;
+            ArrangeOverrideCount = 0;
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            MeasureOverrideCount++;
+            return new Size(
+                double.IsNaN(Width) ? 0 : Width,
+                double.IsNaN(Height) ? 0 : Height);
+        }
+
+        protected override Size ArrangeOverride(Size finalSize)
+        {
+            ArrangeOverrideCount++;
+            return finalSize;
+        }
     }
 
     private static void AssertRenderedTemplateShadow(

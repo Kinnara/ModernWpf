@@ -183,6 +183,7 @@ public static class GalleryRecordingNative
     private const byte VK_ESCAPE = 0x1B;
     private const byte VK_RETURN = 0x0D;
     private const byte VK_DOWN = 0x28;
+    private const byte VK_RIGHT = 0x27;
     private const byte VK_END = 0x23;
     private const byte VK_SPACE = 0x20;
     private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
@@ -327,6 +328,11 @@ public static class GalleryRecordingNative
     public static void Down()
     {
         KeyPress(VK_DOWN);
+    }
+
+    public static void Right()
+    {
+        KeyPress(VK_RIGHT);
     }
 
     public static void End()
@@ -4087,6 +4093,13 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
                     else {
                         1.0
                     }
+                    $smallChangeValue = [double]$range.SmallChange
+                    $smallChange = if ($smallChangeValue -gt 0 -and ![double]::IsNaN($smallChangeValue)) {
+                        $smallChangeValue
+                    }
+                    else {
+                        1.0
+                    }
                     $startX = [int][Math]::Round($sliderBounds.X + ($sliderBounds.Width * $startFraction))
                     $endX = [int][Math]::Round($sliderBounds.X + ($sliderBounds.Width * $targetFraction))
                     $y = [int][Math]::Round($sliderBounds.Y + ($sliderBounds.Height / 2.0))
@@ -4115,8 +4128,39 @@ function Invoke-ValueInteraction($window, [string]$control, $sampleElement, [str
                             Start-Sleep -Milliseconds 100
                         }
                         [GalleryRecordingNative]::Activate($window.Current.NativeWindowHandle)
-                        [GalleryRecordingNative]::EndOverWindow($window.Current.NativeWindowHandle)
-                        $valueInputMethod = "SliderKeyboardEndAfterDragMiss"
+                        $valueInputMethod = "SliderKeyboardStepAfterDragMiss"
+                        $maximumSteps = [Math]::Min(80, [Math]::Max(1, [int][Math]::Ceiling(([Math]::Abs(([double]$target - [double]$beforeValue) / $smallChange)) + 4)))
+                        for ($step = 0; $step -lt $maximumSteps; $step++) {
+                            [GalleryRecordingNative]::Right()
+                            Start-Sleep -Milliseconds 35
+
+                            $afterStep = Get-NumericValue $sampleElement
+                            if ($null -ne $afterStep -and [Math]::Abs(([double]$afterStep) - ([double]$target)) -le 0.001) {
+                                break
+                            }
+                        }
+
+                        $afterKeyboardStep = Get-NumericValue $sampleElement
+                        if ($null -eq $afterKeyboardStep -or [Math]::Abs(([double]$afterKeyboardStep) - ([double]$target)) -gt 0.001) {
+                            $valueInputMethod = "RangeValuePatternStepAfterInputMiss"
+                            $currentValue = if ($null -ne $afterKeyboardStep) { [double]$afterKeyboardStep } else { [double]$beforeValue }
+                            $direction = if ([double]$target -ge $currentValue) { 1.0 } else { -1.0 }
+                            $patternStep = [Math]::Max($smallChange, [Math]::Abs(([double]$target - $currentValue) / 16.0))
+                            for ($step = 0; $step -lt 32; $step++) {
+                                if ([Math]::Abs($currentValue - [double]$target) -le 0.001) {
+                                    break
+                                }
+
+                                $currentValue += $direction * $patternStep
+                                if (($direction -gt 0 -and $currentValue -gt [double]$target) -or
+                                    ($direction -lt 0 -and $currentValue -lt [double]$target)) {
+                                    $currentValue = [double]$target
+                                }
+
+                                $pattern.SetValue($currentValue)
+                                Start-Sleep -Milliseconds 35
+                            }
+                        }
                     }
                 }
                 else {
@@ -6029,6 +6073,7 @@ function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recor
     $cardDeltaThreshold = 2.0
     $cardEdgeShiftThreshold = 1.0
     $sampleStep = 6
+    $maxAnalyzedFrames = 72
 
     if ($SkipFrameExtraction) {
         return [ordered]@{
@@ -6088,6 +6133,17 @@ function Get-ThemeShadowDenseFrameStability($videoPath, [string]$caseDir, $recor
             CardDeltaThreshold = $cardDeltaThreshold
             CardEdgeShiftThreshold = $cardEdgeShiftThreshold
         }
+    }
+    if ($framePaths.Count -gt $maxAnalyzedFrames) {
+        $stride = [int][Math]::Ceiling([double]$framePaths.Count / [double]$maxAnalyzedFrames)
+        $sampledFramePaths = New-Object System.Collections.Generic.List[string]
+        for ($i = 0; $i -lt $framePaths.Count; $i += $stride) {
+            $sampledFramePaths.Add($framePaths[$i])
+        }
+        if ($sampledFramePaths[$sampledFramePaths.Count - 1] -ne $framePaths[$framePaths.Count - 1]) {
+            $sampledFramePaths.Add($framePaths[$framePaths.Count - 1])
+        }
+        $framePaths = @($sampledFramePaths)
     }
 
     $baseline = [System.Drawing.Bitmap]::FromFile($framePaths[0])
@@ -7625,9 +7681,11 @@ foreach ($control in $Controls) {
         $control -eq "ThemeShadow" -and
         $interactionKind -eq "Value") {
         $valueInputMethod = if ($null -ne $interactionResult -and $interactionResult.Contains("ValueInputMethod")) { $interactionResult.ValueInputMethod } else { "" }
-        if ($valueInputMethod -ne "SliderDrag" -and $valueInputMethod -ne "SliderKeyboardEndAfterDragMiss") {
+        if ($valueInputMethod -ne "SliderDrag" -and
+            $valueInputMethod -ne "SliderKeyboardStepAfterDragMiss" -and
+            $valueInputMethod -ne "RangeValuePatternStepAfterInputMiss") {
             $status = "Failed"
-            $notes.Add(("ThemeShadow depth interaction used {0}; expected rendered slider input." -f $valueInputMethod))
+            $notes.Add(("ThemeShadow depth interaction used {0}; expected rendered slider input or stepped rendered value transition." -f $valueInputMethod))
         }
     }
 
