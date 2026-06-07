@@ -3991,6 +3991,11 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "[int]$WindowLeft = 0,",
+                "[int]$WindowTop = 0,",
+                "[void][GalleryRecordingNative]::Move($window.Current.NativeWindowHandle, $WindowLeft, $WindowTop, $Width, $Height)");
+            AssertContainsInOrder(
+                source,
                 "function Find-WindowByProcessId([int]$processId)",
                 "$bestWindow = $null",
                 "$bestScore = -1",
