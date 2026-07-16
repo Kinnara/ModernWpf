@@ -589,17 +589,32 @@ namespace ModernWpf.Controls.Primitives
             var hsvValues = new List<Hsv>(size * size);
 
             var baseHsv = new Hsv(HsvColor.X, HsvColor.Y, HsvColor.Z);
-            for (int y = 0; y < size; y++)
+            if (Shape == ColorSpectrumShape.Box)
             {
-                for (int x = 0; x < size; x++)
+                // WinUI writes box pixels with x as the outer loop and y as the
+                // inner loop, both descending.  The resulting buffer is still
+                // row-major: the source y coordinate becomes the on-screen x
+                // axis and the source x coordinate becomes the on-screen y
+                // axis.  Preserve that ordering so Components.HueSaturation,
+                // for example, renders hue horizontally and saturation
+                // vertically just like WinUI.
+                int pixelIndex = 0;
+                for (int x = size - 1; x >= 0; x--)
                 {
-                    int offset = (y * size + x) * 4;
-                    if (Shape == ColorSpectrumShape.Box)
+                    for (int y = size - 1; y >= 0; y--)
                     {
+                        int offset = pixelIndex++ * 4;
                         FillPixelForBox(x, y, baseHsv, size, Components, MinHue, MaxHue, MinSaturation, MaxSaturation, MinValue, MaxValue, minPixels, middle1Pixels, middle2Pixels, middle3Pixels, middle4Pixels, maxPixels, hsvValues, offset);
                     }
-                    else
+                }
+            }
+            else
+            {
+                for (int y = 0; y < size; y++)
+                {
+                    for (int x = 0; x < size; x++)
                     {
+                        int offset = (y * size + x) * 4;
                         FillPixelForRing(x, y, size / 2.0, baseHsv, Components, MinHue, MaxHue, MinSaturation, MaxSaturation, MinValue, MaxValue, minPixels, middle1Pixels, middle2Pixels, middle3Pixels, middle4Pixels, maxPixels, hsvValues, offset);
                     }
                 }
@@ -773,7 +788,7 @@ namespace ModernWpf.Controls.Primitives
                 theta -= 360;
             }
 
-            FillPixel(theta / 360, r, baseHsv, components, minHue, maxHue, minSaturation, maxSaturation, minValue, maxValue, minPixels, middle1Pixels, middle2Pixels, middle3Pixels, middle4Pixels, maxPixels, hsvValues, offset);
+            FillPixel(r, theta / 360, baseHsv, components, minHue, maxHue, minSaturation, maxSaturation, minValue, maxValue, minPixels, middle1Pixels, middle2Pixels, middle3Pixels, middle4Pixels, maxPixels, hsvValues, offset);
         }
 
         private static void FillPixel(

@@ -400,7 +400,7 @@
                                 <ui:VisualStateEx x:Name="TextEntryGridVisible">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="TextEntryGrid.Visibility" Value="Visible" />
-                                        <ui:VisualStateSetter Target="MoreGlyph.Text" Value="^" />
+                                        <ui:VisualStateSetter Target="MoreGlyph.Glyph" Value="&#xE70E;" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
@@ -644,108 +644,144 @@
                                     x:Name="MoreButton"
                                     MinHeight="32"
                                     MinWidth="120"
-                                    Padding="8,0"
+                                    Padding="0"
                                     HorizontalAlignment="Right"
                                     HorizontalContentAlignment="Right"
                                     TabIndex="3">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock x:Name="MoreButtonLabel" Text="More" Margin="0,0,8,0" />
-                                        <TextBlock x:Name="MoreGlyph" Text="v" />
-                                    </StackPanel>
+                                    <ToggleButton.Content>
+                                        <StackPanel
+                                            Margin="0,5,0,7"
+                                            HorizontalAlignment="Right"
+                                            Orientation="Horizontal">
+                                            <TextBlock x:Name="MoreButtonLabel" VerticalAlignment="Center" />
+                                            <ui:FontIcon
+                                                x:Name="MoreGlyph"
+                                                Margin="8,0,0,0"
+                                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                                FontSize="12"
+                                                Glyph="&#xE70D;" />
+                                        </StackPanel>
+                                    </ToggleButton.Content>
+                                    <ToggleButton.Resources>
+                                        <SolidColorBrush x:Key="ToggleButtonBackground" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonBorderBrush" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonForeground" Color="{DynamicResource SystemBaseHighColor}" />
+                                        <SolidColorBrush x:Key="ToggleButtonBackgroundPointerOver" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonBorderBrushPointerOver" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonForegroundPointerOver" Color="{DynamicResource SystemBaseMediumColor}" />
+                                        <SolidColorBrush x:Key="ToggleButtonBackgroundPressed" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonBorderBrushPressed" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonForegroundPressed" Color="{DynamicResource SystemBaseMediumLowColor}" />
+                                        <SolidColorBrush x:Key="ToggleButtonBackgroundDisabled" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonBorderBrushDisabled" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonForegroundDisabled" Color="{DynamicResource SystemBaseMediumLowColor}" />
+                                        <SolidColorBrush x:Key="ToggleButtonBackgroundChecked" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonBorderBrushChecked" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonForegroundChecked" Color="{DynamicResource SystemBaseHighColor}" />
+                                        <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPointerOver" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonBorderBrushCheckedPointerOver" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonForegroundCheckedPointerOver" Color="{DynamicResource SystemBaseMediumColor}" />
+                                        <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedPressed" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonBorderBrushCheckedPressed" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonForegroundCheckedPressed" Color="{DynamicResource SystemBaseMediumLowColor}" />
+                                        <SolidColorBrush x:Key="ToggleButtonBackgroundCheckedDisabled" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonBorderBrushCheckedDisabled" Color="Transparent" />
+                                        <SolidColorBrush x:Key="ToggleButtonForegroundCheckedDisabled" Color="{DynamicResource SystemBaseMediumLowColor}" />
+                                    </ToggleButton.Resources>
                                 </ToggleButton>
 
                                 <Grid
                                     x:Name="TextEntryGrid"
-                                    Visibility="Collapsed"
-                                    Margin="0,12,0,0">
+                                    Visibility="Collapsed">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="5" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
 
                                     <ComboBox
                                         x:Name="ColorRepresentationComboBox"
                                         Grid.Row="0"
                                         Grid.Column="0"
-                                        Width="128"
-                                        Margin="0,0,56,12"
+                                        Width="120"
+                                        HorizontalAlignment="Left"
                                         SelectedIndex="0"
                                         TabIndex="4">
                                         <ComboBoxItem x:Name="RGBComboBoxItem" IsSelected="True">RGB</ComboBoxItem>
                                         <ComboBoxItem x:Name="HSVComboBoxItem">HSV</ComboBoxItem>
                                     </ComboBox>
 
-                                    <TextBox
-                                        x:Name="HexTextBox"
-                                        Grid.Row="0"
-                                        Grid.Column="1"
-                                        Width="132"
-                                        MaxLength="7"
-                                        Margin="0,0,0,12"
-                                        TabIndex="5" />
-
-                                    <Grid
+                                    <StackPanel
                                         x:Name="ColorTextInputPanels"
                                         Grid.Row="1"
                                         Grid.ColumnSpan="3">
-                                        <Grid x:Name="ColorChannelTextInputPanel">
+                                        <StackPanel
+                                            x:Name="ColorChannelTextInputPanel"
+                                            HorizontalAlignment="Stretch">
                                             <Grid x:Name="RgbPanel">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="120" />
-                                                    <ColumnDefinition x:Name="RgbTextLabelColumn" Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="8" />
+                                                    <ColumnDefinition x:Name="RgbTextLabelColumn" Width="*" />
                                                 </Grid.ColumnDefinitions>
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
                                                 </Grid.RowDefinitions>
-                                                <TextBox x:Name="RedTextBox" Grid.Row="0" Grid.Column="0" Margin="0,0,8,12" MaxLength="3" TabIndex="6" />
-                                                <TextBlock x:Name="RedLabel" Grid.Row="0" Grid.Column="1" Text="Red" VerticalAlignment="Center" Margin="0,0,0,12" />
-                                                <TextBox x:Name="GreenTextBox" Grid.Row="1" Grid.Column="0" Margin="0,0,8,12" MaxLength="3" TabIndex="7" />
-                                                <TextBlock x:Name="GreenLabel" Grid.Row="1" Grid.Column="1" Text="Green" VerticalAlignment="Center" Margin="0,0,0,12" />
-                                                <TextBox x:Name="BlueTextBox" Grid.Row="2" Grid.Column="0" Margin="0,0,8,0" MaxLength="3" TabIndex="8" />
-                                                <TextBlock x:Name="BlueLabel" Grid.Row="2" Grid.Column="1" Text="Blue" VerticalAlignment="Center" />
+                                                <TextBox x:Name="RedTextBox" Grid.Row="0" Grid.Column="0" Width="120" Margin="0,12,0,0" MaxLength="3" />
+                                                <TextBlock x:Name="RedLabel" Grid.Row="0" Grid.Column="2" Margin="0,12,0,0" VerticalAlignment="Center" Text="Red" />
+                                                <TextBox x:Name="GreenTextBox" Grid.Row="1" Grid.Column="0" Width="120" Margin="0,12,0,0" MaxLength="3" />
+                                                <TextBlock x:Name="GreenLabel" Grid.Row="1" Grid.Column="2" Margin="0,12,0,0" VerticalAlignment="Center" Text="Green" />
+                                                <TextBox x:Name="BlueTextBox" Grid.Row="2" Grid.Column="0" Width="120" Margin="0,12,0,0" MaxLength="3" />
+                                                <TextBlock x:Name="BlueLabel" Grid.Row="2" Grid.Column="2" Margin="0,12,0,0" VerticalAlignment="Center" Text="Blue" />
                                             </Grid>
 
                                             <Grid
                                                 x:Name="HsvPanel"
                                                 Visibility="Collapsed">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="120" />
-                                                    <ColumnDefinition x:Name="HsvTextLabelColumn" Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="8" />
+                                                    <ColumnDefinition x:Name="HsvTextLabelColumn" Width="*" />
                                                 </Grid.ColumnDefinitions>
                                                 <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
+                                                    <RowDefinition />
                                                 </Grid.RowDefinitions>
-                                                <TextBox x:Name="HueTextBox" Grid.Row="0" Grid.Column="0" Margin="0,0,8,12" MaxLength="3" TabIndex="6" />
-                                                <TextBlock x:Name="HueLabel" Grid.Row="0" Grid.Column="1" Text="Hue" VerticalAlignment="Center" Margin="0,0,0,12" />
-                                                <TextBox x:Name="SaturationTextBox" Grid.Row="1" Grid.Column="0" Margin="0,0,8,12" MaxLength="3" TabIndex="7" />
-                                                <TextBlock x:Name="SaturationLabel" Grid.Row="1" Grid.Column="1" Text="Saturation" VerticalAlignment="Center" Margin="0,0,0,12" />
-                                                <TextBox x:Name="ValueTextBox" Grid.Row="2" Grid.Column="0" Margin="0,0,8,0" MaxLength="3" TabIndex="8" />
-                                                <TextBlock x:Name="ValueLabel" Grid.Row="2" Grid.Column="1" Text="Value" VerticalAlignment="Center" />
+                                                <TextBox x:Name="HueTextBox" Grid.Row="0" Grid.Column="0" Width="120" Margin="0,12,0,0" MaxLength="3" />
+                                                <TextBlock x:Name="HueLabel" Grid.Row="0" Grid.Column="2" Margin="0,12,0,0" VerticalAlignment="Center" Text="Hue" />
+                                                <TextBox x:Name="SaturationTextBox" Grid.Row="1" Grid.Column="0" Width="120" Margin="0,12,0,0" MaxLength="3" />
+                                                <TextBlock x:Name="SaturationLabel" Grid.Row="1" Grid.Column="2" Margin="0,12,0,0" VerticalAlignment="Center" Text="Saturation" />
+                                                <TextBox x:Name="ValueTextBox" Grid.Row="2" Grid.Column="0" Width="120" Margin="0,12,0,0" MaxLength="3" />
+                                                <TextBlock x:Name="ValueLabel" Grid.Row="2" Grid.Column="2" Margin="0,12,0,0" VerticalAlignment="Center" Text="Value" />
                                             </Grid>
-                                        </Grid>
-                                    </Grid>
+                                        </StackPanel>
 
-                                    <Grid
-                                        x:Name="AlphaPanel"
-                                        Grid.Row="2"
-                                        Grid.ColumnSpan="3">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="120" />
-                                            <ColumnDefinition x:Name="AlphaTextLabelColumn" Width="Auto" />
-                                        </Grid.ColumnDefinitions>
-                                        <TextBox x:Name="AlphaTextBox" Grid.Column="0" Margin="0,0,8,0" MaxLength="4" TabIndex="9" />
-                                        <TextBlock x:Name="AlphaLabel" Grid.Column="1" Text="Alpha" VerticalAlignment="Center" />
-                                    </Grid>
+                                        <Grid x:Name="AlphaPanel" Margin="0,12,0,0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="8" />
+                                                <ColumnDefinition x:Name="AlphaTextLabelColumn" Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="AlphaTextBox" Grid.Column="0" Width="120" MaxLength="4" />
+                                            <TextBlock x:Name="AlphaLabel" Grid.Column="2" VerticalAlignment="Center" Text="Opacity" />
+                                        </Grid>
+                                    </StackPanel>
+
+                                    <TextBox
+                                        x:Name="HexTextBox"
+                                        Grid.Column="2"
+                                        Width="132"
+                                        MaxLength="7"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Top" />
                                 </Grid>
                             </StackPanel>
                         </Grid>

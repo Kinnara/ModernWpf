@@ -55,6 +55,7 @@ namespace ModernWpf.Controls
         public override void OnApplyTemplate()
         {
             UnhookTemplateEvents();
+            ThemeManager.RemoveActualThemeChangedHandler(this, OnActualThemeChanged);
 
             base.OnApplyTemplate();
 
@@ -97,6 +98,7 @@ namespace ModernWpf.Controls
             UpdateVisualState(false);
             InitializeColor();
             UpdatePreviousColorRectangle();
+            ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);
         }
 
         private static void OnColorPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -198,7 +200,7 @@ namespace ModernWpf.Controls
             {
                 _colorSpectrum.ColorChanged += OnColorSpectrumColorChanged;
                 _colorSpectrum.SizeChanged += OnColorSpectrumSizeChanged;
-                AutomationProperties.SetName(_colorSpectrum, "Color spectrum");
+                AutomationProperties.SetName(_colorSpectrum, "Color picker");
             }
 
             if (_colorPreviewRectangleGrid != null)
@@ -216,7 +218,7 @@ namespace ModernWpf.Controls
             {
                 _alphaSlider.ValueChanged += OnAlphaSliderValueChanged;
                 _alphaSlider.ColorChannel = ColorPickerHsvChannel.Alpha;
-                AutomationProperties.SetName(_alphaSlider, "Alpha");
+                AutomationProperties.SetName(_alphaSlider, "Opacity");
             }
 
             if (_alphaSliderBackgroundRectangle != null)
@@ -236,7 +238,7 @@ namespace ModernWpf.Controls
                     _moreButton.Click += OnMoreButtonClicked;
                 }
 
-                AutomationProperties.SetHelpText(_moreButton, "Show or hide color text inputs.");
+                AutomationProperties.SetHelpText(_moreButton, "Invoke to show or hide the text entry fields.");
             }
 
             if (_colorRepresentationComboBox != null)
@@ -256,7 +258,7 @@ namespace ModernWpf.Controls
             {
                 _alphaTextBox.TextChanged += OnAlphaTextChanged;
                 HookTextBoxFocus(_alphaTextBox);
-                AutomationProperties.SetName(_alphaTextBox, "Alpha");
+                AutomationProperties.SetName(_alphaTextBox, "Opacity");
             }
 
             if (_hexTextBox != null)
@@ -410,7 +412,7 @@ namespace ModernWpf.Controls
             SetLabel(_hueLabel, "Hue");
             SetLabel(_saturationLabel, "Saturation");
             SetLabel(_valueLabel, "Value");
-            SetLabel(_alphaLabel, "Alpha");
+            SetLabel(_alphaLabel, "Opacity");
 
             if (_colorRepresentationComboBox != null && _colorRepresentationComboBox.SelectedIndex < 0)
             {
@@ -433,6 +435,11 @@ namespace ModernWpf.Controls
         {
             SetCurrentColorState(Color);
             SetColorAndUpdateControls(ColorUpdateReason.InitializingColor);
+        }
+
+        internal Hsv GetCurrentHsv()
+        {
+            return _currentHsv;
         }
 
         private void SetCurrentColorState(Color color)
@@ -582,6 +589,12 @@ namespace ModernWpf.Controls
             CreateAlphaSliderCheckeredBackground();
         }
 
+        private void OnActualThemeChanged(object sender, RoutedEventArgs e)
+        {
+            CreateColorPreviewCheckeredBackground();
+            CreateAlphaSliderCheckeredBackground();
+        }
+
         private void OnThirdDimensionSliderValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             if (_updatingControls)
@@ -646,7 +659,7 @@ namespace ModernWpf.Controls
         {
             if (_moreButton != null)
             {
-                AutomationProperties.SetName(_moreButton, _textEntryGridOpened ? "Hide color values" : "Show color values");
+                AutomationProperties.SetName(_moreButton, _textEntryGridOpened ? "Less" : "More");
 
                 if (_moreButton is WpfPrimitives.ToggleButton toggleButton && toggleButton.IsChecked != _textEntryGridOpened)
                 {
@@ -1013,9 +1026,25 @@ namespace ModernWpf.Controls
             }
         }
 
-        private static Brush CreateCheckeredBackground()
+        private Brush CreateCheckeredBackground()
         {
-            var brush = new DrawingBrush
+            Color checkerColor = Color.FromArgb(25, 0, 0, 0);
+            object resource = TryFindResource("SystemListLowColor");
+            if (resource is Color color)
+            {
+                checkerColor = color;
+            }
+            else if (resource is SolidColorBrush resourceBrush)
+            {
+                checkerColor = resourceBrush.Color;
+            }
+
+            var checkerGeometry = new GeometryGroup();
+            checkerGeometry.Children.Add(new RectangleGeometry(new Rect(4, 0, 4, 4)));
+            checkerGeometry.Children.Add(new RectangleGeometry(new Rect(0, 4, 4, 4)));
+
+            var drawing = new GeometryDrawing(new SolidColorBrush(checkerColor), null, checkerGeometry);
+            var brush = new DrawingBrush(drawing)
             {
                 TileMode = TileMode.Tile,
                 Viewport = new Rect(0, 0, 8, 8),
@@ -1023,12 +1052,6 @@ namespace ModernWpf.Controls
                 Viewbox = new Rect(0, 0, 8, 8),
                 ViewboxUnits = BrushMappingMode.Absolute
             };
-
-            var group = new DrawingGroup();
-            group.Children.Add(new GeometryDrawing(new SolidColorBrush(Color.FromRgb(230, 230, 230)), null, new RectangleGeometry(new Rect(0, 0, 8, 8))));
-            group.Children.Add(new GeometryDrawing(new SolidColorBrush(Color.FromRgb(180, 180, 180)), null, new RectangleGeometry(new Rect(0, 0, 4, 4))));
-            group.Children.Add(new GeometryDrawing(new SolidColorBrush(Color.FromRgb(180, 180, 180)), null, new RectangleGeometry(new Rect(4, 4, 4, 4))));
-            brush.Drawing = group;
             brush.Freeze();
             return brush;
         }
@@ -1073,7 +1096,7 @@ namespace ModernWpf.Controls
         {
             if (_hexTextBox != null)
             {
-                AutomationProperties.SetName(_hexTextBox, _colorRepresentationComboBox?.SelectedIndex == 1 ? "HSV hex value" : "RGB hex value");
+                AutomationProperties.SetName(_hexTextBox, _colorRepresentationComboBox?.SelectedIndex == 1 ? "HSV hex" : "RGB hex");
             }
         }
 

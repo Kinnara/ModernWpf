@@ -2780,6 +2780,9 @@ namespace ModernWpf.Gallery.Tests
                 "function Find-AccentComponentCropBounds([string]$screenshot, $searchBounds, [int]$targetWidth, [int]$targetHeight)",
                 "$color.B -gt 120",
                 "$minY -lt ($height * 0.65)",
+                "function New-ColorPickerModernPrimaryCrop([string]$caseDir)",
+                "Cropped the ModernWpf ColorPicker editor surface inside the source-equivalent root padding and bottom margin.",
+                "GallerySample_ColorPicker_ColorPicker_editor-surface.png",
                 "function New-ColorPickerReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot)",
                 "\"ColorRepresentationComboBox\"",
                 "\"BlueTextBox\"",
@@ -2799,6 +2802,19 @@ namespace ModernWpf.Gallery.Tests
                 "New-InfoBadgeReferencePrimaryCrop $caseDir $window $screenshot $sampleElement",
                 "elseif ($control -eq \"ColorPicker\")",
                 "New-ColorPickerReferencePrimaryCrop $caseDir $window $screenshot");
+            Assert.IsTrue(
+                source.Contains("New-ColorPickerModernPrimaryCrop $caseDir", StringComparison.Ordinal),
+                "ColorPicker parity must crop the ModernWpf artifact to the same editor surface as the reference child bounds.");
+            Assert.IsTrue(
+                source.Contains("\"ColorPicker\" { return $true }", StringComparison.Ordinal) &&
+                source.Contains("[ValidateSet(\"MoreButton\", \"Alpha\", \"Ring\")]", StringComparison.Ordinal) &&
+                source.Contains("if ($ColorPickerState -eq \"Alpha\") { \"alpha\" } else { \"moreBtn\" }", StringComparison.Ordinal) &&
+                source.Contains("function New-ColorPickerStateInteractionCrop", StringComparison.Ordinal) &&
+                source.Contains("ColorPicker More-button surface", StringComparison.Ordinal) &&
+                source.Contains("ColorPicker alpha surface", StringComparison.Ordinal) &&
+                source.Contains("ColorPicker ring surface", StringComparison.Ordinal) &&
+                source.Contains("New-ColorPickerStateInteractionCrop $app $caseDir $window $afterPath \"after\"", StringComparison.Ordinal),
+                "ColorPicker parity must exercise and compare the WinUI Gallery's More-button, alpha, and ring option states.");
             Assert.IsTrue(
                 source.Contains("$primaryCropMissing = (Test-ControlRequiresPrimaryCrop $control) -and !$staticCrops.Primary.Found", StringComparison.Ordinal),
                 "Controls with custom primary parity must fail when the primary crop is missing.");

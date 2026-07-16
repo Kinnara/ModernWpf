@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Numerics;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -23,24 +24,27 @@ namespace ModernWpf.Controls
         {
             get
             {
-                Vector4 hsv = Owner.HsvColor;
-                return string.Format(
-                    System.Globalization.CultureInfo.InvariantCulture,
-                    "Hue {0}, saturation {1}, value {2}",
-                    Math.Round(hsv.X),
-                    Math.Round(hsv.Y * 100),
-                    Math.Round(hsv.Z * 100));
+                return FormatValue(Owner.Color, Owner.HsvColor);
             }
         }
 
         public void SetValue(string value)
         {
-            throw new InvalidOperationException();
+            object converted = ColorConverter.ConvertFromString(value);
+            if (!(converted is Color color))
+            {
+                throw new ArgumentException("The value could not be converted to a color.", nameof(value));
+            }
+
+            Owner.SetCurrentValue(ColorSpectrum.ColorProperty, color);
         }
 
         internal void RaiseValueChanged(Color oldColor, Color newColor, Vector4 oldHsv, Vector4 newHsv)
         {
-            RaisePropertyChangedEvent(ValuePatternIdentifiers.ValueProperty, FormatValue(oldHsv), FormatValue(newHsv));
+            RaisePropertyChangedEvent(
+                ValuePatternIdentifiers.ValueProperty,
+                FormatValue(oldColor, oldHsv),
+                FormatValue(newColor, newHsv));
         }
 
         protected override string GetClassNameCore()
@@ -50,12 +54,23 @@ namespace ModernWpf.Controls
 
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
-            return AutomationControlType.Custom;
+            return AutomationControlType.Slider;
         }
 
         protected override string GetLocalizedControlTypeCore()
         {
-            return "color spectrum";
+            return "2D slider";
+        }
+
+        protected override string GetNameCore()
+        {
+            string name = base.GetNameCore();
+            return string.IsNullOrEmpty(name) ? "Color picker" : name;
+        }
+
+        protected override string GetHelpTextCore()
+        {
+            return "2D navigation with arrow keys";
         }
 
         public override object GetPattern(PatternInterface patternInterface)
@@ -63,11 +78,12 @@ namespace ModernWpf.Controls
             return patternInterface == PatternInterface.Value ? this : base.GetPattern(patternInterface);
         }
 
-        private static string FormatValue(Vector4 hsv)
+        private static string FormatValue(Color color, Vector4 hsv)
         {
             return string.Format(
-                System.Globalization.CultureInfo.InvariantCulture,
-                "Hue {0}, saturation {1}, value {2}",
+                CultureInfo.InvariantCulture,
+                "{0}, Hue {1}, Saturation {2}, Value {3}",
+                ColorDisplayNameHelper.ToDisplayName(color),
                 Math.Round(hsv.X),
                 Math.Round(hsv.Y * 100),
                 Math.Round(hsv.Z * 100));

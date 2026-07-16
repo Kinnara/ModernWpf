@@ -13,6 +13,8 @@ param(
     [string]$WinUIReferenceRunDir,
     [switch]$Build,
     [switch]$IncludeInteractions,
+    [ValidateSet("MoreButton", "Alpha", "Ring")]
+    [string]$ColorPickerState = "MoreButton",
     [switch]$FailOnDifference
 )
 
@@ -1121,11 +1123,64 @@ function Find-OpenInteractionTriggerTarget($element) {
 function Test-ControlSupportsStateInteraction([string]$control) {
     switch ($control) {
         "CheckBox" { return $true }
+        "ColorPicker" { return $true }
         "ToggleButton" { return $true }
         "ToggleSwitch" { return $true }
         "AppBarToggleButton" { return $true }
         default { return $false }
     }
+}
+
+function Get-StateInteractionTarget($window, [string]$control, $element) {
+    if ($control -eq "ColorPicker") {
+        if ($ColorPickerState -eq "Ring") {
+            return Find-DescendantByName $window "Ring"
+        }
+
+        $automationId = if ($ColorPickerState -eq "Alpha") { "alpha" } else { "moreBtn" }
+        return Find-ElementByAutomationIdInProcess $window.Current.ProcessId $automationId
+    }
+
+    return $element
+}
+
+function Get-StateInteractionStateName([string]$control, $element) {
+    if ($control -eq "ColorPicker" -and $ColorPickerState -eq "Ring") {
+        if ($null -eq $element) {
+            return ""
+        }
+
+        try {
+            $pattern = $element.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+            return $(if ($pattern.Current.IsSelected) { "On" } else { "Off" })
+        }
+        catch {
+            return ""
+        }
+    }
+
+    return Get-ToggleStateName $element
+}
+
+function Set-StateInteractionElementState($window, [string]$control, $element, [string]$desiredState) {
+    if ($control -eq "ColorPicker" -and $ColorPickerState -eq "Ring") {
+        $target = if ($desiredState -eq "On") { $element } else { Find-DescendantByName $window "Box" }
+        if ($null -eq $target) {
+            return $false
+        }
+
+        try {
+            $pattern = $target.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+            $pattern.Select()
+            Start-Sleep -Milliseconds 80
+            return (Get-StateInteractionStateName $control $element) -eq $desiredState
+        }
+        catch {
+            return $false
+        }
+    }
+
+    return Set-ToggleElementState $window $element $desiredState
 }
 
 function Get-StateInteractionSettleDelayMs([string]$control) {
@@ -2631,6 +2686,34 @@ function Find-AccentComponentCropBounds([string]$screenshot, $searchBounds, [int
     }
 }
 
+function New-ColorPickerModernPrimaryCrop([string]$caseDir) {
+    $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $sourcePath = Join-Path $artifactDir "GallerySample_ColorPicker_ColorPicker.png"
+    if (!(Test-Path $sourcePath)) {
+        return $null
+    }
+
+    $sourceSize = Get-ImageSize $sourcePath
+    $topPadding = 4
+    $bottomPaddingAndMargin = 16
+    if ($sourceSize.Width -le 0 -or $sourceSize.Height -le ($topPadding + $bottomPaddingAndMargin)) {
+        return $null
+    }
+
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the ModernWpf ColorPicker editor surface inside the source-equivalent root padding and bottom margin."
+        X = 0
+        Y = $topPadding
+        Width = $sourceSize.Width
+        Height = $sourceSize.Height - $topPadding - $bottomPaddingAndMargin
+        ChangedSamples = 0
+    }
+    $path = Join-Path $artifactDir "GallerySample_ColorPicker_ColorPicker_editor-surface.png"
+    $savedBounds = Save-Crop $sourcePath $bounds $path 0
+    return New-RenderedArtifactCrop $path "ColorPicker editor surface" $savedBounds
+}
+
 function New-ColorPickerReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot) {
     $elementIds = @(
         "ColorSpectrum",
@@ -2641,6 +2724,7 @@ function New-ColorPickerReferencePrimaryCrop([string]$caseDir, $window, [string]
         "BlueLabel"
     )
     $boundsList = @()
+    $boundsById = @{}
     foreach ($elementId in $elementIds) {
         $element = Find-DescendantByAutomationId $window $elementId
         $bounds = Get-ElementWindowBounds $window $element
@@ -2649,11 +2733,15 @@ function New-ColorPickerReferencePrimaryCrop([string]$caseDir, $window, [string]
         }
 
         $boundsList += $bounds
+        $boundsById[$elementId] = $bounds
     }
 
-    $left = @($boundsList | ForEach-Object { $_.X } | Measure-Object -Minimum).Minimum
-    $top = @($boundsList | ForEach-Object { $_.Y } | Measure-Object -Minimum).Minimum
-    $right = @($boundsList | ForEach-Object { $_.X + $_.Width } | Measure-Object -Maximum).Maximum
+    # ComboBox UIA bounds include a four-pixel focus overhang. Anchor the
+    # horizontal crop to the spectrum/slider content so the reference surface
+    # matches the rendered ModernWpf editor rather than including that overhang.
+    $left = $boundsById["ColorSpectrum"].X
+    $top = $boundsById["ColorSpectrum"].Y
+    $right = $boundsById["ThirdDimensionSlider"].X + $boundsById["ThirdDimensionSlider"].Width
     $bottom = @($boundsList | ForEach-Object { $_.Y + $_.Height } | Measure-Object -Maximum).Maximum
     $bounds = [ordered]@{
         Found = $true
@@ -2748,6 +2836,13 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             $progressRingPrimary = New-ProgressRingModernPrimaryCrop $caseDir $primaryCrop.Width $primaryCrop.Height
             if ($null -ne $progressRingPrimary -and $progressRingPrimary.NonBlank) {
                 $primaryCrop = $progressRingPrimary
+            }
+        }
+
+        if ($control -eq "ColorPicker") {
+            $colorPickerPrimary = New-ColorPickerModernPrimaryCrop $caseDir
+            if ($null -ne $colorPickerPrimary -and $colorPickerPrimary.NonBlank) {
+                $primaryCrop = $colorPickerPrimary
             }
         }
 
@@ -3726,6 +3821,7 @@ function Test-ControlRequiresPopupWindowOpenProof([string]$control) {
 
 function Test-ControlRequiresReferenceInteractionCropParity([string]$control) {
     switch ($control) {
+        "ColorPicker" { return $true }
         "CommandBarFlyout" { return $true }
         default { return $false }
     }
@@ -3739,6 +3835,7 @@ function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control) {
 
 function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control) {
     switch ($control) {
+        "ColorPicker" { return 4.0 }
         "CommandBarFlyout" { return 12.0 }
         default { return 24.0 }
     }
@@ -3746,6 +3843,7 @@ function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control) {
 
 function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control) {
     switch ($control) {
+        "ColorPicker" { return 0 }
         "CommandBarFlyout" { return 8 }
         default { return 24 }
     }
@@ -4893,6 +4991,94 @@ function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDi
     }
 }
 
+function New-ColorPickerStateInteractionCrop(
+    [string]$app,
+    [string]$caseDir,
+    $window,
+    [string]$screenshot,
+    [string]$phase,
+    [bool]$stateEnabled) {
+    $source = if ($ColorPickerState -eq "Alpha") {
+        "ColorPicker alpha surface"
+    }
+    elseif ($ColorPickerState -eq "Ring") {
+        "ColorPicker ring surface"
+    }
+    else {
+        "ColorPicker More-button surface"
+    }
+    $path = Join-Path $caseDir ("{0}-ColorPicker-state-{1}-crop.png" -f $app.ToLowerInvariant(), $phase)
+
+    # WPF TextBlock labels are not represented in its UIA control view, so the
+    # expanded baseline cannot be reconstructed from the same stable child set.
+    # Its rendered artifact is exact and already used for the default parity
+    # crop; keep live UIA-bound cropping for the toggled More-button state.
+    if ($app -eq "ModernWpf" -and !$stateEnabled) {
+        $artifactPath = Join-Path (Join-Path $caseDir "modernwpf-artifacts") "GallerySample_ColorPicker_ColorPicker.png"
+        if (!(Test-Path $artifactPath)) {
+            return $null
+        }
+
+        $sourceSize = Get-ImageSize $artifactPath
+        $topPadding = 4
+        $bottomPaddingAndMargin = 16
+        $bounds = [ordered]@{
+            Found = $true
+            Reason = "Cropped the expanded ModernWpf ColorPicker state from its rendered artifact."
+            X = 0
+            Y = $topPadding
+            Width = $sourceSize.Width
+            Height = $sourceSize.Height - $topPadding - $bottomPaddingAndMargin
+            ChangedSamples = 0
+        }
+        $savedBounds = Save-Crop $artifactPath $bounds $path 0
+        return New-RenderedArtifactCrop $path $source $savedBounds
+    }
+
+    if ([string]::IsNullOrWhiteSpace($screenshot) -or !(Test-Path $screenshot)) {
+        return $null
+    }
+
+    $elementIds = if ($ColorPickerState -eq "Alpha" -and $stateEnabled) {
+        @("ColorSpectrum", "ThirdDimensionSlider", "AlphaSlider", "ColorRepresentationComboBox", "HexTextBox", "BlueTextBox", "AlphaTextBox")
+    }
+    elseif ($ColorPickerState -eq "Ring") {
+        @("ColorSpectrum", "ThirdDimensionSlider", "ColorRepresentationComboBox", "HexTextBox", "BlueTextBox")
+    }
+    elseif ($ColorPickerState -eq "MoreButton" -and $stateEnabled) {
+        @("ColorSpectrum", "ThirdDimensionSlider", "MoreButton")
+    }
+    else {
+        @("ColorSpectrum", "ThirdDimensionSlider", "ColorRepresentationComboBox", "HexTextBox", "BlueTextBox", "BlueLabel")
+    }
+    $boundsById = @{}
+    foreach ($elementId in $elementIds) {
+        $child = Find-DescendantByAutomationId $window $elementId
+        $childBounds = Get-ElementWindowBounds $window $child
+        if ($null -eq $childBounds -or !$childBounds.Found) {
+            return $null
+        }
+
+        $boundsById[$elementId] = $childBounds
+    }
+
+    $left = $boundsById["ColorSpectrum"].X
+    $top = $boundsById["ColorSpectrum"].Y
+    $right = $boundsById["ThirdDimensionSlider"].X + $boundsById["ThirdDimensionSlider"].Width
+    $bottom = @($boundsById.Values | ForEach-Object { $_.Y + $_.Height } | Measure-Object -Maximum).Maximum
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the live ColorPicker state from stable child bounds."
+        X = $left
+        Y = $top
+        Width = $right - $left
+        Height = $bottom - $top
+        ChangedSamples = 0
+    }
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    return New-RenderedArtifactCrop $path $source $savedBounds
+}
+
 function Capture-StateInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element) {
     if (!$IncludeInteractions -or !(Test-ControlSupportsStateInteraction $control)) {
         return $null
@@ -4901,7 +5087,8 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
     [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
     Start-Sleep -Milliseconds 250
 
-    $baselineState = Get-ToggleStateName $element
+    $toggleElement = Get-StateInteractionTarget $window $control $element
+    $baselineState = Get-StateInteractionStateName $control $toggleElement
     $desiredState = if ($baselineState -eq "On") { "Off" } else { "On" }
     $renderedArtifactPath = if ($app -eq "ModernWpf") { Get-ModernRenderedElementArtifactPath $caseDir $element } else { "" }
     $renderedArtifactSource = if ($app -eq "ModernWpf" -and $null -ne $element) { $element.Current.AutomationId } else { "" }
@@ -4914,7 +5101,10 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
     }
 
     $baselineCropPath = Join-Path $caseDir ("{0}-{1}-state-before-crop.png" -f $app.ToLowerInvariant(), $control)
-    $baselineCrop = if (Test-Path $baselinePath) {
+    $baselineCrop = if ($control -eq "ColorPicker") {
+        New-ColorPickerStateInteractionCrop $app $caseDir $window $baselinePath "before" ($baselineState -eq "On")
+    }
+    elseif (Test-Path $baselinePath) {
         Save-ElementCrop $window $baselinePath $baselineCropPath $element "UIA" 10
     }
     else {
@@ -4926,12 +5116,12 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
 
     $invoked = $false
     if (![string]::IsNullOrEmpty($baselineState)) {
-        $invoked = Set-ToggleElementState $window $element $desiredState
+        $invoked = Set-StateInteractionElementState $window $control $toggleElement $desiredState
     }
     $settleDelayMs = Get-StateInteractionSettleDelayMs $control
     Start-Sleep -Milliseconds $settleDelayMs
 
-    $afterState = Get-ToggleStateName $element
+    $afterState = Get-StateInteractionStateName $control $toggleElement
     if ($app -eq "ModernWpf" -and ![string]::IsNullOrWhiteSpace($renderedArtifactPath)) {
         [void](Refresh-ModernWpfVisualArtifacts $window)
     }
@@ -4944,7 +5134,10 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
     }
 
     $afterCropPath = Join-Path $caseDir ("{0}-{1}-state-after-crop.png" -f $app.ToLowerInvariant(), $control)
-    $afterCrop = if (Test-Path $afterPath) {
+    $afterCrop = if ($control -eq "ColorPicker") {
+        New-ColorPickerStateInteractionCrop $app $caseDir $window $afterPath "after" ($afterState -eq "On")
+    }
+    elseif (Test-Path $afterPath) {
         Save-ElementCrop $window $afterPath $afterCropPath $element "UIA" 10
     }
     else {
@@ -4971,22 +5164,30 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
     $visualChanged = $null -ne $stateDelta -and $stateDelta.Comparable -and $stateDelta.MeanDelta -gt 0.5
     $status = if (!$invoked) { "Failed" } elseif (!$stateChanged) { "Failed" } elseif (!$visualChanged) { "Failed" } elseif (!$stateVisual.Passed) { "Failed" } else { "Passed" }
     $notes = if ([string]::IsNullOrEmpty($baselineState)) {
-        "$control did not expose a UIA TogglePattern state."
+        "$control did not expose its configured UIA state pattern."
     }
     elseif (!$invoked) {
         "Could not toggle the $control sample from $baselineState to $desiredState."
     }
     elseif (!$stateChanged) {
-        "$control toggle state did not change from $baselineState to $desiredState; observed '$afterState'."
+        "$control state did not change from $baselineState to $desiredState; observed '$afterState'."
     }
     elseif (!$visualChanged) {
-        "$control toggle state changed, but the cropped control image did not visibly change."
+        "$control state changed, but the cropped control image did not visibly change."
     }
     elseif (!$stateVisual.Passed) {
         $stateVisual.Notes
     }
     else {
         ""
+    }
+
+    if ($control -eq "ColorPicker" -and ![string]::IsNullOrEmpty($baselineState)) {
+        [void](Set-StateInteractionElementState $window $control $toggleElement $baselineState)
+        Start-Sleep -Milliseconds $settleDelayMs
+        if ($app -eq "ModernWpf") {
+            [void](Refresh-ModernWpfVisualArtifacts $window)
+        }
     }
 
     return [ordered]@{
