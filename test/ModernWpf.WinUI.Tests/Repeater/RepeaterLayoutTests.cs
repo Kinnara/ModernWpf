@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -354,6 +355,21 @@ public class RepeaterLayoutTests
     }
 
     [TestMethod]
+    public void FlowLayoutsIgnoreCollectionChangesWhenContextStateIsUnavailableLikeCurrentWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var context = new TestVirtualizingLayoutContext(itemCount: 0);
+            var args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+
+            new CollectionChangeFlowLayout().RaiseItemsChanged(context, args);
+            new CollectionChangeUniformGridLayout().RaiseItemsChanged(context, args);
+
+            Assert.IsNull(context.LayoutState);
+        });
+    }
+
+    [TestMethod]
     public void ItemsRepeaterScrollHostUsesVerticalAnchorRatioForAnchorCandidates()
     {
         WpfTestHost.Run(() =>
@@ -562,8 +578,15 @@ public class RepeaterLayoutTests
             return m_visibleRect;
         }
 
+        protected override object? LayoutStateCore
+        {
+            get => m_layoutState;
+            set => m_layoutState = value;
+        }
+
         private readonly int m_itemCount;
         private readonly Rect m_visibleRect;
+        private object? m_layoutState;
     }
 
     private sealed class RecordingViewportLayout : VirtualizingLayout
@@ -588,6 +611,26 @@ public class RepeaterLayoutTests
         {
             MeasureCount++;
             return new Size(MeasureCount, MeasureCount);
+        }
+    }
+
+    private sealed class CollectionChangeFlowLayout : FlowLayout
+    {
+        public void RaiseItemsChanged(
+            VirtualizingLayoutContext context,
+            NotifyCollectionChangedEventArgs args)
+        {
+            OnItemsChangedCore(context, new object(), args);
+        }
+    }
+
+    private sealed class CollectionChangeUniformGridLayout : UniformGridLayout
+    {
+        public void RaiseItemsChanged(
+            VirtualizingLayoutContext context,
+            NotifyCollectionChangedEventArgs args)
+        {
+            OnItemsChangedCore(context, new object(), args);
         }
     }
 

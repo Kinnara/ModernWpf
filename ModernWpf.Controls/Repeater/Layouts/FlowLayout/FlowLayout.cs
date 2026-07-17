@@ -93,7 +93,14 @@ namespace ModernWpf.Controls
             object source,
             NotifyCollectionChangedEventArgs args)
         {
-            GetFlowAlgorithm(context).OnItemsSourceChanged(source, args, context);
+            // Current WinUI permits a stray collection notification after the
+            // layout context has been uninitialized. Mirror its null-state guard
+            // instead of dereferencing a FlowLayoutState that no longer exists.
+            if (context.LayoutState is FlowLayoutState flowState)
+            {
+                flowState.FlowAlgorithm.OnItemsSourceChanged(source, args, context);
+            }
+
             // Always invalidate layout to keep the view accurate.
             InvalidateLayout();
         }

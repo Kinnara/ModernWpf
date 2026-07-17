@@ -68,6 +68,15 @@ namespace ModernWpf {
                 return ResourceManager.GetString("AppBarMoreButtonClosedToolTip", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Less app bar.
+        /// </summary>
+        internal static string AppBarLessButtonName {
+            get {
+                return ResourceManager.GetString("AppBarLessButtonName", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to More app bar.

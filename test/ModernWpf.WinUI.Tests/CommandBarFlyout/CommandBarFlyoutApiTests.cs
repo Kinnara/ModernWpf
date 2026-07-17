@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -19,12 +21,11 @@ namespace ModernWpf.WinUI.Tests.CommandBarFlyouts;
 [TestClass]
 public class CommandBarFlyoutApiTests
 {
-    private const double PrimaryCommandTemplateWidth = 60.0;
     private const double PrimaryCommandActualWidth = 60.0;
-    private const double PrimaryCommandHeight = 55.0;
+    private const double PrimaryCommandHeight = 52.0;
     private const double PrimaryCommandContentMinWidth = 40.0;
     private const double PrimaryLabelPanelWidth = 60.0;
-    private const double CommandBarPrimarySurfaceHeight = 62.0;
+    private const double CommandBarPrimarySurfaceHeight = 60.0;
 
     private enum CommandBarSizingOptions
     {
@@ -185,6 +186,70 @@ public class CommandBarFlyoutApiTests
             VerifyPrimaryCommandBottomLabel(deleteButton, "Delete");
 
             HideAndWait(commandBarFlyout);
+        });
+    }
+
+    [TestMethod]
+    public void CommandsExposeWinUIFlyoutAutomationRolesAndMoreButtonName()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var primaryButton = new AppBarButton { Label = "Share" };
+            var secondaryButton = new AppBarButton { Label = "Resize" };
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right
+            };
+
+            commandBarFlyout.PrimaryCommands.Add(primaryButton);
+            commandBarFlyout.SecondaryCommands.Add(secondaryButton);
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 520, height: 300);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            try
+            {
+                var commandBar = GetCommandBar(commandBarFlyout);
+                commandBar.ApplyTemplate();
+                host.UpdateLayout();
+
+                var commandBarPeer = UIElementAutomationPeer.CreatePeerForElement(commandBar);
+                var primaryPeer = UIElementAutomationPeer.CreatePeerForElement(primaryButton);
+                var secondaryPeer = UIElementAutomationPeer.CreatePeerForElement(secondaryButton);
+                var moreButton = FindTemplateChild<ButtonBase>(commandBar, "MoreButton");
+
+                Assert.IsNotNull(commandBarPeer);
+                Assert.IsNotNull(primaryPeer);
+                Assert.IsNotNull(secondaryPeer);
+                Assert.AreEqual(AutomationControlType.Menu, commandBarPeer.GetAutomationControlType());
+                Assert.AreEqual("menu", commandBarPeer.GetLocalizedControlType());
+                Assert.AreEqual(AutomationControlType.MenuItem, primaryPeer.GetAutomationControlType());
+                Assert.AreEqual("menu item", primaryPeer.GetLocalizedControlType());
+                Assert.AreEqual(AutomationControlType.MenuItem, secondaryPeer.GetAutomationControlType());
+                Assert.AreEqual("menu item", secondaryPeer.GetLocalizedControlType());
+                commandBar.IsOpen = false;
+                host.UpdateLayout();
+                WpfTestHost.DoEvents();
+                Assert.AreEqual("More app bar", AutomationProperties.GetName(moreButton));
+
+                commandBar.IsOpen = true;
+                host.UpdateLayout();
+                WpfTestHost.DoEvents();
+                Assert.AreEqual("Less app bar", AutomationProperties.GetName(moreButton));
+            }
+            finally
+            {
+                HideAndWait(commandBarFlyout);
+            }
         });
     }
 
@@ -1179,7 +1244,7 @@ public class CommandBarFlyoutApiTests
             overflowRight - overflowLeft,
             1.0,
             $"Expected expanded CommandBarFlyout visible overflow width to match the primary command strip width. PrimaryWidth={primaryRight - primaryLeft}, OverflowWidth={overflowRight - overflowLeft}, OuterOverflowWidth={outerOverflowRight - outerOverflowLeft}.");
-        var expectedHorizontalGap = 0;
+        const double expectedHorizontalGap = 2.0;
         var horizontalGap = overflowLeft - primaryLeft;
         Assert.IsTrue(
             Math.Abs(horizontalGap - expectedHorizontalGap) <= 1.0,
@@ -1375,7 +1440,7 @@ public class CommandBarFlyoutApiTests
         Assert.AreEqual(PrimaryCommandHeight, button.ActualHeight);
         Assert.IsTrue(double.IsNaN(contentRoot.Width));
         Assert.AreEqual(PrimaryCommandContentMinWidth, contentRoot.MinWidth);
-        Assert.AreEqual(PrimaryCommandHeight, contentRoot.MinHeight);
+        Assert.AreEqual(0.0, contentRoot.MinHeight);
         Assert.AreEqual(PrimaryLabelPanelWidth, iconAndLabelPanel.Width);
         Assert.AreEqual(new Thickness(0, 9, 0, 0), iconAndLabelPanel.Margin);
         Assert.AreEqual(VerticalAlignment.Top, iconAndLabelPanel.VerticalAlignment);
@@ -1517,11 +1582,11 @@ public class CommandBarFlyoutApiTests
             "IconAndLabelPanel.Width",
             "TextLabel.Visibility");
 
-        Assert.AreEqual(PrimaryCommandTemplateWidth, button.Width);
-        Assert.AreEqual(PrimaryCommandHeight, button.Height);
+        Assert.IsTrue(double.IsNaN(button.Width));
+        Assert.IsTrue(double.IsNaN(button.Height));
         Assert.IsTrue(double.IsNaN(contentRoot.Width));
         Assert.AreEqual(PrimaryCommandContentMinWidth, contentRoot.MinWidth);
-        Assert.AreEqual(PrimaryCommandHeight, contentRoot.MinHeight);
+        Assert.AreEqual(0.0, contentRoot.MinHeight);
         Assert.AreEqual(Visibility.Collapsed, textLabel.Visibility);
         Assert.AreEqual("Accept", textLabel.Text);
         Assert.AreEqual(Visibility.Collapsed, overflowTextLabel.Visibility);
@@ -1641,11 +1706,11 @@ public class CommandBarFlyoutApiTests
             "IconAndLabelPanel.Width",
             "TextLabel.Visibility");
 
-        Assert.AreEqual(PrimaryCommandTemplateWidth, button.Width);
-        Assert.AreEqual(PrimaryCommandHeight, button.Height);
+        Assert.IsTrue(double.IsNaN(button.Width));
+        Assert.IsTrue(double.IsNaN(button.Height));
         Assert.IsTrue(double.IsNaN(contentRoot.Width));
         Assert.AreEqual(PrimaryCommandContentMinWidth, contentRoot.MinWidth);
-        Assert.AreEqual(PrimaryCommandHeight, contentRoot.MinHeight);
+        Assert.AreEqual(0.0, contentRoot.MinHeight);
         Assert.AreEqual(Visibility.Collapsed, overflowCheckGlyph.Visibility);
         Assert.AreEqual(Visibility.Collapsed, textLabel.Visibility);
         Assert.AreEqual("Accept", textLabel.Text);

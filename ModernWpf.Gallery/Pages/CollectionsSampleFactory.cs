@@ -1423,7 +1423,7 @@ private void InitializeData()
         {
             return ParseRepeaterTemplate(
                 "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
-                "<Border Width='{Binding MaxLength}' Background='{DynamicResource SystemControlBackgroundChromeMediumBrush}'>" +
+                "<Border Width='{Binding MaxLength}' Background='{DynamicResource SystemControlPageBackgroundChromeLowBrush}'>" +
                 "<Rectangle Width='{Binding Length}' Height='24' HorizontalAlignment='Left' Fill='{DynamicResource SystemControlBackgroundAccentBrush}'/>" +
                 "</Border>" +
                 "</DataTemplate>");
@@ -1433,7 +1433,7 @@ private void InitializeData()
         {
             return ParseRepeaterTemplate(
                 "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
-                "<Border Height='{Binding MaxHeight}' Background='{DynamicResource SystemControlBackgroundChromeMediumBrush}'>" +
+                "<Border Height='{Binding MaxHeight}' Background='{DynamicResource SystemControlPageBackgroundChromeLowBrush}'>" +
                 "<Rectangle Width='48' Height='{Binding Height}' VerticalAlignment='Top' Fill='{DynamicResource SystemControlBackgroundAccentBrush}'/>" +
                 "</Border>" +
                 "</DataTemplate>");
@@ -1444,7 +1444,7 @@ private void InitializeData()
             return ParseRepeaterTemplate(
                 "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
                 "<Grid>" +
-                "<Ellipse Width='{Binding MaxDiameter}' Height='{Binding MaxDiameter}' HorizontalAlignment='Center' VerticalAlignment='Center' Fill='{DynamicResource SystemControlBackgroundChromeMediumBrush}'/>" +
+                "<Ellipse Width='{Binding MaxDiameter}' Height='{Binding MaxDiameter}' HorizontalAlignment='Center' VerticalAlignment='Center' Fill='{DynamicResource SystemControlPageBackgroundChromeLowBrush}'/>" +
                 "<Ellipse Width='{Binding Diameter}' Height='{Binding Diameter}' HorizontalAlignment='Center' VerticalAlignment='Center' Fill='{DynamicResource SystemControlBackgroundAccentBrush}'/>" +
                 "</Grid>" +
                 "</DataTemplate>");

@@ -16,8 +16,6 @@
 
     <Thickness x:Key="CommandBarFlyoutAppBarButtonInnerBorderMargin">2</Thickness>
     <Thickness x:Key="CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin">2,2,6,2</Thickness>
-    <sys:Double x:Key="CommandBarFlyoutPrimaryAppBarButtonWidth">60</sys:Double>
-    <sys:Double x:Key="CommandBarFlyoutPrimaryAppBarButtonHeight">55</sys:Double>
     <sys:Double x:Key="CommandBarFlyoutPrimaryLabelPanelWidth">60</sys:Double>
 
     <Style x:Key="CommandBarFlyoutAppBarButtonStyleBase" TargetType="local:AppBarButton">
@@ -29,8 +27,7 @@
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="Width" Value="{StaticResource CommandBarFlyoutPrimaryAppBarButtonWidth}" />
-        <Setter Property="Height" Value="{StaticResource CommandBarFlyoutPrimaryAppBarButtonHeight}" />
+        <Setter Property="Width" Value="NaN" />
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin" Value="0,0,0,2" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
@@ -223,8 +220,7 @@
 
                         <Grid
                             x:Name="ContentRoot"
-                            MinWidth="40"
-                            MinHeight="{StaticResource CommandBarFlyoutPrimaryAppBarButtonHeight}">
+                            MinWidth="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -338,8 +334,7 @@
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="Width" Value="{StaticResource CommandBarFlyoutPrimaryAppBarButtonWidth}" />
-        <Setter Property="Height" Value="{StaticResource CommandBarFlyoutPrimaryAppBarButtonHeight}" />
+        <Setter Property="Width" Value="NaN" />
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualMargin" Value="0,0,0,2" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
@@ -570,8 +565,7 @@
 
                         <Grid
                             x:Name="ContentRoot"
-                            MinWidth="40"
-                            MinHeight="{StaticResource CommandBarFlyoutPrimaryAppBarButtonHeight}">
+                            MinWidth="40">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -712,7 +706,6 @@
         <Setter Property="VerticalContentAlignment" Value="Top" />
         <Setter Property="DefaultLabelPosition" Value="Bottom" />
         <Setter Property="MaxWidth" Value="440" />
-        <Setter Property="Height" Value="{StaticResource CommandBarFlyoutPrimaryAppBarButtonHeight}" />
         <Setter Property="IsDynamicOverflowEnabled" Value="False" />
         <Setter Property="CommandBarOverflowPresenterStyle" Value="{StaticResource CommandBarFlyoutCommandBarOverflowPresenterStyle}" />
         <Setter Property="OverflowPresenterStyle" Value="{StaticResource CommandBarFlyoutCommandBarOverflowPresenterStyle}" />
@@ -1004,6 +997,15 @@
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="PrimaryLabelStates">
+                                <VisualState x:Name="NoPrimaryLabels" />
+                                <ui:VisualStateEx x:Name="HasPrimaryLabels">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryItemsPanel.MinHeight" Value="52" />
+                                        <ui:VisualStateSetter Target="PrimaryItemsPanel.Height" Value="NaN" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Border
                             x:Name="OuterContentRoot"
@@ -1059,8 +1061,8 @@
                                         </Grid.ColumnDefinitions>
                                         <StackPanel
                                             x:Name="PrimaryItemsPanel"
-                                            Height="{StaticResource CommandBarFlyoutPrimaryAppBarButtonHeight}"
-                                            Margin="3,2,0,3"
+                                            Height="40"
+                                            Margin="3,3,0,3"
                                             Grid.Column="0"
                                             Orientation="Horizontal"
                                             HorizontalAlignment="Left"

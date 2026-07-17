@@ -37,7 +37,9 @@ namespace ModernWpf.Automation.Peers
 
         protected override string GetLocalizedControlTypeCore()
         {
-            return "app bar button";
+            return AppBarElementProperties.GetIsInCommandBarFlyout(GetImpl())
+                ? "menu item"
+                : "app bar button";
         }
 
         protected override string GetAcceleratorKeyCore()
@@ -49,7 +51,9 @@ namespace ModernWpf.Automation.Peers
 
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
-            return AutomationControlType.Button;
+            return AppBarElementProperties.GetIsInCommandBarFlyout(GetImpl())
+                ? AutomationControlType.MenuItem
+                : AutomationControlType.Button;
         }
 
         protected override bool IsKeyboardFocusableCore()

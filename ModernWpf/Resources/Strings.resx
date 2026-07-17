@@ -121,6 +121,10 @@
     <value>See more</value>
     <comment>319-5102</comment>
   </data>
+  <data name="AppBarLessButtonName" xml:space="preserve">
+    <value>Less app bar</value>
+    <comment>Localized accessibility name for an expanded app bar's overflow button.</comment>
+  </data>
   <data name="AppBarMoreButtonName" xml:space="preserve">
     <value>More app bar</value>
     <comment>332-5305</comment>

@@ -34,6 +34,34 @@ public class RepeaterSourceAuditTests
         StringAssert.Contains(auditText, "GlobalSuppressions.cs");
     }
 
+    [TestMethod]
+    public void CurrentFlowLayoutsGuardMissingLayoutStateLikeWinUISource()
+    {
+        var repoRoot = FindRepoRoot();
+        var flowLayout = File.ReadAllText(Path.Combine(
+            repoRoot,
+            "ModernWpf.Controls",
+            "Repeater",
+            "Layouts",
+            "FlowLayout",
+            "FlowLayout.cs"));
+        var uniformGridLayout = File.ReadAllText(Path.Combine(
+            repoRoot,
+            "ModernWpf.Controls",
+            "Repeater",
+            "Layouts",
+            "UniformGridLayout",
+            "UniformGridLayout.cs"));
+        var audit = File.ReadAllText(Path.Combine(repoRoot, "docs", "repeater-winui3-source-audit.md"));
+
+        StringAssert.Contains(flowLayout, "context.LayoutState is FlowLayoutState flowState");
+        StringAssert.Contains(flowLayout, "flowState.FlowAlgorithm.OnItemsSourceChanged(source, args, context);");
+        StringAssert.Contains(uniformGridLayout, "context.LayoutState is UniformGridLayoutState gridState");
+        StringAssert.Contains(uniformGridLayout, "gridState.FlowAlgorithm.OnItemsSourceChanged(source, args, context);");
+        StringAssert.Contains(audit, "3cae15f071f1ab8565f9a7592dbf27f04bafe651");
+        StringAssert.Contains(audit, "ViewportManagerDownLevel");
+    }
+
     private static string FindRepoRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

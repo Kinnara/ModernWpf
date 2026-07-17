@@ -43,6 +43,23 @@ namespace ModernWpf.Controls
 
     internal static partial class AppBarElementProperties
     {
+        internal static readonly DependencyProperty IsInCommandBarFlyoutProperty =
+            DependencyProperty.RegisterAttached(
+                "IsInCommandBarFlyout",
+                typeof(bool),
+                typeof(AppBarElementProperties),
+                new PropertyMetadata(false));
+
+        internal static bool GetIsInCommandBarFlyout(DependencyObject element)
+        {
+            return (bool)element.GetValue(IsInCommandBarFlyoutProperty);
+        }
+
+        internal static void SetIsInCommandBarFlyout(DependencyObject element, bool value)
+        {
+            element.SetValue(IsInCommandBarFlyoutProperty, value);
+        }
+
         static AppBarElementProperties()
         {
             InputGestureTextProperty = KeyboardAcceleratorTextOverrideProperty;

@@ -2851,6 +2851,63 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryVisualChecksCropVisibleItemsRepeaterSourceBarRows()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+            var gallerySource = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "ModernWpf.Gallery",
+                "Pages",
+                "CollectionsSampleFactory.cs"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"ItemsRepeater\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"ItemsRepeater\" { return \"ItemsRepeater source bar rows\" }",
+                "function New-ItemsRepeaterModernPrimaryCrop([string]$caseDir, $window, [string]$screenshot)",
+                "Find-DescendantByAutomationId $window \"GallerySample_ItemsRepeater_ItemsRepeater\"",
+                "$contentInsetX = [Math]::Max(0, [int][Math]::Round(($repeaterBounds.Width - 425) / 2.0))",
+                "X = $repeaterBounds.X + $contentInsetX",
+                "Width = [Math]::Min(425, $repeaterBounds.Width)",
+                "Height = [Math]::Min(88, $repeaterBounds.Height)",
+                "function New-ItemsRepeaterReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement)",
+                "Find-DescendantByAutomationId $sampleElement \"AddBtn\"",
+                "[System.Windows.Automation.ControlType]::Pane",
+                "$candidateBounds.Width -ge 420 -and $candidateBounds.Width -le 440",
+                "ItemsRepeater source bar rows");
+            AssertContainsInOrder(
+                source,
+                "if ($control -eq \"ItemsRepeater\")",
+                "New-ItemsRepeaterModernPrimaryCrop $caseDir $window $screenshot",
+                "elseif ($control -eq \"ItemsRepeater\")",
+                "New-ItemsRepeaterReferencePrimaryCrop $caseDir $window $screenshot $sampleElement");
+            AssertContainsInOrder(
+                source,
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"ItemsRepeater\" { return 1.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"ItemsRepeater\" { return 0 }");
+            Assert.IsFalse(
+                source.Contains("$primaryCrop[\"NonBlank\"] = $true", StringComparison.Ordinal),
+                "ItemsRepeater must use live source-row crops instead of relabeling a clipped VisualBrush artifact as nonblank.");
+            Assert.AreEqual(
+                3,
+                Regex.Matches(gallerySource, "SystemControlPageBackgroundChromeLowBrush", RegexOptions.CultureInvariant).Count,
+                "Horizontal, vertical, and circular ItemsRepeater bar templates must use WinUI SystemChromeLowColor.");
+            Assert.IsFalse(
+                gallerySource.Contains("<Border Width='{Binding MaxLength}' Background='{DynamicResource SystemControlBackgroundChromeMediumBrush}'>", StringComparison.Ordinal) ||
+                gallerySource.Contains("<Border Height='{Binding MaxHeight}' Background='{DynamicResource SystemControlBackgroundChromeMediumBrush}'>", StringComparison.Ordinal) ||
+                gallerySource.Contains("<Ellipse Width='{Binding MaxDiameter}' Height='{Binding MaxDiameter}' HorizontalAlignment='Center' VerticalAlignment='Center' Fill='{DynamicResource SystemControlBackgroundChromeMediumBrush}'/>", StringComparison.Ordinal),
+                "ItemsRepeater bar templates must not substitute the darker medium chrome resource for WinUI SystemChromeLowColor.");
+        }
+
+        [TestMethod]
         public void GalleryVisualChecksRejectWpfOnlyPagesWhenUsingWinUIReference()
         {
             var source = File.ReadAllText(Path.Combine(
@@ -3281,6 +3338,16 @@ namespace ModernWpf.Gallery.Tests
                 "OpenPopupSize = $openPopupSize",
                 "OpenPopupCrop = $openPopupCrop",
                 "CommandBarFlyoutSecondaryExpanded = $commandBarFlyoutSecondaryExpanded");
+            AssertContainsInOrder(
+                source,
+                "function Get-CommandBarFlyoutOpenSurfaceElementEvidence($window, $elements = $null)",
+                "Name = [string]$element.Current.Name",
+                "ControlType = [string]$element.Current.ControlType.ProgrammaticName",
+                "function Save-CommandBarFlyoutOpenSurfaceScreenCrop($window, [string]$path)",
+                "$elements = @(Get-CommandBarFlyoutOpenSurfaceElements $window)",
+                "$bounds = Get-CommandBarFlyoutOpenSurfaceScreenBounds $window $elements",
+                "RawElementBounds = $bounds",
+                "Elements = $elementEvidence");
             Assert.IsFalse(
                 source.Contains("$referencePopupCropNonBlank", StringComparison.Ordinal),
                 "Popup-required open checks must not pass from a generic reference crop.");
@@ -3669,6 +3736,29 @@ namespace ModernWpf.Gallery.Tests
                 "AlignmentY = $best.OffsetY",
                 "$modern[\"InteractionCropReferenceComparison\"] = if ($control -eq \"GridView\")",
                 "Compare-ImagesOnCommonCanvas $modern.Interaction.Crop.Screenshot $referenceCapture.Interaction.Crop.Screenshot");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceCommandBarFlyoutPixelParityThreshold()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresReferenceInteractionCropParity([string]$control)",
+                "\"CommandBarFlyout\" { return $true }",
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"CommandBarFlyout\" { return 6.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"CommandBarFlyout\" { return 2 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"CommandBarFlyout\" { return 9.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"CommandBarFlyout\" { return 0 }");
         }
 
         [TestMethod]

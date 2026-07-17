@@ -949,6 +949,7 @@ function Test-ControlRequiresPrimaryCrop([string]$control) {
     switch ($control) {
         "ColorPicker" { return $true }
         "InfoBadge" { return $true }
+        "ItemsRepeater" { return $true }
         "PersonPicture" { return $true }
         "SplitView" { return $true }
         "ThemeShadow" { return $true }
@@ -959,6 +960,7 @@ function Test-ControlRequiresPrimaryCrop([string]$control) {
 function Get-RequiredReferencePrimaryCropSource([string]$control) {
     switch ($control) {
         "InfoBadge" { return "InfoBadge value badge" }
+        "ItemsRepeater" { return "ItemsRepeater source bar rows" }
         "SplitView" { return "SplitView pane and content" }
         default { return "" }
     }
@@ -2394,6 +2396,101 @@ function New-AnnotatedScrollBarReferencePrimaryCrop([string]$caseDir, $window, [
     return $null
 }
 
+function New-ItemsRepeaterModernPrimaryCrop([string]$caseDir, $window, [string]$screenshot) {
+    $repeater = Find-DescendantByAutomationId $window "GallerySample_ItemsRepeater_ItemsRepeater"
+    $repeaterBounds = Get-ElementWindowBounds $window $repeater
+    if ($null -eq $repeaterBounds -or !$repeaterBounds.Found) {
+        return $null
+    }
+
+    # The current Gallery sample contains three 425x24 HorizontalBarTemplate
+    # rows separated by the StackLayout's two 8px gaps. Crop that source-owned
+    # visual instead of the WPF VisualBrush artifact, whose parent offset can
+    # clip the right edge and leave a misleading mostly-blank viewbox.
+    $contentInsetX = [Math]::Max(0, [int][Math]::Round(($repeaterBounds.Width - 425) / 2.0))
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the three source ItemsRepeater bar rows from live ModernWpf element bounds."
+        X = $repeaterBounds.X + $contentInsetX
+        Y = $repeaterBounds.Y
+        Width = [Math]::Min(425, $repeaterBounds.Width)
+        Height = [Math]::Min(88, $repeaterBounds.Height)
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "modernwpf-ItemsRepeater-primary-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "ItemsRepeater source bar rows" $savedBounds
+    if ($null -ne $crop -and $crop.VisibleStdDev -ge (Get-PrimaryCropMinimumVisibleStdDev "ItemsRepeater")) {
+        $crop["NonBlank"] = $true
+        return $crop
+    }
+
+    return $null
+}
+
+function New-ItemsRepeaterReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
+    if ($null -eq $sampleElement) {
+        return $null
+    }
+
+    $addButton = Find-DescendantByAutomationId $sampleElement "AddBtn"
+    $addButtonBounds = Get-ElementWindowBounds $window $addButton
+    if ($null -eq $addButtonBounds -or !$addButtonBounds.Found) {
+        return $null
+    }
+
+    $paneCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        [System.Windows.Automation.ControlType]::Pane)
+    $panes = $sampleElement.FindAll([System.Windows.Automation.TreeScope]::Descendants, $paneCondition)
+    $barHostBounds = $null
+    foreach ($pane in $panes) {
+        try {
+            if (![string]::IsNullOrEmpty([string]$pane.Current.AutomationId)) {
+                continue
+            }
+
+            $candidateBounds = Get-ElementWindowBounds $window $pane
+            if ($null -ne $candidateBounds -and $candidateBounds.Found -and
+                $candidateBounds.Width -ge 420 -and $candidateBounds.Width -le 440 -and
+                $candidateBounds.Height -ge 88 -and
+                $candidateBounds.X -lt $addButtonBounds.X -and
+                $candidateBounds.Y -le $addButtonBounds.Y -and
+                ($candidateBounds.Y + $candidateBounds.Height) -gt $addButtonBounds.Y) {
+                $barHostBounds = $candidateBounds
+                break
+            }
+        }
+        catch {
+        }
+    }
+
+    if ($null -eq $barHostBounds) {
+        return $null
+    }
+
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the three source ItemsRepeater bar rows from the first WinUI ControlExample pane."
+        X = $barHostBounds.X
+        Y = $barHostBounds.Y
+        Width = [Math]::Min(425, $barHostBounds.Width)
+        Height = 88
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "winui3-ItemsRepeater-primary-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "ItemsRepeater source bar rows" $savedBounds
+    if ($null -ne $crop -and $crop.VisibleStdDev -ge (Get-PrimaryCropMinimumVisibleStdDev "ItemsRepeater")) {
+        $crop["NonBlank"] = $true
+        return $crop
+    }
+
+    return $null
+}
+
 function New-IconElementReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot) {
     $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
     $modernIconArtifact = Join-Path $modernArtifactDir "GallerySample_IconElement_SlicesIcon.png"
@@ -2881,8 +2978,11 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             }
         }
 
-        if ($control -eq "ItemsRepeater" -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank -and $primaryCrop.VisibleStdDev -ge (Get-PrimaryCropMinimumVisibleStdDev $control)) {
-            $primaryCrop["NonBlank"] = $true
+        if ($control -eq "ItemsRepeater") {
+            $itemsRepeaterPrimary = New-ItemsRepeaterModernPrimaryCrop $caseDir $window $screenshot
+            if ($null -ne $itemsRepeaterPrimary -and $itemsRepeaterPrimary.NonBlank) {
+                $primaryCrop = $itemsRepeaterPrimary
+            }
         }
 
         if ($control -eq "BreadcrumbBar") {
@@ -3027,6 +3127,12 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             $primaryResult = $personPicturePrimary
         }
     }
+    elseif ($control -eq "ItemsRepeater") {
+        $itemsRepeaterPrimary = New-ItemsRepeaterReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
+        if ($null -ne $itemsRepeaterPrimary) {
+            $primaryResult = $itemsRepeaterPrimary
+        }
+    }
     elseif ($control -eq "InfoBadge") {
         $infoBadgePrimary = New-InfoBadgeReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
         if ($null -ne $infoBadgePrimary) {
@@ -3136,6 +3242,32 @@ function Get-CommandBarFlyoutOpenSurfaceElements($window) {
     return $elements.ToArray()
 }
 
+function Get-CommandBarFlyoutOpenSurfaceElementEvidence($window, $elements = $null) {
+    $evidence = New-Object System.Collections.Generic.List[object]
+    if ($null -eq $elements) {
+        $elements = @(Get-CommandBarFlyoutOpenSurfaceElements $window)
+    }
+
+    foreach ($element in @($elements)) {
+        try {
+            $rect = $element.Current.BoundingRectangle
+            $evidence.Add([ordered]@{
+                Name = [string]$element.Current.Name
+                AutomationId = [string]$element.Current.AutomationId
+                ControlType = [string]$element.Current.ControlType.ProgrammaticName
+                X = [Math]::Round($rect.X, 2)
+                Y = [Math]::Round($rect.Y, 2)
+                Width = [Math]::Round($rect.Width, 2)
+                Height = [Math]::Round($rect.Height, 2)
+            })
+        }
+        catch {
+        }
+    }
+
+    return $evidence.ToArray()
+}
+
 function Get-CommandBarFlyoutOpenSurfaceBounds($window) {
     $bounds = $null
     foreach ($element in @(Get-CommandBarFlyoutOpenSurfaceElements $window)) {
@@ -3148,9 +3280,13 @@ function Get-CommandBarFlyoutOpenSurfaceBounds($window) {
     return $bounds
 }
 
-function Get-CommandBarFlyoutOpenSurfaceScreenBounds($window) {
+function Get-CommandBarFlyoutOpenSurfaceScreenBounds($window, $elements = $null) {
     $bounds = $null
-    foreach ($element in @(Get-CommandBarFlyoutOpenSurfaceElements $window)) {
+    if ($null -eq $elements) {
+        $elements = @(Get-CommandBarFlyoutOpenSurfaceElements $window)
+    }
+
+    foreach ($element in @($elements)) {
         $elementBounds = Get-ElementScreenBounds $element 0
         if ($null -ne $elementBounds -and $elementBounds.Found) {
             $bounds = Merge-WindowBounds $bounds $elementBounds
@@ -3326,7 +3462,9 @@ function Save-CommandBarFlyoutOpenSurfaceWindowCompositeCrop($window, $bounds, [
 }
 
 function Save-CommandBarFlyoutOpenSurfaceScreenCrop($window, [string]$path) {
-    $bounds = Get-CommandBarFlyoutOpenSurfaceScreenBounds $window
+    $elements = @(Get-CommandBarFlyoutOpenSurfaceElements $window)
+    $bounds = Get-CommandBarFlyoutOpenSurfaceScreenBounds $window $elements
+    $elementEvidence = @(Get-CommandBarFlyoutOpenSurfaceElementEvidence $window $elements)
     if ($null -eq $bounds -or !$bounds.Found) {
         return [ordered]@{
             Found = $false
@@ -3382,6 +3520,8 @@ function Save-CommandBarFlyoutOpenSurfaceScreenCrop($window, [string]$path) {
         NonBlank = Test-ImageNotBlank $path
         VisibleStdDev = Get-ImageVisibleStdDev $path
         CaptureMethod = "ScreenBounds"
+        RawElementBounds = $bounds
+        Elements = $elementEvidence
     }
 
     if (Test-ScreenElementPopupCropHasContent $result) {
@@ -3956,11 +4096,13 @@ function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control) {
         "AnnotatedScrollBar" { return 1.5 }
         "AutoSuggestBox" { return 0.1 }
         "BreadcrumbBar" { return 3.0 }
+        "CommandBarFlyout" { return 6.0 }
         "DropDownButton" { return 4.0 }
         "GridView" { return 2.0 }
         "InfoBadge" { return 5.0 }
         "InfoBar" { return 2.0 }
         "IconElement" { return 0.1 }
+        "ItemsRepeater" { return 1.0 }
         "NumberBox" { return 2.5 }
         "PersonPicture" { return 0.5 }
         "ProgressRing" { return 1.0 }
@@ -3978,7 +4120,9 @@ function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control) {
 
 function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control) {
     switch ($control) {
+        "CommandBarFlyout" { return 2 }
         "GridView" { return 0 }
+        "ItemsRepeater" { return 0 }
         default { return 24 }
     }
 }
@@ -3986,7 +4130,7 @@ function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control) {
 function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control) {
     switch ($control) {
         "ColorPicker" { return 4.0 }
-        "CommandBarFlyout" { return 12.0 }
+        "CommandBarFlyout" { return 9.0 }
         "GridView" { return 8.0 }
         default { return 24.0 }
     }
@@ -3995,7 +4139,7 @@ function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control) {
 function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control) {
     switch ($control) {
         "ColorPicker" { return 0 }
-        "CommandBarFlyout" { return 8 }
+        "CommandBarFlyout" { return 0 }
         "GridView" { return 4 }
         default { return 24 }
     }

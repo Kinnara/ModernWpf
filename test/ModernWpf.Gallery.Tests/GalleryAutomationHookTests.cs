@@ -1580,6 +1580,12 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(3, CountItems(repeater.ItemsSource));
                     Assert.IsInstanceOfType(repeater.Layout, typeof(Mux.StackLayout));
                     Assert.AreEqual(Orientation.Vertical, ((Mux.StackLayout)repeater.Layout).Orientation);
+                    var firstBar = repeater.TryGetElement(0) as Border ??
+                        FindDescendants<Border>(repeater.TryGetElement(0)).First(border => border.Background != null);
+                    var expectedLowChrome = (SolidColorBrush)Application.Current.TryFindResource("SystemControlPageBackgroundChromeLowBrush");
+                    Assert.IsNotNull(firstBar);
+                    Assert.IsNotNull(expectedLowChrome);
+                    Assert.AreEqual(expectedLowChrome.Color, ((SolidColorBrush)firstBar.Background).Color);
 
                     addButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent, addButton));
                     Assert.AreEqual(4, CountItems(repeater.ItemsSource));

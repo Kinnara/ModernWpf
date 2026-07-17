@@ -2142,3 +2142,58 @@ could not visibly change even though UIA exposed `You clicked Item 1.`.
   `GalleryVisualChecksClicksCommonSelectionInteractionControls`, and
   `GalleryVisualChecksEnforceGridViewPixelParityThreshold` pass 3/3 on both
   net8 and net10.
+
+## 2026-07-17 CommandBarFlyout Current-Source Interaction Parity
+
+The previous CommandBarFlyout proof showed that secondary commands opened, but
+its interaction crop and UIA evidence did not prove current WinUI surface
+geometry or accessibility roles. The refreshed audit uses official
+`winui3/main` commit `3cae15f071f1ab8565f9a7592dbf27f04bafe651`
+and installed WinUI Gallery `2.9.3.0` / Windows App Runtime `2.2.3.0.0`.
+
+- Root-window and sample-element theme probes now reject a WinUI reference
+  capture when the requested Light/Dark theme was not actually applied.
+- CommandBarFlyout bounds and element evidence are captured from one atomic
+  UIA enumeration so transient popup elements cannot change between geometry
+  and accessibility reads.
+- The report records each open command's name, control type, and bounds plus
+  the raw union. Both ModernWpf and WinUI expose Share, Save, Delete, Resize,
+  and Move as MenuItem elements and expose the expanded ellipsis as
+  `Less app bar`, MoreButton.
+- Current source-sized templates and the WPF popup-HWND anchor correction
+  produce an exact `217x124` raw UIA command union and exact `229x136`
+  shadow-inclusive interaction crop in both applications.
+- Light evidence is
+  `artifacts/visual-checks/20260717-214308-498-41228/report.md`: static primary
+  delta `4.99`, interaction delta `7.05`.
+- Dark evidence is
+  `artifacts/visual-checks/20260717-214353-622-95916/report.md`: static primary
+  delta `4.99`, interaction delta `8.18`.
+- The harness now requires CommandBarFlyout reference interaction parity and
+  enforces static delta `<=6.0`, static crop-size delta `<=2`, interaction
+  delta `<=9.0`, and exact interaction crop-size parity.
+
+## 2026-07-17 ItemsRepeater Source-Bar Proof
+
+The broader ungated-control inventory found that ItemsRepeater's saved primary
+artifact was visibly populated but classified as blank. Its WPF VisualBrush
+viewbox included a six-pixel centered-parent offset, clipped the right edge,
+and had no matching WinUI primary crop, so the older pass could not prove pixel
+parity.
+
+- The harness now crops the current sample's three 425x24 bar rows and two 8px
+  StackLayout gaps from live element bounds in both applications.
+- WinUI's first anonymous ControlExample pane is selected structurally beside
+  `AddBtn`; the crop source is required, so whole-sample fallback cannot pass.
+- The ModernWpf crop removes the six-pixel centering inset from the repeater's
+  437px max-width surface.
+- The Gallery sample now uses the source Low chrome resource for horizontal,
+  vertical, and circular bar templates. This changes Light bar backgrounds
+  from the stale `#E6E6E6` medium value to source `#F2F2F2`.
+- Add/remove and vertical/horizontal/uniform layout behavior remains covered by
+  `ItemsRepeaterSampleMatchesWinUIGalleryExamples`; Repeater product tests cover
+  realization, layout, recycle, selection, scrolling, and lifecycle behavior.
+- Final strict Light
+  `artifacts/visual-checks/20260717-220356-944-25124/report.md` passes at `0.53`;
+  Dark `artifacts/visual-checks/20260717-220423-221-77876/report.md` passes at
+  `0.42`. Both use exact `425x88` crops under a `1.0` exact-size gate.

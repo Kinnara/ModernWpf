@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using ModernWpf.Automation.Peers;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -150,6 +151,7 @@ namespace ModernWpf.Controls.Primitives
         private void OnIsOpenChanged(bool isOpen)
         {
             UpdateOverflowPopupVisibility(isOpen, allowOpen: IsLoaded || !isOpen);
+            UpdateMoreButtonAutomationName();
 
             if (isOpen)
             {
@@ -249,6 +251,7 @@ namespace ModernWpf.Controls.Primitives
             if (m_moreButton != null)
             {
                 m_moreButton.SetBinding(System.Windows.Controls.Border.CornerRadiusProperty, new Binding(nameof(CornerRadius)) { Source = this, Mode = BindingMode.OneWay });
+                UpdateMoreButtonAutomationName();
 
                 if (m_moreButton is ToggleButton moreToggleButton)
                 {
@@ -283,6 +286,11 @@ namespace ModernWpf.Controls.Primitives
             }
 
             base.OnIsKeyboardFocusWithinChanged(e);
+        }
+
+        protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
+        {
+            return new CommandBarFlyoutCommandBarAutomationPeer(this);
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -416,6 +424,7 @@ namespace ModernWpf.Controls.Primitives
                 if (child is DependencyObject dependencyObject)
                 {
                     AppBarElementProperties.SetIsInOverflow(dependencyObject, false);
+                    AppBarElementProperties.SetIsInCommandBarFlyout(dependencyObject, false);
                     dependencyObject.ClearValue(AppBarElementProperties.DefaultLabelPositionProperty);
                 }
             }
@@ -436,7 +445,18 @@ namespace ModernWpf.Controls.Primitives
                 {
                     panel.Children.Add(element);
                     AppBarElementProperties.SetIsInOverflow(element, isInOverflow);
+                    AppBarElementProperties.SetIsInCommandBarFlyout(element, true);
                 }
+            }
+        }
+
+        private void UpdateMoreButtonAutomationName()
+        {
+            if (m_moreButton != null)
+            {
+                AutomationProperties.SetName(
+                    m_moreButton,
+                    IsOpen ? Strings.AppBarLessButtonName : Strings.AppBarMoreButtonName);
             }
         }
 
@@ -976,8 +996,11 @@ namespace ModernWpf.Controls.Primitives
                 return;
             }
 
-            m_overflowPopup.HorizontalOffset = 0;
-            m_overflowPopup.VerticalOffset = 0;
+            // WPF's separate popup HWND includes a two-pixel non-client placement inset
+            // that WinUI's in-root popup does not. Compensate so the primary and overflow
+            // surfaces share the same edge and join at the same screen coordinate.
+            m_overflowPopup.HorizontalOffset = 2;
+            m_overflowPopup.VerticalOffset = IsOverflowPopupOpenDown() ? -2 : 2;
         }
 
         private void UpdateOverflowJoinSeparatorVisibility(bool shouldExpandUp, bool hasPrimaryCommands)
