@@ -4,6 +4,7 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -298,6 +299,7 @@ public class NumberBoxApiTests
             AssertStyleSetter(spinButtonStyle, Control.PaddingProperty, new Thickness(0));
             AssertStyleSetter(spinButtonStyle, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Stretch);
             AssertDynamicResourceSetter(spinButtonStyle, Control.BorderThicknessProperty, "NumberBoxSpinButtonBorderThickness");
+            AssertDynamicResourceSetter(spinButtonStyle, Control.ForegroundProperty, "TextControlButtonForeground");
             AssertStyleSetter(spinButtonStyle, Control.FontSizeProperty, 12.0);
             AssertDynamicResourceSetter(spinButtonStyle, Control.FontFamilyProperty, "SymbolThemeFontFamily");
 
@@ -313,11 +315,22 @@ public class NumberBoxApiTests
             AssertStyleSetter(popupSpinButtonStyle, Control.PaddingProperty, new Thickness(0));
             AssertDynamicResourceSetter(popupSpinButtonStyle, Control.BackgroundProperty, "NumberBoxPopupSpinButtonBackground");
             AssertDynamicResourceSetter(popupSpinButtonStyle, Control.BorderThicknessProperty, "NumberBoxPopupSpinButtonBorderThickness");
+            AssertDynamicResourceSetter(popupSpinButtonStyle, Control.ForegroundProperty, "TextControlButtonForeground");
             AssertStyleSetter(popupSpinButtonStyle, Control.FontSizeProperty, 16.0);
             AssertDynamicResourceSetter(popupSpinButtonStyle, Control.FontFamilyProperty, "SymbolThemeFontFamily");
             AssertDynamicResourceSetter(popupSpinButtonStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
             AssertBrushEquals((Brush)popupUpButton.TryFindResource("NumberBoxPopupSpinButtonBackground"), popupUpButton.Background);
             AssertBrushEquals((Brush)popupDownButton.TryFindResource("NumberBoxPopupSpinButtonBackground"), popupDownButton.Background);
+
+            numberBox.Foreground = Brushes.White;
+            host.UpdateLayout();
+
+            var darkSecondaryForeground = new SolidColorBrush(Color.FromArgb(0xC5, 0xFF, 0xFF, 0xFF));
+            AssertBrushEquals(darkSecondaryForeground, upButton.Foreground);
+            AssertBrushEquals(darkSecondaryForeground, downButton.Foreground);
+            AssertBrushEquals(Brushes.White, TextElement.GetForeground(popupRoot));
+            AssertBrushEquals(darkSecondaryForeground, popupUpButton.Foreground);
+            AssertBrushEquals(darkSecondaryForeground, popupDownButton.Foreground);
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {

@@ -435,7 +435,10 @@ namespace ModernWpf.Gallery.Testing
         {
             var automationId = AutomationProperties.GetAutomationId(element);
             if (string.Equals(automationId, "GallerySample_NavigationView_NavigationView", StringComparison.Ordinal) ||
+                string.Equals(automationId, "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar", StringComparison.Ordinal) ||
                 string.Equals(automationId, "GallerySample_GridView_BasicGridView", StringComparison.Ordinal) ||
+                string.Equals(automationId, "GallerySample_IconElement_SlicesIcon", StringComparison.Ordinal) ||
+                string.Equals(automationId, "GallerySample_ProgressRing_DeterminateProgressRing", StringComparison.Ordinal) ||
                 string.Equals(automationId, "GallerySample_CommandBarFlyout_ShowButton", StringComparison.Ordinal))
             {
                 return GetParentOffsetViewbox(element, width, height);
@@ -450,9 +453,9 @@ namespace ModernWpf.Gallery.Testing
             if (parent != null)
             {
                 var offset = element.TransformToAncestor(parent).Transform(new Point());
-                if (offset.Y > 0)
+                if (offset.X > 0 || offset.Y > 0)
                 {
-                    return new Rect(0, offset.Y, width, height);
+                    return new Rect(offset.X, offset.Y, width, height);
                 }
             }
 

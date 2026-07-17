@@ -13,7 +13,8 @@
         <ResourceDictionary Source="Styles/RatingControl.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <m:StaticResource x:Key="ContentControlThemeFontFamily" ResourceKey="{x:Static SystemFonts.MessageFontFamilyKey}" />
+    <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI Variable Text, Segoe UI</FontFamily>
+    <FontFamily x:Key="CaptionControlThemeFontFamily">Segoe UI Variable Small, Segoe UI</FontFamily>
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
     <CornerRadius x:Key="PopupCornerRadius">8,8,8,8</CornerRadius>
     <sys:Double x:Key="ControlContentThemeFontSize">14</sys:Double>

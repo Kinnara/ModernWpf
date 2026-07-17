@@ -53,6 +53,64 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void GridExElevationBorderMatchesWinUIEndpointsAt96Dpi()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var lightBorder = new LinearGradientBrush
+            {
+                MappingMode = BrushMappingMode.Absolute,
+                StartPoint = new Point(0, 0),
+                EndPoint = new Point(0, 3),
+                RelativeTransform = new ScaleTransform(1, -1, 0, 0.5)
+            };
+            lightBorder.GradientStops.Add(new GradientStop(Color.FromArgb(0x29, 0, 0, 0), 0.33));
+            lightBorder.GradientStops.Add(new GradientStop(Color.FromArgb(0x0F, 0, 0, 0), 1));
+
+            var chrome = new ModernGridEx
+            {
+                Width = 78,
+                Height = 32,
+                Background = new SolidColorBrush(Color.FromRgb(251, 251, 251)),
+                BackgroundSizing = BackgroundSizing.InnerBorderEdge,
+                BorderBrush = lightBorder,
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(4)
+            };
+            var root = new Grid
+            {
+                Width = 78,
+                Height = 32,
+                Background = new SolidColorBrush(Color.FromRgb(243, 243, 243))
+            };
+            root.Children.Add(chrome);
+
+            ArrangeElement(root, 78, 32);
+            Assert.AreEqual(
+                Color.FromRgb(204, 204, 204),
+                RenderCurrentElementPixel(root, 10, 31, 78, 32));
+
+            var darkBorder = new LinearGradientBrush
+            {
+                MappingMode = BrushMappingMode.Absolute,
+                StartPoint = new Point(0, 0),
+                EndPoint = new Point(0, 3)
+            };
+            darkBorder.GradientStops.Add(new GradientStop(Color.FromArgb(0x18, 255, 255, 255), 0.33));
+            darkBorder.GradientStops.Add(new GradientStop(Color.FromArgb(0x12, 255, 255, 255), 1));
+
+            root.Background = new SolidColorBrush(Color.FromRgb(32, 32, 32));
+            chrome.Background = new SolidColorBrush(Color.FromRgb(45, 45, 45));
+            chrome.BorderBrush = darkBorder;
+            ArrangeElement(root, 78, 32);
+
+            Assert.AreEqual(
+                Color.FromRgb(48, 48, 48),
+                RenderCurrentElementPixel(root, 10, 31, 78, 32));
+        });
+    }
+
+    [TestMethod]
     public void ThemeShadowChromeUsesDepthDrivenSoftwareRenderer()
     {
         WpfTestHost.Run(() =>
@@ -3220,6 +3278,37 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ContentPresenterExUsesWinUITextBlockLayoutRounding()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var presenter = new ContentPresenterEx
+            {
+                Content = "Documents",
+                FontFamily = new FontFamily("Segoe UI Variable Text, Segoe UI"),
+                FontSize = 14,
+                UseLayoutRounding = true
+            };
+
+            using var host = new TestWindowHost(presenter, width: 160, height: 50);
+
+            var textBlock = FindVisualChild<TextBlock>(presenter)
+                ?? throw new AssertFailedException("Expected ContentPresenterEx to generate a default TextBlock.");
+            var dpi = VisualTreeHelper.GetDpi(presenter);
+
+            Assert.IsFalse(textBlock.UseLayoutRounding);
+            Assert.AreEqual(
+                Math.Ceiling(textBlock.DesiredSize.Width * dpi.DpiScaleX) / dpi.DpiScaleX,
+                presenter.DesiredSize.Width,
+                0.001);
+            Assert.AreEqual(
+                Math.Ceiling(textBlock.DesiredSize.Height * dpi.DpiScaleY) / dpi.DpiScaleY,
+                presenter.DesiredSize.Height,
+                0.001);
+        });
+    }
+
+    [TestMethod]
     public void ContentPresenterExHitTestUsesRoundedChromeClip()
     {
         WpfTestHost.Run(() =>
@@ -3231,6 +3320,27 @@ public class LayoutCompatibilityApiTests
                 Background = Brushes.Red,
                 CornerRadius = new CornerRadius(12, 0, 0, 0)
             });
+        });
+    }
+
+    [TestMethod]
+    public void ContentPresenterExZeroAlphaChromeDoesNotAlterBackdrop()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var backdropColor = Color.FromRgb(0xF3, 0xF3, 0xF3);
+            var root = new Grid
+            {
+                Width = 30,
+                Height = 30,
+                Background = new SolidColorBrush(backdropColor)
+            };
+            root.Children.Add(new ContentPresenterEx
+            {
+                Background = new SolidColorBrush(Color.FromArgb(0, 0xFF, 0xFF, 0xFF))
+            });
+
+            Assert.AreEqual(backdropColor, RenderElementPixel(root, 15, 15, 30, 30));
         });
     }
 
@@ -4406,6 +4516,27 @@ public class LayoutCompatibilityApiTests
             grid.Children.Add(CreateRedChildBox());
 
             AssertRoundedChildRenderClip(grid);
+        });
+    }
+
+    [TestMethod]
+    public void GridExFullyRoundedBackgroundClipsCornerPixels()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var grid = new ModernGridEx
+            {
+                Width = 16,
+                Height = 16,
+                Background = Brushes.Blue,
+                CornerRadius = new CornerRadius(8)
+            };
+
+            var corner = RenderElementPixel(grid, 0, 0, 16, 16);
+            var center = RenderElementPixel(grid, 8, 8, 16, 16);
+
+            Assert.IsTrue(corner.A < 30, $"Expected a transparent pixel outside the circular GridEx background. Pixel={corner}");
+            Assert.IsTrue(center.B > 200 && center.A > 200, $"Expected the center of the circular GridEx background to be filled. Pixel={center}");
         });
     }
 

@@ -120,6 +120,7 @@ public class PersonPictureApiTests
 
             var initialsTextBlock = FindNamedDescendant<TextBlock>(personPicture, "InitialsTextBlock");
             var symbolFontFamily = (FontFamily)personPicture.FindResource("SymbolThemeFontFamily");
+            var contentFontFamily = (FontFamily)personPicture.FindResource("ContentControlThemeFontFamily");
 
             personPicture.IsGroup = true;
             host.UpdateLayout();
@@ -129,7 +130,7 @@ public class PersonPictureApiTests
             personPicture.IsGroup = false;
             personPicture.Initials = "JS";
             host.UpdateLayout();
-            Assert.AreEqual("Segoe UI", initialsTextBlock.FontFamily.Source);
+            Assert.AreEqual(contentFontFamily.Source, initialsTextBlock.FontFamily.Source);
             Assert.AreEqual("JS", initialsTextBlock.Text);
 
             personPicture.Initials = string.Empty;

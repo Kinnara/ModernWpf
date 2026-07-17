@@ -1,6 +1,6 @@
 # ToggleSwitch WinUI 3 Source Audit
 
-Date: 2026-05-17
+Date: 2026-07-17
 
 This audit treats the local WinUI 3 checkout at `D:\repos\microsoft-ui-xaml`
 as the behavioral source of truth for the ModernWpf `ToggleSwitch` port. The
@@ -50,7 +50,7 @@ the resulting source-backed implementation and the remaining WPF substitutions.
 | `ToggleSwitchKeyProcess` handles source key-down/up sequencing using `OriginalKey`. | Matched with a private WPF `ToggleSwitchKeyProcess` helper; WPF system/IME/dead-char keys normalize back to the exposed original key before processing, and the WinUI flow-direction branches are preserved behind `HandlesKey`. |
 | WinUI native tests for live-tree entry/leave, tap, horizontal drag, horizontal pan, vertical pan no-toggle, keyboard space, directional-key no-toggle, footprint, visual tree, and automation shape. | Covered by focused WPF tests where platform input can be represented; compositor-only behavior is documented as a substitution. |
 | Automation peer class name, localized control type, toggle pattern, clickable point, name construction, default On/Off filtering, and hidden template children. | Matched with WPF automation APIs and source-shaped string extraction. |
-| CommonStyles template dimensions, style setters, state names, knob animations, On/Off content presenters, template-root shape, and WinUI resource keys. | Matched with WPF template equivalents, `VisualStateEx.Setters`, and theme resource aliases; the previous WPF-only `VerticalContentAlignment=Center` setter has been removed. The WinUI root `Grid` chrome bindings are represented by an inert WPF `BorderEx` chrome layer so `Background`, `BorderBrush`, `BorderThickness`, and `CornerRadius` flow from the `ToggleSwitch` like the source template without changing the WPF `Grid` layout used for source-sized drag bounds. The WinUI `SwitchAreaGrid` is a `Grid` / `Panel`, while the WPF substitute is a `Border`; its color animations now target `Border.Background` instead of the old guessed `Panel.Background` path. WinUI's `SwitchKnobOn` `BackgroundSizing=OuterBorderEdge` is represented by a WPF `BorderEx` so the knob chrome behavior is not dropped on a plain `Border`. The WinUI CommonStyles legacy `ToggleSwitchCurtain*`, `ToggleSwitchThumb*`, `ToggleSwitchTrack*`, foreground, header, and outer-border theme brushes are restored for Light, Dark, and HighContrast resource compatibility. |
+| CommonStyles template dimensions, style setters, state names, knob animations, On/Off content presenters, template-root shape, and WinUI resource keys. | Matched with WPF template equivalents, `VisualStateEx.Setters`, and theme resource aliases. WinUI's `Control` default centers `VerticalContentAlignment`, while WPF's dependency-property metadata defaults it to `Top`; the ModernWpf style explicitly sets `Center` as a platform-default substitution so the source `TemplateBinding` produces WinUI's centered On/Off content. The WinUI root `Grid` chrome bindings are represented by an inert WPF `BorderEx` chrome layer so `Background`, `BorderBrush`, `BorderThickness`, and `CornerRadius` flow from the `ToggleSwitch` like the source template without changing the WPF `Grid` layout used for source-sized drag bounds. The WinUI `SwitchAreaGrid` is a `Grid` / `Panel`, while the WPF substitute is a `Border`; its color animations now target `Border.Background` instead of the old guessed `Panel.Background` path. WinUI's `SwitchKnobOn` `BackgroundSizing=OuterBorderEdge` is represented by a WPF `BorderEx` so the knob chrome behavior is not dropped on a plain `Border`. The WinUI CommonStyles legacy `ToggleSwitchCurtain*`, `ToggleSwitchThumb*`, `ToggleSwitchTrack*`, foreground, header, and outer-border theme brushes are restored for Light, Dark, and HighContrast resource compatibility. |
 | CommonStyles `ManipulationMode="System,TranslateX"` routes horizontal pan into switch selection while vertical pan does not toggle. | Matched with a WPF manipulation substitute: `IsManipulationEnabled` defaults on, `ManipulationStarting` requests `TranslateX`, horizontal deltas reuse the WinUI-shaped move/complete path, and vertical-only deltas stay unhandled/non-toggle. |
 
 ## WPF Substitutions
@@ -59,6 +59,7 @@ the resulting source-backed implementation and the remaining WPF substitutions.
 - WinUI `ManipulationMode="System,TranslateX"` is represented by WPF manipulation events plus the existing `Thumb` drag handling; exact OS touch routing through parent scroll viewers remains a platform-level verification gap.
 - WinUI `RepositionThemeAnimation`, compositor behavior, and element sounds have no direct WPF equivalent.
 - WinUI root `Grid` chrome is represented by an inert WPF `BorderEx` layer, and WinUI `SwitchAreaGrid.CornerRadius` is represented by the WPF `Border` used for `SwitchAreaGrid`; related color animations target `Border.Background` in WPF.
+- WinUI and WPF have different `VerticalContentAlignment` metadata defaults. The default style explicitly sets `Center` so the unchanged source `TemplateBinding` centers On/Off content like WinUI instead of using WPF's `Top` default.
 - WPF can freeze unnamed `Freezable` transforms created from templates, so discovered `TranslateTransform` instances are cloned and assigned back to the part before mutation.
 - WinUI `AutomationProperties.AccessibilityView="Raw"` and WinRT automation internals are represented by WPF automation peer child filtering and WPF provider APIs.
 - The WinUI framework `dxaml` generic template remains in the source tree, but packaged WinUI 3 CommonStyles overrides it; ModernWpf targets the packaged CommonStyles template shape.
@@ -72,4 +73,15 @@ dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "
 dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore
 ```
 
-Latest verified result on 2026-05-17: ToggleSwitch API tests passed 53/53.
+Latest verified result on 2026-07-17: ToggleSwitch API tests passed 54/54.
+
+Strict installed WinUI 3 Gallery evidence uses immutable pre-interaction
+artifacts so the resting Off state is compared independently from the On-state
+interaction proof. Exact `72x40` primary crops pass the enforced `1.5` gate:
+
+- Light: `artifacts\visual-checks\20260717-073117-263-46756\report.md`, resting delta `0.92`, On-state interaction crop delta `0.51`.
+- Dark: `artifacts\visual-checks\20260717-073149-240-96860\report.md`, resting delta `1.06`, On-state interaction crop delta `0.48`.
+
+The centered-content substitution reduced the refreshed Light resting delta
+from `10.14` to `0.92`; before the fix WPF placed `Off` at physical rows
+`5..14`, while WinUI placed it at `16..25`. Both now occupy `16..25`.

@@ -298,6 +298,9 @@ public class InfoBadgeApiTests
             var expectedRadius = infoBadge.ActualHeight / 2;
             Assert.IsTrue(expectedRadius > 0);
             Assert.AreEqual(new CornerRadius(expectedRadius), infoBadge.TemplateSettings.InfoBadgeCornerRadius);
+            Assert.AreEqual(
+                infoBadge.TemplateSettings.InfoBadgeCornerRadius,
+                FindNamedDescendant<GridEx>(infoBadge, "RootGrid").CornerRadius);
         });
     }
 
@@ -316,6 +319,9 @@ public class InfoBadgeApiTests
             host.UpdateLayout();
 
             Assert.AreEqual(new CornerRadius(2), infoBadge.TemplateSettings.InfoBadgeCornerRadius);
+            Assert.AreEqual(
+                infoBadge.TemplateSettings.InfoBadgeCornerRadius,
+                FindNamedDescendant<GridEx>(infoBadge, "RootGrid").CornerRadius);
         });
     }
 

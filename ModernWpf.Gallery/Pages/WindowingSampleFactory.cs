@@ -175,8 +175,10 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             var titleBarRoot = new Grid();
             var titleBarBackground = new Border
             {
+                Name = "TitleBarSurface",
                 BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(4)
+                CornerRadius = new CornerRadius(4),
+                Margin = new Thickness(-1)
             };
             titleBarBackground.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
             titleBarBackground.SetResourceReference(Border.BorderBrushProperty, "SurfaceStrokeColorDefaultBrush");
@@ -198,9 +200,9 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             var icon = new Image
             {
                 Name = "TitleBarIcon",
-                Width = 20,
-                Height = 20,
-                Margin = new Thickness(16, 0, 12, 0),
+                Width = 16,
+                Height = 16,
+                Margin = new Thickness(14, 0, 16, 0),
                 VerticalAlignment = VerticalAlignment.Center,
                 Source = CreateBitmap(ResourceUri("Assets/Tiles/GalleryIcon.ico"))
             };

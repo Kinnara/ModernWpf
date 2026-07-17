@@ -2241,17 +2241,26 @@ drift, a visual-harness crop issue, or unclassified native-control limitation.
 
 | Row 8 order | Retained surface | State | Allowed next work |
 | --- | --- | --- | --- |
-| 8.1 | GridView | Refreshed at branch tip. Current evidence is Light `artifacts/visual-checks/20260531-151548-761-78380/report.md` at primary `1.61` and Dark `artifacts/visual-checks/20260531-151737-949-59816/report.md` at primary `1.6`, both with matching `657x412` crops, nonblank ModernWpf/WinUI captures, and required sample elements. | Reopen only on new visual regression evidence. |
+| 8.1 | GridView | Locked in the current pixel-parity round with no product-template change required. The harness now maps WinUI Gallery's `ClickOutput0` instead of falling back to the whole GridView sample, extracts the actual changed click-result pixels, and permits only a bounded one-pixel alignment while separately gating crop metrics. Exact `657x412` static comparisons pass the new `2.0` gate: Light `artifacts/visual-checks/20260717-092950-082-76648/report.md` at `1.61`, Dark `artifacts/visual-checks/20260717-092919-846-50492/report.md` at `1.60`. Both runs invoke `Item 1`, expose `You clicked Item 1.`, and pass the required interaction gate at `6.40` / `6.64` under `8.0`; the `122x18` versus `120x19` crops remain within the strict four-pixel metric gate. Product tests pass 9/9, the Gallery sample/interaction/gate slice passes 3/3 on net8 and net10, and ModernWpf.Controls builds for net462/net8/net10. | Reopen only on new ListView/GridView source, item interaction, accessibility, visual-state, template, theme-resource, or strict visual-regression evidence. |
 | 8.2 | CommandBarFlyout | Refreshed at branch tip. Current evidence is Light `artifacts/visual-checks/20260531-151548-761-78380/report.md` at score `5.09` / primary `4.99` and Dark `artifacts/visual-checks/20260531-151737-949-59816/report.md` at score `5.09` / primary `4.99`, both `454x302` vs `453x302`, nonblank, and with required sample elements. | Reopen only on new visual regression evidence. |
-| 8.3 | BreadcrumbBar | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020444-625-41128/report.md` at primary `11.27` and Dark `artifacts/visual-checks/20260531-020545-936-66416/report.md` at primary `12.93`, both `529x26` vs `530x26`, matching the previously recorded retained one-pixel crop/text-rasterization residual. No ModernWpf exception logs were written. | Reopen only on new visual regression evidence. |
-| 8.4 | AnnotatedScrollBar | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020444-625-41128/report.md` at `18.1` and Dark `artifacts/visual-checks/20260531-020545-936-66416/report.md` at `15.36`, both with matching `790x500` primary crops and no ModernWpf exception logs, down from refreshed Light `76.39` / primary `56.49` and Dark `54.33` / primary `34.43`. | Reopen only on new visual regression evidence. |
-| 8.5 | RatingControl | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020444-625-41128/report.md` at `7.09` and Dark `artifacts/visual-checks/20260531-020545-936-66416/report.md` at `7.94`, both with matching `183x32` primary crops and no ModernWpf exception logs, down from refreshed Light `19.37` and Dark `23.53`. | Reopen only on new visual regression evidence. |
-| 8.6 | IconElement | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020444-625-41128/report.md` at `18.11` and Dark `artifacts/visual-checks/20260531-020545-936-66416/report.md` at `12.24`, both with matching `790x118` primary crops and no ModernWpf exception logs, down from refreshed Light primary `101.45` / Dark primary `22.42` where the reference crop compared the whole `svPanel` (`843x646`). | Reopen only on new visual regression evidence. |
-| 8.7 | TitleBar | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020922-808-3596/report.md` at `6.44` and Dark `artifacts/visual-checks/20260531-021032-594-76136/report.md` at `4.7`, both with matching `470x48` title-bar surface primary crops and no ModernWpf exception logs, down from refreshed `15.27` / `15.85` after the harness stopped comparing `TitleBox` and the WPF preview matched WinUI's content-first title-bar layout. | Reopen only on new visual regression evidence. |
-| 8.8 | DropDownButton | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020922-808-3596/report.md` at `3.66` and Dark `artifacts/visual-checks/20260531-021032-594-76136/report.md` at `2.86`, both with matching `78x32` primary crops and no ModernWpf exception logs, down from refreshed `15.43` / `14.78` after the DropDownButton template kept the chevron inside the button bounds instead of clipping it out of the crop. | Reopen only on new visual regression evidence. |
-| 8.9 | SelectorBar | Refreshed in this round. Current evidence is Light `artifacts/visual-checks/20260531-020922-808-3596/report.md` at `7.07` and Dark `artifacts/visual-checks/20260531-021032-594-76136/report.md` at `7.86`, both with matching `284x48` primary crops and no ModernWpf exception logs, down from refreshed `11.89` / `12.86` with `292x47` vs `284x48` crop drift after the sample-specific item template matched the WinUI reference crop size and spacing. | Reopen only on new visual regression evidence. |
-| 8.10 | InfoBar | Refreshed in this round. Current normal-theme evidence is Light `artifacts/visual-checks/20260531-020922-808-3596/report.md` at score `11.77`, primary `10.97`, `560x103` vs `560x95`, and Dark `artifacts/visual-checks/20260531-021032-594-76136/report.md` at score `12.77`, primary `11.97`, `560x103` vs `560x95`; both passed with visible InfoBar content and no ModernWpf exception logs. Under real OS High Contrast, the rendered primary artifact was blank before the fix (`artifacts/visual-checks/20260530-022340-065-80740/report.md` and `artifacts/visual-checks/20260530-022703-657-13032/report.md`). The template now uses a standard `Border`/`Grid` layout root instead of the offscreen-fragile `GridEx`, the visible state restores `ContentRoot.Visibility`, the default border thickness resolves to `1`, and the artifact smoke test rejects solid-background InfoBar captures. Current HC Light-equivalent evidence is `artifacts/visual-checks/20260530-025058-847-82168/report.md`: passed, score `25.21`, primary `23.11`, `560x103` vs `545x97`, with visible InfoBar content and border. Current HC Dark-equivalent evidence is `artifacts/visual-checks/20260530-025135-368-28776/report.md`: passed, score `25.21`, primary `23.11`, same crop sizes. Residual score is recorded as retained WinUI/native-control and reference-crop geometry drift for this milestone round, not a blank/harness failure. | Reopen only on new InfoBar visual regression evidence. ProgressRing is also recorded below. |
-| 8.11 | ProgressRing | Refreshed at branch tip. Refreshed pre-fix evidence showed the ModernWpf primary crop as a dot/point while WinUI rendered an indeterminate arc: Light `artifacts/visual-checks/20260530-025657-292-66928/report.md` was `8.63` with a ModernWpf PrintWindow failure, and Dark `artifacts/visual-checks/20260530-025754-227-49236/report.md` was `15.84`. The template now uses a WPF-rendered `ProgressRingIndicator` arc instead of the old six-dot storyboard substitute, visual-test artifacts pin the indeterminate arc phase, the harness resets the WinUI `ProgressToggle` before reference capture, ProgressRing primary crops use the rendered sample-root slice instead of the offset-fragile control-only VisualBrush, and rendered primary crops can satisfy the nonblank gate when the window screenshot is blank. The invalid Light refresh at `artifacts/visual-checks/20260531-125102-776-89452/report.md` is superseded because the WinUI reference `ThemeProbe` did not prove Light theme and produced a dark reference crop with a fake `187.72` delta. `Run-GalleryVisualChecks.ps1` now fails/retries unproven WinUI reference theme probes. Current Light evidence is `artifacts/visual-checks/20260531-151548-761-78380/report.md`: passed, score/primary `14.95`, `60x60` vs `60x60`, nonblank, with required sample elements. Current Dark evidence is `artifacts/visual-checks/20260531-151737-949-59816/report.md`: passed, score/primary `14.83`, same crop sizes, nonblank, with required sample elements. Remaining score is recorded as WinUI AnimatedVisual phase/endpoint and WPF geometry rasterization residual, not a dot/blank/control-crop/theme-probe mismatch. | Reopen only on new ProgressRing visual regression evidence. |
+| 8.3 | BreadcrumbBar | Fixed in the current pixel-parity round. `Segoe UI Variable Text` plus WinUI `TextBlock` physical-pixel ceiling semantics produce the exact installed-Gallery width vector and matching `530x26` crops. Strict post-gate evidence is Light `artifacts/visual-checks/20260717-000424-684-57708/report.md` at primary `2.53` and Dark `artifacts/visual-checks/20260717-000406-228-6496/report.md` at primary `2.33`; the remaining delta is glyph antialiasing only, and the harness gate is now `3.0`. | Reopen only on new visual regression evidence. |
+| 8.4 | AnnotatedScrollBar | Fixed in the current pixel-parity round. The source common RepeatButton padding and Fluent symbol glyph now produce matching 30x19 scroll buttons; direct global brush consumption restores the accent thumb and prevents the BasedOn button fill from leaking through WPF's indirect dynamic lookup. The harness compares the actual control rather than the 790x500 sample/options surface. Exact `52x500` crops pass the new `1.5` gate: Light `artifacts/visual-checks/20260717-020544-419-81012/report.md` at `1.20`, Dark `artifacts/visual-checks/20260717-020605-857-62720/report.md` at `1.21`. | Reopen only on new AnnotatedScrollBar source, behavior, accessibility, or strict visual-regression evidence. |
+| 8.5 | RatingControl | Rechecked against current `winui3/main` on 2026-07-17. The 12px caption now uses the WinUI-equivalent Segoe UI Variable Small optical face and a DPI-aware one-physical-pixel WPF metric correction. Exact `183x32` comparisons pass the new strict `7.0` gate: Light `artifacts/visual-checks/20260717-011121-730-29640/report.md` at `6.23`, Dark `artifacts/visual-checks/20260717-011145-649-64488/report.md` at `6.90`. | Reopen only on new visual regression evidence. |
+| 8.6 | IconElement | Fixed in the current pixel-parity round. The official sample paragraph now consumes `BodyTextBlockStyle`, while the strict primary proof compares the actual 50px `SlicesIcon` BitmapIcon instead of 590x118 of unrelated descriptive text. Parent-offset WPF artifact rendering makes the isolated bitmap nonblank. Matching `50x51` crops pass the new `0.1` gate at `0.02` in both themes: Light `artifacts/visual-checks/20260717-012319-346-86980/report.md`, Dark `artifacts/visual-checks/20260717-012349-247-72408/report.md`. | Reopen only on new IconElement source, behavior, accessibility, or strict visual-regression evidence. |
+| 8.7 | TitleBar | Fixed in the current pixel-parity round. The preview now follows current WinUI's hosted zero-inset metrics: 14px leading space, 16x16 icon, 16px icon gap, x=46 constrained content, and x=248 right header. The sample-card stroke is owned outside the control crop like the official Gallery Grid. Exact `470x48` comparisons pass the new strict `1.0` gate: Light `artifacts/visual-checks/20260717-061731-160-44460/report.md` at `0.74`, Dark `artifacts/visual-checks/20260717-061752-652-53268/report.md` at `0.82`, down from `6.44` / `4.70`. | Reopen only on new TitleBar Gallery source, interaction, accessibility, or strict visual-regression evidence. |
+| 8.8 | DropDownButton | Locked in the current pixel-parity round. The source template, 12x12 chevron, flyout/automation behavior, theme aliases, and exact `78x32` control geometry remain aligned. A new 96-DPI renderer regression proves the source elevation brush composites to exact Light `#CCCCCC` and Dark `#303030` bottom endpoints; a live-capture-only alpha correction was rejected because it broke that product rendering. Exact-size installed WinUI Gallery comparisons pass the new strict `4.0` gate: Light `artifacts/visual-checks/20260717-064508-588-80056/report.md` at `3.68`, Dark `artifacts/visual-checks/20260717-064534-981-29992/report.md` at `2.69`. The remaining live delta is display-pipeline text/edge antialiasing, not layout or source-resource drift. | Reopen only on new DropDownButton source, behavior, accessibility, DPI-rendering, or strict visual-regression evidence. |
+| 8.9 | SelectorBar | Fixed in the current pixel-parity round. The source item metrics remain exact while a render-only one-pixel adjustment aligns only WPF's text baseline; icons, measured geometry, focus bounds, selection pill, and hit targets remain source-positioned. Exact `284x48` comparisons pass the new strict `3.0` gate: Light `artifacts/visual-checks/20260717-022122-441-38908/report.md` at `1.99`, Dark `artifacts/visual-checks/20260717-022213-202-80524/report.md` at `2.58`, down from the refreshed `6.96` / `7.68` baseline. | Reopen only on new SelectorBar source, behavior, accessibility, or strict visual-regression evidence. |
+| 8.10 | InfoBar | Fixed in the current pixel-parity round. The generated sample top-aligns the InfoBar like WinUI Gallery's example host; `InfoBarPanel` now consumes current WinUI TextBlock physical-pixel-ceiled desired sizes and applies the source layout-rounding content offset. Strict post-gate evidence is Light `artifacts/visual-checks/20260717-004129-648-15600/report.md` at primary `1.33` and Dark `artifacts/visual-checks/20260717-004152-161-80752/report.md` at primary `1.46`, both with exact `560x95` crops under the new `2.0` gate. Earlier `560x103` geometry and `10.97` / `11.97` primary deltas are superseded. Existing real-OS High Contrast proof remains recorded at `artifacts/visual-checks/20260530-025058-847-82168/report.md` and `artifacts/visual-checks/20260530-025135-368-28776/report.md`. | Reopen only on new InfoBar source, behavior, accessibility, High Contrast, or strict visual-regression evidence. |
+| 8.11 | ProgressRing | Refreshed against the current generated WinUI Lottie sources and installed WinUI 3 Gallery. The old indeterminate animation-delay comparison was nondeterministic, so the harness now sets both source-equivalent determinate examples to 65 through `ProgressValue`, compares `GallerySample_ProgressRing_DeterminateProgressRing` with `ProgressRing2`, and uses exact `60x60` crops. `ProgressRingIndicator` now uses the generated 32x32 visual's 8px ellipse, 1.5px stroke, and 1.77 shape scale instead of the previous empirical 6px WPF stroke. The determinate artifact viewbox removes its parent offset, and whole-window pixels are only a fallback when primary control crops are unavailable. Strict current evidence passes: Light `artifacts/visual-checks/20260716-233459-296-65888/report.md` at `0.64`, Dark `artifacts/visual-checks/20260716-233521-049-35744/report.md` at `0.63`, both under the new `1.0` gate. Product and harness regressions cover the 60px/65% raster and deterministic capture path. | Reopen only on new ProgressRing source, behavior, accessibility, or strict visual-regression evidence. |
+| 8.12 | SplitButton | Locked in the current pixel-parity round with no product-template change required: current WinUI source geometry, split borders, theme aliases, chevron fallback, flyout placement, keyboard paths, and automation providers were already aligned. The harness now captures the WinUI normal-state static crop before opening the secondary flyout; the prior post-interaction crop measured a pressed/pointer-over segment against ModernWpf's normal artifact. Exact `71x32` comparisons pass the new strict `1.0` gate: Light `artifacts/visual-checks/20260717-070823-832-70808/report.md` at `0.46`, Dark `artifacts/visual-checks/20260717-071010-320-38440/report.md` at `0.37`. Both runs separately prove the secondary flyout opens and exposes `Red`. | Reopen only on new SplitButton source, behavior, accessibility, interaction, or strict visual-regression evidence. |
+| 8.13 | ToggleSplitButton | Locked in the current pixel-parity round with the same source-shaped SplitButton family template and corrected pre-interaction WinUI static capture. Exact `78x33` comparisons pass the new strict `2.0` gate: Light `artifacts/visual-checks/20260717-071833-748-55192/report.md` at `1.62`, Dark `artifacts/visual-checks/20260717-072010-929-33204/report.md` at `0.98`. Backgrounds, borders, divider, list glyph, and chevron align; the residual is text/symbol antialiasing. Both runs separately prove the secondary flyout opens and exposes `Bulleted list`, while the shared product slice covers toggle and accessibility providers. | Reopen only on new ToggleSplitButton source, behavior, accessibility, interaction, or strict visual-regression evidence. |
+| 8.14 | ToggleSwitch | Fixed and locked in the current pixel-parity round. WinUI's Control metadata centers `VerticalContentAlignment`, whereas WPF defaults it to `Top`; an explicit `Center` style substitution now makes the unchanged source presenter bindings align On/Off content. The harness also copies ModernWpf rendered artifacts to immutable pre-interaction paths before toggling state. Exact resting `72x40` crops pass the new strict `1.5` gate: Light `artifacts/visual-checks/20260717-073117-263-46756/report.md` at `0.92`, Dark `artifacts/visual-checks/20260717-073149-240-96860/report.md` at `1.06`, down from refreshed Light `10.14` and historical `10.62` / `12.74`. On-state interaction crop deltas are `0.51` / `0.48`. | Reopen only on new ToggleSwitch source, behavior, accessibility, interaction, metadata-default, or strict visual-regression evidence. |
+| 8.15 | NumberBox | Fixed and locked in the current pixel-parity round. Exact `132x59` resting crops now compare immutable pre-interaction state and pass the new strict `2.5` gate: Light `artifacts/visual-checks/20260717-075724-633-8816/report.md` at `1.84`, Dark `artifacts/visual-checks/20260717-075742-058-68924/report.md` at `1.74`; value-change interaction crop deltas are `1.69` / `1.02` and separately prove `10` to `20.00`. The Dark audit exposed that WPF retained the Light repeat-button foreground alias, rendering both spin chevrons black. Inline and popup styles now derive WinUI's `#C5FFFFFF` secondary foreground from the resolved dark control foreground while preserving system resources in High Contrast. Product tests pass 17/17 and the Gallery sample/gate slice passes 2/2 on net8 and net10. | Reopen only on new NumberBox source, behavior, accessibility, interaction, theme-resource, or strict visual-regression evidence. |
+| 8.16 | AutoSuggestBox | Locked in the current pixel-parity round with no product change required. Immutable pre-interaction capture removes the old state contamination: exact `300x32` resting crops pass the new strict `0.1` gate at delta `0.01` in both Light (`artifacts/visual-checks/20260717-080628-414-77376/report.md`) and Dark (`artifacts/visual-checks/20260717-080645-185-50632/report.md`), superseding the older `2.21` / `7.8` results. The text harness now prefers real keyboard input so WinUI can classify the change as `UserInput`. ModernWpf proof in `artifacts/visual-checks/20260717-080707-181-19788/report.json` types `ae`, invokes `Aegean`, captures the nonblank `300x50` popup, and updates output; the current installed WinUI Gallery accepts `ae` but does not expose its sample suggestions, so that cross-app interaction is explicitly unavailable rather than folded into the pixel pass. Product tests pass 8/8 and the Gallery sample/gate slice passes 2/2 on net8 and net10. | Reopen only on new AutoSuggestBox source, behavior, accessibility, popup, keyboard-input, or strict visual-regression evidence. |
+| 8.17 | SplitView | Locked in the current pixel-parity round with no product change required. The existing sample-scoped reference crop combines WinUI's `PaneRoot` and `content` bounds, avoiding the Gallery shell's duplicate `PaneRoot` ID. Exact `400x300` comparisons pass the new strict `4.0` gate: Light `artifacts/visual-checks/20260717-081604-045-11108/report.md` at `3.23`, Dark `artifacts/visual-checks/20260717-081618-744-58120/report.md` at `3.37`. Pane width, divider, backgrounds, headers, nav-item layout, and content placement align; the bounded residual is WPF text and symbol-font rasterization. Product tests pass 14/14 and the Gallery sample/gate slice passes 2/2 on net8 and net10. | Reopen only on new SplitView source, behavior, accessibility, visual-state, light-dismiss, pane-geometry, or strict visual-regression evidence. |
+| 8.18 | PersonPicture | Locked in the current pixel-parity round with no product change required. The sample-specific reference crop now finds the rendered avatar inside WinUI's first example body instead of comparing the `ProfileImageRadio` option. Exact `96x96` avatar crops pass the new strict `0.5` gate: Light `artifacts/visual-checks/20260717-082356-846-16316/report.md` at `0.39`, Dark `artifacts/visual-checks/20260717-082417-249-7520/report.md` at `0.35`. The profile image, circular clipping, border, and theme surfaces visually align; the sub-point residual is bounded image scaling/rasterization. Product tests pass 9/9, and the Gallery sample/gate slice passes 2/2 on net8 and net10. | Reopen only on new PersonPicture source, behavior, accessibility, image/initials/badge priority, template, theme-resource, or strict visual-regression evidence. |
+| 8.19 | ThemeShadow | Locked in the current pixel-parity round with no renderer change required. The harness now removes WinUI `ControlExample` host insets and compares the source `Example3Grid` body instead of a stretched sample column that included the options edge. Exact `272x272` comparisons pass the new strict `0.3` gate: Light `artifacts/visual-checks/20260717-083005-154-16988/report.md` at `0.22`, Dark `artifacts/visual-checks/20260717-083029-229-57484/report.md` at `0.12`. The 200x200 card, 36px source padding, fill, corner radius, and shadow envelope align. The focused pixel-master/dynamic-redraw product slice passes 3/3, and the Gallery sample/crop/gate slice passes 3/3 on net8 and net10. | Reopen only on new ThemeShadow/elevation source, renderer recipe, compositor-master, theme/corner/depth redraw, popup inset, template-host, or strict visual-regression evidence. |
+| 8.20 | InfoBadge | Fixed and locked in the current pixel-parity round. Current WinUI updates the size-derived radius from `SizeChanged`; the WPF port had updated it after `base.ArrangeOverride`, allowing a first NavigationView-hosted frame to retain square chrome. The port now keeps the source `SizeChanged` path and seeds the same `height / 2` radius before arranging the WPF template. The harness directly finds WinUI's accent value badge and cannot fall back to the whole sample. Exact `16x16` comparisons pass the new strict `5.0` gate: Light `artifacts/visual-checks/20260717-090752-264-10592/report.md` at `4.44`, Dark `artifacts/visual-checks/20260717-090826-509-8256/report.md` at `3.73`, down from the square-badge `40.57` failure. Product/raster tests pass 9/9, and the Gallery sample/crop/gate slice passes 3/3 on net8 and net10. | Reopen only on new InfoBadge source, behavior, accessibility, first-frame lifecycle, NavigationView hosting, template, theme-resource, or strict visual-regression evidence. |
 
 ### Row 7 Strict Subqueue
 
@@ -9767,27 +9776,27 @@ named `ItemsView3` for the ItemsView sample. The sample assigns a local WPF item
 because the default library item template rendered blank in the visual capture
 even though the live tree had the source text and icons; that local template
 now applies the same `0.8` icon scale used by ModernWpf's SelectorBar
-resources. The WPF runtime adaptation maps the source `Icon="Favorite"` glyph
+resources and the same render-only one-pixel text baseline adjustment as the
+default item template. The WPF runtime adaptation maps the source `Icon="Favorite"` glyph
 to ModernWpf's outline-star symbol while leaving the official snippet text
 unchanged, because installed WinUI renders that first-sample icon as an outline
 star while ModernWpf's `Symbol.Favorite` glyph is filled. Current SelectorBar
 WinUI-reference evidence is
-`artifacts/visual-checks/20260529-201109-733-55040/report.md` for Light and
-`artifacts/visual-checks/20260529-201140-617-31732/report.md` for Dark, both
+`artifacts/visual-checks/20260717-022122-441-38908/report.md` for Light and
+`artifacts/visual-checks/20260717-022213-202-80524/report.md` for Dark, both
 with ModernWpf and installed WinUI 3 Gallery `Passed`, nonblank app captures,
 required ModernWpf element `GallerySample_SelectorBar_SelectorBar` found,
-matching `284x48` primary crops, and primary deltas reduced to `7.07` /
-`7.86` from refreshed `11.89` / `12.86`. The sample-specific item template now
+matching `284x48` primary crops, and primary deltas reduced to `1.99` / `2.58`
+from the refreshed `6.96` / `7.68` baseline. The sample-specific item template now
 uses the WinUI-equivalent icon/text gap, preserves the 48px reference height,
 and removes the transparent outer border from the basic sample so the ModernWpf
 artifact matches the installed WinUI Gallery's first `PART_ItemsView` reference
 crop. The visual harness uses the installed WinUI Gallery's first
 `PART_ItemsView` template part as the SelectorBar reference primary target
 because the source `x:Name="SelectorBar1"` is not exposed as a UIA automation
-element. Avoid reopening SelectorBar's source shape unless a new WinUI source,
-runtime, or crop regression appears; a later round can separately investigate
-the default SelectorBarItem template rendering gap or remaining text/glyph
-antialiasing residual.
+element. A strict `3.0` primary-crop threshold now protects both themes. Avoid
+reopening SelectorBar's source shape unless a new WinUI source, runtime, or crop
+regression appears; the remaining delta is text/glyph antialiasing residual.
 The generated ModernWpf BreadcrumbBar extension page now uses the local
 official WinUI Gallery two-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\BreadcrumbBarPage.xaml`
@@ -10058,15 +10067,18 @@ source-backed Status & Info WinUI example, keeps WinUI's `nvSample1`,
 `DynamicInfoBadge`, and `ValueNumberBox`, and adapts the style selector with
 direct WPF property/resource updates because the keyed InfoBadge styles are not
 reliably resolvable in the test host. Current InfoBadge WinUI-reference
-evidence is `artifacts/visual-checks/20260524-151044-483-106400/report.md`
-for Light and `artifacts/visual-checks/20260524-151102-355-66552/report.md`
-for Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`.
+evidence is `artifacts/visual-checks/20260717-090752-264-10592/report.md`
+for Light at `4.44` and
+`artifacts/visual-checks/20260717-090826-509-8256/report.md` for Dark at `3.73`.
+Both compare exact `16x16` value badges and pass the strict `5.0` gate.
 ModernWpf exposes `GallerySample_InfoBadge_InfoBadge` as the required/primary
-crop target; installed WinUI Gallery does not expose source `x:Name="infoBadge1"`
-as a stable UIA element, so the visual harness intentionally leaves the WinUI
-reference primary target empty until a stable exposed node exists. Avoid
-reopening InfoBadge's source shape unless a new WinUI source, crop, or exposed
-reference automation regression appears.
+crop target; because installed WinUI Gallery does not expose source
+`x:Name="infoBadge1"` as stable UIA, the harness finds the first rendered
+accent badge from sample pixels and fails if that required crop is unavailable.
+The product also pre-seeds the source `height / 2` radius before WPF template
+arrangement so a NavigationView-hosted badge cannot render a square first
+frame. Avoid reopening InfoBadge's source shape unless a new WinUI source,
+crop, lifecycle, or reference-pixel regression appears.
 The generated ModernWpf ProgressRing extension page now uses the local official
 WinUI Gallery two-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ProgressRingPage.xaml`
@@ -10215,15 +10227,18 @@ WinUI Gallery two-example structure for the RichEditBox font-color SplitButton
 and the text SplitButton. `BasicInputSampleFactory.CreateExamples` consumes the
 local `Buttons\SplitButton` sample-code files, keeps WinUI's sample names and
 primary control sizing, and adapts the first sample to WPF with `RichTextBox`
-plus button-hosted swatches in a `Flyout`. Current SplitButton WinUI-reference
-evidence is `artifacts/visual-checks/20260524-123925-164-99420/report.md` for
-Light and `artifacts/visual-checks/20260524-123949-366-106832/report.md` for
-Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`, matching
-`71x32` primary crops, and primary deltas `1.5` / `4.59`. The visual harness
-uses the WinUI reference automation ID `myColorButton` because the installed
-reference exposes the crop target as UIA control type `SplitButton`, not as a
-plain named Button. Avoid reopening SplitButton's source shape unless a new
-WinUI source or crop regression appears.
+plus button-hosted swatches in a `Flyout`. Strict current SplitButton
+WinUI-reference evidence is
+`artifacts/visual-checks/20260717-070823-832-70808/report.md` for Light and
+`artifacts/visual-checks/20260717-071010-320-38440/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, exact `71x32` primary
+crops, primary deltas `0.46` / `0.37`, and passing secondary-flyout proof. The
+visual harness uses WinUI reference automation ID `myColorButton` and captures
+normal-state static pixels before opening the flyout; this supersedes the old
+post-interaction `1.5` / `4.59` evidence, which compared unlike visual states.
+The enforced primary threshold is `1.0`. Avoid reopening SplitButton's source
+shape unless a new WinUI source, behavior, accessibility, interaction, or
+strict crop regression appears.
 The generated ModernWpf ToggleSplitButton extension page now uses the local
 official WinUI Gallery one-example structure for list formatting in a
 RichEditBox. `BasicInputSampleFactory.CreateExamples` consumes the local
@@ -10234,10 +10249,14 @@ RichEditBox behavior to WPF through `EditingCommands.ToggleBullets` /
 evidence is `artifacts/visual-checks/20260524-124943-598-86008/report.md` for
 Light and `artifacts/visual-checks/20260524-125009-123-96140/report.md` for
 Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`, matching
-`78x33` primary crops, and primary deltas `3.44` / `8.45`. The visual harness
-uses the WinUI reference automation ID `myListButton` for the primary crop.
-Avoid reopening ToggleSplitButton's source shape unless a new WinUI source or
-crop regression appears.
+`78x33` primary crops. Strict current evidence supersedes those old deltas:
+Light `artifacts/visual-checks/20260717-071833-748-55192/report.md` at `1.62`
+and Dark `artifacts/visual-checks/20260717-072010-929-33204/report.md` at
+`0.98`, both under the enforced `2.0` gate and with passing `Bulleted list`
+secondary-flyout proof. The visual harness uses WinUI reference automation ID
+`myListButton` and captures static pixels before the interaction. Avoid
+reopening ToggleSplitButton's source shape unless a new WinUI source, behavior,
+accessibility, interaction, or strict crop regression appears.
 The generated ModernWpf ToggleSwitch extension page now uses the local official
 WinUI Gallery two-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ToggleSwitchPage.xaml`:
@@ -10249,14 +10268,18 @@ ProgressRing active state synchronized with the second switch. The first sample
 clears ModernWpf's default `On` / `Off` content and overrides the theme
 `MinWidth` because the WinUI reference's contentless resting switch crops at
 `72x40`; without that WPF adaptation ModernWpf measures the same sample at
-`154x40`. Current ToggleSwitch WinUI-reference evidence is
-`artifacts/visual-checks/20260524-133843-637-110936/report.md` for Light and
-`artifacts/visual-checks/20260524-133907-232-112612/report.md` for Dark, both
-with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `72x40`
-primary crops, and primary deltas `10.62` / `12.74`. The visual harness uses
-the WinUI reference name `simple ToggleSwitch` for the primary crop. Avoid
-reopening ToggleSwitch's source shape unless a new WinUI source or crop
-regression appears.
+`154x40`. Strict current ToggleSwitch WinUI-reference evidence is Light
+`artifacts/visual-checks/20260717-073117-263-46756/report.md` at resting
+primary `0.92` / On-state crop `0.51` and Dark
+`artifacts/visual-checks/20260717-073149-240-96860/report.md` at resting
+primary `1.06` / On-state crop `0.48`. Both exact `72x40` primary crops pass
+the enforced `1.5` gate. WinUI's default centered content alignment is explicit
+in the WPF style because WPF's metadata default is Top, and ModernWpf static
+artifacts are copied before interaction so the Off proof is immutable. This
+supersedes the old `10.62` / `12.74` evidence. The visual harness uses WinUI
+reference name `simple ToggleSwitch`. Avoid reopening ToggleSwitch's source
+shape unless a new WinUI source, behavior, accessibility, interaction,
+metadata-default, or strict crop regression appears.
 The generated ModernWpf RepeatButton extension page now uses the local official
 WinUI Gallery one-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\RepeatButtonPage.xaml`
@@ -10370,10 +10393,11 @@ number formatter to a local WPF `INumberBoxNumberFormatter`. The explicit
 `124` / `132` / `137` sample widths are copied from the local installed WinUI
 Gallery UIA reference so the spin-button primary crop matches the reference
 `NumberBoxSpinButtonPlacementExample` target. Current NumberBox WinUI-reference
-evidence is `artifacts/visual-checks/20260524-130855-649-115628/report.md` for
-Light and `artifacts/visual-checks/20260524-130915-545-96112/report.md` for
+evidence is `artifacts/visual-checks/20260717-075724-633-8816/report.md` for
+Light and `artifacts/visual-checks/20260717-075742-058-68924/report.md` for
 Dark, both with ModernWpf and installed WinUI 3 Gallery `Passed`, matching
-`132x59` primary crops, and primary deltas `7.31` / `11.25`. Avoid reopening
+`132x59` primary crops, primary deltas `1.84` / `1.74` under the enforced
+`2.5` gate, and value-change interaction crop deltas `1.69` / `1.02`. Avoid reopening
 NumberBox's source shape unless a new WinUI source or crop regression appears.
 The generated ModernWpf AutoSuggestBox extension page now uses the local
 official WinUI Gallery two-example structure from
@@ -10384,10 +10408,13 @@ adaptation keeps WinUI's inline sample code strings, `Control1`, `Control2`,
 WinUI `RelativePanel` detail layout to a WPF `Grid`, and uses
 `GalleryCatalog.Search(...)` for the local catalog-backed suggestion source.
 Current AutoSuggestBox WinUI-reference evidence is
-`artifacts/visual-checks/20260524-132311-955-114128/report.md` for Light and
-`artifacts/visual-checks/20260524-132251-074-117324/report.md` for Dark, both
+`artifacts/visual-checks/20260717-080628-414-77376/report.md` for Light and
+`artifacts/visual-checks/20260717-080645-185-50632/report.md` for Dark, both
 with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `300x32`
-primary crops, and primary deltas `2.21` / `7.8`. The visual harness uses the
+primary crops, and primary deltas `0.01` / `0.01` under the enforced `0.1`
+gate. ModernWpf's separate interaction proof types `ae`, invokes `Aegean`, and
+updates the sample output; the current installed WinUI Gallery does not expose
+its suggestions after the same keyboard input. The visual harness uses the
 WinUI reference automation ID `Control1` and lowers only AutoSuggestBox's
 primary-crop variation threshold because the empty resting field is nearly flat
 in Dark theme in both apps. Avoid reopening AutoSuggestBox's source shape
@@ -10405,13 +10432,14 @@ keeps WinUI's visible sample header, snippet, source-facing names
 `displayModeCombobox`, `paneBackgroundCombobox`, `openPaneLengthSlider`, and
 `compactPaneLengthSlider`), nav-item selection behavior, right/left placement
 layout switch, and option-driven property updates while exposing
-`GallerySample_SplitView_*` automation IDs for required sample capture and the
-shared source-backed `NavLinksList` primary crop. Current SplitView
-WinUI-reference evidence is
-`artifacts/visual-checks/20260524-234959-952-108984/report.md` for Light and
-`artifacts/visual-checks/20260524-235024-293-91520/report.md` for Dark, both
-with ModernWpf and installed WinUI 3 Gallery `Passed`, primary crops of
-`255x258` vs `255x257`, and primary deltas `4.58` / `5.69`. Avoid reopening
+`GallerySample_SplitView_*` automation IDs for required sample capture. The
+reference crop combines the sample-scoped WinUI `PaneRoot` and `content`
+bounds so the Gallery shell's duplicate `PaneRoot` is excluded. Current
+SplitView evidence is
+`artifacts/visual-checks/20260717-081604-045-11108/report.md` for Light and
+`artifacts/visual-checks/20260717-081618-744-58120/report.md` for Dark, both
+with ModernWpf and installed WinUI 3 Gallery `Passed`, exact `400x300` primary
+crops, and primary deltas `3.23` / `3.37` under the enforced `4.0` gate. Avoid reopening
 SplitView's source shape unless a new WinUI source or crop regression appears.
 The generated ModernWpf PersonPicture extension page now uses the local
 official WinUI Gallery one-example structure from
@@ -10430,14 +10458,14 @@ instead of the WinUI sample's remote URL, and renders the control at `96x96` so
 ModernWpf's WPF template matches the installed WinUI visual size; the source
 snippet still records the official `Height="300"` sample shape. Current
 PersonPicture WinUI-reference evidence is
-`artifacts/visual-checks/20260525-001258-575-48524/report.md` for Light and
-`artifacts/visual-checks/20260525-001321-104-116532/report.md` for Dark, both
-with ModernWpf and installed WinUI 3 Gallery `Passed`, matching `120x32`
-`ProfileImageRadio` primary crops, and primary deltas `8.73` / `11.4`. The
-visual harness uses `ProfileImageRadio` for the primary crop because the
-installed WinUI reference does not expose a stable `personPicture` automation
-ID. Avoid reopening PersonPicture's source shape unless a new WinUI source or
-crop regression appears.
+`artifacts/visual-checks/20260717-082356-846-16316/report.md` for Light and
+`artifacts/visual-checks/20260717-082417-249-7520/report.md` for Dark. Both
+ModernWpf and installed WinUI 3 Gallery pass with exact `96x96` avatar crops
+and primary deltas `0.39` / `0.35` under the enforced `0.5` gate. The harness
+searches the first WinUI example body for the rendered avatar because the
+installed reference does not expose a stable automation ID on the
+`PersonPicture` itself. Avoid reopening PersonPicture's source shape unless a
+new WinUI source or crop regression appears.
 The generated ModernWpf Sound extension page now uses the local official WinUI
 Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\SoundPage.xaml` and
@@ -10759,15 +10787,13 @@ The WPF adaptation maps the WinUI `ThemeShadow` surface to ModernWpf
 and updates both `Depth` and `TranslationZ` from the Z-translation slider to
 track the WinUI `ShadowRect.Translation` behavior. Current ThemeShadow
 WinUI-reference evidence is
-`artifacts/visual-checks/20260525-052819-678-89860/report.md` for Light and
-`artifacts/visual-checks/20260525-052844-264-102916/report.md` for Dark, both
-with ModernWpf and installed WinUI 3 Gallery `Passed`; the required
-`GallerySample_ThemeShadow_ShadowRect` artifact is present, while the primary
-crop uses the rendered ModernWpf sample root against the installed WinUI
-`svPanel` sample region because the standalone WPF slider UIA crop is flat and
-the WinUI shadow rectangle is not exposed as a stable automation target. Treat
-the Light sample-region delta as diagnostic unless a better stable crop becomes
-available. Avoid reopening ThemeShadow's source shape unless a new local WinUI
+`artifacts/visual-checks/20260717-083005-154-16988/report.md` for Light and
+`artifacts/visual-checks/20260717-083029-229-57484/report.md` for Dark. Both
+ModernWpf and installed WinUI 3 Gallery pass with exact `272x272` source
+`Example3Grid` body crops and primary deltas `0.22` / `0.12` under the enforced
+`0.3` gate. The crop removes the WinUI `ControlExample` host inset and excludes
+the options column, isolating the source 36px padding, 200x200 card, and shadow
+envelope. Avoid reopening ThemeShadow's source shape unless a new local WinUI
 source, native WPF shadow capability, or crop regression appears.
 The generated ModernWpf Multiple windows extension page now uses the local
 official WinUI Gallery source from

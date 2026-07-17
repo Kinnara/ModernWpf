@@ -382,12 +382,14 @@ namespace ModernWpf.Gallery.Pages
         private static StackPanel CreateIconElementStack(string description)
         {
             var stack = new StackPanel();
-            stack.Children.Add(new TextBlock
+            var descriptionText = new TextBlock
             {
                 Text = description,
                 TextWrapping = TextWrapping.Wrap,
                 Margin = new Thickness(0, 0, 0, 12)
-            });
+            };
+            descriptionText.SetResourceReference(FrameworkElement.StyleProperty, "BodyTextBlockStyle");
+            stack.Children.Add(descriptionText);
             return stack;
         }
 

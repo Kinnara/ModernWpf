@@ -1,5 +1,7 @@
 # SplitView WinUI 3 Source Audit
 
+Date: 2026-07-17
+
 ModernWpf `SplitView` is now treated as a whole-control WPF port of the local WinUI 3 source rather than the older guessed WPF surface.
 
 Source snapshot:
@@ -52,3 +54,18 @@ dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-resto
 dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore
 git diff --check
 ```
+
+Latest focused result: `SplitView` product tests passed 14/14 on
+`net8.0-windows7.0`. The Gallery sample plus visual-gate contract passed 2/2
+on both `net8.0-windows7.0` and `net10.0-windows7.0`.
+
+The installed WinUI 3 Gallery crop uses the sample-scoped `PaneRoot` and
+`content` bounds so the Gallery shell's duplicate `PaneRoot` automation ID is
+not mistaken for the control. Exact `400x300` pane+content crops pass the
+enforced `4.0` gate:
+
+- Light: `artifacts\visual-checks\20260717-081604-045-11108\report.md`, delta `3.23`.
+- Dark: `artifacts\visual-checks\20260717-081618-744-58120\report.md`, delta `3.37`.
+
+Pane width, divider, backgrounds, headers, item layout, and content placement
+align; the remaining bounded delta is WPF text and symbol-font rasterization.

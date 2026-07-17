@@ -2,6 +2,8 @@
 
 Source snapshot: `D:\repos\microsoft-ui-xaml`, `reference/winui3-current` / `c70471c511a0168b61dcca13af9556465f26b673`.
 
+Current validation: 2026-07-17.
+
 WinUI source files:
 
 - `src\controls\dev\PersonPicture\PersonPicture.cpp`
@@ -50,3 +52,7 @@ ModernWpf files:
   - Passed 9/9.
 - `dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore -m:1`
   - Passed with existing repository warnings.
+- Installed WinUI 3 Gallery exact-size comparisons:
+  - Light: `artifacts/visual-checks/20260717-082356-846-16316/report.md`, exact `96x96` avatar crops, primary delta `0.39`.
+  - Dark: `artifacts/visual-checks/20260717-082417-249-7520/report.md`, exact `96x96` avatar crops, primary delta `0.35`.
+  - `Run-GalleryVisualChecks.ps1` now enforces a strict `0.5` primary-crop threshold. The sample-specific WinUI crop searches the first example body for the rendered avatar because the installed Gallery does not expose a stable automation ID on the reference `PersonPicture` itself.

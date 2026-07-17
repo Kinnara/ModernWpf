@@ -32,14 +32,13 @@
     <Style x:Key="ScrollButtonStyle" TargetType="RepeatButton" BasedOn="{StaticResource DefaultRepeatButtonStyle}">
         <Setter Property="MinWidth" Value="16" />
         <Setter Property="MinHeight" Value="16" />
-        <Setter Property="Background" Value="{DynamicResource ScrollButtonBackground}" />
-        <Setter Property="Foreground" Value="{DynamicResource ScrollButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource ScrollButtonBorderBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
         <Setter Property="BorderThickness" Value="{StaticResource ScrollButtonStyleBorderThickness}" />
         <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize" Value="{StaticResource ScrollButtonFontSize}" />
-        <Setter Property="Padding" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
@@ -56,13 +55,13 @@
                                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ScrollButtonForegroundPointerOver}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ScrollButtonForegroundPressed}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TextFillColorTertiaryBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource ScrollButtonForegroundDisabled}" />
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -107,6 +106,7 @@
                             Style="{StaticResource ScrollButtonStyle}">
                             <ui:FontIcon
                                 x:Name="PART_VerticalIncrementRepeatIcon"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 FontSize="{StaticResource ScrollButtonFontSize}"
                                 Glyph="&#xEDDB;" />
                         </RepeatButton>
@@ -151,7 +151,7 @@
                                 Height="{StaticResource ThumbHeight}"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Top"
-                                Background="{DynamicResource VerticalThumbGhostBrush}"
+                                Background="{DynamicResource AccentFillColorDisabledBrush}"
                                 CornerRadius="{StaticResource ThumbCornerRadius}"
                                 Visibility="Collapsed" />
 
@@ -161,7 +161,7 @@
                                 Height="{StaticResource ThumbHeight}"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Top"
-                                Background="{DynamicResource VerticalThumbBrush}"
+                                Background="{DynamicResource AccentFillColorDefaultBrush}"
                                 CornerRadius="{StaticResource ThumbCornerRadius}" />
                         </Grid>
 
@@ -173,6 +173,7 @@
                             Style="{StaticResource ScrollButtonStyle}">
                             <ui:FontIcon
                                 x:Name="PART_VerticalDecrementRepeatIcon"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 FontSize="{StaticResource ScrollButtonFontSize}"
                                 Glyph="&#xEDDC;" />
                         </RepeatButton>

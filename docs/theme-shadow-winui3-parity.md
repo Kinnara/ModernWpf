@@ -2,6 +2,8 @@
 
 Source snapshot: `D:\repos\microsoft-ui-xaml`, `reference/winui3-current` / `c70471c511a0168b61dcca13af9556465f26b673`.
 
+Current validation: 2026-07-17.
+
 Source coverage matrix: `docs\theme-shadow-source-coverage.md`.
 
 WinUI source evidence:
@@ -225,6 +227,10 @@ WinUI also has pixel masters for `ThemeShadowDropShadowSystemThemeRedrawRTB`, re
 | Light | `14,22,72,72` | `13,21,74,74` | `31` | `33` | `2330` | `2564` |
 | Dark | `14,21,72,74` | `12,20,76,76` | `58` | `61` | `2542` | `2936` |
 
+## Installed Gallery Pixel Gate
+
+The Gallery harness now compares the actual source `Example3Grid` body rather than the stretched sample column. It removes the WinUI `ControlExample` host inset, then compares exact `272x272` Light and Dark demo surfaces. The final strict reports are `artifacts/visual-checks/20260717-083005-154-16988/report.md` at `0.22` for Light and `artifacts/visual-checks/20260717-083029-229-57484/report.md` at `0.12` for Dark, both under an enforced `0.3` gate. This isolates the 200x200 card, its 36px source padding, fill, corner radius, and shadow envelope from the unrelated options column and Gallery shell.
+
 ## Remaining Gap
 
 This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, hollow-center behavior, and light/dark opacity constants now come from WinUI source and WinUI masters, and representative ModernWpf source-backed templates now have rendered-pixel guards for childful and childless chrome shapes. The `ThemeShadowDropShadowSystemThemeRedrawRTB` source PNG masters can be read directly from a local WinUI checkout for the core `50x50` depth-32 canvas. The live WinUI capture app generates all nine manifest PNGs from real WinUI `ThemeShadow` rendering in both source-geometry mode and actual-control mode, writes provenance sidecars for those captures, and the refreshed actual-control folder passes `-RequireReferencePngs`, the reference-directory guard, and the opted-in rendered-template PNG comparison against fresh ModernWpf snapshots. The remaining limitation is the platform boundary itself: WPF still uses a software-rendered `ThemeShadowChrome` substitute instead of compositor `UIElement.Shadow` visuals, so future source changes should keep using the manifest, masks, provenance sidecars, and opted-in PNG comparison as the parity gate.
@@ -232,5 +238,7 @@ This is still a WPF substitution, not a literal WinUI compositor port. The depth
 ## Verification
 
 Focused tests cover the renderer path, rendered alpha-profile calibration metrics, input-hit-test transparency, local and animated caster-opacity propagation, actual-theme redraw behavior, direct opt-in comparison against WinUI's checked-in `ThemeShadowDropShadowSystemThemeRedrawRTB` PNG masters, dynamic corner-radius redraw behavior, the removal of `BlurEffect` border shadow internals, computed depth padding, childless explicit-size caster behavior, source windowed Popup insets, popup-host template opt-ins, renderer geometry from source control-level MockDComp masters, rendered shadow pixels from representative source-backed childful and childless template chromes, rendered-template snapshot metrics, PNG reference comparison, reference mask sidecars, reference capture staging and provenance sidecars, rendered-template coverage for FlyoutPresenter, NumberBox, AutoSuggestBox, CommandBar, CommandBarFlyout, MenuFlyoutPresenter, and TeachingTip, FlyoutPresenter's source child-elevation shadow path, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, ContentDialog's source `baseElevation=128` shadow depth, TeachingTip's source `ContentRootGrid` shadow depth, CommandBar's source `SecondaryItemsControlShadowWrapper` overflow target, AutoSuggestBox's source popup-child suggestions shadow target, CommandBarFlyout's source presenter-shadow toggle lifecycle and overflow-root shadow states, MenuFlyoutPresenter's source-shaped `ThemeShadowChrome` presenter shadow path, and the static inventory of product XAML `ThemeShadowChrome` hosts.
+
+The current pixel-master, actual-theme redraw, and dynamic-corner-radius slice passes 3/3 on `net8.0-windows7.0`. The Gallery ThemeShadow sample/crop/gate slice passes 3/3 on both `net8.0-windows7.0` and `net10.0-windows7.0`.
 
 `TemplateParityTests.ThemeShadowSourceCoverageAuditCoversKnownWinUIShadowInputs` keeps the source coverage matrix aligned with the known WinUI shadow inputs, shared renderer recipe sources, official WPF Fluent stock exceptions, and documented WPF substitutions.

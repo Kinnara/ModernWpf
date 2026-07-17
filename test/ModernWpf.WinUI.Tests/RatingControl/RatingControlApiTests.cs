@@ -89,7 +89,7 @@ public class RatingControlApiTests
             Assert.AreEqual(20.0, caption.Margin.Right);
             Assert.AreEqual(12.0, caption.FontSize);
             Assert.AreEqual(
-                ((FontFamily)ratingControl.TryFindResource("ContentControlThemeFontFamily")).Source,
+                ((FontFamily)ratingControl.TryFindResource("CaptionControlThemeFontFamily")).Source,
                 caption.FontFamily.Source);
             AssertBrushEquals(ratingControl.Foreground, caption.Foreground);
             Assert.AreEqual(VerticalAlignment.Center, caption.VerticalAlignment);
@@ -345,6 +345,33 @@ public class RatingControlApiTests
                 RestoreResource(appResources, FontSizeForRenderingResourceKey, hadFontSizeOverride, originalFontSizeOverride);
                 RestoreResource(appResources, ItemSpacingResourceKey, hadItemSpacingOverride, originalItemSpacingOverride);
             }
+        });
+    }
+
+    [TestMethod]
+    public void CaptionWidthUsesWinUIPhysicalPixelMetrics()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var ratingControl = new ModernWpf.Controls.RatingControl
+            {
+                Caption = "312 ratings",
+                UseLayoutRounding = true
+            };
+            using var host = new TestWindowHost(ratingControl, width: 420, height: 180);
+            host.UpdateLayout();
+
+            var caption = FindNamedDescendant<TextBlock>(ratingControl, "Caption");
+            var dpiScale = VisualTreeHelper.GetDpi(caption).DpiScaleX;
+            var renderingFontSize = (double)ratingControl.FindResource(FontSizeForRenderingResourceKey);
+            var itemSpacing = (double)ratingControl.FindResource(ItemSpacingResourceKey);
+            var ratingItemsWidth = (ratingControl.MaxRating * renderingFontSize / 2.0) +
+                ((ratingControl.MaxRating - 1) * itemSpacing);
+            var expectedWidth = ratingItemsWidth + 12.0 + caption.ActualWidth - (1.0 / dpiScale);
+
+            Assert.AreEqual(expectedWidth, ratingControl.ActualWidth, 0.001);
         });
     }
 

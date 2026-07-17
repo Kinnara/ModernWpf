@@ -2115,3 +2115,30 @@ Close the remaining toolbar/flyout false-pass class exposed by manual review:
   `t3000.png` shows `Resize` / `Move` on first open, `t4000.png` shows the
   flyout closed after `Resize`, and `t8000.png` shows the secondary menu open
   again without a repeat-open crash.
+
+## 2026-07-17 GridView Strict Click-Result Parity Refresh
+
+The older GridView interaction proof was valid only for ModernWpf: its
+prefixed output automation ID resolved to the empty output TextBlock, while
+the installed WinUI Gallery fell back to the whole `BasicGridView` sample.
+Because the official click output is outside that list, the reference crop
+could not visibly change even though UIA exposed `You clicked Item 1.`.
+
+- The reference capture now resolves WinUI Gallery's `ClickOutput0` directly.
+- Both broad output fields are reduced to the pixels changed by the click
+  result before cross-app comparison, avoiding unrelated example-width drift.
+- A common-canvas comparison permits at most one pixel of alignment in either
+  direction. Crop-size parity remains independently gated, so the alignment
+  search cannot hide text metric drift.
+- `GridView` now requires an interaction crop under an `8.0` delta gate and a
+  four-pixel combined width/height gate.
+- Final Light evidence is
+  `artifacts/visual-checks/20260717-092950-082-76648/report.md`: interaction
+  delta `6.40`, `122x18` versus `120x19`, expected output present.
+- Final Dark evidence is
+  `artifacts/visual-checks/20260717-092919-846-50492/report.md`: interaction
+  delta `6.64`, the same bounded crop metrics, expected output present.
+- `GridViewSampleMatchesWinUIGalleryExamples`,
+  `GalleryVisualChecksClicksCommonSelectionInteractionControls`, and
+  `GalleryVisualChecksEnforceGridViewPixelParityThreshold` pass 3/3 on both
+  net8 and net10.

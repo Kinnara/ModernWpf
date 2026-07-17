@@ -14,13 +14,13 @@ namespace ModernWpf.Controls
         public InfoBadge()
         {
             SetValue(TemplateSettingsPropertyKey, new InfoBadgeTemplateSettings());
+            SizeChanged += OnSizeChanged;
         }
 
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 
-            UpdateCornerRadius();
             UpdateDisplayKind();
         }
 
@@ -37,9 +37,10 @@ namespace ModernWpf.Controls
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
-            var finalSize = base.ArrangeOverride(arrangeBounds);
-            UpdateCornerRadius(finalSize.Height);
-            return finalSize;
+            // WPF raises SizeChanged after the arrange pass. Seed the source-equivalent
+            // size-derived radius before arranging the template so its first frame is rounded.
+            UpdateCornerRadius(arrangeBounds.Height);
+            return base.ArrangeOverride(arrangeBounds);
         }
 
         private static void OnDisplayKindPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -50,6 +51,11 @@ namespace ModernWpf.Controls
         private static void OnCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((InfoBadge)d).UpdateCornerRadius();
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateCornerRadius(e.NewSize.Height);
         }
 
         private void UpdateDisplayKind()

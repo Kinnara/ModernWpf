@@ -19,9 +19,19 @@
             <Setter Property="Padding" Value="0" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
             <Setter Property="BorderThickness" Value="{DynamicResource NumberBoxSpinButtonBorderThickness}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextControlButtonForeground}" />
             <Setter Property="FontSize" Value="12" />
             <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
         </Style.Setters>
+        <Style.Triggers>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Path=Foreground.Color, RelativeSource={RelativeSource AncestorType={x:Type local:NumberBox}}}" Value="#FFFFFFFF" />
+                    <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Foreground" Value="#C5FFFFFF" />
+            </MultiDataTrigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="NumberBoxPopupSpinButtonStyle" TargetType="RepeatButton" BasedOn="{StaticResource DefaultRepeatButtonStyle}">
@@ -33,10 +43,20 @@
             <Setter Property="Padding" Value="0" />
             <Setter Property="Background" Value="{DynamicResource NumberBoxPopupSpinButtonBackground}" />
             <Setter Property="BorderThickness" Value="{DynamicResource NumberBoxPopupSpinButtonBorderThickness}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextControlButtonForeground}" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
             <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         </Style.Setters>
+        <Style.Triggers>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Path=(TextElement.Foreground).Color, RelativeSource={RelativeSource AncestorType={x:Type Border}}}" Value="#FFFFFFFF" />
+                    <Condition Binding="{Binding Source={x:Static SystemParameters.HighContrast}}" Value="False" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Foreground" Value="#C5FFFFFF" />
+            </MultiDataTrigger>
+        </Style.Triggers>
     </Style>
 
     <Style x:Key="NumberBoxTextBoxStyle" TargetType="TextBox" BasedOn="{StaticResource DefaultTextBoxStyle}">
@@ -426,6 +446,7 @@
                                 IsShadowEnabled="{DynamicResource {x:Static SystemParameters.DropShadowKey}}">
                                 <Border
                                     x:Name="PopupContentRoot"
+                                    TextElement.Foreground="{TemplateBinding Foreground}"
                                     Padding="6"
                                     Background="{DynamicResource NumberBoxPopupBackground}"
                                     BorderBrush="{DynamicResource NumberBoxPopupBorderBrush}"

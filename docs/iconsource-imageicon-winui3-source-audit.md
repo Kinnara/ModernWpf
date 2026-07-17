@@ -16,6 +16,11 @@ WinUI 3 files audited:
 - `src\controls\dev\IconSource\APITests\IconSourceApiTests.cs`
 - `src\controls\dev\ImageIcon\APITests\ImageIconTests.cs`
 
+Current-source and Gallery visual behavior were rechecked on 2026-07-17.
+The official Gallery's first IconElement example still renders the 50px
+`SlicesIcon` `BitmapIcon` with `ShowAsMonochrome=False`, while its descriptive
+paragraph uses `BodyTextBlockStyle` and is not part of the icon control.
+
 ModernWpf files:
 
 - `ModernWpf\IconSource\IconSource.cs`
@@ -28,6 +33,11 @@ ModernWpf files:
 - `ModernWpf\IconElement\ImageIcon.cs`
 - `ModernWpf.Controls\Common\SharedHelpers.cs`
 - `test\ModernWpf.WinUI.Tests\IconSource\IconSourceApiTests.cs`
+- `ModernWpf.Gallery\Pages\StylesSampleFactory.cs`
+- `ModernWpf.Gallery\Testing\GalleryDiagnostics.cs`
+- `test\ModernWpf.Gallery.Tests\GalleryAutomationHookTests.cs`
+- `test\ModernWpf.Gallery.Tests\WpfGallerySourceShapeTests.cs`
+- `tools\visual-checks\Run-GalleryVisualChecks.ps1`
 
 ## Source-Backed Behavior
 
@@ -59,3 +69,22 @@ ModernWpf covers the source-backed slice with:
 - source `FontIcon` mirroring behavior under right-to-left flow direction;
 - `SharedHelpers.MakeIconElementFrom(FontIconSource)` copying the full source property set;
 - ImageIcon source application and loaded visual-child smoke coverage.
+
+## Installed Gallery Pixel Verification
+
+The visual harness now compares the rendered `SlicesIcon` control on both
+sides, rather than treating the surrounding 590x118 sample paragraph as the
+IconElement primary crop. `GalleryDiagnostics` uses the parent-offset viewbox
+for the WPF BitmapIcon so its image pixels survive the isolated artifact
+render; the reference crop locates the same 50px bitmap immediately below the
+official example's body text. The ModernWpf paragraph also explicitly consumes
+the source `BodyTextBlockStyle`.
+
+Strict 2026-07-17 evidence uses matching `50x51` rendered crops and passes at
+`0.02` in both themes:
+
+- Light: `artifacts\visual-checks\20260717-012319-346-86980\report.md`
+- Dark: `artifacts\visual-checks\20260717-012349-247-72408\report.md`
+
+The primary-crop regression gate is `0.1`. The old 12-13 whole-example delta
+was descriptive WPF/WinUI paragraph line-breaking, not IconElement pixels.

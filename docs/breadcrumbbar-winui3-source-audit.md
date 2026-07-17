@@ -1,6 +1,6 @@
 # BreadcrumbBar WinUI 3 Source Audit
 
-Date: 2026-05-17
+Date: 2026-07-17
 
 WinUI 3 source snapshot:
 
@@ -23,6 +23,8 @@ reference/winui3-current
 - `src\controls\dev\Breadcrumb\BreadcrumbLayout.cpp`
 - `src\controls\dev\Breadcrumb\BreadcrumbBarItem.cpp`
 - `src\controls\dev\Breadcrumb\BreadcrumbBarItemAutomationPeer.cpp`
+- `src\dxaml\xcp\core\text\TextBlock\TextBlock.cpp`
+- `src\dxaml\xcp\core\inc\EnterParams.h`
 
 ## ModernWpf Port
 
@@ -34,7 +36,10 @@ reference/winui3-current
 - `ModernWpf.Controls\BreadcrumbBar\BreadcrumbBar.xaml`
 - `ModernWpf.Controls\BreadcrumbBar\BreadcrumbBarAutomationPeer.cs`
 - `ModernWpf.Controls\BreadcrumbBar\BreadcrumbBarItemAutomationPeer.cs`
+- `ModernWpf\Controls\ContentPresenterEx.cs`
+- `ModernWpf\ModernWpfControlsResources.xaml`
 - `test\ModernWpf.WinUI.Tests\BreadcrumbBar\BreadcrumbBarApiTests.cs`
+- `test\ModernWpf.WinUI.Tests\LayoutCompatibility\LayoutCompatibilityApiTests.cs`
 
 ## Ported Source Behavior
 
@@ -46,6 +51,8 @@ reference/winui3-current
 - Ported the source focus-target setters for `EllipsisDropDown` and `LastItem` states. `FocusVisualHelper.IsTemplateFocusTarget` and `FocusVisualHelper.FocusVisualMargin` represent WinUI `Control.IsTemplateFocusTarget` and `FocusVisualMargin` on WPF template parts.
 - Added the source ellipsis flyout path: hidden elements are cloned in reverse order into an `ItemsRepeater`, dropdown item indexes map back to original item indexes, and dropdown clicks route through `ItemClicked`.
 - Added source-style breadcrumb resources for chevrons, item foregrounds, current item foregrounds, dropdown item states, flyout presenter chrome, item font weight, and chevron metrics.
+- Replaced WPF's machine-dependent message font with `Segoe UI Variable Text, Segoe UI`, matching WinUI's `XamlAutoFontFamily` on current Windows while retaining a downlevel fallback.
+- Ported WinUI's default `UseLayoutRounding=true` behavior at the BreadcrumbBar boundary. The current WinUI `TextBlock::MeasureOverride` ceilings unrounded text dimensions to physical pixels; `ContentPresenterEx` now applies the same ceiling to its generated text element instead of WPF's nearest-pixel rounding. The installed Gallery item-width vector now matches exactly: `56,89,61,84,63,63,65,49` (`530x26` total).
 
 ## WPF Substitutions
 
@@ -54,9 +61,12 @@ reference/winui3-current
 - WinUI `Flyout` can be a named template resource. WPF resource lookup uses the same key and instantiates the ellipsis repeater in code before showing the flyout.
 - WinUI `AccessibilityView`, `Pointer*` routed events, `FocusState`, gamepad navigation, access-key routing, and XamlRoot-specific focus movement do not have direct WPF equivalents. The WPF port uses hit testing, standard WPF focus, mouse capture, and left/right keyboard movement as substitutes.
 - Localized WinUI resource strings for ellipsis and localized control type are currently represented by English strings until localized ModernWpf resource packs add this control.
+- WPF and WinUI use different DirectWrite integration/rasterization paths. With geometry and colors matched, the remaining live delta is confined to glyph antialiasing; forcing WPF grayscale rendering was measured and rejected because it increased the Dark delta from `2.33` to `3.10`.
 
 ## Validation
 
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter FullyQualifiedName~BreadcrumbBar --no-restore`
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~BreadcrumbBar|FullyQualifiedName~TemplateParityTests" --no-restore`
 - `dotnet build .\ModernWpf.sln --no-restore`
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj -f net8.0-windows7.0 --filter "FullyQualifiedName~BreadcrumbBarApiTests|FullyQualifiedName~ContentPresenterEx" --no-restore` — 25 passed.
+- Strict installed-WinUI-Gallery comparisons use a `3.0` primary-crop gate and exact `530x26` crops: Dark `artifacts\visual-checks\20260717-000406-228-6496\report.md` at `2.33`; Light `artifacts\visual-checks\20260717-000424-684-57708\report.md` at `2.53`.

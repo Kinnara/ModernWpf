@@ -289,6 +289,7 @@ public class InfoBarApiTests
 
             Assert.AreEqual(typeof(ModernWpf.Controls.InfoBar), infoBarStyle.TargetType);
             AssertSetterValue(infoBarStyle, Control.IsTabStopProperty, false);
+            AssertSetterValue(infoBarStyle, UIElement.SnapsToDevicePixelsProperty, true);
             AssertSetterValue(infoBarStyle, ModernWpf.Controls.InfoBar.CloseButtonStyleProperty, closeButtonStyle);
             AssertSolidColorBrushSetterColor(infoBarStyle, Control.BackgroundProperty, Colors.Transparent);
             AssertDynamicResourceSetter(infoBarStyle, Control.BorderBrushProperty, "InfoBarBorderBrush");
@@ -563,6 +564,41 @@ public class InfoBarApiTests
             Assert.AreEqual(new Rect(2, 3, 20, 10), LayoutInformation.GetLayoutSlot(first));
             Assert.AreEqual(new Rect(2, 18, 30, 10), LayoutInformation.GetLayoutSlot(second));
             Assert.AreEqual(new Rect(2, 37, 10, 10), LayoutInformation.GetLayoutSlot(third));
+        });
+    }
+
+    [TestMethod]
+    public void InfoBarPanelUsesWinUITextBlockLayoutRounding()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var first = new TextBlock { Width = 20.1, Height = 10.1 };
+            var second = new TextBlock { Width = 30.1, Height = 10.1 };
+            var panel = new InfoBarPanel
+            {
+                VerticalOrientationPadding = new Thickness(2, 3, 4, 5)
+            };
+            InfoBarPanel.SetVerticalOrientationMargin(second, new Thickness(0, 4, 0, 0));
+            panel.Children.Add(first);
+            panel.Children.Add(second);
+
+            using var host = new TestWindowHost(panel, width: 100, height: 100);
+            var dpi = VisualTreeHelper.GetDpi(panel);
+
+            panel.InvalidateMeasure();
+            panel.Measure(new Size(40, 100));
+            var roundedWidth = Math.Ceiling(second.DesiredSize.Width * dpi.DpiScaleX) / dpi.DpiScaleX;
+            var firstRoundedHeight = Math.Ceiling(first.DesiredSize.Height * dpi.DpiScaleY) / dpi.DpiScaleY;
+            var secondRoundedHeight = Math.Ceiling(second.DesiredSize.Height * dpi.DpiScaleY) / dpi.DpiScaleY;
+            panel.Arrange(new Rect(0, 0, roundedWidth + 6, firstRoundedHeight + secondRoundedHeight + 12));
+
+            Assert.AreEqual(roundedWidth + 6, panel.DesiredSize.Width, 0.001);
+            Assert.AreEqual(firstRoundedHeight + secondRoundedHeight + 12, panel.DesiredSize.Height, 0.001);
+
+            var firstAdjustment = firstRoundedHeight - first.DesiredSize.Height;
+            var secondAdjustment = secondRoundedHeight - second.DesiredSize.Height;
+            Assert.AreEqual(3 + firstAdjustment, LayoutInformation.GetLayoutSlot(first).Y, 0.001);
+            Assert.AreEqual(3 + firstRoundedHeight + 4 + secondAdjustment, LayoutInformation.GetLayoutSlot(second).Y, 0.001);
         });
     }
 

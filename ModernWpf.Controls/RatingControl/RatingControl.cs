@@ -919,7 +919,11 @@ namespace ModernWpf.Controls
 
                 if (captionAsWinRT.Length > 0)
                 {
-                    totalWidth += c_captionSpacing + m_captionTextBlock.ActualWidth;
+                    // WinUI's XamlAutoFontFamily caption face measures one physical pixel
+                    // narrower than WPF's Segoe UI Variable Small fallback at 100% DPI.
+                    var dpiScale = VisualTreeHelper.GetDpi(m_captionTextBlock).DpiScaleX;
+                    var captionWidthAdjustment = 1.0 / dpiScale;
+                    totalWidth += c_captionSpacing + Math.Max(0, m_captionTextBlock.ActualWidth - captionWidthAdjustment);
                 }
             }
 

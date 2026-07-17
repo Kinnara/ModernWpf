@@ -21,8 +21,8 @@ namespace ModernWpf.Controls
                 return;
             }
 
-            var hasBackground = background != null;
-            var hasBorder = borderBrush != null && !IsZero(borderThickness);
+            var hasBackground = IsVisibleBrush(background);
+            var hasBorder = IsVisibleBrush(borderBrush) && !IsZero(borderThickness);
             if (!hasBackground && !hasBorder)
             {
                 return;
@@ -76,6 +76,16 @@ namespace ModernWpf.Controls
                     drawingContext.DrawGeometry(borderBrush, null, outerGeometry);
                 }
             }
+        }
+
+        private static bool IsVisibleBrush(Brush brush)
+        {
+            if (brush == null || brush.Opacity <= 0)
+            {
+                return false;
+            }
+
+            return !(brush is SolidColorBrush solidColorBrush && solidColorBrush.Color.A == 0);
         }
 
         public static Geometry CreateRoundedRectangleGeometry(Rect rect, CornerRadius cornerRadius)

@@ -128,14 +128,13 @@ public class AnnotatedScrollBarApiTests
             Assert.AreSame(resources["DefaultRepeatButtonStyle"], scrollButtonStyle.BasedOn);
             AssertSetterValue(scrollButtonStyle, FrameworkElement.MinWidthProperty, 16.0);
             AssertSetterValue(scrollButtonStyle, FrameworkElement.MinHeightProperty, 16.0);
-            AssertDynamicResourceSetter(scrollButtonStyle, Control.BackgroundProperty, "ScrollButtonBackground");
-            AssertDynamicResourceSetter(scrollButtonStyle, Control.ForegroundProperty, "ScrollButtonForeground");
-            AssertDynamicResourceSetter(scrollButtonStyle, Control.BorderBrushProperty, "ScrollButtonBorderBrush");
+            AssertDynamicResourceSetter(scrollButtonStyle, Control.BackgroundProperty, "SubtleFillColorTransparentBrush");
+            AssertDynamicResourceSetter(scrollButtonStyle, Control.ForegroundProperty, "TextFillColorPrimaryBrush");
+            AssertDynamicResourceSetter(scrollButtonStyle, Control.BorderBrushProperty, "SubtleFillColorTransparentBrush");
             AssertDynamicResourceSetter(scrollButtonStyle, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
             AssertDynamicResourceSetter(scrollButtonStyle, Control.FontFamilyProperty, "SymbolThemeFontFamily");
             AssertSetterValue(scrollButtonStyle, Control.BorderThicknessProperty, resources["ScrollButtonStyleBorderThickness"]);
             AssertSetterValue(scrollButtonStyle, Control.FontSizeProperty, resources["ScrollButtonFontSize"]);
-            AssertSetterValue(scrollButtonStyle, Control.PaddingProperty, new Thickness(0));
             Assert.IsInstanceOfType(GetSetterValue(scrollButtonStyle, Control.TemplateProperty), typeof(ControlTemplate));
 
             AssertResourceAlias(annotatedScrollBar, "ScrollButtonBackground", "SubtleFillColorTransparentBrush");
@@ -167,9 +166,22 @@ public class AnnotatedScrollBarApiTests
             Assert.AreEqual(16.0, incrementButton.MinWidth);
             Assert.AreEqual(16.0, incrementButton.MinHeight);
             Assert.AreEqual(8.0, incrementButton.FontSize);
+            Assert.AreEqual(annotatedScrollBar.TryFindResource("ButtonPadding"), incrementButton.Padding);
             Assert.AreEqual(
                 annotatedScrollBar.TryFindResource("ControlCornerRadius"),
                 incrementButton.GetValue(System.Windows.Controls.Border.CornerRadiusProperty));
+
+            var incrementIcon = VisualTreeTestHelper
+                .EnumerateDescendants(incrementButton)
+                .OfType<ModernWpf.Controls.FontIcon>()
+                .Single();
+            Assert.AreEqual(annotatedScrollBar.TryFindResource("SymbolThemeFontFamily"), incrementIcon.FontFamily);
+
+            var incrementPresenter = VisualTreeTestHelper
+                .EnumerateDescendants(incrementButton)
+                .OfType<ModernWpf.Controls.ContentPresenterEx>()
+                .Single();
+            Assert.AreSame(incrementButton.Background, incrementPresenter.Background);
 
             var labelsGrid = FindTemplatePart<Grid>(annotatedScrollBar, "PART_LabelsGrid");
             var tooltip = FindTemplatePart<ToolTip>(annotatedScrollBar, "PART_DetailLabelToolTip");

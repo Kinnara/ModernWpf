@@ -219,7 +219,11 @@
                                 FontSize="{TemplateBinding FontSize}"
                                 Margin="{StaticResource SelectorBarItemTextVisualMargin}"
                                 Foreground="{TemplateBinding Foreground}"
-                                TextWrapping="Wrap" />
+                                TextWrapping="Wrap">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform Y="-1" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
                         </ui:StackPanelEx>
 
                         <Rectangle

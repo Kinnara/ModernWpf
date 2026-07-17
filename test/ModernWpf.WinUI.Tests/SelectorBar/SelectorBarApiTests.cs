@@ -90,6 +90,8 @@ public class SelectorBarApiTests
             Assert.AreEqual("Deleted", textVisual.Text);
             Assert.AreSame(foreground, iconPresenter.Foreground);
             Assert.AreSame(foreground, textVisual.Foreground);
+            Assert.IsInstanceOfType(textVisual.RenderTransform, typeof(TranslateTransform));
+            Assert.AreEqual(-1.0, ((TranslateTransform)textVisual.RenderTransform).Y);
             Assert.AreEqual(8.0, contentStack.Spacing);
             Assert.AreEqual(0.0, selectionVisual.Opacity);
             Assert.AreEqual(1.0, commonVisual.StrokeThickness);

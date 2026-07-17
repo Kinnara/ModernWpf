@@ -6,6 +6,14 @@ namespace ModernWpf.Controls.Primitives
 {
     public sealed class ProgressRingIndicator : FrameworkElement
     {
+        // ProgressRingDeterminate.cpp and ProgressRingIndeterminate.cpp define a
+        // 32x32 visual with an 8px ellipse and 1.5px stroke under a 1.77 scale.
+        private const double LottieDesignSide = 32.0;
+        private const double LottieShapeScale = 1.77;
+        private const double LottieEllipseRadius = 8.0;
+        private const double LottieStrokeThickness = 1.5;
+        private const double DefaultResourceStrokeThickness = 4.0;
+
         public static readonly DependencyProperty ForegroundProperty =
             DependencyProperty.Register(
                 nameof(Foreground),
@@ -133,11 +141,10 @@ namespace ModernWpf.Controls.Primitives
                 return;
             }
 
-            // WPF's stroked StreamGeometry rasterizes lighter than WinUI's animated visual.
-            // Keep the public resource value intact, but compensate the rendered pen width.
-            var strokeThickness = Math.Max(1.0, StrokeThickness * 1.5);
-            var radius = Math.Max(0.0, (side - strokeThickness) / 2.0);
-            if (radius <= 0)
+            var strokeScale = Math.Max(0.0, StrokeThickness) / DefaultResourceStrokeThickness;
+            var strokeThickness = side * LottieStrokeThickness * LottieShapeScale / LottieDesignSide * strokeScale;
+            var radius = side * LottieEllipseRadius * LottieShapeScale / LottieDesignSide;
+            if (strokeThickness <= 0.0 || radius <= 0.0)
             {
                 return;
             }

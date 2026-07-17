@@ -1,5 +1,7 @@
 # AutoSuggestBox WinUI 3 Source Audit
 
+Date: 2026-07-17
+
 ModernWpf `AutoSuggestBox` is now treated as a source-backed WPF port of the local WinUI 3 implementation rather than the old compact WPF-written behavior.
 
 ## WinUI 3 Source
@@ -51,3 +53,26 @@ Mapped source files:
 - `AutoSuggestBoxApiTests.SuggestionListItemClickUsesWinUISourceEventBeforeSelectionOrder` and `SuggestionListPrimarySelectionUsesWinUISourceSelectionModes` cover source `ItemClick` ordering and primary selection behavior for WPF multiple/extended modes.
 - `AutoSuggestBoxApiTests.SuggestionsPopupUsesSourceThemeShadow` covers the source popup-child shadow target, depth `32`, medium windowed-popup insets, and the `SuggestionsContainer.CornerRadius` binding.
 - Existing tests continue covering query-button `ContentPresenterEx` state setters, corner-radius popup/textbox filtering, and suggestion selection/query behavior.
+
+## Current Validation
+
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~AutoSuggestBoxApiTests" --no-restore`
+  - Passed 8/8 on `net8.0-windows7.0`.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter "FullyQualifiedName~AutoSuggestBoxSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryVisualChecksEnforceAutoSuggestBoxPixelParityThreshold" --no-restore`
+  - Passed 2/2 on `net8.0-windows7.0` and `net10.0-windows7.0`.
+
+Exact `300x32` resting crops pass the enforced `0.1` installed WinUI 3
+Gallery gate at delta `0.01` in both themes:
+
+- Light: `artifacts\visual-checks\20260717-080628-414-77376\report.md`.
+- Dark: `artifacts\visual-checks\20260717-080645-185-50632\report.md`.
+
+The harness now sends real keyboard input before falling back to UIA
+`ValuePattern.SetValue`, preserving WinUI's `UserInput` text-change reason.
+ModernWpf interaction evidence at
+`artifacts\visual-checks\20260717-080707-181-19788\report.json` proves typing
+`ae`, exposing and invoking the `Aegean` suggestion, capturing the nonblank
+`300x50` popup window, and updating the sample output to `Aegean`. The current
+installed WinUI Gallery accepts the same real-keyboard `ae` input but does not
+open its sample suggestion popup, so cross-app interaction comparison is
+recorded as unavailable rather than weakening the static pixel gate.

@@ -895,6 +895,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             text.SetValue(TextBlock.FontWeightProperty, new TemplateBindingExtension(Control.FontWeightProperty));
             text.SetValue(TextBlock.FontSizeProperty, new TemplateBindingExtension(Control.FontSizeProperty));
             text.SetValue(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
+            text.SetValue(UIElement.RenderTransformProperty, new TranslateTransform(0, -1));
             content.AppendChild(text);
 
             var selectionPill = new FrameworkElementFactory(typeof(Rectangle));

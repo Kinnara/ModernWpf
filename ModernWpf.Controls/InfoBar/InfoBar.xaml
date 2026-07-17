@@ -120,6 +120,7 @@
 
     <Style TargetType="local:InfoBar">
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="CloseButtonStyle" Value="{StaticResource InfoBarCloseButtonStyle}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="{DynamicResource InfoBarBorderBrush}" />

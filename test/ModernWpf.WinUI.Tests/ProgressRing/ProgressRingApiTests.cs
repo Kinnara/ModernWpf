@@ -5,6 +5,7 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
@@ -108,6 +109,67 @@ public class ProgressRingApiTests
             Assert.AreEqual(0.0, progressRing.Minimum);
             Assert.AreEqual(100.0, progressRing.Maximum);
             Assert.AreEqual(0.0, progressRing.Value);
+        });
+    }
+
+    [TestMethod]
+    public void DeterminateRendererMatchesCurrentWinUILottieGeometryAtSixtyPixels()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var indicator = new ModernWpf.Controls.Primitives.ProgressRingIndicator
+            {
+                Width = 60,
+                Height = 60,
+                Foreground = Brushes.White,
+                Background = Brushes.Transparent,
+                StrokeThickness = 4,
+                IsIndeterminate = false,
+                Minimum = 0,
+                Maximum = 100,
+                Value = 65
+            };
+            indicator.Measure(new Size(60, 60));
+            indicator.Arrange(new Rect(0, 0, 60, 60));
+            indicator.UpdateLayout();
+
+            var bitmap = new RenderTargetBitmap(60, 60, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(indicator);
+            var stride = 60 * 4;
+            var pixels = new byte[stride * 60];
+            bitmap.CopyPixels(pixels, stride, 0);
+
+            var minX = 60;
+            var minY = 60;
+            var maxX = -1;
+            var maxY = -1;
+            var visiblePixels = 0;
+            var alphaSum = 0;
+            for (var y = 0; y < 60; y++)
+            {
+                for (var x = 0; x < 60; x++)
+                {
+                    var alpha = pixels[(y * stride) + (x * 4) + 3];
+                    if (alpha == 0)
+                    {
+                        continue;
+                    }
+
+                    minX = Math.Min(minX, x);
+                    minY = Math.Min(minY, y);
+                    maxX = Math.Max(maxX, x);
+                    maxY = Math.Max(maxY, y);
+                    visiblePixels++;
+                    alphaSum += alpha;
+                }
+            }
+
+            Assert.AreEqual(6, minX);
+            Assert.AreEqual(1, minY);
+            Assert.AreEqual(58, maxX);
+            Assert.AreEqual(58, maxY);
+            Assert.IsTrue(visiblePixels >= 650 && visiblePixels <= 700, $"Visible pixels: {visiblePixels}");
+            Assert.IsTrue(alphaSum >= 140_000 && alphaSum <= 143_000, $"Alpha sum: {alphaSum}");
         });
     }
 

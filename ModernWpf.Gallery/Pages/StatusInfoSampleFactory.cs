@@ -491,7 +491,8 @@ namespace ModernWpf.Gallery.Pages
                 Title = "Title",
                 Message = "Essential app message for your users to be informed of, acknowledge, or take action on.",
                 Width = 560,
-                HorizontalAlignment = HorizontalAlignment.Left
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top
             };
             GalleryAutomation.WithAutomationId(infoBar, GalleryAutomation.SampleElementId("InfoBar", "InfoBar"));
 
@@ -544,7 +545,8 @@ namespace ModernWpf.Gallery.Pages
                 Title = "Title",
                 Message = InfoBarLongMessage,
                 Width = 560,
-                HorizontalAlignment = HorizontalAlignment.Left
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top
             };
             GalleryAutomation.WithAutomationId(infoBar, GalleryAutomation.SampleElementId("InfoBar", "LongMessageInfoBar"));
 
@@ -609,7 +611,8 @@ namespace ModernWpf.Gallery.Pages
                 Title = "Title",
                 Message = "Essential app message for your users to be informed of, acknowledge, or take action on.",
                 Width = 560,
-                HorizontalAlignment = HorizontalAlignment.Left
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top
             };
             GalleryAutomation.WithAutomationId(infoBar, GalleryAutomation.SampleElementId("InfoBar", "IconAndCloseInfoBar"));
 

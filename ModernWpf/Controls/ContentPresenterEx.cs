@@ -431,6 +431,7 @@ namespace ModernWpf.Controls
             {
                 if (_textBlock != null)
                 {
+                    _textBlock.ClearValue(UseLayoutRoundingProperty);
                     _textBlock.ClearValue(TextBlock.TextWrappingProperty);
                     _textBlock.ClearValue(TextBlock.LineHeightProperty);
                     _textBlock.ClearValue(TextBlock.LineStackingStrategyProperty);
@@ -439,6 +440,11 @@ namespace ModernWpf.Controls
                 }
 
                 _textBlock = value;
+
+                // WinUI's TextBlock applies a physical-pixel ceiling to its unrounded
+                // text metrics when layout rounding is enabled. Keep WPF's generated
+                // TextBlock unrounded so MeasureOverride can reproduce that behavior.
+                _textBlock?.SetValue(UseLayoutRoundingProperty, false);
 
                 ApplyTextProperties();
             }
@@ -452,10 +458,13 @@ namespace ModernWpf.Controls
             {
                 if (_accessText != null)
                 {
+                    _accessText.ClearValue(UseLayoutRoundingProperty);
                     _accessText.ClearValue(AccessText.TextWrappingProperty);
                 }
 
                 _accessText = value;
+
+                _accessText?.SetValue(UseLayoutRoundingProperty, false);
 
                 ApplyTextProperties();
             }
@@ -485,8 +494,8 @@ namespace ModernWpf.Controls
             // if that failed, try the default TemplateSelector
             if (template == null)
             {
-                template = base.ChooseTemplate();
                 IsUsingDefaultTemplate = true;
+                template = base.ChooseTemplate();
             }
             else
             {
@@ -499,8 +508,62 @@ namespace ModernWpf.Controls
         protected override Size MeasureOverride(Size constraint)
         {
             var chrome = GetChromeThickness();
-            var desired = base.MeasureOverride(LayoutChromeHelper.Deflate(constraint, chrome));
-            return LayoutChromeHelper.Inflate(desired, chrome);
+            var contentConstraint = LayoutChromeHelper.Deflate(constraint, chrome);
+            var desired = base.MeasureOverride(contentConstraint);
+
+            if (EnsureDefaultTextElement())
+            {
+                // The default presenter template can create its TextBlock while
+                // base.MeasureOverride is in progress, before ChooseTemplate returns.
+                // Measure once more after applying the WinUI rounding substitution.
+                desired = base.MeasureOverride(contentConstraint);
+            }
+
+            desired = LayoutChromeHelper.Inflate(desired, chrome);
+
+            if (UseLayoutRounding && (_textBlock != null || _accessText != null))
+            {
+                var dpi = VisualTreeHelper.GetDpi(this);
+                desired.Width = LayoutRoundCeiling(desired.Width, dpi.DpiScaleX);
+                desired.Height = LayoutRoundCeiling(desired.Height, dpi.DpiScaleY);
+            }
+
+            return desired;
+        }
+
+        private bool EnsureDefaultTextElement()
+        {
+            if (_textBlock != null || _accessText != null ||
+                ContentTemplate != null || ContentTemplateSelector != null ||
+                VisualChildrenCount != 1)
+            {
+                return false;
+            }
+
+            var child = GetVisualChild(0);
+            if (ReferenceEquals(child, Content))
+            {
+                return false;
+            }
+
+            if (child is TextBlock textBlock)
+            {
+                TextBlock = textBlock;
+                return true;
+            }
+
+            if (child is AccessText accessText)
+            {
+                AccessText = accessText;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static double LayoutRoundCeiling(double value, double scale)
+        {
+            return Math.Ceiling(value * scale) / scale;
         }
 
         protected override Size ArrangeOverride(Size arrangeSize)

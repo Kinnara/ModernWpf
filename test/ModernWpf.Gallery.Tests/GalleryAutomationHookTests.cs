@@ -1260,6 +1260,14 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(HorizontalAlignment.Right, annotatedScrollBar.HorizontalAlignment);
                     Assert.IsTrue(annotatedScrollBar.ScrollController.CanScroll);
 
+                    var incrementButton = FindNamedDescendant<RepeatButton>(annotatedScrollBar, "PART_VerticalIncrementRepeatButton");
+                    Assert.IsNotNull(incrementButton);
+                    var incrementPresenter = FindDescendants<Mux.ContentPresenterEx>(incrementButton).Single();
+                    Assert.AreSame(incrementButton.Background, incrementPresenter.Background);
+                    Assert.AreSame(annotatedScrollBar.TryFindResource("SubtleFillColorTransparentBrush"), incrementPresenter.Background);
+                    Assert.AreEqual(Colors.Transparent, ((SolidColorBrush)incrementPresenter.Background).Color);
+                    Assert.AreEqual(annotatedScrollBar.TryFindResource("ButtonPadding"), incrementButton.Padding);
+
                     Assert.AreEqual(new Thickness(2), itemsRepeater.Margin);
                     Assert.AreEqual(250, itemsRepeater.Children.Count);
                     AssertAnnotatedColorItem(itemsRepeater, 0, Colors.Azure);
@@ -1314,6 +1322,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(thumb);
                     Assert.IsTrue(thumb.ActualWidth > 0);
                     Assert.IsTrue(thumb.ActualHeight > 0);
+                    Assert.AreSame(annotatedScrollBar.TryFindResource("AccentFillColorDefaultBrush"), thumb.Background);
 
                     Assert.AreEqual("AnnotatedScrollBar maximum height:", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(heightSlider));
                     Assert.IsTrue(
@@ -3031,6 +3040,9 @@ namespace ModernWpf.Gallery.Tests
                     var bitmapRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
                     Assert.AreEqual(1, bitmapRoot.Children.Count);
                     Assert.IsInstanceOfType(bitmapRoot.Children[0], typeof(StackPanel));
+                    var bitmapExampleStack = (StackPanel)bitmapRoot.Children[0];
+                    var bitmapDescription = (TextBlock)bitmapExampleStack.Children[0];
+                    Assert.AreSame(bitmapDescription.FindResource("BodyTextBlockStyle"), bitmapDescription.Style);
                     var bitmapOptions = (CheckBox)page.Examples[0].OptionsContent;
                     Assert.IsNotNull(bitmapOptions);
 
@@ -3299,6 +3311,25 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(470d, titleBarControl.Width);
                     Assert.AreEqual(48d, titleBarControl.Height);
                     Assert.AreEqual("TitleBarControl", AutomationProperties.GetName(titleBarControl));
+                    var titleBarSurface = FindNamedDescendant<Border>(titleBarControl, "TitleBarSurface");
+                    Assert.IsNotNull(titleBarSurface);
+                    Assert.AreEqual(new Thickness(-1), titleBarSurface.Margin);
+                    Assert.AreEqual(new Thickness(1), titleBarSurface.BorderThickness);
+                    Assert.AreEqual(new CornerRadius(4), titleBarSurface.CornerRadius);
+                    var titleBarIcon = FindNamedDescendant<Image>(titleBarControl, "TitleBarIcon");
+                    Assert.IsNotNull(titleBarIcon);
+                    Assert.AreEqual(16d, titleBarIcon.Width);
+                    Assert.AreEqual(16d, titleBarIcon.Height);
+                    Assert.AreEqual(new Thickness(14, 0, 16, 0), titleBarIcon.Margin);
+                    var titleBarSearchBox = (Mux.AutoSuggestBox)FindByAutomationId(page, "GallerySample_TitleBar_SearchBox");
+                    Assert.IsNotNull(titleBarSearchBox);
+                    Assert.AreEqual(186d, titleBarSearchBox.Width);
+                    Assert.AreEqual(new Thickness(0, 0, 16, 0), titleBarSearchBox.Margin);
+                    var rightHeader = FindNamedDescendant<Mux.PersonPicture>(titleBarControl, "TitleBarRightHeader");
+                    Assert.IsNotNull(rightHeader);
+                    Assert.AreEqual(30d, rightHeader.Width);
+                    Assert.AreEqual(30d, rightHeader.Height);
+                    Assert.AreEqual(new Thickness(0, 0, 16, 0), rightHeader.Margin);
 
                     var titleBox = FindNamedDescendant<TextBox>(page, "TitleBox");
                     Assert.IsNotNull(titleBox);
@@ -4945,6 +4976,8 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsTrue(textVisual.ActualWidth > 0, "SelectorBar text visual should be rendered.");
             Assert.IsTrue(iconVisual.ActualWidth > 0, "SelectorBar icon visual should be rendered.");
             Assert.IsTrue(selectionVisual.ActualWidth > 0, "SelectorBar selection visual should be measured.");
+            Assert.IsInstanceOfType(textVisual.RenderTransform, typeof(TranslateTransform));
+            Assert.AreEqual(-1.0, ((TranslateTransform)textVisual.RenderTransform).Y);
         }
 
         private static void AssertNavigationViewInfoBadgeSampleRendered(
@@ -4957,6 +4990,24 @@ namespace ModernWpf.Gallery.Tests
             AssertRenderedInside(navigationView, inboxItem, "Inbox NavigationViewItem", navigationDiagnostics);
             AssertRenderedInside(navigationView, infoBadge, "Inbox InfoBadge", navigationDiagnostics);
 
+            var rootGrid = FindNamedDescendant<Mux.GridEx>(infoBadge, "RootGrid");
+            Assert.IsNotNull(rootGrid, "InfoBadge should render through its source-shaped RootGrid template part.");
+            Assert.AreEqual(new CornerRadius(infoBadge.ActualHeight / 2), infoBadge.TemplateSettings.InfoBadgeCornerRadius);
+            Assert.AreEqual(infoBadge.TemplateSettings.InfoBadgeCornerRadius, rootGrid.CornerRadius);
+
+            var cornerPixel = RenderDescendantPixel(navigationView, infoBadge, 0, 0);
+            var centerPixel = RenderDescendantPixel(
+                navigationView,
+                infoBadge,
+                (int)(infoBadge.ActualWidth / 2),
+                (int)(infoBadge.ActualHeight / 2));
+            Assert.IsTrue(
+                cornerPixel.A < 30 || (cornerPixel.R > 180 && cornerPixel.G > 180 && cornerPixel.B > 180),
+                $"InfoBadge's first NavigationView-hosted frame should leave the circular corner transparent. Pixel={cornerPixel}");
+            Assert.IsTrue(
+                centerPixel.B > centerPixel.R + 60 && centerPixel.B > centerPixel.G + 10,
+                $"InfoBadge's circular center should retain the accent fill. Pixel={centerPixel}");
+
             var visibleMenuTexts = FindDescendants<TextBlock>(navigationView)
                 .Where(textBlock => textBlock.IsVisible && textBlock.ActualWidth > 0 && textBlock.ActualHeight > 0)
                 .Select(textBlock => textBlock.Text)
@@ -4965,6 +5016,26 @@ namespace ModernWpf.Gallery.Tests
             CollectionAssert.Contains(visibleMenuTexts, "Home", string.Join(", ", visibleMenuTexts));
             CollectionAssert.Contains(visibleMenuTexts, "Account", string.Join(", ", visibleMenuTexts));
             CollectionAssert.Contains(visibleMenuTexts, "Inbox", string.Join(", ", visibleMenuTexts));
+        }
+
+        private static Color RenderDescendantPixel(
+            FrameworkElement ancestor,
+            FrameworkElement descendant,
+            int offsetX,
+            int offsetY)
+        {
+            ancestor.UpdateLayout();
+            var width = (int)Math.Ceiling(ancestor.ActualWidth);
+            var height = (int)Math.Ceiling(ancestor.ActualHeight);
+            var origin = descendant.TranslatePoint(new Point(), ancestor);
+            var x = Math.Max(0, Math.Min(width - 1, (int)Math.Floor(origin.X) + offsetX));
+            var y = Math.Max(0, Math.Min(height - 1, (int)Math.Floor(origin.Y) + offsetY));
+
+            var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(ancestor);
+            var pixels = new byte[4];
+            bitmap.CopyPixels(new Int32Rect(x, y, 1, 1), pixels, 4, 0);
+            return Color.FromArgb(pixels[3], pixels[2], pixels[1], pixels[0]);
         }
 
         private static void AssertColorPickerTextInputLayoutMatchesReference(Mux.ColorPicker colorPicker)

@@ -1022,9 +1022,9 @@ public class ToggleSwitchApiTests
                 BaseValueSource.DefaultStyle,
                 DependencyPropertyHelper.GetValueSource(toggleSwitch, UIElement.IsManipulationEnabledProperty).BaseValueSource);
 
-            Assert.AreEqual(VerticalAlignment.Top, toggleSwitch.VerticalContentAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, toggleSwitch.VerticalContentAlignment);
             Assert.AreEqual(
-                BaseValueSource.Default,
+                BaseValueSource.DefaultStyle,
                 DependencyPropertyHelper.GetValueSource(toggleSwitch, Control.VerticalContentAlignmentProperty).BaseValueSource);
         });
     }
@@ -1052,6 +1052,7 @@ public class ToggleSwitchApiTests
             AssertSetterValue(style, FrameworkElement.HorizontalAlignmentProperty, HorizontalAlignment.Left);
             AssertSetterValue(style, FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center);
             AssertSetterValue(style, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Left);
+            AssertSetterValue(style, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
             AssertDynamicResourceSetter(style, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
             AssertDynamicResourceSetter(style, Control.FontSizeProperty, "ControlContentThemeFontSize");
             AssertSetterValue(style, UIElement.IsManipulationEnabledProperty, true);
@@ -1065,6 +1066,7 @@ public class ToggleSwitchApiTests
             Assert.AreEqual(HorizontalAlignment.Left, toggleSwitch.HorizontalAlignment);
             Assert.AreEqual(VerticalAlignment.Center, toggleSwitch.VerticalAlignment);
             Assert.AreEqual(HorizontalAlignment.Left, toggleSwitch.HorizontalContentAlignment);
+            Assert.AreEqual(VerticalAlignment.Center, toggleSwitch.VerticalContentAlignment);
             Assert.AreSame(toggleSwitch.TryFindResource("ContentControlThemeFontFamily"), toggleSwitch.FontFamily);
             Assert.AreEqual(toggleSwitch.TryFindResource("ControlContentThemeFontSize"), toggleSwitch.FontSize);
             Assert.IsTrue(toggleSwitch.IsManipulationEnabled);

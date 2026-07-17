@@ -378,6 +378,41 @@ public class BreadcrumbBarApiTests
     }
 
     [TestMethod]
+    public void GalleryBreadcrumbItemWidthsMatchCurrentWinUIReference()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var breadcrumb = new ModernWpf.Controls.BreadcrumbBar
+            {
+                ItemsSource = new[]
+                {
+                    "Home",
+                    "Documents",
+                    "Design",
+                    "Northwind",
+                    "Images",
+                    "Folder1",
+                    "Folder2",
+                    "Folder3"
+                }
+            };
+
+            using var host = new TestWindowHost(breadcrumb, width: 800, height: 80);
+            host.UpdateLayout();
+
+            var actualWidths = breadcrumb.Containers
+                .Select(container => container.ActualWidth)
+                .ToArray();
+            var expectedWidths = new[] { 56.0, 89.0, 61.0, 84.0, 63.0, 63.0, 65.0, 49.0 };
+            CollectionAssert.AreEqual(
+                expectedWidths,
+                actualWidths,
+                "Actual WinUI Gallery breadcrumb item widths: " + string.Join(", ", actualWidths.Select(width => width.ToString("F3"))));
+            Assert.AreEqual(530.0, actualWidths.Sum());
+        });
+    }
+
+    [TestMethod]
     public void VerifyConstrainedWidthUsesWinUIEllipsisElement()
     {
         WpfTestHost.Run(() =>

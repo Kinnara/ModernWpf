@@ -1,6 +1,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace ModernWpf.Controls.Primitives
 {
@@ -23,7 +24,7 @@ namespace ModernWpf.Controls.Primitives
             foreach (UIElement child in InternalChildren)
             {
                 child.Measure(availableSize);
-                var childDesiredSize = child.DesiredSize;
+                var childDesiredSize = GetWinUIDesiredSize(child);
 
                 if (childDesiredSize.Width != 0 && childDesiredSize.Height != 0)
                 {
@@ -77,14 +78,15 @@ namespace ModernWpf.Controls.Primitives
                 {
                     if (child is FrameworkElement)
                     {
-                        var desiredSize = child.DesiredSize;
+                        var desiredSize = GetWinUIDesiredSize(child);
                         if (desiredSize.Width != 0 && desiredSize.Height != 0)
                         {
                             var verticalMargin = GetVerticalOrientationMargin(child);
                             verticalOffset += hasPreviousElement ? verticalMargin.Top : 0;
+                            var textLayoutRoundingOffset = GetWinUITextLayoutRoundingHeightAdjustment(child, desiredSize);
                             child.Arrange(new Rect(
                                 verticalOrientationPadding.Left + verticalMargin.Left,
-                                verticalOffset,
+                                verticalOffset + textLayoutRoundingOffset,
                                 desiredSize.Width,
                                 desiredSize.Height));
                             verticalOffset += desiredSize.Height + verticalMargin.Bottom;
@@ -104,14 +106,15 @@ namespace ModernWpf.Controls.Primitives
                     var child = InternalChildren[i];
                     if (child is FrameworkElement)
                     {
-                        var desiredSize = child.DesiredSize;
+                        var desiredSize = GetWinUIDesiredSize(child);
                         if (desiredSize.Width != 0 && desiredSize.Height != 0)
                         {
                             var horizontalMargin = GetHorizontalOrientationMargin(child);
                             horizontalOffset += hasPreviousElement ? horizontalMargin.Left : 0;
+                            var textLayoutRoundingOffset = GetWinUITextLayoutRoundingHeightAdjustment(child, desiredSize);
                             child.Arrange(new Rect(
                                 horizontalOffset,
-                                horizontalOrientationPadding.Top + horizontalMargin.Top,
+                                horizontalOrientationPadding.Top + horizontalMargin.Top + textLayoutRoundingOffset,
                                 i < InternalChildren.Count - 1 ? desiredSize.Width : Math.Max(desiredSize.Width, finalSize.Width - horizontalOffset),
                                 desiredSize.Height));
                             horizontalOffset += desiredSize.Width + horizontalMargin.Right;
@@ -122,6 +125,28 @@ namespace ModernWpf.Controls.Primitives
             }
 
             return finalSize;
+        }
+
+        private Size GetWinUIDesiredSize(UIElement child)
+        {
+            var desiredSize = child.DesiredSize;
+            var dpi = VisualTreeHelper.GetDpi(this);
+
+            // WinUI TextBlock ceilings its page-node dimensions to physical pixels
+            // before parent panels consume DesiredSize. WPF preserves fractional text
+            // metrics, so reproduce that boundary for the source-ported panel.
+            desiredSize.Width = Math.Ceiling(desiredSize.Width * dpi.DpiScaleX) / dpi.DpiScaleX;
+            desiredSize.Height = Math.Ceiling(desiredSize.Height * dpi.DpiScaleY) / dpi.DpiScaleY;
+            return desiredSize;
+        }
+
+        private static double GetWinUITextLayoutRoundingHeightAdjustment(UIElement child, Size roundedDesiredSize)
+        {
+            // WinUI TextBlock adds the layout-rounding height adjustment to its
+            // content render offset so its last line is not clipped.
+            return child is TextBlock
+                ? Math.Max(0.0, roundedDesiredSize.Height - child.DesiredSize.Height)
+                : 0.0;
         }
 
         private bool _isVertical;

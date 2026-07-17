@@ -366,6 +366,7 @@
 
     <Style TargetType="local:BreadcrumbBar">
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:BreadcrumbBar">

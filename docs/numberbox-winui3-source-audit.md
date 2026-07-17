@@ -1,5 +1,7 @@
 # NumberBox WinUI 3 Source Audit
 
+Date: 2026-07-17
+
 Source snapshot: `D:\repos\microsoft-ui-xaml`, `reference/winui3-current` / `c70471c511a0168b61dcca13af9556465f26b673`.
 
 WinUI source files:
@@ -47,12 +49,26 @@ ModernWpf files:
 - WPF `TextBox` requires `PART_ContentHost`; ModernWpf cannot exactly use the WinUI `ContentElement` scroll viewer or `AutomationProperties.AccessibilityView=Raw` paths.
 - Popup spin buttons keep `Focusable=False` in addition to source `IsTabStop=False` because WPF focus movement can close the popup.
 - The local `NumberBoxPopupIndicatorMargin` resource remains in the NumberBox dictionary so WPF template-scope `StaticResource` lookup resolves reliably.
+- WPF can retain the Light `TextControlButtonForeground` alias when the source-shaped repeat-button style is instantiated inside the NumberBox template. The inline buttons therefore derive the Dark secondary foreground from the resolved NumberBox foreground, and popup buttons receive it through the popup root's inherited text foreground; the substitution is disabled in High Contrast so the system resource alias remains authoritative.
 - ModernWpf explicitly sets the inner text-box spin-button column width after entering the visual state because the current WPF `VisualStateEx` setter path does not reliably apply to the non-`FrameworkElement` `ColumnDefinition.Width` target.
 - The inner delete-button/TextBox common-state template still uses WPF trigger and `FontIconFallback` substitutions until the shared TextBox source-style port is done.
 
 ## Verification
 
-Focused tests cover source template shape, spin-button visual-state setters, inline and popup glyphs and metrics, repeat-button resource aliases, popup indicator glyph, UIA `LabeledBy` forwarding, source `NaN` setter behavior through existing property tests, and significant-digit input preservation.
+Focused tests cover source template shape, spin-button visual-state setters, inline and popup glyphs and metrics, repeat-button resource aliases, Light/Dark foreground resolution for both button hosts, popup indicator glyph, UIA `LabeledBy` forwarding, source `NaN` setter behavior through existing property tests, and significant-digit input preservation.
 
 - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~NumberBox" --no-restore`
   - Passed 17/17.
+- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter "FullyQualifiedName~NumberBoxSampleMatchesWinUIGalleryExamples|FullyQualifiedName~GalleryVisualChecksEnforceNumberBoxPixelParityThreshold" --no-restore`
+  - Passed 2/2 on `net8.0-windows7.0` and `net10.0-windows7.0`.
+
+Strict installed WinUI 3 Gallery comparisons use exact `132x59` resting crops
+and separately prove the value interaction from `10` to `20.00`. Both themes
+pass the enforced `2.5` primary-crop gate:
+
+- Light: `artifacts\visual-checks\20260717-075724-633-8816\report.md`, primary delta `1.84`, interaction crop delta `1.69`.
+- Dark: `artifacts\visual-checks\20260717-075742-058-68924\report.md`, primary delta `1.74`, interaction crop delta `1.02`.
+
+The Dark foreground correction reduced the refreshed resting delta from `2.21`
+to `1.74`; more importantly, both chevrons now use WinUI's light secondary
+foreground instead of the visually incorrect Light-theme black alias.
