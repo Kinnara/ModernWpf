@@ -13,6 +13,7 @@
 
     <ui:CornerRadiusFilterConverter x:Key="TopCornerRadiusFilterConverter" Filter="Top" />
     <ui:CornerRadiusFilterConverter x:Key="BottomCornerRadiusFilterConverter" Filter="Bottom" />
+    <local:AppBarIconOrContentConverter x:Key="AppBarIconOrContentConverter" />
 
     <Thickness x:Key="CommandBarFlyoutAppBarButtonInnerBorderMargin">2</Thickness>
     <Thickness x:Key="CommandBarFlyoutAppBarEllipsisButtonInnerBorderMargin">2,2,6,2</Thickness>
@@ -239,8 +240,14 @@
                                     HorizontalAlignment="Stretch">
                                     <ui:ContentPresenterEx
                                         x:Name="Content"
-                                        Content="{TemplateBinding Icon}"
-                                        Foreground="{TemplateBinding Foreground}" />
+                                        Foreground="{TemplateBinding Foreground}">
+                                        <ui:ContentPresenterEx.Content>
+                                            <MultiBinding Converter="{StaticResource AppBarIconOrContentConverter}">
+                                                <Binding Path="Content" RelativeSource="{RelativeSource TemplatedParent}" />
+                                                <Binding Path="Icon" RelativeSource="{RelativeSource TemplatedParent}" />
+                                            </MultiBinding>
+                                        </ui:ContentPresenterEx.Content>
+                                    </ui:ContentPresenterEx>
                                 </Viewbox>
                                 <TextBlock
                                     x:Name="TextLabel"
@@ -594,8 +601,14 @@
                                     HorizontalAlignment="Stretch">
                                     <ui:ContentPresenterEx
                                         x:Name="Content"
-                                        Content="{TemplateBinding Icon}"
-                                        Foreground="{TemplateBinding Foreground}" />
+                                        Foreground="{TemplateBinding Foreground}">
+                                        <ui:ContentPresenterEx.Content>
+                                            <MultiBinding Converter="{StaticResource AppBarIconOrContentConverter}">
+                                                <Binding Path="Content" RelativeSource="{RelativeSource TemplatedParent}" />
+                                                <Binding Path="Icon" RelativeSource="{RelativeSource TemplatedParent}" />
+                                            </MultiBinding>
+                                        </ui:ContentPresenterEx.Content>
+                                    </ui:ContentPresenterEx>
                                 </Viewbox>
                                 <TextBlock
                                     x:Name="TextLabel"

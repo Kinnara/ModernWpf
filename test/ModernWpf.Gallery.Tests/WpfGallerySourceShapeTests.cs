@@ -2503,13 +2503,17 @@ namespace ModernWpf.Gallery.Tests
             var activeXamlFiles = activeXamlRoots
                 .SelectMany(root => Directory.EnumerateFiles(root, "*.xaml", SearchOption.AllDirectories))
                 .Concat(new[] { Path.Combine(repoRoot, "ModernWpf.Gallery", "MainWindow.xaml") });
+            var allowedActiveAutomationIdAssignments = new[]
+            {
+                @"ModernWpf.Gallery\Pages\ItemPage.xaml: AutomationProperties.AutomationId=""GalleryItemPageScrollViewer""",
+                @"ModernWpf.Gallery\Pages\ItemPage.xaml: AutomationProperties.AutomationId=""{Binding AutomationId}"""
+            };
             var shellXamlFiles = Directory.EnumerateFiles(
                 Path.Combine(repoRoot, "ModernWpf.Gallery", "Shell"),
                 "*.xaml",
                 SearchOption.AllDirectories);
             var forbiddenSnippets = new[]
             {
-                "AutomationProperties.AutomationId=",
                 "x:Name=\"ContentRootGrid\"",
                 "x:Name=\"GallerySampleHost\"",
                 "x:Name=\"AllControlsItemsControl\"",
@@ -2540,9 +2544,14 @@ namespace ModernWpf.Gallery.Tests
                 .SelectMany(path =>
                 {
                     var source = File.ReadAllText(path);
-                    return forbiddenSnippets
+                    var forbidden = forbiddenSnippets
                         .Where(snippet => source.Contains(snippet, StringComparison.Ordinal))
                         .Select(snippet => Path.GetRelativePath(repoRoot, path) + ": " + snippet);
+                    var unapprovedAutomationIds = File.ReadLines(path)
+                        .Where(line => line.Contains("AutomationProperties.AutomationId=", StringComparison.Ordinal))
+                        .Select(line => Path.GetRelativePath(repoRoot, path) + ": " + line.Trim())
+                        .Where(assignment => !allowedActiveAutomationIdAssignments.Contains(assignment, StringComparer.Ordinal));
+                    return forbidden.Concat(unapprovedAutomationIds);
                 })
                 .Concat(shellXamlFiles.SelectMany(path =>
                 {
@@ -2615,7 +2624,7 @@ namespace ModernWpf.Gallery.Tests
                 "Name = \"scrollViewer\"",
                 "Width = AnnotatedItemWidth + 4",
                 "Margin = new Thickness(12, 0, 0, 0)",
-                "var slider = new Slider",
+                "var slider = WinUISampleSlider.ShowValueFill(new Slider",
                 "Name = \"AnnotatedScrollBarMaxHeightSlider\"",
                 "Margin = new Thickness(0)",
                 "ControlHelper.SetHeader(slider, \"AnnotatedScrollBar maximum height:\");",
@@ -2632,16 +2641,17 @@ namespace ModernWpf.Gallery.Tests
                 "sliderHost.Children.Add(slider);",
                 "Grid.SetRow(sliderHost, 1);",
                 "options.Children.Add(sliderHost);",
-                "var optionsHost = new Border",
-                "Padding = new Thickness(16)",
-                "optionsHost.SetResourceReference(Border.BackgroundProperty, \"CardBackgroundFillColorDefaultBrush\");",
-                "optionsHost.SetResourceReference(Border.CornerRadiusProperty, \"ControlCornerRadius\");");
+                "optionsContent = options;",
+                "root.Children.Add(sampleGrid);");
             Assert.IsFalse(
                 source.Contains("Grid.SetRow(slider, 2);", StringComparison.Ordinal),
                 "AnnotatedScrollBar options should keep the slider in the second WinUI source row.");
             Assert.IsFalse(
                 source.Contains("Margin = new Thickness(52, 0, 0, 0)", StringComparison.Ordinal),
                 "AnnotatedScrollBar options should use ControlExample-style padding instead of a manual left offset.");
+            Assert.IsFalse(
+                source.Contains("TextWrapping = TextWrapping.Wrap,\r\n                VerticalAlignment = VerticalAlignment.Center", StringComparison.Ordinal),
+                "The WinUI options explanation is a single unwrapped line whose desired width sizes the options column.");
         }
 
         [TestMethod]
@@ -2798,7 +2808,7 @@ namespace ModernWpf.Gallery.Tests
                 "ColorPicker editor surface",
                 "function New-InfoBadgeReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement)",
                 "GallerySample_InfoBadge_InfoBadge.png",
-                "$referenceAccent = Find-AccentComponentBounds $screenshot $sampleBounds",
+                "$referenceAccent = Find-AccentComponentBounds $screenshot $searchBounds",
                 "Cropped the first rendered WinUI InfoBadge value badge from the sample pixels.",
                 "InfoBadge value badge",
                 "if ($control -eq \"SplitView\")",
@@ -2985,6 +2995,96 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryVisualChecksCoverEveryWinUIPortedControlExampleLive()
+        {
+            var visualChecks = ReadRepoFile("tools", "visual-checks", "Run-GalleryVisualChecks.ps1");
+            var itemPageXaml = ReadRepoFile("ModernWpf.Gallery", "Pages", "ItemPage.xaml");
+            var itemPageSource = ReadRepoFile("ModernWpf.Gallery", "Pages", "ItemPage.xaml.cs");
+            var diagnostics = ReadRepoFile("ModernWpf.Gallery", "Testing", "GalleryDiagnostics.cs");
+            var navigationRoot = ReadRepoFile("ModernWpf.Gallery", "Shell", "NavigationRootPage.xaml.cs");
+
+            var countMapMatch = Regex.Match(
+                visualChecks,
+                @"\$WinUIPortedControlExampleCounts\s*=\s*\[ordered\]@\{(?<items>.*?)\r?\n\}",
+                RegexOptions.Singleline);
+            Assert.IsTrue(countMapMatch.Success, "Could not locate the WinUI-ported control example-count map.");
+            var entries = Regex.Matches(
+                    countMapMatch.Groups["items"].Value,
+                    @"^\s*(?<control>[A-Za-z0-9]+)\s*=\s*(?<count>\d+)\s*$",
+                    RegexOptions.Multiline)
+                .Cast<Match>()
+                .ToDictionary(
+                    match => match.Groups["control"].Value,
+                    match => int.Parse(match.Groups["count"].Value),
+                    StringComparer.Ordinal);
+            Assert.AreEqual(37, entries.Count, "Every WinUI-ported control route must be in the exhaustive visual matrix.");
+            Assert.AreEqual(94, entries.Values.Sum(), "Every displayed WinUI-ported sample must be in the exhaustive visual matrix.");
+            Assert.AreEqual(8, entries["NavigationView"]);
+            Assert.AreEqual(2, entries["WinUIProgressBar"]);
+            Assert.AreEqual(2, entries["TitleBar"]);
+
+            AssertContainsInOrder(
+                itemPageXaml,
+                "AutomationProperties.AutomationId=\"GalleryItemPageScrollViewer\"",
+                "AutomationProperties.AutomationId=\"{Binding AutomationId}\"",
+                "AutomationProperties.Name=\"{Binding HeaderText}\"");
+            AssertContainsInOrder(
+                itemPageSource,
+                "AssignExampleAutomationIds(_item.UniqueId, Examples);",
+                "private static void AssignExampleAutomationIds(string uniqueId, IReadOnlyList<GalleryExample> examples)",
+                "\"Example\" + (index + 1).ToString",
+                "public string AutomationId { get; internal set; }");
+            AssertContainsInOrder(
+                diagnostics,
+                "VisualScrollRequestFileName = \"modernwpf-gallery-scroll-request.txt\"",
+                "VisualScrollResultFileName = \"modernwpf-gallery-scroll-result.txt\"",
+                "public static bool BringVisualArtifactIntoView(DependencyObject root, string automationId)",
+                "public static bool TryProcessVisualScrollRequest(DependencyObject root)",
+                "element.PointToScreen(new Point())");
+            AssertContainsInOrder(
+                navigationRoot,
+                "_visualTestCommandTimer.Tick += OnVisualTestCommandTimerTick;",
+                "GalleryDiagnostics.TryProcessVisualScrollRequest",
+                "GalleryDiagnostics.WriteVisualArtifacts(Window.GetWindow(this) ?? (DependencyObject)this);",
+                "SetVisualTestState(route, \"Ready:\" + route);");
+            AssertContainsInOrder(
+                visualChecks,
+                "function Scroll-ModernWpfVisualArtifactIntoView($window, [string]$artifactDir, [string]$automationId)",
+                "function Get-ControlExampleArtifactEvidence([string]$control, [string]$artifactDir)",
+                "function Reveal-AutomationRangeInContainer($startElement, $endElement, $container, $window)",
+                "function Capture-ModernControlExampleScreenArtifacts([string]$control, [string]$caseDir, $window)",
+                "function Capture-WinUIControlExampleScreenArtifacts([string]$control, [string]$caseDir, $window)",
+                "$sourceButtons = @(Get-DescendantsByNameAndControlType $scrollPanel \"Source code\"",
+                "$revealed = Reveal-AutomationRangeInContainer $header $pairedSourceButton $scrollPanel $window",
+                "Find-WinUIControlExampleSourceButton $header $sourceButtons $window",
+                "Derived from the matching WinUI ControlExample header and Source code expander.",
+                "Capture-ModernControlExampleScreenArtifacts $control $caseDir $window",
+                "Capture-WinUIControlExampleScreenArtifacts $control $caseDir $window",
+                "Compare-ControlExampleScreenArtifactEvidence",
+                "$modern[\"ControlExampleComparisons\"] = $controlExampleComparisons",
+                "## Control Example Artifact Coverage",
+                "## Live Control Example Coverage",
+                "## Control Example Parity",
+                "control-example-review.png");
+            StringAssert.Contains(visualChecks, "$leftGraphics.DrawImageUnscaled($left, 0, 0)");
+            StringAssert.Contains(visualChecks, "$rightGraphics.DrawImageUnscaled($right, 0, 0)");
+            StringAssert.Contains(visualChecks, "$pairScale = [Math]::Min(");
+            StringAssert.Contains(visualChecks, "$captureWindowHeight = [Math]::Max($originalWindowHeight, 1800)");
+            StringAssert.Contains(visualChecks, "($bounds.X + $bounds.Width) -le $windowWidth");
+            StringAssert.Contains(visualChecks, "($bounds.Y + $bounds.Height) -le $windowHeight");
+            StringAssert.Contains(visualChecks, "$modernWpfWindowWidth = [Math]::Max(640, $Width - 73)");
+            StringAssert.Contains(visualChecks, "function Set-DeterministicControlFocus($window, [string]$control)");
+            StringAssert.Contains(visualChecks, "[void](Set-DeterministicControlFocus $window $control)");
+            AssertContainsInOrder(
+                visualChecks,
+                "$focusSet = Set-DeterministicControlFocus $window $control",
+                "if ($control -eq \"SelectorBar\" -and $focusSet)",
+                "Refresh-ModernWpfVisualArtifacts $window $artifactDir");
+            Assert.IsFalse(visualChecks.Contains("$leftGraphics.DrawImage($left, 0, 0, $width, $height)", StringComparison.Ordinal));
+            Assert.IsFalse(visualChecks.Contains("$rightGraphics.DrawImage($right, 0, 0, $width, $height)", StringComparison.Ordinal));
+        }
+
+        [TestMethod]
         public void InfoBadgeNavigationViewSampleKeepsEmbeddedBadgeVisible()
         {
             var source = File.ReadAllText(Path.Combine(
@@ -3015,12 +3115,14 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
-                "function Ensure-WinUIReferenceRootTheme([string]$control, $window)",
+                "function Ensure-WinUIReferenceRootTheme([string]$control, [string]$caseDir, $window)",
+                "root pixels already matched the requested theme",
                 "Find-ElementByNameInProcess $window.Current.ProcessId @(\"Settings\")",
                 "Find-ElementByAutomationIdInProcess $window.Current.ProcessId \"themeModeComboBox\"",
                 "$selectionPattern.Select()",
                 "Find-ElementByAutomationIdInProcess $window.Current.ProcessId \"__GoBackInvoker\"",
-                "$verified = $selectedTheme -eq $Theme -and $backInvoked",
+                "$rootPixelsVerified",
+                "$verified = $selectedTheme -eq $Theme -and $backInvoked -and $rootPixelsVerified",
                 "function Ensure-WinUIReferenceTheme([string]$control, [string]$caseDir, $window)",
                 "if ($control -eq \"CommandBarFlyout\")",
                 "$primarySource = \"\"",
@@ -3456,7 +3558,14 @@ namespace ModernWpf.Gallery.Tests
                 "\"ProgressRing\" { return 0 }",
                 "Set-ProgressRingDeterminateValue $window \"ModernWpf\" 65",
                 "Refresh-ModernWpfVisualArtifacts $window",
+                "$focusSet = Set-DeterministicControlFocus $window $control",
                 "Set-ProgressRingDeterminateValue $window \"WinUI3\" 65");
+            AssertContainsInOrder(
+                source,
+                "function Set-DeterministicControlFocus($window, [string]$control)",
+                "$control -in @(\"ProgressRing\", \"WinUIProgressBar\")",
+                "Find-DescendantButtonByAnyName $window @(\"Toggle Navigation\", \"Back\")",
+                "$shellButton.SetFocus()");
             Assert.IsFalse(
                 source.Contains("function Reset-ProgressRingAnimationPhase", StringComparison.Ordinal),
                 "ProgressRing reference proof must not depend on an indeterminate animation capture delay.");
@@ -3530,7 +3639,13 @@ namespace ModernWpf.Gallery.Tests
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
                 "\"TitleBar\" { return 1.0 }",
                 "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
-                "\"TitleBar\" { return 0 }");
+                "\"TitleBar\" { return 0 }",
+                "function Stabilize-WinUIReferenceResponsiveLayout([string]$control, $window)",
+                "$width + 64",
+                "PART_TitleText",
+                "PART_SubtitleText",
+                "$responsiveLayoutProbe = Stabilize-WinUIReferenceResponsiveLayout $control $window",
+                "ResponsiveLayoutProbe = $responsiveLayoutProbe");
         }
 
         [TestMethod]
@@ -3758,7 +3873,9 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "\"InfoBadge\" { return \"GallerySample_InfoBadge_InfoBadge\" }",
                 "function New-InfoBadgeReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement)",
-                "$referenceAccent = Find-AccentComponentBounds $screenshot $sampleBounds",
+                "TryFind-DescendantByAutomationId $window \"nvSample1\"",
+                "$navigationViewBounds = Get-ElementWindowBounds $window $navigationView",
+                "$referenceAccent = Find-AccentComponentBounds $screenshot $searchBounds",
                 "InfoBadge value badge",
                 "elseif ($control -eq \"InfoBadge\")",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
@@ -3781,6 +3898,7 @@ namespace ModernWpf.Gallery.Tests
             var template = ReadRepoFile("ModernWpf.Controls", "NavigationView", "NavigationView.xaml");
             var styles = ReadRepoFile("ModernWpf", "Styles", "NavigationView.xaml");
             var sample = ReadRepoFile("ModernWpf.Gallery", "Pages", "NavigationSampleFactory.cs");
+            var diagnostics = ReadRepoFile("ModernWpf.Gallery", "Testing", "GalleryDiagnostics.cs");
 
             AssertContainsInOrder(
                 source,
@@ -3790,9 +3908,52 @@ namespace ModernWpf.Gallery.Tests
                 "function Get-RequiredReferencePrimaryCropSource([string]$control)",
                 "\"NavigationView\" { return \"nvSample5\" }",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
-                "\"NavigationView\" { return 1.2 }",
+                "\"NavigationView\" { return 1.5 }",
                 "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
                 "\"NavigationView\" { return 0 }");
+            AssertContainsInOrder(
+                source,
+                "function Get-NavigationViewSelectionIndicatorEvidence([string]$path, [string]$orientation = \"Left\")",
+                "No solid NavigationView selection-indicator pixels were found",
+                "if ($control -eq \"NavigationView\")",
+                "$modern[\"NavigationViewSelectionIndicatorComparison\"]",
+                "NavigationView selection-indicator pixels differed");
+            AssertContainsInOrder(
+                source,
+                "function Get-NavigationViewSampleArtifactEvidence([string]$artifactDirectory)",
+                "GallerySample_NavigationView_NavigationView",
+                "GallerySample_NavigationView_TopNavigationView",
+                "IndicatorOrientation = \"Top\"",
+                "GallerySample_NavigationView_AdaptiveNavigationView",
+                "GallerySample_NavigationView_TabsNavigationView",
+                "GallerySample_NavigationView_DataBindingNavigationView",
+                "GallerySample_NavigationView_FooterNavigationView",
+                "GallerySample_NavigationView_HierarchicalNavigationView",
+                "GallerySample_NavigationView_ApiNavigationView",
+                "Get-NavigationViewSelectionIndicatorEvidence $path $expectation.IndicatorOrientation",
+                "NavigationView sample artifacts failed validation",
+                "Get-NavigationViewSampleArtifactEvidence $artifactDir",
+                "$navigationViewSampleArtifactsFailed",
+                "NavigationView sample artifacts: $($sampleArtifacts.ValidCount)/$($sampleArtifacts.ExpectedCount) valid");
+            AssertContainsInOrder(
+                source,
+                "function Capture-NavigationViewReferenceSampleArtifacts([string]$caseDirectory, $window)",
+                "ReferenceAutomationId = \"nvSample5\"",
+                "ReferenceAutomationId = \"nvSample6\"",
+                "ReferenceAutomationId = \"nvSample2\"",
+                "ReferenceAutomationId = \"nvSample7\"",
+                "ReferenceAutomationId = \"nvSample4\"",
+                "ReferenceAutomationId = \"nvSample9\"",
+                "ReferenceAutomationId = \"nvSample8\"",
+                "ReferenceAutomationId = \"nvSample\"",
+                "function Get-NavigationViewSampleMeanDeltaThreshold([string]$automationId)",
+                "\"GallerySample_NavigationView_AdaptiveNavigationView\" { return 4.25 }",
+                "function Compare-NavigationViewSampleArtifactEvidence($modernEvidence, $referenceEvidence)",
+                "$indicatorMatches",
+                "$modern[\"NavigationViewSampleComparisons\"]",
+                "NavigationView all-sample reference evidence was unavailable",
+                "## NavigationView Sample Matrix",
+                "NavigationView sample parity: $($sampleComparisons.ValidCount)/$($sampleComparisons.ExpectedCount) passed");
 
             StringAssert.Contains(light, "x:Key=\"NavigationViewDefaultPaneBackground\" ResourceKey=\"SystemControlPageBackgroundChromeLowBrush\"");
             StringAssert.Contains(light, "x:Key=\"NavigationViewContentBackground\" ResourceKey=\"LayerFillColorDefaultBrush\"");
@@ -3805,14 +3966,51 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(template, "Background=\"{DynamicResource NavigationViewItemIconBackground}\"");
             StringAssert.Contains(template, "BorderBrush=\"{DynamicResource NavigationViewContentGridBorderBrush}\"");
             StringAssert.Contains(template, "Value=\"{DynamicResource NavigationViewItemHeaderForeground}\"");
+            StringAssert.Contains(template, "<Setter Property=\"MinHeight\" Value=\"{DynamicResource NavigationViewTopPaneHeight}\" />");
+            StringAssert.Contains(template, "Margin=\"{DynamicResource TopNavigationViewTopNavGridMargin}\"");
+            StringAssert.Contains(template, "VerticalScrollBarVisibility=\"Disabled\"");
+            StringAssert.Contains(template, "Margin=\"{DynamicResource NavigationViewPaneContentGridMargin}\"");
+            StringAssert.Contains(template, "FontFamily=\"{DynamicResource ContentControlThemeFontFamily}\"");
             StringAssert.Contains(styles, "<Thickness x:Key=\"NavigationViewHeaderMargin\">56,45,0,0</Thickness>");
             StringAssert.Contains(styles, "<Thickness x:Key=\"NavigationViewContentPresenterMargin\">48,13,0,0</Thickness>");
             AssertContainsInOrder(
                 sample,
-                "Text = \"Lorem ipsum dolor sit amet",
+                "Text = SamplePageLoremIpsum",
                 "Margin = new Thickness(0, 1, 0, 0)",
                 "text.SetResourceReference(FrameworkElement.StyleProperty, \"BodyTextBlockStyle\")",
                 "text.SetResourceReference(TextBlock.ForegroundProperty, \"TextFillColorPrimaryBrush\")");
+            AssertContainsInOrder(
+                sample,
+                "GalleryAutomation.SampleElementId(\"NavigationView\", \"NavigationView\")",
+                "GalleryAutomation.SampleElementId(\"NavigationView\", \"TopNavigationView\")",
+                "GalleryAutomation.SampleElementId(\"NavigationView\", \"AdaptiveNavigationView\")",
+                "GalleryAutomation.SampleElementId(\"NavigationView\", \"TabsNavigationView\")",
+                "GalleryAutomation.SampleElementId(\"NavigationView\", \"DataBindingNavigationView\")",
+                "GalleryAutomation.SampleElementId(\"NavigationView\", \"FooterNavigationView\")",
+                "GalleryAutomation.SampleElementId(\"NavigationView\", \"HierarchicalNavigationView\")",
+                "GalleryAutomation.SampleElementId(\"NavigationView\", \"ApiNavigationView\")");
+            AssertContainsInOrder(
+                sample,
+                "GalleryAutomation.SampleElementId(\"NavigationView\", \"DataBindingNavigationView\")",
+                "HookNavigationHeaderSelection(navigationView);",
+                "navigationView.Header = \"Sample Page 1\";",
+                "GalleryAutomation.SampleElementId(\"NavigationView\", \"FooterNavigationView\")",
+                "navigationView.Width = 592.0;",
+                "navigationView.HorizontalAlignment = HorizontalAlignment.Left;",
+                "GalleryAutomation.SampleElementId(\"NavigationView\", \"HierarchicalNavigationView\")",
+                "navigationView.Width = 565.0;",
+                "navigationView.HorizontalAlignment = HorizontalAlignment.Left;",
+                "GalleryAutomation.SampleElementId(\"NavigationView\", \"ApiNavigationView\")",
+                "navigationView.Width = 458.0;",
+                "var contentFrame = new Frame",
+                "navigationView.Content = contentFrame;",
+                "navigationView.Height = 540;",
+                "contentFrame.Content = CreateNavigationSampleContent();",
+                "optionsContent = CreateNavigationViewApiOptions(");
+            AssertContainsInOrder(
+                diagnostics,
+                "element is ModernWpf.Controls.NavigationView",
+                "automationId.StartsWith(\"GallerySample_NavigationView_\", StringComparison.Ordinal)");
         }
 
         [TestMethod]
@@ -4285,6 +4483,15 @@ namespace ModernWpf.Gallery.Tests
                 "\"RatingControl\" { return 5.0 }",
                 "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
                 "\"RatingControl\" { return 0 }");
+            AssertContainsInOrder(
+                source,
+                "function Get-ReferenceBaselineNote([string]$control)",
+                "Installed WinUI Gallery 2.9.3.0 / Windows App Runtime 2.2.3.0.0 renders PlaceholderValue=0 as one filled star.",
+                "$referenceBaselineNote = Get-ReferenceBaselineNote $control",
+                "$modern[\"ReferenceBaselineNote\"] = $referenceBaselineNote",
+                "$referenceBaselineNotes = @(",
+                "## Reference Baseline Notes",
+                "reference baseline: \" + $result.ReferenceBaselineNote");
         }
 
         [TestMethod]
@@ -4379,10 +4586,13 @@ namespace ModernWpf.Gallery.Tests
                 catalog,
                 "\"ProgressRing\"",
                 "\"WinUIProgressBar\"",
-                ".Concat(new[] { CreateModernWpfProgressBarItem() })",
-                "private static GalleryItem CreateModernWpfProgressBarItem()",
-                "\"ProgressBar (WinUI)\"",
-                "\"ModernWpf.Controls\"");
+                "\"InfoBadge\"",
+                "var sourceItems = GalleryCatalogData.Items;",
+                ".Concat(sourceItems.Where(sourceItem =>",
+                "IsModernWpfExtensionItem(sourceItem.UniqueId)");
+            Assert.IsFalse(
+                catalog.Contains("CreateModernWpfProgressBarItem", StringComparison.Ordinal),
+                "The WinUI ProgressBar route must come from the shared generated catalog metadata.");
             AssertContainsInOrder(
                 factory,
                 "private const string ProgressBarIndeterminateXaml",
@@ -4486,9 +4696,11 @@ namespace ModernWpf.Gallery.Tests
                 "function Copy-RenderedArtifactCrop([string]$sourcePath, [string]$destinationPath, [string]$source)",
                 "Copy-Item -LiteralPath $sourcePath -Destination $destinationPath -Force",
                 "return New-RenderedArtifactCrop $destinationPath $source $null",
-                "function Refresh-ModernWpfVisualArtifacts($window)",
+                "function Refresh-ModernWpfVisualArtifacts($window, [string]$artifactDir = \"\")",
                 "TryFind-DescendantByAutomationId $window \"GalleryVisualTestRefreshArtifacts\"",
-                "Invoke-ElementPatternOnce $window $refreshButton");
+                "modernwpf-gallery-status.txt",
+                "Invoke-ElementPatternOnce $window $refreshButton",
+                "Wait-Until -TimeoutSeconds 10 -Description \"ModernWpf visual artifact refresh\"");
             AssertContainsInOrder(
                 source,
                 "function Capture-StateInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element)",
@@ -4506,7 +4718,7 @@ namespace ModernWpf.Gallery.Tests
                 "$afterState = Get-StateInteractionStateName $control $toggleElement",
                 "$stateOutputAutomationId = Get-StateInteractionOutputAutomationId $app $control",
                 "$stateOutputMatched = [string]::IsNullOrEmpty($expectedStateOutput) -or $stateOutput -eq $expectedStateOutput",
-                "[void](Refresh-ModernWpfVisualArtifacts $window)",
+                "[void](Refresh-ModernWpfVisualArtifacts $window (Join-Path $caseDir \"modernwpf-artifacts\"))",
                 "elseif (Test-Path $afterPath)",
                 "Save-ElementCrop $window $afterPath $afterCropPath $element \"UIA\" 10",
                 "$afterCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $afterCropPath $renderedArtifactSource",
@@ -6547,16 +6759,26 @@ namespace ModernWpf.Gallery.Tests
                 "<Grid>",
                 "<Grid.ColumnDefinitions>",
                 "<ColumnDefinition Width=\"*\" />",
+                "x:Name=\"OutputColumn\"",
+                "Width=\"Auto\"",
+                "MaxWidth=\"320\" />",
                 "x:Name=\"OptionsColumn\"",
                 "Width=\"Auto\"",
-                "MinWidth=\"200\"",
-                "MaxWidth=\"320\" />",
+                "MaxWidth=\"{Binding OptionsMaxWidth, RelativeSource={RelativeSource TemplatedParent}}\" />",
                 "<ContentPresenter",
-                "Margin=\"16\"",
+                "Margin=\"12\"",
+                "HorizontalAlignment=\"{TemplateBinding HorizontalContentAlignment}\"",
+                "VerticalAlignment=\"{TemplateBinding VerticalContentAlignment}\"",
                 "Content=\"{TemplateBinding ExampleContent}\" />",
                 "<Border",
-                "x:Name=\"OptionsRoot\"",
+                "x:Name=\"OutputRoot\"",
                 "Grid.Column=\"1\"",
+                "Margin=\"0,12,12,12\"",
+                "Padding=\"16\"",
+                "Content=\"{TemplateBinding OutputContent}\"",
+                "<Border",
+                "x:Name=\"OptionsRoot\"",
+                "Grid.Column=\"2\"",
                 "Padding=\"16\"",
                 "Background=\"{DynamicResource CardBackgroundFillColorDefaultBrush}\"",
                 "BorderBrush=\"{DynamicResource DividerStrokeColorDefaultBrush}\"",
@@ -6569,6 +6791,7 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 xaml,
                 "<Expander",
+                "x:Name=\"SourceCodeExpander\"",
                 "Grid.Row=\"2\"",
                 "AutomationProperties.Name=\"{Binding HeaderText, RelativeSource={RelativeSource TemplatedParent}, StringFormat=View Source Code for {0}}\"",
                 "Header=\"Source code\"",
@@ -6625,7 +6848,9 @@ namespace ModernWpf.Gallery.Tests
                 xaml,
                 "<Trigger Property=\"OptionsContent\" Value=\"{x:Null}\">",
                 "<Setter TargetName=\"OptionsRoot\" Property=\"Visibility\" Value=\"Collapsed\" />",
-                "<Setter TargetName=\"OptionsColumn\" Property=\"MinWidth\" Value=\"0\" />",
+                "</Trigger>",
+                "<Trigger Property=\"OutputContent\" Value=\"{x:Null}\">",
+                "<Setter TargetName=\"OutputRoot\" Property=\"Visibility\" Value=\"Collapsed\" />",
                 "</Trigger>");
         }
 

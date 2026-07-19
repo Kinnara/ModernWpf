@@ -231,7 +231,7 @@ namespace ModernWpf.Gallery.Pages
                     CreateClickHyperlinkButtonExampleContent(),
                     FindSampleCodeSection(sampleSnippets, "HyperlinkButton\\HyperlinkButtonClick.txt", "xaml"),
                     null,
-                    new Thickness(10),
+                    new Thickness(0, 16, 0, 0),
                     new[] { clickSnippet })
             };
         }
@@ -288,13 +288,24 @@ namespace ModernWpf.Gallery.Pages
 
         private static IReadOnlyList<GalleryExample> CreateRepeatButtonExamples()
         {
+            var content = CreateSimpleRepeatButtonExampleContent(assignRootAutomationId: true);
+            var repeatButton = (RepeatButton)content.Children[0];
+            var disableControl = new CheckBox
+            {
+                Name = "DisableControl1",
+                Content = "Disable RepeatButton"
+            };
+            disableControl.Checked += delegate { repeatButton.IsEnabled = false; };
+            disableControl.Unchecked += delegate { repeatButton.IsEnabled = true; };
+
             return new[]
             {
                 new GalleryExample(
                     "A simple RepeatButton with text content.",
-                    CreateSimpleRepeatButtonExampleContent(assignRootAutomationId: true),
+                    content,
                     RepeatButtonSimpleXaml,
-                    null)
+                    null,
+                    disableControl)
             };
         }
 
@@ -360,17 +371,38 @@ namespace ModernWpf.Gallery.Pages
 
         private static IReadOnlyList<GalleryExample> CreateToggleButtonExamples()
         {
+            var exampleContent = CreateSimpleToggleButtonExampleContent(
+                assignRootAutomationId: true,
+                embedSupplementalContent: false,
+                out var outputContent,
+                out var optionsContent);
+
             return new[]
             {
                 new GalleryExample(
                     "A simple ToggleButton with text content.",
-                    CreateSimpleToggleButtonExampleContent(assignRootAutomationId: true),
+                    exampleContent,
                     ToggleButtonSimpleXaml,
-                    null)
+                    null,
+                    outputContent,
+                    optionsContent)
             };
         }
 
         private static GallerySamplePanel CreateSimpleToggleButtonExampleContent(bool assignRootAutomationId)
+        {
+            return CreateSimpleToggleButtonExampleContent(
+                assignRootAutomationId,
+                embedSupplementalContent: true,
+                out _,
+                out _);
+        }
+
+        private static GallerySamplePanel CreateSimpleToggleButtonExampleContent(
+            bool assignRootAutomationId,
+            bool embedSupplementalContent,
+            out TextBlock output,
+            out StackPanel options)
         {
             var panel = new GallerySamplePanel();
             if (assignRootAutomationId)
@@ -391,20 +423,37 @@ namespace ModernWpf.Gallery.Pages
             };
             GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("ToggleButton", "ToggleButton"));
 
-            var output = new TextBlock
+            var outputText = new TextBlock
             {
                 Name = "Control1Output",
-                Margin = new Thickness(0, 12, 0, 0),
+                Margin = embedSupplementalContent ? new Thickness(0, 12, 0, 0) : new Thickness(0),
                 Text = "Off"
             };
-            GalleryAutomation.WithAutomationId(output, GalleryAutomation.SampleElementId("ToggleButton", "Output"));
+            output = outputText;
+            GalleryAutomation.WithAutomationId(outputText, GalleryAutomation.SampleElementId("ToggleButton", "Output"));
 
-            button.Checked += delegate { output.Text = "On"; };
-            button.Unchecked += delegate { output.Text = "Off"; };
+            button.Checked += delegate { outputText.Text = "On"; };
+            button.Unchecked += delegate { outputText.Text = "Off"; };
+
+            var disableToggle = new CheckBox
+            {
+                Name = "DisableToggle1",
+                Content = "Disable ToggleButton"
+            };
+            disableToggle.Checked += delegate { button.IsEnabled = false; };
+            disableToggle.Unchecked += delegate { button.IsEnabled = true; };
+
+            options = new StackPanel();
+            options.Children.Add(disableToggle);
 
             buttonRow.Children.Add(button);
             panel.Children.Add(buttonRow);
-            panel.Children.Add(output);
+            if (embedSupplementalContent)
+            {
+                panel.Children.Add(outputText);
+                options.Margin = new Thickness(0, 12, 0, 0);
+                panel.Children.Add(options);
+            }
             return panel;
         }
 
@@ -415,19 +464,29 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 0, 0, 12)
             };
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("SplitButton"));
-            panel.Children.Add(CreateColorSplitButtonExampleContent(assignRootAutomationId: false));
+            var content = CreateColorSplitButtonExampleContent(assignRootAutomationId: false, out var options);
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(24) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.Children.Add(content);
+            Grid.SetColumn(options, 2);
+            layout.Children.Add(options);
+            panel.Children.Add(layout);
             return panel;
         }
 
         private static IReadOnlyList<GalleryExample> CreateSplitButtonExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
         {
+            var colorButtonContent = CreateColorSplitButtonExampleContent(assignRootAutomationId: true, out var colorButtonOptions);
             return new[]
             {
                 new GalleryExample(
-                    "A SplitButton controlling text color in a RichTextBox",
-                    CreateColorSplitButtonExampleContent(assignRootAutomationId: true),
+                    "A SplitButton controlling text color in a RichEditBox",
+                    colorButtonContent,
                     FindSampleCodeText(sampleSnippets, "Buttons\\SplitButton\\SplitButtonSample1.txt"),
-                    null),
+                    null,
+                    colorButtonOptions),
                 new GalleryExample(
                     "A SplitButton with text",
                     CreateTextSplitButtonExampleContent(),
@@ -436,7 +495,7 @@ namespace ModernWpf.Gallery.Pages
             };
         }
 
-        private static GallerySamplePanel CreateColorSplitButtonExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateColorSplitButtonExampleContent(bool assignRootAutomationId, out RichTextBox options)
         {
             var panel = new GallerySamplePanel();
             if (assignRootAutomationId)
@@ -444,12 +503,8 @@ namespace ModernWpf.Gallery.Pages
                 GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("SplitButton"));
             }
 
-            var layout = new Grid();
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(24) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
             var richTextBox = CreateSplitButtonRichTextBox();
+            options = richTextBox;
             var currentColor = new Border
             {
                 Name = "CurrentColor",
@@ -482,10 +537,7 @@ namespace ModernWpf.Gallery.Pages
                 splitButton.Flyout.Hide();
             }, includeBlack: false);
 
-            layout.Children.Add(splitButton);
-            Grid.SetColumn(richTextBox, 2);
-            layout.Children.Add(richTextBox);
-            panel.Children.Add(layout);
+            panel.Children.Add(splitButton);
             return panel;
         }
 
@@ -589,34 +641,39 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 0, 0, 12)
             };
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ToggleSplitButton"));
-            panel.Children.Add(CreateToggleSplitButtonExampleContent(assignRootAutomationId: false));
+            var content = CreateToggleSplitButtonExampleContent(assignRootAutomationId: false, out var options);
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(24) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            layout.Children.Add(content);
+            Grid.SetColumn(options, 2);
+            layout.Children.Add(options);
+            panel.Children.Add(layout);
             return panel;
         }
 
         private static IReadOnlyList<GalleryExample> CreateToggleSplitButtonExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
         {
+            var content = CreateToggleSplitButtonExampleContent(assignRootAutomationId: true, out var options);
             return new[]
             {
                 new GalleryExample(
-                    "Using ToggleSplitButton to control bulleted list functionality in RichTextBox",
-                    CreateToggleSplitButtonExampleContent(assignRootAutomationId: true),
+                    "Using ToggleSplitButton to control bulleted list functionality in RichEditBox",
+                    content,
                     FindSampleCodeText(sampleSnippets, "Buttons\\ToggleSplitButton\\ToggleSplitButtonSample1.txt"),
-                    null)
+                    null,
+                    options)
             };
         }
 
-        private static GallerySamplePanel CreateToggleSplitButtonExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateToggleSplitButtonExampleContent(bool assignRootAutomationId, out RichTextBox options)
         {
             var panel = new GallerySamplePanel();
             if (assignRootAutomationId)
             {
                 GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ToggleSplitButton"));
             }
-
-            var layout = new Grid();
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(24) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
             var richTextBox = new RichTextBox
             {
@@ -625,6 +682,7 @@ namespace ModernWpf.Gallery.Pages
                 MinHeight = 96,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto
             };
+            options = richTextBox;
             AutomationProperties.SetName(richTextBox, "Text entry");
 
             var symbolIcon = new Mux.SymbolIcon(Mux.Symbol.List)
@@ -660,10 +718,7 @@ namespace ModernWpf.Gallery.Pages
                 richTextBox.Focus();
             });
 
-            layout.Children.Add(toggleSplitButton);
-            Grid.SetColumn(richTextBox, 2);
-            layout.Children.Add(richTextBox);
-            panel.Children.Add(layout);
+            panel.Children.Add(toggleSplitButton);
             return panel;
         }
 
@@ -882,35 +937,52 @@ namespace ModernWpf.Gallery.Pages
 
         private static IReadOnlyList<GalleryExample> CreateRatingControlExamples()
         {
+            var simpleContent = CreateSimpleRatingControlExampleContent(
+                assignRootAutomationId: true,
+                embedSupplementalContent: false,
+                out var simpleOutput,
+                out var simpleOptions);
+            var placeholderContent = CreatePlaceholderRatingControlExampleContent(out var placeholderOptions);
+
             return new[]
             {
                 new GalleryExample(
                     "A simple RatingControl",
-                    CreateSimpleRatingControlExampleContent(assignRootAutomationId: true),
+                    simpleContent,
                     RatingControlSimpleXaml,
-                    null),
+                    null,
+                    simpleOutput,
+                    simpleOptions),
                 new GalleryExample(
                     "PlaceholderValue of RatingControl",
-                    CreatePlaceholderRatingControlExampleContent(),
+                    placeholderContent,
                     RatingControlPlaceholderXaml,
-                    null)
+                    null,
+                    null,
+                    placeholderOptions)
             };
         }
 
         private static GallerySamplePanel CreateSimpleRatingControlExampleContent(bool assignRootAutomationId)
+        {
+            return CreateSimpleRatingControlExampleContent(
+                assignRootAutomationId,
+                embedSupplementalContent: true,
+                out _,
+                out _);
+        }
+
+        private static GallerySamplePanel CreateSimpleRatingControlExampleContent(
+            bool assignRootAutomationId,
+            bool embedSupplementalContent,
+            out TextBlock output,
+            out StackPanel options)
         {
             var panel = new GallerySamplePanel();
             if (assignRootAutomationId)
             {
                 GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("RatingControl"));
             }
-
-            var layout = new Grid();
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            layout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            layout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
             var ratingStack = new StackPanel
             {
@@ -927,36 +999,33 @@ namespace ModernWpf.Gallery.Pages
             AutomationProperties.SetName(rating, "Simple RatingControl");
             GalleryAutomation.WithAutomationId(rating, GalleryAutomation.SampleElementId("RatingControl", "RatingControl"));
 
-            var output = new TextBlock
+            var outputText = new TextBlock
             {
                 FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 12, 0, 0),
+                Margin = embedSupplementalContent ? new Thickness(0, 12, 0, 0) : new Thickness(0),
                 Text = FormatRatingValue(rating.Value)
             };
+            output = outputText;
 
             rating.ValueChanged += delegate
             {
-                UpdateSimpleRatingOutput(rating, output);
+                UpdateSimpleRatingOutput(rating, outputText);
             };
             var ratingValueDescriptor = DependencyPropertyDescriptor.FromProperty(
                 Mux.RatingControl.ValueProperty,
                 typeof(Mux.RatingControl));
             ratingValueDescriptor?.AddValueChanged(rating, delegate
             {
-                UpdateSimpleRatingOutput(rating, output);
+                UpdateSimpleRatingOutput(rating, outputText);
             });
 
             ratingStack.Children.Add(rating);
-            layout.Children.Add(ratingStack);
-            Grid.SetRow(output, 1);
-            layout.Children.Add(output);
 
-            var options = new StackPanel
+            var optionsPanel = new StackPanel
             {
                 Width = 220
             };
-            Grid.SetColumn(options, 2);
-            Grid.SetRowSpan(options, 2);
+            options = optionsPanel;
             var clearEnabledCheck = new CheckBox
             {
                 Name = "clearEnabledCheck",
@@ -964,10 +1033,10 @@ namespace ModernWpf.Gallery.Pages
             };
             clearEnabledCheck.Checked += delegate { rating.IsClearEnabled = true; };
             clearEnabledCheck.Unchecked += delegate { rating.IsClearEnabled = false; };
-            options.Children.Add(clearEnabledCheck);
-            options.Children.Add(new TextBlock
+            optionsPanel.Children.Add(clearEnabledCheck);
+            optionsPanel.Children.Add(new TextBlock
             {
-                Text = "Click again to clear your rating.",
+                Text = "Swipe left or click again to clear your rating.",
                 TextWrapping = TextWrapping.Wrap
             });
             var readOnlyCheck = new CheckBox
@@ -978,20 +1047,34 @@ namespace ModernWpf.Gallery.Pages
             };
             readOnlyCheck.Checked += delegate { rating.IsReadOnly = true; };
             readOnlyCheck.Unchecked += delegate { rating.IsReadOnly = false; };
-            options.Children.Add(readOnlyCheck);
-            layout.Children.Add(options);
+            optionsPanel.Children.Add(readOnlyCheck);
 
-            panel.Children.Add(layout);
+            if (embedSupplementalContent)
+            {
+                var layout = new Grid();
+                layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
+                layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                layout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                layout.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                layout.Children.Add(ratingStack);
+                Grid.SetRow(outputText, 1);
+                layout.Children.Add(outputText);
+                Grid.SetColumn(optionsPanel, 2);
+                Grid.SetRowSpan(optionsPanel, 2);
+                layout.Children.Add(optionsPanel);
+                panel.Children.Add(layout);
+            }
+            else
+            {
+                panel.Children.Add(ratingStack);
+            }
             return panel;
         }
 
-        private static GallerySamplePanel CreatePlaceholderRatingControlExampleContent()
+        private static GallerySamplePanel CreatePlaceholderRatingControlExampleContent(out StackPanel options)
         {
             var panel = new GallerySamplePanel();
-            var layout = new Grid();
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
             var rating = new Mux.RatingControl
             {
@@ -1002,35 +1085,31 @@ namespace ModernWpf.Gallery.Pages
             };
             AutomationProperties.SetName(rating, "RatingControl with placeholder");
             GalleryAutomation.WithAutomationId(rating, GalleryAutomation.SampleElementId("RatingControl", "PlaceholderRatingControl"));
-            layout.Children.Add(rating);
+            panel.Children.Add(rating);
 
-            var options = new StackPanel
+            options = new StackPanel
             {
                 Width = 220
             };
-            Grid.SetColumn(options, 2);
             options.Children.Add(new TextBlock
             {
                 Text = "PlaceholderValue",
                 Margin = new Thickness(0, 0, 0, 4),
                 FontWeight = FontWeights.SemiBold
             });
-            var slider = new Slider
+            var slider = WinUISampleSlider.ShowValueFill(new Slider
             {
                 Name = "slider",
                 Minimum = 0,
                 Maximum = 5,
                 SmallChange = 0.5,
                 TickFrequency = 0.5
-            };
+            });
             slider.ValueChanged += delegate
             {
                 rating.PlaceholderValue = slider.Value;
             };
             options.Children.Add(slider);
-            layout.Children.Add(options);
-
-            panel.Children.Add(layout);
             return panel;
         }
 

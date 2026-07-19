@@ -226,6 +226,8 @@ namespace ModernWpf.Gallery.Pages
             var output = CreateAppBarOutput("Control4Output");
             var pathIcon = new Mux.PathIcon
             {
+                Width = 24,
+                Height = 24,
                 Data = Geometry.Parse("F1 M 20,20L 24,10L 24,24L 5,24")
             };
             var button = new Mux.AppBarButton
@@ -233,6 +235,8 @@ namespace ModernWpf.Gallery.Pages
                 Name = "Button4",
                 Content = new Viewbox
                 {
+                    Width = 20,
+                    Height = 20,
                     Stretch = Stretch.Uniform,
                     Child = pathIcon
                 },
@@ -416,8 +420,12 @@ namespace ModernWpf.Gallery.Pages
                 Name = "Button4",
                 Content = new Viewbox
                 {
+                    Width = 20,
+                    Height = 20,
                     Child = new Mux.PathIcon
                     {
+                        Width = 24,
+                        Height = 24,
                         Data = Geometry.Parse("F1 M 20,20L 24,10L 24,24L 5,24")
                     }
                 },
@@ -436,34 +444,39 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 0, 0, 12)
             };
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("CommandBar"));
-            panel.Children.Add(CreateCommandBarExampleContent(assignRootAutomationId: false));
+            var content = CreateCommandBarExampleContent(assignRootAutomationId: false, out var options);
+            var layout = new Grid();
+            layout.ColumnDefinitions.Add(new ColumnDefinition());
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(32) });
+            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(180) });
+            layout.Children.Add(content);
+            Grid.SetColumn(options, 2);
+            layout.Children.Add(options);
+            panel.Children.Add(layout);
             return panel;
         }
 
         private static IReadOnlyList<GalleryExample> CreateCommandBarExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
         {
+            var content = CreateCommandBarExampleContent(assignRootAutomationId: true, out var options);
             return new[]
             {
                 new GalleryExample(
                     "A command bar with labels on the side free floating in a page",
-                    CreateCommandBarExampleContent(assignRootAutomationId: true),
+                    content,
                     FindSnippetText(sampleSnippets, "CommandBarLabelsSide.txt"),
-                    null)
+                    null,
+                    options)
             };
         }
 
-        private static GallerySamplePanel CreateCommandBarExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateCommandBarExampleContent(bool assignRootAutomationId, out UIElement optionsContent)
         {
             var root = new GallerySamplePanel();
             if (assignRootAutomationId)
             {
                 GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("CommandBar"));
             }
-
-            var layout = new Grid();
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(32) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(180) });
 
             var samplePanel = new StackPanel();
             var output = new TextBlock
@@ -503,13 +516,11 @@ namespace ModernWpf.Gallery.Pages
 
             samplePanel.Children.Add(commandBar);
             samplePanel.Children.Add(output);
-            layout.Children.Add(samplePanel);
 
             var options = CreateCommandBarOptions(commandBar, output);
-            Grid.SetColumn(options, 2);
-            layout.Children.Add(options);
+            optionsContent = options;
 
-            root.Children.Add(layout);
+            root.Children.Add(samplePanel);
             return root;
         }
 
@@ -539,7 +550,6 @@ namespace ModernWpf.Gallery.Pages
         {
             var options = new StackPanel
             {
-                Width = 180,
                 VerticalAlignment = VerticalAlignment.Top
             };
             options.Children.Add(new TextBlock { Text = "Show or hide" });

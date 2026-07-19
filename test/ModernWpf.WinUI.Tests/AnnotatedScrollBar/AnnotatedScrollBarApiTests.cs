@@ -291,6 +291,50 @@ public class AnnotatedScrollBarApiTests
     }
 
     [TestMethod]
+    public void RepeatedLabelLayoutKeepsSourceLabelHeightsIndependentOfOffsets()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var annotatedScrollBar = new ModernWpf.Controls.AnnotatedScrollBar
+            {
+                Height = 500,
+                Labels =
+                {
+                    new AnnotatedScrollBarLabel("Azure", 0),
+                    new AnnotatedScrollBarLabel("Crimson", 2880),
+                    new AnnotatedScrollBarLabel("Cyan", 7380),
+                    new AnnotatedScrollBarLabel("Fuchsia", 8100),
+                    new AnnotatedScrollBarLabel("Gold", 14400)
+                }
+            };
+
+            using var host = new TestWindowHost(annotatedScrollBar, width: 160, height: 520);
+            var controller = annotatedScrollBar.ScrollController;
+            controller.SetIsScrollable(true);
+            controller.SetValues(0, 22004, 0, 500);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            // Exercise the update path after margins contain the computed offsets.
+            controller.SetValues(0, 22004, 10, 500);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var labelsGrid = FindTemplatePart<Grid>(annotatedScrollBar, "PART_LabelsGrid");
+            Assert.IsNotNull(labelsGrid);
+            var renderedLabels = labelsGrid!.Children
+                .OfType<ContentPresenter>()
+                .Where(presenter => presenter.Visibility == Visibility.Visible)
+                .Select(presenter => ((AnnotatedScrollBarLabel)presenter.Content).Content)
+                .ToArray();
+
+            CollectionAssert.AreEqual(
+                new object[] { "Azure", "Crimson", "Cyan", "Fuchsia", "Gold" },
+                renderedLabels);
+        });
+    }
+
+    [TestMethod]
     public void VerifySetValuesValidation()
     {
         WpfTestHost.Run(() =>

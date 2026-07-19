@@ -962,7 +962,7 @@ public class TemplateParityTests
     }
 
     [TestMethod]
-    public void CommandBarFlyoutTemplateKeepsWinUISourceAnimationShape()
+    public void CommandBarFlyoutTemplateKeepsSupportedWinUISourceAnimationShape()
     {
         var repoRoot = FindRepoRoot();
         var commandBarFlyoutTemplate = File.ReadAllText(Path.Combine(
@@ -976,16 +976,19 @@ public class TemplateParityTests
             "CommandBar",
             "CommandBar.xaml"));
 
-        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetName=\"OuterContentRootClipTransform\" Storyboard.TargetProperty=\"X\"", StringComparison.Ordinal));
-        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetName=\"OuterOverflowContentRootClipTransform\" Storyboard.TargetProperty=\"X\"", StringComparison.Ordinal));
-        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Path=FlyoutTemplateSettings.OpenAnimationStartPosition", StringComparison.Ordinal));
-        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Path=FlyoutTemplateSettings.OpenAnimationEndPosition", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("x:Key=\"OpeningOpacityStoryboard\" FillBehavior=\"Stop\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("x:Key=\"ClosingOpacityStoryboard\" FillBehavior=\"HoldEnd\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetName=\"LayoutRoot\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetName=\"OuterOverflowContentRootShadowChrome\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetProperty=\"Opacity\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("x:Key=\"CollapsedToExpandedUpStoryboard\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("x:Key=\"ExpandedDownToCollapsedStoryboard\" FillBehavior=\"Stop\"", StringComparison.Ordinal));
         Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetName=\"MoreButtonTransform\" Storyboard.TargetProperty=\"X\"", StringComparison.Ordinal));
         Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetName=\"ContentRootClipTransform\" Storyboard.TargetProperty=\"X\"", StringComparison.Ordinal));
         Assert.IsTrue(commandBarFlyoutTemplate.Contains("Storyboard.TargetName=\"OverflowContentRootClipTransform\" Storyboard.TargetProperty=\"Y\"", StringComparison.Ordinal));
         Assert.IsTrue(commandBarFlyoutTemplate.Contains("ControlNormalAnimationDuration", StringComparison.Ordinal));
         Assert.IsTrue(commandBarFlyoutTemplate.Contains("ControlFastAnimationAfterDuration", StringComparison.Ordinal));
-        Assert.IsTrue(commandBarFlyoutTemplate.Contains("PopupAnimation=\"{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}\"", StringComparison.Ordinal));
+        Assert.IsTrue(commandBarFlyoutTemplate.Contains("<ui:WindowedPopup", StringComparison.Ordinal));
         Assert.IsTrue(commandBarTemplate.Contains("PopupAnimation=\"{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}\"", StringComparison.Ordinal));
     }
 

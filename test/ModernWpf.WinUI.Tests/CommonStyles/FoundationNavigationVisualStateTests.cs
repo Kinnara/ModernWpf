@@ -154,30 +154,35 @@ public class FoundationNavigationVisualStateTests
     [TestMethod]
     public void FoundationThemeResourcesExposeOfficialWpfFluentAliases()
     {
-        foreach (var themeName in new[] { "Light", "Dark" })
+        WpfTestHost.Run(() =>
         {
-            AssertThemeResourceReference(themeName, "WindowBackground", "SolidBackgroundFillColorBaseBrush");
-            AssertThemeResourceReference(themeName, "WindowForeground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "FrameBackground", "SystemControlTransparentBrush");
-            AssertThemeResourceReference(themeName, "FrameForeground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "FrameMenuItemBackgroundSelected", "SubtleFillColorTertiaryBrush");
-            AssertThemeResourceReference(themeName, "FrameMenuItemForegroundDisabled", "TextFillColorDisabledBrush");
-            AssertThemeResourceReference(themeName, "NavigationWindowBackground", "SolidBackgroundFillColorBaseBrush");
-            AssertThemeResourceReference(themeName, "NavigationWindowForeground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "PageForeground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "PageBackground", "SubtleFillColorTransparentBrush");
-        }
+            TestApplication.EnsureInitialized();
 
-        AssertThemeResourceReference("HighContrast", "WindowBackground", "SystemColorWindowColorBrush");
-        AssertThemeResourceReference("HighContrast", "WindowForeground", "SystemColorWindowTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "FrameBackground", "SystemControlTransparentBrush");
-        AssertThemeResourceReference("HighContrast", "FrameForeground", "SystemColorWindowTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "FrameMenuItemBackgroundSelected", "SystemColorButtonFaceColorBrush");
-        AssertThemeResourceReference("HighContrast", "FrameMenuItemForegroundDisabled", "SystemColorGrayTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "NavigationWindowBackground", "SystemColorWindowColorBrush");
-        AssertThemeResourceReference("HighContrast", "NavigationWindowForeground", "SystemColorWindowTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "PageForeground", "SystemColorWindowTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "PageBackground", "SystemControlTransparentBrush");
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "WindowBackground", "SolidBackgroundFillColorBaseBrush");
+                AssertThemeResourceReference(themeName, "WindowForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "FrameBackground", "SystemControlTransparentBrush");
+                AssertThemeResourceReference(themeName, "FrameForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "FrameMenuItemBackgroundSelected", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "FrameMenuItemForegroundDisabled", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "NavigationWindowBackground", "SolidBackgroundFillColorBaseBrush");
+                AssertThemeResourceReference(themeName, "NavigationWindowForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "PageForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "PageBackground", "SubtleFillColorTransparentBrush");
+            }
+
+            AssertThemeResourceReference("HighContrast", "WindowBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "WindowForeground", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "FrameBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "FrameForeground", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "FrameMenuItemBackgroundSelected", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "FrameMenuItemForegroundDisabled", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "NavigationWindowBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "NavigationWindowForeground", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "PageForeground", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "PageBackground", "SystemControlTransparentBrush");
+        });
     }
 
     [TestMethod]

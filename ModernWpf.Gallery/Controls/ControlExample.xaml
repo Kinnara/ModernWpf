@@ -32,6 +32,7 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock
+                            x:Name="HeaderTextPresenter"
                             Grid.Row="0"
                             Margin="0,0,0,10"
                             Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -41,6 +42,7 @@
                             Converter={StaticResource NullToVisibilityConverter}}" />
 
                         <Border
+                            x:Name="ExampleDisplayBorder"
                             Grid.Row="1"
                             Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
                             BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
@@ -51,19 +53,43 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition
+                                        x:Name="OutputColumn"
+                                        Width="Auto"
+                                        MaxWidth="320" />
+                                    <ColumnDefinition
                                         x:Name="OptionsColumn"
                                         Width="Auto"
-                                        MinWidth="200"
-                                        MaxWidth="320" />
+                                        MaxWidth="{Binding OptionsMaxWidth, RelativeSource={RelativeSource TemplatedParent}}" />
                                 </Grid.ColumnDefinitions>
 
                                 <ContentPresenter
-                                    Margin="16"
+                                    Margin="12"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     Content="{TemplateBinding ExampleContent}" />
 
                                 <Border
-                                    x:Name="OptionsRoot"
+                                    x:Name="OutputRoot"
                                     Grid.Column="1"
+                                    Margin="0,12,12,12"
+                                    Padding="16"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Stretch"
+                                    Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                                    CornerRadius="8">
+                                    <StackPanel>
+                                        <TextBlock
+                                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                            Text="Output:" />
+                                        <ContentPresenter
+                                            Content="{TemplateBinding OutputContent}"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border
+                                    x:Name="OptionsRoot"
+                                    Grid.Column="2"
                                     Padding="16"
                                     Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                                     BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
@@ -77,6 +103,7 @@
                         </Border>
 
                         <Expander
+                            x:Name="SourceCodeExpander"
                             Grid.Row="2"
                             AutomationProperties.Name="{Binding HeaderText, RelativeSource={RelativeSource TemplatedParent}, StringFormat=View Source Code for {0}}"
                             Header="Source code">
@@ -165,7 +192,14 @@
                         </Trigger>
                         <Trigger Property="OptionsContent" Value="{x:Null}">
                             <Setter TargetName="OptionsRoot" Property="Visibility" Value="Collapsed" />
-                            <Setter TargetName="OptionsColumn" Property="MinWidth" Value="0" />
+                        </Trigger>
+                        <Trigger Property="OutputContent" Value="{x:Null}">
+                            <Setter TargetName="OutputRoot" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="UseWinUIGalleryLayout" Value="True">
+                            <Setter TargetName="HeaderTextPresenter" Property="Margin" Value="0,0,0,12" />
+                            <Setter TargetName="ExampleDisplayBorder" Property="BorderThickness" Value="1" />
+                            <Setter TargetName="SourceCodeExpander" Property="MinHeight" Value="48" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

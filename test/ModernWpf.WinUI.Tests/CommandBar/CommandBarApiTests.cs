@@ -1337,6 +1337,60 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void AppBarButtonAndToggleTemplatesRenderExplicitContentWithIconFallback()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var buttonContent = new Border { Width = 20, Height = 20 };
+            var buttonIcon = new SymbolIcon(Symbol.Accept);
+            var button = new AppBarButton
+            {
+                Content = buttonContent,
+                Icon = buttonIcon,
+                Label = "Content"
+            };
+
+            var toggleContent = new Border { Width = 20, Height = 20 };
+            var toggleIcon = new SymbolIcon(Symbol.Pin);
+            var toggleButton = new AppBarToggleButton
+            {
+                Content = toggleContent,
+                Icon = toggleIcon,
+                Label = "Content"
+            };
+
+            var iconOnlyButton = new AppBarButton
+            {
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Icon"
+            };
+            var iconOnlyToggleButton = new AppBarToggleButton
+            {
+                Icon = new SymbolIcon(Symbol.Pin),
+                Label = "Icon"
+            };
+
+            var root = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Children = { button, toggleButton, iconOnlyButton, iconOnlyToggleButton }
+            };
+
+            using var host = new TestWindowHost(root, width: 360, height: 140);
+            host.UpdateLayout();
+
+            Assert.AreSame(buttonContent, FindTemplateChild<ContentPresenterEx>(button, "Content").Content);
+            Assert.AreSame(toggleContent, FindTemplateChild<ContentPresenterEx>(toggleButton, "Content").Content);
+            Assert.AreSame(iconOnlyButton.Icon, FindTemplateChild<ContentPresenterEx>(iconOnlyButton, "Content").Content);
+            Assert.AreSame(iconOnlyToggleButton.Icon, FindTemplateChild<ContentPresenterEx>(iconOnlyToggleButton, "Content").Content);
+            Assert.IsTrue(buttonContent.RenderSize.Width > 0);
+            Assert.IsTrue(toggleContent.RenderSize.Width > 0);
+        });
+    }
+
+    [TestMethod]
     public void AppBarElementsConsumeLiveCoreThemeResources()
     {
         WpfTestHost.Run(() =>

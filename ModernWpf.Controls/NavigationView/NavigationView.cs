@@ -431,6 +431,31 @@ namespace ModernWpf.Controls
 
             // Stop update anything because of PropertyChange during OnApplyTemplate. Update them all together at the end of this function
             m_appliedTemplate = false;
+            m_fromOnApplyTemplate = true;
+
+            try
+            {
+                ApplyTemplateCore();
+            }
+            finally
+            {
+                m_fromOnApplyTemplate = false;
+            }
+
+            // WPF can apply a template lazily after Loaded (for example, when a
+            // NavigationView below a ScrollViewer viewport is first revealed).
+            // In that case there will be no later Loaded event to complete the
+            // WinUI display-mode deferral.
+            if (IsLoaded && m_updateVisualStateForDisplayModeFromOnLoaded)
+            {
+                Dispatcher.BeginInvoke(
+                    new Action(CompleteDeferredDisplayModeUpdate),
+                    DispatcherPriority.Loaded);
+            }
+        }
+
+        void ApplyTemplateCore()
+        {
 
             UnhookEventsAndClearFields();
 
@@ -1905,23 +1930,16 @@ namespace ModernWpf.Controls
                 m_isClosedCompact = !splitView.IsPaneOpen && (splitViewDisplayMode == SplitViewDisplayMode.CompactOverlay || splitViewDisplayMode == SplitViewDisplayMode.CompactInline);
                 VisualStateManager.GoToState(this, m_isClosedCompact ? "ClosedCompact" : "NotClosedCompact", true /*useTransitions*/);
 
-                // Set the initial state of the list size
+                // WinUI normally updates subsequent list-size state from the
+                // SplitView pane lifecycle events. WPF can update the initial
+                // two-way IsPaneOpen binding or display mode without raising
+                // those events, so every authoritative SplitView notification
+                // must also reconcile the list width.
                 if (!m_initialListSizeStateSet)
                 {
                     m_initialListSizeStateSet = true;
-                    VisualStateManager.GoToState(this, m_isClosedCompact ? "ListSizeCompact" : "ListSizeFull", true /*useTransitions*/);
                 }
-                else if (false /*!SharedHelpers.IsRS3OrHigher()*/) // Do any changes that would otherwise happen on opening/closing for RS2 and earlier:
-                {
-                    // RS3+ animation timing enhancement:
-                    // Pre-RS3, we didn't have the full suite of Closed, Closing, Opened,
-                    // Opening events on SplitView. So when doing open/closed operations,
-                    // we have to do them immediately. Just one example: on RS2 when you
-                    // close the pane, the PaneTitle will disappear *immediately* which
-                    // looks janky. But on RS4, it'll have its visibility set after the
-                    // closed event fires.
-                    VisualStateManager.GoToState(this, m_isClosedCompact ? "ListSizeCompact" : "ListSizeFull", true /*useTransitions*/);
-                }
+                VisualStateManager.GoToState(this, m_isClosedCompact ? "ListSizeCompact" : "ListSizeFull", true /*useTransitions*/);
 
                 UpdateTitleBarPadding();
                 UpdateBackAndCloseButtonsVisibility();
@@ -2155,7 +2173,10 @@ namespace ModernWpf.Controls
             {
                 UIElement paneContentGrid = m_paneContentGrid;
 
-                if ((prevIndicator != nextIndicator) && paneContentGrid != null && prevIndicator != null && nextIndicator != null && SharedHelpers.IsAnimationsEnabled)
+                var indicatorsSharePane = paneContentGrid != null &&
+                    prevIndicator?.FindCommonVisualAncestor(paneContentGrid) != null &&
+                    nextIndicator?.FindCommonVisualAncestor(paneContentGrid) != null;
+                if ((prevIndicator != nextIndicator) && indicatorsSharePane && SharedHelpers.IsAnimationsEnabled)
                 {
                     // Make sure both indicators are visible and in their original locations
                     ResetElementAnimationProperties(prevIndicator, 1.0);
@@ -2832,7 +2853,17 @@ namespace ModernWpf.Controls
                 {
                     VisualStateManager.GoToState(this, visualStateName, false /*useTransitions*/);
                 }
-                splitView.DisplayMode = splitViewDisplayMode;
+                // Updating SplitView.DisplayMode while NavigationView is applying its
+                // template can add children to a popup root during measure. Current
+                // WinUI defers every update originating in OnApplyTemplate until Loaded.
+                if (m_fromOnApplyTemplate)
+                {
+                    m_updateVisualStateForDisplayModeFromOnLoaded = true;
+                }
+                else
+                {
+                    splitView.DisplayMode = splitViewDisplayMode;
+                }
             }
         }
 
@@ -4183,7 +4214,6 @@ namespace ModernWpf.Controls
                 // When PaneDisplayMode is changed, reset the force flag to make the Pane can be opened automatically again.
                 m_wasForceClosed = false;
 
-                CollapseTopLevelMenuItems((NavigationViewPaneDisplayMode)args.OldValue);
                 UpdatePaneToggleButtonVisibility();
                 UpdatePaneDisplayMode((NavigationViewPaneDisplayMode)args.OldValue, (NavigationViewPaneDisplayMode)args.NewValue);
                 UpdatePaneTitleFrameworkElementParents();
@@ -4321,6 +4351,8 @@ namespace ModernWpf.Controls
 
         void OnLoaded(object sender, RoutedEventArgs args)
         {
+            CompleteDeferredDisplayModeUpdate();
+
             if (m_coreTitleBar is { } coreTitleBar)
             {
                 coreTitleBar.LayoutMetricsChanged += OnTitleBarMetricsChanged;
@@ -4328,6 +4360,15 @@ namespace ModernWpf.Controls
             }
             // Update pane buttons now since we the CompactPaneLength is actually known now.
             UpdatePaneButtonsWidths();
+        }
+
+        void CompleteDeferredDisplayModeUpdate()
+        {
+            if (m_updateVisualStateForDisplayModeFromOnLoaded)
+            {
+                m_updateVisualStateForDisplayModeFromOnLoaded = false;
+                UpdateVisualStateForDisplayModeGroup(DisplayMode);
+            }
         }
 
         void OnIsPaneOpenChanged()
@@ -4457,7 +4498,7 @@ namespace ModernWpf.Controls
             // From other navigation PaneDisplayMode to LeftMinimal, we expect pane is closed.
             // From LeftMinimal to Left, it is expected the pane is open. For other configurations, this seems counterintuitive.
             // See #1702 and #1787
-            if (!IsTopNavigationView())
+            if (!IsTopNavigationView() && newDisplayMode == PaneDisplayMode)
             {
                 if (IsPaneOpen)
                 {
@@ -5768,20 +5809,6 @@ namespace ModernWpf.Controls
             return null;
         }
 
-        void CollapseTopLevelMenuItems(NavigationViewPaneDisplayMode oldDisplayMode)
-        {
-            // We want to make sure only top level items are visible when switching pane modes
-            if (oldDisplayMode == NavigationViewPaneDisplayMode.Top)
-            {
-                CollapseMenuItemsInRepeater(m_topNavRepeater);
-                CollapseMenuItemsInRepeater(m_topNavRepeaterOverflowView);
-            }
-            else
-            {
-                CollapseMenuItemsInRepeater(m_leftNavRepeater);
-            }
-        }
-
         void CollapseMenuItemsInRepeater(ItemsRepeater ir)
         {
             for (int index = 0; index < GetContainerCountInRepeater(ir); index++)
@@ -5901,6 +5928,8 @@ namespace ModernWpf.Controls
         bool m_isClosedCompact = false;
         bool m_blockNextClosingEvent = false;
         bool m_initialListSizeStateSet = false;
+        bool m_fromOnApplyTemplate = false;
+        bool m_updateVisualStateForDisplayModeFromOnLoaded = false;
 
         TopNavigationViewDataProvider m_topDataProvider = new TopNavigationViewDataProvider();
 

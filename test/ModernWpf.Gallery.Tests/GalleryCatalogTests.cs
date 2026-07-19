@@ -40,6 +40,7 @@ namespace ModernWpf.Gallery.Tests
             "ColorPicker",
             "HyperlinkButton",
             "ProgressRing",
+            "WinUIProgressBar",
             "InfoBadge",
             "Flyout",
             "Popup",
@@ -575,8 +576,7 @@ namespace ModernWpf.Gallery.Tests
         {
             var source = File.ReadAllText(FindRepoFile("ModernWpf.Gallery", "Pages", "BasicInputSampleFactory.cs"));
 
-            Assert.IsFalse(source.Contains("Swipe left or click again to clear your rating."));
-            StringAssert.Contains(source, "Click again to clear your rating.");
+            StringAssert.Contains(source, "Swipe left or click again to clear your rating.");
         }
 
         [TestMethod]
@@ -870,7 +870,7 @@ namespace ModernWpf.Gallery.Tests
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(12, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(77, GalleryCatalog.Items.Count);
+            Assert.AreEqual(78, GalleryCatalog.Items.Count);
         }
 
         [TestMethod]

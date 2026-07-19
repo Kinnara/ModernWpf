@@ -494,12 +494,6 @@ namespace ModernWpf.Controls
                 if (m_labelsGrid.Children[i] is ContentPresenter labelContentPresenter &&
                     labelContentPresenter.Content is AnnotatedScrollBarLabel label)
                 {
-                    labelContentPresenter.Measure(InfiniteSize);
-                    if (i < m_labelSizes.Count)
-                    {
-                        m_labelSizes[i] = labelContentPresenter.DesiredSize.Height;
-                    }
-
                     var labelVerticalOffset = GetLabelVerticalOffset(label);
                     labelContentPresenter.Margin = new Thickness(0, labelVerticalOffset, 0, 0);
                 }

@@ -63,13 +63,17 @@ namespace ModernWpf.Gallery.Pages
             switch (uniqueId)
             {
                 case "PersonPicture":
+                    var exampleContent = CreatePersonPictureExampleContent(
+                        assignRootAutomationId: true,
+                        out var optionsContent);
                     return new[]
                     {
                         new GalleryExample(
                             "Select different looks for the person picture.",
-                            CreatePersonPictureExampleContent(assignRootAutomationId: true),
+                            exampleContent,
                             PersonPictureBasicXaml,
-                            PersonPictureBasicCSharp)
+                            PersonPictureBasicCSharp,
+                            optionsContent)
                     };
                 default:
                     return Array.Empty<GalleryExample>();
@@ -78,15 +82,27 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreatePersonPictureSample()
         {
-            return CreatePersonPictureExampleContent(assignRootAutomationId: true);
-        }
-
-        private static GallerySamplePanel CreatePersonPictureExampleContent(bool assignRootAutomationId)
-        {
-            var root = new GallerySamplePanel
+            var content = CreatePersonPictureExampleContent(
+                assignRootAutomationId: true,
+                out var optionsContent);
+            var layout = new GallerySamplePanel
             {
                 Orientation = Orientation.Horizontal
             };
+            layout.Children.Add(content);
+            layout.Children.Add(new Border
+            {
+                Margin = new Thickness(24, 0, 0, 0),
+                Child = optionsContent
+            });
+            return layout;
+        }
+
+        private static GallerySamplePanel CreatePersonPictureExampleContent(
+            bool assignRootAutomationId,
+            out UIElement optionsContent)
+        {
+            var root = new GallerySamplePanel();
             if (assignRootAutomationId)
             {
                 GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("PersonPicture"));
@@ -95,9 +111,9 @@ namespace ModernWpf.Gallery.Pages
             var personPicture = new Mux.PersonPicture
             {
                 Name = "personPicture",
-                Width = 96,
-                Height = 96,
-                VerticalAlignment = VerticalAlignment.Top
+                Height = 300,
+                VerticalAlignment = VerticalAlignment.Top,
+                HorizontalAlignment = HorizontalAlignment.Left
             };
             GalleryAutomation.WithAutomationId(personPicture, GalleryAutomation.SampleElementId("PersonPicture", "PersonPicture"));
 
@@ -133,7 +149,6 @@ namespace ModernWpf.Gallery.Pages
 
             var options = new StackPanel
             {
-                Margin = new Thickness(24, 0, 0, 0),
                 Children =
                 {
                     profileType
@@ -141,7 +156,7 @@ namespace ModernWpf.Gallery.Pages
             };
 
             root.Children.Add(personPicture);
-            root.Children.Add(options);
+            optionsContent = options;
             ApplyPersonPictureSelection(personPicture, profileImageRadio, displayNameRadio, initialsRadio);
             return root;
         }

@@ -738,6 +738,36 @@
             }
           ],
           "RelatedControls": []
+        },
+        {
+          "UniqueId": "WinUIProgressBar",
+          "Title": "ProgressBar (WinUI)",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "RangeBase"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Shows an app's progress on a task, or that the app is performing ongoing work that doesn't block user interaction.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ProgressBar.png",
+          "Description": "The WinUI-style ProgressBar has two visual representations:\nIndeterminate - shows that a task is ongoing, but doesn't block user interaction.\nDeterminate - shows how much progress has been made on a known amount of work.",
+          "SourcePath": "/ProgressBar",
+          "Docs": [
+            {
+              "Title": "ProgressBar - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.progressbar"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/progress-controls"
+            }
+          ],
+          "RelatedControls": [
+            "ProgressRing"
+          ]
         }
       ]
     },

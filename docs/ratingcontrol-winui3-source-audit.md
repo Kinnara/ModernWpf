@@ -65,6 +65,16 @@ Current Gallery blobs are `7c4a293639c43105aa8d9526ce97beadc34ea8c1`
 no RatingControl page/sample change after Gallery conversion commit
 `14a4a1a2b8ddc527dc4a7d5f7e743d7c2bc97db7`.
 
+The branch was rechecked at `winui3/main` head
+`f41c31c2aabaf2f67c1373ac3120f98145b03280` on 2026-07-19. Its
+`CoercePlaceholderValueBetweenMinAndMax` path still preserves zero and values
+between zero and one. The installed Gallery runtime is older: its placeholder
+sample renders one filled star when the slider and `PlaceholderValue` are both
+zero. That installed-runtime pixel is therefore a known reference divergence,
+not the current-source target. The visual-check report now calls this out under
+`Reference Baseline Notes` and in the RatingControl result rows, so the `7.0`
+static threshold cannot silently conceal it.
+
 ## ModernWpf Port Surface
 
 - `ModernWpf.Controls\RatingControl\RatingControl.cs`

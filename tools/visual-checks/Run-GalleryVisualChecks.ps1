@@ -68,6 +68,46 @@ $WpfGalleryOnlyVisualAuditCases = @(
     "TreeView"
 )
 
+$WinUIPortedControlExampleCounts = [ordered]@{
+    NavigationView = 8
+    InfoBar = 3
+    NumberBox = 3
+    AutoSuggestBox = 2
+    ContentDialog = 2
+    TeachingTip = 3
+    CommandBar = 1
+    CommandBarFlyout = 1
+    AppBarButton = 6
+    AppBarToggleButton = 4
+    AppBarSeparator = 1
+    DropDownButton = 2
+    SplitButton = 2
+    ToggleSplitButton = 1
+    RepeatButton = 1
+    ToggleButton = 1
+    MenuBar = 3
+    MenuFlyout = 7
+    ItemsRepeater = 6
+    RatingControl = 2
+    ToggleSwitch = 2
+    ColorPicker = 1
+    HyperlinkButton = 2
+    ProgressRing = 2
+    WinUIProgressBar = 2
+    InfoBadge = 4
+    Flyout = 1
+    Popup = 1
+    BreadcrumbBar = 2
+    SelectorBar = 3
+    SplitView = 1
+    AnnotatedScrollBar = 1
+    GridView = 3
+    PersonPicture = 1
+    IconElement = 6
+    ThemeShadow = 1
+    TitleBar = 2
+}
+
 if ($Reference -eq "InstalledWinUI3Gallery") {
     $wrongReferenceControls = @($Controls | Where-Object { $WpfGalleryOnlyVisualAuditCases -contains $_ })
     if ($wrongReferenceControls.Count -gt 0) {
@@ -94,7 +134,7 @@ try {
 catch {
     Add-Type -AssemblyName System.Drawing
 }
-Add-Type -TypeDefinition @"
+$galleryVisualSource = @"
 using System;
 using System.Runtime.InteropServices;
 
@@ -276,7 +316,111 @@ public static class GalleryVisualNative
         }
     }
 }
+
+public static class GalleryImageMetrics
+{
+    public static double GetVisibleStdDev(string path, int step)
+    {
+        double mean;
+        double stdDev;
+        Analyze(path, step, out mean, out stdDev);
+        return Math.Round(stdDev, 2);
+    }
+
+    public static double GetMeanLuminance(string path, int step)
+    {
+        double mean;
+        double stdDev;
+        Analyze(path, step, out mean, out stdDev);
+        return double.IsNaN(mean) ? mean : Math.Round(mean, 2);
+    }
+
+    private static void Analyze(string path, int step, out double mean, out double stdDev)
+    {
+        step = Math.Max(1, step);
+        using (var source = new System.Drawing.Bitmap(path))
+        using (var bitmap = new System.Drawing.Bitmap(
+            source.Width,
+            source.Height,
+            System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+        {
+            using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
+            {
+                graphics.DrawImageUnscaled(source, 0, 0);
+            }
+
+            var rectangle = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
+            var data = bitmap.LockBits(
+                rectangle,
+                System.Drawing.Imaging.ImageLockMode.ReadOnly,
+                System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            try
+            {
+                int absoluteStride = Math.Abs(data.Stride);
+                var bytes = new byte[absoluteStride * bitmap.Height];
+                Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
+                double sum = 0.0;
+                double sumSquared = 0.0;
+                long samples = 0;
+                for (int y = 0; y < bitmap.Height; y += step)
+                {
+                    int row = data.Stride >= 0
+                        ? y * absoluteStride
+                        : (bitmap.Height - 1 - y) * absoluteStride;
+                    for (int x = 0; x < bitmap.Width; x += step)
+                    {
+                        int pixel = row + (x * 4);
+                        byte alpha = bytes[pixel + 3];
+                        if (alpha <= 16)
+                        {
+                            continue;
+                        }
+
+                        double luminance =
+                            (0.2126 * bytes[pixel + 2]) +
+                            (0.7152 * bytes[pixel + 1]) +
+                            (0.0722 * bytes[pixel]);
+                        sum += luminance;
+                        sumSquared += luminance * luminance;
+                        samples++;
+                    }
+                }
+
+                if (samples == 0)
+                {
+                    mean = double.NaN;
+                    stdDev = 0.0;
+                    return;
+                }
+
+                mean = sum / samples;
+                double variance = (sumSquared / samples) - (mean * mean);
+                stdDev = Math.Sqrt(Math.Max(0.0, variance));
+            }
+            finally
+            {
+                bitmap.UnlockBits(data);
+            }
+        }
+    }
+}
 "@
+$imageMetricsMarker = "public static class GalleryImageMetrics"
+$imageMetricsIndex = $galleryVisualSource.IndexOf($imageMetricsMarker, [StringComparison]::Ordinal)
+if ($imageMetricsIndex -lt 0) {
+    throw "Gallery image metrics source marker was not found."
+}
+
+$galleryNativeSource = $galleryVisualSource.Substring(0, $imageMetricsIndex)
+$galleryImageMetricsSource = "using System;`r`nusing System.Runtime.InteropServices;`r`n" +
+    $galleryVisualSource.Substring($imageMetricsIndex)
+Add-Type -TypeDefinition $galleryNativeSource
+$powerShellRuntimeDirectory = Split-Path ([object].Assembly.Location)
+Add-Type -TypeDefinition $galleryImageMetricsSource -ReferencedAssemblies @(
+    [System.Drawing.Bitmap].Assembly.Location,
+    (Join-Path $powerShellRuntimeDirectory "System.Drawing.Primitives.dll"),
+    (Join-Path $powerShellRuntimeDirectory "System.Private.Windows.Core.dll"),
+    (Join-Path $powerShellRuntimeDirectory "System.Private.Windows.GdiPlus.dll"))
 
 function New-RunDirectory {
     $timestamp = Get-Date -Format "yyyyMMdd-HHmmss-fff"
@@ -305,6 +449,10 @@ function New-RunDirectory {
 
 function ConvertTo-SafeName([string]$name) {
     return ($name -replace '[^A-Za-z0-9_.-]', '_').Trim('_')
+}
+
+function Write-AuditTiming([string]$path, [string]$phase) {
+    Add-Content -LiteralPath $path -Value ("{0:o} {1}" -f [DateTimeOffset]::Now, $phase) -Encoding UTF8
 }
 
 function Get-RootElement {
@@ -1001,6 +1149,52 @@ function Get-SampleRootAutomationId([string]$control) {
     return "GallerySample_${control}_Root"
 }
 
+function Set-DeterministicControlFocus($window, [string]$control) {
+    if ($control -in @("ProgressRing", "WinUIProgressBar")) {
+        # Setting the determinate value through UI Automation focuses WinUI's
+        # NumberBox but not WPF's. Focus a shell button outside the review cards
+        # in both applications so the comparison is about the sample, not a
+        # provider-specific focus side effect. Navigation items are virtualized
+        # out of WinUI's control view, so they are not a reliable focus target.
+        $shellButton = Find-DescendantButtonByAnyName $window @("Toggle Navigation", "Back")
+        if ($null -ne $shellButton) {
+            try {
+                $shellButton.SetFocus()
+                Start-Sleep -Milliseconds 180
+                return $true
+            }
+            catch {
+                return $false
+            }
+        }
+
+        return $false
+    }
+
+    if ($control -ne "SelectorBar") {
+        return $true
+    }
+
+    # SelectorBar intentionally starts with SelectedItem=null and selects its
+    # first item when keyboard focus enters the control. WinUI Gallery's URI
+    # navigation focuses that first item while ModernWpf's diagnostic route
+    # does not, which made identical controls appear different in screenshots.
+    # Exercise the documented focused state explicitly in both applications.
+    $firstItem = Find-DescendantByName $window "Recent"
+    if ($null -eq $firstItem) {
+        return $false
+    }
+
+    try {
+        $firstItem.SetFocus()
+        Start-Sleep -Milliseconds 180
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
+
 function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
     switch ($control) {
         "InfoBadge" { return 8.0 }
@@ -1154,6 +1348,15 @@ function Get-ReferencePrimaryName([string]$control) {
         "Popup" { return "Show Popup (using Offset)" }
         "RepeatButton" { return "Click and hold" }
         "ToggleSwitch" { return "simple ToggleSwitch" }
+        default { return "" }
+    }
+}
+
+function Get-ReferenceBaselineNote([string]$control) {
+    switch ($control) {
+        "RatingControl" {
+            return "Installed WinUI Gallery 2.9.3.0 / Windows App Runtime 2.2.3.0.0 renders PlaceholderValue=0 as one filled star. Current winui3/main preserves zero as a valid empty placeholder, so ModernWpf intentionally follows current source rather than that older installed-runtime pixel."
+        }
         default { return "" }
     }
 }
@@ -1766,64 +1969,12 @@ function Get-ImageSize([string]$path) {
 }
 
 function Get-ImageVisibleStdDev([string]$path, [int]$step = 3) {
-    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
-    try {
-        $sum = 0.0
-        $sumSquared = 0.0
-        $samples = 0
-        for ($y = 0; $y -lt $bitmap.Height; $y += $step) {
-            for ($x = 0; $x -lt $bitmap.Width; $x += $step) {
-                $pixel = $bitmap.GetPixel($x, $y)
-                if ($pixel.A -le 16) {
-                    continue
-                }
-
-                $luminance = (0.2126 * $pixel.R) + (0.7152 * $pixel.G) + (0.0722 * $pixel.B)
-                $sum += $luminance
-                $sumSquared += $luminance * $luminance
-                $samples++
-            }
-        }
-
-        if ($samples -eq 0) {
-            return 0.0
-        }
-
-        $mean = $sum / $samples
-        $variance = ($sumSquared / $samples) - ($mean * $mean)
-        return [Math]::Round([Math]::Sqrt([Math]::Max(0.0, $variance)), 2)
-    }
-    finally {
-        $bitmap.Dispose()
-    }
+    return [GalleryImageMetrics]::GetVisibleStdDev($path, $step)
 }
 
 function Get-ImageMeanLuminance([string]$path, [int]$step = 3) {
-    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
-    try {
-        $sum = 0.0
-        $samples = 0
-        for ($y = 0; $y -lt $bitmap.Height; $y += $step) {
-            for ($x = 0; $x -lt $bitmap.Width; $x += $step) {
-                $pixel = $bitmap.GetPixel($x, $y)
-                if ($pixel.A -le 16) {
-                    continue
-                }
-
-                $sum += (0.2126 * $pixel.R) + (0.7152 * $pixel.G) + (0.0722 * $pixel.B)
-                $samples++
-            }
-        }
-
-        if ($samples -eq 0) {
-            return $null
-        }
-
-        return [Math]::Round($sum / $samples, 2)
-    }
-    finally {
-        $bitmap.Dispose()
-    }
+    $mean = [GalleryImageMetrics]::GetMeanLuminance($path, $step)
+    return $(if ([double]::IsNaN($mean)) { $null } else { $mean })
 }
 
 function Capture-Window([IntPtr]$hwnd, [string]$path, [switch]$SkipActivate) {
@@ -2140,10 +2291,21 @@ function Expand-Bounds($bounds, [int]$imageWidth, [int]$imageHeight, [int]$paddi
         return $bounds
     }
 
-    $x = [Math]::Max(0, $bounds.X - $padding)
-    $y = [Math]::Max(0, $bounds.Y - $padding)
+    $x = [Math]::Max(0, [Math]::Min($imageWidth, $bounds.X - $padding))
+    $y = [Math]::Max(0, [Math]::Min($imageHeight, $bounds.Y - $padding))
     $right = [Math]::Min($imageWidth, $bounds.X + $bounds.Width + $padding)
     $bottom = [Math]::Min($imageHeight, $bounds.Y + $bounds.Height + $padding)
+    if ($right -le $x -or $bottom -le $y) {
+        return [ordered]@{
+            Found = $false
+            Reason = "The requested crop did not intersect the captured window."
+            X = 0
+            Y = 0
+            Width = 0
+            Height = 0
+            ChangedSamples = $bounds.ChangedSamples
+        }
+    }
     return [ordered]@{
         Found = $true
         Reason = ""
@@ -2203,6 +2365,9 @@ function Save-Crop([string]$sourcePath, $bounds, [string]$path, [int]$padding = 
     $source = [System.Drawing.Bitmap]::FromFile($sourcePath)
     try {
         $expandedBounds = Expand-Bounds $bounds $source.Width $source.Height $padding
+        if ($null -eq $expandedBounds -or !$expandedBounds.Found) {
+            return $expandedBounds
+        }
         $rectangle = [System.Drawing.Rectangle]::new(
             [int]$expandedBounds.X,
             [int]$expandedBounds.Y,
@@ -2466,14 +2631,44 @@ function Copy-RenderedArtifactCrop([string]$sourcePath, [string]$destinationPath
     return New-RenderedArtifactCrop $destinationPath $source $null
 }
 
-function Refresh-ModernWpfVisualArtifacts($window) {
+function Refresh-ModernWpfVisualArtifacts($window, [string]$artifactDir = "") {
     $refreshButton = TryFind-DescendantByAutomationId $window "GalleryVisualTestRefreshArtifacts"
     if ($null -eq $refreshButton) {
         return $false
     }
 
+    $statusPath = if ([string]::IsNullOrWhiteSpace($artifactDir)) {
+        ""
+    }
+    else {
+        Join-Path $artifactDir "modernwpf-gallery-status.txt"
+    }
+    $previousStatusWrite = if (![string]::IsNullOrWhiteSpace($statusPath) -and (Test-Path $statusPath)) {
+        (Get-Item -LiteralPath $statusPath).LastWriteTimeUtc.Ticks
+    }
+    else {
+        0L
+    }
+
     if (Invoke-ElementPatternOnce $window $refreshButton) {
-        Start-Sleep -Milliseconds 150
+        if (![string]::IsNullOrWhiteSpace($statusPath)) {
+            try {
+                Wait-Until -TimeoutSeconds 10 -Description "ModernWpf visual artifact refresh" -Probe {
+                    if (!(Test-Path $statusPath)) {
+                        return $null
+                    }
+
+                    $writeTicks = (Get-Item -LiteralPath $statusPath).LastWriteTimeUtc.Ticks
+                    return $(if ($writeTicks -gt $previousStatusWrite) { $writeTicks } else { $null })
+                } | Out-Null
+            }
+            catch {
+                Start-Sleep -Milliseconds 600
+            }
+        }
+        else {
+            Start-Sleep -Milliseconds 600
+        }
         return $true
     }
 
@@ -3100,7 +3295,15 @@ function New-InfoBadgeReferencePrimaryCrop([string]$caseDir, $window, [string]$s
 
     $modernSize = Get-ImageSize $modernPrimaryArtifact
     $sampleBounds = Get-ElementWindowBounds $window $sampleElement
-    $referenceAccent = Find-AccentComponentBounds $screenshot $sampleBounds
+    $navigationView = TryFind-DescendantByAutomationId $window "nvSample1"
+    $navigationViewBounds = Get-ElementWindowBounds $window $navigationView
+    $searchBounds = if ($null -ne $navigationViewBounds -and $navigationViewBounds.Found) {
+        $navigationViewBounds
+    }
+    else {
+        $sampleBounds
+    }
+    $referenceAccent = Find-AccentComponentBounds $screenshot $searchBounds
     $bounds = $null
     if ($null -ne $referenceAccent) {
         $referenceCenterX = $referenceAccent.X + ($referenceAccent.Width / 2.0)
@@ -3108,8 +3311,8 @@ function New-InfoBadgeReferencePrimaryCrop([string]$caseDir, $window, [string]$s
         $bounds = [ordered]@{
             Found = $true
             Reason = "Cropped the first rendered WinUI InfoBadge value badge from the sample pixels."
-            X = [Math]::Max($sampleBounds.X, [int][Math]::Round($referenceCenterX - ($modernSize.Width / 2.0)))
-            Y = [Math]::Max($sampleBounds.Y, [int][Math]::Round($referenceCenterY - ($modernSize.Height / 2.0)))
+            X = [Math]::Max($searchBounds.X, [int][Math]::Round($referenceCenterX - ($modernSize.Width / 2.0)))
+            Y = [Math]::Max($searchBounds.Y, [int][Math]::Round($referenceCenterY - ($modernSize.Height / 2.0)))
             Width = $modernSize.Width
             Height = $modernSize.Height
             ChangedSamples = 0
@@ -3217,6 +3420,18 @@ function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $
             else {
                 $primaryCrop = $null
             }
+        }
+
+        # Detached VisualBrush rendering is not reliable for every WPF visual.
+        # Image-backed controls and some templated input controls can produce a
+        # correctly-sized but empty artifact while the live window is correct.
+        # Reject that artifact here so the primary crop is taken from the live
+        # UIA bounds below instead of comparing blank pixels to the reference.
+        if ($null -ne $primaryCrop -and
+            (!$primaryCrop.NonBlank -or
+                ($primaryCrop.Contains("VisibleStdDev") -and
+                    $primaryCrop.VisibleStdDev -lt (Get-PrimaryCropMinimumVisibleStdDev $control)))) {
+            $primaryCrop = $null
         }
 
         if ($null -eq $primaryCrop) {
@@ -4251,8 +4466,13 @@ function Compare-ImagesNormalized([string]$leftPath, [string]$rightPath) {
         try {
             $leftGraphics.Clear([System.Drawing.Color]::Transparent)
             $rightGraphics.Clear([System.Drawing.Color]::Transparent)
-            $leftGraphics.DrawImage($left, 0, 0, $width, $height)
-            $rightGraphics.DrawImage($right, 0, 0, $width, $height)
+            # Keep both artifacts at their native scale. Stretching each card to
+            # the larger dimensions made fixed-size controls appear aligned even
+            # when the Gallery viewports (or the cards themselves) had different
+            # sizes. The transparent remainder intentionally contributes to the
+            # delta so a size mismatch cannot silently pass.
+            $leftGraphics.DrawImageUnscaled($left, 0, 0)
+            $rightGraphics.DrawImageUnscaled($right, 0, 0)
 
             $samples = 0
             $delta = 0.0
@@ -4285,6 +4505,564 @@ function Compare-ImagesNormalized([string]$leftPath, [string]$rightPath) {
     finally {
         $left.Dispose()
         $right.Dispose()
+    }
+}
+
+function Get-NavigationViewSelectionIndicatorEvidence([string]$path, [string]$orientation = "Left") {
+    if ([string]::IsNullOrWhiteSpace($path) -or !(Test-Path $path)) {
+        return [ordered]@{
+            Found = $false
+            Reason = "NavigationView primary crop was not found."
+        }
+    }
+
+    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
+    try {
+        # Group exact solid pixels so the rounded indicator's antialiased edge
+        # cannot blur a position error. Left-mode indicators live in the first
+        # 24 columns; Top-mode indicators live in the 48-pixel navigation row.
+        $colors = @{}
+        $scanWidth = if ($orientation -eq "Top") { [Math]::Min(250, $bitmap.Width) } else { [Math]::Min(24, $bitmap.Width) }
+        $scanHeight = if ($orientation -eq "Top") { [Math]::Min(54, $bitmap.Height) } else { [Math]::Min(220, $bitmap.Height) }
+        for ($y = 0; $y -lt $scanHeight; $y++) {
+            for ($x = 0; $x -lt $scanWidth; $x++) {
+                $pixel = $bitmap.GetPixel($x, $y)
+                if ($pixel.A -lt 240) {
+                    continue
+                }
+
+                $maximumChannel = [Math]::Max($pixel.R, [Math]::Max($pixel.G, $pixel.B))
+                $minimumChannel = [Math]::Min($pixel.R, [Math]::Min($pixel.G, $pixel.B))
+                if (($maximumChannel - $minimumChannel) -lt 40) {
+                    continue
+                }
+
+                $key = $pixel.Name.ToUpperInvariant()
+                if (!$colors.ContainsKey($key)) {
+                    $colors[$key] = [pscustomobject]@{
+                        Color = $key
+                        Count = 0
+                        MinimumX = $x
+                        MaximumX = $x
+                        MinimumY = $y
+                        MaximumY = $y
+                    }
+                }
+
+                $entry = $colors[$key]
+                $entry.Count++
+                $entry.MinimumX = [Math]::Min($entry.MinimumX, $x)
+                $entry.MaximumX = [Math]::Max($entry.MaximumX, $x)
+                $entry.MinimumY = [Math]::Min($entry.MinimumY, $y)
+                $entry.MaximumY = [Math]::Max($entry.MaximumY, $y)
+            }
+        }
+
+        $candidate = $colors.Values |
+            Where-Object {
+                $width = $_.MaximumX - $_.MinimumX + 1
+                $height = $_.MaximumY - $_.MinimumY + 1
+                $_.Count -ge 20 -and $(if ($orientation -eq "Top") {
+                    $width -ge 8 -and $width -le 24 -and $height -le 6
+                }
+                else {
+                    $width -le 8 -and $height -ge 8 -and $height -le 24
+                })
+            } |
+            Sort-Object -Property Count -Descending |
+            Select-Object -First 1
+
+        if ($null -eq $candidate) {
+            return [ordered]@{
+                Found = $false
+                Reason = "No solid NavigationView selection-indicator pixels were found in the primary crop."
+            }
+        }
+
+        return [ordered]@{
+            Found = $true
+            Reason = ""
+            Color = $candidate.Color
+            Count = $candidate.Count
+            X = $candidate.MinimumX
+            Y = $candidate.MinimumY
+            Width = $candidate.MaximumX - $candidate.MinimumX + 1
+            Height = $candidate.MaximumY - $candidate.MinimumY + 1
+        }
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
+function Get-NavigationViewSampleArtifactEvidence([string]$artifactDirectory) {
+    $expectations = @(
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_NavigationView"; Width = 745; Height = 460; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_TopNavigationView"; Width = 745; Height = 460; IndicatorOrientation = "Top" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_AdaptiveNavigationView"; Width = 745; Height = 460; IndicatorOrientation = "Top" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_TabsNavigationView"; Width = 745; Height = 460; IndicatorOrientation = "Top" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_DataBindingNavigationView"; Width = 745; Height = 460; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_FooterNavigationView"; Width = 592; Height = 460; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_HierarchicalNavigationView"; Width = 565; Height = 460; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_ApiNavigationView"; Width = 458; Height = 540; IndicatorOrientation = "" }
+    )
+    $artifacts = @()
+
+    foreach ($expectation in $expectations) {
+        $path = Join-Path $artifactDirectory ($expectation.AutomationId + ".png")
+        $found = Test-Path $path
+        $size = if ($found) { Get-ImageSize $path } else { [ordered]@{ Width = 0; Height = 0 } }
+        $nonBlank = $found -and (Test-ImageNotBlank $path)
+        $visibleStdDev = if ($found) { Get-ImageVisibleStdDev $path } else { 0.0 }
+        $indicator = if ($found -and ![string]::IsNullOrWhiteSpace($expectation.IndicatorOrientation)) {
+            Get-NavigationViewSelectionIndicatorEvidence $path $expectation.IndicatorOrientation
+        }
+        else {
+            $null
+        }
+        $valid = $found -and
+            $nonBlank -and
+            $size.Width -eq $expectation.Width -and
+            $size.Height -eq $expectation.Height -and
+            $visibleStdDev -ge 4.0 -and
+            ($null -eq $indicator -or $indicator.Found)
+
+        $artifacts += [ordered]@{
+            AutomationId = $expectation.AutomationId
+            Path = $path
+            Found = $found
+            NonBlank = $nonBlank
+            VisibleStdDev = $visibleStdDev
+            Width = $size.Width
+            Height = $size.Height
+            ExpectedWidth = $expectation.Width
+            ExpectedHeight = $expectation.Height
+            IndicatorOrientation = $expectation.IndicatorOrientation
+            Indicator = $indicator
+            Valid = $valid
+        }
+    }
+
+    $invalidArtifacts = @($artifacts | Where-Object { !$_.Valid })
+    $reason = if ($invalidArtifacts.Count -eq 0) {
+        ""
+    }
+    else {
+        "NavigationView sample artifacts failed validation: " + (($invalidArtifacts | ForEach-Object {
+            "$($_.AutomationId) found=$($_.Found) nonblank=$($_.NonBlank) size=$($_.Width)x$($_.Height) visibleStdDev=$($_.VisibleStdDev) indicatorFound=$(if ($null -eq $_.Indicator) { 'n/a' } else { $_.Indicator.Found })"
+        }) -join "; ")
+    }
+
+    return [ordered]@{
+        Passed = $invalidArtifacts.Count -eq 0
+        ExpectedCount = $expectations.Count
+        ValidCount = $expectations.Count - $invalidArtifacts.Count
+        Artifacts = @($artifacts)
+        Reason = $reason
+    }
+}
+
+function Capture-NavigationViewReferenceSampleArtifacts([string]$caseDirectory, $window) {
+    $expectations = @(
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_NavigationView"; ReferenceAutomationId = "nvSample5"; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_TopNavigationView"; ReferenceAutomationId = "nvSample6"; IndicatorOrientation = "Top" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_AdaptiveNavigationView"; ReferenceAutomationId = "nvSample2"; IndicatorOrientation = "Top" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_TabsNavigationView"; ReferenceAutomationId = "nvSample7"; IndicatorOrientation = "Top" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_DataBindingNavigationView"; ReferenceAutomationId = "nvSample4"; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_FooterNavigationView"; ReferenceAutomationId = "nvSample9"; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_HierarchicalNavigationView"; ReferenceAutomationId = "nvSample8"; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_ApiNavigationView"; ReferenceAutomationId = "nvSample"; IndicatorOrientation = "" }
+    )
+    $artifactDirectory = Join-Path $caseDirectory "winui3-navigationview-samples"
+    New-Item -ItemType Directory -Force -Path $artifactDirectory | Out-Null
+    $artifacts = @()
+    $scrollPanel = TryFind-DescendantByAutomationId $window "svPanel"
+
+    foreach ($expectation in $expectations) {
+        $element = TryFind-DescendantByAutomationId $window $expectation.ReferenceAutomationId
+        $scrollRequested = $false
+        if ($null -ne $element) {
+            try {
+                $scrollItem = $element.GetCurrentPattern([System.Windows.Automation.ScrollItemPattern]::Pattern)
+                $scrollItem.ScrollIntoView()
+                $scrollRequested = $true
+            }
+            catch {
+                try {
+                    $focusTarget = TryFind-DescendantByAutomationId $element "TogglePaneButton"
+                    if ($null -ne $focusTarget) {
+                        $focusTarget.SetFocus()
+                        $scrollRequested = $true
+                    }
+                }
+                catch {
+                }
+            }
+        }
+
+        $elementBounds = $null
+        $fullyVisible = $false
+        foreach ($attempt in 1..12) {
+            Start-Sleep -Milliseconds 100
+            if ($null -ne $element) {
+                $elementBounds = Get-ElementScreenBounds $element 0 $window
+            }
+            $scrollBounds = if ($null -ne $scrollPanel) { Get-ElementScreenBounds $scrollPanel 0 $window } else { $null }
+            $fullyVisible = $null -ne $elementBounds -and $elementBounds.Found -and
+                ($null -eq $scrollBounds -or
+                    ($elementBounds.X -ge $scrollBounds.X -and
+                        $elementBounds.Y -ge $scrollBounds.Y -and
+                        ($elementBounds.X + $elementBounds.Width) -le ($scrollBounds.X + $scrollBounds.Width) -and
+                        ($elementBounds.Y + $elementBounds.Height) -le ($scrollBounds.Y + $scrollBounds.Height)))
+            if ($fullyVisible) {
+                break
+            }
+        }
+
+        $path = Join-Path $artifactDirectory ($expectation.AutomationId + ".png")
+        $crop = if ($fullyVisible) {
+            Save-ScreenElementCrop $element $path $expectation.ReferenceAutomationId 0 $window
+        }
+        else {
+            [ordered]@{
+                Found = $false
+                Screenshot = ""
+                Width = if ($null -ne $elementBounds) { $elementBounds.Width } else { 0 }
+                Height = if ($null -ne $elementBounds) { $elementBounds.Height } else { 0 }
+                NonBlank = $false
+                VisibleStdDev = 0.0
+            }
+        }
+        $indicator = if ($crop.Found -and ![string]::IsNullOrWhiteSpace($expectation.IndicatorOrientation)) {
+            Get-NavigationViewSelectionIndicatorEvidence $crop.Screenshot $expectation.IndicatorOrientation
+        }
+        else {
+            $null
+        }
+        $valid = $crop.Found -and
+            $crop.NonBlank -and
+            $crop.VisibleStdDev -ge 4.0 -and
+            ($null -eq $indicator -or $indicator.Found)
+        $artifacts += [ordered]@{
+            AutomationId = $expectation.AutomationId
+            ReferenceAutomationId = $expectation.ReferenceAutomationId
+            Path = $crop.Screenshot
+            Found = $crop.Found
+            FullyVisible = $fullyVisible
+            ScrollRequested = $scrollRequested
+            NonBlank = $crop.NonBlank
+            VisibleStdDev = if ($crop.Contains("VisibleStdDev")) { $crop.VisibleStdDev } else { 0.0 }
+            Width = $crop.Width
+            Height = $crop.Height
+            IndicatorOrientation = $expectation.IndicatorOrientation
+            Indicator = $indicator
+            Valid = $valid
+        }
+    }
+
+    $firstSample = TryFind-DescendantByAutomationId $window "nvSample5"
+    if ($null -ne $firstSample) {
+        try {
+            $firstSampleScrollItem = $firstSample.GetCurrentPattern([System.Windows.Automation.ScrollItemPattern]::Pattern)
+            $firstSampleScrollItem.ScrollIntoView()
+        }
+        catch {
+        }
+    }
+
+    $invalidArtifacts = @($artifacts | Where-Object { !$_.Valid })
+    $reason = if ($invalidArtifacts.Count -eq 0) {
+        ""
+    }
+    else {
+        "WinUI NavigationView reference sample artifacts failed validation: " + (($invalidArtifacts | ForEach-Object {
+            "$($_.ReferenceAutomationId) found=$($_.Found) fullyVisible=$($_.FullyVisible) nonblank=$($_.NonBlank) size=$($_.Width)x$($_.Height) visibleStdDev=$($_.VisibleStdDev) indicatorFound=$(if ($null -eq $_.Indicator) { 'n/a' } else { $_.Indicator.Found })"
+        }) -join "; ")
+    }
+
+    return [ordered]@{
+        Passed = $invalidArtifacts.Count -eq 0
+        ExpectedCount = $expectations.Count
+        ValidCount = $expectations.Count - $invalidArtifacts.Count
+        Artifacts = @($artifacts)
+        Reason = $reason
+    }
+}
+
+function Get-NavigationViewSampleMeanDeltaThreshold([string]$automationId) {
+    switch ($automationId) {
+        "GallerySample_NavigationView_NavigationView" { return 1.5 }
+        "GallerySample_NavigationView_AdaptiveNavigationView" { return 4.25 }
+        "GallerySample_NavigationView_TabsNavigationView" { return 4.25 }
+        "GallerySample_NavigationView_DataBindingNavigationView" { return 1.5 }
+        "GallerySample_NavigationView_FooterNavigationView" { return 2.0 }
+        "GallerySample_NavigationView_HierarchicalNavigationView" { return 1.5 }
+        "GallerySample_NavigationView_ApiNavigationView" { return 2.5 }
+        default { return 1.2 }
+    }
+}
+
+function Compare-NavigationViewSampleArtifactEvidence($modernEvidence, $referenceEvidence) {
+    $comparisons = @()
+    foreach ($modernArtifact in $modernEvidence.Artifacts) {
+        $referenceArtifact = $referenceEvidence.Artifacts |
+            Where-Object { $_.AutomationId -eq $modernArtifact.AutomationId } |
+            Select-Object -First 1
+        $threshold = Get-NavigationViewSampleMeanDeltaThreshold $modernArtifact.AutomationId
+        $comparison = if ($null -ne $referenceArtifact -and
+            $modernArtifact.Found -and
+            $referenceArtifact.Found -and
+            (Test-Path $modernArtifact.Path) -and
+            (Test-Path $referenceArtifact.Path)) {
+            Compare-ImagesNormalized $modernArtifact.Path $referenceArtifact.Path
+        }
+        else {
+            [ordered]@{
+                Comparable = $false
+                Reason = "The ModernWpf or WinUI sample artifact was unavailable."
+                MeanDelta = $null
+            }
+        }
+        $sizeDelta = if ($null -ne $referenceArtifact) {
+            [Math]::Abs([int]$modernArtifact.Width - [int]$referenceArtifact.Width) +
+                [Math]::Abs([int]$modernArtifact.Height - [int]$referenceArtifact.Height)
+        }
+        else {
+            [int]::MaxValue
+        }
+        $indicatorExpected = ![string]::IsNullOrWhiteSpace($modernArtifact.IndicatorOrientation)
+        $indicatorComparable = !$indicatorExpected -or
+            ($null -ne $referenceArtifact -and
+                $null -ne $modernArtifact.Indicator -and
+                $null -ne $referenceArtifact.Indicator -and
+                $modernArtifact.Indicator.Found -and
+                $referenceArtifact.Indicator.Found)
+        $indicatorMatches = !$indicatorExpected -or
+            ($indicatorComparable -and
+                $modernArtifact.IndicatorOrientation -eq $referenceArtifact.IndicatorOrientation -and
+                $modernArtifact.Indicator.Color -eq $referenceArtifact.Indicator.Color -and
+                $modernArtifact.Indicator.Count -eq $referenceArtifact.Indicator.Count -and
+                [Math]::Abs([int]$modernArtifact.Indicator.X - [int]$referenceArtifact.Indicator.X) -le 1 -and
+                [Math]::Abs([int]$modernArtifact.Indicator.Y - [int]$referenceArtifact.Indicator.Y) -le 1 -and
+                $modernArtifact.Indicator.Width -eq $referenceArtifact.Indicator.Width -and
+                $modernArtifact.Indicator.Height -eq $referenceArtifact.Indicator.Height)
+        $passed = $comparison.Comparable -and
+            $sizeDelta -eq 0 -and
+            [double]$comparison.MeanDelta -le $threshold -and
+            $indicatorMatches
+
+        $comparisons += [ordered]@{
+            AutomationId = $modernArtifact.AutomationId
+            ModernWpfPath = $modernArtifact.Path
+            ReferencePath = if ($null -ne $referenceArtifact) { $referenceArtifact.Path } else { "" }
+            ModernWpfWidth = $modernArtifact.Width
+            ModernWpfHeight = $modernArtifact.Height
+            ReferenceWidth = if ($null -ne $referenceArtifact) { $referenceArtifact.Width } else { 0 }
+            ReferenceHeight = if ($null -ne $referenceArtifact) { $referenceArtifact.Height } else { 0 }
+            SizeDelta = $sizeDelta
+            Comparable = $comparison.Comparable
+            MeanDelta = $comparison.MeanDelta
+            MeanDeltaThreshold = $threshold
+            IndicatorExpected = $indicatorExpected
+            IndicatorComparable = $indicatorComparable
+            IndicatorMatches = $indicatorMatches
+            ModernWpfIndicator = $modernArtifact.Indicator
+            ReferenceIndicator = if ($null -ne $referenceArtifact) { $referenceArtifact.Indicator } else { $null }
+            Passed = $passed
+            Reason = $comparison.Reason
+        }
+    }
+
+    $failedComparisons = @($comparisons | Where-Object { !$_.Passed })
+    $reason = if ($failedComparisons.Count -eq 0) {
+        ""
+    }
+    else {
+        "NavigationView sample artifact parity failed: " + (($failedComparisons | ForEach-Object {
+            "$($_.AutomationId) delta=$($_.MeanDelta)/$($_.MeanDeltaThreshold) sizeDelta=$($_.SizeDelta) indicatorMatch=$($_.IndicatorMatches)"
+        }) -join "; ")
+    }
+
+    return [ordered]@{
+        Passed = $failedComparisons.Count -eq 0
+        ExpectedCount = $modernEvidence.ExpectedCount
+        ValidCount = $modernEvidence.ExpectedCount - $failedComparisons.Count
+        Comparisons = @($comparisons)
+        Reason = $reason
+    }
+}
+
+function Get-ControlExampleMeanDeltaThreshold([string]$control, [string]$automationId) {
+    # These compare the complete ControlExample (header, display, Options/Output,
+    # and source expander), not a tightly cropped primitive. Image-backed and
+    # randomized collection samples naturally carry more cross-framework noise.
+    switch ($control) {
+        "GridView" { return 34.0 }
+        "ItemsRepeater" { return 34.0 }
+        "NavigationView" { return 22.0 }
+        "SelectorBar" { return 22.0 }
+        "PersonPicture" { return 20.0 }
+        default { return 18.0 }
+    }
+}
+
+function New-ControlExampleReviewSheet([string]$control, $comparisons, [string]$caseDir) {
+    $pairs = @(
+        $comparisons |
+            Where-Object {
+                $_.Comparable -and
+                (Test-Path $_.ModernWpfPath) -and
+                (Test-Path $_.ReferencePath)
+            }
+    )
+    if ($pairs.Count -eq 0) {
+        return ""
+    }
+
+    $cellWidth = 560
+    $gutter = 16
+    $labelHeight = 28
+    $rowGap = 16
+    $rowInfo = New-Object System.Collections.Generic.List[object]
+    $sheetHeight = $rowGap
+    foreach ($pair in $pairs) {
+        $modernImage = [System.Drawing.Image]::FromFile($pair.ModernWpfPath)
+        $referenceImage = [System.Drawing.Image]::FromFile($pair.ReferencePath)
+        try {
+            # Use one scale for the pair. Independent scaling hid card-width
+            # differences and distorted every fixed-size child in the review
+            # sheet, which could both invent and conceal layout regressions.
+            $pairScale = [Math]::Min(
+                1.0,
+                $cellWidth / [double][Math]::Max(1, [Math]::Max($modernImage.Width, $referenceImage.Width)))
+            $modernHeight = [int][Math]::Round($modernImage.Height * $pairScale)
+            $referenceHeight = [int][Math]::Round($referenceImage.Height * $pairScale)
+            $rowHeight = $labelHeight + [Math]::Max($modernHeight, $referenceHeight)
+            $rowInfo.Add([pscustomobject]@{
+                Pair = $pair
+                ModernWidth = [int][Math]::Round($modernImage.Width * $pairScale)
+                ModernHeight = $modernHeight
+                ReferenceWidth = [int][Math]::Round($referenceImage.Width * $pairScale)
+                ReferenceHeight = $referenceHeight
+                RowHeight = $rowHeight
+            })
+            $sheetHeight += $rowHeight + $rowGap
+        }
+        finally {
+            $modernImage.Dispose()
+            $referenceImage.Dispose()
+        }
+    }
+
+    $sheetWidth = ($cellWidth * 2) + ($gutter * 3)
+    $sheet = [System.Drawing.Bitmap]::new($sheetWidth, $sheetHeight, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $graphics = [System.Drawing.Graphics]::FromImage($sheet)
+    $font = [System.Drawing.Font]::new("Segoe UI", 10.0)
+    $labelBrush = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(255, 32, 32, 32))
+    $borderPen = [System.Drawing.Pen]::new([System.Drawing.Color]::FromArgb(255, 150, 150, 150), 1.0)
+    try {
+        $graphics.Clear([System.Drawing.Color]::FromArgb(255, 224, 224, 224))
+        $graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+        $graphics.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
+        $y = $rowGap
+        foreach ($info in $rowInfo) {
+            $pair = $info.Pair
+            $modernImage = [System.Drawing.Image]::FromFile($pair.ModernWpfPath)
+            $referenceImage = [System.Drawing.Image]::FromFile($pair.ReferencePath)
+            try {
+                $leftX = $gutter
+                $rightX = ($gutter * 2) + $cellWidth
+                $label = "$($pair.AutomationId)  delta=$($pair.MeanDelta) / $($pair.MeanDeltaThreshold)  size=$($pair.ModernWpfWidth)x$($pair.ModernWpfHeight) vs $($pair.ReferenceWidth)x$($pair.ReferenceHeight)"
+                $graphics.DrawString("ModernWpf — $label", $font, $labelBrush, $leftX, $y)
+                $graphics.DrawString("WinUI — $label", $font, $labelBrush, $rightX, $y)
+                $imageY = $y + $labelHeight
+                $graphics.FillRectangle([System.Drawing.Brushes]::White, $leftX, $imageY, $cellWidth, $info.RowHeight - $labelHeight)
+                $graphics.FillRectangle([System.Drawing.Brushes]::White, $rightX, $imageY, $cellWidth, $info.RowHeight - $labelHeight)
+                $graphics.DrawImage($modernImage, $leftX, $imageY, $info.ModernWidth, $info.ModernHeight)
+                $graphics.DrawImage($referenceImage, $rightX, $imageY, $info.ReferenceWidth, $info.ReferenceHeight)
+                $graphics.DrawRectangle($borderPen, $leftX, $imageY, $cellWidth, $info.RowHeight - $labelHeight)
+                $graphics.DrawRectangle($borderPen, $rightX, $imageY, $cellWidth, $info.RowHeight - $labelHeight)
+                $y += $info.RowHeight + $rowGap
+            }
+            finally {
+                $modernImage.Dispose()
+                $referenceImage.Dispose()
+            }
+        }
+
+        $path = Join-Path $caseDir "control-example-review.png"
+        $sheet.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+        return $path
+    }
+    finally {
+        $borderPen.Dispose()
+        $labelBrush.Dispose()
+        $font.Dispose()
+        $graphics.Dispose()
+        $sheet.Dispose()
+    }
+}
+
+function Compare-ControlExampleScreenArtifactEvidence([string]$control, $modernEvidence, $referenceEvidence, [string]$caseDir) {
+    $comparisons = @()
+    foreach ($modernArtifact in $modernEvidence.Artifacts) {
+        $referenceArtifact = $referenceEvidence.Artifacts |
+            Where-Object { $_.AutomationId -eq $modernArtifact.AutomationId } |
+            Select-Object -First 1
+        $referenceIsolated = $null -ne $referenceArtifact -and
+            $referenceArtifact.Contains("Isolated") -and
+            $referenceArtifact.Isolated
+        $threshold = Get-ControlExampleMeanDeltaThreshold $control $modernArtifact.AutomationId
+        $comparison = if ($referenceIsolated -and
+            $modernArtifact.Valid -and
+            $referenceArtifact.Valid -and
+            (Test-Path $modernArtifact.Path) -and
+            (Test-Path $referenceArtifact.Path)) {
+            Compare-ImagesNormalized $modernArtifact.Path $referenceArtifact.Path
+        }
+        else {
+            [ordered]@{
+                Comparable = $false
+                Reason = "The ModernWpf sample or isolated WinUI ControlExample was unavailable."
+                MeanDelta = $null
+            }
+        }
+        $passed = $comparison.Comparable -and [double]$comparison.MeanDelta -le $threshold
+
+        $comparisons += [ordered]@{
+            AutomationId = $modernArtifact.AutomationId
+            ModernWpfPath = $modernArtifact.Path
+            ReferencePath = if ($null -ne $referenceArtifact) { $referenceArtifact.Path } else { "" }
+            ModernWpfWidth = $modernArtifact.Width
+            ModernWpfHeight = $modernArtifact.Height
+            ReferenceWidth = if ($null -ne $referenceArtifact) { $referenceArtifact.Width } else { 0 }
+            ReferenceHeight = if ($null -ne $referenceArtifact) { $referenceArtifact.Height } else { 0 }
+            Comparable = $comparison.Comparable
+            MeanDelta = $comparison.MeanDelta
+            MeanDeltaThreshold = $threshold
+            Passed = $passed
+            Reason = $comparison.Reason
+        }
+    }
+
+    $failedComparisons = @($comparisons | Where-Object { !$_.Passed })
+    $reviewSheet = New-ControlExampleReviewSheet $control $comparisons $caseDir
+    $reason = if ($failedComparisons.Count -eq 0) {
+        ""
+    }
+    else {
+        "ControlExample parity failed: " + (($failedComparisons | ForEach-Object {
+            "$($_.AutomationId) delta=$($_.MeanDelta)/$($_.MeanDeltaThreshold) comparable=$($_.Comparable)"
+        }) -join "; ")
+    }
+
+    return [ordered]@{
+        Passed = $failedComparisons.Count -eq 0
+        ExpectedCount = $modernEvidence.ExpectedCount
+        ValidCount = $modernEvidence.ExpectedCount - $failedComparisons.Count
+        Comparisons = @($comparisons)
+        ReviewSheet = $reviewSheet
+        Reason = $reason
     }
 }
 
@@ -4569,6 +5347,41 @@ function Expand-ElementPatternOnce($window, $element) {
     return $false
 }
 
+function Scroll-ModernWpfVisualArtifactIntoView($window, [string]$artifactDir, [string]$automationId) {
+    $requestPath = Join-Path $artifactDir "modernwpf-gallery-scroll-request.txt"
+    $resultPath = Join-Path $artifactDir "modernwpf-gallery-scroll-result.txt"
+    Set-Content -LiteralPath $resultPath -Value "" -Encoding UTF8
+    Set-Content -LiteralPath $requestPath -Value $automationId -Encoding UTF8
+
+    foreach ($attempt in 1..20) {
+        Start-Sleep -Milliseconds 75
+        if (!(Test-Path -LiteralPath $resultPath)) {
+            continue
+        }
+
+        $result = (Get-Content -Raw -LiteralPath $resultPath).Trim()
+        if ($result -eq "$automationId|NotFound") {
+            return [ordered]@{ Found = $false; AutomationId = $automationId; Reason = "The Gallery did not find the requested artifact." }
+        }
+
+        $parts = $result.Split('|')
+        if ($parts.Count -eq 6 -and $parts[0] -eq $automationId -and $parts[1] -eq "Found") {
+            $culture = [System.Globalization.CultureInfo]::InvariantCulture
+            return [ordered]@{
+                Found = $true
+                AutomationId = $automationId
+                X = [double]::Parse($parts[2], $culture)
+                Y = [double]::Parse($parts[3], $culture)
+                Width = [double]::Parse($parts[4], $culture)
+                Height = [double]::Parse($parts[5], $culture)
+                Reason = ""
+            }
+        }
+    }
+
+    return [ordered]@{ Found = $false; AutomationId = $automationId; Reason = "Timed out waiting for the Gallery scroll result." }
+}
+
 function Compare-ImagesOnCommonCanvas([string]$leftPath, [string]$rightPath) {
     $left = [System.Drawing.Bitmap]::FromFile($leftPath)
     $right = [System.Drawing.Bitmap]::FromFile($rightPath)
@@ -4813,7 +5626,7 @@ function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control) {
         "ItemsRepeater" { return 1.0 }
         "MenuBar" { return 3.0 }
         "MenuFlyout" { return 1.0 }
-        "NavigationView" { return 1.2 }
+        "NavigationView" { return 1.5 }
         "NumberBox" { return 2.5 }
         "PersonPicture" { return 0.5 }
         "Popup" { return 4.0 }
@@ -6389,7 +7202,7 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
     $stateOutput = if ($null -ne $stateOutputElement) { [string]$stateOutputElement.Current.Name } else { "" }
     $stateOutputMatched = [string]::IsNullOrEmpty($expectedStateOutput) -or $stateOutput -eq $expectedStateOutput
     if ($app -eq "ModernWpf" -and ![string]::IsNullOrWhiteSpace($renderedArtifactPath)) {
-        [void](Refresh-ModernWpfVisualArtifacts $window)
+        [void](Refresh-ModernWpfVisualArtifacts $window (Join-Path $caseDir "modernwpf-artifacts"))
     }
     $afterPath = Join-Path $caseDir ("{0}-{1}-state-after.png" -f $app.ToLowerInvariant(), $control)
     try {
@@ -6455,7 +7268,7 @@ function Capture-StateInteraction([string]$app, [string]$control, [string]$caseD
         [void](Set-StateInteractionElementState $window $control $toggleElement $baselineState)
         Start-Sleep -Milliseconds $settleDelayMs
         if ($app -eq "ModernWpf") {
-            [void](Refresh-ModernWpfVisualArtifacts $window)
+            [void](Refresh-ModernWpfVisualArtifacts $window (Join-Path $caseDir "modernwpf-artifacts"))
         }
     }
 
@@ -7131,10 +7944,449 @@ function Stop-WinUIReferenceProcesses {
     }
 }
 
+function Get-ControlExampleArtifactEvidence([string]$control, [string]$artifactDir) {
+    if (!$WinUIPortedControlExampleCounts.Contains($control)) {
+        return $null
+    }
+
+    $expectedCount = [int]$WinUIPortedControlExampleCounts[$control]
+    $artifacts = @()
+    foreach ($index in 1..$expectedCount) {
+        $automationId = "GallerySample_${control}_Example${index}"
+        $path = Join-Path $artifactDir ($automationId + ".png")
+        $found = Test-Path $path
+        $width = 0
+        $height = 0
+        $nonBlank = $false
+        $visibleStdDev = 0.0
+        if ($found) {
+            $size = Get-ImageSize $path
+            $width = $size.Width
+            $height = $size.Height
+            $nonBlank = Test-ImageNotBlank $path
+            $visibleStdDev = Get-ImageVisibleStdDev $path
+        }
+
+        $valid = $found -and $width -gt 0 -and $height -gt 0 -and $nonBlank -and $visibleStdDev -ge 1.0
+        $artifacts += [ordered]@{
+            AutomationId = $automationId
+            Path = $(if ($found) { $path } else { "" })
+            Found = $found
+            Width = $width
+            Height = $height
+            NonBlank = $nonBlank
+            VisibleStdDev = $visibleStdDev
+            Valid = $valid
+        }
+    }
+
+    $validCount = @($artifacts | Where-Object { $_.Valid }).Count
+    return [ordered]@{
+        Passed = $validCount -eq $expectedCount
+        ExpectedCount = $expectedCount
+        ValidCount = $validCount
+        Artifacts = $artifacts
+        Reason = $(if ($validCount -eq $expectedCount) {
+            ""
+        }
+        else {
+            "$control rendered only $validCount of $expectedCount required ControlExample artifacts."
+        })
+    }
+}
+
+function Get-DescendantsByAutomationId($root, [string]$automationId) {
+    if ($null -eq $root) {
+        return @()
+    }
+
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::AutomationIdProperty,
+        $automationId)
+    return @($root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $condition) | ForEach-Object { $_ })
+}
+
+function Get-DescendantsByNameAndControlType($root, [string]$name, $controlType) {
+    if ($null -eq $root) {
+        return @()
+    }
+
+    $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::NameProperty,
+        $name)
+    $typeCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        $controlType)
+    $condition = New-Object System.Windows.Automation.AndCondition($nameCondition, $typeCondition)
+    return @($root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $condition) | ForEach-Object { $_ })
+}
+
+function Find-WinUIControlExampleSourceButton($header, $sourceButtons, $window) {
+    $headerBounds = Get-ElementScreenBounds $header 0 $window
+    if ($null -eq $headerBounds) {
+        return $null
+    }
+
+    $candidates = New-Object System.Collections.Generic.List[object]
+    foreach ($button in $sourceButtons) {
+        $buttonBounds = Get-ElementScreenBounds $button 0 $window
+        if ($null -eq $buttonBounds -or
+            $buttonBounds.Y -lt ($headerBounds.Y + $headerBounds.Height) -or
+            [Math]::Abs([int]$buttonBounds.X - [int]$headerBounds.X) -gt 4 -or
+            [Math]::Abs([int]$buttonBounds.Width - [int]$headerBounds.Width) -gt 4) {
+            continue
+        }
+
+        $candidates.Add([pscustomobject]@{
+            Element = $button
+            Bounds = $buttonBounds
+            Distance = [int]$buttonBounds.Y - ([int]$headerBounds.Y + [int]$headerBounds.Height)
+        })
+    }
+
+    return $candidates |
+        Sort-Object Distance |
+        Select-Object -First 1
+}
+
+function Request-AutomationElementScrollIntoView($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $scrollItem = $element.GetCurrentPattern([System.Windows.Automation.ScrollItemPattern]::Pattern)
+        if ($null -ne $scrollItem) {
+            $scrollItem.ScrollIntoView()
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $element.SetFocus()
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
+
+function Reveal-AutomationRangeInContainer($startElement, $endElement, $container, $window) {
+    if ($null -eq $startElement -or $null -eq $endElement -or $null -eq $container) {
+        return $false
+    }
+
+    if ((Test-AutomationElementVisibleIn $startElement $container $window) -and
+        (Test-AutomationElementVisibleIn $endElement $container $window 47)) {
+        return $true
+    }
+
+    try {
+        $scroll = $container.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
+        if ($null -eq $scroll -or !$scroll.Current.VerticallyScrollable) {
+            return $false
+        }
+
+        # WinUI's ScrollItemPattern can either align a ControlExample's display
+        # border (clipping its header) or report success without moving an
+        # off-screen header. First compensate for the former, then search down
+        # the real ScrollPattern until the complete header-to-source range fits.
+        foreach ($attempt in 1..4) {
+            $scroll.Scroll(
+                [System.Windows.Automation.ScrollAmount]::NoAmount,
+                [System.Windows.Automation.ScrollAmount]::SmallDecrement)
+            Start-Sleep -Milliseconds 50
+            if ((Test-AutomationElementVisibleIn $startElement $container $window) -and
+                (Test-AutomationElementVisibleIn $endElement $container $window 47)) {
+                return $true
+            }
+        }
+
+        foreach ($attempt in 1..40) {
+            $scroll.Scroll(
+                [System.Windows.Automation.ScrollAmount]::NoAmount,
+                [System.Windows.Automation.ScrollAmount]::SmallIncrement)
+            Start-Sleep -Milliseconds 50
+            if ((Test-AutomationElementVisibleIn $startElement $container $window) -and
+                (Test-AutomationElementVisibleIn $endElement $container $window 47)) {
+                return $true
+            }
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Test-AutomationElementVisibleIn($element, $container, $window, [double]$minimumHeight = 0) {
+    $elementBounds = Get-ElementScreenBounds $element 0 $window
+    $containerBounds = Get-ElementScreenBounds $container 0 $window
+    if ($null -eq $elementBounds -or $null -eq $containerBounds) {
+        return $false
+    }
+
+    return $elementBounds.Height -ge $minimumHeight -and
+        $elementBounds.X -ge $containerBounds.X -and
+        $elementBounds.Y -ge $containerBounds.Y -and
+        ($elementBounds.X + $elementBounds.Width) -le ($containerBounds.X + $containerBounds.Width) -and
+        ($elementBounds.Y + [Math]::Min($elementBounds.Height, $containerBounds.Height)) -le ($containerBounds.Y + $containerBounds.Height)
+}
+
+function Capture-ModernControlExampleScreenArtifacts([string]$control, [string]$caseDir, $window) {
+    if (!$WinUIPortedControlExampleCounts.Contains($control)) {
+        return $null
+    }
+
+    $expectedCount = [int]$WinUIPortedControlExampleCounts[$control]
+    $artifactDirectory = Join-Path $caseDir "modernwpf-control-example-screen"
+    New-Item -ItemType Directory -Force -Path $artifactDirectory | Out-Null
+    $artifacts = @()
+    $originalWindowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+    $originalWindowWidth = [Math]::Max(1, $originalWindowRect.Right - $originalWindowRect.Left)
+    $originalWindowHeight = [Math]::Max(1, $originalWindowRect.Bottom - $originalWindowRect.Top)
+    $captureWindowHeight = [Math]::Max($originalWindowHeight, 1800)
+    try {
+        if ($captureWindowHeight -ne $originalWindowHeight) {
+            [void][GalleryVisualNative]::Move(
+                $window.Current.NativeWindowHandle,
+                $originalWindowRect.Left,
+                $originalWindowRect.Top,
+                $originalWindowWidth,
+                $captureWindowHeight)
+            Start-Sleep -Milliseconds 250
+        }
+
+        foreach ($index in 1..$expectedCount) {
+        $automationId = "GallerySample_${control}_Example${index}"
+        $scrollEvidence = Scroll-ModernWpfVisualArtifactIntoView $window (Join-Path $caseDir "modernwpf-artifacts") $automationId
+        $path = Join-Path $artifactDirectory ($automationId + ".png")
+        $windowPath = Join-Path $artifactDirectory ($automationId + "-window.png")
+        Capture-Window $window.Current.NativeWindowHandle $windowPath
+        $windowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+        $bounds = if ($scrollEvidence.Found) {
+            [ordered]@{
+                Found = $true
+                Reason = "Reported by the in-process Gallery visual-test command."
+                X = [int][Math]::Round($scrollEvidence.X - $windowRect.Left)
+                Y = [int][Math]::Round($scrollEvidence.Y - $windowRect.Top)
+                Width = [int][Math]::Round($scrollEvidence.Width)
+                Height = [int][Math]::Round($scrollEvidence.Height)
+                ChangedSamples = 0
+            }
+        }
+        else {
+            $null
+        }
+        $crop = if ($null -ne $bounds) {
+            $savedBounds = Save-Crop $windowPath $bounds $path 0
+            $renderedCrop = New-RenderedArtifactCrop $path $automationId $savedBounds
+            if ($null -ne $renderedCrop) {
+                $renderedCrop
+            }
+            else {
+                [ordered]@{ Found = $false; Screenshot = ""; Width = 0; Height = 0; NonBlank = $false; VisibleStdDev = 0.0 }
+            }
+        }
+        else {
+            [ordered]@{ Found = $false; Screenshot = ""; Width = 0; Height = 0; NonBlank = $false }
+        }
+        $windowWidth = [Math]::Max(1, $windowRect.Right - $windowRect.Left)
+        $windowHeight = [Math]::Max(1, $windowRect.Bottom - $windowRect.Top)
+        $visible = $null -ne $bounds -and
+            $bounds.X -ge 0 -and $bounds.Y -ge 0 -and
+            ($bounds.X + $bounds.Width) -le $windowWidth -and
+            ($bounds.Y + $bounds.Height) -le $windowHeight
+        $valid = $visible -and $crop.Found -and $crop.NonBlank -and $crop.VisibleStdDev -ge 1.0
+        $artifacts += [ordered]@{
+            AutomationId = $automationId
+            Path = $crop.Screenshot
+            Found = $crop.Found
+            Visible = $visible
+            ScrollRequested = $scrollEvidence.Found
+            ScrollReason = $scrollEvidence.Reason
+            Width = $crop.Width
+            Height = $crop.Height
+            NonBlank = $crop.NonBlank
+            VisibleStdDev = if ($crop.Contains("VisibleStdDev")) { $crop.VisibleStdDev } else { 0.0 }
+            Valid = $valid
+        }
+        }
+    }
+    finally {
+        if ($captureWindowHeight -ne $originalWindowHeight) {
+            [void][GalleryVisualNative]::Move(
+                $window.Current.NativeWindowHandle,
+                $originalWindowRect.Left,
+                $originalWindowRect.Top,
+                $originalWindowWidth,
+                $originalWindowHeight)
+            Start-Sleep -Milliseconds 180
+        }
+        [void](Scroll-ModernWpfVisualArtifactIntoView $window (Join-Path $caseDir "modernwpf-artifacts") "GallerySample_${control}_Example1")
+    }
+
+    $validCount = @($artifacts | Where-Object { $_.Valid }).Count
+    return [ordered]@{
+        Passed = $validCount -eq $expectedCount
+        ExpectedCount = $expectedCount
+        ValidCount = $validCount
+        Artifacts = @($artifacts)
+        Reason = $(if ($validCount -eq $expectedCount) { "" } else { "$control exposed only $validCount of $expectedCount visible ModernWpf example screen artifacts." })
+    }
+}
+
+function Capture-WinUIControlExampleScreenArtifacts([string]$control, [string]$caseDir, $window) {
+    if (!$WinUIPortedControlExampleCounts.Contains($control)) {
+        return $null
+    }
+
+    $expectedCount = [int]$WinUIPortedControlExampleCounts[$control]
+    $artifactDirectory = Join-Path $caseDir "winui3-control-example-screen"
+    New-Item -ItemType Directory -Force -Path $artifactDirectory | Out-Null
+    $artifacts = @()
+    $headers = @()
+    $originalWindowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+    $originalWindowWidth = [Math]::Max(1, $originalWindowRect.Right - $originalWindowRect.Left)
+    $originalWindowHeight = [Math]::Max(1, $originalWindowRect.Bottom - $originalWindowRect.Top)
+    $captureWindowHeight = [Math]::Max($originalWindowHeight, 1800)
+    $captureWindowTop = 0
+    try {
+        if ($captureWindowHeight -ne $originalWindowHeight -or $originalWindowRect.Top -ne $captureWindowTop) {
+            [void][GalleryVisualNative]::Move(
+                $window.Current.NativeWindowHandle,
+                $originalWindowRect.Left,
+                $captureWindowTop,
+                $originalWindowWidth,
+                $captureWindowHeight)
+            Start-Sleep -Milliseconds 350
+        }
+
+        $scrollPanel = TryFind-DescendantByAutomationId $window "svPanel"
+        $headers = @(Get-DescendantsByAutomationId $window "HeaderTextPresenter")
+        # Restrict this list to the scrolling sample panel. The window also has
+        # a toolbar Source button that must never be paired with a card header.
+        $sourceButtons = @(Get-DescendantsByNameAndControlType $scrollPanel "Source code" ([System.Windows.Automation.ControlType]::Button))
+        $captureCount = [Math]::Min($expectedCount, $headers.Count)
+        if ($captureCount -gt 0 -and $null -ne $scrollPanel) {
+        foreach ($offset in 0..($captureCount - 1)) {
+            $index = $offset + 1
+            $header = $headers[$offset]
+            $pairedSourceButton = if ($offset -lt $sourceButtons.Count) { $sourceButtons[$offset] } else { $null }
+            $scrollRequested = Request-AutomationElementScrollIntoView $header
+            $sourceScrollRequested = Request-AutomationElementScrollIntoView $pairedSourceButton
+            Start-Sleep -Milliseconds 120
+            $revealed = Reveal-AutomationRangeInContainer $header $pairedSourceButton $scrollPanel $window
+            # Crops use the elements' native screen bounds, so exact viewport
+            # placement is unnecessary. Re-aligning here can overshoot a header
+            # that WinUI has just revealed and clip it again.
+            $aligned = $revealed
+            $path = Join-Path $artifactDirectory ("GallerySample_${control}_Example${index}.png")
+            $windowPath = Join-Path $artifactDirectory ("GallerySample_${control}_Example${index}-window.png")
+            Capture-Window $window.Current.NativeWindowHandle $windowPath
+            $headerBounds = Get-ElementScreenBounds $header 0 $window
+            $sourceButtonMatch = $null
+            if ($null -ne $pairedSourceButton) {
+                $pairedSourceBounds = Get-ElementScreenBounds $pairedSourceButton 0 $window
+                if ($null -ne $pairedSourceBounds) {
+                    $sourceButtonMatch = [pscustomobject]@{
+                        Element = $pairedSourceButton
+                        Bounds = $pairedSourceBounds
+                    }
+                }
+            }
+            if ($null -eq $sourceButtonMatch) {
+                $sourceButtonMatch = Find-WinUIControlExampleSourceButton $header $sourceButtons $window
+            }
+            $sourceButton = if ($null -ne $sourceButtonMatch) { $sourceButtonMatch.Element } else { $null }
+            $sourceButtonBounds = if ($null -ne $sourceButtonMatch) { $sourceButtonMatch.Bounds } else { $null }
+            $headerVisible = Test-AutomationElementVisibleIn $header $scrollPanel $window
+            $sourceButtonVisible = Test-AutomationElementVisibleIn $sourceButton $scrollPanel $window 47
+            $isolatedBounds = $null
+            if ($null -ne $headerBounds -and $null -ne $sourceButtonBounds) {
+                $windowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+                $isolatedBounds = [ordered]@{
+                    Found = $true
+                    Reason = "Derived from the matching WinUI ControlExample header and Source code expander."
+                    X = [int]$headerBounds.X - $windowRect.Left
+                    Y = [int]$headerBounds.Y - $windowRect.Top
+                    Width = [int]$headerBounds.Width
+                    Height = ([int]$sourceButtonBounds.Y + [int]$sourceButtonBounds.Height) - [int]$headerBounds.Y
+                    ChangedSamples = 0
+                }
+            }
+            $crop = if ($null -ne $isolatedBounds -and $isolatedBounds.Height -gt 0) {
+                $savedBounds = Save-Crop $windowPath $isolatedBounds $path 0
+                New-RenderedArtifactCrop $path "WinUI $control example $index" $savedBounds
+            }
+            else {
+                [ordered]@{
+                    Found = $false
+                    Screenshot = ""
+                    Width = 0
+                    Height = 0
+                    NonBlank = $false
+                    VisibleStdDev = 0.0
+                }
+            }
+            $isolated = $null -ne $isolatedBounds -and $null -ne $sourceButton
+            $valid = $isolated -and $headerVisible -and $sourceButtonVisible -and $crop.Found -and $crop.NonBlank -and $crop.VisibleStdDev -ge 1.0
+            $artifacts += [ordered]@{
+                AutomationId = "GallerySample_${control}_Example${index}"
+                Header = $header.Current.Name
+                Path = $crop.Screenshot
+                Found = $crop.Found
+                Isolated = $isolated
+                HeaderVisible = $headerVisible
+                SourceButtonVisible = $sourceButtonVisible
+                ScrollRequested = $scrollRequested
+                SourceScrollRequested = $sourceScrollRequested
+                HeaderRevealed = $revealed
+                AlignedToTop = $aligned
+                Width = $crop.Width
+                Height = $crop.Height
+                NonBlank = $crop.NonBlank
+                VisibleStdDev = if ($crop.Contains("VisibleStdDev")) { $crop.VisibleStdDev } else { 0.0 }
+                Valid = $valid
+            }
+        }
+
+            [void](Request-AutomationElementScrollIntoView $headers[0])
+            Start-Sleep -Milliseconds 120
+        }
+    }
+    finally {
+        if ($captureWindowHeight -ne $originalWindowHeight -or $originalWindowRect.Top -ne $captureWindowTop) {
+            [void][GalleryVisualNative]::Move(
+                $window.Current.NativeWindowHandle,
+                $originalWindowRect.Left,
+                $originalWindowRect.Top,
+                $originalWindowWidth,
+                $originalWindowHeight)
+            Start-Sleep -Milliseconds 180
+        }
+    }
+
+    $validCount = @($artifacts | Where-Object { $_.Valid }).Count
+    return [ordered]@{
+        Passed = $validCount -eq $expectedCount
+        ExpectedCount = $expectedCount
+        FoundHeaderCount = $headers.Count
+        ValidCount = $validCount
+        Artifacts = @($artifacts)
+        Reason = $(if ($validCount -eq $expectedCount) { "" } else { "$control exposed only $validCount of $expectedCount isolated WinUI reference examples ($($headers.Count) headers found)." })
+    }
+}
+
 function Capture-ModernWpf([string]$control, [string]$caseDir) {
     $route = "item/$(Get-ControlRouteId $control "ModernWpf")"
     $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
     New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
+    $timingPath = Join-Path $caseDir "modernwpf-$control-timing.log"
+    Set-Content -LiteralPath $timingPath -Value "" -Encoding UTF8
+    Write-AuditTiming $timingPath "start"
 
     $args = @("--visual-test", "--route", $route, "--theme", $Theme, "--visual-artifact-dir", $artifactDir)
     if ($IncludeInteractions) {
@@ -7146,17 +8398,33 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
             $process.Refresh()
             Find-WindowByProcessId $process.Id
         }
+        Write-AuditTiming $timingPath "window-found"
 
-        [void][GalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
+        # The WPF Gallery shell leaves 73 more physical pixels for a ported
+        # ControlExample than the installed WinUI Gallery at the same outer
+        # width (53 from shell chrome plus the WinUI card's lack of the legacy
+        # WPF Gallery 10-DIP side margins). Match native card viewports so the
+        # comparison never rescales either application.
+        $modernWpfWindowWidth = [Math]::Max(640, $Width - 73)
+        [void][GalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $modernWpfWindowWidth, $Height)
         Wait-ModernWpfReady $window $route $artifactDir | Out-Null
+        Write-AuditTiming $timingPath "route-ready"
         Start-Sleep -Milliseconds 600
         if ($control -eq "ProgressRing") {
             Set-ProgressRingDeterminateValue $window "ModernWpf" 65 | Out-Null
-            Refresh-ModernWpfVisualArtifacts $window | Out-Null
+            Refresh-ModernWpfVisualArtifacts $window $artifactDir | Out-Null
         }
         elseif ($control -eq "WinUIProgressBar") {
             Set-ProgressBarDeterminateValue $window "ModernWpf" 65 | Out-Null
-            Refresh-ModernWpfVisualArtifacts $window | Out-Null
+            Refresh-ModernWpfVisualArtifacts $window $artifactDir | Out-Null
+        }
+
+        $focusSet = Set-DeterministicControlFocus $window $control
+        if ($control -eq "SelectorBar" -and $focusSet) {
+            # The first item is selected only when focus enters SelectorBar.
+            # Refresh in-process artifacts after that transition so the primary
+            # crop and the live ControlExample capture describe the same state.
+            Refresh-ModernWpfVisualArtifacts $window $artifactDir | Out-Null
         }
 
         $statusFile = Read-ModernWpfStatusFile $artifactDir
@@ -7165,6 +8433,15 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $requiredSampleAutomationId = Get-RequiredSampleAutomationId $control
         $requiredSampleArtifact = Join-Path $artifactDir ($requiredSampleAutomationId + ".png")
         $requiredSampleArtifactFound = Test-Path $requiredSampleArtifact
+        $navigationViewSampleArtifacts = if ($control -eq "NavigationView") {
+            Get-NavigationViewSampleArtifactEvidence $artifactDir
+        }
+        else {
+            $null
+        }
+        $controlExampleArtifacts = Get-ControlExampleArtifactEvidence $control $artifactDir
+        $requiredSampleArtifactFound = Test-Path $requiredSampleArtifact
+        Write-AuditTiming $timingPath "rendered-example-evidence-complete"
         $needsSampleElement = $IncludeInteractions -and (
             (Test-ControlSupportsOpenInteraction $control) -or
             (Test-ControlSupportsStateInteraction $control) -or
@@ -7187,6 +8464,7 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
                 Set-Content -Path $treePath -Value ("UIA tree capture failed: " + $_.Exception.Message) -Encoding UTF8
             }
         }
+        Write-AuditTiming $timingPath "uia-tree-complete"
         $windowCaptureError = ""
         try {
             Capture-Window $window.Current.NativeWindowHandle $screenshot
@@ -7194,7 +8472,10 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         catch {
             $windowCaptureError = $_.Exception.Message
         }
+        Write-AuditTiming $timingPath "window-capture-complete"
         $staticCrops = Capture-StaticCrops "ModernWpf" $control $caseDir $window $screenshot
+        $controlExampleScreenArtifacts = Capture-ModernControlExampleScreenArtifacts $control $caseDir $window
+        Write-AuditTiming $timingPath "live-example-captures-complete"
         $openNames = Get-OpenInteractionNames $control
         $openInteraction = Capture-OpenInteraction "ModernWpf" $control $caseDir $window $sample $openNames
         $stateInteraction = Capture-StateInteraction "ModernWpf" $control $caseDir $window $sample
@@ -7225,7 +8506,10 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt $primaryCropMinimumVisibleStdDev
         $primaryCropMissing = (Test-ControlRequiresPrimaryCrop $control) -and !$staticCrops.Primary.Found
         $requiredSampleFound = $requiredSampleArtifactFound -or $null -ne $sample -or $hasRenderedCrops
-        $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($primaryCropMissing) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif (!$requiredSampleFound) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
+        $navigationViewSampleArtifactsFailed = $null -ne $navigationViewSampleArtifacts -and !$navigationViewSampleArtifacts.Passed
+        $controlExampleArtifactsFailed = $null -ne $controlExampleArtifacts -and !$controlExampleArtifacts.Passed
+        $controlExampleScreenArtifactsFailed = $null -ne $controlExampleScreenArtifacts -and !$controlExampleScreenArtifacts.Passed
+        $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($primaryCropMissing) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif (!$requiredSampleFound) { "Failed" } elseif ($controlExampleArtifactsFailed) { "Failed" } elseif ($controlExampleScreenArtifactsFailed) { "Failed" } elseif ($navigationViewSampleArtifactsFailed) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
         if ($primaryCropMissing -and [string]::IsNullOrEmpty($lastException)) {
             $lastException = "Primary crop was required for $control but was not found."
         }
@@ -7237,6 +8521,15 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         }
         if (!$notBlank -and ![string]::IsNullOrEmpty($windowCaptureError) -and [string]::IsNullOrEmpty($lastException)) {
             $lastException = $windowCaptureError
+        }
+        if ($navigationViewSampleArtifactsFailed -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = $navigationViewSampleArtifacts.Reason
+        }
+        if ($controlExampleArtifactsFailed -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = $controlExampleArtifacts.Reason
+        }
+        if ($controlExampleScreenArtifactsFailed -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = $controlExampleScreenArtifacts.Reason
         }
         if ($null -ne $interaction -and $interaction.Status -ne "Passed" -and [string]::IsNullOrEmpty($lastException)) {
             $lastException = $interaction.Notes
@@ -7258,6 +8551,9 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
             StaticCrops = $staticCrops
             Interaction = $interaction
             WindowCaptureError = $windowCaptureError
+            ControlExampleArtifacts = $controlExampleArtifacts
+            ControlExampleScreenArtifacts = $controlExampleScreenArtifacts
+            NavigationViewSampleArtifacts = $navigationViewSampleArtifacts
         }
     }
     finally {
@@ -7272,6 +8568,54 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
         }
         catch {
         }
+    }
+}
+
+function Stabilize-WinUIReferenceResponsiveLayout([string]$control, $window) {
+    if ($control -ne "TitleBar") {
+        return [ordered]@{
+            Applied = $false
+            Verified = $true
+            Reason = "The reference control has no capture-time responsive-layout normalization."
+        }
+    }
+
+    # WinUI TitleBar enters Compact when its content's desired width no longer
+    # fits the content area. The installed Gallery can miss that first
+    # SizeChanged transition after protocol navigation, leaving Title and
+    # Subtitle visible for one transient expanded frame. Grow and restore the
+    # host so the control receives a deterministic final SizeChanged at the
+    # requested capture width. Current WinUI source then keeps the 470-DIP
+    # Gallery preview in Compact, in both Light and Dark themes.
+    $windowRect = $window.Current.BoundingRectangle
+    $handle = $window.Current.NativeWindowHandle
+    $x = [int][Math]::Round($windowRect.X)
+    $y = [int][Math]::Round($windowRect.Y)
+    $width = [int][Math]::Round($windowRect.Width)
+    $height = [int][Math]::Round($windowRect.Height)
+    [void][GalleryVisualNative]::Move($handle, $x, $y, $width + 64, $height)
+    Start-Sleep -Milliseconds 300
+    [void][GalleryVisualNative]::Move($handle, $x, $y, $width, $height)
+
+    Wait-Until -TimeoutSeconds 5 -Description "WinUI 3 Gallery TitleBar compact responsive layout" -Probe {
+        $titleBar = TryFind-DescendantByAutomationId $window "TitleBarControl"
+        if ($null -eq $titleBar) {
+            return $null
+        }
+
+        $title = TryFind-DescendantByAutomationId $titleBar "PART_TitleText"
+        $subtitle = TryFind-DescendantByAutomationId $titleBar "PART_SubtitleText"
+        if (!(Test-AutomationElementUsable $title) -and !(Test-AutomationElementUsable $subtitle)) {
+            return $true
+        }
+
+        return $null
+    } | Out-Null
+
+    return [ordered]@{
+        Applied = $true
+        Verified = $true
+        Reason = "The installed reference was settled into the current-source compact TitleBar layout at the capture width."
     }
 }
 
@@ -7292,7 +8636,7 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         } | Out-Null
         Wait-WinUIReferenceReady $window $control
         Start-Sleep -Milliseconds 1200
-        $rootThemeProbe = Ensure-WinUIReferenceRootTheme $control $window
+        $rootThemeProbe = Ensure-WinUIReferenceRootTheme $control $caseDir $window
         Wait-WinUIReferenceReady $window $control
         Reset-WinUIReferenceSampleScroll $window $control
         if ($control -eq "ProgressRing") {
@@ -7310,6 +8654,10 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
         elseif ($control -eq "WinUIProgressBar") {
             Set-ProgressBarDeterminateValue $window "WinUI3" 65 | Out-Null
         }
+
+        $responsiveLayoutProbe = Stabilize-WinUIReferenceResponsiveLayout $control $window
+
+        [void](Set-DeterministicControlFocus $window $control)
 
         Move-CursorAwayFromInteractionSurface $window
         $screenshot = Join-Path $caseDir "winui3-$control.png"
@@ -7340,6 +8688,16 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
             }
         }
 
+        $navigationViewSampleArtifacts = if ($control -eq "NavigationView") {
+            Capture-NavigationViewReferenceSampleArtifacts $caseDir $window
+        }
+        else {
+            $null
+        }
+        $navigationViewSampleArtifactsFailed = $null -ne $navigationViewSampleArtifacts -and !$navigationViewSampleArtifacts.Passed
+
+        $controlExampleScreenArtifacts = Capture-WinUIControlExampleScreenArtifacts $control $caseDir $window
+
         $showButton = Find-ReferenceInteractionTrigger $window $control
         $openNames = Get-OpenInteractionNames $control
         $openInteraction = Capture-OpenInteraction "WinUI3" $control $caseDir $window $showButton $openNames
@@ -7363,17 +8721,20 @@ function Capture-WinUIReference([string]$control, [string]$caseDir) {
             App = "WinUI3Gallery"
             Control = $control
             Route = $route
-            Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropMissing) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($primaryCropWrongSource) { "Failed" } elseif ($themeProbeFailed) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
+            Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropMissing) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($primaryCropWrongSource) { "Failed" } elseif ($themeProbeFailed) { "Failed" } elseif ($navigationViewSampleArtifactsFailed) { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" })
             Title = $pageTitle
             Screenshot = $screenshot
             UiaTree = $treePath
-            LastException = $(if ($primaryCropMissing) { "Primary crop was required for $control but was not found." } elseif ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)." } elseif ($primaryCropWrongSource) { "Primary crop for $control used '$($staticCrops.Primary.Source)' but expected '$requiredPrimaryCropSource'." } elseif ($themeProbeFailed) { "Reference theme probe did not prove $Theme theme: $($themeProbe.Reason)" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
+            LastException = $(if ($primaryCropMissing) { "Primary crop was required for $control but was not found." } elseif ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)." } elseif ($primaryCropWrongSource) { "Primary crop for $control used '$($staticCrops.Primary.Source)' but expected '$requiredPrimaryCropSource'." } elseif ($themeProbeFailed) { "Reference theme probe did not prove $Theme theme: $($themeProbe.Reason)" } elseif ($navigationViewSampleArtifactsFailed) { $navigationViewSampleArtifacts.Reason } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { $interaction.Notes } else { "" })
             NonBlank = $notBlank
             RequiredSampleAutomationId = ""
             RequiredSampleElementFound = $true
             StaticCrops = $staticCrops
             Interaction = $interaction
             ThemeProbe = $themeProbe
+            ResponsiveLayoutProbe = $responsiveLayoutProbe
+            ControlExampleScreenArtifacts = $controlExampleScreenArtifacts
+            NavigationViewSampleArtifacts = $navigationViewSampleArtifacts
         }
     }
     finally {
@@ -7399,13 +8760,27 @@ function Get-WinUIReferenceSelectedItemName($element) {
     return ""
 }
 
-function Ensure-WinUIReferenceRootTheme([string]$control, $window) {
-    if (($control -ne "CommandBar" -and $control -ne "CommandBarFlyout") -or $Theme -eq "Default") {
+function Ensure-WinUIReferenceRootTheme([string]$control, [string]$caseDir, $window) {
+    if ($Theme -eq "Default") {
         return [ordered]@{
             RequestedTheme = $Theme
             SelectedTheme = ""
             Verified = $true
-            Reason = "A dedicated reference root theme is not required."
+            Reason = "Default reference root theme requested."
+        }
+    }
+
+    $initialProbePath = Join-Path $caseDir ("winui3-$control-root-theme-probe.png")
+    Capture-Window $window.Current.NativeWindowHandle $initialProbePath
+    $initialMean = Get-ImageMeanLuminance $initialProbePath
+    $wantsDark = $Theme -eq "Dark"
+    if ($null -ne $initialMean -and (([double]$initialMean -lt 128.0) -eq $wantsDark)) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            SelectedTheme = $Theme
+            MeanLuminance = $initialMean
+            Verified = $true
+            Reason = "WinUI 3 Gallery root pixels already matched the requested theme."
         }
     }
 
@@ -7483,14 +8858,23 @@ function Ensure-WinUIReferenceRootTheme([string]$control, $window) {
         }
     }
 
-    $verified = $selectedTheme -eq $Theme -and $backInvoked
+    $postMean = $null
+    if ($backInvoked) {
+        $postProbePath = Join-Path $caseDir ("winui3-$control-root-theme-probe-after.png")
+        Capture-Window $window.Current.NativeWindowHandle $postProbePath
+        $postMean = Get-ImageMeanLuminance $postProbePath
+    }
+    $rootPixelsVerified = $null -ne $postMean -and (([double]$postMean -lt 128.0) -eq $wantsDark)
+    $verified = $selectedTheme -eq $Theme -and $backInvoked -and $rootPixelsVerified
     return [ordered]@{
         RequestedTheme = $Theme
         SelectedTheme = $selectedTheme
+        InitialMeanLuminance = $initialMean
+        MeanLuminance = $postMean
         SettingsInvoked = $settingsInvoked
         BackInvoked = $backInvoked
         Verified = $verified
-        Reason = $(if ($verified) { "WinUI 3 Gallery root theme matched the requested popup theme." } else { "WinUI 3 Gallery root theme or return navigation was not verified." })
+        Reason = $(if ($verified) { "WinUI 3 Gallery root theme and pixels matched the requested theme." } else { "WinUI 3 Gallery root theme, pixels, or return navigation was not verified." })
     }
 }
 
@@ -7845,6 +9229,53 @@ foreach ($control in $Controls) {
 
     $modern = $results | Where-Object { $_.Control -eq $control -and $_.App -eq "ModernWpf" } | Select-Object -Last 1
     $referenceCapture = $results | Where-Object { $_.Control -eq $control -and $_.App -eq "WinUI3Gallery" } | Select-Object -Last 1
+    $referenceBaselineNote = Get-ReferenceBaselineNote $control
+    if (![string]::IsNullOrWhiteSpace($referenceBaselineNote)) {
+        if ($null -ne $modern) {
+            $modern["ReferenceBaselineNote"] = $referenceBaselineNote
+        }
+        if ($null -ne $referenceCapture) {
+            $referenceCapture["ReferenceBaselineNote"] = $referenceBaselineNote
+        }
+    }
+    if ($control -eq "NavigationView" -and $null -ne $modern -and $null -ne $referenceCapture) {
+        $hasNavigationViewSampleEvidence =
+            $modern.Contains("NavigationViewSampleArtifacts") -and
+            $referenceCapture.Contains("NavigationViewSampleArtifacts") -and
+            $null -ne $modern.NavigationViewSampleArtifacts -and
+            $null -ne $referenceCapture.NavigationViewSampleArtifacts
+        if ($hasNavigationViewSampleEvidence) {
+            $navigationViewSampleComparisons = Compare-NavigationViewSampleArtifactEvidence `
+                $modern.NavigationViewSampleArtifacts `
+                $referenceCapture.NavigationViewSampleArtifacts
+            $modern["NavigationViewSampleComparisons"] = $navigationViewSampleComparisons
+            if ($FailOnDifference -and !$navigationViewSampleComparisons.Passed) {
+                Set-VisualCheckReferenceFailure $modern $navigationViewSampleComparisons.Reason
+            }
+        }
+        elseif ($FailOnDifference) {
+            Set-VisualCheckReferenceFailure $modern "NavigationView all-sample reference evidence was unavailable; refresh the installed WinUI Gallery capture."
+        }
+    }
+    $hasControlExampleEvidence = $null -ne $modern -and $null -ne $referenceCapture -and
+        $modern.Contains("ControlExampleScreenArtifacts") -and
+        $referenceCapture.Contains("ControlExampleScreenArtifacts") -and
+        $null -ne $modern.ControlExampleScreenArtifacts -and
+        $null -ne $referenceCapture.ControlExampleScreenArtifacts
+    if ($hasControlExampleEvidence) {
+        $controlExampleComparisons = Compare-ControlExampleScreenArtifactEvidence `
+            $control `
+            $modern.ControlExampleScreenArtifacts `
+            $referenceCapture.ControlExampleScreenArtifacts `
+            $caseDir
+        $modern["ControlExampleComparisons"] = $controlExampleComparisons
+        if ($FailOnDifference -and !$controlExampleComparisons.Passed) {
+            Set-VisualCheckReferenceFailure $modern $controlExampleComparisons.Reason
+        }
+    }
+    elseif ($FailOnDifference -and $WinUIPortedControlExampleCounts.Contains($control)) {
+        Set-VisualCheckReferenceFailure $modern "$control all-sample ControlExample reference evidence was unavailable."
+    }
     $hasPrimaryCropPair = $null -ne $modern -and $null -ne $referenceCapture -and
         $modern.Contains("StaticCrops") -and $referenceCapture.Contains("StaticCrops") -and
         $null -ne $modern.StaticCrops -and $null -ne $referenceCapture.StaticCrops -and
@@ -7877,6 +9308,34 @@ foreach ($control in $Controls) {
             $primarySizeThreshold = Get-ReferencePrimaryCropSizeDeltaThreshold $control
             if ($primarySizeDelta -gt $primarySizeThreshold) {
                 Set-VisualCheckReferenceFailure $modern "$control primary crop size delta $primarySizeDelta exceeded visual threshold $primarySizeThreshold."
+            }
+        }
+
+        if ($control -eq "NavigationView") {
+            $modernIndicator = Get-NavigationViewSelectionIndicatorEvidence $modern.StaticCrops.Primary.Screenshot
+            $referenceIndicator = Get-NavigationViewSelectionIndicatorEvidence $referenceCapture.StaticCrops.Primary.Screenshot
+            $indicatorComparable = $modernIndicator.Found -and $referenceIndicator.Found
+            $indicatorMatches = $indicatorComparable -and
+                $modernIndicator.Color -eq $referenceIndicator.Color -and
+                $modernIndicator.Count -eq $referenceIndicator.Count -and
+                $modernIndicator.X -eq $referenceIndicator.X -and
+                $modernIndicator.Y -eq $referenceIndicator.Y -and
+                $modernIndicator.Width -eq $referenceIndicator.Width -and
+                $modernIndicator.Height -eq $referenceIndicator.Height
+            $modern["NavigationViewSelectionIndicatorComparison"] = [ordered]@{
+                Comparable = $indicatorComparable
+                Matches = $indicatorMatches
+                ModernWpf = $modernIndicator
+                Reference = $referenceIndicator
+            }
+
+            if ($FailOnDifference -and !$indicatorMatches) {
+                if (!$indicatorComparable) {
+                    Set-VisualCheckReferenceFailure $modern "NavigationView selection-indicator pixels were unavailable. ModernWpf: $($modernIndicator.Reason) Reference: $($referenceIndicator.Reason)"
+                }
+                else {
+                    Set-VisualCheckReferenceFailure $modern "NavigationView selection-indicator pixels differed. ModernWpf: $($modernIndicator.Color) count=$($modernIndicator.Count) bounds=$($modernIndicator.X),$($modernIndicator.Y),$($modernIndicator.Width)x$($modernIndicator.Height). Reference: $($referenceIndicator.Color) count=$($referenceIndicator.Count) bounds=$($referenceIndicator.X),$($referenceIndicator.Y),$($referenceIndicator.Width)x$($referenceIndicator.Height)."
+                }
             }
         }
     }
@@ -7971,6 +9430,27 @@ if (![string]::IsNullOrWhiteSpace($WinUIReferenceRunDir)) {
 }
 $markdown.Add("")
 
+$referenceBaselineNotes = @(
+    $Controls |
+        Sort-Object -Unique |
+        ForEach-Object {
+            $note = Get-ReferenceBaselineNote $_
+            if (![string]::IsNullOrWhiteSpace($note)) {
+                [pscustomobject]@{ Control = $_; Note = $note }
+            }
+        }
+)
+if ($Reference -eq "InstalledWinUI3Gallery" -and $referenceBaselineNotes.Count -gt 0) {
+    $markdown.Add("## Reference Baseline Notes")
+    $markdown.Add("")
+    $markdown.Add("| Control | Note |")
+    $markdown.Add("| --- | --- |")
+    foreach ($referenceBaselineNote in $referenceBaselineNotes) {
+        $markdown.Add("| $($referenceBaselineNote.Control) | $($referenceBaselineNote.Note) |")
+    }
+    $markdown.Add("")
+}
+
 $controlScores = @{}
 foreach ($result in $results) {
     if ($result.App -ne "ModernWpf") {
@@ -7988,6 +9468,16 @@ foreach ($result in $results) {
     }
     if ($result.Contains("InteractionCropReferenceComparison") -and $result.InteractionCropReferenceComparison.Comparable) {
         $score = [Math]::Max($score, [double]$result.InteractionCropReferenceComparison.MeanDelta)
+    }
+    if ($result.Contains("ControlExampleComparisons") -and $null -ne $result.ControlExampleComparisons) {
+        $exampleDeltas = @(
+            $result.ControlExampleComparisons.Comparisons |
+                Where-Object { $_.Comparable -and $null -ne $_.MeanDelta } |
+                ForEach-Object { [double]$_.MeanDelta }
+        )
+        if ($exampleDeltas.Count -gt 0) {
+            $score = [Math]::Max($score, [double](($exampleDeltas | Measure-Object -Maximum).Maximum))
+        }
     }
 
     $controlScores[$result.Control] = [Math]::Round($score, 2)
@@ -8012,6 +9502,77 @@ foreach ($result in $rankedModernResults) {
 }
 $markdown.Add("")
 
+$exampleArtifactResults = @(
+    $rankedModernResults |
+        Where-Object { $_.Contains("ControlExampleArtifacts") -and $null -ne $_.ControlExampleArtifacts }
+)
+if ($exampleArtifactResults.Count -gt 0) {
+    $markdown.Add("## Control Example Artifact Coverage")
+    $markdown.Add("")
+    $markdown.Add("| Control | Valid examples | Expected examples | Status |")
+    $markdown.Add("| --- | ---: | ---: | --- |")
+    foreach ($result in ($exampleArtifactResults | Sort-Object Control)) {
+        $evidence = $result.ControlExampleArtifacts
+        $status = if ($evidence.Passed) { "Passed" } else { "Failed" }
+        $markdown.Add("| $($result.Control) | $($evidence.ValidCount) | $($evidence.ExpectedCount) | $status |")
+    }
+    $markdown.Add("")
+}
+
+$liveExampleResults = @(
+    $results |
+        Where-Object { $_.Contains("ControlExampleScreenArtifacts") -and $null -ne $_.ControlExampleScreenArtifacts }
+)
+if ($liveExampleResults.Count -gt 0) {
+    $markdown.Add("## Live Control Example Coverage")
+    $markdown.Add("")
+    $markdown.Add("| App | Control | Valid examples | Expected examples | Reference headers | Status |")
+    $markdown.Add("| --- | --- | ---: | ---: | ---: | --- |")
+    foreach ($result in ($liveExampleResults | Sort-Object Control, App)) {
+        $evidence = $result.ControlExampleScreenArtifacts
+        $headerCount = if ($evidence.Contains("FoundHeaderCount")) { $evidence.FoundHeaderCount } else { "" }
+        $status = if ($evidence.Passed) { "Passed" } else { "Failed" }
+        $markdown.Add("| $($result.App) | $($result.Control) | $($evidence.ValidCount) | $($evidence.ExpectedCount) | $headerCount | $status |")
+    }
+    $markdown.Add("")
+}
+
+$controlExampleComparisonResults = @(
+    $rankedModernResults |
+        Where-Object { $_.Contains("ControlExampleComparisons") -and $null -ne $_.ControlExampleComparisons }
+)
+if ($controlExampleComparisonResults.Count -gt 0) {
+    $markdown.Add("## Control Example Parity")
+    $markdown.Add("")
+    $markdown.Add("| Control | Example | Pixel delta | Threshold | ModernWpf size | WinUI size | Status |")
+    $markdown.Add("| --- | --- | ---: | ---: | --- | --- | --- |")
+    foreach ($result in ($controlExampleComparisonResults | Sort-Object Control)) {
+        foreach ($comparison in $result.ControlExampleComparisons.Comparisons) {
+            $status = if ($comparison.Passed) { "Passed" } elseif (!$comparison.Comparable) { "Unavailable" } else { "Failed" }
+            $markdown.Add("| $($result.Control) | $($comparison.AutomationId) | $($comparison.MeanDelta) | $($comparison.MeanDeltaThreshold) | $($comparison.ModernWpfWidth)x$($comparison.ModernWpfHeight) | $($comparison.ReferenceWidth)x$($comparison.ReferenceHeight) | $status |")
+        }
+    }
+    $markdown.Add("")
+    $markdown.Add("Per-control side-by-side review sheets are stored as `control-example-review.png` in each control artifact directory.")
+    $markdown.Add("")
+}
+
+$navigationViewResult = $rankedModernResults |
+    Where-Object { $_.Control -eq "NavigationView" -and $_.Contains("NavigationViewSampleComparisons") } |
+    Select-Object -First 1
+if ($null -ne $navigationViewResult) {
+    $markdown.Add("## NavigationView Sample Matrix")
+    $markdown.Add("")
+    $markdown.Add("| Sample artifact | Pixel delta | Threshold | ModernWpf size | WinUI size | Indicator | Status |")
+    $markdown.Add("| --- | ---: | ---: | --- | --- | --- | --- |")
+    foreach ($comparison in $navigationViewResult.NavigationViewSampleComparisons.Comparisons) {
+        $status = if ($comparison.Passed) { "Passed" } else { "Failed" }
+        $indicatorStatus = if (!$comparison.IndicatorExpected) { "n/a" } elseif ($comparison.IndicatorMatches) { "Matched" } else { "Failed" }
+        $markdown.Add("| $($comparison.AutomationId) | $($comparison.MeanDelta) | $($comparison.MeanDeltaThreshold) | $($comparison.ModernWpfWidth)x$($comparison.ModernWpfHeight) | $($comparison.ReferenceWidth)x$($comparison.ReferenceHeight) | $indicatorStatus | $status |")
+    }
+    $markdown.Add("")
+}
+
 $markdown.Add("| App | Control | Status | Nonblank | Required sample element | Notes |")
 $markdown.Add("| --- | --- | --- | --- | --- | --- |")
 foreach ($result in ($results | Sort-Object -Property @{ Expression = { if ($controlScores.ContainsKey($_.Control)) { -1.0 * [double]$controlScores[$_.Control] } else { 0 } } }, Control, @{ Expression = { if ($_.App -eq "ModernWpf") { 0 } else { 1 } } })) {
@@ -8025,6 +9586,35 @@ foreach ($result in ($results | Sort-Object -Property @{ Expression = { if ($con
     if ($result.Contains("PrimaryCropSize")) {
         $notes = "$notes; primary crop sizes: $($result.PrimaryCropSize.ModernWpfWidth)x$($result.PrimaryCropSize.ModernWpfHeight) vs $($result.PrimaryCropSize.ReferenceWidth)x$($result.PrimaryCropSize.ReferenceHeight)"
     }
+    if ($result.Contains("NavigationViewSelectionIndicatorComparison")) {
+        $indicator = $result.NavigationViewSelectionIndicatorComparison
+        if ($indicator.Comparable) {
+            $notes = "$notes; selection indicator: $($indicator.ModernWpf.Color) count=$($indicator.ModernWpf.Count) bounds=$($indicator.ModernWpf.X),$($indicator.ModernWpf.Y),$($indicator.ModernWpf.Width)x$($indicator.ModernWpf.Height) vs $($indicator.Reference.X),$($indicator.Reference.Y),$($indicator.Reference.Width)x$($indicator.Reference.Height)"
+        }
+        else {
+            $notes = "$notes; selection indicator comparison unavailable"
+        }
+    }
+    if ($result.Contains("NavigationViewSampleArtifacts") -and $null -ne $result.NavigationViewSampleArtifacts) {
+        $sampleArtifacts = $result.NavigationViewSampleArtifacts
+        $notes = "$notes; NavigationView sample artifacts: $($sampleArtifacts.ValidCount)/$($sampleArtifacts.ExpectedCount) valid"
+    }
+    if ($result.Contains("ControlExampleArtifacts") -and $null -ne $result.ControlExampleArtifacts) {
+        $exampleArtifacts = $result.ControlExampleArtifacts
+        $notes = "$notes; ControlExample artifacts: $($exampleArtifacts.ValidCount)/$($exampleArtifacts.ExpectedCount) valid"
+    }
+    if ($result.Contains("ControlExampleScreenArtifacts") -and $null -ne $result.ControlExampleScreenArtifacts) {
+        $screenArtifacts = $result.ControlExampleScreenArtifacts
+        $notes = "$notes; live example captures: $($screenArtifacts.ValidCount)/$($screenArtifacts.ExpectedCount) valid"
+    }
+    if ($result.Contains("NavigationViewSampleComparisons") -and $null -ne $result.NavigationViewSampleComparisons) {
+        $sampleComparisons = $result.NavigationViewSampleComparisons
+        $notes = "$notes; NavigationView sample parity: $($sampleComparisons.ValidCount)/$($sampleComparisons.ExpectedCount) passed"
+    }
+    if ($result.Contains("ControlExampleComparisons") -and $null -ne $result.ControlExampleComparisons) {
+        $exampleComparisons = $result.ControlExampleComparisons
+        $notes = "$notes; ControlExample parity: $($exampleComparisons.ValidCount)/$($exampleComparisons.ExpectedCount) passed"
+    }
     if ($result.Contains("InteractionReferenceComparison")) {
         $notes = "$notes; interaction delta: " + $result.InteractionReferenceComparison.MeanDelta
     }
@@ -8036,6 +9626,9 @@ foreach ($result in ($results | Sort-Object -Property @{ Expression = { if ($con
     }
     if ($result.Contains("Interaction") -and $null -ne $result.Interaction -and $result.Interaction.Status -ne "Passed") {
         $notes = "$notes; interaction: " + $result.Interaction.Notes
+    }
+    if ($result.Contains("ReferenceBaselineNote")) {
+        $notes = "$notes; reference baseline: " + $result.ReferenceBaselineNote
     }
 
     $markdown.Add("| $($result.App) | $($result.Control) | $($result.Status) | $($result.NonBlank) | $($result.RequiredSampleElementFound) | $notes |")

@@ -70,7 +70,7 @@ public class SplitButtonSourceAuditTests
         StringAssert.Contains(togglePeer, "patternInterface == PatternInterface.Toggle");
         StringAssert.Contains(togglePeer, "return AutomationControlType.SplitButton;");
 
-        StringAssert.Contains(galleryFactory, "A SplitButton controlling text color in a RichTextBox");
+        StringAssert.Contains(galleryFactory, "A SplitButton controlling text color in a RichEditBox");
         StringAssert.Contains(galleryFactory, "Name = \"myColorButton\"");
         StringAssert.Contains(galleryFactory, "Name = \"myColorButtonReveal\"");
         StringAssert.Contains(galleryFactory, "Name = \"myListButton\"");

@@ -1165,6 +1165,107 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewLeftPaneSelectionIndicatorUsesWinUIRenderedOrigin()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var menuItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Menu Item1",
+                Icon = new ModernWpf.Controls.SymbolIcon { Symbol = ModernWpf.Controls.Symbol.Play }
+            };
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Width = 745,
+                Height = 460,
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftCompact,
+                IsPaneOpen = false,
+                IsSettingsVisible = false,
+                IsTitleBarAutoPaddingEnabled = false
+            };
+            navView.MenuItems.Add(menuItem);
+            navView.SelectedItem = menuItem;
+
+            using var host = new TestWindowHost(navView, width: 745, height: 460);
+            host.UpdateLayout();
+
+            var indicator = FindNamedDescendant<Rectangle>(menuItem, "SelectionIndicator");
+            var indicatorBounds = indicator.TransformToAncestor(menuItem)
+                .TransformBounds(new Rect(indicator.RenderSize));
+
+            Assert.AreEqual(4.0, indicatorBounds.Left, 0.01, "The left indicator must share the WinUI item background origin, without a second 4-DIP inset.");
+            Assert.AreEqual(3.0, indicatorBounds.Width, 0.01);
+            Assert.AreEqual(16.0, indicatorBounds.Height, 0.01);
+        });
+    }
+
+    [TestMethod]
+    public void NavigationViewTopPaneSelectionIndicatorRendersBelowCenteredContent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var menuItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Menu Item1"
+            };
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Width = 745,
+                Height = 460,
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top,
+                IsBackButtonVisible = ModernWpf.Controls.NavigationViewBackButtonVisible.Visible,
+                IsSettingsVisible = false,
+                IsTitleBarAutoPaddingEnabled = false
+            };
+            navView.MenuItems.Add(menuItem);
+            navView.SelectedItem = menuItem;
+
+            using var host = new TestWindowHost(navView, width: 745, height: 460);
+            host.UpdateLayout();
+
+            var topNavGrid = FindNamedDescendant<Grid>(navView, "TopNavGrid");
+            var backButton = FindNamedDescendant<Button>(navView, "NavigationViewBackButton");
+            var itemPresenter = FindNamedDescendant<ModernWpf.Controls.Primitives.NavigationViewItemPresenter>(
+                menuItem,
+                "NavigationViewItemPresenter");
+            var layoutRoot = FindNamedDescendant<Border>(itemPresenter, "LayoutRoot");
+            var indicator = FindNamedDescendant<Rectangle>(itemPresenter, "SelectionIndicator");
+            var text = VisualTreeTestHelper.EnumerateDescendants(menuItem)
+                .OfType<TextBlock>()
+                .Single(textBlock => textBlock.Text == "Menu Item1");
+
+            var itemBounds = itemPresenter.TransformToAncestor(topNavGrid)
+                .TransformBounds(new Rect(itemPresenter.RenderSize));
+            var indicatorBounds = indicator.TransformToAncestor(topNavGrid)
+                .TransformBounds(new Rect(indicator.RenderSize));
+            var textBounds = text.TransformToAncestor(topNavGrid)
+                .TransformBounds(new Rect(text.RenderSize));
+            var textBoundsInNavigationView = text.TransformToAncestor(navView)
+                .TransformBounds(new Rect(text.RenderSize));
+            var backButtonBounds = backButton.TransformToAncestor(navView)
+                .TransformBounds(new Rect(backButton.RenderSize));
+
+            Assert.AreEqual(new Thickness(4, 0, 4, 0), topNavGrid.Margin);
+            Assert.AreEqual(new Thickness(4, 2, 4, 2), layoutRoot.Margin);
+            Assert.AreEqual(48.0, itemBounds.Height, 0.01, "Top items must occupy the full WinUI top-navigation strip.");
+            Assert.AreEqual(39.0, indicatorBounds.Top, 0.01, "The 3-DIP indicator must render at the bottom of the 48-DIP strip.");
+            Assert.AreEqual(3.0, indicatorBounds.Height, 0.01);
+            Assert.IsTrue(textBounds.Bottom < indicatorBounds.Top, $"The selection indicator must not overlap the item text. Text={textBounds}; Indicator={indicatorBounds}.");
+            Assert.AreEqual(
+                backButtonBounds.Top + (backButtonBounds.Height / 2),
+                textBoundsInNavigationView.Top + (textBoundsInNavigationView.Height / 2),
+                1.0,
+                "Top item text and the back button must share the same vertical center.");
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewTopPaneItemPresenterStatesUseWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>
@@ -1896,7 +1997,7 @@ public class NavigationViewApiTests
             var root = FindNamedDescendant<Grid>(navView, "RootGrid");
             var paneContentGrid = FindNamedDescendant<FrameworkElement>(navView, "PaneContentGrid");
             var shadowCaster = FindNamedDescendant<ThemeShadowChrome>(navView, "ShadowCaster");
-            var paneTitleTextBlock = FindNamedDescendant<FrameworkElement>(navView, "PaneTitleTextBlock");
+            var paneTitleTextBlock = FindNamedDescendant<TextBlock>(navView, "PaneTitleTextBlock");
             var paneHeaderContentBorder = FindNamedDescendant<FrameworkElement>(navView, "PaneHeaderContentBorder");
             var paneCustomContentBorder = FindNamedDescendant<FrameworkElement>(navView, "PaneCustomContentBorder");
             var footerContentBorder = FindNamedDescendant<FrameworkElement>(navView, "FooterContentBorder");
@@ -1909,6 +2010,10 @@ public class NavigationViewApiTests
                 "PaneContentGrid.HorizontalAlignment",
                 "PaneCustomContentBorder.HorizontalAlignment",
                 "FooterContentBorder.HorizontalAlignment");
+            Assert.AreEqual(
+                ((FontFamily)navView.FindResource("ContentControlThemeFontFamily")).Source,
+                paneTitleTextBlock.FontFamily.Source,
+                "PaneTitle must not inherit the pane toggle button's symbol font.");
 
             Assert.IsTrue(VisualStateManager.GoToState(navView, "ListSizeCompact", false));
             AssertCurrentState(root, "PaneStateListSizeGroup", "ListSizeCompact");
@@ -1919,6 +2024,48 @@ public class NavigationViewApiTests
             Assert.AreEqual(HorizontalAlignment.Left, paneContentGrid.HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Left, paneCustomContentBorder.HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Left, footerContentBorder.HorizontalAlignment);
+        });
+    }
+
+    [TestMethod]
+    public void NavigationViewLazilyRealizedMenuItemsSourceUsesCompactListSize()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Width = 745.0,
+                Height = 460.0,
+                Visibility = Visibility.Collapsed,
+                MenuItemsSource = new ObservableCollection<string> { "Category 1" }
+            };
+            var root = new Grid();
+            root.Children.Add(navView);
+
+            using var host = new TestWindowHost(root);
+
+            Assert.IsTrue(navView.IsLoaded);
+            Assert.AreEqual(0, VisualTreeHelper.GetChildrenCount(navView),
+                "The test must exercise template application after Loaded.");
+
+            navView.Visibility = Visibility.Visible;
+            host.UpdateLayout();
+
+            var stateGroupsRoot = FindNamedDescendant<Grid>(navView, "RootGrid");
+            var paneContentGrid = FindNamedDescendant<FrameworkElement>(navView, "PaneContentGrid");
+            var item = navView.ContainerFromMenuItem("Category 1") as ModernWpf.Controls.NavigationViewItem;
+
+            Assert.IsNotNull(item);
+
+            Assert.IsFalse(navView.IsPaneOpen);
+            Assert.AreEqual(ModernWpf.Controls.NavigationViewDisplayMode.Compact, navView.DisplayMode);
+            AssertCurrentState(stateGroupsRoot, "PaneStateGroup", "ClosedCompact");
+            AssertCurrentState(stateGroupsRoot, "PaneStateListSizeGroup", "ListSizeCompact");
+            Assert.AreEqual(navView.CompactPaneLength, paneContentGrid.ActualWidth, 0.01);
+            Assert.AreEqual(navView.CompactPaneLength - 1.0, item!.ActualWidth, 0.01,
+                "A lazily realized data-bound item must remain inside the compact pane.");
         });
     }
 

@@ -408,18 +408,25 @@ public class LayoutCompatibilityApiTests
                 Width = 272,
                 Height = 272,
                 Padding = new Thickness(36),
-                Background = Brushes.White
+                Background = Brushes.White,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top
             };
             exampleGrid.Children.Add(new Grid());
             exampleGrid.Children.Add(chrome);
 
-            ArrangeElement(exampleGrid, 272, 272);
+            // GridEx is normally connected to a presentation source in the Gallery.
+            // Host it likewise so WPF owns and drains its layout queue when the test
+            // window closes; manually arranging a detached GridEx poisons later
+            // detached-root layout tests on the same dispatcher.
+            using var host = new TestWindowHost(exampleGrid, width: 340, height: 340);
+            host.UpdateLayout();
+
             var before = RenderShadowSnapshotBitmap(exampleGrid, 272, 272);
             var beforeCardBounds = MeasureRenderedColorBounds(before, color => color.R > 180 && color.G < 80 && color.B < 80);
 
             chrome.TranslationZ = 64;
-            exampleGrid.UpdateLayout();
-            WpfTestHost.DoEvents();
+            host.UpdateLayout();
 
             var after = RenderShadowSnapshotBitmap(exampleGrid, 272, 272);
             var afterCardBounds = MeasureRenderedColorBounds(after, color => color.R > 180 && color.G < 80 && color.B < 80);
@@ -1593,9 +1600,9 @@ public class LayoutCompatibilityApiTests
                 host.UpdateLayout();
 
                 var commandBarFlyoutChrome = FindTemplateChild<ThemeShadowChrome>(commandBarFlyoutCommandBar, "OuterOverflowContentRootShadowChrome");
-                AssertMediumWindowedPopupInsets(commandBarFlyoutChrome);
+                AssertMediumWindowedPopupInsets(commandBarFlyoutChrome, reservesShadowSpace: false);
 
-                var overflowPopup = FindTemplateChild<Popup>(commandBarFlyoutCommandBar, "OverflowPopup");
+                var overflowPopup = FindTemplateChild<WindowedPopup>(commandBarFlyoutCommandBar, "OverflowPopup");
                 overflowPopup.Child = null;
                 try
                 {
@@ -4491,8 +4498,16 @@ public class LayoutCompatibilityApiTests
                 CornerRadius = new CornerRadius(0, 4, 0, 0),
                 BackgroundSizing = BackgroundSizing.OuterBorderEdge
             };
+            var root = CreateDetachedRenderRoot(grid, 30, 30);
 
-            AssertOuterChromePixels(grid);
+            try
+            {
+                AssertOuterChromePixels(root);
+            }
+            finally
+            {
+                DisconnectRenderedChild(root);
+            }
         });
     }
 
@@ -4501,13 +4516,25 @@ public class LayoutCompatibilityApiTests
     {
         WpfTestHost.Run(() =>
         {
-            AssertRoundedChromeHitTest(new ModernGridEx
+            var grid = new ModernGridEx
             {
                 Width = 30,
                 Height = 30,
                 Background = Brushes.Red,
                 CornerRadius = new CornerRadius(12, 0, 0, 0)
-            });
+            };
+            var root = CreateDetachedRenderRoot(grid, 30, 30);
+
+            try
+            {
+                ArrangeElement(root, 30, 30);
+                Assert.IsNull(VisualTreeHelper.HitTest(grid, new Point(1, 1)), "Top-left point should be clipped by the rounded chrome.");
+                Assert.IsNotNull(VisualTreeHelper.HitTest(grid, new Point(15, 15)), "Center point should hit inside the rounded chrome.");
+            }
+            finally
+            {
+                DisconnectRenderedChild(root);
+            }
         });
     }
 
@@ -4523,8 +4550,16 @@ public class LayoutCompatibilityApiTests
                 CornerRadius = new CornerRadius(12, 0, 0, 0)
             };
             grid.Children.Add(CreateRedChildBox());
+            var root = CreateDetachedRenderRoot(grid, 30, 30);
 
-            AssertRoundedChildRenderClip(grid);
+            try
+            {
+                AssertRoundedChildRenderClip(root);
+            }
+            finally
+            {
+                DisconnectRenderedChild(root);
+            }
         });
     }
 
@@ -4540,12 +4575,21 @@ public class LayoutCompatibilityApiTests
                 Background = Brushes.Blue,
                 CornerRadius = new CornerRadius(8)
             };
+            var root = CreateDetachedRenderRoot(grid, 16, 16);
 
-            var corner = RenderElementPixel(grid, 0, 0, 16, 16);
-            var center = RenderElementPixel(grid, 8, 8, 16, 16);
+            try
+            {
+                ArrangeElement(root, 16, 16);
+                var corner = RenderCurrentElementPixel(root, 0, 0, 16, 16);
+                var center = RenderCurrentElementPixel(root, 8, 8, 16, 16);
 
-            Assert.IsTrue(corner.A < 30, $"Expected a transparent pixel outside the circular GridEx background. Pixel={corner}");
-            Assert.IsTrue(center.B > 200 && center.A > 200, $"Expected the center of the circular GridEx background to be filled. Pixel={center}");
+                Assert.IsTrue(corner.A < 30, $"Expected a transparent pixel outside the circular GridEx background. Pixel={corner}");
+                Assert.IsTrue(center.B > 200 && center.A > 200, $"Expected the center of the circular GridEx background to be filled. Pixel={center}");
+            }
+            finally
+            {
+                DisconnectRenderedChild(root);
+            }
         });
     }
 
@@ -4809,6 +4853,26 @@ public class LayoutCompatibilityApiTests
         };
     }
 
+    private static Grid CreateDetachedRenderRoot(FrameworkElement child, double width, double height)
+    {
+        var root = new Grid
+        {
+            Width = width,
+            Height = height
+        };
+        root.Children.Add(child);
+        return root;
+    }
+
+    private static void DisconnectRenderedChild(Grid root)
+    {
+        // RenderTargetBitmap retains a windowless visual on WPF's render channel.
+        // Detach GridEx and drain its invalidations so later live-window layout is clean.
+        root.Children.Clear();
+        root.UpdateLayout();
+        WpfTestHost.DoEvents();
+    }
+
     private static ModernGridEx CreateStarSpanGrid(double width, double height, double spacing)
     {
         var grid = new ModernGridEx
@@ -4863,10 +4927,10 @@ public class LayoutCompatibilityApiTests
         Assert.AreSame(targetBrush, getEffectiveBackground(control));
     }
 
-    private static void AssertMediumWindowedPopupInsets(ThemeShadowChrome chrome)
+    private static void AssertMediumWindowedPopupInsets(ThemeShadowChrome chrome, bool reservesShadowSpace = true)
     {
         Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Medium, chrome.WindowedPopupInsetMode);
-        Assert.IsTrue(chrome.ReservesShadowSpace);
+        Assert.AreEqual(reservesShadowSpace, chrome.ReservesShadowSpace);
         Assert.AreEqual(new Thickness(10, 2, 10, 18), chrome.PopupShadowPadding);
     }
 

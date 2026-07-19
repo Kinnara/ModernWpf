@@ -410,6 +410,7 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
 
         private static IReadOnlyList<GalleryExample> CreateNumberBoxExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
         {
+            var spinButtonContent = CreateSpinButtonNumberBoxExampleContent(out var spinButtonOptions);
             return new[]
             {
                 new GalleryExample(
@@ -419,9 +420,10 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
                     null),
                 new GalleryExample(
                     "A NumberBox with a spin button.",
-                    CreateSpinButtonNumberBoxExampleContent(),
+                    spinButtonContent,
                     "<NumberBox\r\n    x:Name=\"NumberBoxSpinButtonPlacementExample\"\r\n    Header=\"Enter an integer:\"\r\n    Value=\"1\"\r\n    SpinButtonPlacementMode=\"Inline\"\r\n    SmallChange=\"10\"\r\n    LargeChange=\"100\" />",
-                    null),
+                    null,
+                    spinButtonOptions),
                 new GalleryExample(
                     "A formatted NumberBox that rounds to the nearest 0.25.",
                     CreateFormattedNumberBoxExampleContent(),
@@ -453,13 +455,9 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
             return panel;
         }
 
-        private static GallerySamplePanel CreateSpinButtonNumberBoxExampleContent()
+        private static GallerySamplePanel CreateSpinButtonNumberBoxExampleContent(out Mux.RadioButtons options)
         {
             var panel = new GallerySamplePanel();
-            var layout = new Grid();
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
             var numberBox = new Mux.NumberBox
             {
@@ -470,7 +468,8 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
                 LargeChange = 100,
                 SmallChange = 10,
                 SpinButtonPlacementMode = Mux.NumberBoxSpinButtonPlacementMode.Inline,
-                Value = 10
+                Value = 10,
+                HorizontalAlignment = HorizontalAlignment.Left
             };
             AutomationProperties.SetName(numberBox, "NumberBox with spin button");
             GalleryAutomation.WithAutomationId(numberBox, GalleryAutomation.SampleElementId("NumberBox", "SpinButtonNumberBox"));
@@ -489,11 +488,9 @@ private void AutoSuggestBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestB
                     ? Mux.NumberBoxSpinButtonPlacementMode.Inline
                     : Mux.NumberBoxSpinButtonPlacementMode.Compact;
             };
+            options = radioButtons;
 
-            layout.Children.Add(numberBox);
-            Grid.SetColumn(radioButtons, 2);
-            layout.Children.Add(radioButtons);
-            panel.Children.Add(layout);
+            panel.Children.Add(numberBox);
             return panel;
         }
 

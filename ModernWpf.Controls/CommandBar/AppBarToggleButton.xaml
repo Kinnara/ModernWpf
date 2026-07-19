@@ -4,6 +4,8 @@
     xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
+    <local:AppBarIconOrContentConverter x:Key="AppBarIconOrContentConverter" />
+
     <Style TargetType="local:AppBarToggleButton">
         <Setter Property="Background" Value="{DynamicResource AppBarToggleButtonBackground}" />
         <Setter Property="Foreground" Value="{DynamicResource AppBarToggleButtonForeground}" />
@@ -300,8 +302,14 @@
                                     HorizontalAlignment="Stretch">
                                     <ui:ContentPresenterEx
                                         x:Name="Content"
-                                        Content="{TemplateBinding Icon}"
-                                        Foreground="{TemplateBinding Foreground}" />
+                                        Foreground="{TemplateBinding Foreground}">
+                                        <ui:ContentPresenterEx.Content>
+                                            <MultiBinding Converter="{StaticResource AppBarIconOrContentConverter}">
+                                                <Binding Path="Content" RelativeSource="{RelativeSource TemplatedParent}" />
+                                                <Binding Path="Icon" RelativeSource="{RelativeSource TemplatedParent}" />
+                                            </MultiBinding>
+                                        </ui:ContentPresenterEx.Content>
+                                    </ui:ContentPresenterEx>
                                 </Viewbox>
                                 <TextBlock
                                     x:Name="TextLabel"

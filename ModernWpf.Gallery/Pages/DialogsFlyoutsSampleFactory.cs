@@ -319,23 +319,26 @@ private void ClosePopupClicked(object sender, RoutedEventArgs e)
                 Margin = new Thickness(0, 0, 0, 12)
             };
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("Popup"));
-            panel.Children.Add(CreatePopupOffsetExampleContent(assignRootAutomationId: false));
+            var content = CreatePopupOffsetExampleContent(assignRootAutomationId: false, out var options);
+            panel.Children.Add(CreatePopupExampleLayout(content, options));
             return panel;
         }
 
         private static IReadOnlyList<GalleryExample> CreatePopupExamples()
         {
+            var content = CreatePopupOffsetExampleContent(assignRootAutomationId: true, out var options);
             return new[]
             {
                 new GalleryExample(
                     "Popup with Offset Positioning",
-                    CreatePopupOffsetExampleContent(assignRootAutomationId: true),
+                    content,
                     PopupOffsetXaml,
-                    PopupOffsetCSharp)
+                    PopupOffsetCSharp,
+                    options)
             };
         }
 
-        private static GallerySamplePanel CreatePopupOffsetExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreatePopupOffsetExampleContent(bool assignRootAutomationId, out UIElement options)
         {
             var root = new GallerySamplePanel();
             if (assignRootAutomationId)
@@ -406,9 +409,8 @@ private void ClosePopupClicked(object sender, RoutedEventArgs e)
 
             output.Children.Add(showButton);
             output.Children.Add(popup);
-            root.Children.Add(CreatePopupExampleLayout(
-                output,
-                CreatePopupOptionsPanel(lightDismiss, verticalOffset, horizontalOffset)));
+            options = CreatePopupOptionsPanel(lightDismiss, verticalOffset, horizontalOffset);
+            root.Children.Add(output);
             return root;
         }
 
@@ -484,8 +486,19 @@ private void ClosePopupClicked(object sender, RoutedEventArgs e)
             {
                 Width = 160
             };
-            foreach (var child in children)
+            for (var index = 0; index < children.Length; index++)
             {
+                var child = children[index];
+                if (index < children.Length - 1 && child is FrameworkElement element)
+                {
+                    // WinUI's options StackPanel uses Spacing="8".
+                    element.Margin = new Thickness(
+                        element.Margin.Left,
+                        element.Margin.Top,
+                        element.Margin.Right,
+                        element.Margin.Bottom + 8);
+                }
+
                 panel.Children.Add(child);
             }
 

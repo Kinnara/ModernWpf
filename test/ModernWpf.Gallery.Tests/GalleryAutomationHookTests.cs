@@ -108,6 +108,161 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "CommandBarFlyout", "GallerySample_CommandBarFlyout_Root", "GallerySample_CommandBarFlyout_ShowButton" };
         }
 
+        public static IEnumerable<object[]> WinUIPortedControlExampleCounts()
+        {
+            yield return new object[] { "NavigationView", 8 };
+            yield return new object[] { "InfoBar", 3 };
+            yield return new object[] { "NumberBox", 3 };
+            yield return new object[] { "AutoSuggestBox", 2 };
+            yield return new object[] { "ContentDialog", 2 };
+            yield return new object[] { "TeachingTip", 3 };
+            yield return new object[] { "CommandBar", 1 };
+            yield return new object[] { "CommandBarFlyout", 1 };
+            yield return new object[] { "AppBarButton", 6 };
+            yield return new object[] { "AppBarToggleButton", 4 };
+            yield return new object[] { "AppBarSeparator", 1 };
+            yield return new object[] { "DropDownButton", 2 };
+            yield return new object[] { "SplitButton", 2 };
+            yield return new object[] { "ToggleSplitButton", 1 };
+            yield return new object[] { "RepeatButton", 1 };
+            yield return new object[] { "ToggleButton", 1 };
+            yield return new object[] { "MenuBar", 3 };
+            yield return new object[] { "MenuFlyout", 7 };
+            yield return new object[] { "ItemsRepeater", 6 };
+            yield return new object[] { "RatingControl", 2 };
+            yield return new object[] { "ToggleSwitch", 2 };
+            yield return new object[] { "ColorPicker", 1 };
+            yield return new object[] { "HyperlinkButton", 2 };
+            yield return new object[] { "ProgressRing", 2 };
+            yield return new object[] { "WinUIProgressBar", 2 };
+            yield return new object[] { "InfoBadge", 4 };
+            yield return new object[] { "Flyout", 1 };
+            yield return new object[] { "Popup", 1 };
+            yield return new object[] { "BreadcrumbBar", 2 };
+            yield return new object[] { "SelectorBar", 3 };
+            yield return new object[] { "SplitView", 1 };
+            yield return new object[] { "AnnotatedScrollBar", 1 };
+            yield return new object[] { "GridView", 3 };
+            yield return new object[] { "PersonPicture", 1 };
+            yield return new object[] { "IconElement", 6 };
+            yield return new object[] { "ThemeShadow", 1 };
+            yield return new object[] { "TitleBar", 2 };
+        }
+
+        public static IEnumerable<object[]> WinUIPortedControlExampleSupplementalContent()
+        {
+            yield return new object[] { "TeachingTip", "NNN" };
+            yield return new object[] { "ColorPicker", "P" };
+            yield return new object[] { "HyperlinkButton", "PN" };
+            yield return new object[] { "RatingControl", "BP" };
+            yield return new object[] { "RepeatButton", "P" };
+            yield return new object[] { "ToggleButton", "B" };
+            yield return new object[] { "DropDownButton", "NN" };
+            yield return new object[] { "SplitButton", "PN" };
+            yield return new object[] { "ToggleSplitButton", "P" };
+            yield return new object[] { "ToggleSwitch", "NN" };
+            yield return new object[] { "NumberBox", "NPN" };
+            yield return new object[] { "AutoSuggestBox", "NN" };
+            yield return new object[] { "SplitView", "P" };
+            yield return new object[] { "PersonPicture", "P" };
+            yield return new object[] { "IconElement", "PNNNNN" };
+            yield return new object[] { "ThemeShadow", "P" };
+            yield return new object[] { "TitleBar", "PN" };
+            yield return new object[] { "InfoBadge", "PPNP" };
+            yield return new object[] { "InfoBar", "PPP" };
+            yield return new object[] { "ProgressRing", "PP" };
+            yield return new object[] { "WinUIProgressBar", "PN" };
+            yield return new object[] { "AnnotatedScrollBar", "P" };
+            yield return new object[] { "GridView", "NPP" };
+            yield return new object[] { "ItemsRepeater", "PPNNNN" };
+            yield return new object[] { "BreadcrumbBar", "NP" };
+            yield return new object[] { "SelectorBar", "NNN" };
+            yield return new object[] { "NavigationView", "NNNNNPPP" };
+            yield return new object[] { "ContentDialog", "NN" };
+            yield return new object[] { "Flyout", "N" };
+            yield return new object[] { "Popup", "P" };
+            yield return new object[] { "MenuBar", "NNN" };
+            yield return new object[] { "MenuFlyout", "NNNNNNN" };
+            yield return new object[] { "AppBarButton", "NNNNNN" };
+            yield return new object[] { "AppBarSeparator", "N" };
+            yield return new object[] { "AppBarToggleButton", "NNNN" };
+            yield return new object[] { "CommandBar", "P" };
+            yield return new object[] { "CommandBarFlyout", "N" };
+        }
+
+        [DataTestMethod]
+        [DynamicData(nameof(WinUIPortedControlExampleSupplementalContent), DynamicDataSourceType.Method)]
+        public void EveryWinUIPortedControlExampleUsesTheSourceOutputAndOptionsSlots(string uniqueId, string expectedShape)
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem(uniqueId));
+                var actualShape = new string(page.Examples.Select(example =>
+                {
+                    var hasOutput = example.OutputContent != null;
+                    var hasOptions = example.OptionsContent != null;
+                    return hasOutput && hasOptions ? 'B' : hasOutput ? 'O' : hasOptions ? 'P' : 'N';
+                }).ToArray());
+
+                Assert.AreEqual(
+                    expectedShape,
+                    actualShape,
+                    uniqueId + " supplemental content differs from the current WinUI Gallery ControlExample structure (N=none, O=output, P=options, B=both)." );
+            });
+        }
+
+        [DataTestMethod]
+        [DynamicData(nameof(WinUIPortedControlExampleCounts), DynamicDataSourceType.Method)]
+        public void EveryWinUIPortedControlExampleExposesStableVisualArtifactIdentity(string uniqueId, int expectedCount)
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem(uniqueId));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.AreEqual(expectedCount, page.Examples.Count, uniqueId + " source example count changed.");
+                    Assert.AreEqual(
+                        expectedCount,
+                        FindDescendants<ControlExample>(page).Count(),
+                        uniqueId + " did not render every GalleryExample through ControlExample.");
+
+                    for (var index = 0; index < expectedCount; index++)
+                    {
+                        var expectedAutomationId = "GallerySample_" + uniqueId + "_Example" + (index + 1).ToString(CultureInfo.InvariantCulture);
+                        Assert.AreEqual(expectedAutomationId, page.Examples[index].AutomationId);
+
+                        var example = FindByAutomationId(page, expectedAutomationId) as ControlExample;
+                        Assert.IsNotNull(example, expectedAutomationId + " is missing.");
+                        Assert.AreEqual(page.Examples[index].HeaderText, AutomationProperties.GetName(example));
+                        Assert.IsTrue(example.ActualWidth > 0, expectedAutomationId + " rendered with zero width.");
+                        Assert.IsTrue(example.ActualHeight > 0, expectedAutomationId + " rendered with zero height.");
+                    }
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
         [TestMethod]
         public void SliderSampleStartsAtReferenceValue()
         {
@@ -452,6 +607,12 @@ namespace ModernWpf.Gallery.Tests
                     StringAssert.Contains(page.Examples[0].XamlCode, "IsLightDismissEnabled=\"$(IsLightDismissEnabled)\"");
                     StringAssert.Contains(page.Examples[0].CSharpCode, "if (!StandardPopup.IsOpen) { StandardPopup.IsOpen = true; }");
 
+                    var popupOptions = (StackPanel)page.Examples[0].OptionsContent;
+                    Assert.AreEqual(3, popupOptions.Children.Count);
+                    Assert.AreEqual(new Thickness(0, 0, 0, 8), ((FrameworkElement)popupOptions.Children[0]).Margin);
+                    Assert.AreEqual(new Thickness(0, 0, 0, 8), ((FrameworkElement)popupOptions.Children[1]).Margin);
+                    Assert.AreEqual(new Thickness(), ((FrameworkElement)popupOptions.Children[2]).Margin);
+
                     var root = (FrameworkElement)FindByAutomationId(page, "GallerySample_Popup_Root");
                     var showButton = (Button)FindByAutomationId(page, "GallerySample_Popup_Button");
                     var output = FindNamedDescendant<Grid>(page, "Output");
@@ -581,9 +742,55 @@ namespace ModernWpf.Gallery.Tests
                     StringAssert.Contains(page.Examples[6].XamlCode, "SelectsOnInvoked=\"False\"");
                     StringAssert.Contains(page.Examples[7].XamlCode, "PaneFooter");
 
-                    var navigationView = (ModernWpf.Controls.NavigationView)FindByAutomationId(page, "GallerySample_NavigationView_NavigationView");
-                    Assert.IsNotNull(navigationView);
-                    Assert.AreEqual("nvSample5", navigationView.Name);
+                    var navigationView = AssertNavigationViewSampleArtifact(
+                        page,
+                        "GallerySample_NavigationView_NavigationView",
+                        "nvSample5",
+                        745.0,
+                        460.0);
+                    var topNavigationView = AssertNavigationViewSampleArtifact(
+                        page,
+                        "GallerySample_NavigationView_TopNavigationView",
+                        "nvSample6",
+                        745.0,
+                        460.0);
+                    var adaptiveNavigationView = AssertNavigationViewSampleArtifact(
+                        page,
+                        "GallerySample_NavigationView_AdaptiveNavigationView",
+                        "nvSample2",
+                        745.0,
+                        460.0);
+                    var tabsNavigationView = AssertNavigationViewSampleArtifact(
+                        page,
+                        "GallerySample_NavigationView_TabsNavigationView",
+                        "nvSample7",
+                        745.0,
+                        460.0);
+                    var boundNavigationView = AssertNavigationViewSampleArtifact(
+                        page,
+                        "GallerySample_NavigationView_DataBindingNavigationView",
+                        "nvSample4",
+                        745.0,
+                        460.0);
+                    var footerNavigationView = AssertNavigationViewSampleArtifact(
+                        page,
+                        "GallerySample_NavigationView_FooterNavigationView",
+                        "nvSample9",
+                        592.0,
+                        460.0);
+                    var hierarchicalNavigationView = AssertNavigationViewSampleArtifact(
+                        page,
+                        "GallerySample_NavigationView_HierarchicalNavigationView",
+                        "nvSample8",
+                        565.0,
+                        460.0);
+                    var apiNavigationView = AssertNavigationViewSampleArtifact(
+                        page,
+                        "GallerySample_NavigationView_ApiNavigationView",
+                        "nvSample",
+                        458.0,
+                        540.0);
+
                     Assert.AreEqual(745.0, navigationView.Width);
                     Assert.AreEqual(460.0, navigationView.Height);
                     Assert.AreEqual(HorizontalAlignment.Left, navigationView.HorizontalAlignment);
@@ -597,7 +804,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreSame(contentFrame5, navigationView.Content);
                     var firstContent = contentFrame5.Content as ScrollViewer;
                     Assert.IsNotNull(firstContent);
-                    Assert.AreEqual(ScrollBarVisibility.Hidden, firstContent.VerticalScrollBarVisibility);
+                    Assert.AreEqual(ScrollBarVisibility.Auto, firstContent.VerticalScrollBarVisibility);
                     var bodyText = FindDescendants<TextBlock>(firstContent)
                         .Single(textBlock => textBlock.Text.StartsWith("Lorem ipsum", StringComparison.Ordinal));
                     Assert.AreEqual(new Thickness(0, 1, 0, 0), bodyText.Margin);
@@ -609,6 +816,10 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("SamplePage1", firstItem.Tag);
                     Assert.AreEqual(ModernWpf.Controls.Symbol.Play, ((ModernWpf.Controls.SymbolIcon)firstItem.Icon).Symbol);
                     Assert.AreSame(firstItem, navigationView.SelectedItem);
+                    AssertClosedCompactNavigationViewGeometry(
+                        navigationView,
+                        "Menu Item1",
+                        "The default NavigationView sample");
                     var secondItem = (ModernWpf.Controls.NavigationViewItem)navigationView.MenuItems[1];
                     Assert.AreEqual("Menu Item2", secondItem.Content);
                     Assert.AreEqual("SamplePage2", secondItem.Tag);
@@ -625,56 +836,191 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreSame(firstItem, navigationView.SelectedItem);
                     Assert.AreEqual("Sample Page 1", navigationView.Header);
 
-                    var topNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample6");
+                    var leftSelectionIndicator = FindNamedDescendant<System.Windows.Shapes.Rectangle>(firstItem, "SelectionIndicator");
+                    var leftSelectionIndicatorBounds = GetRelativeBounds(leftSelectionIndicator, firstItem);
+                    var leftSelectionIndicatorBoundsInNavigationView = GetRelativeBounds(leftSelectionIndicator, navigationView);
+                    Assert.AreEqual(
+                        4.0,
+                        leftSelectionIndicatorBounds.Left,
+                        0.01,
+                        "The default Gallery sample must keep the WinUI left selection indicator at the item background origin.");
+                    Assert.AreEqual(
+                        4.0,
+                        leftSelectionIndicatorBoundsInNavigationView.Left,
+                        0.01,
+                        "The default Gallery sample must match the WinUI selection indicator's horizontal origin.");
+
                     Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Top, topNavigationView.PaneDisplayMode);
                     Assert.AreEqual("This is Header Text", topNavigationView.Header);
                     Assert.AreEqual(4, topNavigationView.MenuItems.Count);
+                    AssertTopNavigationViewGeometry(
+                        topNavigationView,
+                        "Menu Item1",
+                        "The Top NavigationView sample");
 
-                    var adaptiveNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample2");
                     Assert.IsTrue(adaptiveNavigationView.ActualWidth >= adaptiveNavigationView.CompactModeThresholdWidth);
                     Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Top, adaptiveNavigationView.PaneDisplayMode);
                     Assert.AreEqual(4, adaptiveNavigationView.MenuItems.Count);
+                    AssertTopNavigationViewGeometry(
+                        adaptiveNavigationView,
+                        "Menu Item1",
+                        "The adaptive NavigationView sample at Gallery width");
 
-                    var tabsNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample7");
                     Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Top, tabsNavigationView.PaneDisplayMode);
                     Assert.AreEqual(Mux.NavigationViewBackButtonVisible.Collapsed, tabsNavigationView.IsBackButtonVisible);
                     Assert.AreEqual(Mux.NavigationViewSelectionFollowsFocus.Enabled, tabsNavigationView.SelectionFollowsFocus);
+                    AssertTopNavigationViewGeometry(
+                        tabsNavigationView,
+                        "Item1",
+                        "The tabs NavigationView sample");
 
-                    var boundNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample4");
                     Assert.IsNotNull(boundNavigationView.MenuItemsSource);
                     Assert.IsNotNull(boundNavigationView.MenuItemTemplate);
                     Assert.IsNotNull(boundNavigationView.SelectedItem);
+                    Assert.AreEqual("Sample Page 1", boundNavigationView.Header);
 
-                    var footerNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample9");
+                    var boundCategories = ((System.Collections.IEnumerable)boundNavigationView.MenuItemsSource)
+                        .Cast<object>()
+                        .ToArray();
+                    boundNavigationView.SelectedItem = boundCategories[1];
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Sample Page 2", boundNavigationView.Header);
+                    boundNavigationView.SelectedItem = boundCategories[0];
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Sample Page 1", boundNavigationView.Header);
+
+                    boundNavigationView.BringIntoView();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    var boundFirstItem = FindDescendants<Mux.NavigationViewItem>(boundNavigationView)
+                        .Single(item => Equals(item.Content, "Category 1"));
+                    var boundPaneContentGrid = FindNamedDescendant<Border>(boundNavigationView, "PaneContentGrid");
+                    var boundItemContentPresenter = FindNamedDescendant<Mux.ContentPresenterEx>(
+                        boundFirstItem,
+                        "ContentPresenter");
+                    var boundSettingsItem = (Mux.NavigationViewItem)boundNavigationView.SettingsItem;
+                    var boundSettingsContentPresenter = FindNamedDescendant<Mux.ContentPresenterEx>(
+                        boundSettingsItem,
+                        "ContentPresenter");
+                    var boundPaneBounds = GetRelativeBounds(boundPaneContentGrid, boundNavigationView);
+                    var boundItemBounds = GetRelativeBounds(boundFirstItem, boundNavigationView);
+                    var boundContentPresenterBounds = GetRelativeBounds(boundItemContentPresenter, boundNavigationView);
+                    var boundSettingsContentPresenterBounds = GetRelativeBounds(
+                        boundSettingsContentPresenter,
+                        boundNavigationView);
+                    var boundRootGrid = FindNamedDescendant<Grid>(boundNavigationView, "RootGrid");
+                    var boundStateGroups = VisualStateManager.GetVisualStateGroups(boundRootGrid)
+                        .Cast<VisualStateGroup>()
+                        .ToArray();
+                    var boundPaneState = boundStateGroups
+                        .Single(group => group.Name == "PaneStateGroup")
+                        .CurrentState;
+                    var boundListSizeState = boundStateGroups
+                        .Single(group => group.Name == "PaneStateListSizeGroup")
+                        .CurrentState;
+
+                    Assert.IsFalse(boundNavigationView.IsPaneOpen);
+                    Assert.AreEqual(Mux.NavigationViewDisplayMode.Compact, boundNavigationView.DisplayMode);
+                    Assert.AreEqual("ClosedCompact", boundPaneState?.Name);
+                    Assert.AreEqual("ListSizeCompact", boundListSizeState?.Name);
+                    Assert.AreEqual(
+                        boundNavigationView.CompactPaneLength,
+                        boundPaneBounds.Width,
+                        0.01,
+                        "A lazily realized data-bound sample must use the compact pane width while closed.");
+                    Assert.AreEqual(
+                        boundNavigationView.CompactPaneLength - 1.0,
+                        boundItemBounds.Width,
+                        0.01,
+                        "Data-bound menu items must be constrained by the compact pane.");
+                    Assert.AreEqual(
+                        0.0,
+                        boundContentPresenterBounds.Width,
+                        0.01,
+                        "The compact item must not leave any label width visible beside its icon.");
+                    Assert.AreEqual(
+                        0.0,
+                        boundSettingsContentPresenterBounds.Width,
+                        0.01,
+                        "The compact Settings item must not leave any label width visible beside its icon.");
+
                     Assert.IsFalse(footerNavigationView.IsSettingsVisible);
                     Assert.AreEqual(3, footerNavigationView.MenuItems.Count);
                     Assert.AreEqual(3, footerNavigationView.FooterMenuItems.Count);
                     Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Left, footerNavigationView.PaneDisplayMode);
+                    AssertExpandedLeftNavigationViewGeometry(
+                        footerNavigationView,
+                        "Browse",
+                        "The footer NavigationView sample",
+                        expectSelection: true);
+                    var trackOrderItem = (Mux.NavigationViewItem)footerNavigationView.MenuItems[1];
+                    footerNavigationView.SelectedItem = trackOrderItem;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Sample Page 2", footerNavigationView.Header);
+                    footerNavigationView.SelectedItem = footerNavigationView.MenuItems[0];
+                    WpfTestHost.DoEvents();
                     var footerTop = FindNamedDescendant<RadioButton>(page, "nvSample9Top");
                     footerTop.IsChecked = true;
                     WpfTestHost.DoEvents();
                     Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Top, footerNavigationView.PaneDisplayMode);
                     Assert.IsFalse(footerNavigationView.IsPaneOpen);
+                    AssertTopNavigationViewGeometry(
+                        footerNavigationView,
+                        "Browse",
+                        "The footer NavigationView sample in Top mode");
 
-                    var hierarchicalNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample8");
                     Assert.AreEqual(3, hierarchicalNavigationView.MenuItems.Count);
                     var accountItem = (Mux.NavigationViewItem)hierarchicalNavigationView.MenuItems[1];
                     var documentOptionsItem = (Mux.NavigationViewItem)hierarchicalNavigationView.MenuItems[2];
                     Assert.AreEqual(2, accountItem.MenuItems.Count);
                     Assert.AreEqual(2, documentOptionsItem.MenuItems.Count);
                     Assert.IsFalse(documentOptionsItem.SelectsOnInvoked);
+                    Assert.AreEqual("Sample Page 1", hierarchicalNavigationView.Header);
+                    hierarchicalNavigationView.SelectedItem = accountItem;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Sample Page 2", hierarchicalNavigationView.Header);
+                    hierarchicalNavigationView.SelectedItem = hierarchicalNavigationView.MenuItems[0];
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual("Sample Page 1", hierarchicalNavigationView.Header);
+                    AssertExpandedLeftNavigationViewGeometry(
+                        hierarchicalNavigationView,
+                        "Home",
+                        "The hierarchical NavigationView sample",
+                        expectSelection: true);
+                    var hierarchicalTop = FindNamedDescendant<RadioButton>(page, "nvSample8Top");
+                    hierarchicalTop.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    AssertTopNavigationViewGeometry(
+                        hierarchicalNavigationView,
+                        "Home",
+                        "The hierarchical NavigationView sample in Top mode");
                     var hierarchicalLeftCompact = FindNamedDescendant<RadioButton>(page, "nvSample8LeftCompact");
                     hierarchicalLeftCompact.IsChecked = true;
                     WpfTestHost.DoEvents();
                     Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.LeftCompact, hierarchicalNavigationView.PaneDisplayMode);
                     Assert.IsFalse(hierarchicalNavigationView.IsPaneOpen);
+                    AssertClosedCompactNavigationViewGeometry(
+                        hierarchicalNavigationView,
+                        "Home",
+                        "The hierarchical NavigationView sample in LeftCompact mode");
 
-                    var apiNavigationView = FindNamedDescendant<Mux.NavigationView>(page, "nvSample");
                     var samplePage2Item = FindNamedDescendant<Mux.NavigationViewItem>(page, "SamplePage2Item");
                     Assert.AreEqual("Header", apiNavigationView.Header);
                     Assert.AreEqual("Pane Title", apiNavigationView.PaneTitle);
                     Assert.AreEqual(Mux.NavigationViewBackButtonVisible.Visible, apiNavigationView.IsBackButtonVisible);
                     Assert.IsNotNull(apiNavigationView.AutoSuggestBox);
+                    var apiContentFrame = FindNamedDescendant<Frame>(apiNavigationView, "contentFrame");
+                    Assert.IsNull(apiContentFrame.Content, "The API sample should match WinUI's initially empty Frame.");
+                    var paneTitleTextBlock = FindNamedDescendant<TextBlock>(apiNavigationView, "PaneTitleTextBlock");
+                    Assert.AreEqual(
+                        ((FontFamily)page.TryFindResource("ContentControlThemeFontFamily")).Source,
+                        paneTitleTextBlock.FontFamily.Source,
+                        "PaneTitle must not inherit the toggle button's symbol font.");
+                    AssertExpandedLeftNavigationViewGeometry(
+                        apiNavigationView,
+                        "Menu Item1",
+                        "The API NavigationView sample",
+                        expectSelection: false);
 
                     var headerText = FindNamedDescendant<TextBox>(page, "headerText");
                     headerText.Text = "Updated Header";
@@ -706,6 +1052,13 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                     Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Top, apiNavigationView.PaneDisplayMode);
                     Assert.AreEqual(Orientation.Horizontal, footerStackPanel.Orientation);
+                    apiNavigationView.SelectedItem = apiNavigationView.MenuItems[0];
+                    WpfTestHost.DoEvents();
+                    AssertTopNavigationViewGeometry(
+                        apiNavigationView,
+                        "Menu Item1",
+                        "The API NavigationView sample in Top mode");
+                    Assert.IsNotNull(apiContentFrame.Content, "Selecting an API sample item should populate its Frame.");
 
                     var selectionFollowsFocus = FindNamedDescendant<CheckBox>(page, "sffCheck");
                     selectionFollowsFocus.IsChecked = true;
@@ -861,6 +1214,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(contentFrame);
                     Assert.IsNotNull(selectorBar3);
                     Assert.IsNotNull(itemsView3);
+                    Assert.AreEqual(new Thickness(0), itemsView3.Margin);
 
                     Assert.AreEqual("SelectorBar1", selectorBar1.Name);
                     Assert.AreEqual(new Thickness(0), selectorBar1.BorderThickness);
@@ -882,18 +1236,23 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(5, selectorBar2.Items.Count);
                     Assert.AreSame(selectorBar2.Items[0], selectorBar2.SelectedItem);
                     Assert.AreEqual("SamplePage1", GetFramePageTitle(contentFrame));
-                    AssertFramePageForeground(contentFrame, Color.FromArgb(0xE4, 0, 0, 0));
+                    AssertSelectorBarSamplePage1Layout(contentFrame);
 
                     selectorBar2.SelectedItem = selectorBar2.Items[2];
                     WpfTestHost.DoEvents();
                     Assert.AreSame(selectorBar2.Items[2], selectorBar2.SelectedItem);
                     Assert.AreEqual("SamplePage3", GetFramePageTitle(contentFrame));
-                    AssertFramePageForeground(contentFrame, Color.FromArgb(0xE4, 0, 0, 0));
+                    AssertSelectorBarSamplePage3Layout(contentFrame);
 
                     Assert.AreEqual("SelectorBar3", selectorBar3.Name);
                     Assert.AreEqual(3, selectorBar3.Items.Count);
                     Assert.AreSame(selectorBar3.Items[0], selectorBar3.SelectedItem);
                     Assert.AreEqual(5, CountItems(itemsView3.ItemsSource));
+                    var colorItems = FindDescendants<Border>(itemsView3)
+                        .Where(border => border.Width == 112d && border.Height == 82d)
+                        .ToList();
+                    Assert.AreEqual(5, colorItems.Count);
+                    Assert.IsTrue(colorItems.All(border => border.CornerRadius == new CornerRadius(4)));
 
                     selectorBar3.SelectedItem = selectorBar3.Items[1];
                     WpfTestHost.DoEvents();
@@ -967,6 +1326,25 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Informational", severityComboBox.SelectedItem);
                     Assert.AreEqual(1, messageComboBox.SelectedIndex);
                     Assert.AreEqual(0, actionButtonComboBox.SelectedIndex);
+                    Assert.AreEqual(new Thickness(), severityComboBox.Margin);
+                    Assert.AreEqual(new Thickness(), messageComboBox.Margin);
+                    Assert.AreEqual(new Thickness(), actionButtonComboBox.Margin);
+                    Assert.AreEqual(60d, ((StackPanel)severityComboBox.Parent).MinHeight);
+                    Assert.AreEqual(60d, ((StackPanel)messageComboBox.Parent).MinHeight);
+                    Assert.AreEqual(60d, ((StackPanel)actionButtonComboBox.Parent).MinHeight);
+
+                    foreach (var checkBox in new[]
+                    {
+                        FindNamedDescendant<CheckBox>(page, "InfoBarIsOpenCheckBox1"),
+                        FindNamedDescendant<CheckBox>(page, "InfoBarIsOpenCheckBox2"),
+                        FindNamedDescendant<CheckBox>(page, "InfoBarIsOpenCheckBox3"),
+                        FindNamedDescendant<CheckBox>(page, "InfoBarIsIconVisibleCheckBox"),
+                        FindNamedDescendant<CheckBox>(page, "InfoBarIsClosableCheckBox")
+                    })
+                    {
+                        Assert.IsNotNull(checkBox);
+                        Assert.AreEqual(new Thickness(), checkBox.Margin);
+                    }
 
                     severityComboBox.SelectedItem = "Error";
                     WpfTestHost.DoEvents();
@@ -1046,6 +1424,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Different InfoBadge Styles", page.Examples[1].HeaderText);
                     Assert.AreEqual("Placing an InfoBadge Inside Another Control", page.Examples[2].HeaderText);
                     Assert.AreEqual("InfoBadge with Dynamic Value", page.Examples[3].HeaderText);
+                    Assert.IsTrue(page.Examples.All(example =>
+                        example.HorizontalContentAlignment == HorizontalAlignment.Stretch &&
+                        example.VerticalContentAlignment == VerticalAlignment.Top));
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "Inbox, 5 notifications");
                     StringAssert.Contains(page.Examples[0].XamlCode, "infoBadge1");
@@ -1230,6 +1611,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Do work", progressToggle.OffContent);
                     Assert.AreEqual("Working", progressToggle.OnContent);
                     Assert.AreEqual(200.0, backgroundComboBox1.Width);
+                    Assert.AreEqual(
+                        "Pick a color",
+                        ModernWpf.Controls.Primitives.ControlHelper.GetPlaceholderText(backgroundComboBox1));
                     Assert.AreEqual("Transparent", backgroundComboBox1.Items[0]);
                     Assert.AreEqual("LightGray", backgroundComboBox1.Items[1]);
                     Assert.AreEqual(Brushes.Transparent, progressRing1Host.Background);
@@ -1253,6 +1637,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(Mux.NumberBoxSpinButtonPlacementMode.Inline, progressValue.SpinButtonPlacementMode);
                     Assert.AreEqual(0.0, progressValue.Value);
                     Assert.AreEqual(200.0, backgroundComboBox2.Width);
+                    Assert.AreEqual(
+                        "Pick a color",
+                        ModernWpf.Controls.Primitives.ControlHelper.GetPlaceholderText(backgroundComboBox2));
                     Assert.AreEqual("Transparent", backgroundComboBox2.Items[0]);
                     Assert.AreEqual("LightGray", backgroundComboBox2.Items[1]);
                     Assert.AreEqual(Brushes.Transparent, progressRing2Host.Background);
@@ -1418,6 +1805,7 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.AreEqual(1, page.Examples.Count);
                     Assert.AreEqual("AnnotatedScrollBar linked to a ScrollView.", page.Examples[0].HeaderText);
+                    Assert.AreEqual(448d, page.Examples[0].OptionsMaxWidth);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "ScrollView x:Name=\"scrollView\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "AnnotatedScrollBar x:Name=\"annotatedScrollBar\"");
@@ -1497,6 +1885,19 @@ namespace ModernWpf.Gallery.Tests
                             textBlock.ActualWidth,
                             textBlock.ActualHeight))
                         .ToList();
+                    labelDiagnostics.AddRange(FindDescendants<ContentPresenter>(annotatedScrollBar)
+                        .Where(presenter => presenter.Content is Mux.AnnotatedScrollBarLabel)
+                        .Select(presenter =>
+                        {
+                            var label = (Mux.AnnotatedScrollBarLabel)presenter.Content;
+                            return string.Format(
+                                "Container({0}):{1}:Top={2}:Actual={3}x{4}",
+                                label.Content,
+                                presenter.Visibility,
+                                presenter.Margin.Top,
+                                presenter.ActualWidth,
+                                presenter.ActualHeight);
+                        }));
                     var allLabelTexts = FindDescendants<TextBlock>(annotatedScrollBar)
                         .Select(textBlock => textBlock.Text)
                         .Where(text => !string.IsNullOrEmpty(text))
@@ -1514,7 +1915,9 @@ namespace ModernWpf.Gallery.Tests
                         .ToList();
                     Assert.IsTrue(renderedLabelTexts.Contains("Azure"), string.Join("; ", labelDiagnostics));
                     Assert.IsTrue(renderedLabelTexts.Contains("Crimson"), string.Join("; ", labelDiagnostics));
-                    Assert.IsTrue(renderedLabelTexts.Count >= 3, string.Join("; ", labelDiagnostics));
+                    Assert.IsTrue(renderedLabelTexts.Contains("Cyan"), string.Join("; ", labelDiagnostics));
+                    Assert.IsTrue(renderedLabelTexts.Contains("Fuchsia"), string.Join("; ", labelDiagnostics));
+                    Assert.IsTrue(renderedLabelTexts.Contains("Gold"), string.Join("; ", labelDiagnostics));
 
                     var thumb = FindNamedDescendant<Border>(annotatedScrollBar, "PART_VerticalThumb");
                     Assert.IsNotNull(thumb);
@@ -1537,15 +1940,23 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(0, 10, 0, 0), heightSliderHost.Margin);
                     var optionsGrid = heightSliderHost.Parent as Grid;
                     Assert.IsNotNull(optionsGrid);
-                    var optionsHost = optionsGrid.Parent as Border;
-                    Assert.IsNotNull(optionsHost);
-                    Assert.AreEqual(new Thickness(0), optionsHost.Margin);
-                    Assert.AreEqual(new Thickness(16), optionsHost.Padding);
-                    Assert.AreEqual(new CornerRadius(4), optionsHost.CornerRadius);
-                    Assert.IsNotNull(optionsHost.Background);
+                    var optionsExplanation = optionsGrid.Children
+                        .OfType<TextBlock>()
+                        .Single(textBlock => textBlock.Text.StartsWith("Changing the AnnotatedScrollBar height", StringComparison.Ordinal));
+                    Assert.AreEqual(TextWrapping.NoWrap, optionsExplanation.TextWrapping);
+                    Assert.AreSame(page.Examples[0].OptionsContent, optionsGrid);
+                    var annotatedCard = FindDescendants<ControlExample>(page).Single();
+                    var optionsColumn = (ColumnDefinition)annotatedCard.Template.FindName("OptionsColumn", annotatedCard);
+                    Assert.AreEqual(448d, optionsColumn.MaxWidth);
+                    Assert.IsTrue(
+                        optionsExplanation.ActualWidth >= 395d,
+                        "The full WinUI explanation line must fit without clipping; actual " + optionsExplanation.ActualWidth);
                     Assert.IsTrue(heightSlider.IsSelectionRangeEnabled);
                     Assert.AreEqual(100.0, heightSlider.SelectionStart);
                     Assert.AreEqual(500.0, heightSlider.SelectionEnd);
+                    var valueFill = FindNamedDescendant<Border>(heightSlider, "PART_SelectionRange");
+                    Assert.IsNotNull(valueFill);
+                    Assert.IsTrue(valueFill.ActualWidth >= 390d, "The maximum-value slider fill must reach its visible thumb.");
 
                     heightSlider.Value = 250;
                     WpfTestHost.DoEvents();
@@ -1684,7 +2095,22 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(dropCheckBox);
                     Assert.IsNotNull(selectionModeComboBox);
                     Assert.IsNotNull(reverseFlowButton);
+                    Assert.IsTrue(double.IsNaN(control2.Width));
+                    Assert.AreEqual(new Thickness(), selectionModeComboBox.Margin);
+                    Assert.AreEqual(HorizontalAlignment.Left, selectionModeComboBox.HorizontalAlignment);
+                    var selectionModeBlock = (StackPanel)selectionModeComboBox.Parent;
+                    Assert.AreEqual(new Thickness(0, 12, 0, 0), selectionModeBlock.Margin);
+                    Assert.AreEqual(60d, selectionModeBlock.MinHeight);
+                    Assert.AreEqual(HorizontalAlignment.Left, selectionModeBlock.HorizontalAlignment);
+                    var propertyDescriptionBlocks = control2.Children.OfType<TextBlock>()
+                        .Where(textBlock => textBlock.MaxWidth == 150)
+                        .ToList();
+                    Assert.AreEqual(2, propertyDescriptionBlocks.Count);
+                    Assert.IsTrue(propertyDescriptionBlocks.All(textBlock => textBlock.Margin == new Thickness()));
+                    Assert.IsTrue(propertyDescriptionBlocks.All(textBlock =>
+                        textBlock.Inlines.OfType<LineBreak>().Count() == 1));
                     Assert.AreEqual(8, contentGridView.Items.Count);
+                    Assert.AreEqual(double.PositiveInfinity, contentGridView.MaxHeight);
                     Assert.IsFalse(contentGridView.IsItemClickEnabled);
                     Assert.AreEqual(FlowDirection.LeftToRight, contentGridView.FlowDirection);
                     Assert.AreEqual(SelectionMode.Single, contentGridView.SelectionMode);
@@ -1783,12 +2209,26 @@ namespace ModernWpf.Gallery.Tests
                     var deleteButton = FindNamedDescendant<Button>(page, "DeleteBtn");
                     var horizontalStack = FindNamedDescendant<RadioButton>(page, "HStackBtn");
                     var uniformGrid = FindNamedDescendant<RadioButton>(page, "HGridBtn");
+                    var basicOptions = (StackPanel)page.Examples[0].OptionsContent;
+                    var virtualizingOptions = (StackPanel)page.Examples[1].OptionsContent;
                     Assert.IsNotNull(repeater);
                     Assert.AreSame(repeater, namedRepeater);
                     Assert.IsNotNull(addButton);
                     Assert.IsNotNull(deleteButton);
                     Assert.IsNotNull(horizontalStack);
                     Assert.IsNotNull(uniformGrid);
+                    Assert.IsTrue(double.IsNaN(basicOptions.Width));
+                    Assert.IsTrue(double.IsNaN(virtualizingOptions.Width));
+                    Assert.AreEqual(new Thickness(0, 0, 0, 12), addButton.Margin);
+                    Assert.AreEqual(new Thickness(0, 0, 0, 12), deleteButton.Margin);
+                    Assert.AreEqual(HorizontalAlignment.Stretch, page.Examples[1].HorizontalContentAlignment);
+                    Assert.AreEqual(VerticalAlignment.Top, page.Examples[1].VerticalContentAlignment);
+                    var layoutRadioButtons = basicOptions.Children.OfType<Mux.RadioButtons>().Single();
+                    Assert.AreEqual("Layout", layoutRadioButtons.Header);
+                    Assert.AreEqual(3, layoutRadioButtons.Items.Count);
+                    var virtualizingLayoutRadioButtons = virtualizingOptions.Children.OfType<Mux.RadioButtons>().Single();
+                    Assert.AreEqual(1, virtualizingLayoutRadioButtons.SelectedIndex);
+                    Assert.AreEqual(2, virtualizingLayoutRadioButtons.Items.Count);
                     Assert.AreEqual(3, CountItems(repeater.ItemsSource));
                     Assert.IsInstanceOfType(repeater.Layout, typeof(Mux.StackLayout));
                     Assert.AreEqual(Orientation.Vertical, ((Mux.StackLayout)repeater.Layout).Orientation);
@@ -1829,10 +2269,111 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(500, CountItems(repeater2.ItemsSource));
                     Assert.AreEqual(9, CountItems(mixedRepeater.ItemsSource));
                     Assert.AreEqual(4, CountItems(outerRepeater.ItemsSource));
+                    Assert.AreEqual(0d, ((Mux.StackLayout)outerRepeater.Layout).Spacing);
                     Assert.AreEqual(20, CountItems(animatedRepeater.ItemsSource));
                     Assert.AreEqual(120, CountItems(recipeRepeater.ItemsSource));
+                    Assert.AreEqual("ActivityFeedLayout", repeater2.Layout.GetType().Name);
                     Assert.IsInstanceOfType(mixedRepeater.Layout, typeof(Mux.UniformGridLayout));
-                    Assert.IsInstanceOfType(recipeRepeater.Layout, typeof(Mux.UniformGridLayout));
+                    Assert.AreEqual("VariedImageSizeLayout", recipeRepeater.Layout.GetType().Name);
+                    Assert.AreEqual(
+                        200d,
+                        (double)recipeRepeater.Layout.GetType().GetProperty("Width").GetValue(recipeRepeater.Layout));
+
+                    var virtualizingScrollViewer = (ScrollViewer)FindByAutomationId(
+                        page,
+                        "GallerySample_ItemsRepeater_VirtualizingScrollViewer");
+                    Assert.IsNotNull(virtualizingScrollViewer);
+                    virtualizingScrollViewer.BringIntoView();
+                    WpfTestHost.DoEvents();
+                    page.UpdateLayout();
+                    WpfTestHost.DoEvents();
+                    WaitFor(() => repeater2.TryGetElement(5) != null);
+
+                    var activityItem0 = (FrameworkElement)repeater2.TryGetElement(0);
+                    var activityItem1 = (FrameworkElement)repeater2.TryGetElement(1);
+                    var activityItem2 = (FrameworkElement)repeater2.TryGetElement(2);
+                    var activityItem3 = (FrameworkElement)repeater2.TryGetElement(3);
+                    var activityItem4 = (FrameworkElement)repeater2.TryGetElement(4);
+                    var activityItem5 = (FrameworkElement)repeater2.TryGetElement(5);
+                    var activityBounds0 = GetRelativeBounds(activityItem0, repeater2);
+                    var activityBounds1 = GetRelativeBounds(activityItem1, repeater2);
+                    var activityBounds2 = GetRelativeBounds(activityItem2, repeater2);
+                    var activityBounds3 = GetRelativeBounds(activityItem3, repeater2);
+                    var activityBounds4 = GetRelativeBounds(activityItem4, repeater2);
+                    var activityBounds5 = GetRelativeBounds(activityItem5, repeater2);
+
+                    Assert.AreEqual(108d, activityBounds0.Height, 0.01);
+                    Assert.AreEqual(activityBounds0.Width, activityBounds1.Width, 0.01);
+                    Assert.AreEqual((activityBounds0.Width * 2) + 12d, activityBounds2.Width, 1.01);
+                    Assert.AreEqual(activityBounds0.Right + 12d, activityBounds1.Left, 1.01);
+                    Assert.AreEqual(activityBounds1.Right + 12d, activityBounds2.Left, 1.01);
+                    Assert.AreEqual(activityBounds2.Bottom + 12d, activityBounds3.Top, 0.01);
+                    Assert.AreEqual((activityBounds4.Width * 2) + 12d, activityBounds3.Width, 1.01);
+                    Assert.AreEqual(activityBounds4.Width, activityBounds5.Width, 0.01);
+
+                    var animatedScrollViewer = FindNamedDescendant<ScrollViewer>(page, "Animated_ScrollViewer");
+                    Assert.IsNotNull(animatedScrollViewer);
+                    animatedScrollViewer.BringIntoView();
+                    WpfTestHost.DoEvents();
+                    page.UpdateLayout();
+                    WpfTestHost.DoEvents();
+                    WaitFor(() => animatedRepeater.TryGetElement(4) != null);
+
+                    var realizedAnimatedElements = Enumerable.Range(0, 20)
+                        .Select(animatedRepeater.TryGetElement)
+                        .OfType<FrameworkElement>()
+                        .ToList();
+                    Assert.IsTrue(
+                        realizedAnimatedElements.Count >= 5,
+                        $"The 175 px animated viewport realized only {realizedAnimatedElements.Count} color buttons.");
+                    Assert.IsTrue(realizedAnimatedElements.All(element => element.Margin == new Thickness()));
+                    var animatedScales = realizedAnimatedElements
+                        .Select(element => element.RenderTransform as ScaleTransform)
+                        .Where(transform => transform != null)
+                        .Select(transform => transform.ScaleX)
+                        .ToList();
+                    Assert.AreEqual(realizedAnimatedElements.Count, animatedScales.Count);
+                    Assert.IsTrue(
+                        animatedScales.Max() - animatedScales.Min() > 0.1,
+                        "Animated repeater items should scale by their distance from the viewport center.");
+
+                    var recipeTracker = FindNamedDescendant<Mux.ItemsRepeaterScrollHost>(page, "tracker");
+                    Assert.IsNotNull(recipeTracker);
+                    recipeTracker.BringIntoView();
+                    WpfTestHost.DoEvents();
+                    page.UpdateLayout();
+                    WpfTestHost.DoEvents();
+                    WaitFor(() => recipeRepeater.TryGetElement(2) != null);
+                    var realizedRecipes = Enumerable.Range(0, 6)
+                        .Select(recipeRepeater.TryGetElement)
+                        .OfType<FrameworkElement>()
+                        .ToList();
+                    Assert.IsTrue(realizedRecipes.Count >= 3);
+                    Assert.IsTrue(
+                        realizedRecipes.All(recipe => Math.Abs(LayoutInformation.GetLayoutSlot(recipe).Width - 200d) < 0.01),
+                        "The custom varied-size layout should assign each recipe a 200 px layout slot.");
+                    Assert.IsTrue(
+                        realizedRecipes.Select(recipe => Math.Round(recipe.ActualHeight, 2)).Distinct().Count() > 1,
+                        "The content-heavy sample should preserve varied recipe heights.");
+
+                    var firstCategory = outerRepeater.TryGetElement(0);
+                    Assert.IsNotNull(firstCategory);
+                    var innerRepeater = FindNamedDescendant<Mux.ItemsRepeater>(firstCategory, "innerRepeater");
+                    Assert.IsNotNull(innerRepeater);
+                    Assert.AreEqual(0d, ((Mux.StackLayout)innerRepeater.Layout).Spacing);
+                    WaitFor(() => innerRepeater.TryGetElement(0) != null);
+                    var firstNestedItem = innerRepeater.TryGetElement(0);
+                    var apricotsText = FindDescendants<TextBlock>(firstNestedItem)
+                        .Single(textBlock => textBlock.Text == "Apricots");
+                    var nestedItemGrid = firstNestedItem as Grid ?? FindDescendants<Grid>(firstNestedItem)
+                        .First(grid => grid.Background != null);
+                    Assert.IsTrue(
+                        apricotsText.ActualWidth >= 60,
+                        $"The nested ItemsRepeater clipped 'Apricots' to {apricotsText.ActualWidth:0.##} px.");
+                    Assert.IsTrue(
+                        nestedItemGrid.ActualWidth >= apricotsText.ActualWidth,
+                        $"The nested item background is {nestedItemGrid.ActualWidth:0.##} px wide while its text is {apricotsText.ActualWidth:0.##} px wide " +
+                        $"(item type {firstNestedItem.GetType().Name}, item width {firstNestedItem.RenderSize.Width:0.##}, text desired width {apricotsText.DesiredSize.Width:0.##}).");
 
                     filterRecipes.Text = "Garlic";
                     WpfTestHost.DoEvents();
@@ -2225,6 +2766,12 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("\u03A3", ((Mux.FontIcon)fontButton.Icon).Glyph);
                     Assert.AreEqual("PathIcon", pathButton.Label);
                     Assert.IsInstanceOfType(pathButton.Content, typeof(Viewbox));
+                    var pathViewbox = (Viewbox)pathButton.Content;
+                    Assert.AreEqual(20d, pathViewbox.Width);
+                    Assert.AreEqual(20d, pathViewbox.Height);
+                    Assert.IsInstanceOfType(pathViewbox.Child, typeof(Mux.PathIcon));
+                    Assert.IsTrue(pathViewbox.Child.RenderSize.Width > 0);
+                    Assert.IsTrue(pathViewbox.Child.RenderSize.Height > 0);
                     Assert.AreEqual("Save", acceleratorButton.Label);
                     Assert.AreEqual("Ctrl+S", acceleratorButton.InputGestureText);
                     Assert.AreEqual("Edit", flyoutButton.Label);
@@ -2286,6 +2833,13 @@ namespace ModernWpf.Gallery.Tests
                     StringAssert.Contains(((Mux.BitmapIcon)bitmapToggleButton.Icon).UriSource.ToString(), "Slices2.png");
                     Assert.AreEqual("\u03A3", ((Mux.FontIcon)fontToggleButton.Icon).Glyph);
                     Assert.IsTrue(pathToggleButton.IsThreeState);
+                    Assert.IsInstanceOfType(pathToggleButton.Content, typeof(Viewbox));
+                    var pathToggleViewbox = (Viewbox)pathToggleButton.Content;
+                    Assert.AreEqual(20d, pathToggleViewbox.Width);
+                    Assert.AreEqual(20d, pathToggleViewbox.Height);
+                    Assert.IsInstanceOfType(pathToggleViewbox.Child, typeof(Mux.PathIcon));
+                    Assert.IsTrue(pathToggleViewbox.Child.RenderSize.Width > 0);
+                    Assert.IsTrue(pathToggleViewbox.Child.RenderSize.Height > 0);
 
                     var toggleOutput = FindNamedDescendant<TextBlock>(appBarToggleButtonPage, "Control1Output");
                     symbolToggleButton.IsChecked = true;
@@ -2398,7 +2952,7 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
 
                     Assert.AreEqual(2, page.Examples.Count);
-                    Assert.AreEqual("A SplitButton controlling text color in a RichTextBox", page.Examples[0].HeaderText);
+                    Assert.AreEqual("A SplitButton controlling text color in a RichEditBox", page.Examples[0].HeaderText);
                     Assert.AreEqual("A SplitButton with text", page.Examples[1].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "myColorButton");
@@ -2468,7 +3022,7 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
 
                     Assert.AreEqual(1, page.Examples.Count);
-                    Assert.AreEqual("Using ToggleSplitButton to control bulleted list functionality in RichTextBox", page.Examples[0].HeaderText);
+                    Assert.AreEqual("Using ToggleSplitButton to control bulleted list functionality in RichEditBox", page.Examples[0].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "myListButton");
                     StringAssert.Contains(page.Examples[0].XamlCode, "Symbol=\"List\"");
@@ -2539,6 +3093,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(2, page.Examples.Count);
                     Assert.AreEqual("A hyperlink button that navigates to a URI.", page.Examples[0].HeaderText);
                     Assert.AreEqual("A hyperlink button that handles a Click event.", page.Examples[1].HeaderText);
+                    Assert.AreEqual(new Thickness(0, 16, 0, 0), page.Examples[1].Margin);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     Assert.AreEqual("<HyperlinkButton Content=\"Microsoft home page\" NavigateUri=\"https://www.microsoft.com\" $(IsEnabled)/>", page.Examples[0].XamlCode);
                     Assert.AreEqual("<HyperlinkButton Content=\"ToggleButton\" Click=\"HyperlinkButton_Click\"/>", page.Examples[1].XamlCode);
@@ -2766,6 +3321,10 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("A simple RatingControl", page.Examples[0].HeaderText);
                     Assert.AreEqual("PlaceholderValue of RatingControl", page.Examples[1].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    Assert.IsNotNull(page.Examples[0].OutputContent);
+                    Assert.IsNotNull(page.Examples[0].OptionsContent);
+                    Assert.IsNull(page.Examples[1].OutputContent);
+                    Assert.IsNotNull(page.Examples[1].OptionsContent);
                     StringAssert.Contains(page.Examples[0].XamlCode, "AutomationProperties.Name=\"Simple RatingControl\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "IsClearEnabled=\"$(IsClearEnabled)\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "IsReadOnly=\"$(IsReadOnly)\"");
@@ -2793,10 +3352,11 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsFalse(rating.IsReadOnly);
 
                     var firstExampleRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
-                    var firstLayout = (Grid)firstExampleRoot.Children[0];
-                    var output = (TextBlock)firstLayout.Children[1];
+                    var ratingStack = (StackPanel)firstExampleRoot.Children[0];
+                    var output = (TextBlock)page.Examples[0].OutputContent;
+                    Assert.AreSame(rating, ratingStack.Children[0]);
                     Assert.AreEqual(FontWeights.Bold, output.FontWeight);
-                    Assert.AreEqual(new Thickness(0, 12, 0, 0), output.Margin);
+                    Assert.AreEqual(new Thickness(0), output.Margin);
                     Assert.AreEqual(rating.Value.ToString(CultureInfo.InvariantCulture), output.Text);
 
                     clearEnabledCheck.IsChecked = true;
@@ -2826,10 +3386,14 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(5, slider.Maximum);
                     Assert.AreEqual(0.5, slider.SmallChange);
                     Assert.AreEqual(0.5, slider.TickFrequency);
+                    Assert.IsTrue(slider.IsSelectionRangeEnabled);
+                    Assert.AreEqual(0d, slider.SelectionStart);
+                    Assert.AreEqual(0d, slider.SelectionEnd);
 
                     slider.Value = 2.5;
                     WpfTestHost.DoEvents();
                     Assert.AreEqual(2.5, placeholderRating.PlaceholderValue);
+                    Assert.AreEqual(2.5, slider.SelectionEnd);
                 }
                 finally
                 {
@@ -2936,21 +3500,35 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(1, page.Examples.Count);
                     Assert.AreEqual("A simple ToggleButton with text content.", page.Examples[0].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
+                    Assert.IsNotNull(page.Examples[0].OutputContent);
+                    Assert.IsNotNull(page.Examples[0].OptionsContent);
                     Assert.AreEqual("<ToggleButton Content=\"ToggleButton\" Click=\"Button_Click\" $(IsEnabled)/>", page.Examples[0].XamlCode);
                     Assert.IsNull(page.Examples[0].CSharpCode);
 
                     var button = (ToggleButton)FindByAutomationId(page, "GallerySample_ToggleButton_ToggleButton");
                     var output = FindNamedDescendant<TextBlock>(page, "Control1Output");
+                    var disableToggle = FindNamedDescendant<CheckBox>(page, "DisableToggle1");
                     Assert.IsNotNull(button);
                     Assert.IsNotNull(output);
+                    Assert.IsNotNull(disableToggle);
+                    Assert.AreSame(output, page.Examples[0].OutputContent);
+                    Assert.AreSame(disableToggle, ((StackPanel)page.Examples[0].OptionsContent).Children[0]);
 
                     Assert.AreEqual("Toggle1", button.Name);
                     Assert.AreEqual("ToggleButton", button.Content);
                     Assert.AreEqual(false, button.IsChecked);
                     Assert.AreEqual("Control1Output", output.Name);
-                    Assert.AreEqual(new Thickness(0, 12, 0, 0), output.Margin);
+                    Assert.AreEqual(new Thickness(0), output.Margin);
                     Assert.AreEqual("GallerySample_ToggleButton_Output", AutomationProperties.GetAutomationId(output));
                     Assert.AreEqual("Off", output.Text);
+                    Assert.AreEqual("Disable ToggleButton", disableToggle.Content);
+
+                    disableToggle.IsChecked = true;
+                    WpfTestHost.DoEvents();
+                    Assert.IsFalse(button.IsEnabled);
+                    disableToggle.IsChecked = false;
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(button.IsEnabled);
 
                     var buttonPeer = new ToggleButtonAutomationPeer(button);
                     Assert.AreEqual("ToggleButton", buttonPeer.GetName());
@@ -3179,6 +3757,7 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.AreEqual("NumberBoxSpinButtonPlacementExample", spinButtonBox.Name);
                     Assert.AreEqual(132.0, spinButtonBox.Width);
+                    Assert.AreEqual(HorizontalAlignment.Left, spinButtonBox.HorizontalAlignment);
                     Assert.AreEqual("NumberBox with spin button", AutomationProperties.GetName(spinButtonBox));
                     Assert.AreEqual("Enter an integer:", spinButtonBox.Header);
                     Assert.AreEqual(10.0, spinButtonBox.Value);
@@ -3236,8 +3815,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("A basic SplitView.", page.Examples[0].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     var exampleRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
-                    Assert.AreEqual(Orientation.Horizontal, exampleRoot.Orientation);
-                    Assert.AreEqual(24d, ((FrameworkElement)exampleRoot.Children[1]).Margin.Left);
+                    Assert.AreEqual(1, exampleRoot.Children.Count);
+                    Assert.IsInstanceOfType(page.Examples[0].OptionsContent, typeof(StackPanel));
                     StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"splitView\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "PaneBackground=\"$(PaneBackground)\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "NavLinksList");
@@ -3284,9 +3863,17 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(196d, openPaneLength.Width);
                     Assert.AreEqual(128d, openPaneLength.Minimum);
                     Assert.AreEqual(500d, openPaneLength.Maximum);
+                    Assert.IsTrue(openPaneLength.IsSelectionRangeEnabled);
+                    Assert.AreEqual(openPaneLength.Minimum, openPaneLength.SelectionStart);
+                    Assert.AreEqual(openPaneLength.Value, openPaneLength.SelectionEnd);
                     Assert.AreEqual(196d, compactPaneLength.Width);
                     Assert.AreEqual(24d, compactPaneLength.Minimum);
                     Assert.AreEqual(128d, compactPaneLength.Maximum);
+                    Assert.AreEqual(new Thickness(0, 4, 0, 0), ((StackPanel)compactPaneLength.Parent).Margin);
+                    Assert.AreEqual(new Thickness(0, 12, 0, 0), placement.Margin);
+                    Assert.IsTrue(compactPaneLength.IsSelectionRangeEnabled);
+                    Assert.AreEqual(compactPaneLength.Minimum, compactPaneLength.SelectionStart);
+                    Assert.AreEqual(compactPaneLength.Value, compactPaneLength.SelectionEnd);
 
                     navLinksList.SelectedIndex = 1;
                     WpfTestHost.DoEvents();
@@ -3333,9 +3920,10 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Select different looks for the person picture.", page.Examples[0].HeaderText);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     var exampleRoot = (GallerySamplePanel)page.Examples[0].ExampleContent;
-                    Assert.AreEqual(Orientation.Horizontal, exampleRoot.Orientation);
-                    Assert.AreEqual(24d, ((FrameworkElement)exampleRoot.Children[1]).Margin.Left);
+                    Assert.AreEqual(1, exampleRoot.Children.Count);
+                    Assert.IsInstanceOfType(page.Examples[0].OptionsContent, typeof(StackPanel));
                     StringAssert.Contains(page.Examples[0].XamlCode, "x:Name=\"personPicture\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Height=\"300\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "ProfileImageRadio");
                     StringAssert.Contains(page.Examples[0].XamlCode, "$(ProfilePicture)$(DisplayName)$(Initials)");
                     StringAssert.Contains(page.Examples[0].CSharpCode, "personPicture.ProfilePicture");
@@ -3355,6 +3943,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("personPicture", personPicture.Name);
                     Assert.AreEqual(96d, personPicture.Width);
                     Assert.AreEqual(96d, personPicture.Height);
+                    Assert.AreEqual(96d, personPicture.ActualWidth);
+                    Assert.AreEqual(96d, personPicture.ActualHeight);
+                    Assert.AreEqual(HorizontalAlignment.Left, personPicture.HorizontalAlignment);
                     Assert.AreEqual(0, profileType.SelectedIndex);
                     Assert.AreEqual("Profile Image", profileImageRadio.Content);
                     Assert.AreEqual("Display Name", displayNameRadio.Content);
@@ -3483,6 +4074,23 @@ namespace ModernWpf.Gallery.Tests
                     var svgIcon = (Mux.ImageIcon)svgButton.Content;
                     Assert.AreEqual(50d, svgIcon.Width);
                     Assert.IsInstanceOfType(svgIcon.Source, typeof(DrawingImage));
+                    var svgDrawing = (DrawingGroup)((DrawingImage)svgIcon.Source).Drawing;
+                    Assert.AreEqual(2, svgDrawing.Children.Count);
+                    var svgContent = (DrawingGroup)svgDrawing.Children[1];
+                    Assert.AreEqual(new Matrix(0.3, 0, 0, 0.3, -0.2, -0.5), ((MatrixTransform)svgContent.Transform).Matrix);
+                    CollectionAssert.AreEqual(
+                        new[]
+                        {
+                            Color.FromRgb(0xF5, 0x7C, 0x00),
+                            Color.FromRgb(0x94, 0x2A, 0x09),
+                            Color.FromRgb(0xBF, 0x36, 0x0C),
+                            Color.FromRgb(0xE6, 0x51, 0x00),
+                            Color.FromRgb(0xFF, 0xF9, 0xC4)
+                        },
+                        svgContent.Children
+                            .OfType<GeometryDrawing>()
+                            .Select(child => ((SolidColorBrush)child.Brush).Color)
+                            .ToArray());
 
                     var pathButton = (Button)FindByAutomationId(page, "GallerySample_IconElement_Example1Button");
                     Assert.IsNotNull(pathButton);
@@ -3591,6 +4199,23 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(1d, slider.SmallChange);
                     Assert.AreEqual(1d, slider.TickFrequency);
                     Assert.AreEqual(32d, slider.Value);
+                    Assert.IsTrue(slider.IsSelectionRangeEnabled);
+                    Assert.AreEqual(0d, slider.SelectionStart);
+                    Assert.AreEqual(32d, slider.SelectionEnd);
+                    var selectionRange = FindNamedDescendant<Border>(slider, "PART_SelectionRange");
+                    Assert.IsNotNull(selectionRange);
+                    Assert.AreEqual(Visibility.Visible, selectionRange.Visibility);
+                    var sliderTrack = FindNamedDescendant<Track>(slider, "PART_Track");
+                    var selectionRangeCanvas = (Canvas)selectionRange.Parent;
+                    Assert.IsTrue(
+                        selectionRange.ActualWidth > 80d,
+                        "ThemeShadow's value fill must be visibly rendered; range actual/declared width " +
+                        selectionRange.ActualWidth + "/" + selectionRange.Width +
+                        ", left " + Canvas.GetLeft(selectionRange) +
+                        ", parent " + selectionRange.Parent.GetType().FullName +
+                        ", canvas " + selectionRangeCanvas.ActualWidth + "x" + selectionRangeCanvas.ActualHeight +
+                        ", track/thumb " + sliderTrack.ActualWidth + "/" + sliderTrack.Thumb.ActualWidth +
+                        ", start/end " + slider.SelectionStart + "/" + slider.SelectionEnd);
 
                     var beforeRootBounds = GetRelativeBounds(root, page);
                     var beforeGridBounds = GetRelativeBounds(exampleGrid, page);
@@ -3665,8 +4290,6 @@ namespace ModernWpf.Gallery.Tests
                     WindowStartupLocation = WindowStartupLocation.Manual,
                     Content = page
                 };
-                Window dragRegionsWindow = null;
-
                 try
                 {
                     window.Show();
@@ -3680,13 +4303,16 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(0, 12, 0, 0), intro.Margin);
                     Assert.AreEqual(TextWrapping.Wrap, intro.TextWrapping);
                     Assert.AreEqual(
-                        "Use the TitleBar control and ModernWpf title bar attached properties for WPF title bar customization.",
+                        "For full title bar customization without using the TitleBar control, see the AppWindowTitleBar sample",
                         new TextRange(intro.ContentStart, intro.ContentEnd).Text.Trim());
 
-                    Assert.AreEqual(3, page.Examples.Count);
+                    Assert.AreEqual(2, page.Examples.Count);
                     Assert.AreEqual("TitleBar configuration", page.Examples[0].HeaderText);
-                    Assert.AreEqual("TitleBar drag regions", page.Examples[1].HeaderText);
-                    Assert.AreEqual("End to end TitleBar sample", page.Examples[2].HeaderText);
+                    Assert.AreEqual("End to end TitleBar sample", page.Examples[1].HeaderText);
+                    Assert.AreEqual(HorizontalAlignment.Stretch, page.Examples[0].HorizontalContentAlignment);
+                    Assert.AreEqual(VerticalAlignment.Center, page.Examples[0].VerticalContentAlignment);
+                    Assert.AreEqual(HorizontalAlignment.Stretch, page.Examples[1].HorizontalContentAlignment);
+                    Assert.AreEqual(VerticalAlignment.Center, page.Examples[1].VerticalContentAlignment);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "<TitleBar");
                     StringAssert.Contains(page.Examples[0].XamlCode, "Title=\"$(Title)\"");
@@ -3694,29 +4320,35 @@ namespace ModernWpf.Gallery.Tests
                     StringAssert.Contains(page.Examples[0].XamlCode, "IsBackButtonVisible=\"$(BackButtonVisibility)\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "IsPaneToggleButtonVisible=\"$(PaneToggleVisibility)\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "<ImageIconSource ImageSource=\"/Assets/Tiles/GalleryIcon.ico\" />");
-                    StringAssert.Contains(page.Examples[0].XamlCode, "TitleBarContentHorizontalAlignment");
-                    StringAssert.Contains(page.Examples[0].XamlCode, "MaxWidth=\"580\"");
-                    StringAssert.Contains(page.Examples[0].XamlCode, "PlaceholderText=\"Search...\"");
+                    Assert.IsFalse(page.Examples[0].XamlCode.Contains("TitleBarContentHorizontalAlignment"));
+                    StringAssert.Contains(page.Examples[0].XamlCode, "Width=\"360\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "PlaceholderText=\"Search..\"");
                     Assert.IsNull(page.Examples[0].CSharpCode);
-                    StringAssert.Contains(page.Examples[1].XamlCode, "TitleBar.IsDragRegion");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "x:Name=\"StatusBadge\"");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "PlaceholderText=\"Search...\"");
-                    StringAssert.Contains(page.Examples[1].CSharpCode, "TitleBar.SetIsDragRegion(StatusBadge, true)");
-                    StringAssert.Contains(page.Examples[1].CSharpCode, "titleBar.RecomputeDragRegions();");
-                    StringAssert.Contains(page.Examples[2].XamlCode, "x:Name=\"titleBar\"");
-                    StringAssert.Contains(page.Examples[2].XamlCode, "PaneToggleRequested=\"TitleBar_PaneToggleRequested\"");
-                    StringAssert.Contains(page.Examples[2].XamlCode, "<NavigationView");
-                    StringAssert.Contains(page.Examples[2].CSharpCode, "this.ExtendsContentIntoTitleBar = true;");
-                    StringAssert.Contains(page.Examples[2].CSharpCode, "this.SetTitleBar(titleBar);");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "x:Name=\"titleBar\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "PaneToggleRequested=\"TitleBar_PaneToggleRequested\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "<NavigationView");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "this.ExtendsContentIntoTitleBar = true;");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "this.SetTitleBar(titleBar);");
 
                     var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
                     Assert.AreEqual(1, root.Children.Count);
+                    Assert.AreEqual(VerticalAlignment.Center, root.VerticalAlignment);
                     var titleBarControl = (ContentControl)FindByAutomationId(page, "GallerySample_TitleBar_TitleBarControl");
                     Assert.IsNotNull(titleBarControl);
                     Assert.AreEqual("TitleBarControl", titleBarControl.Name);
                     Assert.AreEqual(470d, titleBarControl.Width);
                     Assert.AreEqual(48d, titleBarControl.Height);
                     Assert.AreEqual("TitleBarControl", AutomationProperties.GetName(titleBarControl));
+                    var configurationCard = FindDescendants<ControlExample>(page)
+                        .Single(example => example.HeaderText == "TitleBar configuration");
+                    Assert.IsTrue(configurationCard.UseWinUIGalleryLayout);
+                    var configurationDisplay = (Border)configurationCard.Template.FindName("ExampleDisplayBorder", configurationCard);
+                    var titleBarBoundsInDisplay = GetRelativeBounds(titleBarControl, configurationDisplay);
+                    Assert.AreEqual(
+                        configurationDisplay.ActualHeight / 2d,
+                        titleBarBoundsInDisplay.Top + titleBarBoundsInDisplay.Height / 2d,
+                        1d,
+                        "The TitleBar preview must remain vertically centered beside its taller options panel.");
                     var titleBarSurface = FindNamedDescendant<Border>(titleBarControl, "TitleBarSurface");
                     Assert.IsNotNull(titleBarSurface);
                     Assert.AreEqual(new Thickness(-1), titleBarSurface.Margin);
@@ -3731,7 +4363,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(titleBarSearchBox);
                     Assert.AreEqual(186d, titleBarSearchBox.Width);
                     Assert.AreEqual(new Thickness(0, 0, 16, 0), titleBarSearchBox.Margin);
-                    Assert.AreEqual("Search...", titleBarSearchBox.PlaceholderText);
+                    Assert.AreEqual("Search..", titleBarSearchBox.PlaceholderText);
                     var rightHeader = FindNamedDescendant<Mux.PersonPicture>(titleBarControl, "TitleBarRightHeader");
                     Assert.IsNotNull(rightHeader);
                     Assert.AreEqual(30d, rightHeader.Width);
@@ -3742,10 +4374,23 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(titleBox);
                     Assert.AreEqual("Title", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(titleBox));
                     Assert.AreEqual("WinUI Gallery", titleBox.Text);
+                    var titleHeader = FindNamedDescendant<TextBlock>(page, "TitleHeader");
+                    Assert.IsNotNull(titleHeader);
+                    Assert.AreEqual("Title", titleHeader.Text);
+                    Assert.AreEqual(new Thickness(0, 0, 0, 8), titleHeader.Margin);
+                    Assert.IsTrue(titleHeader.ActualWidth > 0);
+                    Assert.IsTrue(titleHeader.ActualHeight > 0);
                     var subtitleBox = FindNamedDescendant<TextBox>(page, "SubtitleBox");
                     Assert.IsNotNull(subtitleBox);
                     Assert.AreEqual("Subtitle", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(subtitleBox));
                     Assert.AreEqual("Preview", subtitleBox.Text);
+                    Assert.AreEqual(new Thickness(), subtitleBox.Margin);
+                    var subtitleHeader = FindNamedDescendant<TextBlock>(page, "SubtitleHeader");
+                    Assert.IsNotNull(subtitleHeader);
+                    Assert.AreEqual("Subtitle", subtitleHeader.Text);
+                    Assert.AreEqual(new Thickness(0, 12, 0, 8), subtitleHeader.Margin);
+                    Assert.IsTrue(subtitleHeader.ActualWidth > 0);
+                    Assert.IsTrue(subtitleHeader.ActualHeight > 0);
                     var backButtonToggle = FindNamedDescendant<Mux.ToggleSwitch>(page, "BackButtonToggle");
                     Assert.IsNotNull(backButtonToggle);
                     Assert.AreEqual("IsBackButtonVisible", backButtonToggle.Header);
@@ -3754,6 +4399,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(paneToggle);
                     Assert.AreEqual("IsPaneToggleButtonVisible", paneToggle.Header);
                     Assert.IsFalse(paneToggle.IsOn);
+                    Assert.AreEqual(280d, ((FrameworkElement)titleHeader.Parent).ActualHeight, 0.01);
                     var previewBackButton = (Button)FindByAutomationId(page, "GallerySample_TitleBar_BackButton");
                     Assert.IsNotNull(previewBackButton);
                     Assert.AreEqual(Visibility.Collapsed, previewBackButton.Visibility);
@@ -3771,66 +4417,26 @@ namespace ModernWpf.Gallery.Tests
                     WpfTestHost.DoEvents();
                     Assert.AreEqual(Visibility.Visible, previewBackButton.Visibility);
 
-                    var dragRegionsRoot = (GallerySamplePanel)page.Examples[1].ExampleContent;
-                    Assert.AreEqual(1, dragRegionsRoot.Children.Count);
-                    var dragRegionsShowWindowButton = (Button)FindByAutomationId(
-                        page,
-                        "GallerySample_TitleBar_DragRegionsShowWindowButton");
-                    Assert.IsNotNull(dragRegionsShowWindowButton);
-                    Assert.AreEqual("ShowTitleBarDragRegionsWindowButton", dragRegionsShowWindowButton.Name);
-                    Assert.AreSame(
-                        dragRegionsShowWindowButton.TryFindResource("AccentButtonStyle"),
-                        dragRegionsShowWindowButton.Style);
-
-                    dragRegionsShowWindowButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                    WpfTestHost.DoEvents();
-                    dragRegionsWindow = Application.Current.Windows
-                        .OfType<Window>()
-                        .Single(candidate => candidate.Title == "TitleBar drag regions sample");
-                    Assert.IsTrue(Mux.TitleBar.GetExtendViewIntoTitleBar(dragRegionsWindow));
-                    Assert.IsFalse(Mux.TitleBar.GetIsIconVisible(dragRegionsWindow));
-
-                    var dragRegionOptions = FindNamedDescendant<Mux.RadioButtons>(
-                        dragRegionsWindow,
-                        "BadgeIsDragRegionRadios");
-                    Assert.AreEqual(0, dragRegionOptions.SelectedIndex);
-                    Assert.AreEqual(3, dragRegionOptions.Items.Count);
-                    StringAssert.StartsWith((string)dragRegionOptions.Items[0], "Unset");
-                    StringAssert.StartsWith((string)dragRegionOptions.Items[1], "True");
-                    StringAssert.StartsWith((string)dragRegionOptions.Items[2], "False");
-
-                    var statusBadge = FindNamedDescendant<Button>(dragRegionsWindow, "StatusBadge");
-                    var statusText = FindNamedDescendant<TextBlock>(dragRegionsWindow, "StatusText");
-                    statusBadge.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                    Assert.AreEqual("Status badge clicked", statusText.Text);
-
-                    var rightHeaderPanel = FindNamedDescendant<StackPanel>(dragRegionsWindow, "RightHeaderPanel");
-                    var toggleExtraButton = FindNamedDescendant<Button>(
-                        dragRegionsWindow,
-                        "ToggleExtraTitleBarButton");
-                    toggleExtraButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                    Assert.IsTrue(rightHeaderPanel.Children.OfType<Button>()
-                        .Any(candidate => candidate.Name == "ExtraTitleBarButton"));
-                    StringAssert.StartsWith(statusText.Text, "Added a Button");
-
-                    var recomputeButton = FindNamedDescendant<Button>(
-                        dragRegionsWindow,
-                        "RecomputeDragRegionsButton");
-                    recomputeButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-                    StringAssert.Contains(statusText.Text, "no explicit recomputation is required");
-
-                    var endToEndRoot = (GallerySamplePanel)page.Examples[2].ExampleContent;
+                    var endToEndRoot = (GallerySamplePanel)page.Examples[1].ExampleContent;
                     Assert.AreEqual(1, endToEndRoot.Children.Count);
+                    var endToEndStack = (StackPanel)endToEndRoot.Children[0];
+                    Assert.AreEqual(560d, endToEndStack.MaxWidth);
+                    Assert.AreEqual(HorizontalAlignment.Center, endToEndStack.HorizontalAlignment);
+                    var endToEndCard = FindDescendants<ControlExample>(page)
+                        .Single(example => example.HeaderText == "End to end TitleBar sample");
+                    var endToEndDisplay = (Border)endToEndCard.Template.FindName("ExampleDisplayBorder", endToEndCard);
+                    var endToEndBoundsInDisplay = GetRelativeBounds(endToEndStack, endToEndDisplay);
+                    Assert.AreEqual(
+                        endToEndDisplay.ActualWidth / 2d,
+                        endToEndBoundsInDisplay.Left + endToEndBoundsInDisplay.Width / 2d,
+                        1d,
+                        "The end-to-end TitleBar content must remain horizontally centered like the WinUI Gallery sample.");
                     var showWindowButton = FindButtonByContent(endToEndRoot, "Show window");
                     Assert.IsNotNull(showWindowButton);
                     Assert.AreSame(showWindowButton.TryFindResource("AccentButtonStyle"), showWindowButton.Style);
                 }
                 finally
                 {
-                    if (dragRegionsWindow != null)
-                    {
-                        dragRegionsWindow.Close();
-                    }
                     window.Content = null;
                     window.Close();
                     WpfTestHost.DoEvents();
@@ -3914,6 +4520,10 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(closeButton);
                     Assert.IsNotNull(addSecondaryCommandsButton);
                     Assert.IsNotNull(removeSecondaryCommandsButton);
+                    var commandBarOptions = removeSecondaryCommandsButton.Parent as StackPanel;
+                    Assert.IsNotNull(commandBarOptions);
+                    Assert.IsTrue(double.IsNaN(commandBarOptions.Width));
+                    Assert.IsTrue(removeSecondaryCommandsButton.ActualWidth >= removeSecondaryCommandsButton.DesiredSize.Width - 0.5);
 
                     openButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                     Assert.IsTrue(commandBar.IsOpen);
@@ -4464,6 +5074,86 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(new FileInfo(infoBarArtifact).Length > 0);
                     Assert.IsTrue(HasVisibleRgbPixels(infoBarArtifact), infoBarArtifact + " has no visible RGB content.");
                     Assert.IsTrue(HasVisibleRgbVariation(infoBarArtifact), infoBarArtifact + " has no visible RGB variation.");
+                }
+                finally
+                {
+                    window.Content = null;
+                    window.Close();
+                    GalleryDiagnostics.ResetForTests();
+                    if (Directory.Exists(artifactDirectory))
+                    {
+                        Directory.Delete(artifactDirectory, recursive: true);
+                    }
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void GalleryVisualScrollHookReachesTheLastControlExampleAfterArtifactCapture()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var artifactDirectory = Path.Combine(Path.GetTempPath(), "ModernWpfGalleryTests", Path.GetRandomFileName());
+                GalleryDiagnostics.Configure(GalleryLaunchOptions.Parse(new[] { "--visual-test", "--visual-artifact-dir", artifactDirectory }));
+                var page = new ItemPage(GalleryCatalog.FindItem("InfoBadge"));
+                var window = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var scrollViewer = (ScrollViewer)FindByAutomationId(page, "GalleryItemPageScrollViewer");
+                    Assert.IsNotNull(scrollViewer);
+                    var scrollPresenter = (ScrollContentPresenter)scrollViewer.Template.FindName("PART_ScrollContentPresenter", scrollViewer);
+                    Assert.AreSame(scrollViewer, scrollPresenter.ScrollOwner, "The item-page ScrollViewer must own its template presenter.");
+                    Assert.IsTrue(scrollPresenter.ViewportHeight > 0);
+                    Assert.IsTrue(scrollPresenter.ExtentHeight > scrollPresenter.ViewportHeight);
+
+                    GalleryDiagnostics.WriteVisualArtifacts(page);
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var firstExample = (FrameworkElement)FindByAutomationId(page, "GallerySample_InfoBadge_Example1");
+                    var lastExample = (FrameworkElement)FindByAutomationId(page, "GallerySample_InfoBadge_Example4");
+                    Assert.IsTrue(GalleryDiagnostics.BringVisualArtifactIntoView(page, "GallerySample_InfoBadge_Example4"));
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    var lastPosition = lastExample.TransformToAncestor(scrollPresenter).Transform(new Point());
+                    Assert.IsTrue(scrollPresenter.VerticalOffset > 0, "The last example did not move the pixel-scrolling presenter.");
+                    Assert.IsTrue(lastPosition.Y >= -0.01, "The last example scrolled above the viewport.");
+                    Assert.IsTrue(lastPosition.Y < scrollPresenter.ActualHeight, "The last example remained below the viewport.");
+                    Assert.IsTrue(
+                        lastPosition.Y + Math.Min(lastExample.ActualHeight, scrollPresenter.ActualHeight) <= scrollPresenter.ActualHeight + 0.01,
+                        "The last example was not fully exposed within the available viewport.");
+
+                    Assert.IsTrue(GalleryDiagnostics.BringVisualArtifactIntoView(page, "GallerySample_InfoBadge_Example1"));
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    var firstPosition = firstExample.TransformToAncestor(scrollPresenter).Transform(new Point());
+                    Assert.AreEqual(
+                        16d,
+                        scrollPresenter.VerticalOffset,
+                        0.01,
+                        "Returning to the first example should consume its intentional 16 px top margin.");
+                    Assert.AreEqual(
+                        0d,
+                        firstPosition.Y,
+                        0.01,
+                        "Returning to the first example should align its rendered top edge with the viewport.");
                 }
                 finally
                 {
@@ -5479,9 +6169,9 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(new CornerRadius(infoBadge.ActualHeight / 2), infoBadge.TemplateSettings.InfoBadgeCornerRadius);
             Assert.AreEqual(infoBadge.TemplateSettings.InfoBadgeCornerRadius, rootGrid.CornerRadius);
 
-            var cornerPixel = RenderDescendantPixel(navigationView, infoBadge, 0, 0);
+            var cornerPixel = RenderDescendantPixel(infoBadge, infoBadge, 0, 0);
             var centerPixel = RenderDescendantPixel(
-                navigationView,
+                infoBadge,
                 infoBadge,
                 (int)(infoBadge.ActualWidth / 2),
                 (int)(infoBadge.ActualHeight / 2));
@@ -5600,6 +6290,156 @@ namespace ModernWpf.Gallery.Tests
                 FormatActualSize(menuItemsHost));
         }
 
+        private static Mux.NavigationView AssertNavigationViewSampleArtifact(
+            DependencyObject page,
+            string automationId,
+            string expectedName,
+            double expectedWidth,
+            double expectedHeight)
+        {
+            var navigationView = FindByAutomationId(page, automationId) as Mux.NavigationView;
+            Assert.IsNotNull(navigationView, automationId + " should identify a NavigationView sample artifact.");
+
+            navigationView.BringIntoView();
+            WpfTestHost.DoEvents();
+            navigationView.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(automationId, AutomationProperties.GetAutomationId(navigationView));
+            Assert.AreEqual(expectedName, navigationView.Name);
+            Assert.IsTrue(navigationView.IsLoaded, automationId + " should be loaded before visual validation.");
+            Assert.IsTrue(navigationView.IsVisible, automationId + " should be visible before visual validation.");
+            Assert.AreEqual(expectedWidth, navigationView.ActualWidth, 0.01, automationId + " should render at the WinUI Gallery sample width.");
+            Assert.AreEqual(expectedHeight, navigationView.ActualHeight, 0.01, automationId + " should render at the Gallery sample height.");
+            return navigationView;
+        }
+
+        private static void AssertTopNavigationViewGeometry(
+            Mux.NavigationView navigationView,
+            string selectedContent,
+            string sampleDescription)
+        {
+            navigationView.BringIntoView();
+            WpfTestHost.DoEvents();
+            navigationView.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Top, navigationView.PaneDisplayMode, sampleDescription);
+            Assert.IsFalse(navigationView.IsPaneOpen, sampleDescription + " should not retain a left pane in Top mode.");
+
+            var selectedItem = FindDescendants<Mux.NavigationViewItem>(navigationView)
+                .Single(item => Equals(item.Content, selectedContent));
+            Assert.AreSame(selectedItem, navigationView.SelectedItem, sampleDescription + " should keep its first item selected.");
+            Assert.IsTrue(selectedItem.IsSelected, sampleDescription + " should render the selected item state.");
+
+            var topNavGrid = FindNamedDescendant<Grid>(navigationView, "TopNavGrid");
+            var itemPresenter = FindNamedDescendant<Mux.Primitives.NavigationViewItemPresenter>(
+                selectedItem,
+                "NavigationViewItemPresenter");
+            var selectionIndicator = FindNamedDescendant<System.Windows.Shapes.Rectangle>(
+                selectedItem,
+                "SelectionIndicator");
+            var itemText = FindDescendants<TextBlock>(selectedItem)
+                .Single(textBlock => textBlock.Text == selectedContent);
+            var itemPresenterBounds = GetRelativeBounds(itemPresenter, topNavGrid);
+            var selectionIndicatorBounds = GetRelativeBounds(selectionIndicator, topNavGrid);
+            var itemTextBounds = GetRelativeBounds(itemText, topNavGrid);
+
+            Assert.AreEqual(48.0, itemPresenterBounds.Height, 0.01, sampleDescription + " items should fill the Top strip.");
+            Assert.AreEqual(16.0, selectionIndicatorBounds.Width, 0.01, sampleDescription + " should use the WinUI indicator width.");
+            Assert.AreEqual(3.0, selectionIndicatorBounds.Height, 0.01, sampleDescription + " should use the WinUI indicator height.");
+            Assert.AreEqual(39.0, selectionIndicatorBounds.Top, 0.01, sampleDescription + " should put the indicator at the bottom of the Top strip.");
+            Assert.AreEqual(1.0, selectionIndicator.Opacity, 0.01, sampleDescription + " should show its selected-item indicator.");
+            Assert.AreEqual(
+                itemPresenterBounds.Left + (itemPresenterBounds.Width / 2.0),
+                selectionIndicatorBounds.Left + (selectionIndicatorBounds.Width / 2.0),
+                0.51,
+                sampleDescription + " should center the indicator beneath its item.");
+            Assert.IsTrue(
+                itemTextBounds.Bottom < selectionIndicatorBounds.Top,
+                $"{sampleDescription} should not overlap its label and indicator. Text={itemTextBounds}; Indicator={selectionIndicatorBounds}.");
+        }
+
+        private static void AssertExpandedLeftNavigationViewGeometry(
+            Mux.NavigationView navigationView,
+            string firstItemContent,
+            string sampleDescription,
+            bool expectSelection)
+        {
+            navigationView.BringIntoView();
+            WpfTestHost.DoEvents();
+            navigationView.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(Mux.NavigationViewPaneDisplayMode.Left, navigationView.PaneDisplayMode, sampleDescription);
+            Assert.AreEqual(Mux.NavigationViewDisplayMode.Expanded, navigationView.DisplayMode, sampleDescription);
+            Assert.IsTrue(navigationView.IsPaneOpen, sampleDescription + " should start with its Left pane open.");
+            AssertNavigationViewVisualState(navigationView, "PaneStateGroup", "NotClosedCompact", sampleDescription);
+            AssertNavigationViewVisualState(navigationView, "PaneStateListSizeGroup", "ListSizeFull", sampleDescription);
+
+            var firstItem = FindDescendants<Mux.NavigationViewItem>(navigationView)
+                .Single(item => Equals(item.Content, firstItemContent));
+            var paneContentGrid = FindNamedDescendant<Border>(navigationView, "PaneContentGrid");
+            var contentPresenter = FindNamedDescendant<Mux.ContentPresenterEx>(firstItem, "ContentPresenter");
+            var paneBounds = GetRelativeBounds(paneContentGrid, navigationView);
+            var itemBounds = GetRelativeBounds(firstItem, navigationView);
+            var contentBounds = GetRelativeBounds(contentPresenter, navigationView);
+
+            Assert.AreEqual(navigationView.OpenPaneLength, paneBounds.Width, 0.01, sampleDescription + " should use the full pane width.");
+            Assert.AreEqual(navigationView.OpenPaneLength - 1.0, itemBounds.Width, 0.01, sampleDescription + " should size menu items to the pane.");
+            Assert.IsTrue(contentBounds.Width > 0, sampleDescription + " should show its menu labels in the open pane.");
+            Assert.IsTrue(contentBounds.Right <= paneBounds.Right + 0.01, sampleDescription + " menu labels should remain inside the pane.");
+
+            if (expectSelection)
+            {
+                Assert.AreSame(firstItem, navigationView.SelectedItem, sampleDescription + " should start with its first item selected.");
+                var selectionIndicator = FindNamedDescendant<System.Windows.Shapes.Rectangle>(firstItem, "SelectionIndicator");
+                var selectionIndicatorBounds = GetRelativeBounds(selectionIndicator, firstItem);
+                Assert.AreEqual(4.0, selectionIndicatorBounds.Left, 0.01, sampleDescription + " should use the WinUI left indicator origin.");
+            }
+        }
+
+        private static void AssertClosedCompactNavigationViewGeometry(
+            Mux.NavigationView navigationView,
+            string firstItemContent,
+            string sampleDescription)
+        {
+            navigationView.BringIntoView();
+            WpfTestHost.DoEvents();
+            navigationView.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(Mux.NavigationViewDisplayMode.Compact, navigationView.DisplayMode, sampleDescription);
+            Assert.IsFalse(navigationView.IsPaneOpen, sampleDescription + " should keep its compact pane closed.");
+            AssertNavigationViewVisualState(navigationView, "PaneStateGroup", "ClosedCompact", sampleDescription);
+            AssertNavigationViewVisualState(navigationView, "PaneStateListSizeGroup", "ListSizeCompact", sampleDescription);
+
+            var firstItem = FindDescendants<Mux.NavigationViewItem>(navigationView)
+                .Single(item => Equals(item.Content, firstItemContent));
+            var paneContentGrid = FindNamedDescendant<Border>(navigationView, "PaneContentGrid");
+            var contentPresenter = FindNamedDescendant<Mux.ContentPresenterEx>(firstItem, "ContentPresenter");
+            var paneBounds = GetRelativeBounds(paneContentGrid, navigationView);
+            var itemBounds = GetRelativeBounds(firstItem, navigationView);
+            var contentBounds = GetRelativeBounds(contentPresenter, navigationView);
+
+            Assert.AreEqual(navigationView.CompactPaneLength, paneBounds.Width, 0.01, sampleDescription + " should use the compact pane width.");
+            Assert.AreEqual(navigationView.CompactPaneLength - 1.0, itemBounds.Width, 0.01, sampleDescription + " should constrain compact menu items.");
+            Assert.AreEqual(0.0, contentBounds.Width, 0.01, sampleDescription + " should not leak menu-label pixels from its compact pane.");
+        }
+
+        private static void AssertNavigationViewVisualState(
+            Mux.NavigationView navigationView,
+            string groupName,
+            string expectedState,
+            string sampleDescription)
+        {
+            var rootGrid = FindNamedDescendant<Grid>(navigationView, "RootGrid");
+            var group = VisualStateManager.GetVisualStateGroups(rootGrid)
+                .Cast<VisualStateGroup>()
+                .Single(stateGroup => stateGroup.Name == groupName);
+            Assert.AreEqual(expectedState, group.CurrentState?.Name, sampleDescription + " has the wrong " + groupName + " state.");
+        }
+
         private static string FormatActualSize(FrameworkElement element)
         {
             if (element == null)
@@ -5645,25 +6485,40 @@ namespace ModernWpf.Gallery.Tests
 
         private static string GetFramePageTitle(Frame frame)
         {
-            return GetFramePageTextBlock(frame).Text;
+            var page = frame.Content as Page;
+            Assert.IsNotNull(page);
+            return page.Title;
         }
 
-        private static void AssertFramePageForeground(Frame frame, Color expectedColor)
-        {
-            var brush = GetFramePageTextBlock(frame).Foreground as SolidColorBrush;
-            Assert.IsNotNull(brush);
-            Assert.AreEqual(expectedColor, brush.Color);
-        }
-
-        private static TextBlock GetFramePageTextBlock(Frame frame)
+        private static void AssertSelectorBarSamplePage1Layout(Frame frame)
         {
             var page = frame.Content as Page;
             Assert.IsNotNull(page);
-            var border = page.Content as Border;
-            Assert.IsNotNull(border);
-            var textBlock = border.Child as TextBlock;
-            Assert.IsNotNull(textBlock);
-            return textBlock;
+            var scrollViewer = page.Content as ScrollViewer;
+            Assert.IsNotNull(scrollViewer);
+            var grid = scrollViewer.Content as Grid;
+            Assert.IsNotNull(grid);
+            Assert.AreEqual(3, grid.ColumnDefinitions.Count);
+            Assert.AreEqual(4, grid.RowDefinitions.Count);
+
+            var sourceElement = FindNamedDescendant<Grid>(page, "SourceElement");
+            Assert.IsNotNull(sourceElement);
+            Assert.AreEqual(250d, sourceElement.MinWidth);
+            Assert.AreEqual(2, Grid.GetRowSpan(sourceElement));
+            Assert.AreEqual(5, grid.Children.OfType<Grid>().Count(child => child.MinHeight == 150d));
+        }
+
+        private static void AssertSelectorBarSamplePage3Layout(Frame frame)
+        {
+            var page = frame.Content as Page;
+            Assert.IsNotNull(page);
+            var scrollViewer = page.Content as ScrollViewer;
+            Assert.IsNotNull(scrollViewer);
+            var grid = scrollViewer.Content as Grid;
+            Assert.IsNotNull(grid);
+            Assert.AreEqual(3, grid.ColumnDefinitions.Count);
+            Assert.AreEqual(new GridLength(2, GridUnitType.Star), grid.ColumnDefinitions[0].Width);
+            Assert.AreEqual(5, grid.Children.OfType<Grid>().Count(child => child.MinHeight == 150d));
         }
 
         private static int CountItems(object itemsSource)

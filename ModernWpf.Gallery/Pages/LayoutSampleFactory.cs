@@ -55,13 +55,17 @@ namespace ModernWpf.Gallery.Pages
             switch (uniqueId)
             {
                 case "SplitView":
+                    var exampleContent = CreateBasicSplitViewExampleContent(
+                        assignRootAutomationId: true,
+                        out var optionsContent);
                     return new[]
                     {
                         new GalleryExample(
                             "A basic SplitView.",
-                            CreateBasicSplitViewExampleContent(assignRootAutomationId: true),
+                            exampleContent,
                             SplitViewBasicXaml,
-                            null)
+                            null,
+                            optionsContent)
                     };
                 default:
                     return Array.Empty<GalleryExample>();
@@ -70,10 +74,15 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateSplitViewSample()
         {
-            return CreateBasicSplitViewExampleContent(assignRootAutomationId: true);
+            var content = CreateBasicSplitViewExampleContent(
+                assignRootAutomationId: true,
+                out var optionsContent);
+            return CreateSplitViewStandaloneLayout(content, optionsContent);
         }
 
-        private static GallerySamplePanel CreateBasicSplitViewExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateBasicSplitViewExampleContent(
+            bool assignRootAutomationId,
+            out UIElement optionsContent)
         {
             var panel = new GallerySamplePanel
             {
@@ -146,7 +155,7 @@ namespace ModernWpf.Gallery.Pages
             var placement = new Mux.ToggleSwitch
             {
                 MinWidth = 120,
-                Margin = new Thickness(0, 12, 8, 0),
+                Margin = new Thickness(0, 12, 0, 0),
                 Header = "Placement",
                 OffContent = "Left",
                 OnContent = "Right"
@@ -212,25 +221,40 @@ namespace ModernWpf.Gallery.Pages
 
             var options = new StackPanel
             {
-                Margin = new Thickness(24, 0, 0, 0)
+                Name = "SplitViewOptions"
             };
             options.Children.Add(toggle);
             options.Children.Add(placement);
             options.Children.Add(CreateSplitViewOption("DisplayMode", mode));
             options.Children.Add(CreateSplitViewOption("PaneBackground", paneBackground));
             options.Children.Add(CreateSplitViewOption("OpenPaneLength", openLength));
-            options.Children.Add(CreateSplitViewOption("CompactPaneLength", compactLength));
+            options.Children.Add(CreateSplitViewOption("CompactPaneLength", compactLength, 4));
 
             panel.Children.Add(splitViewHost);
-            panel.Children.Add(options);
+            optionsContent = options;
             return panel;
         }
 
-        private static StackPanel CreateSplitViewOption(string header, FrameworkElement control)
+        private static UIElement CreateSplitViewStandaloneLayout(UIElement content, UIElement options)
+        {
+            var panel = new GallerySamplePanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            panel.Children.Add(content);
+            panel.Children.Add(new Border
+            {
+                Margin = new Thickness(24, 0, 0, 0),
+                Child = options
+            });
+            return panel;
+        }
+
+        private static StackPanel CreateSplitViewOption(string header, FrameworkElement control, double topMargin = 12)
         {
             return new StackPanel
             {
-                Margin = new Thickness(0, 12, 0, 0),
+                Margin = new Thickness(0, topMargin, 0, 0),
                 Children =
                 {
                     new TextBlock
@@ -393,7 +417,7 @@ namespace ModernWpf.Gallery.Pages
 
         private static Slider CreateSlider(string header, double minimum, double maximum, double value)
         {
-            var slider = new Slider
+            var slider = WinUISampleSlider.ShowValueFill(new Slider
             {
                 Minimum = minimum,
                 Maximum = maximum,
@@ -403,7 +427,7 @@ namespace ModernWpf.Gallery.Pages
                 HorizontalAlignment = HorizontalAlignment.Left,
                 IsSnapToTickEnabled = true,
                 TickFrequency = 1
-            };
+            });
             ControlHelper.SetHeader(slider, header);
             return slider;
         }

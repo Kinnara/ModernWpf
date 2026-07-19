@@ -112,6 +112,7 @@ namespace ModernWpf.Gallery.Shell
         private NavigationTarget _currentTarget;
         private bool _isProgrammaticNavigation;
         private bool _themeHandlersAttached;
+        private readonly DispatcherTimer _visualTestCommandTimer;
         private const double DefaultTopLevelNavigationContentLeftMargin = 32;
         private const double DefaultChildGlyphNavigationContentLeftMargin = 0;
         private const double DefaultChildTextNavigationContentLeftMargin = 16;
@@ -121,8 +122,8 @@ namespace ModernWpf.Gallery.Shell
         private const string GroupNavigationDisclosureChevronTag = "GalleryNavigationDisclosureChevron";
         private const double DefaultTopLevelNavigationContentVerticalOffset = 0;
         private const double DefaultChildNavigationContentVerticalOffset = 16;
-        private static readonly Thickness DefaultNavigationSelectionIndicatorMargin = new Thickness(0);
-        private static readonly Thickness ChildNavigationSelectionIndicatorMargin = new Thickness(-35, 0, 0, -6);
+        private static readonly Thickness DefaultNavigationSelectionIndicatorMargin = new Thickness(4, 0, 0, 0);
+        private static readonly Thickness ChildNavigationSelectionIndicatorMargin = new Thickness(-31, 0, 0, -6);
         private static readonly Thickness DefaultNavigationItemButtonMargin = new Thickness(4, 2, 4, 2);
         private static readonly Thickness ChildNavigationSelectedBackgroundMargin = new Thickness(12, 7, -5, -5);
         private static readonly Thickness ChildNavigationSelectedContentOffset = new Thickness(-8, -13, 0, 0);
@@ -151,6 +152,14 @@ namespace ModernWpf.Gallery.Shell
             GetVisualTestStatusPanel().Visibility = GalleryDiagnostics.IsEnabled
                 ? Visibility.Visible
                 : Visibility.Collapsed;
+            if (GalleryDiagnostics.IsEnabled)
+            {
+                _visualTestCommandTimer = new DispatcherTimer(DispatcherPriority.Background)
+                {
+                    Interval = TimeSpan.FromMilliseconds(75)
+                };
+                _visualTestCommandTimer.Tick += OnVisualTestCommandTimerTick;
+            }
             SuppressNavigationViewDefaultExpandGlyph();
 
             BuildNavigationMenu();
@@ -607,11 +616,18 @@ namespace ModernWpf.Gallery.Shell
         {
             AttachThemeHandlers();
             AlignNavigationViewShellResourcesWithWpfGallery();
+            _visualTestCommandTimer?.Start();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            _visualTestCommandTimer?.Stop();
             DetachThemeHandlers();
+        }
+
+        private void OnVisualTestCommandTimerTick(object sender, EventArgs e)
+        {
+            GalleryDiagnostics.TryProcessVisualScrollRequest(Window.GetWindow(this) ?? (DependencyObject)this);
         }
 
         private void AttachThemeHandlers()
@@ -969,8 +985,8 @@ namespace ModernWpf.Gallery.Shell
                             contentHost.UpdateLayout();
                             GalleryDiagnostics.PrepareInteractiveVisualState(contentHost);
                             contentHost.UpdateLayout();
-                            SetVisualTestState(route, "Ready:" + route);
                             GalleryDiagnostics.WriteVisualArtifacts(Window.GetWindow(this) ?? (DependencyObject)this);
+                            SetVisualTestState(route, "Ready:" + route);
                         }
                     }));
             }

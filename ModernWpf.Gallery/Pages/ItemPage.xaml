@@ -22,6 +22,7 @@
             Visibility="{Binding ShowPageHeader, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
         <ScrollViewer
+            AutomationProperties.AutomationId="GalleryItemPageScrollViewer"
             Grid.Row="1"
             Margin="0,0,0,24"
             Padding="0,0,24,0"
@@ -43,11 +44,18 @@
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <controls:ControlExample
+                                AutomationProperties.AutomationId="{Binding AutomationId}"
+                                AutomationProperties.Name="{Binding HeaderText}"
                                 HeaderText="{Binding HeaderText}"
                                 XamlCode="{Binding XamlCode}"
                                 CSharpCode="{Binding CSharpCode}"
                                 ExampleContent="{Binding ExampleContent}"
+                                OutputContent="{Binding OutputContent}"
                                 OptionsContent="{Binding OptionsContent}"
+                                OptionsMaxWidth="{Binding OptionsMaxWidth}"
+                                HorizontalContentAlignment="{Binding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{Binding VerticalContentAlignment}"
+                                UseWinUIGalleryLayout="True"
                                 Margin="{Binding Margin}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>

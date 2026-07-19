@@ -202,14 +202,8 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             "Folder3"
         };
 
-        private static readonly string[] SelectorBarPageColors =
-        {
-            "#E8F3FF",
-            "#F2F2F2",
-            "#FFF4CE",
-            "#FDE7E9",
-            "#E7F6E7"
-        };
+        private const string SamplePageLoremIpsum =
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
         public static UIElement Create(string uniqueId)
         {
@@ -254,12 +248,14 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             };
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("BreadcrumbBar"));
             panel.Children.Add(CreateBreadcrumbBarSimpleExampleContent(false));
-            panel.Children.Add(CreateBreadcrumbBarTemplateExampleContent());
+            var templateContent = CreateBreadcrumbBarTemplateExampleContent(out var templateOptions);
+            panel.Children.Add(CreateBreadcrumbBarExampleLayout(templateContent, templateOptions));
             return panel;
         }
 
         private static IReadOnlyList<GalleryExample> CreateBreadcrumbBarExamples()
         {
+            var templateContent = CreateBreadcrumbBarTemplateExampleContent(out var templateOptions);
             return new[]
             {
                 new GalleryExample(
@@ -269,9 +265,10 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                     BreadcrumbBarSimpleCSharp),
                 new GalleryExample(
                     "BreadCrumbBar Control with Custom DataTemplate",
-                    CreateBreadcrumbBarTemplateExampleContent(),
+                    templateContent,
                     BreadcrumbBarTemplateXaml,
-                    BreadcrumbBarTemplateCSharp)
+                    BreadcrumbBarTemplateCSharp,
+                    templateOptions)
             };
         }
 
@@ -295,7 +292,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             return root;
         }
 
-        private static UIElement CreateBreadcrumbBarTemplateExampleContent()
+        private static UIElement CreateBreadcrumbBarTemplateExampleContent(out UIElement optionsContent)
         {
             var defaultFolders = new List<BreadcrumbFolder>
             {
@@ -342,7 +339,8 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 }
             };
 
-            return CreateBreadcrumbBarExampleLayout(breadcrumbBar, resetSampleButton);
+            optionsContent = resetSampleButton;
+            return breadcrumbBar;
         }
 
         private static DataTemplate CreateBreadcrumbFolderTemplate()
@@ -393,6 +391,9 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
         private static IReadOnlyList<GalleryExample> CreateNavigationViewExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
         {
+            var footerContent = CreateNavigationViewFooterExampleContent(out var footerOptions);
+            var hierarchicalContent = CreateNavigationViewHierarchicalExampleContent(out var hierarchicalOptions);
+            var apiContent = CreateNavigationViewApiExampleContent(out var apiOptions);
             return new[]
             {
                 new GalleryExample(
@@ -422,19 +423,22 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                     FindSampleCodeText(sampleSnippets, "NavigationViewSample5_cs.txt")),
                 new GalleryExample(
                     "NavigationView with Footer Menu Items",
-                    CreateNavigationViewFooterExampleContent(),
+                    footerContent,
                     FindSampleCodeText(sampleSnippets, "NavigationViewSample9_xaml.txt"),
-                    null),
+                    null,
+                    footerOptions),
                 new GalleryExample(
                     "Hierarchical NavigationView",
-                    CreateNavigationViewHierarchicalExampleContent(),
+                    hierarchicalContent,
                     FindSampleCodeText(sampleSnippets, "NavigationViewSample8_xaml.txt"),
-                    null),
+                    null,
+                    hierarchicalOptions),
                 new GalleryExample(
                     "API in action",
-                    CreateNavigationViewApiExampleContent(),
+                    apiContent,
                     NavigationViewApiXaml,
-                    null)
+                    null,
+                    apiOptions)
             };
         }
 
@@ -469,6 +473,9 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 "contentFrame6",
                 Mux.NavigationViewPaneDisplayMode.Top,
                 "This is Header Text");
+            GalleryAutomation.WithAutomationId(
+                navigationView,
+                GalleryAutomation.SampleElementId("NavigationView", "TopNavigationView"));
             AddStandardNavigationItems(navigationView, includeIcons: false, firstContent: "Menu Item1", remainingPrefix: "Menu Item");
             SelectFirstNavigationItem(navigationView);
             root.Children.Add(navigationView);
@@ -486,6 +493,9 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 "contentFrame2",
                 Mux.NavigationViewPaneDisplayMode.Auto,
                 null);
+            GalleryAutomation.WithAutomationId(
+                navigationView,
+                GalleryAutomation.SampleElementId("NavigationView", "AdaptiveNavigationView"));
             AddStandardNavigationItems(navigationView, includeIcons: false, firstContent: "Menu Item1", remainingPrefix: "Menu Item");
             SelectFirstNavigationItem(navigationView);
             AttachAdaptiveNavigationViewPaneMode(root, navigationView);
@@ -504,6 +514,9 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 "contentFrame7",
                 Mux.NavigationViewPaneDisplayMode.Top,
                 null);
+            GalleryAutomation.WithAutomationId(
+                navigationView,
+                GalleryAutomation.SampleElementId("NavigationView", "TabsNavigationView"));
             navigationView.IsBackButtonVisible = Mux.NavigationViewBackButtonVisible.Collapsed;
             navigationView.SelectionFollowsFocus = Mux.NavigationViewSelectionFollowsFocus.Enabled;
             AddStandardNavigationItems(navigationView, includeIcons: false, firstContent: "Item1", remainingPrefix: "Item");
@@ -531,14 +544,19 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 "contentFrame4",
                 Mux.NavigationViewPaneDisplayMode.Auto,
                 null);
+            GalleryAutomation.WithAutomationId(
+                navigationView,
+                GalleryAutomation.SampleElementId("NavigationView", "DataBindingNavigationView"));
             navigationView.MenuItemsSource = categories;
             navigationView.MenuItemTemplate = CreateNavigationCategoryTemplate();
+            HookNavigationHeaderSelection(navigationView);
             navigationView.SelectedItem = categories[0];
+            navigationView.Header = "Sample Page 1";
             root.Children.Add(navigationView);
             return root;
         }
 
-        private static UIElement CreateNavigationViewFooterExampleContent()
+        private static UIElement CreateNavigationViewFooterExampleContent(out UIElement optionsContent)
         {
             var root = CreateNavigationViewDescriptionRoot(
                 "You can add clickable menu items to the footer of your NavigationView that participate in the same selection model as items in the main menu. In Top PaneDisplayMode, these items will appear aligned to the right of the NavigationView. In Left PaneDisplayMode, these items will appear aligned to the bottom of the NavigationView. ",
@@ -549,6 +567,11 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 "contentFrame9",
                 Mux.NavigationViewPaneDisplayMode.Left,
                 "This is Header Text");
+            GalleryAutomation.WithAutomationId(
+                navigationView,
+                GalleryAutomation.SampleElementId("NavigationView", "FooterNavigationView"));
+            navigationView.Width = 592.0;
+            navigationView.HorizontalAlignment = HorizontalAlignment.Left;
             navigationView.IsSettingsVisible = false;
             navigationView.MenuItems.Add(CreateNavigationItem("Browse", Mux.Symbol.Library, "SamplePage1"));
             navigationView.MenuItems.Add(CreateNavigationItem("Track an Order", Mux.Symbol.Map, "SamplePage2"));
@@ -557,19 +580,19 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             navigationView.FooterMenuItems.Add(CreateNavigationItem("Your Cart", Mux.Symbol.Shop, "SamplePage5"));
             navigationView.FooterMenuItems.Add(CreateNavigationItem("Help", Mux.Symbol.Help, "SamplePage5"));
             SelectFirstNavigationItem(navigationView);
+            HookNavigationHeaderSelection(navigationView);
             root.Children.Add(navigationView);
 
-            return CreateNavigationViewExampleLayout(
-                root,
-                CreateNavigationPanePositionOptions(
-                    "Pane position:",
-                    "nvSample9Left",
-                    "nvSample9Top",
-                    null,
-                    navigationView));
+            optionsContent = CreateNavigationPanePositionOptions(
+                "Pane position:",
+                "nvSample9Left",
+                "nvSample9Top",
+                null,
+                navigationView);
+            return root;
         }
 
-        private static UIElement CreateNavigationViewHierarchicalExampleContent()
+        private static UIElement CreateNavigationViewHierarchicalExampleContent(out UIElement optionsContent)
         {
             var root = CreateNavigationViewDescriptionRoot(null, false);
             root.Children.Add(new TextBlock
@@ -584,6 +607,11 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 "contentFrame8",
                 Mux.NavigationViewPaneDisplayMode.Left,
                 null);
+            GalleryAutomation.WithAutomationId(
+                navigationView,
+                GalleryAutomation.SampleElementId("NavigationView", "HierarchicalNavigationView"));
+            navigationView.Width = 565.0;
+            navigationView.HorizontalAlignment = HorizontalAlignment.Left;
 
             var home = CreateNavigationItem("Home", Mux.Symbol.Home, "SamplePage1");
             home.ToolTip = "Home";
@@ -601,26 +629,37 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             navigationView.MenuItems.Add(home);
             navigationView.MenuItems.Add(account);
             navigationView.MenuItems.Add(documentOptions);
+            HookNavigationHeaderSelection(navigationView);
             SelectFirstNavigationItem(navigationView);
             root.Children.Add(navigationView);
 
-            return CreateNavigationViewExampleLayout(
-                root,
-                CreateNavigationPanePositionOptions(
-                    "PanePosition:",
-                    "nvSample8Left",
-                    "nvSample8Top",
-                    "nvSample8LeftCompact",
-                    navigationView));
+            optionsContent = CreateNavigationPanePositionOptions(
+                "PanePosition:",
+                "nvSample8Left",
+                "nvSample8Top",
+                "nvSample8LeftCompact",
+                navigationView);
+            return root;
         }
 
-        private static UIElement CreateNavigationViewApiExampleContent()
+        private static UIElement CreateNavigationViewApiExampleContent(out UIElement optionsContent)
         {
             var navigationView = CreateNavigationViewShell(
                 "nvSample",
                 "contentFrame",
                 Mux.NavigationViewPaneDisplayMode.Left,
                 "Header");
+            GalleryAutomation.WithAutomationId(
+                navigationView,
+                GalleryAutomation.SampleElementId("NavigationView", "ApiNavigationView"));
+            navigationView.Width = 458.0;
+            navigationView.HorizontalAlignment = HorizontalAlignment.Left;
+            var contentFrame = new Frame
+            {
+                Name = "contentFrame",
+                NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden
+            };
+            navigationView.Content = contentFrame;
             navigationView.Height = 540;
             navigationView.Margin = new Thickness(0, 12, 0, 0);
             navigationView.ExpandedModeThresholdWidth = 500;
@@ -658,15 +697,21 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             navigationView.MenuItems.Add(samplePage3Item);
             navigationView.PaneCustomContent = paneHyperlink;
             navigationView.PaneFooter = footerStackPanel;
+            navigationView.SelectionChanged += delegate(Mux.NavigationView sender, Mux.NavigationViewSelectionChangedEventArgs args)
+            {
+                if (args.SelectedItemContainer is Mux.NavigationViewItem selectedItem && selectedItem.Tag is string)
+                {
+                    contentFrame.Content = CreateNavigationSampleContent();
+                }
+            };
             HookNavigationHeaderSelection(navigationView);
 
-            return CreateNavigationViewExampleLayout(
+            optionsContent = CreateNavigationViewApiOptions(
                 navigationView,
-                CreateNavigationViewApiOptions(
-                    navigationView,
-                    paneHyperlink,
-                    footerStackPanel,
-                    samplePage2Item));
+                paneHyperlink,
+                footerStackPanel,
+                samplePage2Item);
+            return navigationView;
         }
 
         private static UIElement CreateSelectorBarSample()
@@ -748,9 +793,6 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             var contentFrame = new Frame
             {
                 Name = "ContentFrame",
-                Width = 520,
-                Height = 180,
-                Margin = new Thickness(0, 12, 0, 0),
                 NavigationUIVisibility = System.Windows.Navigation.NavigationUIVisibility.Hidden
             };
 
@@ -762,7 +804,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                     currentSelectedIndex = 0;
                 }
 
-                contentFrame.Content = CreatePageContent("SamplePage" + (currentSelectedIndex + 1), SelectorBarPageColors[currentSelectedIndex]);
+                contentFrame.Content = CreateSelectorBarSamplePage(currentSelectedIndex + 1);
             };
             selectorBar.SelectionChanged += delegate { updateContent(); };
             selectorBar.SelectedItem = selectorBar.Items[0];
@@ -794,7 +836,6 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             var itemsControl = new ItemsControl
             {
                 Name = "ItemsView3",
-                Margin = new Thickness(0, 12, 0, 0),
                 ItemTemplate = CreateSelectorBarColorTemplate(),
                 ItemsSource = pinkColorCollection
             };
@@ -943,6 +984,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             border.SetValue(FrameworkElement.WidthProperty, 112.0);
             border.SetValue(FrameworkElement.HeightProperty, 82.0);
             border.SetValue(FrameworkElement.MarginProperty, new Thickness(4));
+            border.SetValue(Border.CornerRadiusProperty, new CornerRadius(4));
             border.SetBinding(Border.BackgroundProperty, new Binding());
 
             return new DataTemplate(typeof(SolidColorBrush))
@@ -1093,11 +1135,14 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 </DataTemplate>");
         }
 
-        private static Grid CreateNavigationViewExampleLayout(UIElement sample, UIElement options)
+        private static Grid CreateNavigationViewExampleLayout(
+            UIElement sample,
+            UIElement options,
+            double optionsColumnWidth)
         {
             var grid = new Grid();
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(optionsColumnWidth) });
 
             Grid.SetColumn(sample, 0);
             grid.Children.Add(sample);
@@ -1219,8 +1264,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             {
                 Name = "headerText",
                 Text = "Header",
-                MinWidth = 160,
-                Margin = new Thickness(0, 0, 0, 8)
+                MinWidth = 160
             };
             AutomationProperties.SetName(headerText, "Header property");
             headerText.TextChanged += delegate { navigationView.Header = headerText.Text; };
@@ -1235,8 +1279,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             {
                 Name = "paneText",
                 Text = "Pane Title",
-                MinWidth = 160,
-                Margin = new Thickness(0, 0, 0, 8)
+                MinWidth = 160
             };
             AutomationProperties.SetName(paneText, "PaneTitle property");
             paneText.TextChanged += delegate { navigationView.PaneTitle = paneText.Text; };
@@ -1263,6 +1306,11 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             panel.Children.Add(CreateOptionText("PanePosition:"));
             var left = CreateNamedRadioButton("nvSampleLeft", "Left", true, "nvSamplePanePosition");
             var top = CreateNamedRadioButton("nvSampleTop", "Top", false, "nvSamplePanePosition");
+            // WinUI's API sample uses the controls' native 32-DIP cadence here and
+            // gives only the final radio button an explicit 12-DIP bottom margin.
+            // The shared pane-mode options intentionally retain their own spacing.
+            left.Margin = new Thickness(0);
+            top.Margin = new Thickness(0, 0, 0, 12);
             left.Checked += delegate
             {
                 if (left.IsChecked == true)
@@ -1306,8 +1354,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             {
                 Name = name,
                 Content = content,
-                IsChecked = isChecked,
-                Margin = new Thickness(0, 0, 0, 4)
+                IsChecked = isChecked
             };
         }
 
@@ -1316,7 +1363,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             return new TextBlock
             {
                 Text = text,
-                Margin = new Thickness(0, 12, 0, 4)
+                Margin = new Thickness(0, 12, 0, 0)
             };
         }
 
@@ -1353,11 +1400,12 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             AddNavigationTile(grid, 1, 2, 1, 1, CreateBrush("#D3D3D3"), 0);
             AddNavigationTile(grid, 2, 1, 1, 1, CreateBrush("#D3D3D3"), 0);
             AddNavigationTile(grid, 2, 2, 1, 1, CreateBrush("#A9A9A9"), 0);
-            AddNavigationTile(grid, 1, 0, 2, 1, CreateBrush("#0078D4"), 250);
+            var sourceElement = AddNavigationTile(grid, 1, 0, 2, 1, GetSelectorBarAccentBrush(), 250);
+            sourceElement.Name = "SourceElement";
 
             var text = new TextBlock
             {
-                Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                Text = SamplePageLoremIpsum,
                 Margin = new Thickness(0, 1, 0, 0),
                 TextWrapping = TextWrapping.Wrap
             };
@@ -1374,12 +1422,12 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
 
             return new ScrollViewer
             {
-                VerticalScrollBarVisibility = ScrollBarVisibility.Hidden,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                 Content = grid
             };
         }
 
-        private static void AddNavigationTile(Grid grid, int row, int column, int rowSpan, int columnSpan, Brush background, double minWidth)
+        private static Grid AddNavigationTile(Grid grid, int row, int column, int rowSpan, int columnSpan, Brush background, double minWidth)
         {
             var tile = new Grid
             {
@@ -1399,6 +1447,7 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
                 Grid.SetColumnSpan(tile, columnSpan);
             }
             grid.Children.Add(tile);
+            return tile;
         }
 
         private static Mux.NavigationViewItem CreateNavigationItem(string content, string tag)
@@ -1426,25 +1475,224 @@ private void BreadcrumbBar2_ItemClicked(BreadcrumbBar sender, BreadcrumbBarItemC
             return item;
         }
 
-        private static Page CreatePageContent(string title, string color)
+        private static Page CreateSelectorBarSamplePage(int pageNumber)
         {
+            UIElement content;
+            switch (pageNumber)
+            {
+                case 2:
+                    content = CreateSelectorBarSamplePage2Content();
+                    break;
+                case 3:
+                    content = CreateSelectorBarSamplePage3Content();
+                    break;
+                case 4:
+                    content = CreateSelectorBarSamplePage4Content();
+                    break;
+                case 5:
+                    content = CreateSelectorBarSamplePage5Content();
+                    break;
+                default:
+                    pageNumber = 1;
+                    content = CreateNavigationSampleContent();
+                    break;
+            }
+
             return new Page
             {
-                Content = new Border
-                {
-                    Background = CreateBrush(color),
-                    Padding = new Thickness(18),
-                    Child = new TextBlock
-                    {
-                        Text = title,
-                        FontSize = 22,
-                        FontWeight = FontWeights.SemiBold,
-                        Foreground = CreateBrush("#E4000000"),
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        VerticalAlignment = VerticalAlignment.Center
-                    }
-                }
+                Title = "SamplePage" + pageNumber,
+                Content = content
             };
+        }
+
+        private static UIElement CreateSelectorBarSamplePage2Content()
+        {
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+            var destinationElement = new Grid
+            {
+                Name = "DestinationElement",
+                Width = 150,
+                Height = 200,
+                MinHeight = 150,
+                Margin = new Thickness(12),
+                VerticalAlignment = VerticalAlignment.Top,
+                Background = GetSelectorBarAccentBrush()
+            };
+            Grid.SetRow(destinationElement, 1);
+            grid.Children.Add(destinationElement);
+
+            var contentPanel = new StackPanel
+            {
+                Name = "ContentPanel",
+                MinHeight = 200,
+                Margin = new Thickness(12)
+            };
+            var title = new TextBlock
+            {
+                Margin = new Thickness(0, 0, 0, 12),
+                Text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit",
+                TextWrapping = TextWrapping.Wrap
+            };
+            title.SetResourceReference(FrameworkElement.StyleProperty, "TitleTextBlockStyle");
+            contentPanel.Children.Add(title);
+            contentPanel.Children.Add(CreateSamplePageBodyText());
+            Grid.SetRow(contentPanel, 1);
+            Grid.SetColumn(contentPanel, 1);
+            grid.Children.Add(contentPanel);
+
+            return new ScrollViewer { Content = grid };
+        }
+
+        private static UIElement CreateSelectorBarSamplePage3Content()
+        {
+            var grid = CreateSamplePageTileGrid(
+                new GridLength(2, GridUnitType.Star),
+                new GridLength(1, GridUnitType.Star),
+                new GridLength(1, GridUnitType.Star));
+            AddSamplePageTile(grid, 1, 0, 2, 1, Brushes.LightGray, new Thickness(5));
+            AddSamplePageTile(grid, 1, 1, 1, 1, Brushes.DarkGray, new Thickness(5));
+            AddSamplePageTile(grid, 2, 1, 1, 1, Brushes.Gray, new Thickness(5));
+            AddSamplePageTile(grid, 1, 2, 1, 1, Brushes.LightGray, new Thickness(5));
+            AddSamplePageTile(grid, 2, 2, 1, 1, Brushes.DarkGray, new Thickness(5));
+            AddSamplePageText(grid, 3, 3, new Thickness(5));
+            return new ScrollViewer { Content = grid };
+        }
+
+        private static UIElement CreateSelectorBarSamplePage4Content()
+        {
+            var stack = new StackPanel();
+
+            var firstGrid = new Grid();
+            firstGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
+            firstGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            firstGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            AddSamplePageTile(firstGrid, 0, 0, 1, 1, Brushes.DarkSalmon, new Thickness(5));
+            AddSamplePageTile(firstGrid, 0, 1, 1, 1, Brushes.DarkRed, new Thickness(5));
+            AddSamplePageTile(firstGrid, 0, 2, 1, 1, Brushes.LightCoral, new Thickness(5));
+            stack.Children.Add(firstGrid);
+
+            var secondGrid = new Grid();
+            secondGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            secondGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            secondGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(2, GridUnitType.Star) });
+            secondGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            secondGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            secondGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            AddSamplePageTile(secondGrid, 1, 1, 1, 1, Brushes.DarkRed, new Thickness(5));
+            AddSamplePageTile(secondGrid, 1, 0, 1, 1, Brushes.LightCoral, new Thickness(5));
+            AddSamplePageTile(secondGrid, 1, 2, 1, 1, Brushes.IndianRed, new Thickness(5));
+            AddSamplePageText(secondGrid, 2, 3, new Thickness(5));
+            stack.Children.Add(secondGrid);
+
+            return new ScrollViewer { Content = stack };
+        }
+
+        private static UIElement CreateSelectorBarSamplePage5Content()
+        {
+            var grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(4, GridUnitType.Star) });
+            for (var row = 0; row < 4; row++)
+            {
+                grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            }
+
+            AddSamplePageTile(grid, 0, 0, 1, 1, Brushes.Khaki, new Thickness(5));
+            AddSamplePageTile(grid, 0, 1, 1, 1, Brushes.DarkKhaki, new Thickness(5));
+
+            var largeEllipse = new Ellipse
+            {
+                Width = 150,
+                Height = 150,
+                Fill = Brushes.DarkSeaGreen
+            };
+            Grid.SetColumn(largeEllipse, 2);
+            grid.Children.Add(largeEllipse);
+
+            var smallEllipse = new Ellipse
+            {
+                Width = 75,
+                Height = 75,
+                Fill = Brushes.MediumSeaGreen
+            };
+            Grid.SetRow(smallEllipse, 1);
+            Grid.SetColumnSpan(smallEllipse, 2);
+            grid.Children.Add(smallEllipse);
+
+            AddSamplePageTile(grid, 1, 2, 1, 1, Brushes.DarkOliveGreen, new Thickness(5));
+            AddSamplePageText(grid, 3, 3, new Thickness(5));
+            return new ScrollViewer { Content = grid };
+        }
+
+        private static Grid CreateSamplePageTileGrid(params GridLength[] columnWidths)
+        {
+            var grid = new Grid();
+            foreach (var width in columnWidths)
+            {
+                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = width });
+            }
+
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            return grid;
+        }
+
+        private static Grid AddSamplePageTile(
+            Grid grid,
+            int row,
+            int column,
+            int rowSpan,
+            int columnSpan,
+            Brush background,
+            Thickness margin)
+        {
+            var tile = new Grid
+            {
+                MinHeight = 150,
+                Margin = margin,
+                Background = background
+            };
+            Grid.SetRow(tile, row);
+            Grid.SetColumn(tile, column);
+            Grid.SetRowSpan(tile, rowSpan);
+            Grid.SetColumnSpan(tile, columnSpan);
+            grid.Children.Add(tile);
+            return tile;
+        }
+
+        private static void AddSamplePageText(Grid grid, int row, int columnSpan, Thickness margin)
+        {
+            var host = new Grid
+            {
+                Margin = margin
+            };
+            host.Children.Add(CreateSamplePageBodyText());
+            Grid.SetRow(host, row);
+            Grid.SetColumnSpan(host, columnSpan);
+            grid.Children.Add(host);
+        }
+
+        private static TextBlock CreateSamplePageBodyText()
+        {
+            return new TextBlock
+            {
+                Text = SamplePageLoremIpsum,
+                TextWrapping = TextWrapping.Wrap
+            };
+        }
+
+        private static Brush GetSelectorBarAccentBrush()
+        {
+            return Application.Current.TryFindResource("SystemControlBackgroundAccentBrush") as Brush
+                ?? CreateBrush("#0078D4");
         }
 
         private static Style FindStyleResource(string key)

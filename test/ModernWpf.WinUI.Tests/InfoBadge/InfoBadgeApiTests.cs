@@ -229,36 +229,41 @@ public class InfoBadgeApiTests
     [TestMethod]
     public void InfoBadgeUsesWinUI3ThemeResources()
     {
-        foreach (var themeName in new[] { "Light", "Dark", "HighContrast" })
+        WpfTestHost.Run(() =>
         {
-            AssertThemeResourceValue(themeName, "InfoBadgeMinHeight", 4.0);
-            AssertThemeResourceValue(themeName, "InfoBadgeMinWidth", 4.0);
-            AssertThemeResourceValue(themeName, "InfoBadgeMaxHeight", 16.0);
-            AssertThemeResourceValue(themeName, "InfoBadgeValueFontSize", 11.0);
-            AssertThemeResourceValue(themeName, "InfoBadgeIconWidth", 12.0);
-            AssertThemeResourceValue(themeName, "InfoBadgePadding", new Thickness(0));
-            AssertThemeResourceValue(themeName, "IconInfoBadgeFontIconMargin", new Thickness(4, 0, 4, 2));
-            AssertThemeResourceValue(themeName, "ValueInfoBadgeTextMargin", new Thickness(4, 0, 4, 2));
-            AssertThemeResourceValue(themeName, "IconInfoBadgeIconMargin", new Thickness(4));
-        }
+            TestApplication.EnsureInitialized();
 
-        foreach (var themeName in new[] { "Light", "Dark" })
-        {
-            AssertThemeResourceReference(themeName, "InfoBadgeForeground", "TextOnAccentFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "InfoBadgeBackground", "AccentFillColorDefaultBrush");
-        }
+            foreach (var themeName in new[] { "Light", "Dark", "HighContrast" })
+            {
+                AssertThemeResourceValue(themeName, "InfoBadgeMinHeight", 4.0);
+                AssertThemeResourceValue(themeName, "InfoBadgeMinWidth", 4.0);
+                AssertThemeResourceValue(themeName, "InfoBadgeMaxHeight", 16.0);
+                AssertThemeResourceValue(themeName, "InfoBadgeValueFontSize", 11.0);
+                AssertThemeResourceValue(themeName, "InfoBadgeIconWidth", 12.0);
+                AssertThemeResourceValue(themeName, "InfoBadgePadding", new Thickness(0));
+                AssertThemeResourceValue(themeName, "IconInfoBadgeFontIconMargin", new Thickness(4, 0, 4, 2));
+                AssertThemeResourceValue(themeName, "ValueInfoBadgeTextMargin", new Thickness(4, 0, 4, 2));
+                AssertThemeResourceValue(themeName, "IconInfoBadgeIconMargin", new Thickness(4));
+            }
 
-        AssertThemeResourceValue("Light", "InfoBadgeIconHeight", 9.0);
-        AssertThemeResourceValue("Dark", "InfoBadgeIconHeight", 8.0);
-        AssertThemeResourceValue("HighContrast", "InfoBadgeIconHeight", 9.0);
-        AssertThemeResourceValue("Light", "SystemFillColorSolidNeutral", Color.FromRgb(0x8A, 0x8A, 0x8A));
-        AssertThemeResourceValue("Dark", "SystemFillColorSolidNeutral", Color.FromRgb(0x9D, 0x9D, 0x9D));
-        AssertThemeBrushColor("Light", "SystemFillColorSolidNeutralBrush", Color.FromRgb(0x8A, 0x8A, 0x8A));
-        AssertThemeBrushColor("Dark", "SystemFillColorSolidNeutralBrush", Color.FromRgb(0x9D, 0x9D, 0x9D));
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "InfoBadgeForeground", "TextOnAccentFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "InfoBadgeBackground", "AccentFillColorDefaultBrush");
+            }
 
-        AssertThemeResourceReference("HighContrast", "InfoBadgeForeground", "SystemControlHighlightAltChromeWhiteBrush");
-        AssertThemeResourceReference("HighContrast", "InfoBadgeBackground", "SystemControlHighlightAccentBrush");
-        AssertThemeResourceExists("HighContrast", "SystemFillColorSolidNeutralBrush");
+            AssertThemeResourceValue("Light", "InfoBadgeIconHeight", 9.0);
+            AssertThemeResourceValue("Dark", "InfoBadgeIconHeight", 8.0);
+            AssertThemeResourceValue("HighContrast", "InfoBadgeIconHeight", 9.0);
+            AssertThemeResourceValue("Light", "SystemFillColorSolidNeutral", Color.FromRgb(0x8A, 0x8A, 0x8A));
+            AssertThemeResourceValue("Dark", "SystemFillColorSolidNeutral", Color.FromRgb(0x9D, 0x9D, 0x9D));
+            AssertThemeBrushColor("Light", "SystemFillColorSolidNeutralBrush", Color.FromRgb(0x8A, 0x8A, 0x8A));
+            AssertThemeBrushColor("Dark", "SystemFillColorSolidNeutralBrush", Color.FromRgb(0x9D, 0x9D, 0x9D));
+
+            AssertThemeResourceReference("HighContrast", "InfoBadgeForeground", "SystemControlHighlightAltChromeWhiteBrush");
+            AssertThemeResourceReference("HighContrast", "InfoBadgeBackground", "SystemControlHighlightAccentBrush");
+            AssertThemeResourceExists("HighContrast", "SystemFillColorSolidNeutralBrush");
+        });
     }
 
     [TestMethod]

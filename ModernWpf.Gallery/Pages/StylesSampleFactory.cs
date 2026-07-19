@@ -345,7 +345,7 @@ namespace ModernWpf.Gallery.Pages
             exampleGrid.Children.Add(shadowCastGrid);
             exampleGrid.Children.Add(shadow);
 
-            var translationSlider = new Slider
+            var translationSlider = WinUISampleSlider.ShowValueFill(new Slider
             {
                 Name = "TranslationSliderInApp",
                 Width = 200,
@@ -355,7 +355,7 @@ namespace ModernWpf.Gallery.Pages
                 SmallChange = 1,
                 TickFrequency = 1,
                 Value = 32
-            };
+            });
             AutomationProperties.SetName(translationSlider, "shadow intensity");
             GalleryAutomation.WithAutomationId(translationSlider, GalleryAutomation.SampleElementId("ThemeShadow", "TranslationSlider"));
             ControlHelper.SetHeader(translationSlider, "Z-translation");
@@ -396,10 +396,36 @@ namespace ModernWpf.Gallery.Pages
         private static DrawingImage CreateCameraPanoramaDrawing()
         {
             var drawing = new DrawingGroup();
-            drawing.Children.Add(new GeometryDrawing(CreateBrush("#E6F4FF"), null, Geometry.Parse("M 0,0 L 50,0 L 50,32 L 0,32 Z")));
-            drawing.Children.Add(new GeometryDrawing(CreateBrush("#107C10"), null, Geometry.Parse("M 0,23 L 12,13 L 21,21 L 31,10 L 50,25 L 50,32 L 0,32 Z")));
-            drawing.Children.Add(new GeometryDrawing(CreateBrush("#FCE100"), null, new EllipseGeometry(new Point(37, 7), 4, 4)));
-            drawing.Children.Add(new GeometryDrawing(null, new Pen(CreateBrush("#1F1F1F"), 2), Geometry.Parse("M 1,1 L 49,1 L 49,31 L 1,31 Z")));
+            drawing.Children.Add(new GeometryDrawing(
+                Brushes.Transparent,
+                null,
+                new RectangleGeometry(new Rect(0, 0, 14, 14))));
+
+            var svgContent = new DrawingGroup
+            {
+                Transform = new MatrixTransform(0.3, 0, 0, 0.3, -0.2, -0.5)
+            };
+            svgContent.Children.Add(new GeometryDrawing(
+                CreateBrush("#F57C00"),
+                null,
+                Geometry.Parse("M4 9V41S12.4 38 24 38 44 41 44 41V9S37.3 12 24 12 4 9 4 9Z")));
+            svgContent.Children.Add(new GeometryDrawing(
+                CreateBrush("#942A09"),
+                null,
+                Geometry.Parse("M24 34H24.4L15 19 6.9 36.2C10.3 35.3 16.5 34 24 34Z")));
+            svgContent.Children.Add(new GeometryDrawing(
+                CreateBrush("#BF360C"),
+                null,
+                Geometry.Parse("M24 34C27.3 34 30.3 34.2 33 34.6L25 22.8 17.2 34.3C19.3 34.1 21.6 34 24 34Z")));
+            svgContent.Children.Add(new GeometryDrawing(
+                CreateBrush("#E65100"),
+                null,
+                Geometry.Parse("M40.7 36 35 26.5 30 34.3C34.5 34.7 38.2 35.4 40.7 36Z")));
+            svgContent.Children.Add(new GeometryDrawing(
+                CreateBrush("#FFF9C4"),
+                null,
+                new EllipseGeometry(new Point(36, 19.5), 2, 2.5)));
+            drawing.Children.Add(svgContent);
 
             var image = new DrawingImage(drawing);
             image.Freeze();

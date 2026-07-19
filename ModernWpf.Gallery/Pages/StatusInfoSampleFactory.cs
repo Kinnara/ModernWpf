@@ -131,38 +131,45 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 0, 0, 12)
             };
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("InfoBadge"));
-            panel.Children.Add(CreateNavigationViewInfoBadgeExampleContent(assignRootAutomationId: false));
+            var content = CreateNavigationViewInfoBadgeExampleContent(assignRootAutomationId: false, out var options);
+            panel.Children.Add(CreateInfoBadgeExampleLayout(content, options));
             return panel;
         }
 
         private static IReadOnlyList<GalleryExample> CreateInfoBadgeExamples()
         {
+            var navigationContent = CreateNavigationViewInfoBadgeExampleContent(assignRootAutomationId: true, out var navigationOptions);
+            var stylesContent = CreateInfoBadgeStylesExampleContent(out var stylesOptions);
+            var dynamicContent = CreateDynamicInfoBadgeExampleContent(out var dynamicOptions);
             return new[]
             {
                 new GalleryExample(
                     "InfoBadge embedded in NavigationView ",
-                    CreateNavigationViewInfoBadgeExampleContent(assignRootAutomationId: true),
+                    navigationContent,
                     InfoBadgeNavigationViewXaml,
-                    null),
+                    null,
+                    navigationOptions).WithContentAlignment(HorizontalAlignment.Stretch, VerticalAlignment.Top),
                 new GalleryExample(
                     "Different InfoBadge Styles",
-                    CreateInfoBadgeStylesExampleContent(),
+                    stylesContent,
                     InfoBadgeStylesXaml,
-                    null),
+                    null,
+                    stylesOptions).WithContentAlignment(HorizontalAlignment.Stretch, VerticalAlignment.Top),
                 new GalleryExample(
                     "Placing an InfoBadge Inside Another Control",
                     CreateInfoBadgeInsideControlExampleContent(),
                     InfoBadgeInsideControlXaml,
-                    null),
+                    null).WithContentAlignment(HorizontalAlignment.Stretch, VerticalAlignment.Top),
                 new GalleryExample(
                     "InfoBadge with Dynamic Value",
-                    CreateDynamicInfoBadgeExampleContent(),
+                    dynamicContent,
                     InfoBadgeDynamicValueXaml,
-                    InfoBadgeDynamicValueCSharp)
+                    InfoBadgeDynamicValueCSharp,
+                    dynamicOptions).WithContentAlignment(HorizontalAlignment.Stretch, VerticalAlignment.Top)
             };
         }
 
-        private static GallerySamplePanel CreateNavigationViewInfoBadgeExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateNavigationViewInfoBadgeExampleContent(bool assignRootAutomationId, out UIElement options)
         {
             var root = new GallerySamplePanel();
             if (assignRootAutomationId)
@@ -246,13 +253,12 @@ namespace ModernWpf.Gallery.Pages
             };
             displayMode.SelectedItem = "LeftExpanded";
 
-            root.Children.Add(CreateInfoBadgeExampleLayout(
-                navigationView,
-                CreateInfoBadgeOptionsPanel(toggle, CreateOptionBlock("Display Mode", displayMode))));
+            options = CreateInfoBadgeOptionsPanel(toggle, CreateOptionBlock("Display Mode", displayMode));
+            root.Children.Add(navigationView);
             return root;
         }
 
-        private static GallerySamplePanel CreateInfoBadgeStylesExampleContent()
+        private static GallerySamplePanel CreateInfoBadgeStylesExampleContent(out UIElement options)
         {
             var root = new GallerySamplePanel();
             var infoBadge2 = new Mux.InfoBadge
@@ -298,9 +304,8 @@ namespace ModernWpf.Gallery.Pages
             };
             styleCombo.SelectedItem = "Attention";
 
-            root.Children.Add(CreateInfoBadgeExampleLayout(
-                badges,
-                CreateInfoBadgeOptionsPanel(CreateOptionBlock("Styles", styleCombo))));
+            options = CreateInfoBadgeOptionsPanel(CreateOptionBlock("Styles", styleCombo));
+            root.Children.Add(badges);
             return root;
         }
 
@@ -343,7 +348,7 @@ namespace ModernWpf.Gallery.Pages
             return root;
         }
 
-        private static GallerySamplePanel CreateDynamicInfoBadgeExampleContent()
+        private static GallerySamplePanel CreateDynamicInfoBadgeExampleContent(out UIElement options)
         {
             var root = new GallerySamplePanel();
             var dynamicInfoBadge = new Mux.InfoBadge
@@ -368,9 +373,8 @@ namespace ModernWpf.Gallery.Pages
             };
             dynamicInfoBadge.Value = 1;
 
-            root.Children.Add(CreateInfoBadgeExampleLayout(
-                dynamicInfoBadge,
-                CreateInfoBadgeOptionsPanel(valueNumberBox)));
+            options = CreateInfoBadgeOptionsPanel(valueNumberBox);
+            root.Children.Add(dynamicInfoBadge);
             return root;
         }
 
@@ -454,29 +458,36 @@ namespace ModernWpf.Gallery.Pages
         {
             var panel = CreateSamplePanel("InfoBar presents inline app status without blocking the current task.");
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("InfoBar"));
-            panel.Children.Add(CreateSeverityInfoBarExampleContent(assignRootAutomationId: false));
+            var content = CreateSeverityInfoBarExampleContent(assignRootAutomationId: false, out var options);
+            panel.Children.Add(CreateInfoBarExampleLayout(content, options));
             return panel;
         }
 
         private static IReadOnlyList<GalleryExample> CreateInfoBarExamples()
         {
+            var severityContent = CreateSeverityInfoBarExampleContent(assignRootAutomationId: true, out var severityOptions);
+            var messageContent = CreateMessageInfoBarExampleContent(out var messageOptions);
+            var iconContent = CreateIconAndCloseInfoBarExampleContent(out var iconOptions);
             return new[]
             {
                 new GalleryExample(
                     "A closable InfoBar with options to change its Severity.",
-                    CreateSeverityInfoBarExampleContent(assignRootAutomationId: true),
+                    severityContent,
                     InfoBarExample1Xaml,
-                    null),
+                    null,
+                    severityOptions),
                 new GalleryExample(
                     "A closable InfoBar with a long or short message and various buttons",
-                    CreateMessageInfoBarExampleContent(),
+                    messageContent,
                     InfoBarExample2Xaml,
-                    null),
+                    null,
+                    messageOptions),
                 new GalleryExample(
                     "A closable InfoBar with options to display the close button and icon",
-                    CreateIconAndCloseInfoBarExampleContent(),
+                    iconContent,
                     InfoBarExample3Xaml,
-                    null)
+                    null,
+                    iconOptions)
             };
         }
 
@@ -491,7 +502,7 @@ namespace ModernWpf.Gallery.Pages
             return root;
         }
 
-        private static GallerySamplePanel CreateSeverityInfoBarExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateSeverityInfoBarExampleContent(bool assignRootAutomationId, out UIElement optionsContent)
         {
             var root = CreateInfoBarExampleRoot(assignRootAutomationId);
             var infoBar = new Mux.InfoBar
@@ -540,13 +551,14 @@ namespace ModernWpf.Gallery.Pages
 
             var options = CreateOptionsPanel();
             options.Children.Add(isOpen);
-            options.Children.Add(CreateOptionBlock("Severity", severity));
+            options.Children.Add(CreateInfoBarOptionBlock("Severity", severity));
+            optionsContent = options;
 
-            root.Children.Add(CreateInfoBarExampleLayout(infoBar, options));
+            root.Children.Add(infoBar);
             return root;
         }
 
-        private static GallerySamplePanel CreateMessageInfoBarExampleContent()
+        private static GallerySamplePanel CreateMessageInfoBarExampleContent(out UIElement optionsContent)
         {
             var root = CreateInfoBarExampleRoot(assignRootAutomationId: false);
             var infoBar = new Mux.InfoBar
@@ -603,14 +615,15 @@ namespace ModernWpf.Gallery.Pages
 
             var options = CreateOptionsPanel();
             options.Children.Add(isOpen);
-            options.Children.Add(CreateOptionBlock("Message Length", messageLength));
-            options.Children.Add(CreateOptionBlock("Action Button", actionButton));
+            options.Children.Add(CreateInfoBarOptionBlock("Message Length", messageLength));
+            options.Children.Add(CreateInfoBarOptionBlock("Action Button", actionButton));
+            optionsContent = options;
 
-            root.Children.Add(CreateInfoBarExampleLayout(infoBar, options));
+            root.Children.Add(infoBar);
             return root;
         }
 
-        private static GallerySamplePanel CreateIconAndCloseInfoBarExampleContent()
+        private static GallerySamplePanel CreateIconAndCloseInfoBarExampleContent(out UIElement optionsContent)
         {
             var root = CreateInfoBarExampleRoot(assignRootAutomationId: false);
             var infoBar = new Mux.InfoBar
@@ -645,8 +658,9 @@ namespace ModernWpf.Gallery.Pages
             options.Children.Add(isOpen);
             options.Children.Add(isIconVisible);
             options.Children.Add(isClosable);
+            optionsContent = options;
 
-            root.Children.Add(CreateInfoBarExampleLayout(infoBar, options));
+            root.Children.Add(infoBar);
             return root;
         }
 
@@ -677,9 +691,26 @@ namespace ModernWpf.Gallery.Pages
             return new CheckBox
             {
                 Content = content,
-                IsChecked = isChecked,
-                Margin = new Thickness(0, 0, 0, 8)
+                IsChecked = isChecked
             };
+        }
+
+        private static StackPanel CreateInfoBarOptionBlock(string label, Control control)
+        {
+            // WinUI ComboBox includes its Header in a 60-DIP desired-height
+            // surface. WPF has no Header property, so keep the equivalent
+            // label/control composition at the same measured height.
+            var block = new StackPanel
+            {
+                MinHeight = 60
+            };
+            block.Children.Add(new TextBlock
+            {
+                Text = label,
+                Margin = new Thickness(0, 0, 0, 4)
+            });
+            block.Children.Add(control);
+            return block;
         }
 
         private static StackPanel CreateOptionBlock(string label, Control control)
@@ -713,7 +744,8 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 0, 0, 12)
             };
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ProgressRing"));
-            panel.Children.Add(CreateIndeterminateProgressRingExampleContent(assignRootAutomationId: false));
+            var content = CreateIndeterminateProgressRingExampleContent(assignRootAutomationId: false, out var options);
+            panel.Children.Add(CreateProgressRingExampleLayout(content, options));
             return panel;
         }
 
@@ -848,22 +880,26 @@ namespace ModernWpf.Gallery.Pages
 
         private static IReadOnlyList<GalleryExample> CreateProgressRingExamples()
         {
+            var indeterminateContent = CreateIndeterminateProgressRingExampleContent(assignRootAutomationId: true, out var indeterminateOptions);
+            var determinateContent = CreateDeterminateProgressRingExampleContent(out var determinateOptions);
             return new[]
             {
                 new GalleryExample(
                     "An indeterminate progress ring.",
-                    CreateIndeterminateProgressRingExampleContent(assignRootAutomationId: true),
+                    indeterminateContent,
                     ProgressRingIndeterminateXaml,
-                    null),
+                    null,
+                    indeterminateOptions),
                 new GalleryExample(
                     "A determinate progress ring.",
-                    CreateDeterminateProgressRingExampleContent(),
+                    determinateContent,
                     ProgressRingDeterminateXaml,
-                    null)
+                    null,
+                    determinateOptions)
             };
         }
 
-        private static GallerySamplePanel CreateIndeterminateProgressRingExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateIndeterminateProgressRingExampleContent(bool assignRootAutomationId, out UIElement options)
         {
             var root = new GallerySamplePanel();
             if (assignRootAutomationId)
@@ -902,13 +938,12 @@ namespace ModernWpf.Gallery.Pages
                 ApplyProgressRingBackground(progressHost, background.SelectedItem as string);
             };
 
-            root.Children.Add(CreateProgressRingExampleLayout(
-                progressHost,
-                CreateOptionsPanel(toggle, CreateOptionBlock("Background color", background))));
+            options = CreateOptionsPanel(toggle, CreateOptionBlock("Background color", background));
+            root.Children.Add(progressHost);
             return root;
         }
 
-        private static GallerySamplePanel CreateDeterminateProgressRingExampleContent()
+        private static GallerySamplePanel CreateDeterminateProgressRingExampleContent(out UIElement options)
         {
             var root = new GallerySamplePanel();
             var progressRing = new Mux.ProgressRing
@@ -962,9 +997,8 @@ namespace ModernWpf.Gallery.Pages
                 ApplyProgressRingBackground(progressHost, background.SelectedItem as string);
             };
 
-            root.Children.Add(CreateProgressRingExampleLayout(
-                sample,
-                CreateOptionsPanel(CreateOptionBlock("Background color", background))));
+            options = CreateOptionsPanel(CreateOptionBlock("Background color", background));
+            root.Children.Add(sample);
             return root;
         }
 
@@ -1008,6 +1042,7 @@ namespace ModernWpf.Gallery.Pages
                 Name = name,
                 Width = 200
             };
+            ModernWpf.Controls.Primitives.ControlHelper.SetPlaceholderText(comboBox, "Pick a color");
             comboBox.Items.Add("Transparent");
             comboBox.Items.Add("LightGray");
             return comboBox;

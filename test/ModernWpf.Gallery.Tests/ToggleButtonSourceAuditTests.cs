@@ -40,8 +40,8 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(sample, "Name = \"Control1Output\"");
             StringAssert.Contains(sample, "Text = \"Off\"");
             StringAssert.Contains(sample, "GalleryAutomation.SampleElementId(\"ToggleButton\", \"Output\")");
-            StringAssert.Contains(sample, "button.Checked += delegate { output.Text = \"On\"; };");
-            StringAssert.Contains(sample, "button.Unchecked += delegate { output.Text = \"Off\"; };");
+            StringAssert.Contains(sample, "button.Checked += delegate { outputText.Text = \"On\"; };");
+            StringAssert.Contains(sample, "button.Unchecked += delegate { outputText.Text = \"Off\"; };");
 
             StringAssert.Contains(sampleTests, "new ToggleButtonAutomationPeer(button)");
             StringAssert.Contains(sampleTests, "new TextBlockAutomationPeer(output)");

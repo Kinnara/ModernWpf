@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,6 +17,8 @@ namespace ModernWpf.Gallery.Testing
     internal static class GalleryDiagnostics
     {
         public const string StatusFileName = "modernwpf-gallery-status.txt";
+        public const string VisualScrollRequestFileName = "modernwpf-gallery-scroll-request.txt";
+        public const string VisualScrollResultFileName = "modernwpf-gallery-scroll-result.txt";
 
         private static readonly object Gate = new object();
 
@@ -159,7 +162,15 @@ namespace ModernWpf.Gallery.Testing
                     StabilizeAnimatedVisualState(root);
                 }
 
-                WriteVisualArtifactsCore(root);
+                var scrollPositions = CaptureScrollPositions(root);
+                try
+                {
+                    WriteVisualArtifactsCore(root);
+                }
+                finally
+                {
+                    RestoreScrollPositions(scrollPositions);
+                }
             }
             catch (Exception ex)
             {
@@ -269,6 +280,7 @@ namespace ModernWpf.Gallery.Testing
                 var artifactId = GetVisualArtifactId(element, automationId);
                 if (ShouldWriteVisualArtifact(artifactId) && !ShouldSkipVisualArtifact(element, artifactId))
                 {
+                    PrepareElementForVisualArtifact(element, artifactId);
                     var artifactFileName = SanitizeFileName(artifactId);
                     WriteElementPng(element, Path.Combine(ArtifactDirectory, artifactFileName + ".png"));
                     WriteElementBounds(element, Path.Combine(ArtifactDirectory, artifactFileName + ".bounds.txt"));
@@ -286,6 +298,219 @@ namespace ModernWpf.Gallery.Testing
             {
                 WriteVisualArtifactsCore(VisualTreeHelper.GetChild(root, i));
             }
+        }
+
+        public static bool BringVisualArtifactIntoView(DependencyObject root, string automationId)
+        {
+            if (!IsEnabled || root == null || string.IsNullOrWhiteSpace(automationId))
+            {
+                return false;
+            }
+
+            var element = FindByAutomationId(root, automationId) as FrameworkElement;
+            if (element == null || !element.IsLoaded)
+            {
+                return false;
+            }
+
+            return BringVisualArtifactIntoView(element);
+        }
+
+        private static bool BringVisualArtifactIntoView(FrameworkElement element)
+        {
+            if (element == null || !element.IsLoaded)
+            {
+                return false;
+            }
+
+            element.BringIntoView(new Rect(
+                0,
+                0,
+                Math.Max(1, element.ActualWidth),
+                Math.Max(1, element.ActualHeight)));
+            element.UpdateLayout();
+            var scrollViewer = FindAncestorScrollViewer(element);
+            if (scrollViewer != null)
+            {
+                scrollViewer.ApplyTemplate();
+                var scrollPresenter = scrollViewer.Template?.FindName("PART_ScrollContentPresenter", scrollViewer) as ScrollContentPresenter;
+                if (scrollPresenter != null && scrollPresenter.ViewportHeight > 0)
+                {
+                    var position = element.TransformToAncestor(scrollPresenter).Transform(new Point());
+                    var maximumOffset = Math.Max(0, scrollPresenter.ExtentHeight - scrollPresenter.ViewportHeight);
+                    var desiredOffset = Math.Max(
+                        0,
+                        Math.Min(maximumOffset, scrollPresenter.VerticalOffset + position.Y));
+                    scrollPresenter.SetVerticalOffset(desiredOffset);
+                    scrollPresenter.InvalidateArrange();
+                }
+                else
+                {
+                    var position = element.TransformToAncestor(scrollViewer).Transform(new Point());
+                    scrollViewer.ScrollToVerticalOffset(Math.Max(0, scrollViewer.VerticalOffset + position.Y));
+                }
+                scrollViewer.UpdateLayout();
+            }
+            element.UpdateLayout();
+            return true;
+        }
+
+        public static bool TryProcessVisualScrollRequest(DependencyObject root)
+        {
+            if (!IsEnabled || string.IsNullOrWhiteSpace(ArtifactDirectory) || root == null)
+            {
+                return false;
+            }
+
+            var requestPath = Path.Combine(ArtifactDirectory, VisualScrollRequestFileName);
+            if (!File.Exists(requestPath))
+            {
+                return false;
+            }
+
+            string automationId;
+            try
+            {
+                automationId = File.ReadAllText(requestPath).Trim();
+                File.Delete(requestPath);
+            }
+            catch
+            {
+                return false;
+            }
+
+            var element = FindByAutomationId(root, automationId) as FrameworkElement;
+            if (!BringVisualArtifactIntoView(element))
+            {
+                WriteVisualScrollResult(automationId + "|NotFound");
+                return true;
+            }
+
+            // ScrollViewer applies its content translation on the render pass. Delay the
+            // reported screen bounds until that pass so the external recorder never crops
+            // the stale, pre-scroll location of a lower sample.
+            element.Dispatcher.BeginInvoke(
+                DispatcherPriority.Render,
+                new Action(() =>
+                {
+                    element.UpdateLayout();
+                    var topLeft = element.PointToScreen(new Point());
+                    var bottomRight = element.PointToScreen(new Point(element.ActualWidth, element.ActualHeight));
+                    WriteVisualScrollResult(string.Format(
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        "{0}|Found|{1:0.###}|{2:0.###}|{3:0.###}|{4:0.###}",
+                        automationId,
+                        topLeft.X,
+                        topLeft.Y,
+                        Math.Max(1, bottomRight.X - topLeft.X),
+                        Math.Max(1, bottomRight.Y - topLeft.Y)));
+                }));
+            return true;
+        }
+
+        private static void WriteVisualScrollResult(string result)
+        {
+            File.WriteAllText(
+                Path.Combine(ArtifactDirectory, VisualScrollResultFileName),
+                result);
+        }
+
+        private static ScrollViewer FindAncestorScrollViewer(DependencyObject element)
+        {
+            var candidate = VisualTreeHelper.GetParent(element);
+            while (candidate != null)
+            {
+                var scrollViewer = candidate as ScrollViewer;
+                if (scrollViewer != null)
+                {
+                    return scrollViewer;
+                }
+
+                candidate = VisualTreeHelper.GetParent(candidate);
+            }
+
+            return null;
+        }
+
+        private static void PrepareElementForVisualArtifact(FrameworkElement element, string artifactId)
+        {
+            if (!IsControlExampleArtifactId(artifactId) || !element.IsLoaded)
+            {
+                return;
+            }
+
+            element.BringIntoView(new Rect(0, 0, Math.Max(1, element.ActualWidth), 1));
+            element.Dispatcher.Invoke(DispatcherPriority.Loaded, new Action(() => { }));
+            element.UpdateLayout();
+            element.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
+        }
+
+        private static bool IsControlExampleArtifactId(string artifactId)
+        {
+            const string prefix = "GallerySample_";
+            const string marker = "_Example";
+            if (string.IsNullOrEmpty(artifactId) || !artifactId.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            var markerIndex = artifactId.LastIndexOf(marker, StringComparison.Ordinal);
+            int exampleIndex;
+            return markerIndex > prefix.Length &&
+                int.TryParse(artifactId.Substring(markerIndex + marker.Length), out exampleIndex) &&
+                exampleIndex > 0;
+        }
+
+        private static List<ScrollPosition> CaptureScrollPositions(DependencyObject root)
+        {
+            var positions = new List<ScrollPosition>();
+            CaptureScrollPositionsCore(root, positions);
+            return positions;
+        }
+
+        private static void CaptureScrollPositionsCore(DependencyObject root, List<ScrollPosition> positions)
+        {
+            var scrollViewer = root as ScrollViewer;
+            if (scrollViewer != null)
+            {
+                positions.Add(new ScrollPosition(scrollViewer));
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                CaptureScrollPositionsCore(VisualTreeHelper.GetChild(root, i), positions);
+            }
+        }
+
+        private static void RestoreScrollPositions(IEnumerable<ScrollPosition> positions)
+        {
+            foreach (var position in positions)
+            {
+                if (!position.ScrollViewer.IsLoaded)
+                {
+                    continue;
+                }
+
+                position.ScrollViewer.ScrollToHorizontalOffset(position.HorizontalOffset);
+                position.ScrollViewer.ScrollToVerticalOffset(position.VerticalOffset);
+            }
+        }
+
+        private sealed class ScrollPosition
+        {
+            public ScrollPosition(ScrollViewer scrollViewer)
+            {
+                ScrollViewer = scrollViewer;
+                HorizontalOffset = scrollViewer.HorizontalOffset;
+                VerticalOffset = scrollViewer.VerticalOffset;
+            }
+
+            public ScrollViewer ScrollViewer { get; private set; }
+
+            public double HorizontalOffset { get; private set; }
+
+            public double VerticalOffset { get; private set; }
         }
 
         private static void StabilizeAnimatedVisualState(DependencyObject root)
@@ -434,7 +659,8 @@ namespace ModernWpf.Gallery.Testing
         private static Rect GetArtifactViewbox(FrameworkElement element, int width, int height)
         {
             var automationId = AutomationProperties.GetAutomationId(element);
-            if (string.Equals(automationId, "GallerySample_NavigationView_NavigationView", StringComparison.Ordinal) ||
+            if ((element is ModernWpf.Controls.NavigationView &&
+                    automationId.StartsWith("GallerySample_NavigationView_", StringComparison.Ordinal)) ||
                 string.Equals(automationId, "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar", StringComparison.Ordinal) ||
                 string.Equals(automationId, "GallerySample_GridView_BasicGridView", StringComparison.Ordinal) ||
                 string.Equals(automationId, "GallerySample_IconElement_SlicesIcon", StringComparison.Ordinal) ||

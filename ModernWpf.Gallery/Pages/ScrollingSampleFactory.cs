@@ -60,22 +60,25 @@ namespace ModernWpf.Gallery.Pages
 
         private static UIElement CreateAnnotatedScrollBarSample()
         {
-            return CreateAnnotatedScrollBarExampleContent(assignRootAutomationId: true);
+            return CreateAnnotatedScrollBarExampleContent(assignRootAutomationId: true, out _);
         }
 
         private static IReadOnlyList<GalleryExample> CreateAnnotatedScrollBarExamples()
         {
+            var content = CreateAnnotatedScrollBarExampleContent(assignRootAutomationId: true, out var options);
             return new[]
             {
                 new GalleryExample(
                     "AnnotatedScrollBar linked to a ScrollView.",
-                    CreateAnnotatedScrollBarExampleContent(assignRootAutomationId: true),
+                    content,
                     AnnotatedScrollBarXaml,
-                    AnnotatedScrollBarCSharp)
+                    AnnotatedScrollBarCSharp,
+                    options)
+                    .WithOptionsMaxWidth(448d)
             };
         }
 
-        private static GallerySamplePanel CreateAnnotatedScrollBarExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateAnnotatedScrollBarExampleContent(bool assignRootAutomationId, out UIElement optionsContent)
         {
             var root = new GallerySamplePanel();
             if (assignRootAutomationId)
@@ -156,21 +159,17 @@ namespace ModernWpf.Gallery.Pages
             sampleGrid.Children.Add(scrollViewer);
             sampleGrid.Children.Add(annotatedScrollBar);
 
-            var slider = new Slider
+            var slider = WinUISampleSlider.ShowValueFill(new Slider
             {
                 Name = "AnnotatedScrollBarMaxHeightSlider",
                 Minimum = 100,
                 Maximum = 500,
                 Value = 500,
-                IsSelectionRangeEnabled = true,
-                SelectionStart = 100,
-                SelectionEnd = 500,
                 Margin = new Thickness(0)
-            };
+            });
             ControlHelper.SetHeader(slider, "AnnotatedScrollBar maximum height:");
             slider.ValueChanged += delegate
             {
-                slider.SelectionEnd = slider.Value;
                 annotatedScrollBar.MaxHeight = slider.Value;
                 UpdateScrollController();
             };
@@ -184,7 +183,6 @@ namespace ModernWpf.Gallery.Pages
             options.Children.Add(new TextBlock
             {
                 Text = "Changing the AnnotatedScrollBar height refreshes its Labels layout.",
-                TextWrapping = TextWrapping.Wrap,
                 VerticalAlignment = VerticalAlignment.Center
             });
             var sliderHost = new StackPanel
@@ -201,33 +199,9 @@ namespace ModernWpf.Gallery.Pages
             sliderHost.Children.Add(slider);
             Grid.SetRow(sliderHost, 1);
             options.Children.Add(sliderHost);
+            optionsContent = options;
 
-            var layout = new Grid();
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(320) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            Grid.SetColumn(sampleGrid, 0);
-            layout.Children.Add(sampleGrid);
-            var optionsSeparator = new Border
-            {
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
-                Width = 1
-            };
-            optionsSeparator.SetResourceReference(Border.BackgroundProperty, "DividerStrokeColorDefaultBrush");
-            Grid.SetColumn(optionsSeparator, 1);
-            layout.Children.Add(optionsSeparator);
-            var optionsHost = new Border
-            {
-                Padding = new Thickness(16),
-                Child = options
-            };
-            optionsHost.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
-            optionsHost.SetResourceReference(Border.CornerRadiusProperty, "ControlCornerRadius");
-            Grid.SetColumn(optionsHost, 2);
-            layout.Children.Add(optionsHost);
-
-            root.Children.Add(layout);
+            root.Children.Add(sampleGrid);
             return root;
         }
 

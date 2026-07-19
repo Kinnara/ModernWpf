@@ -6,8 +6,10 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Controls;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -102,9 +104,13 @@ public class SliderVisualStateTests
             Assert.AreEqual(Visibility.Visible, bottomTick.Visibility);
 
             slider.IsSelectionRangeEnabled = true;
+            slider.SelectionStart = slider.Minimum;
+            slider.SelectionEnd = slider.Value;
             host.UpdateLayout();
             Assert.AreEqual(Visibility.Visible, selectionRange.Visibility);
             Assert.AreEqual(Visibility.Hidden, selectedRange.Visibility);
+            Assert.IsInstanceOfType(selectionRange.Parent, typeof(SliderRangeCanvas));
+            Assert.IsTrue(selectionRange.ActualWidth > 0);
 
             AssertThumbStatesUseWpfNames(thumb);
         });
@@ -142,7 +148,48 @@ public class SliderVisualStateTests
             Assert.AreEqual(Visibility.Collapsed, leftTick.Visibility);
             Assert.AreEqual(Visibility.Visible, rightTick.Visibility);
 
+            slider.IsSelectionRangeEnabled = true;
+            slider.SelectionStart = slider.Minimum;
+            slider.SelectionEnd = slider.Value;
+            host.UpdateLayout();
+            Assert.IsInstanceOfType(selectionRange.Parent, typeof(SliderRangeCanvas));
+            Assert.IsTrue(selectionRange.ActualHeight > 0);
+
             AssertThumbStatesUseWpfNames(thumb);
+        });
+    }
+
+    [TestMethod]
+    public void SelectionRangeEnabledBeforeFirstLayoutRendersItsCurrentValue()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var slider = CreateSlider(Orientation.Horizontal);
+            slider.IsSelectionRangeEnabled = true;
+            slider.SelectionStart = slider.Minimum;
+            slider.SelectionEnd = slider.Value;
+
+            using var host = new TestWindowHost(slider, width: 240, height: 100);
+            host.UpdateLayout();
+            Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.Background);
+            host.UpdateLayout();
+
+            var selectionRange = FindTemplatePart<Border>(slider, "PART_SelectionRange");
+            Assert.IsInstanceOfType(selectionRange.Parent, typeof(SliderRangeCanvas));
+            Assert.AreEqual(Visibility.Visible, selectionRange.Visibility);
+            Assert.IsTrue(selectionRange.Width > 0);
+            Assert.AreEqual(selectionRange.Width, selectionRange.ActualWidth, 0.51);
+
+            var initialWidth = selectionRange.ActualWidth;
+            slider.Value = 75;
+            slider.SelectionEnd = slider.Value;
+            host.UpdateLayout();
+            Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.Background);
+            host.UpdateLayout();
+            Assert.IsTrue(selectionRange.ActualWidth > initialWidth);
+            Assert.AreEqual(selectionRange.Width, selectionRange.ActualWidth, 0.51);
         });
     }
 

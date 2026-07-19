@@ -358,7 +358,6 @@
                         <Grid x:Name="PresenterContentRootGrid">
                             <!-- Wrap SelectionIndicator in a grid so that its offset is 0,0 - this enables the offset animation. -->
                             <Grid
-                                Margin="4,0,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center">
 
@@ -570,10 +569,14 @@
     <Style TargetType="primitives:NavigationViewItemPresenter" x:Key="MUX_NavigationViewItemPresenterStyleWhenOnTopPane">
         <Setter Property="Foreground" Value="{DynamicResource TopNavigationViewItemForeground}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <!-- WPF's ScrollViewer measures the horizontal repeater with an infinite cross-axis.
+             Keep primary top items on WinUI's 48-DIP strip despite that platform difference. -->
+        <Setter Property="MinHeight" Value="{DynamicResource NavigationViewTopPaneHeight}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="primitives:NavigationViewItemPresenter">
                     <Border x:Name="LayoutRoot"
+                            Margin="{DynamicResource NavigationViewItemButtonMargin}"
                             Background="{TemplateBinding Background}"
                             ui:FocusVisualHelper.IsTemplateFocusTarget="True"
                             CornerRadius="{TemplateBinding CornerRadius}">
@@ -1323,10 +1326,11 @@
                                     MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.SmallerPaneToggleButtonWidth}"
                                     ui:FocusVisualHelper.FocusVisualMargin="0">
                                     <TextBlock
-                                        x:Name="PaneTitleTextBlock"
-                                        Grid.Column="0"
-                                        Text="{TemplateBinding PaneTitle}"
-                                        HorizontalAlignment="Left"
+                                    x:Name="PaneTitleTextBlock"
+                                    Grid.Column="0"
+                                    Text="{TemplateBinding PaneTitle}"
+                                    FontFamily="{DynamicResource ContentControlThemeFontFamily}"
+                                    HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
                                         Style="{DynamicResource NavigationViewItemHeaderTextStyle}"/>
                                 </Button>
@@ -1367,6 +1371,7 @@
 
                                 <Grid x:Name="TopNavGrid"
                                       Height="{DynamicResource NavigationViewTopPaneHeight}"
+                                      Margin="{DynamicResource TopNavigationViewTopNavGridMargin}"
                                       Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TopPaneVisibility}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition x:Name="BackButtonPlaceholderOnTopNav" ui:ColumnDefinitionHelper.PixelWidth="{DynamicResource NavigationBackButtonWidth}"/>
@@ -1406,7 +1411,8 @@
                                         Grid.Column="3">
                                         <ScrollViewer
                                             HorizontalScrollBarVisibility="Hidden"
-                                            VerticalScrollBarVisibility="Hidden">
+                                            VerticalScrollBarVisibility="Disabled"
+                                            VerticalContentAlignment="Stretch">
                                             <local:ItemsRepeater
                                                 AutomationProperties.Name="{TemplateBinding AutomationProperties.Name}"
                                                 x:Name="TopNavMenuItemsHost">
@@ -1509,6 +1515,7 @@
                                     <Border x:Name="PaneContentGrid"
                                             BorderBrush="{DynamicResource NavigationViewItemSeparatorForeground}"
                                             BorderThickness="0,0,1,0"
+                                            Margin="{DynamicResource NavigationViewPaneContentGridMargin}"
                                             HorizontalAlignment="Left"
                                             Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.LeftPaneVisibility}">
                                         <Grid>
@@ -1519,7 +1526,7 @@
                                                 <RowDefinition x:Name="PaneContentGridToggleButtonRow" Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
                                                 <RowDefinition Height="Auto"/>
-                                                <RowDefinition Height="8"/>
+                                                <RowDefinition Height="0"/>
                                                 <!-- above list margin -->
                                                 <RowDefinition x:Name="ItemsContainerRow" Height="*"/>
                                             </Grid.RowDefinitions>
@@ -1589,7 +1596,7 @@
                                                 Grid.Row="4" />
 
                                             <!-- "Non header" content -->
-                                            <Grid x:Name="ItemsContainerGrid" Grid.Row="6" Margin="0,0,0,8">
+                                            <Grid x:Name="ItemsContainerGrid" Grid.Row="6">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="*"/> <!-- MenuItems -->
                                                     <RowDefinition Height="Auto"/> <!-- Separator -->

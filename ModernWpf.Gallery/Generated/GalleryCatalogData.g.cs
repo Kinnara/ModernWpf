@@ -297,6 +297,19 @@ namespace ModernWpf.Gallery.Models
                         new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
                         new GalleryDocLink[] { new GalleryDocLink("ProgressRing - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.progressring"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/progress-controls") },
                         new string[] { "" }),
+                    new GalleryItem(
+                        "StatusAndInfo",
+                        "WinUIProgressBar",
+                        "ProgressBar (WinUI)",
+                        "Shows an app's progress on a task, or that the app is performing ongoing work that doesn't block user interaction.",
+                        "ms-appx:///Assets/ControlImages/ProgressBar.png",
+                        "The WinUI-style ProgressBar has two visual representations:\nIndeterminate - shows that a task is ongoing, but doesn't block user interaction.\nDeterminate - shows how much progress has been made on a known amount of work.",
+                        "ModernWpf.Controls",
+                        false,
+                        false,
+                        new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control", "RangeBase" },
+                        new GalleryDocLink[] { new GalleryDocLink("ProgressBar - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.progressbar"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/progress-controls") },
+                        new string[] { "ProgressRing" }),
                 }),
                 new GalleryGroup("DialogsAndFlyouts", "Dialogs & flyouts", "", "pack://application:,,,/Assets/ControlImages/Placeholder.png", false, new GalleryItem[]
                 {

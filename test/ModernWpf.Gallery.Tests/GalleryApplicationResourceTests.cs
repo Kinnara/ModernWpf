@@ -484,18 +484,20 @@ namespace ModernWpf.Gallery.Tests
                     var templateRoot = (DependencyObject)VisualTreeHelper.GetChild(controlExample, 0);
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(templateRoot));
 
-                    Assert.IsNull(controlExample.Template.FindName("ExampleDisplayBorder", controlExample));
                     var displayBorder = FindVisualChildren<Border>(controlExample)
                         .Single(border =>
                             Grid.GetRow(border) == 1 &&
                             border.BorderThickness == new Thickness(1, 1, 1, 0) &&
                             border.CornerRadius == new CornerRadius(8, 8, 0, 0));
+                    Assert.AreSame(displayBorder, controlExample.Template.FindName("ExampleDisplayBorder", controlExample));
                     Assert.AreEqual(
                         (double)Application.Current.FindResource("BodyTextBlockFontSize"),
                         TextElement.GetFontSize(displayBorder));
                     var examplePresenter = FindVisualChildren<ContentPresenter>(displayBorder)
                         .Single(presenter => ReferenceEquals(presenter.Content, controlExample.ExampleContent));
-                    Assert.AreEqual(new Thickness(16), examplePresenter.Margin);
+                    Assert.AreEqual(new Thickness(12), examplePresenter.Margin);
+                    Assert.AreEqual(HorizontalAlignment.Left, examplePresenter.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Top, examplePresenter.VerticalAlignment);
                     var optionsRoot = (Border)controlExample.Template.FindName("OptionsRoot", controlExample);
                     Assert.IsNotNull(optionsRoot);
                     Assert.AreEqual(Visibility.Collapsed, optionsRoot.Visibility);
@@ -504,8 +506,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(0d, optionsColumn.MinWidth);
                     Assert.AreEqual(320d, optionsColumn.MaxWidth);
 
-                    Assert.IsNull(controlExample.Template.FindName("SourceCodeExpander", controlExample));
                     var sourceCodeExpander = FindVisualChildren<Expander>(controlExample).Single();
+                    Assert.AreSame(sourceCodeExpander, controlExample.Template.FindName("SourceCodeExpander", controlExample));
                     Assert.AreEqual("Source code", sourceCodeExpander.Header);
                     Assert.AreEqual("View Source Code for Reference sample", AutomationProperties.GetName(sourceCodeExpander));
                     Assert.AreEqual(0.0, sourceCodeExpander.MinHeight);
@@ -524,6 +526,21 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(
                         sourceHeaderToggle.ActualWidth >= displayBorder.ActualWidth - 2.0,
                         "Expected source header to span the official full-width row; actual " + sourceHeaderToggle.ActualWidth + " display " + displayBorder.ActualWidth);
+
+                    controlExample.HorizontalContentAlignment = HorizontalAlignment.Stretch;
+                    controlExample.VerticalContentAlignment = VerticalAlignment.Center;
+                    controlExample.UseWinUIGalleryLayout = true;
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var headerTextPresenter = (TextBlock)controlExample.Template.FindName("HeaderTextPresenter", controlExample);
+                    Assert.AreEqual(new Thickness(0, 0, 0, 12), headerTextPresenter.Margin);
+                    Assert.AreEqual(new Thickness(1), displayBorder.BorderThickness);
+                    Assert.AreEqual(48.0, sourceCodeExpander.MinHeight);
+                    Assert.IsTrue(sourceCodeExpander.ActualHeight >= 48.0);
+                    Assert.AreEqual(HorizontalAlignment.Stretch, examplePresenter.HorizontalAlignment);
+                    Assert.AreEqual(VerticalAlignment.Center, examplePresenter.VerticalAlignment);
 
                     var divider = (Border)controlExample.Template.FindName("Border", controlExample);
                     Assert.IsNotNull(divider);
@@ -588,8 +605,9 @@ namespace ModernWpf.Gallery.Tests
                     window.UpdateLayout();
                     WpfTestHost.DoEvents();
 
-                    Assert.IsNull(controlExample.Template.FindName("SourceCodeExpander", controlExample));
-                    var sourceCodeExpander = FindVisualChildren<Expander>(controlExample).Single();
+                    var sourceCodeExpander = (Expander)controlExample.Template.FindName("SourceCodeExpander", controlExample);
+                    Assert.IsNotNull(sourceCodeExpander);
+                    Assert.AreSame(sourceCodeExpander, FindVisualChildren<Expander>(controlExample).Single());
                     Assert.AreEqual("Source code", sourceCodeExpander.Header);
                     Assert.AreEqual(Visibility.Visible, sourceCodeExpander.Visibility);
 

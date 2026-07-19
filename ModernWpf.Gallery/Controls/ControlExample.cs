@@ -38,6 +38,13 @@ namespace ModernWpf.Gallery.Controls
             new PropertyMetadata(null)
         );
 
+        public static readonly DependencyProperty OutputContentProperty = DependencyProperty.Register(
+            nameof(OutputContent),
+            typeof(object),
+            typeof(ControlExample),
+            new PropertyMetadata(null)
+        );
+
         public static readonly DependencyProperty OptionsContentProperty = DependencyProperty.Register(
             nameof(OptionsContent),
             typeof(object),
@@ -79,6 +86,20 @@ namespace ModernWpf.Gallery.Controls
             )
         );
 
+        public static readonly DependencyProperty UseWinUIGalleryLayoutProperty = DependencyProperty.Register(
+            nameof(UseWinUIGalleryLayout),
+            typeof(bool),
+            typeof(ControlExample),
+            new PropertyMetadata(false)
+        );
+
+        public static readonly DependencyProperty OptionsMaxWidthProperty = DependencyProperty.Register(
+            nameof(OptionsMaxWidth),
+            typeof(double),
+            typeof(ControlExample),
+            new PropertyMetadata(320d)
+        );
+
         public string HeaderText
         {
             get => (string)GetValue(HeaderTextProperty);
@@ -89,6 +110,12 @@ namespace ModernWpf.Gallery.Controls
         {
             get => GetValue(ExampleContentProperty);
             set => SetValue(ExampleContentProperty, value);
+        }
+
+        public object OutputContent
+        {
+            get => GetValue(OutputContentProperty);
+            set => SetValue(OutputContentProperty, value);
         }
 
         public object OptionsContent
@@ -119,6 +146,18 @@ namespace ModernWpf.Gallery.Controls
         {
             get => (Uri)GetValue(CSharpCodeSourceProperty);
             set => SetValue(CSharpCodeSourceProperty, value);
+        }
+
+        public bool UseWinUIGalleryLayout
+        {
+            get => (bool)GetValue(UseWinUIGalleryLayoutProperty);
+            set => SetValue(UseWinUIGalleryLayoutProperty, value);
+        }
+
+        public double OptionsMaxWidth
+        {
+            get => (double)GetValue(OptionsMaxWidthProperty);
+            set => SetValue(OptionsMaxWidthProperty, value);
         }
 
         private void OnXamlCodeSourceChanged(Uri uri)

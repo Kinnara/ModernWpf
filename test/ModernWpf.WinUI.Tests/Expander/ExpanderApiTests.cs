@@ -305,62 +305,67 @@ public class ExpanderApiTests
     [TestMethod]
     public void VerifyExpanderThemeAliasesRetainOfficialWpfFluentKeys()
     {
-        foreach (var themeName in new[] { "Light", "Dark" })
+        WpfTestHost.Run(() =>
         {
-            AssertThemeResourceReference(themeName, "ExpanderHeaderBackground", "CardBackgroundFillColorDefaultBrush");
-            AssertThemeResourceReference(themeName, "ExpanderHeaderForeground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "ExpanderHeaderForegroundPointerOver", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "ExpanderHeaderForegroundPressed", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "ExpanderHeaderBorderBrush", "CardStrokeColorDefaultBrush");
-            AssertThemeResourceReference(themeName, "ExpanderHeaderBorderPointerOverBrush", "CardStrokeColorDefaultBrush");
-            AssertThemeResourceReference(themeName, "ExpanderHeaderBorderPressedBrush", "CardStrokeColorDefaultBrush");
-            AssertThemeResourceReference(themeName, "ExpanderHeaderDisabledForeground", "TextFillColorDisabledBrush");
-            AssertThemeResourceReference(themeName, "ExpanderHeaderDisabledBorderBrush", "CardStrokeColorDefaultBrush");
-            AssertThemeResourceValue(themeName, "ExpanderHeaderBorderThickness", new Thickness(1));
+            TestApplication.EnsureInitialized();
 
-            AssertThemeResourceReference(themeName, "ExpanderChevronBackground", "SubtleFillColorTransparentBrush");
-            AssertThemeResourceReference(themeName, "ExpanderChevronPointerOverBackground", "SubtleFillColorSecondaryBrush");
-            AssertThemeResourceReference(themeName, "ExpanderChevronPressedBackground", "SubtleFillColorTertiaryBrush");
-            AssertThemeResourceReference(themeName, "ExpanderChevronForeground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "ExpanderChevronPointerOverForeground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "ExpanderChevronPressedForeground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "ExpanderChevronBorderBrush", "SubtleFillColorTransparentBrush");
-            AssertThemeResourceReference(themeName, "ExpanderChevronBorderPointerOverBrush", "SubtleFillColorTransparentBrush");
-            AssertThemeResourceReference(themeName, "ExpanderChevronBorderPressedBrush", "SubtleFillColorTransparentBrush");
-            AssertThemeResourceValue(themeName, "ExpanderChevronBorderThickness", new Thickness(0));
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "ExpanderHeaderBackground", "CardBackgroundFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderForegroundPointerOver", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderForegroundPressed", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderBorderBrush", "CardStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderBorderPointerOverBrush", "CardStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderBorderPressedBrush", "CardStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderDisabledForeground", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "ExpanderHeaderDisabledBorderBrush", "CardStrokeColorDefaultBrush");
+                AssertThemeResourceValue(themeName, "ExpanderHeaderBorderThickness", new Thickness(1));
 
-            AssertThemeResourceReference(themeName, "ExpanderContentBackground", "CardBackgroundFillColorSecondaryBrush");
-            AssertThemeResourceReference(themeName, "ExpanderContentBorderBrush", "CardStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronPointerOverBackground", "SubtleFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronPressedBackground", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronPointerOverForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronPressedForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronBorderBrush", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronBorderPointerOverBrush", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "ExpanderChevronBorderPressedBrush", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceValue(themeName, "ExpanderChevronBorderThickness", new Thickness(0));
 
-            AssertCommonExpanderThemeResourceMetrics(themeName);
-        }
+                AssertThemeResourceReference(themeName, "ExpanderContentBackground", "CardBackgroundFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "ExpanderContentBorderBrush", "CardStrokeColorDefaultBrush");
 
-        AssertThemeResourceReference("HighContrast", "ExpanderHeaderBackground", "SystemColorButtonFaceColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderHeaderForeground", "SystemColorButtonTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderHeaderForegroundPointerOver", "SystemColorHighlightColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderHeaderForegroundPressed", "SystemColorHighlightColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderBrush", "SystemColorWindowTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderPointerOverBrush", "SystemColorHighlightColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderPressedBrush", "SystemColorHighlightColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderHeaderDisabledForeground", "SystemColorGrayTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderHeaderDisabledBorderBrush", "SystemColorGrayTextColorBrush");
-        AssertThemeResourceValue("HighContrast", "ExpanderHeaderBorderThickness", new Thickness(2));
+                AssertCommonExpanderThemeResourceMetrics(themeName);
+            }
 
-        AssertThemeResourceReference("HighContrast", "ExpanderChevronBackground", "SystemColorButtonFaceColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderChevronPointerOverBackground", "SystemControlTransparentBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderChevronPressedBackground", "SystemControlTransparentBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderChevronForeground", "SystemColorButtonTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderChevronPointerOverForeground", "SystemColorHighlightColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderChevronPressedForeground", "SystemColorHighlightColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderChevronBorderBrush", "SystemColorButtonTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderChevronBorderPointerOverBrush", "SystemColorHighlightColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderChevronBorderPressedBrush", "SystemColorHighlightColorBrush");
-        AssertThemeResourceValue("HighContrast", "ExpanderChevronBorderThickness", new Thickness(2));
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderBackground", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderForegroundPointerOver", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderForegroundPressed", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderPointerOverBrush", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderBorderPressedBrush", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderDisabledForeground", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderHeaderDisabledBorderBrush", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceValue("HighContrast", "ExpanderHeaderBorderThickness", new Thickness(2));
 
-        AssertThemeResourceReference("HighContrast", "ExpanderContentBackground", "SystemColorWindowColorBrush");
-        AssertThemeResourceReference("HighContrast", "ExpanderContentBorderBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronBackground", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronPointerOverBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronPressedBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronPointerOverForeground", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronPressedForeground", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronBorderBrush", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronBorderPointerOverBrush", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderChevronBorderPressedBrush", "SystemColorHighlightColorBrush");
+            AssertThemeResourceValue("HighContrast", "ExpanderChevronBorderThickness", new Thickness(2));
 
-        AssertCommonExpanderThemeResourceMetrics("HighContrast");
+            AssertThemeResourceReference("HighContrast", "ExpanderContentBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "ExpanderContentBorderBrush", "SystemColorWindowTextColorBrush");
+
+            AssertCommonExpanderThemeResourceMetrics("HighContrast");
+        });
     }
 
     [TestMethod]

@@ -32,7 +32,7 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(sample, "CreateRatingControlExamples()");
             StringAssert.Contains(sample, "A simple RatingControl");
             StringAssert.Contains(sample, "PlaceholderValue of RatingControl");
-            StringAssert.Contains(sample, "Click again to clear your rating.");
+            StringAssert.Contains(sample, "Swipe left or click again to clear your rating.");
             StringAssert.Contains(sample, "PlaceholderValue = 0");
             StringAssert.Contains(sample, "rating.PlaceholderValue = slider.Value;");
             StringAssert.Contains(sampleTests, "RatingControlSampleMatchesWinUIGalleryExamples");

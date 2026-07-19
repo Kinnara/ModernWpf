@@ -90,6 +90,7 @@
             PaneDisplayMode="Left">
             <ui:NavigationView.Resources>
                 <Thickness x:Key="NavigationViewContentGridBorderThickness">0</Thickness>
+                <Thickness x:Key="NavigationViewPaneContentGridMargin">0,8</Thickness>
                 <CornerRadius x:Key="NavigationViewContentGridCornerRadius">0</CornerRadius>
                 <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
             </ui:NavigationView.Resources>

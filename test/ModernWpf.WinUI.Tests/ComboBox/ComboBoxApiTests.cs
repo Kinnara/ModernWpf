@@ -134,6 +134,40 @@ public class ComboBoxApiTests
     }
 
     [TestMethod]
+    public void ComboBoxPlaceholderTextIsVisibleOnlyWithoutASelection()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var comboBox = CreateComboBox();
+            ControlHelper.SetPlaceholderText(comboBox, "Pick a color");
+
+            using var host = new TestWindowHost(comboBox);
+            host.UpdateLayout();
+
+            var placeholder = FindTemplateChild<TextBlock>(comboBox, "PlaceholderTextContentPresenter");
+            Assert.AreEqual("Pick a color", placeholder.Text);
+            Assert.AreEqual(Visibility.Visible, placeholder.Visibility);
+            Assert.AreSame(
+                placeholder.TryFindResource("ComboBoxPlaceHolderForeground"),
+                placeholder.Foreground);
+
+            comboBox.SelectedIndex = 0;
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Collapsed, placeholder.Visibility);
+
+            comboBox.SelectedIndex = -1;
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Visible, placeholder.Visibility);
+
+            ControlHelper.SetPlaceholderText(comboBox, string.Empty);
+            host.UpdateLayout();
+            Assert.AreEqual(Visibility.Collapsed, placeholder.Visibility);
+        });
+    }
+
+    [TestMethod]
     public void VerifyEditableComboBoxUsesOfficialTextBoxTemplate()
     {
         WpfTestHost.Run(() =>
@@ -485,24 +519,32 @@ public class ComboBoxApiTests
         AssertTrigger(triggers, "IsMouseOver", true,
             ("ContentBorder", "Background", "ComboBoxBackgroundPointerOver"),
             ("ContentBorder", "BorderBrush", "ComboBoxBorderBrushPointerOver"),
-            ("PART_ContentPresenter", "Foreground", "ComboBoxForegroundPointerOver"));
+            ("PART_ContentPresenter", "Foreground", "ComboBoxForegroundPointerOver"),
+            ("PlaceholderTextContentPresenter", "Foreground", "ComboBoxPlaceHolderForegroundPointerOver"));
         AssertTrigger(triggers, "ToggleButton", "IsPressed", true,
             ("ContentBorder", "Background", "ComboBoxBackgroundPressed"),
             ("ContentBorder", "BorderBrush", "ComboBoxBorderBrushPressed"),
-            ("PART_ContentPresenter", "Foreground", "ComboBoxForegroundPressed"));
+            ("PART_ContentPresenter", "Foreground", "ComboBoxForegroundPressed"),
+            ("PlaceholderTextContentPresenter", "Foreground", "ComboBoxPlaceHolderForegroundPressed"));
         AssertTrigger(triggers, "IsFocused", true,
             ("PART_ContentPresenter", "Foreground", "ComboBoxForegroundFocused"),
+            ("PlaceholderTextContentPresenter", "Foreground", "ComboBoxPlaceHolderForegroundFocused"),
             ("ChevronIcon", "Foreground", "ComboBoxDropDownGlyphForegroundFocused"));
         AssertTrigger(triggers, "IsEnabled", false,
             ("ContentBorder", "Background", "ComboBoxBackgroundDisabled"),
             ("ContentBorder", "BorderBrush", "ComboBoxBorderBrushDisabled"),
             ("PART_ContentPresenter", "Foreground", "ComboBoxForegroundDisabled"),
+            ("PlaceholderTextContentPresenter", "Foreground", "ComboBoxPlaceHolderForegroundDisabled"),
             ("ChevronIcon", "Foreground", "ComboBoxDropDownGlyphForegroundDisabled"));
 
         var multiTriggers = template.Triggers.OfType<MultiTrigger>().ToArray();
         AssertTrigger(multiTriggers,
+            new[] { ("", "SelectedIndex", (object)(-1)), ("", "PlaceholderTextVisibility", (object)Visibility.Visible) },
+            ("PlaceholderTextContentPresenter", "Visibility", Visibility.Visible));
+        AssertTrigger(multiTriggers,
             new[] { ("", "IsFocused", (object)true), ("ToggleButton", "IsPressed", (object)true) },
             ("PART_ContentPresenter", "Foreground", "ComboBoxForegroundFocusedPressed"),
+            ("PlaceholderTextContentPresenter", "Foreground", "ComboBoxPlaceHolderForegroundFocusedPressed"),
             ("ChevronIcon", "Foreground", "ComboBoxDropDownGlyphForegroundFocusedPressed"));
     }
 

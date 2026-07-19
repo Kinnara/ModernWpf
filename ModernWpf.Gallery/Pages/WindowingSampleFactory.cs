@@ -20,18 +20,14 @@ namespace ModernWpf.Gallery.Pages
     Subtitle=""$(Subtitle)""
     IsBackButtonVisible=""$(BackButtonVisibility)""
     IsPaneToggleButtonVisible=""$(PaneToggleVisibility)"">
-    <TitleBar.Resources>
-        <HorizontalAlignment x:Key=""TitleBarContentHorizontalAlignment"">Stretch</HorizontalAlignment>
-    </TitleBar.Resources>
     <TitleBar.IconSource>
         <ImageIconSource ImageSource=""/Assets/Tiles/GalleryIcon.ico"" />
     </TitleBar.IconSource>
     <TitleBar.Content>
         <AutoSuggestBox
-            MaxWidth=""580""
-            HorizontalAlignment=""Stretch""
+            Width=""360""
             VerticalAlignment=""Center""
-            PlaceholderText=""Search...""
+            PlaceholderText=""Search..""
             QueryIcon=""Find"" />
     </TitleBar.Content>
     <TitleBar.RightHeader>
@@ -153,7 +149,20 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
 
         private static UIElement CreateTitleBarSample()
         {
-            return CreateTitleBarConfigurationExampleContent(assignRootAutomationId: true);
+            var content = CreateTitleBarConfigurationExampleContent(
+                assignRootAutomationId: true,
+                out var optionsContent);
+            var layout = new GallerySamplePanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            layout.Children.Add(content);
+            layout.Children.Add(new Border
+            {
+                Margin = new Thickness(24, 0, 0, 0),
+                Child = optionsContent
+            });
+            return layout;
         }
 
         private static TextBlock CreateTitleBarIntroContent()
@@ -162,36 +171,43 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             {
                 Margin = new Thickness(0, 12, 0, 0),
                 TextWrapping = TextWrapping.Wrap,
-                Text = "Use the TitleBar control and ModernWpf title bar attached properties for WPF title bar customization."
+                Text = "For full title bar customization without using the TitleBar control, see the AppWindowTitleBar sample"
             };
             return textBlock;
         }
 
         private static IReadOnlyList<GalleryExample> CreateTitleBarExamples()
         {
+            var configurationContent = CreateTitleBarConfigurationExampleContent(
+                assignRootAutomationId: true,
+                out var configurationOptions);
             return new[]
             {
                 new GalleryExample(
                     "TitleBar configuration",
-                    CreateTitleBarConfigurationExampleContent(assignRootAutomationId: true),
+                    configurationContent,
                     TitleBarConfigurationXaml,
-                    null),
-                new GalleryExample(
-                    "TitleBar drag regions",
-                    CreateTitleBarDragRegionsExampleContent(),
-                    TitleBarDragRegionsXaml,
-                    TitleBarDragRegionsCSharp),
+                    null,
+                    configurationOptions)
+                    .WithContentAlignment(HorizontalAlignment.Stretch, VerticalAlignment.Center),
                 new GalleryExample(
                     "End to end TitleBar sample",
                     CreateTitleBarEndToEndExampleContent(),
                     TitleBarEndToEndXaml,
                     TitleBarEndToEndCSharp)
+                    .WithContentAlignment(HorizontalAlignment.Stretch, VerticalAlignment.Center)
             };
         }
 
-        private static GallerySamplePanel CreateTitleBarConfigurationExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateTitleBarConfigurationExampleContent(
+            bool assignRootAutomationId,
+            out UIElement optionsContent)
         {
-            var root = new GallerySamplePanel();
+            var root = new GallerySamplePanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Center
+            };
             if (assignRootAutomationId)
             {
                 GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("TitleBar"));
@@ -279,7 +295,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 Name = "TitleBarSearchBox",
                 Width = 186,
                 VerticalAlignment = VerticalAlignment.Center,
-                PlaceholderText = "Search...",
+                PlaceholderText = "Search..",
                 QueryIcon = new Mux.SymbolIcon(Mux.Symbol.Find),
                 Margin = new Thickness(0, 0, 16, 0)
             };
@@ -311,8 +327,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             var subtitleBox = new TextBox
             {
                 Name = "SubtitleBox",
-                Text = "Preview",
-                Margin = new Thickness(0, 12, 0, 0)
+                Text = "Preview"
             };
             ControlHelper.SetHeader(subtitleBox, "Subtitle");
 
@@ -346,29 +361,43 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             var options = new StackPanel
             {
                 Width = 240,
-                Orientation = Orientation.Vertical,
-                Margin = new Thickness(24, 0, 0, 0)
+                Orientation = Orientation.Vertical
             };
+            // WinUI TextBox reserves an 8-DIP gap between its built-in Header
+            // presenter and input chrome. WPF uses an explicit header element
+            // for the port, so preserve that same vertical metric here.
+            options.Children.Add(CreateTitleBarOptionHeader("TitleHeader", "Title", new Thickness(0, 0, 0, 8)));
             options.Children.Add(titleBox);
+            options.Children.Add(CreateTitleBarOptionHeader("SubtitleHeader", "Subtitle", new Thickness(0, 12, 0, 8)));
             options.Children.Add(subtitleBox);
             options.Children.Add(backButtonToggle);
             options.Children.Add(paneToggle);
 
-            var layout = new Grid();
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            Grid.SetColumn(titleBarControl, 0);
-            Grid.SetColumn(options, 1);
-            layout.Children.Add(titleBarControl);
-            layout.Children.Add(options);
-            root.Children.Add(layout);
+            root.Children.Add(titleBarControl);
+            optionsContent = options;
             updatePreview();
             return root;
         }
 
+        private static TextBlock CreateTitleBarOptionHeader(string name, string text, Thickness margin)
+        {
+            var header = new TextBlock
+            {
+                Name = name,
+                Text = text,
+                Margin = margin
+            };
+            header.SetResourceReference(TextBlock.FontSizeProperty, "BodyTextBlockFontSize");
+            header.SetResourceReference(TextBlock.ForegroundProperty, "TextFillColorPrimaryBrush");
+            return header;
+        }
+
         private static GallerySamplePanel CreateTitleBarDragRegionsExampleContent()
         {
-            var root = new GallerySamplePanel();
+            var root = new GallerySamplePanel
+            {
+                VerticalAlignment = VerticalAlignment.Center
+            };
             var stack = new StackPanel
             {
                 MaxWidth = 560,

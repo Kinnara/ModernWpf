@@ -6,6 +6,7 @@ using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -183,6 +184,8 @@ private void InitializeData()
 
         private static IReadOnlyList<GalleryExample> CreateGridViewExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
         {
+            var styledContent = CreateStyledGridViewExampleContent(out var styledOptions);
+            var contentContent = CreateContentGridViewExampleContent(out var contentOptions);
             return new[]
             {
                 new GalleryExample(
@@ -192,14 +195,16 @@ private void InitializeData()
                     FindSampleCodeText(sampleSnippets, "GridView/GridViewSample1_cs.txt")),
                 new GalleryExample(
                     "GridView with Layout Customization",
-                    CreateStyledGridViewExampleContent(),
+                    styledContent,
                     GridViewLayoutCustomizationXaml,
-                    null),
+                    null,
+                    styledOptions),
                 new GalleryExample(
                     "Content inside of a GridView.",
-                    CreateContentGridViewExampleContent(),
+                    contentContent,
                     GridViewContentXaml,
-                    null)
+                    null,
+                    contentOptions)
             };
         }
 
@@ -239,7 +244,7 @@ private void InitializeData()
             return root;
         }
 
-        private static GallerySamplePanel CreateStyledGridViewExampleContent()
+        private static GallerySamplePanel CreateStyledGridViewExampleContent(out UIElement optionsContent)
         {
             var root = CreateGridViewExampleRoot(assignRootAutomationId: false);
             root.Children.Add(new TextBlock
@@ -249,10 +254,6 @@ private void InitializeData()
                 Margin = new Thickness(0, 0, 0, 15)
             });
 
-            var layout = CreateGridViewOptionsLayout();
-            var sampleColumn = new StackPanel();
-            layout.Children.Add(sampleColumn);
-
             Mux.ItemsWrapGrid styledGridWrapPanel = null;
             var styledGrid = CreateSourceGridView("StyledGrid", CreateGridViewImageOverlayTemplate(), CreateGridViewItems());
             styledGrid.ItemContainerStyle = CreateGridViewItemMarginStyle(5, 5);
@@ -260,14 +261,12 @@ private void InitializeData()
             {
                 styledGridWrapPanel = panel;
             });
-            sampleColumn.Children.Add(styledGrid);
+            root.Children.Add(styledGrid);
 
             var options = new StackPanel
             {
                 Width = 250
             };
-            Grid.SetColumn(options, 2);
-
             var columnSpace = CreateGridViewNumberBox("ColumnSpace", "Space between columns", 0, 100, 5);
             var rowSpace = CreateGridViewNumberBox("RowSpace", "Space between rows", 0, 100, 5);
             var wrapItemCount = CreateGridViewNumberBox("WrapItemCount", "Maximum number of items before wrapping", 1, 8, 3);
@@ -294,16 +293,13 @@ private void InitializeData()
             options.Children.Add(columnSpace);
             options.Children.Add(rowSpace);
             options.Children.Add(wrapItemCount);
-            layout.Children.Add(options);
-
-            root.Children.Add(layout);
+            optionsContent = options;
             return root;
         }
 
-        private static GallerySamplePanel CreateContentGridViewExampleContent()
+        private static GallerySamplePanel CreateContentGridViewExampleContent(out UIElement optionsContent)
         {
             var root = CreateGridViewExampleRoot(assignRootAutomationId: false);
-            var layout = CreateGridViewOptionsLayout();
 
             var sampleGrid = new Grid();
             sampleGrid.RowDefinitions.Add(new RowDefinition());
@@ -315,6 +311,7 @@ private void InitializeData()
             selectionOutput.Name = "SelectionOutput";
 
             var contentGridView = CreateSourceGridView("ContentGridView", CreateGridViewImageTemplate(), CreateGridViewItems());
+            contentGridView.MaxHeight = double.PositiveInfinity;
             contentGridView.FlowDirection = FlowDirection.LeftToRight;
             contentGridView.SelectionMode = SelectionMode.Single;
             contentGridView.SelectionChanged += delegate(object sender, SelectionChangedEventArgs args)
@@ -336,13 +333,9 @@ private void InitializeData()
             outputs.Children.Add(selectionOutput);
             Grid.SetRow(outputs, 1);
             sampleGrid.Children.Add(outputs);
-            layout.Children.Add(sampleGrid);
-
             var options = CreateContentGridViewOptions(contentGridView, clickOutput, selectionOutput);
-            Grid.SetColumn(options, 2);
-            layout.Children.Add(options);
-
-            root.Children.Add(layout);
+            root.Children.Add(sampleGrid);
+            optionsContent = options;
             return root;
         }
 
@@ -392,8 +385,7 @@ private void InitializeData()
         {
             var options = new StackPanel
             {
-                Name = "Control2",
-                Width = 250
+                Name = "Control2"
             };
 
             var templateOptions = new Mux.RadioButtons
@@ -444,21 +436,27 @@ private void InitializeData()
                 Text = "GridView Properties",
                 Margin = new Thickness(0, 18, 0, 10)
             });
-            options.Children.Add(new TextBlock
+            var dragAndDropDescription = new TextBlock
             {
                 MaxWidth = 150,
                 FontSize = 13,
-                TextWrapping = TextWrapping.Wrap,
-                Text = "In order to drag, drop, and reorder items within the GridView, make sure the last three boxes are checked below."
-            });
-            options.Children.Add(new TextBlock
+                TextWrapping = TextWrapping.Wrap
+            };
+            dragAndDropDescription.Inlines.Add(new Run(
+                "In order to drag, drop, and reorder items within the GridView, make sure the last three boxes are checked below."));
+            dragAndDropDescription.Inlines.Add(new LineBreak());
+            options.Children.Add(dragAndDropDescription);
+
+            var itemClickDescription = new TextBlock
             {
                 MaxWidth = 150,
                 FontSize = 13,
-                TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(0, 8, 0, 0),
-                Text = "Turning on IsItemClickEnabled will allow the user to click on an item (and print output below the GridView), regardless of selection mode."
-            });
+                TextWrapping = TextWrapping.Wrap
+            };
+            itemClickDescription.Inlines.Add(new Run(
+                "Turning on IsItemClickEnabled will allow the user to click on an item (and print output below the GridView), regardless of selection mode."));
+            itemClickDescription.Inlines.Add(new LineBreak());
+            options.Children.Add(itemClickDescription);
 
             var itemClickCheckBox = CreateGridViewOptionCheckBox("ItemClickCheckBox", "IsItemClickEnabled");
             itemClickCheckBox.Click += delegate
@@ -478,7 +476,7 @@ private void InitializeData()
             var selectionMode = new ComboBox
             {
                 Name = "SelectionModeComboBox",
-                Margin = new Thickness(0, 12, 0, 0)
+                HorizontalAlignment = HorizontalAlignment.Left
             };
             selectionMode.Items.Add("None");
             selectionMode.Items.Add("Single");
@@ -517,10 +515,17 @@ private void InitializeData()
             var selectionModeLabel = new TextBlock
             {
                 Text = "SelectionMode",
-                Margin = new Thickness(0, 12, 0, 4)
+                Margin = new Thickness(0, 0, 0, 4)
             };
-            options.Children.Add(selectionModeLabel);
-            options.Children.Add(selectionMode);
+            var selectionModeBlock = new StackPanel
+            {
+                Margin = new Thickness(0, 12, 0, 0),
+                MinHeight = 60,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            selectionModeBlock.Children.Add(selectionModeLabel);
+            selectionModeBlock.Children.Add(selectionMode);
+            options.Children.Add(selectionModeBlock);
             return options;
         }
 
@@ -787,24 +792,34 @@ private void InitializeData()
                 Margin = new Thickness(0, 0, 0, 12)
             };
             GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("ItemsRepeater"));
-            root.Children.Add(CreateBasicItemsRepeaterExampleContent(assignRootAutomationId: false));
+            var content = CreateBasicItemsRepeaterExampleContent(
+                assignRootAutomationId: false,
+                out var optionsContent);
+            root.Children.Add(CreateItemsRepeaterStandaloneLayout(content, optionsContent));
             return root;
         }
 
         private static IReadOnlyList<GalleryExample> CreateItemsRepeaterExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
         {
+            var basicContent = CreateBasicItemsRepeaterExampleContent(
+                assignRootAutomationId: true,
+                out var basicOptions);
+            var virtualizingContent = CreateVirtualizingItemsRepeaterExampleContent(out var virtualizingOptions);
             return new[]
             {
                 new GalleryExample(
                     "Basic, non-interactive items laid out by ItemsRepeater",
-                    CreateBasicItemsRepeaterExampleContent(assignRootAutomationId: true),
+                    basicContent,
                     ItemsRepeaterBasicXaml,
-                    ItemsRepeaterBasicCSharp),
+                    ItemsRepeaterBasicCSharp,
+                    basicOptions),
                 new GalleryExample(
                     "Virtualizing, scrollable list of items laid out by ItemsRepeater",
-                    CreateVirtualizingItemsRepeaterExampleContent(),
+                    virtualizingContent,
                     FindSampleCodeText(sampleSnippets, "ItemsRepeater/ItemsRepeaterSample2_xaml.txt"),
-                    FindSampleCodeText(sampleSnippets, "ItemsRepeater/ItemsRepeaterSample2_cs.txt")),
+                    FindSampleCodeText(sampleSnippets, "ItemsRepeater/ItemsRepeaterSample2_cs.txt"),
+                    virtualizingOptions)
+                    .WithContentAlignment(HorizontalAlignment.Stretch, VerticalAlignment.Top),
                 new GalleryExample(
                     "ItemsRepeater with mixed-type collection",
                     CreateMixedItemsRepeaterExampleContent(),
@@ -828,10 +843,11 @@ private void InitializeData()
             };
         }
 
-        private static GallerySamplePanel CreateBasicItemsRepeaterExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateBasicItemsRepeaterExampleContent(
+            bool assignRootAutomationId,
+            out UIElement optionsContent)
         {
             var root = CreateItemsRepeaterExampleRoot(assignRootAutomationId);
-            var layout = CreateRepeaterOptionsLayout();
             var maxLength = 425;
             var random = new Random(1);
             var barItems = CreateRepeaterBars(maxLength);
@@ -856,18 +872,14 @@ private void InitializeData()
                     Content = repeater
                 }
             };
-            layout.Children.Add(host);
+            root.Children.Add(host);
 
-            var options = new StackPanel
-            {
-                Width = 250
-            };
-            Grid.SetColumn(options, 2);
-
+            var options = new StackPanel();
             Button deleteButton = null;
             var addButton = CreateButton("Add Item");
             addButton.Name = "AddBtn";
             addButton.MinWidth = 150;
+            addButton.Margin = new Thickness(0, 0, 0, 12);
             addButton.Click += delegate
             {
                 barItems.Add(new RepeaterBar(random.Next(maxLength), maxLength));
@@ -880,6 +892,7 @@ private void InitializeData()
             deleteButton = CreateButton("Remove Item");
             deleteButton.Name = "DeleteBtn";
             deleteButton.MinWidth = 150;
+            deleteButton.Margin = new Thickness(0, 0, 0, 12);
             deleteButton.Click += delegate
             {
                 if (barItems.Count > 0)
@@ -891,12 +904,6 @@ private void InitializeData()
             };
             options.Children.Add(addButton);
             options.Children.Add(deleteButton);
-
-            options.Children.Add(new TextBlock
-            {
-                Text = "Layout",
-                Margin = new Thickness(0, 12, 0, 4)
-            });
 
             Action<string> applyLayout = delegate(string layoutKey)
             {
@@ -920,19 +927,24 @@ private void InitializeData()
                 }
             };
 
-            options.Children.Add(CreateLayoutRadioButton("VStackBtn", "StackLayout - Vertical", "VerticalStackLayout", true, applyLayout));
-            options.Children.Add(CreateLayoutRadioButton("HStackBtn", "StackLayout - Horizontal", "HorizontalStackLayout", false, applyLayout));
-            options.Children.Add(CreateLayoutRadioButton("HGridBtn", "UniformGridLayout", "UniformGridLayout", false, applyLayout));
+            options.Children.Add(CreateLayoutRadioButtons(
+                "Layout",
+                new[]
+                {
+                    CreateLayoutRadioButton("VStackBtn", "StackLayout - Vertical", "VerticalStackLayout", true),
+                    CreateLayoutRadioButton("HStackBtn", "StackLayout - Horizontal", "HorizontalStackLayout", false),
+                    CreateLayoutRadioButton("HGridBtn", "UniformGridLayout", "UniformGridLayout", false)
+                },
+                0,
+                applyLayout));
 
-            layout.Children.Add(options);
-            root.Children.Add(layout);
+            optionsContent = options;
             return root;
         }
 
-        private static GallerySamplePanel CreateVirtualizingItemsRepeaterExampleContent()
+        private static GallerySamplePanel CreateVirtualizingItemsRepeaterExampleContent(out UIElement optionsContent)
         {
             var root = CreateItemsRepeaterExampleRoot(assignRootAutomationId: false);
-            var layout = CreateRepeaterOptionsLayout();
 
             var repeater = new Mux.ItemsRepeater
             {
@@ -945,7 +957,7 @@ private void InitializeData()
                     Normal = CreateNumberItemTemplate(accent: false),
                     Accent = CreateNumberItemTemplate(accent: true)
                 },
-                Layout = CreateActivityFeedLayoutApproximation()
+                Layout = CreateActivityFeedLayout()
             };
 
             var scrollViewer = new ScrollViewer
@@ -957,25 +969,34 @@ private void InitializeData()
                 Content = repeater
             };
             GalleryAutomation.WithAutomationId(scrollViewer, GalleryAutomation.SampleElementId("ItemsRepeater", "VirtualizingScrollViewer"));
-            layout.Children.Add(new Mux.ItemsRepeaterScrollHost { ScrollViewer = scrollViewer });
+            root.Children.Add(new Mux.ItemsRepeaterScrollHost { ScrollViewer = scrollViewer });
 
-            var options = new StackPanel
-            {
-                Width = 250
-            };
-            Grid.SetColumn(options, 2);
-            options.Children.Add(CreateLayoutRadioButton(null, "Uniform grid", "UniformGridLayout2", false, delegate
-            {
-                repeater.Layout = CreateUniformGridLayout2();
-            }));
-            options.Children.Add(CreateLayoutRadioButton(null, "Custom virtualizing layout", "MyFeedLayout", true, delegate
-            {
-                repeater.Layout = CreateActivityFeedLayoutApproximation();
-            }));
-            layout.Children.Add(options);
-
-            root.Children.Add(layout);
+            var options = new StackPanel();
+            options.Children.Add(CreateLayoutRadioButtons(
+                null,
+                new[]
+                {
+                    CreateLayoutRadioButton(null, "Uniform grid", "UniformGridLayout2", false),
+                    CreateLayoutRadioButton(null, "Custom virtualizing layout", "MyFeedLayout", true)
+                },
+                1,
+                delegate(string layoutKey)
+                {
+                    repeater.Layout = layoutKey == "UniformGridLayout2"
+                        ? (Mux.VirtualizingLayout)CreateUniformGridLayout2()
+                        : CreateActivityFeedLayout();
+                }));
+            optionsContent = options;
             return root;
+        }
+
+        private static UIElement CreateItemsRepeaterStandaloneLayout(UIElement content, UIElement options)
+        {
+            var layout = CreateRepeaterOptionsLayout();
+            layout.Children.Add(content);
+            Grid.SetColumn(options, 2);
+            layout.Children.Add(options);
+            return layout;
         }
 
         private static GallerySamplePanel CreateMixedItemsRepeaterExampleContent()
@@ -984,8 +1005,7 @@ private void InitializeData()
             root.Children.Add(new TextBlock
             {
                 Text = "This is an ItemsRepeater that displays both integer and string items. It uses a DataTemplateSelector to choose the correct layout for each of its items.",
-                TextWrapping = TextWrapping.Wrap,
-                Margin = new Thickness(0, 0, 0, 12)
+                TextWrapping = TextWrapping.Wrap
             });
 
             root.Children.Add(new Mux.ItemsRepeater
@@ -1017,7 +1037,7 @@ private void InitializeData()
                 VerticalAlignment = VerticalAlignment.Top,
                 ItemsSource = CreateNestedCategories(),
                 ItemTemplate = CreateCategoryTemplate(),
-                Layout = CreateVerticalStackLayout()
+                Layout = new Mux.StackLayout { Orientation = Orientation.Vertical }
             };
             root.Children.Add(new ScrollViewer
             {
@@ -1043,30 +1063,72 @@ private void InitializeData()
                     colorRectangle.Fill = item.Brush;
                 }
             };
+            var preparedElements = new List<FrameworkElement>();
+            var scrollViewer = new ScrollViewer
+            {
+                Name = "Animated_ScrollViewer",
+                Width = 250,
+                Height = 175,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
             var repeater = new Mux.ItemsRepeater
             {
                 Name = "animatedScrollRepeater",
                 ItemsSource = CreateColorItems(selectColor),
-                ItemTemplate = CreateColorButtonTemplate(),
-                Layout = CreateVerticalStackLayout()
+                ItemTemplate = CreateColorButtonTemplate()
+            };
+            Action updateElementScales = delegate
+            {
+                var viewportHeight = scrollViewer.ViewportHeight;
+                if (viewportHeight <= 0 || double.IsNaN(viewportHeight))
+                {
+                    return;
+                }
+
+                var viewportCenter = scrollViewer.VerticalOffset + (viewportHeight / 2);
+                var scalePerPixel = 0.25 / (viewportHeight / 2);
+                foreach (var element in preparedElements.ToArray())
+                {
+                    if (!element.IsDescendantOf(repeater))
+                    {
+                        preparedElements.Remove(element);
+                        continue;
+                    }
+
+                    var elementTop = element.TransformToAncestor(repeater).Transform(new Point()).Y;
+                    var elementCenter = elementTop + (element.ActualHeight / 2);
+                    var scale = Math.Max(0, 1 - (Math.Abs(viewportCenter - elementCenter) * scalePerPixel));
+                    if (element.RenderTransform is ScaleTransform scaleTransform)
+                    {
+                        scaleTransform.ScaleX = scale;
+                        scaleTransform.ScaleY = scale;
+                    }
+                }
             };
             repeater.ElementPrepared += delegate(Mux.ItemsRepeater sender, Mux.ItemsRepeaterElementPreparedEventArgs args)
             {
                 var element = args.Element as FrameworkElement;
                 if (element != null)
                 {
-                    element.Margin = new Thickness(0, 0, 0, 4);
+                    element.RenderTransformOrigin = new Point(0.5, 0.5);
+                    element.RenderTransform = new ScaleTransform(1, 1);
+                    if (!preparedElements.Contains(element))
+                    {
+                        preparedElements.Add(element);
+                    }
                 }
             };
-
-            var scrollViewer = new ScrollViewer
+            repeater.ElementClearing += delegate(Mux.ItemsRepeater sender, Mux.ItemsRepeaterElementClearingEventArgs args)
             {
-                Name = "Animated_ScrollViewer",
-                Width = 250,
-                Height = 175,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                Content = repeater
+                if (args.Element is FrameworkElement element)
+                {
+                    preparedElements.Remove(element);
+                }
             };
+            repeater.LayoutUpdated += delegate { updateElementScales(); };
+            scrollViewer.ScrollChanged += delegate { updateElementScales(); };
+            scrollViewer.SizeChanged += delegate { updateElementScales(); };
+            scrollViewer.Content = repeater;
             layout.Children.Add(scrollViewer);
 
             colorRectangle = new Rectangle
@@ -1105,11 +1167,9 @@ private void InitializeData()
                 Name = "VariedImageSizeRepeater",
                 ItemsSource = filteredRecipes,
                 ItemTemplate = CreateRecipeTemplate(),
-                Layout = new Mux.UniformGridLayout
+                Layout = new VariedImageSizeLayout
                 {
-                    MinItemWidth = 200,
-                    MinColumnSpacing = 12,
-                    MinRowSpacing = 12
+                    Width = 200
                 }
             };
             var tracker = new Mux.ItemsRepeaterScrollHost
@@ -1225,23 +1285,47 @@ private void InitializeData()
             string name,
             string content,
             string tag,
-            bool isChecked,
-            Action<string> checkedAction)
+            bool isChecked)
         {
             var radioButton = new RadioButton
             {
                 Content = content,
                 Tag = tag,
-                IsChecked = isChecked,
-                Margin = new Thickness(0, 2, 0, 2)
+                IsChecked = isChecked
             };
             if (name != null)
             {
                 radioButton.Name = name;
             }
 
-            radioButton.Checked += delegate { checkedAction(tag); };
             return radioButton;
+        }
+
+        private static Mux.RadioButtons CreateLayoutRadioButtons(
+            string header,
+            IEnumerable<RadioButton> items,
+            int selectedIndex,
+            Action<string> selectionChanged)
+        {
+            var radioButtons = new Mux.RadioButtons
+            {
+                Header = header,
+                SelectedIndex = selectedIndex
+            };
+
+            foreach (var item in items)
+            {
+                radioButtons.Items.Add(item);
+            }
+
+            radioButtons.SelectionChanged += delegate
+            {
+                if (radioButtons.SelectedItem is RadioButton selected && selected.Tag is string layoutKey)
+                {
+                    selectionChanged(layoutKey);
+                }
+            };
+            return radioButtons;
         }
 
         private static Mux.StackLayout CreateVerticalStackLayout()
@@ -1282,14 +1366,13 @@ private void InitializeData()
             };
         }
 
-        private static Mux.UniformGridLayout CreateActivityFeedLayoutApproximation()
+        private static ActivityFeedLayout CreateActivityFeedLayout()
         {
-            return new Mux.UniformGridLayout
+            return new ActivityFeedLayout
             {
-                MinItemWidth = 80,
-                MinItemHeight = 108,
-                MinColumnSpacing = 12,
-                MinRowSpacing = 12
+                MinItemSize = new Size(80, 108),
+                ColumnSpacing = 12,
+                RowSpacing = 12
             };
         }
 
@@ -1491,7 +1574,7 @@ private void InitializeData()
                 "<mux:ItemsRepeater.ItemTemplate>" +
                 "<DataTemplate><Grid Margin='10' Background='{DynamicResource SystemControlBackgroundAccentBrush}'><TextBlock Padding='10' Text='{Binding}' Foreground='{DynamicResource SystemControlForegroundChromeWhiteBrush}' HorizontalAlignment='Center' TextWrapping='Wrap' VerticalAlignment='Center'/></Grid></DataTemplate>" +
                 "</mux:ItemsRepeater.ItemTemplate>" +
-                "<mux:ItemsRepeater.Layout><mux:StackLayout Orientation='Horizontal' Spacing='8'/></mux:ItemsRepeater.Layout>" +
+                "<mux:ItemsRepeater.Layout><mux:StackLayout Orientation='Horizontal'/></mux:ItemsRepeater.Layout>" +
                 "</mux:ItemsRepeater>" +
                 "</StackPanel>" +
                 "</DataTemplate>");

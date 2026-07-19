@@ -30,6 +30,7 @@ namespace ModernWpf.Gallery.Pages
             Examples = DirectPageContent == null
                 ? CreateWorkingSampleExamples(_item.UniqueId, SampleSnippets, xamlSnippet, csharpSnippet)
                 : Array.Empty<GalleryExample>();
+            AssignExampleAutomationIds(_item.UniqueId, Examples);
 
             AdditionalSampleSnippets = GetAdditionalSampleSnippets(SampleSnippets, Examples);
             RelatedItems = _item.RelatedControlIds
@@ -408,6 +409,16 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
+        private static void AssignExampleAutomationIds(string uniqueId, IReadOnlyList<GalleryExample> examples)
+        {
+            for (var index = 0; index < examples.Count; index++)
+            {
+                examples[index].AutomationId = GalleryAutomation.SampleElementId(
+                    uniqueId,
+                    "Example" + (index + 1).ToString(System.Globalization.CultureInfo.InvariantCulture));
+            }
+        }
+
         private void OnRelatedItemClick(object sender, System.Windows.RoutedEventArgs e)
         {
             var item = ((System.Windows.FrameworkElement)sender).DataContext as GalleryItem;
@@ -427,12 +438,17 @@ namespace ModernWpf.Gallery.Pages
     public sealed class GalleryExample
     {
         public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode)
-            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(10), Array.Empty<string>(), null)
+            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(0, 16, 0, 0), Array.Empty<string>(), null, null, HorizontalAlignment.Left, VerticalAlignment.Top, 320d)
         {
         }
 
         public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, object optionsContent)
-            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(10), Array.Empty<string>(), optionsContent)
+            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(0, 16, 0, 0), Array.Empty<string>(), null, optionsContent, HorizontalAlignment.Left, VerticalAlignment.Top, 320d)
+        {
+        }
+
+        public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, object outputContent, object optionsContent)
+            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(0, 16, 0, 0), Array.Empty<string>(), outputContent, optionsContent, HorizontalAlignment.Left, VerticalAlignment.Top, 320d)
         {
         }
 
@@ -443,42 +459,107 @@ namespace ModernWpf.Gallery.Pages
             string csharpCode,
             object optionsContent,
             IReadOnlyList<string> consumedSnippetTexts)
-            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(10), consumedSnippetTexts, optionsContent)
+            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(0, 16, 0, 0), consumedSnippetTexts, null, optionsContent, HorizontalAlignment.Left, VerticalAlignment.Top, 320d)
         {
         }
 
         public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, Thickness margin)
-            : this(headerText, exampleContent, xamlCode, csharpCode, margin, Array.Empty<string>(), null)
+            : this(headerText, exampleContent, xamlCode, csharpCode, margin, Array.Empty<string>(), null, null, HorizontalAlignment.Left, VerticalAlignment.Top, 320d)
         {
         }
 
         public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, Thickness margin, IReadOnlyList<string> consumedSnippetTexts)
-            : this(headerText, exampleContent, xamlCode, csharpCode, margin, consumedSnippetTexts, null)
+            : this(headerText, exampleContent, xamlCode, csharpCode, margin, consumedSnippetTexts, null, null, HorizontalAlignment.Left, VerticalAlignment.Top, 320d)
         {
         }
 
-        private GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, Thickness margin, IReadOnlyList<string> consumedSnippetTexts, object optionsContent)
+        private GalleryExample(
+            string headerText,
+            object exampleContent,
+            string xamlCode,
+            string csharpCode,
+            Thickness margin,
+            IReadOnlyList<string> consumedSnippetTexts,
+            object outputContent,
+            object optionsContent,
+            HorizontalAlignment horizontalContentAlignment,
+            VerticalAlignment verticalContentAlignment,
+            double optionsMaxWidth)
         {
             HeaderText = headerText;
             ExampleContent = exampleContent;
+            OutputContent = outputContent;
             OptionsContent = optionsContent;
             XamlCode = xamlCode;
             CSharpCode = csharpCode;
             Margin = margin;
+            HorizontalContentAlignment = horizontalContentAlignment;
+            VerticalContentAlignment = verticalContentAlignment;
+            OptionsMaxWidth = optionsMaxWidth;
             ConsumedSnippetTexts = consumedSnippetTexts ?? Array.Empty<string>();
         }
 
         public string HeaderText { get; }
+        public string AutomationId { get; internal set; }
         public object ExampleContent { get; }
+        public object OutputContent { get; }
         public object OptionsContent { get; }
         public string XamlCode { get; }
         public string CSharpCode { get; }
         public Thickness Margin { get; }
+        public HorizontalAlignment HorizontalContentAlignment { get; }
+        public VerticalAlignment VerticalContentAlignment { get; }
+        public double OptionsMaxWidth { get; }
         public IReadOnlyList<string> ConsumedSnippetTexts { get; }
 
         public GalleryExample WithMargin(Thickness margin)
         {
-            return new GalleryExample(HeaderText, ExampleContent, XamlCode, CSharpCode, margin, ConsumedSnippetTexts, OptionsContent);
+            return new GalleryExample(
+                HeaderText,
+                ExampleContent,
+                XamlCode,
+                CSharpCode,
+                margin,
+                ConsumedSnippetTexts,
+                OutputContent,
+                OptionsContent,
+                HorizontalContentAlignment,
+                VerticalContentAlignment,
+                OptionsMaxWidth);
+        }
+
+        public GalleryExample WithContentAlignment(
+            HorizontalAlignment horizontalContentAlignment,
+            VerticalAlignment verticalContentAlignment)
+        {
+            return new GalleryExample(
+                HeaderText,
+                ExampleContent,
+                XamlCode,
+                CSharpCode,
+                Margin,
+                ConsumedSnippetTexts,
+                OutputContent,
+                OptionsContent,
+                horizontalContentAlignment,
+                verticalContentAlignment,
+                OptionsMaxWidth);
+        }
+
+        public GalleryExample WithOptionsMaxWidth(double optionsMaxWidth)
+        {
+            return new GalleryExample(
+                HeaderText,
+                ExampleContent,
+                XamlCode,
+                CSharpCode,
+                Margin,
+                ConsumedSnippetTexts,
+                OutputContent,
+                OptionsContent,
+                HorizontalContentAlignment,
+                VerticalContentAlignment,
+                optionsMaxWidth);
         }
     }
 }

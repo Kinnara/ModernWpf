@@ -951,6 +951,47 @@ public class CommandBarFlyoutApiTests
     }
 
     [TestMethod]
+    public void FlyoutAppBarTemplatesRenderExplicitContent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var resources = CreateCommandBarFlyoutResources();
+            var buttonContent = new System.Windows.Controls.Border { Width = 20, Height = 20 };
+            var toggleContent = new System.Windows.Controls.Border { Width = 20, Height = 20 };
+            var button = new AppBarButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarButtonStyle"],
+                Content = buttonContent,
+                Icon = new SymbolIcon(Symbol.Accept),
+                Label = "Content"
+            };
+            var toggleButton = new AppBarToggleButton
+            {
+                Style = (Style)resources["CommandBarFlyoutAppBarToggleButtonStyle"],
+                Content = toggleContent,
+                Icon = new SymbolIcon(Symbol.Pin),
+                Label = "Content"
+            };
+            var panel = new System.Windows.Controls.StackPanel
+            {
+                Orientation = System.Windows.Controls.Orientation.Horizontal,
+                Children = { button, toggleButton }
+            };
+
+            var root = CreateTemplateHost(panel, resources);
+            using var host = new TestWindowHost(root, width: 220, height: 120);
+            host.UpdateLayout();
+
+            Assert.AreSame(buttonContent, FindTemplateChild<ContentPresenterEx>(button, "Content").Content);
+            Assert.AreSame(toggleContent, FindTemplateChild<ContentPresenterEx>(toggleButton, "Content").Content);
+            Assert.IsTrue(buttonContent.RenderSize.Width > 0);
+            Assert.IsTrue(toggleContent.RenderSize.Width > 0);
+        });
+    }
+
+    [TestMethod]
     public void FlyoutButtonKeyboardAcceleratorVisibilityUsesVisualStateSetters()
     {
         WpfTestHost.Run(() =>
@@ -1424,17 +1465,23 @@ public class CommandBarFlyoutApiTests
                 var commandBar = GetCommandBar(commandBarFlyout);
                 commandBar.ApplyTemplate();
                 host.UpdateLayout();
+                var overflowPopup = FindTemplateChild<WindowedPopup>(commandBar, "OverflowPopup");
 
                 commandBar.IsOpen = false;
                 host.UpdateLayout();
                 WpfTestHost.DoEvents();
+                WaitFor(
+                    () =>
+                    {
+                        host.UpdateLayout();
+                        return !overflowPopup.IsOpen && IsLayoutOpacity(commandBar, 1.0);
+                    },
+                    "CommandBarFlyout did not settle into its collapsed sizing state.");
 
                 var collapsedWidth = commandBar.FlyoutTemplateSettings.CurrentWidth;
                 var collapsedHeight = commandBar.ActualHeight;
 
-                commandBar.IsOpen = true;
-                host.UpdateLayout();
-                WpfTestHost.DoEvents();
+                WaitForExpandedOverflow(commandBar, host);
 
                 var expandedWidth = commandBar.FlyoutTemplateSettings.CurrentWidth;
                 var overflowPresenter = FindDescendant<CommandBarOverflowPresenter>(commandBar);

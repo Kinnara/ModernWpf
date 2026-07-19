@@ -96,31 +96,36 @@ public class DataGridVisualStateTests
     [TestMethod]
     public void DataGridThemeResourcesExposeOfficialWpfFluentAliases()
     {
-        foreach (var themeName in new[] { "Light", "Dark" })
+        WpfTestHost.Run(() =>
         {
-            AssertThemeResourceReference(themeName, "DataGridColumnFloatingHeaderBorderBrush", "ControlStrongStrokeColorDefaultBrush");
-            AssertThemeResourceReference(themeName, "DataGridHeaderDropSeparatorBackground", "ControlStrongStrokeColorDefaultBrush");
-            AssertThemeResourceReference(themeName, "DataGridHeaderSeparatorBrush", "ControlStrokeColorSecondaryBrush");
-            AssertThemeResourceReference(themeName, "DataGridColumnHeaderForeground", "TextFillColorPrimaryBrush");
-            AssertThemeResourceReference(themeName, "DataGridColumnHeaderBackground", "SubtleFillColorTransparentBrush");
-            AssertThemeResourceReference(themeName, "DataGridHeaderBackground", "SubtleFillColorTertiaryBrush");
-            AssertThemeResourceReference(themeName, "DataGridHeaderForegroundDisabled", "TextFillColorDisabledBrush");
-            AssertThemeResourceReference(themeName, "DataGridCheckBoxBackgroundChecked", "AccentFillColorDefaultBrush");
-            AssertThemeResourceReference(themeName, "DataGridCheckBoxBackgroundCheckedPointerOver", "AccentFillColorTertiaryBrush");
-            AssertThemeResourceReference(themeName, "DataGridRowSelectedForegroundThemeBrush", "TextOnAccentFillColorPrimaryBrush");
-        }
+            TestApplication.EnsureInitialized();
 
-        AssertThemeResourceReference("Light", "DataGridRowSelectedBackgroundThemeBrush", "SystemAccentColorDark1Brush");
-        AssertThemeResourceReference("Dark", "DataGridRowSelectedBackgroundThemeBrush", "SystemAccentColorLight3Brush");
-        AssertThemeResourceReference("HighContrast", "DataGridColumnFloatingHeaderBorderBrush", "SystemColorHighlightColorBrush");
-        AssertThemeResourceReference("HighContrast", "DataGridHeaderSeparatorBrush", "SystemColorButtonTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "DataGridColumnHeaderBackground", "SystemControlTransparentBrush");
-        AssertThemeResourceReference("HighContrast", "DataGridHeaderBackground", "SystemColorButtonFaceColorBrush");
-        AssertThemeResourceReference("HighContrast", "DataGridHeaderForegroundDisabled", "SystemColorGrayTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "DataGridCheckBoxBackgroundChecked", "CheckBoxCheckBackgroundFillChecked");
-        AssertThemeResourceReference("HighContrast", "DataGridCheckBoxBackgroundCheckedPointerOver", "CheckBoxCheckBackgroundFillCheckedPointerOver");
-        AssertThemeResourceReference("HighContrast", "DataGridRowSelectedBackgroundThemeBrush", "SystemColorButtonTextColorBrush");
-        AssertThemeResourceReference("HighContrast", "DataGridRowSelectedForegroundThemeBrush", "SystemColorButtonFaceColorBrush");
+            foreach (var themeName in new[] { "Light", "Dark" })
+            {
+                AssertThemeResourceReference(themeName, "DataGridColumnFloatingHeaderBorderBrush", "ControlStrongStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "DataGridHeaderDropSeparatorBackground", "ControlStrongStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "DataGridHeaderSeparatorBrush", "ControlStrokeColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "DataGridColumnHeaderForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "DataGridColumnHeaderBackground", "SubtleFillColorTransparentBrush");
+                AssertThemeResourceReference(themeName, "DataGridHeaderBackground", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "DataGridHeaderForegroundDisabled", "TextFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "DataGridCheckBoxBackgroundChecked", "AccentFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "DataGridCheckBoxBackgroundCheckedPointerOver", "AccentFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "DataGridRowSelectedForegroundThemeBrush", "TextOnAccentFillColorPrimaryBrush");
+            }
+
+            AssertThemeResourceReference("Light", "DataGridRowSelectedBackgroundThemeBrush", "SystemAccentColorDark1Brush");
+            AssertThemeResourceReference("Dark", "DataGridRowSelectedBackgroundThemeBrush", "SystemAccentColorLight3Brush");
+            AssertThemeResourceReference("HighContrast", "DataGridColumnFloatingHeaderBorderBrush", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "DataGridHeaderSeparatorBrush", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "DataGridColumnHeaderBackground", "SystemControlTransparentBrush");
+            AssertThemeResourceReference("HighContrast", "DataGridHeaderBackground", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "DataGridHeaderForegroundDisabled", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "DataGridCheckBoxBackgroundChecked", "CheckBoxCheckBackgroundFillChecked");
+            AssertThemeResourceReference("HighContrast", "DataGridCheckBoxBackgroundCheckedPointerOver", "CheckBoxCheckBackgroundFillCheckedPointerOver");
+            AssertThemeResourceReference("HighContrast", "DataGridRowSelectedBackgroundThemeBrush", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "DataGridRowSelectedForegroundThemeBrush", "SystemColorButtonFaceColorBrush");
+        });
     }
 
     [TestMethod]

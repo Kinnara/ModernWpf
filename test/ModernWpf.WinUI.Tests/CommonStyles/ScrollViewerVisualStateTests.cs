@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -55,17 +57,34 @@ public class ScrollViewerVisualStateTests
             var scrollViewer = new ScrollViewer
             {
                 Content = new Border { Width = 400, Height = 400 },
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+                Padding = new Thickness(0, 0, 24, 0),
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Visible,
+                Visibility = Visibility.Collapsed
             };
 
             using var host = new TestWindowHost(scrollViewer, width: 120, height: 120);
             host.UpdateLayout();
+            scrollViewer.Visibility = Visibility.Visible;
+            host.UpdateLayout();
+            WaitFor(
+                () => scrollViewer.ViewportWidth > 0 && scrollViewer.ViewportHeight > 0,
+                host.UpdateLayout,
+                "The template did not register its scrolling viewport after becoming visible.");
 
             Assert.IsNotNull(GetTemplateChild<ScrollContentPresenter>(scrollViewer, "PART_ScrollContentPresenter"));
             Assert.IsNotNull(GetTemplateChild<ScrollBar>(scrollViewer, "PART_VerticalScrollBar"));
             Assert.IsNotNull(GetTemplateChild<ScrollBar>(scrollViewer, "PART_HorizontalScrollBar"));
             Assert.IsNull(VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(scrollViewer));
+            Assert.IsTrue(scrollViewer.ViewportWidth > 0, "The template must register a horizontal scrolling viewport.");
+            Assert.IsTrue(scrollViewer.ViewportHeight > 0, "The template must register a vertical scrolling viewport.");
+            Assert.AreEqual(0, scrollViewer.ScrollableWidth, 0.01, "Disabled horizontal scrolling must constrain content to the viewport.");
+            Assert.IsTrue(scrollViewer.ScrollableHeight > 0, "Oversized content must be vertically scrollable.");
+
+            scrollViewer.ScrollToVerticalOffset(50);
+            host.UpdateLayout();
+            Assert.AreEqual(0, scrollViewer.HorizontalOffset, 0.01);
+            Assert.AreEqual(50, scrollViewer.VerticalOffset, 0.01);
         });
     }
 
@@ -114,6 +133,23 @@ public class ScrollViewerVisualStateTests
         Assert.IsFalse(defaultStyleText.Contains("CanHorizontallyScroll=\"False\"", System.StringComparison.Ordinal));
         Assert.IsFalse(defaultStyleText.Contains("CanVerticallyScroll=\"False\"", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("VisualStateEx", System.StringComparison.Ordinal));
+    }
+
+    private static void WaitFor(Func<bool> predicate, Action pump, string failureMessage, int timeoutMilliseconds = 1500)
+    {
+        var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMilliseconds);
+        while (DateTime.UtcNow < deadline)
+        {
+            if (predicate())
+            {
+                return;
+            }
+
+            Thread.Sleep(10);
+            pump();
+        }
+
+        Assert.Fail(failureMessage);
     }
 
     private static void AssertSetter(Setter[] setters, DependencyProperty property, object value)

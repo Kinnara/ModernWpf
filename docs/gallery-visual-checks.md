@@ -194,6 +194,68 @@ Static window captures use `PrintWindow` first and fall back to an activated scr
 
 Static comparisons include primary sample crops for each curated control. The ModernWpf Gallery also writes rendered `GallerySample_*` and `GalleryContentHost` element artifacts under `modernwpf-artifacts/` during visual-test launches; the harness uses those rendered element artifacts before falling back to window screenshot crops. The report ranks controls by primary crop delta plus crop-size mismatch so visual triage can focus on real control-level differences instead of full-window shell noise.
 
+`NavigationView` also has a feature-level indicator gate. Inside the exact
+`745x460` primary crops, the harness groups the solid saturated pixels in the
+left 24-pixel strip and requires ModernWpf and WinUI to have identical color,
+count, and bounds. This prevents the 3x16 high-salience selection indicator
+from moving several pixels while remaining invisible to a whole-crop mean.
+The current Light executable-gate report is
+`artifacts/visual-checks/20260719-113416-596-81168/report.md`: both sides have
+38 solid `#0067C0` pixels at `4,97,3x14` (the rounded edge pixels are
+antialiased and intentionally excluded).
+
+The NavigationView page exports a stable rendered artifact for every one of its
+eight Gallery examples: default, Top, adaptive, tabs, Data binding, footer,
+hierarchy, and API. The installed-reference pass scrolls the matching
+`nvSample5`, `nvSample6`, `nvSample2`, `nvSample7`, `nvSample4`, `nvSample9`,
+`nvSample8`, and `nvSample` controls fully into view and captures the exact
+control bounds. The ModernWpf artifact path applies parent-offset correction to
+every `GallerySample_NavigationView_*` NavigationView, so offscreen page position
+does not shift or truncate a crop.
+
+The NavigationView sample matrix is a strict `-FailOnDifference` gate. It
+requires all 16 artifacts to exist, be nonblank, have visible variation, and
+match exact dimensions. It then compares each ModernWpf/WinUI pair with a
+sample-specific threshold; the longer adaptive/tabs text surfaces allow the
+small WPF/WinUI glyph-raster residual while exact geometry remains mandatory.
+Fresh Light
+`artifacts/visual-checks/20260719-131911-804-89328/report.md` and Dark
+`artifacts/visual-checks/20260719-131949-955-99496/report.md` runs both pass
+`8/8`. Sizes are `745x460` for the first five samples, `592x460` for footer,
+`565x460` for hierarchy, and `458x540` for API on both sides. Light deltas range
+from `0.52` to `3.17`; Dark deltas range from `0.47` to `3.03`.
+
+The Gallery runtime matrix complements the pixels: it checks every sample's
+initial size and mode, Top item/indicator geometry, expanded Left pane/list
+geometry, LeftCompact label suppression, the Data binding
+`ClosedCompact + ListSizeCompact` pair, footer/hierarchy option transitions,
+API option behavior, normal pane-title font, initially empty Frame, and
+selection-driven Frame population. This replaces the earlier primary-plus-one-
+supplemental coverage that missed several visibly wrong lower samples.
+
+The final branch-wide port sweep is Light
+`artifacts/visual-checks/all-ported-postfix-light/20260719-234456-059-46680/report.md`
+and Dark
+`artifacts/visual-checks/all-ported-postfix-dark/20260719-235452-227-27096/report.md`.
+Each run has 74 successful capture rows covering all 37 retained WinUI Gallery
+controls in both applications, all 94 expected sample cards are present and
+nonblank, all 94 ModernWpf/reference pairs pass their control-specific gates,
+and all 37 review sheets were checked. SHA-256 comparison against the preceding
+reviewed matrices left 27 identical Light sheets and 28 identical Dark sheets;
+the remaining 10 Light and 9 Dark sheets were reviewed directly. Their changes
+are animated ProgressRing/ProgressBar phase, randomized Gallery data, or
+one-pixel WPF/WinUI card-height raster drift. No sample has clipped content,
+misplaced selection chrome, compact-pane label leakage, or excess host spacing.
+
+The final automated cross-control pass is also order-sensitive rather than a
+collection of isolated green tests. `ModernWpf.Gallery.Tests` passes 703/703 and
+`ModernWpf.WinUI.Tests` passes 1,002/1,002. The WinUI host eagerly creates all
+theme dictionaries on its shared STA; resource-only audits run through that
+host; detached GridEx render tests disconnect their child visual and drain the
+dispatcher; and animated ToggleSwitch, ScrollViewer, and CommandBarFlyout tests
+wait for their documented settled state. These guards prevent an earlier test
+from silently corrupting a later control's layout or resources.
+
 The visual pass intentionally does not make strict screenshot diffs a default CI gate. It fails on blank captures, wrong or missing required sample elements, failed TeachingTip interaction probes, and Gallery exceptions; image deltas are reported for manual review and can be made strict with `-FailOnDifference` once the harness is stable across machines.
 
 ## Current triage
