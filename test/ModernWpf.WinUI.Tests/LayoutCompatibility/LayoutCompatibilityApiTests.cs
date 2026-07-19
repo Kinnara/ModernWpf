@@ -107,6 +107,13 @@ public class LayoutCompatibilityApiTests
             Assert.AreEqual(
                 Color.FromRgb(48, 48, 48),
                 RenderCurrentElementPixel(root, 10, 31, 78, 32));
+
+            // RenderTargetBitmap keeps the manually arranged visual connected to
+            // WPF's render channel until it is detached. Do not let that pending
+            // windowless visual contaminate later live-window invalidation tests.
+            root.Children.Clear();
+            root.UpdateLayout();
+            WpfTestHost.DoEvents();
         });
     }
 
@@ -1216,9 +1223,11 @@ public class LayoutCompatibilityApiTests
         {
             TestApplication.EnsureInitialized();
 
+            var sourceLayoutRoot = Directory.Exists(Path.Combine(sourceRoot, "dxaml"))
+                ? sourceRoot
+                : Path.Combine(sourceRoot, "src");
             var mastersRoot = Path.Combine(
-                sourceRoot,
-                "src",
+                sourceLayoutRoot,
                 "dxaml",
                 "test",
                 "resources",

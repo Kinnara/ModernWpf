@@ -1,10 +1,8 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Markup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ModernWpf;
-using ModernWpf.Controls;
-using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -14,169 +12,139 @@ namespace ModernWpf.WinUI.Tests.MenuFlyoutVisualStates;
 public class MenuFlyoutVisualStateTests
 {
     [TestMethod]
-    public void SubmenuItemTemplateUsesWinUIVisualStateSetters()
+    public void SubmenuItemTemplateUsesOfficialWpfFluentStateTriggers()
     {
         WpfTestHost.Run(() =>
         {
-            var item = new MenuItem
-            {
-                Header = "Open",
-                Icon = new TextBlock { Text = "I" },
-                InputGestureText = "Ctrl+O",
-                IsCheckable = true,
-                IsChecked = true,
-                Template = FindMenuItemTemplate("SubmenuItemTemplateKey")
-            };
-            MenuItemHelper.SetVisualStateSettersEnabled(item, true);
+            TestApplication.EnsureInitialized();
 
-            using var host = new TestWindowHost(item, width: 260, height: 120);
-            var root = FindTemplateChild<Border>(item, "LayoutRoot");
+            var template = FindMenuItemTemplate(MenuItem.SubmenuItemTemplateKey);
+            var root = (Border)template.LoadContent();
+            Assert.AreEqual("Border", root.Name);
+            Assert.AreEqual(new Thickness(4, 1, 4, 1), root.Margin);
+            Assert.AreEqual(new CornerRadius(4), root.CornerRadius);
 
-            AssertStateSetter(root, "CommonStates", "PointerOver",
-                "LayoutRoot.Background",
-                "ContentPresenter.Foreground",
-                "CheckGlyph.Foreground",
-                "IconContent.Foreground",
-                "KeyboardAcceleratorTextBlock.Foreground");
-            AssertStateSetter(root, "CommonStates", "Pressed",
-                "LayoutRoot.Background",
-                "ContentPresenter.Foreground",
-                "CheckGlyph.Foreground",
-                "IconContent.Foreground",
-                "KeyboardAcceleratorTextBlock.Foreground");
-            AssertStateSetter(root, "CommonStates", "Disabled",
-                "LayoutRoot.Background",
-                "ContentPresenter.Foreground",
-                "CheckGlyph.Foreground",
-                "IconContent.Foreground",
-                "KeyboardAcceleratorTextBlock.Foreground");
-            AssertStateSetter(root, "CheckStates", "Checked", "CheckGlyph.Opacity");
-            AssertStateSetter(root, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextVisible", "KeyboardAcceleratorTextBlock.Visibility");
-
-            AssertCurrentState(root, "CommonStates", "Normal");
-            AssertCurrentState(root, "CheckStates", "Checked");
-            AssertCurrentState(root, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextVisible");
-
-            var checkGlyph = FindTemplateChild<FrameworkElement>(item, "CheckGlyph");
-            var keyboardAcceleratorTextBlock = FindTemplateChild<FrameworkElement>(item, "KeyboardAcceleratorTextBlock");
-            Assert.AreEqual(1.0, checkGlyph.Opacity);
-            Assert.AreEqual(Visibility.Visible, keyboardAcceleratorTextBlock.Visibility);
-
-            item.IsChecked = false;
-            item.InputGestureText = string.Empty;
-            item.IsEnabled = false;
-            host.UpdateLayout();
-            WpfTestHost.DoEvents();
-
-            AssertCurrentState(root, "CommonStates", "Disabled");
-            AssertCurrentState(root, "CheckStates", "Unchecked");
-            AssertCurrentState(root, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextCollapsed");
-            Assert.AreSame(item.TryFindResource("MenuFlyoutItemBackgroundDisabled"), root.Background);
-            Assert.AreSame(
-                item.TryFindResource("MenuFlyoutItemForegroundDisabled"),
-                FindTemplateChild<ContentPresenterEx>(item, "ContentPresenter").Foreground);
-            Assert.AreEqual(0.0, checkGlyph.Opacity);
+            AssertDynamicResourceSetter(
+                template,
+                MenuItem.IsHighlightedProperty,
+                true,
+                "Border",
+                Border.BackgroundProperty,
+                "MenuBarItemBackgroundSelected");
+            AssertSetter(
+                template,
+                MenuItem.IsCheckableProperty,
+                true,
+                "CheckBoxIconBorder",
+                UIElement.VisibilityProperty,
+                Visibility.Visible);
+            AssertSetter(
+                template,
+                MenuItem.IsCheckedProperty,
+                true,
+                "CheckBoxIcon",
+                TextBlock.TextProperty,
+                "\uE73E");
+            AssertSetter(
+                template,
+                MenuItem.InputGestureTextProperty,
+                string.Empty,
+                "InputGestureText",
+                UIElement.VisibilityProperty,
+                Visibility.Collapsed);
         });
     }
 
     [TestMethod]
-    public void SubmenuHeaderTemplateUsesWinUIVisualStateSetters()
+    public void SubmenuHeaderTemplateKeepsWpfTriggersAndCurrentRadioCheckPlaceholder()
     {
         WpfTestHost.Run(() =>
         {
-            var item = new MenuItem
-            {
-                Header = "More",
-                Icon = new TextBlock { Text = "I" },
-                Template = FindMenuItemTemplate("SubmenuHeaderTemplateKey")
-            };
-            item.Items.Add(new MenuItem { Header = "Child" });
-            MenuItemHelper.SetVisualStateSettersEnabled(item, true);
+            TestApplication.EnsureInitialized();
 
-            using var host = new TestWindowHost(item, width: 260, height: 140);
-            var root = FindTemplateChild<Border>(item, "LayoutRoot");
+            var template = FindMenuItemTemplate(MenuItem.SubmenuHeaderTemplateKey);
+            var root = (Grid)template.LoadContent();
+            var elements = VisualTreeTestHelper.EnumerateDescendants(root)
+                .OfType<FrameworkElement>()
+                .ToArray();
+            var border = elements.Single(item => item.Name == "Border");
+            var checkGlyph = (TextBlock)elements.Single(item => item.Name == "CheckGlyph");
 
-            AssertStateSetter(root, "CommonStates", "PointerOver",
-                "LayoutRoot.Background",
-                "ContentPresenter.Foreground",
-                "CheckGlyph.Foreground",
-                "SubItemChevron.Foreground",
-                "IconContent.Foreground");
-            AssertStateSetter(root, "CommonStates", "Pressed",
-                "LayoutRoot.Background",
-                "ContentPresenter.Foreground",
-                "CheckGlyph.Foreground",
-                "SubItemChevron.Foreground",
-                "IconContent.Foreground");
-            AssertStateSetter(root, "CommonStates", "SubMenuOpened",
-                "LayoutRoot.Background",
-                "ContentPresenter.Foreground",
-                "CheckGlyph.Foreground",
-                "SubItemChevron.Foreground",
-                "IconContent.Foreground");
-            AssertStateSetter(root, "CommonStates", "Disabled",
-                "LayoutRoot.Background",
-                "ContentPresenter.Foreground",
-                "CheckGlyph.Foreground",
-                "SubItemChevron.Foreground",
-                "IconContent.Foreground");
+            Assert.AreEqual(new Thickness(4, 1, 4, 1), border.Margin);
+            Assert.AreEqual(Visibility.Collapsed, checkGlyph.Visibility);
+            Assert.AreEqual(0.0, checkGlyph.Opacity);
+            Assert.AreEqual("\uE915", checkGlyph.Text);
 
-            AssertCurrentState(root, "CommonStates", "Normal");
-
-            item.SetCurrentValue(MenuItem.IsSubmenuOpenProperty, true);
-            host.UpdateLayout();
-            WpfTestHost.DoEvents();
-
-            AssertCurrentState(root, "CommonStates", "SubMenuOpened");
-            Assert.AreSame(item.TryFindResource("MenuFlyoutSubItemBackgroundSubMenuOpened"), root.Background);
-            Assert.AreSame(
-                item.TryFindResource("MenuFlyoutSubItemForegroundSubMenuOpened"),
-                FindTemplateChild<ContentPresenterEx>(item, "ContentPresenter").Foreground);
-
-            item.IsEnabled = false;
-            host.UpdateLayout();
-            WpfTestHost.DoEvents();
-
-            AssertCurrentState(root, "CommonStates", "Disabled");
-            Assert.AreSame(item.TryFindResource("MenuFlyoutSubItemBackgroundDisabled"), root.Background);
+            AssertDynamicResourceSetter(
+                template,
+                MenuItem.IsHighlightedProperty,
+                true,
+                "Border",
+                Border.BackgroundProperty,
+                "MenuBarItemBackgroundSelected");
+            AssertSetter(
+                template,
+                MenuItem.IsCheckableProperty,
+                true,
+                "CheckGlyph",
+                UIElement.VisibilityProperty,
+                Visibility.Visible);
+            AssertSetter(
+                template,
+                MenuItem.IsCheckedProperty,
+                true,
+                "CheckGlyph",
+                UIElement.OpacityProperty,
+                1.0);
         });
     }
 
-    private static ControlTemplate FindMenuItemTemplate(string resourceId)
+    private static ControlTemplate FindMenuItemTemplate(object resourceKey)
     {
-        var key = new ComponentResourceKey(typeof(MenuItem), resourceId);
-        return Application.Current.TryFindResource(key) as ControlTemplate
-            ?? throw new AssertFailedException($"Expected MenuItem template resource '{resourceId}'.");
+        return Application.Current.FindResource(resourceKey) as ControlTemplate
+            ?? throw new AssertFailedException($"Expected MenuItem template resource '{resourceKey}'.");
     }
 
-    private static void AssertStateSetter(FrameworkElement stateGroupsRoot, string groupName, string stateName, params string[] expectedTargets)
+    private static void AssertSetter(
+        ControlTemplate template,
+        DependencyProperty triggerProperty,
+        object triggerValue,
+        string targetName,
+        DependencyProperty property,
+        object expectedValue)
     {
-        var group = FindVisualStateGroup(stateGroupsRoot, groupName);
-        var state = group.States.OfType<VisualStateEx>().Single(item => item.Name == stateName);
-        var actualTargets = state.Setters
-            .Select(setter => string.IsNullOrEmpty(setter.Target) ? setter.Property : setter.Target)
-            .ToArray();
+        var setter = FindTrigger(template, triggerProperty, triggerValue)
+            .Setters
+            .OfType<Setter>()
+            .Single(item => item.TargetName == targetName && item.Property == property);
 
-        CollectionAssert.IsSubsetOf(expectedTargets, actualTargets);
+        Assert.AreEqual(expectedValue, setter.Value);
     }
 
-    private static void AssertCurrentState(FrameworkElement stateGroupsRoot, string groupName, string expectedStateName)
+    private static void AssertDynamicResourceSetter(
+        ControlTemplate template,
+        DependencyProperty triggerProperty,
+        object triggerValue,
+        string targetName,
+        DependencyProperty property,
+        object resourceKey)
     {
-        Assert.AreEqual(expectedStateName, FindVisualStateGroup(stateGroupsRoot, groupName).CurrentState?.Name);
+        var setter = FindTrigger(template, triggerProperty, triggerValue)
+            .Setters
+            .OfType<Setter>()
+            .Single(item => item.TargetName == targetName && item.Property == property);
+
+        Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
+        Assert.AreEqual(resourceKey, ((DynamicResourceExtension)setter.Value).ResourceKey);
     }
 
-    private static VisualStateGroup FindVisualStateGroup(FrameworkElement stateGroupsRoot, string groupName)
+    private static Trigger FindTrigger(
+        ControlTemplate template,
+        DependencyProperty property,
+        object value)
     {
-        return VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
-            .OfType<VisualStateGroup>()
-            .Single(item => item.Name == groupName);
-    }
-
-    private static T FindTemplateChild<T>(Control control, string childName)
-        where T : FrameworkElement
-    {
-        control.ApplyTemplate();
-        return control.Template.FindName(childName, control) as T
-            ?? throw new AssertFailedException($"Expected template child '{childName}'.");
+        return template.Triggers
+            .OfType<Trigger>()
+            .Single(item => item.Property == property && Equals(item.Value, value));
     }
 }

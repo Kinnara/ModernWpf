@@ -1,0 +1,12 @@
+--- header
+ColorPicker Properties.
+--- xaml
+<ColorPicker
+      ColorSpectrumShape="$(ColorSpectrumShape)"
+      IsMoreButtonVisible="$(IsMoreButtonVisible)"
+      IsColorSliderVisible="$(IsColorSliderVisible)"
+      IsColorChannelTextInputVisible="$(IsColorChannelTextInputVisible)"
+      IsHexInputVisible="$(IsHexInputVisible)"
+      IsAlphaEnabled="$(IsAlphaEnabled)"
+      IsAlphaSliderVisible="$(IsAlphaSliderVisible)"
+      IsAlphaTextInputVisible="$(IsAlphaTextInputVisible)" />

@@ -235,58 +235,90 @@
                             Padding="{TemplateBinding Padding}"
                             CornerRadius="{TemplateBinding CornerRadius}">
 
-                            <Border Clip="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ClipRect}">
-                                <Grid Height="{TemplateBinding MinHeight}">
+                            <Grid>
+                                <Border Clip="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.ClipRect}">
+                                    <Grid Height="{TemplateBinding MinHeight}">
 
-                                    <Rectangle
-                                        x:Name="ProgressBarTrack"
-                                        Fill="{TemplateBinding Background}"
-                                        Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TrackHeight}"
-                                        Width="{TemplateBinding Width}"
-                                        VerticalAlignment="Center"
-                                        RadiusX="{Binding Source={StaticResource ProgressBarTrackCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                        RadiusY="{Binding Source={StaticResource ProgressBarTrackCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}">
-                                        <Rectangle.RenderTransform>
-                                            <TranslateTransform/>
-                                        </Rectangle.RenderTransform>
-                                    </Rectangle>
+                                        <Rectangle
+                                            x:Name="ProgressBarTrack"
+                                            Fill="{TemplateBinding Background}"
+                                            Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.TrackHeight}"
+                                            Width="{TemplateBinding Width}"
+                                            VerticalAlignment="Center"
+                                            RadiusX="{Binding Source={StaticResource ProgressBarTrackCornerRadius}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                            RadiusY="{Binding Source={StaticResource ProgressBarTrackCornerRadius}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}">
+                                            <Rectangle.RenderTransform>
+                                                <TranslateTransform/>
+                                            </Rectangle.RenderTransform>
+                                        </Rectangle>
 
-                                    <Rectangle
-                                        x:Name="DeterminateProgressBarIndicator"
-                                        Fill="{TemplateBinding Foreground}"
-                                        HorizontalAlignment="Left"
-                                        RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                        RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}">
-                                        <Rectangle.RenderTransform>
-                                            <TranslateTransform />
-                                        </Rectangle.RenderTransform>
-                                    </Rectangle>
+                                        <Rectangle
+                                            x:Name="DeterminateProgressBarIndicator"
+                                            Fill="{TemplateBinding Foreground}"
+                                            HorizontalAlignment="Left"
+                                            RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                            RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}">
+                                            <Rectangle.RenderTransform>
+                                                <TranslateTransform />
+                                            </Rectangle.RenderTransform>
+                                        </Rectangle>
 
-                                    <Rectangle
-                                        x:Name="IndeterminateProgressBarIndicator"
-                                        Fill="{TemplateBinding Foreground}"
-                                        HorizontalAlignment="Left"
-                                        Opacity="0"
-                                        RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                        RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}">
-                                        <Rectangle.RenderTransform>
-                                            <TranslateTransform />
-                                        </Rectangle.RenderTransform>
-                                    </Rectangle>
+                                        <Rectangle
+                                            x:Name="IndeterminateProgressBarIndicator"
+                                            Fill="{TemplateBinding Foreground}"
+                                            HorizontalAlignment="Left"
+                                            Opacity="0"
+                                            RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                            RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}">
+                                            <Rectangle.RenderTransform>
+                                                <TranslateTransform />
+                                            </Rectangle.RenderTransform>
+                                        </Rectangle>
 
-                                    <Rectangle
-                                        x:Name="IndeterminateProgressBarIndicator2"
-                                        Fill="{TemplateBinding Foreground}"
-                                        HorizontalAlignment="Left"
-                                        Opacity="0"
-                                        RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
-                                        RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}">
-                                        <Rectangle.RenderTransform>
-                                            <TranslateTransform />
-                                        </Rectangle.RenderTransform>
-                                    </Rectangle>
-                                </Grid>
-                            </Border>
+                                        <Rectangle
+                                            x:Name="IndeterminateProgressBarIndicator2"
+                                            Fill="{TemplateBinding Foreground}"
+                                            HorizontalAlignment="Left"
+                                            Opacity="0"
+                                            RadiusX="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopLeftCornerRadiusDoubleValueConverter}}"
+                                            RadiusY="{Binding CornerRadius, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomRightCornerRadiusDoubleValueConverter}}">
+                                            <Rectangle.RenderTransform>
+                                                <TranslateTransform />
+                                            </Rectangle.RenderTransform>
+                                        </Rectangle>
+                                    </Grid>
+                                </Border>
+
+                                <primitives:ProgressBarIndicatorRasterOverlay
+                                    x:Name="DeterminateProgressBarIndicatorRasterOverlay"
+                                    Fill="{Binding Fill, ElementName=DeterminateProgressBarIndicator}"
+                                    Width="{Binding ActualWidth, ElementName=DeterminateProgressBarIndicator}"
+                                    Opacity="{Binding Opacity, ElementName=DeterminateProgressBarIndicator}"
+                                    RenderTransform="{Binding RenderTransform, ElementName=DeterminateProgressBarIndicator}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    IsHitTestVisible="False" />
+
+                                <primitives:ProgressBarIndicatorRasterOverlay
+                                    x:Name="IndeterminateProgressBarIndicatorRasterOverlay"
+                                    Fill="{Binding Fill, ElementName=IndeterminateProgressBarIndicator}"
+                                    Width="{Binding ActualWidth, ElementName=IndeterminateProgressBarIndicator}"
+                                    Opacity="{Binding Opacity, ElementName=IndeterminateProgressBarIndicator}"
+                                    RenderTransform="{Binding RenderTransform, ElementName=IndeterminateProgressBarIndicator}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    IsHitTestVisible="False" />
+
+                                <primitives:ProgressBarIndicatorRasterOverlay
+                                    x:Name="IndeterminateProgressBarIndicator2RasterOverlay"
+                                    Fill="{Binding Fill, ElementName=IndeterminateProgressBarIndicator2}"
+                                    Width="{Binding ActualWidth, ElementName=IndeterminateProgressBarIndicator2}"
+                                    Opacity="{Binding Opacity, ElementName=IndeterminateProgressBarIndicator2}"
+                                    RenderTransform="{Binding RenderTransform, ElementName=IndeterminateProgressBarIndicator2}"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    IsHitTestVisible="False" />
+                            </Grid>
                         </Border>
                     </Grid>
                 </ControlTemplate>

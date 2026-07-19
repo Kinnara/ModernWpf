@@ -1449,7 +1449,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_TemplateBreadcrumbBar" }
-        "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
+        "SelectorBar" { return "GallerySample_SelectorBar_SelectorBarItemShared" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
         "Flyout" { return "GallerySample_Flyout_Button" }
@@ -1536,7 +1536,7 @@ function Get-OpenInteractionNames([string]$control) {
         "ContentDialog" { return @("Save your work?", "Upload your content to the cloud.", "Save", "Don't Save", "Cancel") }
         "Flyout" { return @("All items will be removed. Do you want to continue?", "Yes, empty my cart") }
         "Popup" { return @("Simple Popup", "Close") }
-        "MenuBar" { return @("New", "Open...", "Save", "Exit") }
+        "MenuBar" { return @("New", "Open", "Save", "Exit") }
         "MenuFlyout" { return @("By rating", "By match", "By distance") }
         "ToolTip" { return @("Simple ToolTip") }
         "DropDownButton" { return @("Send", "Reply", "Reply All") }

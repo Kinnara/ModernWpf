@@ -65,6 +65,10 @@ namespace ModernWpf.Controls
             {
                 if ((bool)e.NewValue)
                 {
+                    // WPF MenuItem has no MenuFlyoutSubItem style selector.
+                    // IsCheckable selects the radio-submenu placeholder in the
+                    // shared WPF template while IsChecked drives its opacity.
+                    menuItem.SetCurrentValue(IsCheckableProperty, true);
                     menuItem.Loaded += OnSubMenuLoaded;
                     menuItem.Unloaded += OnSubMenuUnloaded;
                     HookSubMenu(menuItem);
@@ -74,6 +78,7 @@ namespace ModernWpf.Controls
                     menuItem.Loaded -= OnSubMenuLoaded;
                     menuItem.Unloaded -= OnSubMenuUnloaded;
                     UnhookSubMenu(menuItem);
+                    menuItem.SetCurrentValue(IsCheckableProperty, false);
                     menuItem.SetCurrentValue(IsCheckedProperty, false);
                 }
             }

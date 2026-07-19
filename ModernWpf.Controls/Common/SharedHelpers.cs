@@ -193,6 +193,22 @@ namespace ModernWpf.Controls
                 }
                 return symbolIcon;
             }
+            else if (iconSource is ImageIconSource imageIconSource)
+            {
+                ImageIcon imageIcon = new();
+
+                if (imageIconSource.ImageSource != null)
+                {
+                    imageIcon.Source = imageIconSource.ImageSource;
+                }
+
+                if (imageIconSource.Foreground is { } newForeground)
+                {
+                    imageIcon.Foreground = newForeground;
+                }
+
+                return imageIcon;
+            }
             else if (iconSource is BitmapIconSource bitmapIconSource)
             {
                 BitmapIcon bitmapIcon = new();

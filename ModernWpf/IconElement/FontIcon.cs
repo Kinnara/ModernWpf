@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 using ModernWpf.Controls.Primitives;
 
@@ -27,7 +28,7 @@ namespace ModernWpf.Controls
                 typeof(FontFamily),
                 typeof(FontIcon),
                 new FrameworkPropertyMetadata(
-                    new FontFamily("Segoe MDL2 Assets"),
+                    new FontFamily("Segoe Fluent Icons,Segoe MDL2 Assets"),
                     OnFontFamilyChanged));
 
         /// <summary>
@@ -87,11 +88,12 @@ namespace ModernWpf.Controls
         /// The identifier for the FontStyle dependency property.
         /// </summary>
         public static readonly DependencyProperty FontStyleProperty =
-            DependencyProperty.Register(
-                nameof(FontStyle),
-                typeof(FontStyle),
+            TextElement.FontStyleProperty.AddOwner(
                 typeof(FontIcon),
-                new FrameworkPropertyMetadata(FontStyles.Normal, OnFontStyleChanged));
+                new FrameworkPropertyMetadata(
+                    FontStyles.Normal,
+                    FrameworkPropertyMetadataOptions.Inherits,
+                    OnFontStyleChanged));
 
         /// <summary>
         /// Gets or sets the font style for the icon glyph.
@@ -120,11 +122,12 @@ namespace ModernWpf.Controls
         /// The identifier for the FontWeight dependency property.
         /// </summary>
         public static readonly DependencyProperty FontWeightProperty =
-            DependencyProperty.Register(
-                nameof(FontWeight),
-                typeof(FontWeight),
+            TextElement.FontWeightProperty.AddOwner(
                 typeof(FontIcon),
-                new FrameworkPropertyMetadata(FontWeights.Normal, OnFontWeightChanged));
+                new FrameworkPropertyMetadata(
+                    FontWeights.Normal,
+                    FrameworkPropertyMetadataOptions.Inherits,
+                    OnFontWeightChanged));
 
         /// <summary>
         /// Gets or sets the thickness of the icon glyph.
@@ -281,21 +284,24 @@ namespace ModernWpf.Controls
 
         private void ApplyMirroredWhenRightToLeft()
         {
-            if (_textBlock != null)
+            if (_mirroringTransform == null && MirroredWhenRightToLeft && FlowDirection == FlowDirection.RightToLeft)
             {
-                if (MirroredWhenRightToLeft && FlowDirection == FlowDirection.RightToLeft)
-                {
-                    _textBlock.RenderTransformOrigin = new Point(0.5, 0.5);
-                    _textBlock.RenderTransform = new ScaleTransform(-1, 1);
-                }
-                else
-                {
-                    _textBlock.ClearValue(RenderTransformProperty);
-                    _textBlock.ClearValue(RenderTransformOriginProperty);
-                }
+                _mirroringTransform = new ScaleTransform();
+                RenderTransformOrigin = new Point(0.5, 0.5);
+                RenderTransform = _mirroringTransform;
+            }
+
+            // WinUI retains the source-created transform after RTL mirroring has
+            // first been activated and changes only its X scale thereafter.
+            if (_mirroringTransform != null)
+            {
+                _mirroringTransform.ScaleX = MirroredWhenRightToLeft && FlowDirection == FlowDirection.RightToLeft
+                    ? -1
+                    : 1;
             }
         }
 
         private TextBlock _textBlock;
+        private ScaleTransform _mirroringTransform;
     }
 }

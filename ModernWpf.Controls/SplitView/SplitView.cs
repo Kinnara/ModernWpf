@@ -69,6 +69,13 @@ namespace ModernWpf.Controls
             return IsPaneOpen && !_isPaneClosingByLightDismiss && IsLightDismissible();
         }
 
+        internal bool IsLightDismissEnabledForAutomation => CanLightDismiss();
+
+        internal void InvokeLightDismissForAutomation()
+        {
+            TryCloseLightDismissiblePane();
+        }
+
         public override void OnApplyTemplate()
         {
             UnregisterDisplayModeStateHandler();
@@ -450,7 +457,20 @@ namespace ModernWpf.Controls
                     {
                         if (waitForDataBinding)
                         {
-                            DispatcherHelper.DoEvents(DispatcherPriority.DataBind);
+                            try
+                            {
+                                DispatcherHelper.DoEvents(DispatcherPriority.DataBind);
+                            }
+                            catch (System.InvalidOperationException)
+                            {
+                                // WPF suspends dispatcher processing during portions of the
+                                // initial Window layout. Queue the same source-state replay
+                                // instead of attempting a nested dispatcher frame there.
+                                Dispatcher.BeginInvoke(
+                                    () => ReapplyDisplayModeState(false),
+                                    DispatcherPriority.DataBind);
+                                return;
+                            }
                         }
 
                         storyboard.Begin(_templateRoot, true);

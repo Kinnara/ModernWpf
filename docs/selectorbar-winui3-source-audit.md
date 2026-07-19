@@ -1,59 +1,170 @@
 # SelectorBar WinUI 3 Source Audit
 
-Date: 2026-07-17
+Date: 2026-07-18
 
-WinUI 3 source snapshot:
+ModernWpf `SelectorBar` and `SelectorBarItem` are tracked as a source-backed WPF
+port of official `microsoft-ui-xaml` `winui3/main` commit
+`de3e767333c2f0717a6a70cb22bd192ced5ad885` (2026-07-17). The current Gallery
+contract is pinned to WinUI Gallery commit
+`29f62479d5c046a0b854a5868e5a7cd484572d87` (2026-07-13). Live comparison uses
+the installed WinUI 3 Controls Gallery `2.9.3.0` with Windows App Runtime
+`2.2.3.0.0`.
 
-```text
-D:\repos\microsoft-ui-xaml
-c70471c511a0168b61dcca13af9556465f26b673
-reference/winui3-current
-```
+## Product Source Baseline
 
-## Source Files
+The product repository moved its mirrored tree from `src\...` to the repository
+root in `8463f45162149de0ec3ad7df752596893fe3e13e`. The last audited pre-move
+product baseline is `c70471c511a0168b61dcca13af9556465f26b673`; the only
+SelectorBar history after that baseline is the root move, so all substantive
+runtime, item, peer, classic-template/theme, resource, API-test, and interaction
+test blobs remain byte-current. Current paths intentionally omit `src\`.
 
-- `src\controls\dev\SelectorBar\SelectorBar.cpp`
-- `src\controls\dev\SelectorBar\SelectorBarItem.cpp`
-- `src\controls\dev\SelectorBar\SelectorBar.xaml`
-- `src\controls\dev\SelectorBar\SelectorBar.idl`
-- `src\controls\dev\SelectorBar\SelectorBar_themeresources.xaml`
-- `src\controls\dev\SelectorBar\SelectorBarItemAutomationPeer.cpp`
-- `src\controls\dev\SelectorBar\APITests\SelectorBarTests.cs`
-- `src\controls\dev\SelectorBar\InteractionTests\SelectorBarTests.cs`
+Primary current WinUI 3 inputs and blob IDs:
 
-## ModernWpf Port
+| Source | Current blob |
+| --- | --- |
+| `controls\dev\SelectorBar\APITests\SelectorBarTests.cs` | `4a26ec257cf6ec5b03d494d489c95abe3d887af2` |
+| `controls\dev\SelectorBar\InteractionTests\SelectorBarTests.cs` | `ff3f546f8f22580dbcbb5dcbcc5689a15e543109` |
+| `controls\dev\SelectorBar\SelectorBar.cpp` | `03fb32f3f7ded885ead07735139848adc8882197` |
+| `controls\dev\SelectorBar\SelectorBar.h` | `c4c2bf7dec892002631b7d96ace9a707d9ed00da` |
+| `controls\dev\SelectorBar\SelectorBar.idl` | `5de9e849b5f3b678dde121b75b4983f352cbb803` |
+| `controls\dev\SelectorBar\SelectorBar.xaml` | `b928003fb521d2901aa1dc3edef3f16a2fd869f3` |
+| `controls\dev\SelectorBar\SelectorBarItem.cpp` | `205c8df3caecd96237136a347d428d73723a6d88` |
+| `controls\dev\SelectorBar\SelectorBarItem.h` | `0bbc42853e410432d5ccc7eecc51f3f0fc767e72` |
+| `controls\dev\SelectorBar\SelectorBarItemAutomationPeer.cpp` | `54d37c95f97f6d366333a7996301f86b2bb57bba` |
+| `controls\dev\SelectorBar\SelectorBar_perf2026.xaml` | `01951cdbb3af6802e9cf6d457e62bbd9e02f286d` |
+| `controls\dev\SelectorBar\SelectorBar_themeresources.xaml` | `194182902a7df8b134b1eeeda17c0bf354464c44` |
+| `controls\dev\SelectorBar\Strings\en-us\Resources.resw` | `6019fa505d3a1f90bf22c89138470c03c994056e` |
+| `controls\dev\ItemsView\ItemsViewAutomationPeer.cpp` | `27c6248d055005ad27477ffe957ffb79ae155b47` |
+| `controls\dev\ItemContainer\ItemContainerAutomationPeer.cpp` | `abf79f19728820b2d4db4649fcfd698500d939ba` |
 
-- `ModernWpf.Controls\SelectorBar\SelectorBar.cs`
-- `ModernWpf.Controls\SelectorBar\SelectorBarItem.cs`
-- `ModernWpf.Controls\SelectorBar\SelectorBar.xaml`
-- `ModernWpf.Controls\SelectorBar\SelectorBarAutomationPeer.cs`
-- `ModernWpf.Controls\SelectorBar\SelectorBarItemAutomationPeer.cs`
-- `test\ModernWpf.WinUI.Tests\SelectorBar\SelectorBarApiTests.cs`
+The current `SelectorBar_perf2026.xaml` preserves the classic part tree,
+metrics, resource aliases, animations, and state semantics while representing
+discrete brush changes as setters. ModernWpf already expresses that current
+variant through `VisualStateEx.Setters`.
 
-## Ported Source Behavior
+## Current Gallery Baseline
 
-- Deleted the old guessed `PART_ItemsPanel` manual child-injection path. The default template now exposes a source-shaped `PART_ItemsView` and binds it to `SelectorBar.Items`.
-- Deleted the old `SelectorBarItem` `PART_Button` wrapper and direct button click path. Item input now lives on the item, with WinUI-style selected/unselected pointer and disabled visual states.
-- Replaced the old child-presenter template with the WinUI `PART_IconVisual`, `PART_TextVisual`, `PART_SelectionVisual`, and `PART_CommonVisual` shape. `Child` stays as the WPF substitute for the WinUI inherited `ItemContainer.Child` API, but the default template follows the current WinUI source placeholder and does not render it.
-- Ported `SelectorBarItem::UpdatePartsVisibility`: icon/text parts collapse independently and the shared icon/text parent collapses when both are absent.
-- Added source-style `SelectorBar.CornerRadius`, `SelectorBarItem.UseSystemFocusVisuals`, and `SelectorBarItem.FocusVisualMargin` surfaces used by the source default styles.
-- Ported `SelectorBarItemAutomationPeer.GetNameCore` fallback order: explicit automation name, item `Text`, `Child` string representation, then the localized default source string `SelectorBarItem`.
-- Added source theme resources local to `SelectorBar.xaml`, including selector/item foreground/background aliases, pill metrics, icon scale, spacing, padding, and border thickness.
-- Preserved the source item padding, icon scale, spacing, and 48-pixel Gallery geometry while applying a render-only `Y=-1` WPF text baseline adjustment. The icon row remains on the source position; this isolates WPF text raster placement without changing measurement, selection-pill geometry, focus bounds, or hit targets.
+WinUI Gallery converted this page to `SampleDefinition` files in
+`14a4a1a2b8ddc527dc4a7d5f7e743d7c2bc97db7`; no later SelectorBar sample commit
+is present through the current pin. Current paths and blobs are:
+
+| Gallery source | Current blob |
+| --- | --- |
+| `WinUIGallery\Samples\SelectorBar\SelectorBarPage.xaml` | `08c77fd4eb5e3105e210166a00e0f0082cf8d873` |
+| `WinUIGallery\Samples\SelectorBar\SelectorBarPage.xaml.cs` | `710711c1daf70fb6914a46fb6c8f0f90600f5040` |
+| `WinUIGallery\Samples\SelectorBar\BasicSelectorbar.txt` | `34b1d24fda342e274202c33bd4131ac93b48d873` |
+| `WinUIGallery\Samples\SelectorBar\SelectorbarDisplayingDifferentCollections.txt` | `9ece269a599518155ff6b686f2bdd296fde166e2` |
+| `WinUIGallery\Samples\SelectorBar\SelectorbarFrameSlideTransitions.txt` | `c52043ced6a16955cfa56b06218c003e08a34c85` |
+| `WinUIGallery\Styles\SelectorBar.xaml` | `af62f7f6df5c54bd51e8c0db2ece59aa6114c7cb` |
+
+The page still contains exactly three examples: the `Recent`/`Shared`/`Favorites`
+bar; a five-page Frame example with directional slide transitions; and a
+Pink/Plum/PowderBlue collection switcher. ModernWpf Gallery keeps the current
+headers, source-facing names, displayed definitions (including the current
+third-definition `UniformGridLayout` text), runtime item counts, selection
+flows, frame content, and color collections. WPF substitutes a `Frame` content
+change and an `ItemsControl` for the unavailable Gallery `ItemsView` surface.
+
+## Ported Runtime and Visual Shape
+
+- The default template exposes source `PART_ItemsView`; the former guessed
+  `PART_ItemsPanel` manual child-injection path remains deleted.
+- The WPF `SelectorBarItemsControl` binds to `Items`, lays out horizontally in a
+  `ScrollViewer`, and owns the single-selection bridge that current WinUI owns
+  through `ItemsView`.
+- `SelectedItem` must belong to `Items`; item changes synchronize both ways,
+  removal clears selection, preselected items initialize on load, and every
+  change raises `SelectionChanged` with source-shaped empty event args.
+- Focus without a valid selection selects the current/focused item or the first
+  enabled, visible, focusable item. Mouse, Enter/Space, and direction-aware
+  Left/Right input update focus/selection through WPF equivalents of current
+  ItemContainer/ItemsView behavior.
+- `SelectorBarItem.UpdatePartsVisibility` independently collapses missing icon
+  and text parts and collapses their common parent when both are absent.
+- The item template retains `PART_IconVisual`, `PART_TextVisual`,
+  `PART_SelectionVisual`, `PART_CommonVisual`, source resources and states,
+  0.8 icon scale, eight-DIP spacing, pill geometry, focus bounds, and 48-DIP
+  Gallery height.
+- A render-only one-pixel WPF text translation aligns the glyph baseline while
+  leaving icon origin, measurement, pill, focus, and hit geometry source-sized.
+  Exact installed-Gallery primary crops remain `284x48`.
+
+## Current Accessibility Contract
+
+- Current WinUI gives `SelectorBar` no separate peer. Its internal `ItemsView`
+  is the active List/Selection provider; each `SelectorBarItem` inherits the
+  ItemContainer ListItem/SelectionItem contract and overrides class/name/type.
+- ModernWpf now follows that visible tree: `SelectorBarItemsControlAutomationPeer`
+  reports class `ItemsView`, List role, single optional selection, and the
+  selected ListItem provider. Both direct and generated item peers report
+  `SelectorBarItem`, ListItem, SelectionItem, and the internal List as their
+  selection container. The former Tab/TabItem roles are removed.
+- Item name fallback order is current source order: explicit automation name,
+  `Text`, `Child.ToString()`, then `SelectorBarItemDefaultControlName`.
+- The default name/localized control type is now resolved through the control
+  resource pack instead of a hardcoded literal; the upstream en-US value is
+  `SelectorBarItem`.
+- WPF retains a raw, non-Control/non-Content `SelectorBarAutomationPeer` only so
+  app/harness automation IDs on the outer WPF control remain addressable. It is
+  excluded from the accessible Control and Content views; selection ownership
+  stays on the source-equivalent internal List.
 
 ## WPF Substitutions
 
-- WinUI `ItemsView` is not present in ModernWpf. The WPF port uses an `ItemsControl` named `PART_ItemsView` inside a horizontal `ScrollViewer`; item selection remains owned by `SelectorBarItem` input and `SelectorBar.SelectedItem`.
-- WinUI `ItemContainer` is not present as a standalone ModernWpf control. `SelectorBarItem` directly exposes the needed inherited `Child` and `IsSelected` surface on a WPF `Control` subclass.
-- WinUI `StackLayout`, `Grid.CornerRadius`, and `Grid.BackgroundSizing` are represented by `StackPanel`, `GridEx`, and source-shaped resource bindings.
-- WinUI `PointerUpThemeAnimation`, compositor transforms, XY focus, and `ItemsView.CurrentItemIndex` have no direct WPF equivalent. The WPF substitute uses source visual-state setters, WPF mouse capture, and keyboard left/right focus movement across focusable items.
-- WPF and WinUI place the same Segoe UI Variable Text run on adjacent device-pixel baselines in this template. ModernWpf applies a one-pixel render translation to `PART_TextVisual`; the Gallery's source-backed local item template mirrors that platform adjustment while leaving the icon glyphs unshifted.
-- The source English automation default `SelectorBarItem` is used until localized ModernWpf resource packs are added for this control.
+- WinUI `ItemsView`, `ItemContainer`, and `StackLayout` are represented by a
+  purpose-built WPF `ItemsControl`, direct item control, horizontal
+  `StackPanel`, and source-shaped selection peers.
+- `Grid.CornerRadius`, `Grid.BackgroundSizing`, and content-presenter chrome use
+  `GridEx`, `BackgroundSizing`, and `ContentPresenterEx`.
+- WinUI `VisualState.Setters` use `VisualStateEx.Setters`; pointer animation,
+  compositor transforms, XY focus, and `ItemsView.CurrentItemIndex` map to WPF
+  state setters, mouse capture, focus, and directional navigation.
+- Only the en-US SelectorBar resource pack is currently added. Other WinUI
+  translations remain a localization follow-up.
+- The Gallery maps source `Favorite` to ModernWpf's outline-star symbol because
+  ModernWpf's `Symbol.Favorite` glyph is filled while the installed Gallery's
+  current first example renders an outline star. Displayed source text remains
+  unchanged.
+- WPF and WinUI place the same Segoe UI Variable Text run on adjacent physical
+  baselines; the documented one-pixel render translation is platform-specific.
 
-## Validation
+## Regression Guards
 
-- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter FullyQualifiedName~SelectorBar --no-restore`
-- `dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore -m:1`
-- Light installed-WinUI Gallery proof: `artifacts/visual-checks/20260717-022122-441-38908/report.md`, exact `284x48` crops, primary delta `1.99`.
-- Dark installed-WinUI Gallery proof: `artifacts/visual-checks/20260717-022213-202-80524/report.md`, exact `284x48` crops, primary delta `2.58`.
-- `Run-GalleryVisualChecks.ps1` now enforces a strict SelectorBar primary-crop threshold of `3.0`.
+- `SelectorBarSourceAuditTests` pins the current product/Gallery commits,
+  root-move boundary, product/Gallery blobs, current paths, classic/perf mapping,
+  accessibility roles/ownership/resources, strict artifacts, and selection
+  recorder anchor.
+- `SelectorBarApiTests` covers current defaults, Items collection/selection,
+  invalid selected items, state/resource/template geometry, part visibility,
+  mouse selection, List/ListItem peer shape, Selection/SelectionItem patterns,
+  selection-container ownership, raw outer wrapper, and localized fallback.
+- `GalleryAutomationHookTests.SelectorBarSampleMatchesWinUIGalleryExamples`
+  covers all three current definitions, source names, exact first-example
+  geometry, icons, selections, Frame page changes, and 5/7/4 color counts.
+- `WpfGallerySourceShapeTests.GalleryVisualChecksEnforceSelectorBarPixelParityThreshold`
+  pins the ModernWpf/reference targets and strict `3.0` primary gate.
+- The recording harness anchors on the actual `Shared` ListItem, invokes its
+  SelectionItem pattern, requires Unselected-to-Selected state evidence, and
+  separately requires a rendered local delta.
+
+## Current Validation
+
+- Fresh Light comparison
+  `artifacts/visual-checks/20260718-211850-273-87320/report.md` passes at `1.99`;
+  fresh Dark comparison
+  `artifacts/visual-checks/20260718-211931-717-99256/report.md` passes at `2.58`.
+  Both compare exact `284x48` live primary controls under the `3.0` gate.
+- Fresh Light selection recording
+  `artifacts/gallery-recordings/20260718-212208-592/report.md` passes with
+  `0.001` maximum frame delta and `0.711` maximum local delta. Fresh Dark
+  recording `artifacts/gallery-recordings/20260718-212254-641/report.md` passes
+  with `0` / `0.251`. Both use the real `Shared` SelectionItem provider, prove
+  Unselected-to-Selected state, and finish within `2.7s` of the six-second
+  maximum window.
+- The complete SelectorBar product/source/accessibility slice passes 11/11 on
+  `net8.0-windows7.0`.
+- The SelectorBar Gallery sample/crop slice passes 2/2 on net8 and net10.
+- `ModernWpf.Gallery` builds successfully for net462, net8, and net10 with zero
+  errors; current target builds retain existing unrelated warnings and no
+  SelectorBar warning.

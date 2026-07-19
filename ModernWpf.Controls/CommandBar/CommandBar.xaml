@@ -428,8 +428,9 @@
                                 x:Name="OverflowPopup"
                                 AllowsTransparency="true"
                                 Placement="Custom"
+                                PlacementTarget="{Binding ElementName=ContentRoot}"
                                 IsOpen="{Binding Path=IsOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                StaysOpen="True"
+                                StaysOpen="true"
                                 Focusable="false"
                                 PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}">
                                 <Grid

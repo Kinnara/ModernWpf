@@ -582,6 +582,7 @@ namespace ModernWpf.Controls.Primitives
                 case FlyoutPlacementMode.Left:
                 case FlyoutPlacementMode.LeftEdgeAlignedTop:
                     point = new Point(targetRect.Left - popupSize.Width, targetRect.Top);
+                    point.Y = GetSidePlacementVerticalOffset(targetRect, popupSize.Height, point.Y);
                     return true;
                 case FlyoutPlacementMode.LeftEdgeAlignedBottom:
                     point = new Point(targetRect.Left - popupSize.Width, targetRect.Bottom - popupSize.Height);
@@ -589,6 +590,7 @@ namespace ModernWpf.Controls.Primitives
                 case FlyoutPlacementMode.Right:
                 case FlyoutPlacementMode.RightEdgeAlignedTop:
                     point = new Point(targetRect.Right, targetRect.Top);
+                    point.Y = GetSidePlacementVerticalOffset(targetRect, popupSize.Height, point.Y);
                     return true;
                 case FlyoutPlacementMode.RightEdgeAlignedBottom:
                     point = new Point(targetRect.Right, targetRect.Bottom - popupSize.Height);
@@ -596,6 +598,71 @@ namespace ModernWpf.Controls.Primitives
                 default:
                     return false;
             }
+        }
+
+        private static double GetSidePlacementVerticalOffset(Rect targetRect, double presenterHeight, double verticalOffset)
+        {
+            if (TryGetMonitorWorkArea(targetRect, out var workArea))
+            {
+                return ClampSidePlacementVerticalOffset(
+                    verticalOffset,
+                    targetRect.Bottom,
+                    presenterHeight,
+                    workArea.Top,
+                    workArea.Bottom);
+            }
+
+            return verticalOffset;
+        }
+
+        internal static double ClampSidePlacementVerticalOffset(
+            double verticalOffset,
+            double anchorBottom,
+            double presenterHeight,
+            double availableTop,
+            double availableBottom)
+        {
+            if (verticalOffset + presenterHeight <= availableBottom)
+            {
+                return verticalOffset;
+            }
+
+            if (verticalOffset <= availableTop)
+            {
+                return availableTop;
+            }
+
+            return anchorBottom - Math.Min(
+                presenterHeight,
+                Math.Max(0, anchorBottom - availableTop));
+        }
+
+        private static bool TryGetMonitorWorkArea(Rect targetRect, out Rect workArea)
+        {
+            var nativeTargetRect = new NativeRect
+            {
+                Left = (int)Math.Floor(targetRect.Left),
+                Top = (int)Math.Floor(targetRect.Top),
+                Right = (int)Math.Ceiling(targetRect.Right),
+                Bottom = (int)Math.Ceiling(targetRect.Bottom)
+            };
+            var monitor = MonitorFromRect(ref nativeTargetRect, MONITOR_DEFAULTTONEAREST);
+            if (monitor != IntPtr.Zero)
+            {
+                var monitorInfo = new MonitorInfo();
+                if (GetMonitorInfo(monitor, monitorInfo))
+                {
+                    workArea = new Rect(
+                        monitorInfo.Work.Left,
+                        monitorInfo.Work.Top,
+                        monitorInfo.Work.Right - monitorInfo.Work.Left,
+                        monitorInfo.Work.Bottom - monitorInfo.Work.Top);
+                    return true;
+                }
+            }
+
+            workArea = Rect.Empty;
+            return false;
         }
 
         private Size GetPresenterDesiredScreenSize(FrameworkElement placementTarget)
@@ -1004,10 +1071,35 @@ namespace ModernWpf.Controls.Primitives
         [DllImport("user32.dll")]
         private static extern bool SetWindowPos(IntPtr hWnd, IntPtr insertAfter, int x, int y, int cx, int cy, uint flags);
 
+        [DllImport("user32.dll")]
+        private static extern IntPtr MonitorFromRect(ref NativeRect rect, uint flags);
+
+        [DllImport("user32.dll")]
+        private static extern bool GetMonitorInfo(IntPtr monitor, [In, Out] MonitorInfo monitorInfo);
+
         private const uint SWP_NOSIZE = 0x0001;
         private const uint SWP_NOZORDER = 0x0004;
         private const uint SWP_NOACTIVATE = 0x0010;
         private const uint SWP_SHOWWINDOW = 0x0040;
+        private const uint MONITOR_DEFAULTTONEAREST = 0x00000002;
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct NativeRect
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private sealed class MonitorInfo
+        {
+            public int Size = Marshal.SizeOf(typeof(MonitorInfo));
+            public NativeRect Monitor;
+            public NativeRect Work;
+            public int Flags;
+        }
 
         private sealed class PendingFlyoutShow
         {

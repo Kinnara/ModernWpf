@@ -269,7 +269,12 @@ public class SelectorBarApiTests
             selectionItemProvider.Select();
 
             Assert.AreSame(shared, selectorBar.SelectedItem);
-            Assert.AreEqual(AutomationControlType.TabItem, itemPeer.GetAutomationControlType());
+            Assert.AreEqual("ItemsView", itemsViewPeer.GetClassName());
+            Assert.AreEqual(AutomationControlType.List, itemsViewPeer.GetAutomationControlType());
+            Assert.IsInstanceOfType(itemsViewPeer.GetPattern(PatternInterface.Selection), typeof(ISelectionProvider));
+            Assert.AreEqual(AutomationControlType.ListItem, itemPeer.GetAutomationControlType());
+            Assert.AreEqual("SelectorBarItem", itemPeer.GetLocalizedControlType());
+            Assert.IsNotNull(selectionItemProvider.SelectionContainer);
         });
     }
 
@@ -382,12 +387,20 @@ public class SelectorBarApiTests
             Assert.AreEqual("Second", itemPeer.GetName());
             Assert.AreEqual("SelectorBarItem", itemPeer.GetLocalizedControlType());
 
-            var selectorPeer = FrameworkElementAutomationPeer.CreatePeerForElement(selectorBar);
-            var selectionProvider = (ISelectionProvider)selectorPeer.GetPattern(PatternInterface.Selection);
+            var itemsView = GetNamedDescendant<SelectorBarItemsControl>(selectorBar, "PART_ItemsView");
+            var itemsViewPeer = FrameworkElementAutomationPeer.CreatePeerForElement(itemsView);
+            var selectionProvider = (ISelectionProvider)itemsViewPeer.GetPattern(PatternInterface.Selection);
 
             Assert.IsFalse(selectionProvider.CanSelectMultiple);
             Assert.IsFalse(selectionProvider.IsSelectionRequired);
             Assert.AreEqual(1, selectionProvider.GetSelection().Length);
+            Assert.AreEqual("ItemsView", itemsViewPeer.GetClassName());
+            Assert.AreEqual(AutomationControlType.List, itemsViewPeer.GetAutomationControlType());
+            Assert.AreEqual(AutomationControlType.ListItem, itemPeer.GetAutomationControlType());
+            var selectorPeer = FrameworkElementAutomationPeer.CreatePeerForElement(selectorBar);
+            Assert.IsNotNull(selectorPeer);
+            Assert.IsFalse(selectorPeer.IsControlElement());
+            Assert.IsFalse(selectorPeer.IsContentElement());
         });
     }
 

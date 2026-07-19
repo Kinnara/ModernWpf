@@ -20,6 +20,7 @@
     { "name": "LabelPosition", "type": "CommandBarLabelPosition", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.LabelPositionProperty" },
     { "name": "IsCompact", "type": "bool", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IsCompactProperty" },
     { "name": "IsInOverflow", "type": "bool", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IsInOverflowProperty", "setterAccessibility": "none" },
+    { "name": "DynamicOverflowOrder", "type": "int", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.DynamicOverflowOrderProperty" },
     { "name": "KeyboardAcceleratorTextOverride", "type": "string", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.KeyboardAcceleratorTextOverrideProperty" },
     { "name": "TemplateSettings", "type": "AppBarButtonTemplateSettings", "kind": "RegisterReadOnly", "setterAccessibility": "none" }
   ]

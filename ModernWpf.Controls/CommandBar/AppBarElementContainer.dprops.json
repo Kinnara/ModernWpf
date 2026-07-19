@@ -12,6 +12,7 @@
   "properties": [
     { "name": "ContentTransitions", "type": "TransitionCollection", "kind": "AddOwner", "sourceProperty": "ControlHelper.ContentTransitionsProperty" },
     { "name": "IsCompact", "type": "bool", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IsCompactProperty" },
-    { "name": "IsInOverflow", "type": "bool", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IsInOverflowProperty", "setterAccessibility": "none" }
+    { "name": "IsInOverflow", "type": "bool", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.IsInOverflowProperty", "setterAccessibility": "none" },
+    { "name": "DynamicOverflowOrder", "type": "int", "kind": "AddOwner", "sourceProperty": "AppBarElementProperties.DynamicOverflowOrderProperty" }
   ]
 }

@@ -2,11 +2,14 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using ModernWpf.Controls;
+using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Automation.Peers
 {
     public class SelectorBarItemAutomationPeer : FrameworkElementAutomationPeer, ISelectionItemProvider
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(SelectorBar));
+
         public SelectorBarItemAutomationPeer(SelectorBarItem owner)
             : base(owner)
         {
@@ -18,12 +21,13 @@ namespace ModernWpf.Automation.Peers
         {
             get
             {
-                if (OwnerItem.Owner == null)
+                var itemsView = OwnerItem.Owner?.ItemsView;
+                if (itemsView == null)
                 {
                     return null;
                 }
 
-                var peer = CreatePeerForElement(OwnerItem.Owner) ?? new SelectorBarAutomationPeer(OwnerItem.Owner);
+                var peer = CreatePeerForElement(itemsView) ?? new SelectorBarItemsControlAutomationPeer(itemsView);
                 return ProviderFromPeer(peer);
             }
         }
@@ -58,7 +62,7 @@ namespace ModernWpf.Automation.Peers
 
         protected override string GetLocalizedControlTypeCore()
         {
-            return DefaultControlName;
+            return GetDefaultControlName();
         }
 
         protected override string GetNameCore()
@@ -74,15 +78,19 @@ namespace ModernWpf.Automation.Peers
                 name = OwnerItem.Child.ToString();
             }
 
-            return string.IsNullOrEmpty(name) ? DefaultControlName : name;
+            return string.IsNullOrEmpty(name) ? GetDefaultControlName() : name;
         }
 
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
-            return AutomationControlType.TabItem;
+            return AutomationControlType.ListItem;
         }
 
-        private const string DefaultControlName = nameof(SelectorBarItem);
+        private static string GetDefaultControlName()
+        {
+            return ResourceAccessor.GetLocalizedStringResource(SR_SelectorBarItemDefaultControlName);
+        }
+
         private SelectorBarItem OwnerItem => (SelectorBarItem)Owner;
     }
 }

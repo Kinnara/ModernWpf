@@ -1,0 +1,12 @@
+<Button Content="Options">
+    <Button.Flyout>
+        <MenuFlyout>
+            <RadioMenuFlyoutItem Text="Landscape" GroupName="OrientationGroup"/>
+            <RadioMenuFlyoutItem Text="Portrait" GroupName="OrientationGroup" IsChecked="True"/>
+            <MenuFlyoutSeparator/>
+            <RadioMenuFlyoutItem Text="Small icons" GroupName="SizeGroup"/>
+            <RadioMenuFlyoutItem Text="Medium icons" IsChecked="True" GroupName="SizeGroup"/>
+            <RadioMenuFlyoutItem Text="Large icons" GroupName="SizeGroup"/>
+        </MenuFlyout>
+    </Button.Flyout>
+</Button>

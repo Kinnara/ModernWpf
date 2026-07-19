@@ -9,12 +9,14 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using ModernWpf.Automation.Peers;
+using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Controls
 {
     [TemplatePart(Name = ItemsRepeaterName, Type = typeof(ItemsRepeater))]
     public partial class BreadcrumbBar : Control
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(BreadcrumbBar));
         private const string ItemsRepeaterName = "PART_ItemsRepeater";
 
         static BreadcrumbBar()
@@ -58,6 +60,8 @@ namespace ModernWpf.Controls
 
         internal IReadOnlyList<BreadcrumbBarItem> Containers =>
             new ReadOnlyCollection<BreadcrumbBarItem>(GetRealizedBreadcrumbItems().ToList());
+
+        internal bool IsEllipsisRendered => _itemsRepeaterLayout?.EllipsisIsRendered == true;
 
         internal BreadcrumbBarItem ContainerFromIndex(int index)
         {
@@ -134,7 +138,12 @@ namespace ModernWpf.Controls
 
             if (_ellipsisBreadcrumbBarItem != null)
             {
-                _ellipsisBreadcrumbBarItem.IsHitTestVisible = _itemsRepeaterLayout.EllipsisIsRendered;
+                var isEllipsisRendered = _itemsRepeaterLayout.EllipsisIsRendered;
+                if (_ellipsisBreadcrumbBarItem.IsHitTestVisible != isEllipsisRendered)
+                {
+                    _ellipsisBreadcrumbBarItem.IsHitTestVisible = isEllipsisRendered;
+                    UIElementAutomationPeer.FromElement(_ellipsisBreadcrumbBarItem)?.InvalidatePeer();
+                }
             }
 
 #if NET48_OR_NEWER
@@ -301,7 +310,9 @@ namespace ModernWpf.Controls
                 item.SetPropertiesForEllipsisItem();
                 _ellipsisBreadcrumbBarItem = item;
                 UpdateEllipsisBreadcrumbBarItemDropDownItemTemplate();
-                AutomationProperties.SetName(item, "More");
+                AutomationProperties.SetName(
+                    item,
+                    ResourceAccessor.GetLocalizedStringResource(SR_AutomationNameEllipsisBreadcrumbBarItem));
                 return;
             }
 

@@ -35,6 +35,13 @@
     <member name="M:ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer.Toggle">
       <summary>Cycles through the toggle states of a control.</summary>
     </member>
+    <member name="T:ModernWpf.Automation.Peers.CommandBarAutomationPeer">
+      <summary>Exposes CommandBar types to Microsoft UI Automation.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.CommandBarAutomationPeer.#ctor(ModernWpf.Controls.CommandBar)">
+      <summary>Initializes a new instance of the CommandBarAutomationPeer class.</summary>
+      <param name="owner">The CommandBar control instance to create the peer for.</param>
+    </member>
     <member name="T:ModernWpf.Automation.Peers.AutoSuggestBoxAutomationPeer">
       <summary>Exposes AutoSuggestBox types to Microsoft UI Automation.</summary>
     </member>
@@ -145,6 +152,14 @@
     <member name="M:ModernWpf.Controls.AppBarButton.#ctor">
       <summary>Initializes a new instance of the AppBarButton class.</summary>
     </member>
+    <member name="P:ModernWpf.Controls.AppBarButton.DynamicOverflowOrder">
+      <summary>Gets or sets the order in which this item is moved to the CommandBar overflow menu.</summary>
+      <returns>The order in which this item is moved to the overflow menu relative to other items.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarButton.DynamicOverflowOrderProperty">
+      <summary>Identifies the DynamicOverflowOrder dependency property.</summary>
+      <returns>The identifier for the DynamicOverflowOrder dependency property.</returns>
+    </member>
     <member name="P:ModernWpf.Controls.AppBarButton.Icon">
       <summary>Gets or sets the graphic content of the app bar button.</summary>
       <returns>The graphic content of the app bar button.</returns>
@@ -221,6 +236,14 @@
     <member name="M:ModernWpf.Controls.AppBarSeparator.#ctor">
       <summary>Initializes a new instance of the AppBarSeparator class.</summary>
     </member>
+    <member name="P:ModernWpf.Controls.AppBarSeparator.DynamicOverflowOrder">
+      <summary>Gets or sets the order in which this item is moved to the CommandBar overflow menu.</summary>
+      <returns>The order in which this item is moved to the overflow menu relative to other items.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarSeparator.DynamicOverflowOrderProperty">
+      <summary>Identifies the DynamicOverflowOrder dependency property.</summary>
+      <returns>The identifier for the DynamicOverflowOrder dependency property.</returns>
+    </member>
     <member name="P:ModernWpf.Controls.AppBarSeparator.IsCompact">
       <summary>Gets or sets a value that indicates whether the separator is shown with reduced padding.</summary>
       <returns>**True** if the separator is shown in its compact state; otherwise, **false**. The default is **false**.</returns>
@@ -242,6 +265,14 @@
     </member>
     <member name="M:ModernWpf.Controls.AppBarToggleButton.#ctor">
       <summary>Initializes a new instance of the AppBarToggleButton class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarToggleButton.DynamicOverflowOrder">
+      <summary>Gets or sets the order in which this item is moved to the CommandBar overflow menu.</summary>
+      <returns>The order in which this item is moved to the overflow menu relative to other items.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarToggleButton.DynamicOverflowOrderProperty">
+      <summary>Identifies the DynamicOverflowOrder dependency property.</summary>
+      <returns>The identifier for the DynamicOverflowOrder dependency property.</returns>
     </member>
     <member name="P:ModernWpf.Controls.AppBarToggleButton.Icon">
       <summary>Gets or sets the graphic content of the app bar toggle button.</summary>
@@ -462,6 +493,12 @@
     <member name="M:ModernWpf.Controls.CommandBar.#ctor">
       <summary>Initializes a new instance of the CommandBar class.</summary>
     </member>
+    <member name="E:ModernWpf.Controls.CommandBar.Closed">
+      <summary>Occurs after the CommandBar overflow closes.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.CommandBar.Closing">
+      <summary>Occurs when the CommandBar overflow starts to close.</summary>
+    </member>
     <member name="P:ModernWpf.Controls.CommandBar.CommandBarOverflowPresenterStyle">
       <summary>Gets or sets the Style applied to the overflow content of the CommandBar.</summary>
       <returns>The applied Style for the overflow content of the CommandBar, if present; otherwise, **null**. The default is **null**.</returns>
@@ -486,6 +523,9 @@
       <summary>Identifies the DefaultLabelPosition dependency property.</summary>
       <returns>The identifier for the DefaultLabelPosition dependency property.</returns>
     </member>
+    <member name="E:ModernWpf.Controls.CommandBar.DynamicOverflowItemsChanging">
+      <summary>Occurs before primary commands move into or out of the overflow menu.</summary>
+    </member>
     <member name="P:ModernWpf.Controls.CommandBar.IsDynamicOverflowEnabled">
       <summary>Gets or sets a value that indicates whether primary commands automatically move to the overflow menu when space is limited.</summary>
       <returns>**true** if primary commands automatically move to the overflow menu when space is limited; otherwise, **false**. The default is **true**.</returns>
@@ -493,6 +533,28 @@
     <member name="F:ModernWpf.Controls.CommandBar.IsDynamicOverflowEnabledProperty">
       <summary>Identifies the IsDynamicOverflowEnabled dependency property.</summary>
       <returns>The identifier for the IsDynamicOverflowEnabled dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBar.IsOpen">
+      <summary>Gets or sets a value that indicates whether the CommandBar overflow is open.</summary>
+      <returns>**true** if the overflow is open; otherwise, **false**. The default is **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBar.IsOpenProperty">
+      <summary>Identifies the IsOpen dependency property.</summary>
+      <returns>The identifier for the IsOpen dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBar.IsSticky">
+      <summary>Gets or sets a value that indicates whether the CommandBar ignores light-dismiss input.</summary>
+      <returns>**true** if the CommandBar ignores light-dismiss input; otherwise, **false**. The default is **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBar.IsStickyProperty">
+      <summary>Identifies the IsSticky dependency property.</summary>
+      <returns>The identifier for the IsSticky dependency property.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.CommandBar.Opened">
+      <summary>Occurs after the CommandBar overflow opens.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.CommandBar.Opening">
+      <summary>Occurs when the CommandBar overflow starts to open.</summary>
     </member>
     <member name="P:ModernWpf.Controls.CommandBar.OverflowButtonVisibility">
       <summary>Gets or sets a value that indicates when a command bar's overflow button is shown.</summary>
@@ -509,6 +571,28 @@
     <member name="P:ModernWpf.Controls.CommandBar.SecondaryCommands">
       <summary>Gets the collection of secondary command elements for the CommandBar.</summary>
       <returns>The collection of secondary command elements for the CommandBar. The default is an empty collection.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.CommandBarDynamicOverflowAction">
+      <summary>Defines constants that indicate whether commands are moving into or out of the CommandBar overflow menu.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBarDynamicOverflowAction.AddingToOverflow">
+      <summary>Commands are moving into the overflow menu.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBarDynamicOverflowAction.RemovingFromOverflow">
+      <summary>Commands are moving out of the overflow menu.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.DynamicOverflowItemsChangingEventArgs">
+      <summary>Provides data for the CommandBar.DynamicOverflowItemsChanging event.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.DynamicOverflowItemsChangingEventArgs.#ctor">
+      <summary>Initializes a new instance of the DynamicOverflowItemsChangingEventArgs class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.DynamicOverflowItemsChangingEventArgs.Action">
+      <summary>Gets a value that indicates whether commands are moving into or out of the overflow menu.</summary>
+      <returns>The dynamic overflow action.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.DynamicOverflowItemsChangingEventHandler">
+      <summary>Represents the method that handles the CommandBar.DynamicOverflowItemsChanging event.</summary>
     </member>
     <member name="T:ModernWpf.Controls.CommandBarDefaultLabelPosition">
       <summary>Defines constants that specify the placement and visibility of AppBarButton labels in a CommandBar.</summary>
@@ -527,6 +611,10 @@
     </member>
     <member name="M:ModernWpf.Controls.CommandBarFlyout.#ctor">
       <summary>Initializes a new instance of the CommandBarFlyout class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBarFlyout.AlwaysExpanded">
+      <summary>Gets or sets whether the secondary commands remain expanded and the overflow button stays hidden while the flyout is open.</summary>
+      <returns><see langword="true"/> to keep the secondary commands expanded; otherwise, <see langword="false"/>. The default is <see langword="false"/>.</returns>
     </member>
     <member name="P:ModernWpf.Controls.CommandBarFlyout.PrimaryCommands">
       <summary>Gets the collection of primary command elements for the CommandBarFlyout.</summary>
@@ -2673,7 +2761,7 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     </member>
     <member name="P:ModernWpf.Controls.RatingControl.PlaceholderValue">
       <summary>Gets or sets the rating that is displayed in the control until the value is changed by a user action or some other operation.</summary>
-      <returns>The rating that is displayed in the control when no value is entered. The default is null.</returns>
+      <returns>The rating that is displayed when no value is entered. Zero and fractional values are valid; negative values use the -1 unset sentinel. The default is -1.</returns>
     </member>
     <member name="F:ModernWpf.Controls.RatingControl.PlaceholderValueProperty">
       <summary>Identifies the PlaceholderValue dependency property.</summary>

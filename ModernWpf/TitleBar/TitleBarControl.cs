@@ -388,6 +388,11 @@ namespace ModernWpf.Controls.Primitives
             base.OnInitialized(e);
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new TitleBarControlAutomationPeer(this);
+        }
+
         protected override void OnVisualParentChanged(DependencyObject oldParent)
         {
             if (_parentWindow != null)

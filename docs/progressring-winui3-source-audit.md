@@ -1,77 +1,162 @@
-# ProgressRing WinUI 3 Source Audit
+# ProgressRing current WinUI 3 source audit
 
-Source snapshot: `D:\repos\microsoft-ui-xaml`, `reference/winui3-current` / `c70471c511a0168b61dcca13af9556465f26b673`.
+Audit date: 2026-07-18
 
-WinUI source files:
+## Pinned sources
 
-- `src\controls\dev\ProgressRing\ProgressRing.cpp`
-- `src\controls\dev\ProgressRing\ProgressRing.h`
-- `src\controls\dev\ProgressRing\ProgressRing.xaml`
-- `src\controls\dev\ProgressRing\ProgressRing.idl`
-- `src\controls\dev\ProgressRing\ProgressRingAutomationPeer.cpp`
-- `src\controls\dev\ProgressRing\ProgressRingAutomationPeer.h`
-- `src\controls\dev\ProgressRing\AnimatedVisuals\ProgressRingDeterminate.cpp`
-- `src\controls\dev\ProgressRing\AnimatedVisuals\ProgressRingDeterminate.h`
-- `src\controls\dev\ProgressRing\AnimatedVisuals\ProgressRingIndeterminate.cpp`
-- `src\controls\dev\ProgressRing\AnimatedVisuals\ProgressRingIndeterminate.h`
-- `src\controls\dev\ProgressRing\ProgressRing_themeresources.xaml`
-- `src\controls\dev\Generated\ProgressRing.properties.cpp`
-- `src\controls\dev\Generated\ProgressRingTemplateSettings.properties.cpp`
-- `src\controls\dev\ProgressRing\APITests\ProgressRingTests.cs`
-- `src\controls\dev\ProgressRing\InteractionTests\ProgressRingTests.cs`
+The product source of truth is official `microsoft/microsoft-ui-xaml`
+`winui3/main` commit `de3e767333c2f0717a6a70cb22bd192ced5ad885`.
 
-ModernWpf files:
+| Upstream file | Blob |
+| --- | --- |
+| `controls/dev/ProgressRing/ProgressRing.cpp` | `46aaf1a82be04175f7eb6a8f6f2481ac7db7be15` |
+| `controls/dev/ProgressRing/ProgressRing.h` | `208152aa309ee51da581320032677088fa816154` |
+| `controls/dev/ProgressRing/ProgressRing.idl` | `4ab074e9c8c65714fefd7892fa75236f919463bf` |
+| `controls/dev/ProgressRing/ProgressRing.xaml` | `df15b1794bbd0cda30279b5ab0674cafa544a0cd` |
+| `controls/dev/ProgressRing/ProgressRing_themeresources.xaml` | `f3fa38ea83ea910200a6a539140a379b128bbf94` |
+| `controls/dev/ProgressRing/ProgressRingAutomationPeer.cpp` | `cd10c66d1322c5b4620bdcdadcfd5bb6c49fb856` |
+| `controls/dev/ProgressRing/ProgressRingAutomationPeer.h` | `71d6d8b6607ee18a8311efc948f0a0f3ca2f4b18` |
+| `controls/dev/ProgressRing/ProgressRingTemplateSettings.cpp` | `7a7326a2601469a5d186217f2088441f60987d66` |
+| `controls/dev/ProgressRing/ProgressRingTemplateSettings.h` | `62940cad2761151706148c539791b48eb362eed4` |
+| `controls/dev/ProgressRing/AnimatedVisuals/ProgressRingDeterminate.cpp` | `7d5234db42e92d9d4411009bd0086e7a2a1f0e31` |
+| `controls/dev/ProgressRing/AnimatedVisuals/ProgressRingDeterminate.h` | `6c93dc39f1e791c16fcdf0f8d3148a15300518c7` |
+| `controls/dev/ProgressRing/AnimatedVisuals/ProgressRingIndeterminate.cpp` | `48b0ac924c6010a5bc4ba7aa4d588c200d807907` |
+| `controls/dev/ProgressRing/AnimatedVisuals/ProgressRingIndeterminate.h` | `1c3e62025a3bca6f3cb32ae7e5f24d8493c340ab` |
+| `controls/dev/Generated/ProgressRing.properties.cpp` | `c04d7bff71f333adb3d3d39442a0ac25a8e0442a` |
+| `controls/dev/Generated/ProgressRingTemplateSettings.properties.cpp` | `bc13d0359e0b8d1cbdb0003cc49bb0fe11f208da` |
+| `controls/dev/ProgressRing/APITests/ProgressRingTests.cs` | `5a71dd173f31e68611a1fd05300c5c99c1a021d1` |
+| `controls/dev/ProgressRing/InteractionTests/ProgressRingTests.cs` | `8b82ad49e3cdf29bb5f5906833168daf882de368` |
+| `controls/dev/ProgressRing/Strings/en-us/Resources.resw` | `7a097e1d732bb2bc0b6ce6b283202bec46ee7659` |
+| `controls/dev/ProgressRing/ProgressRing.vcxitems` | `cfa8fbdd137cd9aba33a128ba7397f01bdde9f2a` |
 
-- `ModernWpf.Controls\ProgressRing\ProgressRing.cs`
-- `ModernWpf.Controls\ProgressRing\ProgressRing.xaml`
-- `ModernWpf.Controls\ProgressRing\ProgressRingAutomationPeer.cs`
-- `ModernWpf.Controls\ProgressRing\ProgressRingIndicator.cs`
-- `ModernWpf.Controls\ProgressRing\ProgressRingTemplateSettings.cs`
-- `ModernWpf.Gallery\Testing\GalleryDiagnostics.cs`
-- `ModernWpf\ThemeResources\Light.xaml`
-- `ModernWpf\ThemeResources\Dark.xaml`
-- `ModernWpf\ThemeResources\HighContrast.xaml`
-- `test\ModernWpf.WinUI.Tests\ProgressRing\ProgressRingApiTests.cs`
-- `test\ModernWpf.WinUI.Tests\ProgressRing\ProgressRingInteractionTests.cs`
+All runtime, generated, animation, peer, resource, and test blobs are
+byte-identical to the previous source-shaped audit at
+`c70471c511a0168b61dcca13af9556465f26b673`. The only later control-tree
+changes are:
 
-## Ported Source Behavior
+- `beabd047460bf5d43a41fcf8bddf7730188bd5a7`, which adds perf2026 build
+  classifications to `ProgressRing.vcxitems` while packaging the same XAML;
+- `8463f45162149de0ec3ad7df752596893fe3e13e`, which moves the source mirror
+  from `src/controls/...` to the current root layout.
 
-- The old template root named `Ring` was removed. The template now uses the WinUI 3 source names `LayoutRoot` and `LottiePlayer`.
-- The old WPF `SizeStates` group and `SixthCircle` visibility switch were removed. WinUI 3 source only has the `CommonStates` group with `Inactive`, `DeterminateActive`, and `Active`.
-- Inactive state opacity now targets `LayoutRoot.Opacity`, matching the source setter. ModernWpf no longer collapses the ring when inactive.
-- `OnApplyTemplate` now discovers `LayoutRoot`, updates determinate progress, and then updates visual states, matching the source ordering.
-- `Loaded` now refreshes visual states like source.
-- `SizeChanged` now only applies template settings instead of also driving visual states.
-- `Value`, `Minimum`, and `Maximum` changes now run the source-shaped determinate progress update path when the ring is determinate.
-- `ApplyTemplateSettings` now follows the source width calculation from `ActualWidth` rather than the old `min(ActualWidth, ActualHeight)` guess.
-- `CoerceValue` now uses the source-shaped `IsInBounds` helper.
-- The automation peer name path now follows source by prefixing the indeterminate status as `Busy {name}` for active indeterminate rings.
-- Theme resources already matched the WinUI 3 source resource aliases.
-- `ProgressRingIndicator` now derives its radius and stroke width from the generated 32x32 animated visual: an 8px ellipse and a 1.5px stroke under the source 1.77 shape scale. At the Gallery's 60px sample size this produces the source 26.55px radius and 4.98px effective stroke instead of the previous empirical 27px radius and 6px stroke.
+The current Gallery source of truth is official `microsoft/WinUI-Gallery`
+commit `29f62479d5c046a0b854a5868e5a7cd484572d87`.
 
-## WPF Substitutions
+| Gallery file | Blob |
+| --- | --- |
+| `WinUIGallery/Samples/ProgressRing/ProgressRingPage.xaml` | `ec4263532cd9e028df8be2ca922d313b4a1d72d0` |
+| `WinUIGallery/Samples/ProgressRing/ProgressRingPage.xaml.cs` | `092637258d6c90583e2e29fa4b48d6fafa31c3ae` |
+| `WinUIGallery/Samples/ProgressRing/DeterminateProgressRing.txt` | `7c30cfaf363ecbfc49a399806b79bc8e5804e5ca` |
+| `WinUIGallery/Samples/ProgressRing/IndeterminateProgressRing.txt` | `e68db7715d70a8f59ed66cf02bfb81ba9ffb02af` |
+| `WinUIGallery/SampleSupport/Data/ControlInfoData.json` | `681e0569fcf304ad4d9f925109f1f6797d66c092` |
 
-- WinUI 3 renders through `AnimatedVisualPlayer`, `IAnimatedVisualSource`, and Lottie-generated `ProgressRingIndeterminate` / `ProgressRingDeterminate` visuals. ModernWpf does not reference the WinUI animation pipeline in the WPF controls assembly, so `LottiePlayer` is represented by a WPF storyboard-backed grid and a native WPF arc. The substitute uses the generated visual's current radius, stroke, round-cap, sweep, and foreground/background geometry; only Composition's animation/rasterization engine remains substituted.
-- WinUI `DeterminateSource` and `IndeterminateSource` are preview animation-source properties. They remain omitted because exposing them as `object` would create a misleading API, and the correct WinUI type is not available in the WPF control assembly.
-- WinUI sets `AutomationProperties.AccessibilityView` to `Content` or `Raw` from control code and template setters. WPF has no equivalent property, so ModernWpf keeps the app-visible behavior through `ProgressRingAutomationPeer.IsControlElementCore`.
-- WPF visual-state setters do not fully reset held storyboard values the same way WinUI setters do, so `UpdateStates` also resets `LayoutRoot.Opacity` before navigating to the source state.
-- `ProgressRingTemplateSettings` remains for WUXC compatibility. Current WinUI 3 keeps these template settings but no longer consumes them from the default Lottie template; ModernWpf's WPF storyboard substitute still uses them for ellipse geometry.
+## Source-backed product behavior
 
-## Verification
+ModernWpf maps the current feasible surface through
+`ModernWpf.Controls/ProgressRing`:
 
-Focused tests cover source defaults/resources, `LayoutRoot` / `LottiePlayer` template shape, deletion of the old `Ring` root, source `CommonStates`, inactive `LayoutRoot.Opacity`, automation control-view fallback, source indeterminate automation name shape, determinate range automation, min/max/value coercion, and a 60px/65% raster regression for the generated Lottie geometry.
+- the template uses `LayoutRoot`, `LottiePlayer`, and only the current
+  `Inactive`, `DeterminateActive`, and `Active` common states;
+- `Inactive` targets `LayoutRoot.Opacity` instead of collapsing the control;
+- template application discovers the layout root, refreshes determinate
+  progress, then updates state; Loaded refreshes state and SizeChanged updates
+  compatibility template settings;
+- value/minimum/maximum changes use the current bounded coercion and refresh
+  determinate progress;
+- compatibility ellipse settings derive from ActualWidth exactly like source;
+- default foreground, transparent background, stroke resource, dimensions,
+  alignment, hit testing, tab-stop, and range defaults match current XAML;
+- active indeterminate automation names are prefixed with localized `Busy`,
+  both modes expose the ProgressBar role and localized `ProgressRing` type,
+  inactive rings leave the control view, and only determinate rings expose the
+  RangeValue provider.
 
-The live comparison is deterministic: both galleries set the source-equivalent determinate example to 65 through its `ProgressValue` NumberBox, compare the determinate ring directly at 60x60, and enforce a primary-crop mean-delta ceiling of 1.0. Whole-gallery window pixels are only a fallback when no primary control crops exist.
+## WPF substitutions
 
-- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~ProgressRing" --no-restore`
-  - Passed 10/10 for `net8.0-windows7.0`.
-- `dotnet test .\test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj --filter "FullyQualifiedName~GalleryVisualChecksCompareProgressRingAtAFixedDeterminateValue" --no-restore -m:1`
-  - Passed 1/1 for both `net8.0-windows7.0` and `net10.0-windows7.0`.
-- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ProgressRing -Reference InstalledWinUI3Gallery -Theme Light -TimeoutSeconds 45 -FailOnDifference`
-  - Passed: `artifacts\visual-checks\20260716-233459-296-65888\report.md`, primary delta `0.64`, exact `60x60` crops.
-- `.\tools\visual-checks\Run-GalleryVisualChecks.ps1 -Controls ProgressRing -Reference InstalledWinUI3Gallery -Theme Dark -TimeoutSeconds 45 -FailOnDifference`
-  - Passed: `artifacts\visual-checks\20260716-233521-049-35744\report.md`, primary delta `0.63`, exact `60x60` crops.
-- `dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore -m:1`
-  - Passed with 0 warnings.
-- `rg -n 'x:Name="Ring"|SizeStates|SixthCircle|s_RingName|s_SmallStateName|s_LargeStateName|ActiveStates' .\ModernWpf.Controls\ProgressRing .\test\ModernWpf.WinUI.Tests\ProgressRing .\docs\progressring-winui3-source-audit.md`
-  - Only audit note references to deleted behavior and the verification command remain; no stale implementation or test helper symbols remain.
+- WinUI renders with `AnimatedVisualPlayer`, `IAnimatedVisualSource`, and the
+  generated determinate/indeterminate Composition visuals. WPF uses a
+  storyboard-backed `LottiePlayer` grid plus `ProgressRingIndicator`.
+- The native WPF indicator derives its geometry from the current generated
+  32x32 animation: 8px ellipse radius, 1.5px stroke, and 1.77 shape scale. At
+  the Gallery's 60px size this yields the source 26.55px radius and 4.98px
+  effective stroke.
+- WPF Brush/Freezable invalidation naturally refreshes foreground/background
+  subproperty changes in place of WinUI's explicit color callback/revokers.
+- Preview-only `DeterminateSource` and `IndeterminateSource` remain omitted;
+  exposing them as `object` would be a misleading API without the WinUI
+  animated-visual interfaces.
+- WPF has no `AutomationProperties.AccessibilityView`; the peer implements the
+  source active Content/inactive Raw effect through `IsControlElementCore`.
+- WPF visual-state storyboards can retain held values, so state updates reset
+  `LayoutRoot.Opacity` before entering the current source state.
+- `ProgressRingTemplateSettings` remains for compatibility and drives the WPF
+  substitute even though current WinUI's default Lottie template no longer
+  consumes those ellipse settings.
+
+## Current Gallery and behavior surface
+
+The current page has two 60x60 examples:
+
+1. active indeterminate `ProgressRing1`, named `Progress image`, with the
+   `Progress Options` ToggleSwitch and Transparent/LightGray background option;
+2. determinate `ProgressRing2`, named `Progress image`, with a 60-DIP right
+   margin, inline `ProgressValue` NumberBox named `Progress amount`, and its own
+   background option.
+
+The exact current snippets are:
+
+```xaml
+<ProgressRing IsActive="$(IsActive)" $(Background)/>
+```
+
+```xaml
+<ProgressRing Width="60" Height="60" Value="$(DeterminateProgressValue)"
+              IsIndeterminate="False"
+              $(Background)/>
+```
+
+ModernWpf's ProgressRing has no public Background property, so the documented
+WPF Gallery adapter applies the selected background to a transparent host
+Border while leaving ring rendering and geometry unchanged. Toggle, value,
+Transparent/LightGray, and NaN-to-zero behavior match the page code-behind.
+
+## Strict live evidence
+
+The harness compares only the deterministic determinate state: it locates the
+real ModernWpf diagnostic ring and official `ProgressRing2`, sets both
+`ProgressValue` NumberBoxes to 65 through UIA RangeValue, refreshes ModernWpf's
+rendered artifact, and requires the live primary crop. The gate is mean RGB
+delta `1.0` and size tolerance `0`.
+
+| Theme | Report | ModernWpf / WinUI size | Primary delta |
+| --- | --- | --- | ---: |
+| Light | `artifacts/visual-checks/20260718-111542-017-86572/report.md` | `60x60` / `60x60` | `0.64` |
+| Dark | `artifacts/visual-checks/20260718-111628-842-2556/report.md` | `60x60` / `60x60` | `0.63` |
+
+Both apps pass. Whole-window mean values are not parity evidence because the
+two Gallery shells differ.
+
+## Regression coverage
+
+- product API tests pin defaults/resources, template and state shape,
+  generated-animation raster geometry, role/name/control-view behavior;
+- interaction tests pin active/determinate/inactive state transitions, range
+  updates/coercion, RangeValue exposure, and indeterminate suppression;
+- the current-source audit gate pins current product/Gallery commits and blobs,
+  implementation shape, exact current sample surface, and strict harness gates;
+- Gallery runtime tests cover the two examples, exact snippets, toggle,
+  background selections, value propagation, accessible names, and NaN reset;
+- Gallery harness tests pin UIA setup, primary IDs, deterministic value 65,
+  the `1.0` delta gate, and zero size tolerance.
+
+Final focused verification passes 11/11 ProgressRing product/source tests on
+net8 and 45/45 Gallery runtime/harness/animation/curated-ID tests on both net8
+and net10. ModernWpf.Controls builds successfully for net462, net8, and net10
+with zero errors. The net462 full rebuild reports 18 existing unrelated
+NavigationView, PersonPicture, and ItemsRepeater warnings; the net8/net10 test
+builds also retain existing SDK/package diagnostics. No ProgressRing warning is
+introduced.
+
+Reopen only for new ProgressRing product/Gallery source, generated animation
+geometry, custom-source strategy, range/state/background behavior,
+theme/template resources, automation/accessibility, or strict visual evidence.

@@ -12,6 +12,8 @@
 
     <system:String x:Key="MenuItemChevronRightGlyph">&#xE76C;</system:String>
     <system:String x:Key="MenuItemCheckedGlyph">&#xE73E;</system:String>
+    <system:String x:Key="MenuItemRadioBulletGlyph">&#xE915;</system:String>
+    <Thickness x:Key="MenuItemSubmenuContentMargin">8,6,8,6</Thickness>
 
     <Style x:Key="MenuItemScrollViewerStyle"
         BasedOn="{StaticResource {x:Type ScrollViewer}}"
@@ -226,7 +228,7 @@
             Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"
             CornerRadius="4">
-            <Grid Margin="8,6,8,6">
+            <Grid Margin="{DynamicResource MenuItemSubmenuContentMargin}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemCheckBoxIconColumnGroup"/>
                     <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup"/>
@@ -325,15 +327,27 @@
                 Background="{TemplateBinding Background}"
                 BorderBrush="{TemplateBinding BorderBrush}"
                 CornerRadius="4">
-                <Grid x:Name="MenuItemContent" Margin="8,6,8,6">
+                <Grid x:Name="MenuItemContent" Margin="{DynamicResource MenuItemSubmenuContentMargin}">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemCheckBoxIconColumnGroup"/>
                         <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup"/>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
+                    <TextBlock
+                        x:Name="CheckGlyph"
+                        Grid.Column="0"
+                        Margin="0,0,15,0"
+                        VerticalAlignment="Center"
+                        FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                        FontSize="12"
+                        Foreground="{DynamicResource MenuFlyoutSubItemChevron}"
+                        Opacity="0"
+                        Text="{StaticResource MenuItemRadioBulletGlyph}"
+                        Visibility="Collapsed" />
                     <ContentPresenter
                         x:Name="Icon"
-                        Grid.Column="0"
+                        Grid.Column="1"
                         Margin="0,0,6,0"
                         VerticalAlignment="Center"
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
@@ -341,13 +355,13 @@
 
                     <ContentPresenter
                         x:Name="HeaderHost"
-                        Grid.Column="1"
+                        Grid.Column="2"
                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
                         Margin="{TemplateBinding Padding}"
                         ContentSource="Header"
                         RecognizesAccessKey="True" />
 
-                    <Grid Grid.Column="2">
+                    <Grid Grid.Column="3">
                         <TextBlock
                             x:Name="Chevron"
                             Margin="0,3,0,0"
@@ -404,6 +418,12 @@
             <Trigger Property="Icon" Value="{x:Null}">
                 <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
                 <Setter TargetName="Icon" Property="Margin" Value="0" />
+            </Trigger>
+            <Trigger Property="IsCheckable" Value="True">
+                <Setter TargetName="CheckGlyph" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="CheckGlyph" Property="Opacity" Value="1" />
             </Trigger>
             <Trigger Property="IsHighlighted" Value="true">
                 <Setter TargetName="Border" Property="Background" Value="{DynamicResource MenuBarItemBackgroundSelected}" />

@@ -362,6 +362,8 @@ namespace ModernWpf.Controls.Primitives
             if (_shadow != null)
             {
                 _shadow.CornerRadius = cornerRadius;
+                _background.InvalidateVisual();
+                InvalidateVisual();
             }
         }
 
@@ -593,6 +595,7 @@ namespace ModernWpf.Controls.Primitives
                 {
                     Depth = Depth,
                     CornerRadius = CornerRadius,
+                    Theme = ThemeManager.GetActualTheme(this),
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Top
                 };
@@ -707,7 +710,12 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnActualThemeChanged(object sender, RoutedEventArgs e)
         {
-            _shadow?.InvalidateVisual();
+            if (_shadow != null)
+            {
+                _shadow.Theme = ThemeManager.GetActualTheme(this);
+                _background.InvalidateVisual();
+                InvalidateVisual();
+            }
         }
 
         private Thickness LayoutShadowPadding => ReservesShadowSpace ? GetReservedLayoutShadowPadding() : new Thickness();
@@ -1291,6 +1299,19 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
+            public ElementTheme Theme
+            {
+                get => _theme;
+                set
+                {
+                    if (_theme != value)
+                    {
+                        _theme = value;
+                        InvalidateVisual();
+                    }
+                }
+            }
+
             public Size ContentSize
             {
                 get => _contentSize;
@@ -1356,7 +1377,7 @@ namespace ModernWpf.Controls.Primitives
                         contentSize,
                         CornerRadius,
                         Depth,
-                        ThemeManager.GetActualTheme(this),
+                        Theme,
                         VisualTreeHelper.GetDpi(this),
                         ContentOrigin);
                 }
@@ -1364,6 +1385,7 @@ namespace ModernWpf.Controls.Primitives
 
             private double _depth;
             private CornerRadius _cornerRadius;
+            private ElementTheme _theme = ElementTheme.Light;
             private Size _contentSize;
             private Size _layoutSize;
             private Point _contentOrigin;

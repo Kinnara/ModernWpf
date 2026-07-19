@@ -20,14 +20,18 @@ namespace ModernWpf.Gallery.Pages
     Subtitle=""$(Subtitle)""
     IsBackButtonVisible=""$(BackButtonVisibility)""
     IsPaneToggleButtonVisible=""$(PaneToggleVisibility)"">
+    <TitleBar.Resources>
+        <HorizontalAlignment x:Key=""TitleBarContentHorizontalAlignment"">Stretch</HorizontalAlignment>
+    </TitleBar.Resources>
     <TitleBar.IconSource>
         <ImageIconSource ImageSource=""/Assets/Tiles/GalleryIcon.ico"" />
     </TitleBar.IconSource>
     <TitleBar.Content>
         <AutoSuggestBox
-            Width=""360""
+            MaxWidth=""580""
+            HorizontalAlignment=""Stretch""
             VerticalAlignment=""Center""
-            PlaceholderText=""Search..""
+            PlaceholderText=""Search...""
             QueryIcon=""Find"" />
     </TitleBar.Content>
     <TitleBar.RightHeader>
@@ -37,6 +41,52 @@ namespace ModernWpf.Gallery.Pages
             Initials=""JD"" />
     </TitleBar.RightHeader>
 </TitleBar>";
+
+        private const string TitleBarDragRegionsXaml =
+@"<!-- Starting with WindowsAppSDK 2.1, TitleBar walks TitleBar.Content,
+     auto-excludes interactive controls from the drag region, and lets
+     non-interactive visuals (and empty space) remain draggable.
+
+     Use TitleBar.IsDragRegion to override the framework decision:
+       True   -> always draggable
+       False  -> always clickable
+       unset  -> framework decides (default) -->
+<TitleBar x:Name=""titleBar"" Title=""Drag regions"">
+    <TitleBar.Resources>
+        <HorizontalAlignment x:Key=""TitleBarContentHorizontalAlignment"">Stretch</HorizontalAlignment>
+    </TitleBar.Resources>
+    <TitleBar.Content>
+        <Grid ColumnSpacing=""8"" HorizontalAlignment=""Stretch"">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width=""*"" />
+                <ColumnDefinition Width=""Auto"" />
+            </Grid.ColumnDefinitions>
+            <AutoSuggestBox
+                MaxWidth=""580""
+                HorizontalAlignment=""Stretch""
+                VerticalAlignment=""Center""
+                PlaceholderText=""Search...""
+                QueryIcon=""Find"" />
+            <Button
+                x:Name=""StatusBadge""
+                Grid.Column=""1""
+                VerticalAlignment=""Center""
+                Click=""StatusBadge_Click""
+                Content=""Status""
+                Style=""{StaticResource AccentButtonStyle}"" />
+        </Grid>
+    </TitleBar.Content>
+</TitleBar>";
+
+        private const string TitleBarDragRegionsCSharp =
+@"// Set TitleBar.IsDragRegion at runtime.
+TitleBar.SetIsDragRegion(StatusBadge, true);   // always draggable
+TitleBar.SetIsDragRegion(StatusBadge, false);  // always clickable
+StatusBadge.ClearValue(TitleBar.IsDragRegionProperty); // back to default
+
+// After adding or removing elements in TitleBar.Content dynamically,
+// ask the framework to recompute drag regions.
+titleBar.RecomputeDragRegions();";
 
         private const string TitleBarEndToEndXaml =
 @"<Grid>
@@ -126,6 +176,11 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                     CreateTitleBarConfigurationExampleContent(assignRootAutomationId: true),
                     TitleBarConfigurationXaml,
                     null),
+                new GalleryExample(
+                    "TitleBar drag regions",
+                    CreateTitleBarDragRegionsExampleContent(),
+                    TitleBarDragRegionsXaml,
+                    TitleBarDragRegionsCSharp),
                 new GalleryExample(
                     "End to end TitleBar sample",
                     CreateTitleBarEndToEndExampleContent(),
@@ -224,7 +279,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 Name = "TitleBarSearchBox",
                 Width = 186,
                 VerticalAlignment = VerticalAlignment.Center,
-                PlaceholderText = "Search..",
+                PlaceholderText = "Search...",
                 QueryIcon = new Mux.SymbolIcon(Mux.Symbol.Find),
                 Margin = new Thickness(0, 0, 16, 0)
             };
@@ -308,6 +363,276 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             layout.Children.Add(options);
             root.Children.Add(layout);
             updatePreview();
+            return root;
+        }
+
+        private static GallerySamplePanel CreateTitleBarDragRegionsExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var stack = new StackPanel
+            {
+                MaxWidth = 560,
+                Orientation = Orientation.Vertical,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            stack.Children.Add(new TextBlock
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Text = "Drag regions can only be observed on a real window. Click the button below to open a sample window where you can toggle TitleBar.IsDragRegion on a status badge and call RecomputeDragRegions() after dynamic content changes.",
+                TextAlignment = TextAlignment.Center,
+                TextWrapping = TextWrapping.Wrap
+            });
+
+            var showWindowButton = new Button
+            {
+                Name = "ShowTitleBarDragRegionsWindowButton",
+                Content = "Show window",
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 12, 0, 0)
+            };
+            GalleryAutomation.WithAutomationId(
+                showWindowButton,
+                GalleryAutomation.SampleElementId("TitleBar", "DragRegionsShowWindowButton"));
+            showWindowButton.SetResourceReference(FrameworkElement.StyleProperty, "AccentButtonStyle");
+            showWindowButton.Click += delegate
+            {
+                var window = CreateModernWindow(
+                    showWindowButton,
+                    "TitleBar drag regions sample",
+                    900,
+                    640);
+                Mux.TitleBar.SetExtendViewIntoTitleBar(window, true);
+                Mux.TitleBar.SetIsIconVisible(window, false);
+                window.Content = CreateTitleBarDragRegionsWindowBody(window);
+                window.Show();
+            };
+            stack.Children.Add(showWindowButton);
+            root.Children.Add(stack);
+            return root;
+        }
+
+        private static FrameworkElement CreateTitleBarDragRegionsWindowBody(Window window)
+        {
+            var root = new Grid();
+            root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(48) });
+            root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+
+            var titleBar = new Grid
+            {
+                Name = "DragRegionsTitleBar",
+                Height = 48,
+                Margin = new Thickness(14, 0, 140, 0)
+            };
+            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            var icon = new Image
+            {
+                Width = 16,
+                Height = 16,
+                Margin = new Thickness(0, 0, 16, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+                Source = CreateBitmap(ResourceUri("Assets/Tiles/GalleryIcon.ico"))
+            };
+            titleBar.Children.Add(icon);
+
+            var titleStack = new StackPanel
+            {
+                Margin = new Thickness(0, 0, 16, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            titleStack.Children.Add(new TextBlock
+            {
+                Text = "Drag regions",
+                FontWeight = FontWeights.SemiBold
+            });
+            titleStack.Children.Add(new TextBlock
+            {
+                Text = "Try dragging the window",
+                FontSize = 12,
+                Opacity = 0.72
+            });
+            Grid.SetColumn(titleStack, 1);
+            titleBar.Children.Add(titleStack);
+
+            var searchBox = new Mux.AutoSuggestBox
+            {
+                Name = "DragRegionsSearchBox",
+                MaxWidth = 580,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Center,
+                PlaceholderText = "Search...",
+                QueryIcon = new Mux.SymbolIcon(Mux.Symbol.Find),
+                Margin = new Thickness(0, 0, 8, 0)
+            };
+            Grid.SetColumn(searchBox, 2);
+            titleBar.Children.Add(searchBox);
+
+            var rightHeaderPanel = new StackPanel
+            {
+                Name = "RightHeaderPanel",
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var statusBadge = new Button
+            {
+                Name = "StatusBadge",
+                Content = "Status",
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            statusBadge.SetResourceReference(FrameworkElement.StyleProperty, "AccentButtonStyle");
+            rightHeaderPanel.Children.Add(statusBadge);
+            Grid.SetColumn(rightHeaderPanel, 3);
+            titleBar.Children.Add(rightHeaderPanel);
+            titleBar.MouseLeftButtonDown += delegate(object sender, System.Windows.Input.MouseButtonEventArgs args)
+            {
+                if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+                {
+                    window.DragMove();
+                }
+            };
+            root.Children.Add(titleBar);
+
+            var body = new StackPanel
+            {
+                Name = "DragRegionsBody",
+                MaxWidth = 640,
+                Margin = new Thickness(32, 24, 32, 24)
+            };
+            body.Children.Add(new TextBlock
+            {
+                Text = "Custom drag regions",
+                FontSize = 20,
+                FontWeight = FontWeights.SemiBold
+            });
+            body.Children.Add(new TextBlock
+            {
+                Margin = new Thickness(0, 16, 0, 0),
+                Text = "Try dragging the window from different parts of the title bar. Interactive controls (like the search box) are automatically excluded from the drag region by the new default behavior in Windows App SDK 2.1.",
+                TextWrapping = TextWrapping.Wrap
+            });
+            body.Children.Add(new TextBlock
+            {
+                Margin = new Thickness(0, 16, 0, 0),
+                Text = "Status badge: TitleBar.IsDragRegion",
+                FontWeight = FontWeights.SemiBold
+            });
+            body.Children.Add(new TextBlock
+            {
+                Margin = new Thickness(0, 6, 0, 0),
+                Text = "Pick a value for the badge in the title bar.",
+                TextWrapping = TextWrapping.Wrap,
+                Opacity = 0.72
+            });
+
+            var dragRegionOptions = new Mux.RadioButtons
+            {
+                Name = "BadgeIsDragRegionRadios",
+                SelectedIndex = 0,
+                Margin = new Thickness(0, 8, 0, 0)
+            };
+            dragRegionOptions.Items.Add("Unset (framework decides — clickable, since Button is interactive)");
+            dragRegionOptions.Items.Add("True (always draggable — overrides the framework default)");
+            dragRegionOptions.Items.Add("False (always clickable)");
+            body.Children.Add(dragRegionOptions);
+
+            var statusText = new TextBlock
+            {
+                Name = "StatusText",
+                Margin = new Thickness(0, 16, 0, 0),
+                TextWrapping = TextWrapping.Wrap,
+                Opacity = 0.72
+            };
+            statusBadge.Click += delegate { statusText.Text = "Status badge clicked"; };
+
+            System.Windows.Input.MouseButtonEventHandler forceDragHandler = delegate(object sender, System.Windows.Input.MouseButtonEventArgs args)
+            {
+                if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+                {
+                    args.Handled = true;
+                    window.DragMove();
+                }
+            };
+            dragRegionOptions.SelectionChanged += delegate
+            {
+                statusBadge.PreviewMouseLeftButtonDown -= forceDragHandler;
+                if (dragRegionOptions.SelectedIndex == 1)
+                {
+                    statusBadge.PreviewMouseLeftButtonDown += forceDragHandler;
+                }
+            };
+
+            body.Children.Add(new TextBlock
+            {
+                Margin = new Thickness(0, 16, 0, 0),
+                Text = "Dynamic content",
+                FontWeight = FontWeights.SemiBold
+            });
+            body.Children.Add(new TextBlock
+            {
+                Margin = new Thickness(0, 6, 0, 0),
+                Text = "When you add or remove elements in TitleBar.Content at runtime, call RecomputeDragRegions() to refresh.",
+                TextWrapping = TextWrapping.Wrap,
+                Opacity = 0.72
+            });
+
+            var actionPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 8, 0, 0)
+            };
+            Button extraButton = null;
+            var toggleExtraButton = new Button
+            {
+                Name = "ToggleExtraTitleBarButton",
+                Content = "Toggle extra title bar button"
+            };
+            toggleExtraButton.Click += delegate
+            {
+                if (extraButton == null)
+                {
+                    extraButton = new Button
+                    {
+                        Name = "ExtraTitleBarButton",
+                        Content = "Extra",
+                        Margin = new Thickness(0, 0, 8, 0),
+                        VerticalAlignment = VerticalAlignment.Center
+                    };
+                    rightHeaderPanel.Children.Insert(0, extraButton);
+                    statusText.Text = "Added a Button to TitleBar.Content. WPF updates its live drag/input tree automatically.";
+                }
+                else
+                {
+                    rightHeaderPanel.Children.Remove(extraButton);
+                    extraButton = null;
+                    statusText.Text = "Removed the Button. WPF updates its live drag/input tree automatically.";
+                }
+            };
+            actionPanel.Children.Add(toggleExtraButton);
+
+            var recomputeButton = new Button
+            {
+                Name = "RecomputeDragRegionsButton",
+                Content = "RecomputeDragRegions()",
+                Margin = new Thickness(8, 0, 0, 0)
+            };
+            recomputeButton.Click += delegate
+            {
+                statusText.Text = "WPF drag regions follow the live visual/input tree; no explicit recomputation is required.";
+            };
+            actionPanel.Children.Add(recomputeButton);
+            body.Children.Add(actionPanel);
+            body.Children.Add(statusText);
+
+            var scrollViewer = new ScrollViewer
+            {
+                Content = body,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
+            };
+            Grid.SetRow(scrollViewer, 1);
+            root.Children.Add(scrollViewer);
             return root;
         }
 

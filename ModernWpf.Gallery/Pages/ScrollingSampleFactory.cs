@@ -19,11 +19,11 @@ namespace ModernWpf.Gallery.Pages
         private const int AnnotatedItemWidth = 120;
         private const int AnnotatedItemHeight = 90;
         private const string AnnotatedScrollBarXaml =
-@"<ScrollViewer x:Name=""scrollViewer""
+@"<ScrollView x:Name=""scrollView""
     Background=""LightGray"" MaxWidth=""800"" MaxHeight=""500""
     VerticalScrollBarVisibility=""Hidden"">
     <!-- ... -->
-</ScrollViewer>
+</ScrollView>
 
 <AnnotatedScrollBar x:Name=""annotatedScrollBar""
     Margin=""4,0,48,0"" MaxHeight=""500""
@@ -31,18 +31,9 @@ namespace ModernWpf.Gallery.Pages
     DetailLabelRequested=""AnnotatedScrollBar_DetailLabelRequested""/>";
 
         private const string AnnotatedScrollBarCSharp =
-@"private void AnnotatedScrollBarPage_Loaded(object sender, RoutedEventArgs e)
+@"private void AnnotatedScrollBarPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
 {
-    scrollViewer.ScrollChanged += delegate
-    {
-        var maxOffset = Math.Max(0, scrollViewer.ExtentHeight - scrollViewer.ViewportHeight);
-        annotatedScrollBar.ScrollController.SetValues(0, maxOffset, scrollViewer.VerticalOffset, scrollViewer.ViewportHeight);
-    };
-
-    annotatedScrollBar.Scrolling += delegate(AnnotatedScrollBar sender, AnnotatedScrollBarScrollingEventArgs args)
-    {
-        scrollViewer.ScrollToVerticalOffset(args.ScrollOffset);
-    };
+    scrollView.ScrollPresenter.VerticalScrollController = annotatedScrollBar.ScrollController;
 }";
 
         public static UIElement Create(string uniqueId)
@@ -77,7 +68,7 @@ namespace ModernWpf.Gallery.Pages
             return new[]
             {
                 new GalleryExample(
-                    "AnnotatedScrollBar linked to a ScrollViewer.",
+                    "AnnotatedScrollBar linked to a ScrollView.",
                     CreateAnnotatedScrollBarExampleContent(assignRootAutomationId: true),
                     AnnotatedScrollBarXaml,
                     AnnotatedScrollBarCSharp)

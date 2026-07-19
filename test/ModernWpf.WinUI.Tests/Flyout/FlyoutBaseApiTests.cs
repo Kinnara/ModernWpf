@@ -625,6 +625,38 @@ public class FlyoutBaseApiTests
     }
 
     [TestMethod]
+    public void SidePlacementNearMonitorBottomAlignsToAnchorBottomLikeCurrentWinUISource()
+    {
+        Assert.AreEqual(
+            640,
+            FlyoutBase.ClampSidePlacementVerticalOffset(
+                verticalOffset: 900,
+                anchorBottom: 940,
+                presenterHeight: 300,
+                availableTop: 0,
+                availableBottom: 1080),
+            0.1);
+        Assert.AreEqual(
+            900,
+            FlyoutBase.ClampSidePlacementVerticalOffset(
+                verticalOffset: 900,
+                anchorBottom: 940,
+                presenterHeight: 120,
+                availableTop: 0,
+                availableBottom: 1080),
+            0.1);
+        Assert.AreEqual(
+            100,
+            FlyoutBase.ClampSidePlacementVerticalOffset(
+                verticalOffset: 100,
+                anchorBottom: 140,
+                presenterHeight: 1100,
+                availableTop: 100,
+                availableBottom: 1000),
+            0.1);
+    }
+
+    [TestMethod]
     public void PopupPlacementFallbackKeepsFullPlacementAsSingleChoice()
     {
         WpfTestHost.Run(() =>

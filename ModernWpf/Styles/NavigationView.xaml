@@ -44,8 +44,10 @@
     <Thickness x:Key="NavigationViewMinimalContentGridBorderThickness">0,1,0,0</Thickness>
     <Thickness x:Key="TopNavigationViewContentGridBorderThickness">0,1,0,0</Thickness>
     <Thickness x:Key="TopNavigationViewTopNavGridMargin">4,0</Thickness>
-    <Thickness x:Key="NavigationViewHeaderMargin">56,44,0,0</Thickness>
-    <Thickness x:Key="NavigationViewContentPresenterMargin">48,12,0,0</Thickness>
+    <!-- WPF's text/layout origin lands one physical pixel above WinUI's at
+         100% scale, so retain the source offsets with a one-pixel Y adapter. -->
+    <Thickness x:Key="NavigationViewHeaderMargin">56,45,0,0</Thickness>
+    <Thickness x:Key="NavigationViewContentPresenterMargin">48,13,0,0</Thickness>
     <Thickness x:Key="NavigationViewContentMargin">0</Thickness>
     <Thickness x:Key="NavigationViewMinimalContentMargin">0</Thickness>
     <Thickness x:Key="TopNavigationViewContentMargin">0</Thickness>

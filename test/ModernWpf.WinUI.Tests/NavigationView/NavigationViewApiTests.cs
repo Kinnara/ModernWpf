@@ -925,6 +925,95 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void DeferredChildFlyoutShowSkipsCollapsedItem()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var parentItem = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "ParentItem"
+            };
+            parentItem.MenuItems.Add(new ModernWpf.Controls.NavigationViewItem { Content = "ChildItem" });
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Top,
+                IsSettingsVisible = false,
+                Width = 1008
+            };
+            navView.MenuItems.Add(parentItem);
+
+            using var host = new TestWindowHost(navView);
+            host.UpdateLayout();
+
+            Assert.IsTrue(parentItem.ShouldRepeaterShowInFlyout());
+            var rootGrid = FindNamedDescendant<Grid>(parentItem, "NVIRootGrid");
+            var flyout = FlyoutBase.GetAttachedFlyout(rootGrid);
+            Assert.IsNotNull(flyout);
+
+            parentItem.IsExpanded = true;
+            parentItem.IsExpanded = false;
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(flyout!.IsOpen);
+
+            parentItem.IsExpanded = true;
+            WpfTestHost.DoEvents();
+            Assert.IsTrue(flyout.IsOpen);
+
+            parentItem.IsExpanded = false;
+            WpfTestHost.DoEvents();
+            Assert.IsFalse(flyout.IsOpen);
+        });
+    }
+
+    [TestMethod]
+    public void PaneLayoutNeverAssignsNegativeScrollViewerMaxHeight()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left,
+                IsPaneOpen = true,
+                IsSettingsVisible = false
+            };
+            navView.MenuItems.Add(new ModernWpf.Controls.NavigationViewItem { Content = "Menu" });
+            navView.FooterMenuItems.Add(new ModernWpf.Controls.NavigationViewItem { Content = "Footer" });
+
+            using var host = new TestWindowHost(navView, width: 320, height: 120);
+            host.UpdateLayout();
+
+            var syntheticMenuRepeater = new ModernWpf.Controls.ItemsRepeater();
+            syntheticMenuRepeater.Measure(new Size(100, 10));
+            syntheticMenuRepeater.Arrange(new Rect(0, 0, 100, 200));
+
+            var syntheticFooterRepeater = new ModernWpf.Controls.ItemsRepeater
+            {
+                Height = 200
+            };
+
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var navigationViewType = typeof(ModernWpf.Controls.NavigationView);
+            navigationViewType.GetField("m_leftNavRepeater", flags)!.SetValue(navView, syntheticMenuRepeater);
+            navigationViewType.GetField("m_leftNavFooterMenuRepeater", flags)!.SetValue(navView, syntheticFooterRepeater);
+
+            var updatePaneLayout = navigationViewType.GetMethod("UpdatePaneLayout", flags);
+            Assert.IsNotNull(updatePaneLayout);
+            updatePaneLayout!.Invoke(navView, null);
+
+            var menuScrollViewer = FindNamedDescendant<ScrollViewer>(navView, "MenuItemsScrollViewer");
+            var footerScrollViewer = FindNamedDescendant<ScrollViewer>(navView, "FooterItemsScrollViewer");
+            Assert.IsTrue(menuScrollViewer.MaxHeight >= 0.0);
+            Assert.IsTrue(footerScrollViewer.MaxHeight >= 0.0);
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewItemTemplateUsesWinUIPresenterSlots()
     {
         WpfTestHost.Run(() =>
@@ -2128,16 +2217,15 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
-    public void VerifyFinalWinUI2NavigationViewThemeResources()
+    public void VerifyCurrentWinUI3NavigationViewThemeResources()
     {
         WpfTestHost.Run(() =>
         {
             var lightDarkResourceReferences = new[]
             {
-                ("NavigationViewDefaultPaneBackground", "SolidBackgroundFillColorBaseBrush"),
                 ("NavigationViewExpandedPaneBackground", "ControlFillColorTransparentBrush"),
                 ("NavigationViewTopPaneBackground", "ControlFillColorTransparentBrush"),
-                ("NavigationViewContentBackground", "SolidBackgroundFillColorBaseBrush"),
+                ("NavigationViewContentBackground", "LayerFillColorDefaultBrush"),
                 ("NavigationViewItemBackground", "SubtleFillColorTransparentBrush"),
                 ("NavigationViewItemBackgroundPointerOver", "SubtleFillColorSecondaryBrush"),
                 ("NavigationViewItemBackgroundPressed", "SubtleFillColorTertiaryBrush"),
@@ -2150,9 +2238,9 @@ public class NavigationViewApiTests
                 ("NavigationViewItemBackgroundSelectedPointerOver", "SubtleFillColorTertiaryBrush"),
                 ("NavigationViewItemBackgroundSelectedPressed", "SubtleFillColorSecondaryBrush"),
                 ("NavigationViewItemBackgroundSelectedDisabled", "SubtleFillColorSecondaryBrush"),
-                ("NavigationViewItemForeground", "TextFillColorSecondaryBrush"),
-                ("NavigationViewItemForegroundPointerOver", "TextFillColorSecondaryBrush"),
-                ("NavigationViewItemForegroundPressed", "TextFillColorPrimaryBrush"),
+                ("NavigationViewItemForeground", "TextFillColorPrimaryBrush"),
+                ("NavigationViewItemForegroundPointerOver", "TextFillColorPrimaryBrush"),
+                ("NavigationViewItemForegroundPressed", "TextFillColorSecondaryBrush"),
                 ("NavigationViewItemForegroundDisabled", "TextFillColorDisabledBrush"),
                 ("NavigationViewItemForegroundChecked", "TextFillColorPrimaryBrush"),
                 ("NavigationViewItemForegroundCheckedPointerOver", "TextFillColorPrimaryBrush"),
@@ -2174,17 +2262,20 @@ public class NavigationViewApiTests
                 ("NavigationViewItemBorderBrushSelectedPointerOver", "SubtleFillColorTransparentBrush"),
                 ("NavigationViewItemBorderBrushSelectedPressed", "SubtleFillColorTransparentBrush"),
                 ("NavigationViewItemBorderBrushSelectedDisabled", "SubtleFillColorTransparentBrush"),
+                ("NavigationViewItemIconBackground", "SystemControlTransparentBrush"),
                 ("NavigationViewItemSeparatorForeground", "DividerStrokeColorDefaultBrush"),
+                ("NavigationViewItemHeaderForeground", "TextFillColorSecondaryBrush"),
                 ("NavigationViewSelectionIndicatorForeground", "AccentFillColorDefaultBrush"),
-                ("TopNavigationViewItemForeground", "TextFillColorSecondaryBrush"),
+                ("NavigationViewContentGridBorderBrush", "CardStrokeColorDefaultBrush"),
+                ("TopNavigationViewItemForeground", "TextFillColorPrimaryBrush"),
                 ("TopNavigationViewItemForegroundPointerOver", "TextFillColorPrimaryBrush"),
-                ("TopNavigationViewItemForegroundPressed", "TextFillColorPrimaryBrush"),
+                ("TopNavigationViewItemForegroundPressed", "TextFillColorSecondaryBrush"),
                 ("TopNavigationViewItemForegroundDisabled", "TextFillColorDisabledBrush"),
                 ("TopNavigationViewItemForegroundSelected", "TextFillColorPrimaryBrush"),
-                ("TopNavigationViewItemForegroundSelectedPointerOver", "TextFillColorSecondaryBrush"),
-                ("TopNavigationViewItemForegroundSelectedPressed", "TextFillColorTertiaryBrush"),
-                ("TopNavigationViewItemBackgroundPointerOver", "SubtleFillColorTransparentBrush"),
-                ("TopNavigationViewItemBackgroundPressed", "SubtleFillColorTransparentBrush"),
+                ("TopNavigationViewItemForegroundSelectedPointerOver", "TextFillColorPrimaryBrush"),
+                ("TopNavigationViewItemForegroundSelectedPressed", "TextFillColorSecondaryBrush"),
+                ("TopNavigationViewItemBackgroundPointerOver", "SubtleFillColorSecondaryBrush"),
+                ("TopNavigationViewItemBackgroundPressed", "SubtleFillColorTertiaryBrush"),
                 ("TopNavigationViewItemBackgroundSelected", "SubtleFillColorTransparentBrush"),
                 ("TopNavigationViewItemBackgroundSelectedPointerOver", "SubtleFillColorTransparentBrush"),
                 ("TopNavigationViewItemBackgroundSelectedPressed", "SubtleFillColorTransparentBrush"),
@@ -2206,11 +2297,18 @@ public class NavigationViewApiTests
                 }
             }
 
+            // WinUI uses an in-app AcrylicBrush here. WPF has no compositor
+            // acrylic, so the port uses the solid colors produced by the
+            // installed Gallery over its default Light and Dark surfaces.
+            AssertThemeResourceReference("Light", "NavigationViewDefaultPaneBackground", "SystemControlPageBackgroundChromeLowBrush");
+            AssertThemeResourceReference("Dark", "NavigationViewDefaultPaneBackground", "SystemControlBackgroundChromeMediumBrush");
+
             var highContrastResourceReferences = new[]
             {
-                ("NavigationViewDefaultPaneBackground", "AcrylicInAppFillColorDefaultBrush"),
+                ("NavigationViewDefaultPaneBackground", "SystemControlBackgroundBaseLowBrush"),
                 ("NavigationViewExpandedPaneBackground", "SystemColorWindowColorBrush"),
-                ("NavigationViewTopPaneBackground", "AcrylicInAppFillColorDefaultBrush"),
+                ("NavigationViewTopPaneBackground", "SystemControlBackgroundBaseLowBrush"),
+                ("NavigationViewContentBackground", "SystemColorWindowColorBrush"),
                 ("NavigationViewItemBackground", "SystemControlBackgroundBaseLowBrush"),
                 ("NavigationViewItemBackgroundPointerOver", "SystemControlHighlightListLowRevealBackgroundBrush"),
                 ("NavigationViewItemBackgroundPressed", "SystemControlHighlightListMediumRevealBackgroundBrush"),
@@ -2247,8 +2345,11 @@ public class NavigationViewApiTests
                 ("NavigationViewItemBorderBrushSelectedPointerOver", "SystemControlHighlightAltTransparentRevealBorderBrush"),
                 ("NavigationViewItemBorderBrushSelectedPressed", "SystemControlHighlightAltTransparentRevealBorderBrush"),
                 ("NavigationViewItemBorderBrushSelectedDisabled", "SystemControlTransparentBrush"),
-                ("NavigationViewItemSeparatorForeground", "SystemControlForegroundBaseLowBrush"),
+                ("NavigationViewItemIconBackground", "SystemControlTransparentBrush"),
+                ("NavigationViewItemSeparatorForeground", "SystemColorWindowTextColorBrush"),
+                ("NavigationViewItemHeaderForeground", "SystemControlForegroundBaseHighBrush"),
                 ("NavigationViewSelectionIndicatorForeground", "SystemColorHighlightTextColorBrush"),
+                ("NavigationViewContentGridBorderBrush", "SystemControlTransparentBrush"),
                 ("TopNavigationViewItemForeground", "NavigationViewItemForeground"),
                 ("TopNavigationViewItemForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush"),
                 ("TopNavigationViewItemForegroundPressed", "SystemControlHighlightAltBaseHighBrush"),
@@ -2259,9 +2360,9 @@ public class NavigationViewApiTests
                 ("TopNavigationViewItemBackgroundPointerOver", "SystemControlHighlightListLowRevealBackgroundBrush"),
                 ("TopNavigationViewItemBackgroundPressed", "SystemControlHighlightListMediumRevealBackgroundBrush"),
                 ("TopNavigationViewItemBackgroundSelected", "SystemControlHighlightListLowRevealBackgroundBrush"),
-                ("TopNavigationViewItemBackgroundSelectedPointerOver", "SystemControlHighlightListLowRevealBackgroundBrush"),
-                ("TopNavigationViewItemBackgroundSelectedPressed", "SystemControlHighlightListMediumRevealBackgroundBrush"),
-                ("TopNavigationViewItemSeparatorForeground", "SystemControlForegroundBaseLowBrush"),
+                ("TopNavigationViewItemBackgroundSelectedPointerOver", "SubtleFillColorTransparentBrush"),
+                ("TopNavigationViewItemBackgroundSelectedPressed", "SubtleFillColorTransparentBrush"),
+                ("TopNavigationViewItemSeparatorForeground", "SystemColorWindowTextColorBrush"),
                 ("NavigationViewButtonBackgroundPointerOver", "SystemControlHighlightListLowBrush"),
                 ("NavigationViewButtonBackgroundPressed", "SystemControlHighlightListMediumBrush"),
                 ("NavigationViewButtonBackgroundDisabled", "SystemControlBackgroundBaseLowBrush"),
@@ -2276,7 +2377,6 @@ public class NavigationViewApiTests
                 AssertThemeResourceReference("HighContrast", resourceKey, expectedResourceKey);
             }
 
-            AssertThemeSolidColorBrushColorReference("HighContrast", "NavigationViewContentBackground", "SystemChromeMediumColor");
         });
     }
 

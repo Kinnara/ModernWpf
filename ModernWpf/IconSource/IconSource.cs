@@ -38,6 +38,11 @@ namespace ModernWpf.Controls
         public IconElement CreateIconElement()
         {
             var element = CreateIconElementCore();
+            if (Foreground is { } foreground)
+            {
+                element.Foreground = foreground;
+            }
+
             m_createdIconElements.Add(new WeakReference<IconElement>(element));
             return element;
         }

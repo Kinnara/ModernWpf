@@ -693,7 +693,15 @@ namespace ModernWpf.Controls
                         SharedHelpers.QueueCallbackForCompositionRendering(
                             () =>
                             {
-                                FlyoutBase.ShowAttachedFlyout(m_rootGrid);
+                                // The item may have collapsed, left flyout mode, or been
+                                // recycled since this callback was queued.
+                                if (IsExpanded &&
+                                    ShouldRepeaterShowInFlyout() &&
+                                    m_rootGrid != null &&
+                                    FlyoutBase.GetAttachedFlyout(m_rootGrid) != null)
+                                {
+                                    FlyoutBase.ShowAttachedFlyout(m_rootGrid);
+                                }
                             });
                     }
                     else

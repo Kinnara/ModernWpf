@@ -291,7 +291,7 @@
                                     Style="{DynamicResource CaptionTextBlockStyle}"
                                     Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
                                     MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.KeyboardAcceleratorTextMinWidth}"
-                                    Margin="24,0,12,0"
+                                    Margin="24,0,13,0"
                                     Foreground="{DynamicResource AppBarButtonKeyboardAcceleratorTextForeground}"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"

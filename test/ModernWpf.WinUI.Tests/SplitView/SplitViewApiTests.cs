@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -194,7 +197,7 @@ public class SplitViewApiTests
             var contentRoot = FindTemplatePart<Grid>(splitView, "ContentRoot");
             var contentTransform = FindTemplatePart<TranslateTransform>(splitView, "ContentTransform");
             var hcPaneBorder = FindTemplatePart<Rectangle>(splitView, "HCPaneBorder");
-            var lightDismissLayer = FindTemplatePart<Rectangle>(splitView, "LightDismissLayer");
+            var lightDismissLayer = FindTemplatePart<SplitViewLightDismissLayer>(splitView, "LightDismissLayer");
 
             Assert.AreSame(splitView.Background, templateRoot.Background);
             Assert.AreEqual(splitView.TemplateSettings.OpenPaneGridLength, columnDefinition1.Width);
@@ -292,6 +295,68 @@ public class SplitViewApiTests
             Assert.IsFalse(splitView.IsPaneOpen);
             Assert.AreEqual(2, closingCount);
             Assert.AreEqual(1, closedCount);
+        });
+    }
+
+    [TestMethod]
+    public void LightDismissTemplatePartsExposeWinUIAutomationPatterns()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var splitView = new ModernWpf.Controls.SplitView
+            {
+                DisplayMode = SplitViewDisplayMode.Overlay,
+                IsPaneOpen = true,
+                OpenPaneLength = 200,
+                Pane = new Border(),
+                Content = new Border()
+            };
+
+            using var host = new TestWindowHost(splitView, width: 640, height: 360);
+            WpfTestHost.DoEvents();
+            host.UpdateLayout();
+
+            var paneRoot = FindTemplatePart<SplitViewPaneRoot>(splitView, "PaneRoot");
+            var panePeer = FrameworkElementAutomationPeer.CreatePeerForElement(paneRoot);
+            Assert.IsNotNull(panePeer);
+            Assert.AreEqual("SplitViewPane", panePeer.GetClassName());
+            Assert.AreEqual(AutomationControlType.Window, panePeer.GetAutomationControlType());
+            Assert.AreEqual("PaneRoot", panePeer.GetAutomationId());
+            Assert.IsTrue(panePeer.IsControlElement());
+            Assert.IsFalse(panePeer.IsContentElement());
+
+            var windowProvider = panePeer.GetPattern(PatternInterface.Window) as IWindowProvider;
+            Assert.IsNotNull(windowProvider);
+            Assert.IsTrue(windowProvider!.IsModal);
+            Assert.IsTrue(windowProvider.IsTopmost);
+            Assert.IsFalse(windowProvider.Maximizable);
+            Assert.IsFalse(windowProvider.Minimizable);
+            Assert.AreEqual(WindowInteractionState.Running, windowProvider.InteractionState);
+            Assert.AreEqual(WindowVisualState.Normal, windowProvider.VisualState);
+
+            var lightDismissLayer = FindTemplatePart<SplitViewLightDismissLayer>(splitView, "LightDismissLayer");
+            var dismissPeer = FrameworkElementAutomationPeer.CreatePeerForElement(lightDismissLayer);
+            Assert.IsNotNull(dismissPeer);
+            Assert.AreEqual("SplitViewLightDismiss", dismissPeer.GetClassName());
+            Assert.AreEqual(AutomationControlType.Button, dismissPeer.GetAutomationControlType());
+            Assert.AreEqual("Close", dismissPeer.GetName());
+            Assert.AreEqual("LightDismiss", dismissPeer.GetAutomationId());
+            Assert.IsTrue(dismissPeer.IsControlElement());
+            Assert.IsTrue(dismissPeer.IsContentElement());
+
+            var invokeProvider = dismissPeer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+            Assert.IsNotNull(invokeProvider);
+            invokeProvider!.Invoke();
+            WpfTestHost.DoEvents();
+            host.UpdateLayout();
+            Assert.IsFalse(splitView.IsPaneOpen);
+
+            splitView.DisplayMode = SplitViewDisplayMode.Inline;
+            splitView.IsPaneOpen = true;
+            WpfTestHost.DoEvents();
+            host.UpdateLayout();
+            Assert.IsNull(panePeer.GetPattern(PatternInterface.Window));
+            Assert.IsNull(dismissPeer.GetPattern(PatternInterface.Invoke));
         });
     }
 

@@ -1,87 +1,181 @@
 # ToggleSwitch WinUI 3 Source Audit
 
-Date: 2026-07-17
+Current product snapshot: `D:\repos\microsoft-ui-xaml`, official
+`microsoft/microsoft-ui-xaml` `winui3/main` commit
+`de3e767333c2f0717a6a70cb22bd192ced5ad885`.
 
-This audit treats the local WinUI 3 checkout at `D:\repos\microsoft-ui-xaml`
-as the behavioral source of truth for the ModernWpf `ToggleSwitch` port. The
-old guessed implementation has been replaced/adapted as a whole-control WinUI 3
-port across the control implementation, automation peer, template settings,
-CommonStyles-derived template/resources, and focused WPF tests. This note maps
-the resulting source-backed implementation and the remaining WPF substitutions.
+Current Gallery snapshot: official `microsoft/WinUI-Gallery` commit
+`29f62479d5c046a0b854a5868e5a7cd484572d87`.
 
-## WinUI 3 Source Inputs
+Parity refresh: 2026-07-18.
 
-- `src\dxaml\xcp\dxaml\lib\ToggleSwitch_Partial.cpp`
-- `src\dxaml\xcp\dxaml\lib\ToggleSwitch_Partial.h`
-- `src\dxaml\xcp\dxaml\lib\ToggleSwitchAutomationPeer_Partial.cpp`
-- `src\dxaml\xcp\components\controls\KeyDownUp\inc\ToggleSwitchKeyProcess.h`
-- `src\dxaml\xcp\tools\XCPTypesAutoGen\XamlOM\Model\Microsoft.UI.Xaml.Controls.cs`
-- `src\dxaml\xcp\tools\XCPTypesAutoGen\XamlOM\Model\Microsoft.UI.Xaml.Controls.Primitives.cs`
-- `src\controls\dev\CommonStyles\ToggleSwitch_themeresources.xaml`
-- `src\dxaml\test\native\external\controls\toggleswitch\ToggleSwitchIntegrationTests.cpp`
-- `src\dxaml\test\native\external\controls\toggleswitch\ToggleSwitchAutomationIntegrationTests.cpp`
+## Current Product Source Pins
 
-## ModernWpf Artifacts
-
-- `ModernWpf.Controls\ToggleSwitch\ToggleSwitch.cs`
-- `ModernWpf.Controls\ToggleSwitch\ToggleSwitch.xaml`
-- `ModernWpf.Controls\ToggleSwitch\ToggleSwitchAutomationPeer.cs`
-- `ModernWpf.Controls\ToggleSwitch\ToggleSwitchTemplateSettings.cs`
-- `ModernWpf.Controls\ToggleSwitch\Strings\Resources.resx`
-- `ModernWpf\ThemeResources\Light.xaml`
-- `ModernWpf\ThemeResources\Dark.xaml`
-- `ModernWpf\ThemeResources\HighContrast.xaml`
-- `test\ModernWpf.WinUI.Tests\ToggleSwitch\ToggleSwitchApiTests.cs`
-
-## Implementation Mapping
-
-| WinUI source behavior | ModernWpf status |
+| Current source | Git blob |
 | --- | --- |
-| Constructor state fields initialize pointer, drag, translation, and pending-key state. | Matched with WPF fields in `ToggleSwitch.cs`. |
-| `PrepareState` creates read-only `ToggleSwitchTemplateSettings`. | Matched by constructor initialization and read-only WPF dependency property. |
-| XamlOM property surface: `IsOn`, `Header`, `HeaderTemplate`, `OnContent`, `OnContentTemplate`, `OffContent`, `OffContentTemplate`, `TemplateSettings`, `HeaderPlacement`, `Toggled`, and protected callback hooks. | Matched with WPF dependency properties, routed `Toggled`, and protected virtual callbacks. |
-| `GetDefaultValue2` supplies localized On/Off defaults while preserving default-value detection. | Matched with resource-backed default values and tests for default-vs-custom automation naming. |
-| `OnPropertyChanged2` updates visual state, header visibility, protected callbacks, and automation toggle-state notifications; the `IsOn` path checks for a property-changed automation listener before calling `GetOrCreateAutomationPeer` and raising `ToggleState`. | Matched through WPF property callbacks, protected callbacks, and a listener-first/get-or-create WPF automation peer notification path. |
-| `ChangeVisualState` selects Common, Focus, Toggle, Content, and Header visual states from source state fields. | Matched with WPF `VisualStateManager.GoToState`; owner focus state is used rather than child focus. |
-| `OnIsEnabledChanged` and `OnVisibilityChanged` clear dragging and pointer-over state before refreshing visual states. | Matched with WPF property-change paths; the WPF pointer-focus substitute is left to real focus transitions rather than these source reset paths. |
-| Template part discovery, drag/tap hookup, part size updates, and header presenter visibility. | Matched with WPF template parts, `Thumb` drag events, a bubbling mouse-up tap bridge, part `SizeChanged`, and null/header-template visibility rules. Curtain and knob translate transforms are discovered from `SwitchCurtain.RenderTransform` and `SwitchKnob.RenderTransform` like WinUI instead of requiring a named `KnobTranslateTransform` part. |
-| `OnPointerCaptureLost` clears `PointerOver` after vertical-pan drag completion when dragging has finished. | Matched through the WPF thumb `LostMouseCapture` path plus the owner fallback. |
-| `GetTranslations`, `SetTranslations`, `ClearTranslations`, `MoveDelta`, `MoveCompleted`, and size-derived knob/curtain bounds. | Matched, including current-to-on/off and on/off-to-current template setting offsets. |
-| `ToggleSwitchKeyProcess` handles source key-down/up sequencing using `OriginalKey`. | Matched with a private WPF `ToggleSwitchKeyProcess` helper; WPF system/IME/dead-char keys normalize back to the exposed original key before processing, and the WinUI flow-direction branches are preserved behind `HandlesKey`. |
-| WinUI native tests for live-tree entry/leave, tap, horizontal drag, horizontal pan, vertical pan no-toggle, keyboard space, directional-key no-toggle, footprint, visual tree, and automation shape. | Covered by focused WPF tests where platform input can be represented; compositor-only behavior is documented as a substitution. |
-| Automation peer class name, localized control type, toggle pattern, clickable point, name construction, default On/Off filtering, and hidden template children. | Matched with WPF automation APIs and source-shaped string extraction. |
-| CommonStyles template dimensions, style setters, state names, knob animations, On/Off content presenters, template-root shape, and WinUI resource keys. | Matched with WPF template equivalents, `VisualStateEx.Setters`, and theme resource aliases. WinUI's `Control` default centers `VerticalContentAlignment`, while WPF's dependency-property metadata defaults it to `Top`; the ModernWpf style explicitly sets `Center` as a platform-default substitution so the source `TemplateBinding` produces WinUI's centered On/Off content. The WinUI root `Grid` chrome bindings are represented by an inert WPF `BorderEx` chrome layer so `Background`, `BorderBrush`, `BorderThickness`, and `CornerRadius` flow from the `ToggleSwitch` like the source template without changing the WPF `Grid` layout used for source-sized drag bounds. The WinUI `SwitchAreaGrid` is a `Grid` / `Panel`, while the WPF substitute is a `Border`; its color animations now target `Border.Background` instead of the old guessed `Panel.Background` path. WinUI's `SwitchKnobOn` `BackgroundSizing=OuterBorderEdge` is represented by a WPF `BorderEx` so the knob chrome behavior is not dropped on a plain `Border`. The WinUI CommonStyles legacy `ToggleSwitchCurtain*`, `ToggleSwitchThumb*`, `ToggleSwitchTrack*`, foreground, header, and outer-border theme brushes are restored for Light, Dark, and HighContrast resource compatibility. |
-| CommonStyles `ManipulationMode="System,TranslateX"` routes horizontal pan into switch selection while vertical pan does not toggle. | Matched with a WPF manipulation substitute: `IsManipulationEnabled` defaults on, `ManipulationStarting` requests `TranslateX`, horizontal deltas reuse the WinUI-shaped move/complete path, and vertical-only deltas stay unhandled/non-toggle. |
+| `dxaml\xcp\dxaml\lib\ToggleSwitch_Partial.cpp` | `182d9d9af8547bab338f0e3375ccd50b7871b7ec` |
+| `dxaml\xcp\dxaml\lib\ToggleSwitch_Partial.h` | `9c94df84b0f2420c646ae08e49e5c4c6d802be45` |
+| `dxaml\xcp\dxaml\lib\ToggleSwitchAutomationPeer_Partial.cpp` | `653b96141170459f5ec43ca43999c89b0be23972` |
+| `dxaml\xcp\dxaml\lib\ToggleSwitchAutomationPeer_Partial.h` | `d61500f69d777d9c092eee4cc76a698e6059ec42` |
+| `dxaml\xcp\components\controls\KeyDownUp\inc\ToggleSwitchKeyProcess.h` | `8363db47b29b8747da03756fe98d39ab5b1bc170` |
+| `dxaml\xcp\components\controls\KeyDownUp\unittests\toggleswitch\ToggleSwitchUnitTests.cpp` | `43d0aabfd55d046161a7d8e82c79983dd22564d1` |
+| `dxaml\xcp\tools\XCPTypesAutoGen\XamlOM\Model\Microsoft.UI.Xaml.Controls.cs` | `ad1199a7ff9c253e38c4fb922accbe0afffbf432` |
+| `dxaml\xcp\tools\XCPTypesAutoGen\XamlOM\Model\Microsoft.UI.Xaml.Controls.Primitives.cs` | `aa7fcdf28f0464bccbc47b85257cf3919983d52f` |
+| `controls\dev\CommonStyles\ToggleSwitch_themeresources.xaml` | `50f290fbe053170d943f390d78bb4f8d6ba48140` |
+| `controls\dev\CommonStyles\ToggleSwitch_themeresources_perf2026.xaml` | `09daa82259a14070ea12d243ae0080e9e7c3d9da` |
+| `dxaml\test\native\external\controls\toggleswitch\ToggleSwitchIntegrationTests.cpp` | `5c5346bb857e34ecb584f9fd225d9639a8d61a9e` |
+| `dxaml\test\native\external\controls\toggleswitch\ToggleSwitchAutomationIntegrationTests.cpp` | `f5ce988ad3009837ba15fa23bc30657e835d57f9` |
+| `controls\test\MUXControlsTestApp\verification\ToggleSwitch.xml` | `d65e7b84f4e1eee952dbe848108bd16e0ee76452` |
+
+The previous audit pinned product commit
+`c70471c511a0168b61dcca13af9556465f26b673`. Rename-aware comparison to the
+current snapshot shows the runtime partials, peer, key processor, unit/native
+tests, and classic CommonStyles dictionary as byte-identical 100% renames.
+Commit `8463f45162149de0ec3ad7df752596893fe3e13e` moves the source mirror from
+`src\...` to the current repository-root layout and introduces the separately
+named perf2026 dictionary into this mirror. Commit
+`beabd047460bf5d43a41fcf8bddf7730188bd5a7` enables build/runtime consumption
+of perf2026 dictionaries.
+
+The perf2026 ToggleSwitch dictionary is an equivalent implementation variant,
+not a new visual contract. It retains the same theme resources, 40x20 track,
+12/14/17x14 knob sizes, margins, presenters, state names, transition timing,
+translation endpoints, and part tree. It replaces discrete brush
+`ObjectAnimationUsingKeyFrames` entries with `VisualState.Setters` and keeps
+the color, size, opacity, and reposition animations. ModernWpf already uses
+`VisualStateEx.Setters` for those brush/foreground assignments while preserving
+the WPF-feasible animations, so no product template change is justified.
+
+## Current Gallery Source Pins
+
+Current commit `29f62479d5c046a0b854a5868e5a7cd484572d87` carries the samples converted
+by `14a4a1a2` (`Convert other samples`, 2026-05-22):
+
+| Current Gallery source | Git blob |
+| --- | --- |
+| `WinUIGallery\Samples\ToggleSwitch\ToggleSwitchPage.xaml` | `929eeb0566891197877a9684d5a2a97ced390868` |
+| `WinUIGallery\Samples\ToggleSwitch\ToggleSwitchPage.xaml.cs` | `1de3beec353704e20f6df7a85ad1c5a4a961b537` |
+| `WinUIGallery\Samples\ToggleSwitch\ToggleSwitchSimple.txt` | `d9505228d70ab1f946e1696908d73742a8ca6b6c` |
+| `WinUIGallery\Samples\ToggleSwitch\ToggleSwitchCustom.txt` | `d7af70b72b67b49a9dbd9b151cd0610a8c05d73b` |
+| `tests\WinUIGallery.UITests\Tests\ToggleSwitch.cs` | `1f84b100bce89d1caa528d4fed4341bf5a393d8d` |
+
+The current page retains two examples:
+
+- `Example1` is a default Off switch with accessible name
+  `simple ToggleSwitch`.
+- The second example is horizontal: `ToggleSwitch2` starts On, has header
+  `Toggle work`, Off/On content `Do work` / `Working`, and drives a 32-DIP
+  ProgressRing. The substitution text emits `IsOn="True"` or `False`.
+- Current Gallery UI tests click `ToggleSwitch2` in both directions, require it
+  displayed/enabled, require Button automation type, and require accessible
+  text `Toggle work Working` in the On state.
+- Each current `.txt` stores a header and XAML section. ModernWpf keeps those
+  headers in `GalleryExample.HeaderText` and the same XAML strings in the
+  factory, which is the equivalent WPF Gallery storage contract.
+
+ModernWpf gives the default example an explicit 72-DIP width and zero MinWidth.
+This is a documented sample-measurement adapter: the unqualified current WinUI
+control resolves to the same 72x40 live extent, while WPF otherwise retains the
+source style's 154-DIP minimum intended for default On/Off content.
+
+## Ported Product Behavior
+
+- The property surface includes IsOn, Header/HeaderTemplate,
+  OnContent/OnContentTemplate, OffContent/OffContentTemplate, HeaderPlacement,
+  read-only TemplateSettings, Toggled, and protected property/toggle hooks.
+- Template application revokes old drag/tap/size handlers, discovers current
+  parts and their live render transforms, clones frozen WPF transforms before
+  mutation, registers current handlers, updates header visibility and
+  translations, and enters current visual states.
+- Common, focus, content, toggle, dragging, and header states follow the source
+  state fields. Disabling or collapsing clears transient drag/pointer state.
+- Thumb dragging and WPF horizontal manipulation share source GetTranslations,
+  MoveDelta, MoveCompleted, and half-range decisions. Horizontal motion toggles;
+  vertical-only manipulation does not. A bubbling tap bridge runs after drag
+  cleanup and avoids post-drag double toggles.
+- The private WPF `ToggleSwitchKeyProcess` ports source key down/up sequencing
+  and OriginalKey normalization. Space toggles; directional keys remain
+  non-toggle in both flow directions. GamepadA has no WPF Key equivalent.
+- The peer exposes only Toggle, reports class `ToggleSwitch`, Button control
+  type, the localized ToggleSwitch type string, a clickable point derived from
+  the live thumb, and no template children. Explicit AutomationProperties.Name
+  wins; otherwise Header plus custom current On/Off content forms the name,
+  while default On/Off values are intentionally excluded.
+- IsOn changes raise Toggled, protected callbacks, state changes, and—only when
+  a property-changed listener exists—a get-or-create peer ToggleState event.
+  The provider rejects disabled toggles and routes enabled toggles through
+  `AutomationToggleSwitchOnToggle`.
+
+## Template and Resource Parity
+
+- The active template uses the source visual-state-hosting root Grid plus an
+  inert WPF `BorderEx` chrome layer for WinUI Grid Background/Border/CornerRadius.
+- Style defaults retain source foreground/alignment/font/focus/corner settings,
+  40x20 switch geometry, 12-DIP knob, 10-DIP content margins, 4-DIP top-header
+  margin, source focus margin, state resources, and High Contrast mappings.
+- WPF Control metadata defaults VerticalContentAlignment to Top; WinUI Control
+  metadata centers it. The explicit WPF `VerticalContentAlignment=Center`
+  setter is the measured platform-default substitution that aligns current
+  Off/On content.
+- WinUI SwitchAreaGrid is a Grid/Panel; WPF uses Border for rounded chrome, so
+  color animations target `Border.Background`. `SwitchKnobOn` uses `BorderEx`
+  to represent WinUI `BackgroundSizing=OuterBorderEdge`.
+- Legacy ToggleSwitchCurtain, Thumb, Track, foreground, header, and outer-border
+  resources remain published across Light, Dark, and High Contrast.
 
 ## WPF Substitutions
 
-- WinUI `VirtualKey.GamepadA` has no WPF `Key` equivalent in the target frameworks, so this remains a documented platform gap even though the rest of the `ToggleSwitchKeyProcess` shape is ported.
-- WinUI `ManipulationMode="System,TranslateX"` is represented by WPF manipulation events plus the existing `Thumb` drag handling; exact OS touch routing through parent scroll viewers remains a platform-level verification gap.
-- WinUI `RepositionThemeAnimation`, compositor behavior, and element sounds have no direct WPF equivalent.
-- WinUI root `Grid` chrome is represented by an inert WPF `BorderEx` layer, and WinUI `SwitchAreaGrid.CornerRadius` is represented by the WPF `Border` used for `SwitchAreaGrid`; related color animations target `Border.Background` in WPF.
-- WinUI and WPF have different `VerticalContentAlignment` metadata defaults. The default style explicitly sets `Center` so the unchanged source `TemplateBinding` centers On/Off content like WinUI instead of using WPF's `Top` default.
-- WPF can freeze unnamed `Freezable` transforms created from templates, so discovered `TranslateTransform` instances are cloned and assigned back to the part before mutation.
-- WinUI `AutomationProperties.AccessibilityView="Raw"` and WinRT automation internals are represented by WPF automation peer child filtering and WPF provider APIs.
-- The WinUI framework `dxaml` generic template remains in the source tree, but packaged WinUI 3 CommonStyles overrides it; ModernWpf targets the packaged CommonStyles template shape.
+- GamepadA, WinUI element sounds, RepositionThemeAnimation/compositor internals,
+  and raw WinRT automation internals have no direct WPF equivalents.
+- WPF manipulation events plus Thumb dragging represent WinUI
+  `ManipulationMode="System,TranslateX"`; parent ScrollViewer arbitration
+  remains platform-owned.
+- Translation transitions use WPF spline/opacity animations with the same
+  source endpoints and timings in place of RepositionThemeAnimation.
+- AccessibilityView Raw is represented by peer child filtering.
+- ContentPresenterEx, BorderEx, brush-to-color proxies, cloned Freezables, and
+  the explicit centered-content setter are scoped WPF platform adapters.
 
-## Current Validation
+## Regression Coverage
 
-Run after ToggleSwitch changes:
+- `ToggleSwitchApiTests` covers live-tree lifecycle, tap/drag/manipulation,
+  threshold and cancellation, pointer capture, key processing, flow direction,
+  state resets, callbacks, property defaults, template settings/translations,
+  part discovery, all state groups/setters/animations, 40x20/knob geometry,
+  root chrome, centered content, resources/High Contrast, automation naming,
+  class/type/localized type/click point/children, Toggle, disabled rejection,
+  and listener-first peer creation.
+- `GalleryAutomationHookTests` pins the current two examples, headers/snippets,
+  default/local values, accessible names, 72-DIP measurement adapter, custom
+  On content, and ProgressRing reaction when the switch turns Off.
+- `WpfGallerySourceShapeTests` pins real ModernWpf/WinUI IDs, immutable resting
+  artifacts before interaction, the `1.5` static gate, On-state comparison,
+  and explicit zero size tolerance.
+- `ToggleSwitchSourceAuditTests` pins current commits/blobs, product/template/
+  peer/Gallery implementation shape, strict report values, and this audit.
 
-```powershell
-dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --filter "FullyQualifiedName~ToggleSwitchApiTests" --no-restore
-dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore
-```
+## Live Installed-Gallery Evidence
 
-Latest verified result on 2026-07-17: ToggleSwitch API tests passed 54/54.
+The harness compares the immutable resting Off state before invoking the real
+Toggle provider, then separately compares the resulting On state.
 
-Strict installed WinUI 3 Gallery evidence uses immutable pre-interaction
-artifacts so the resting Off state is compared independently from the On-state
-interaction proof. Exact `72x40` primary crops pass the enforced `1.5` gate:
+| Theme | Report | State | Crop sizes | Mean delta | Gate |
+| --- | --- | --- | --- | ---: | --- |
+| Light | `artifacts/visual-checks/20260718-115333-533-40948/report.md` | Off | `72x40` / `72x40` | `0.92` | `1.5`, size `0` |
+| Dark | `artifacts/visual-checks/20260718-115425-504-74736/report.md` | Off | `72x40` / `72x40` | `1.06` | `1.5`, size `0` |
+| Light | `artifacts/visual-checks/20260718-115333-533-40948/report.md` | On | `92x60` / `92x60` | `0.53` | interaction gate, exact size |
+| Dark | `artifacts/visual-checks/20260718-115425-504-74736/report.md` | On | `92x60` / `92x60` | `0.48` | interaction gate, exact size |
 
-- Light: `artifacts\visual-checks\20260717-073117-263-46756\report.md`, resting delta `0.92`, On-state interaction crop delta `0.51`.
-- Dark: `artifacts\visual-checks\20260717-073149-240-96860\report.md`, resting delta `1.06`, On-state interaction crop delta `0.48`.
+The remaining non-zero pixels are WPF/WinUI text, curve, and edge
+antialiasing; state, geometry, alignment, resources, and interaction match.
 
-The centered-content substitution reduced the refreshed Light resting delta
-from `10.14` to `0.92`; before the fix WPF placed `Off` at physical rows
-`5..14`, while WinUI placed it at `16..25`. Both now occupy `16..25`.
+## Verification
+
+- The refreshed ToggleSwitch product/source slice passes 55/55 on
+  `net8.0-windows7.0`.
+- Focused Gallery runtime/source tests pass 2/2 on both
+  `net8.0-windows7.0` and `net10.0-windows7.0`.
+- The focused `net462` Controls build is warning-free with zero errors; the
+  product/Gallery test builds also refresh the net8/net10 Controls outputs.
+- Both strict Light and Dark installed-Gallery runs pass with exact Off and On
+  crop sizes.

@@ -5,12 +5,14 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Automation.Peers;
 
 namespace ModernWpf.Controls
 {
@@ -41,6 +43,7 @@ namespace ModernWpf.Controls
             SecondaryCommands.CollectionChanged += SecondaryCommands_CollectionChanged;
 
             Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
             SizeChanged += OnSizeChanged;
         }
 
@@ -51,6 +54,15 @@ namespace ModernWpf.Controls
 
         private void OnIsOpenChanged(bool isOpen)
         {
+            if (isOpen)
+            {
+                OnOpening(null);
+            }
+            else
+            {
+                OnClosing(null);
+            }
+
             if (isOpen)
             {
                 UpdateInputDeviceTypeUsedToOpen();
@@ -68,7 +80,18 @@ namespace ModernWpf.Controls
             if (!isOpen)
             {
                 CloseSubMenus(null);
+                OnClosed(null);
             }
+
+            if (FrameworkElementAutomationPeer.FromElement(this) is CommandBarAutomationPeer peer)
+            {
+                peer.RaiseIsOpenChanged(!isOpen, isOpen);
+            }
+        }
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new CommandBarAutomationPeer(this);
         }
 
         #region PrimaryCommands
@@ -134,9 +157,35 @@ namespace ModernWpf.Controls
             ((CommandBar)d).UpdateUI();
         }
 
+        public event EventHandler<object> Opening;
+
         public event EventHandler<object> Opened;
 
+        public event EventHandler<object> Closing;
+
         public event EventHandler<object> Closed;
+
+        public event DynamicOverflowItemsChangingEventHandler DynamicOverflowItemsChanging;
+
+        protected virtual void OnOpening(object e)
+        {
+            Opening?.Invoke(this, e);
+        }
+
+        protected virtual void OnOpened(object e)
+        {
+            Opened?.Invoke(this, e);
+        }
+
+        protected virtual void OnClosing(object e)
+        {
+            Closing?.Invoke(this, e);
+        }
+
+        protected virtual void OnClosed(object e)
+        {
+            Closed?.Invoke(this, e);
+        }
 
         public override void OnApplyTemplate()
         {
@@ -195,7 +244,7 @@ namespace ModernWpf.Controls
         {
             if (e.Key == Key.Escape && IsOpen)
             {
-                SetCurrentValue(IsOpenProperty, false);
+                TryDismissCommandBarOverflow();
                 e.Handled = true;
             }
 
@@ -230,6 +279,15 @@ namespace ModernWpf.Controls
             UpdateUI(false);
         }
 
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            InputManager.Current.PreProcessInput -= OnPreProcessInput;
+            if (IsOpen)
+            {
+                SetCurrentValue(IsOpenProperty, false);
+            }
+        }
+
         private void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             ApplyDynamicOverflow(e.NewSize.Width);
@@ -238,6 +296,8 @@ namespace ModernWpf.Controls
 
         private void DetachTemplatePartHandlers()
         {
+            InputManager.Current.PreProcessInput -= OnPreProcessInput;
+
             if (m_moreButton != null)
             {
                 if (m_moreButton is ToggleButton moreToggleButton)
@@ -364,16 +424,13 @@ namespace ModernWpf.Controls
                 double moreButtonWidth = MeasureElementWidth(m_moreButton);
                 double availablePrimaryWidth = Math.Max(0, availableWidth - contentWidth - moreButtonWidth);
 
-                int firstOverflowPrimaryIndex = primaryCommands.Count;
-                for (int i = primaryCommands.Count - 1; i >= 0 && primaryWidth > availablePrimaryWidth; i--)
-                {
-                    primaryWidth -= MeasureCommandWidth(primaryCommands[i]);
-                    firstOverflowPrimaryIndex = i;
-                }
-
-                var dynamicPrimary = primaryCommands.Take(firstOverflowPrimaryIndex).ToList();
+                var movedPrimaryCommands = FindMovablePrimaryCommands(
+                    primaryCommands,
+                    availablePrimaryWidth,
+                    primaryWidth);
+                var movedPrimarySet = new HashSet<ICommandBarElement>(movedPrimaryCommands);
+                var dynamicPrimary = primaryCommands.Where(command => !movedPrimarySet.Contains(command)).ToList();
                 var dynamicSecondary = new List<ICommandBarElement>();
-                var movedPrimaryCommands = primaryCommands.Skip(firstOverflowPrimaryIndex).ToList();
 
                 if (movedPrimaryCommands.Count > 0)
                 {
@@ -386,11 +443,190 @@ namespace ModernWpf.Controls
                 }
 
                 dynamicSecondary.AddRange(secondaryCommands);
+                RaiseDynamicOverflowItemsChangingIfNeeded(movedPrimaryCommands);
                 ReplaceDynamicCommands(dynamicPrimary, dynamicSecondary);
             }
             finally
             {
                 m_isApplyingDynamicOverflow = false;
+            }
+        }
+
+        private void RaiseDynamicOverflowItemsChangingIfNeeded(
+            IReadOnlyCollection<ICommandBarElement> movedPrimaryCommands)
+        {
+            var previousMovedPrimaryCommands = new HashSet<ICommandBarElement>(
+                m_dynamicSecondaryCommands.Where(command => PrimaryCommands.Contains(command)));
+            var currentMovedPrimaryCommands = new HashSet<ICommandBarElement>(movedPrimaryCommands);
+
+            if (previousMovedPrimaryCommands.SetEquals(currentMovedPrimaryCommands))
+            {
+                return;
+            }
+
+            bool isAdding = currentMovedPrimaryCommands.Any(
+                command => !previousMovedPrimaryCommands.Contains(command));
+            DynamicOverflowItemsChanging?.Invoke(
+                this,
+                new DynamicOverflowItemsChangingEventArgs
+                {
+                    Action = isAdding
+                        ? CommandBarDynamicOverflowAction.AddingToOverflow
+                        : CommandBarDynamicOverflowAction.RemovingFromOverflow
+                });
+        }
+
+        private static List<ICommandBarElement> FindMovablePrimaryCommands(
+            List<ICommandBarElement> primaryCommands,
+            double availablePrimaryWidth,
+            double primaryWidth)
+        {
+            var movedIndices = new HashSet<int>();
+            var orderedValues = primaryCommands
+                .Select(command => command.DynamicOverflowOrder)
+                .Where(order => order > 0)
+                .Distinct()
+                .OrderBy(order => order)
+                .ToList();
+
+            if (orderedValues.Count > 0)
+            {
+                foreach (int order in orderedValues)
+                {
+                    for (int i = 0; i < primaryCommands.Count; i++)
+                    {
+                        if (primaryCommands[i].DynamicOverflowOrder == order)
+                        {
+                            MovePrimaryCommand(primaryCommands, i, movedIndices, ref primaryWidth);
+                            MoveAdjacentSeparators(primaryCommands, i, movedIndices, ref primaryWidth);
+                        }
+                    }
+
+                    if (primaryWidth < availablePrimaryWidth)
+                    {
+                        break;
+                    }
+                }
+
+                if (primaryWidth > availablePrimaryWidth)
+                {
+                    for (int i = primaryCommands.Count - 1; i >= 0; i--)
+                    {
+                        if (primaryCommands[i].DynamicOverflowOrder == 0)
+                        {
+                            MovePrimaryCommand(primaryCommands, i, movedIndices, ref primaryWidth);
+                            if (primaryWidth < availablePrimaryWidth)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                for (int i = primaryCommands.Count - 1;
+                    i >= 0 && primaryWidth >= availablePrimaryWidth;
+                    i--)
+                {
+                    MovePrimaryCommand(primaryCommands, i, movedIndices, ref primaryWidth);
+                }
+            }
+
+            return primaryCommands
+                .Where((command, index) => movedIndices.Contains(index))
+                .ToList();
+        }
+
+        private static void MoveAdjacentSeparators(
+            List<ICommandBarElement> primaryCommands,
+            int movingIndex,
+            HashSet<int> movedIndices,
+            ref double primaryWidth)
+        {
+            bool hasPreviousSeparator = movingIndex > 0 &&
+                primaryCommands[movingIndex - 1] is AppBarSeparator;
+
+            if (hasPreviousSeparator)
+            {
+                int previousNonSeparator = movingIndex - 1;
+                while (previousNonSeparator >= 0 &&
+                    primaryCommands[previousNonSeparator] is AppBarSeparator)
+                {
+                    previousNonSeparator--;
+                }
+
+                int separatorIndex = movingIndex - 1;
+                if (previousNonSeparator < 0)
+                {
+                    while (separatorIndex >= 0)
+                    {
+                        MovePrimaryCommand(primaryCommands, separatorIndex--, movedIndices, ref primaryWidth);
+                    }
+                }
+                else
+                {
+                    while (separatorIndex > previousNonSeparator &&
+                        separatorIndex - previousNonSeparator > 1)
+                    {
+                        MovePrimaryCommand(primaryCommands, separatorIndex--, movedIndices, ref primaryWidth);
+                    }
+                }
+            }
+
+            if (movingIndex + 1 >= primaryCommands.Count ||
+                primaryCommands[movingIndex + 1] is not AppBarSeparator)
+            {
+                return;
+            }
+
+            int nextNonSeparator = movingIndex + 1;
+            while (nextNonSeparator < primaryCommands.Count &&
+                primaryCommands[nextNonSeparator] is AppBarSeparator)
+            {
+                nextNonSeparator++;
+            }
+
+            int nextSeparatorIndex = movingIndex + 1;
+            if (nextNonSeparator == primaryCommands.Count)
+            {
+                while (nextSeparatorIndex < primaryCommands.Count)
+                {
+                    MovePrimaryCommand(primaryCommands, nextSeparatorIndex++, movedIndices, ref primaryWidth);
+                }
+            }
+            else
+            {
+                while (nextSeparatorIndex < nextNonSeparator &&
+                    nextNonSeparator - nextSeparatorIndex > 1)
+                {
+                    MovePrimaryCommand(primaryCommands, nextSeparatorIndex++, movedIndices, ref primaryWidth);
+                }
+            }
+
+            if (movingIndex == 0)
+            {
+                MovePrimaryCommand(primaryCommands, movingIndex + 1, movedIndices, ref primaryWidth);
+            }
+            else if (hasPreviousSeparator)
+            {
+                MovePrimaryCommand(primaryCommands, movingIndex + 1, movedIndices, ref primaryWidth);
+                if (nextNonSeparator == primaryCommands.Count)
+                {
+                    MovePrimaryCommand(primaryCommands, movingIndex - 1, movedIndices, ref primaryWidth);
+                }
+            }
+        }
+
+        private static void MovePrimaryCommand(
+            List<ICommandBarElement> primaryCommands,
+            int index,
+            HashSet<int> movedIndices,
+            ref double primaryWidth)
+        {
+            if (index >= 0 && index < primaryCommands.Count && movedIndices.Add(index))
+            {
+                primaryWidth -= MeasureCommandWidth(primaryCommands[index]);
             }
         }
 
@@ -625,13 +861,32 @@ namespace ModernWpf.Controls
 
         private void OnOverflowPopupOpened(object sender, EventArgs e)
         {
+            InputManager.Current.PreProcessInput -= OnPreProcessInput;
+            InputManager.Current.PreProcessInput += OnPreProcessInput;
+            RefreshOverflowPopupPosition();
             UpdateTemplateSettings();
             UpdateOverflowPresenterVisualState(true);
-            Opened?.Invoke(this, null);
+            OnOpened(null);
+        }
+
+        private void RefreshOverflowPopupPosition()
+        {
+            if (m_overflowPopup == null)
+            {
+                return;
+            }
+
+            // Popup caches its native position. A CommandBar can be rendered while
+            // disconnected (for example, into a bitmap) and then attached to a live
+            // window; nudging the offset makes WPF recompute against the current target.
+            var horizontalOffset = m_overflowPopup.HorizontalOffset;
+            m_overflowPopup.SetCurrentValue(Popup.HorizontalOffsetProperty, horizontalOffset + 0.01);
+            m_overflowPopup.SetCurrentValue(Popup.HorizontalOffsetProperty, horizontalOffset);
         }
 
         private void OnOverflowPopupClosed(object sender, EventArgs e)
         {
+            InputManager.Current.PreProcessInput -= OnPreProcessInput;
             if (IsOpen)
             {
                 SetCurrentValue(IsOpenProperty, false);
@@ -639,7 +894,6 @@ namespace ModernWpf.Controls
 
             UpdateTemplateSettings();
             UpdateOverflowPresenterVisualState(true);
-            Closed?.Invoke(this, null);
         }
 
         private void OnMoreButtonChecked(object sender, RoutedEventArgs e)
@@ -662,9 +916,64 @@ namespace ModernWpf.Controls
         {
             if (e.Key == Key.Escape && IsOpen)
             {
-                SetCurrentValue(IsOpenProperty, false);
+                TryDismissCommandBarOverflow();
                 e.Handled = true;
             }
+        }
+
+        private void OnPreProcessInput(object sender, PreProcessInputEventArgs e)
+        {
+            if (!IsOpen || IsSticky ||
+                e.StagingItem.Input is not MouseButtonEventArgs mouseArgs ||
+                mouseArgs.ButtonState != MouseButtonState.Pressed)
+            {
+                return;
+            }
+
+            var inputSource = Mouse.DirectlyOver as DependencyObject ?? mouseArgs.OriginalSource as DependencyObject;
+            TryLightDismissForTesting(inputSource);
+        }
+
+        internal bool TryLightDismissForTesting(DependencyObject inputSource)
+        {
+            if (IsOpen && !IsSticky && !IsWithinCommandBarOrOverflow(inputSource))
+            {
+                SetCurrentValue(IsOpenProperty, false);
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool IsWithinCommandBarOrOverflow(DependencyObject element)
+        {
+            while (element != null)
+            {
+                if (ReferenceEquals(element, this) || ReferenceEquals(element, m_overflowContentRoot))
+                {
+                    return true;
+                }
+
+                DependencyObject parent = null;
+                if (element is Visual || element is System.Windows.Media.Media3D.Visual3D)
+                {
+                    parent = VisualTreeHelper.GetParent(element);
+                }
+
+                element = parent ?? LogicalTreeHelper.GetParent(element);
+            }
+
+            return false;
+        }
+
+        private void TryDismissCommandBarOverflow()
+        {
+            if (!IsSticky)
+            {
+                SetCurrentValue(IsOpenProperty, false);
+            }
+
+            m_moreButton?.Focus();
         }
 
         private void UpdateOverflowPopupVisibility(bool isOpen)
@@ -698,8 +1007,7 @@ namespace ModernWpf.Controls
                 CustomPlacementMode.BottomEdgeAlignedRight,
                 popupSize,
                 targetSize,
-                offset,
-                child: m_overflowPopup?.Child as FrameworkElement);
+                offset);
         }
 
         private void UpdateOverflowPresenterVisualState(bool useTransitions)

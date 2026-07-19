@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -199,6 +200,33 @@ public class TitleBarApiTests
             Assert.AreEqual("Minimize", AutomationProperties.GetName(FindNamedDescendant<TitleBarButton>(titleBarControl, "MinimizeButton")));
             Assert.AreEqual("Maximize", AutomationProperties.GetName(FindNamedDescendant<TitleBarButton>(titleBarControl, "PART_MaximizeRestoreButton")));
             Assert.AreEqual("Close", AutomationProperties.GetName(FindNamedDescendant<TitleBarButton>(titleBarControl, "CloseButton")));
+        });
+    }
+
+    [TestMethod]
+    public void VerifyTitleBarControlAutomationPeerMatchesCurrentWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var titleBarControl = new TitleBarControl
+            {
+                Title = "ModernWpf Test Title"
+            };
+
+            using var host = new TestWindowHost(titleBarControl, width: 420, height: 180);
+            host.UpdateLayout();
+
+            var peer = UIElementAutomationPeer.CreatePeerForElement(titleBarControl);
+            Assert.IsNotNull(peer);
+            Assert.IsInstanceOfType(peer, typeof(TitleBarControlAutomationPeer));
+            Assert.AreEqual(AutomationControlType.TitleBar, peer.GetAutomationControlType());
+            Assert.AreEqual("TitleBar", peer.GetClassName());
+            Assert.AreEqual("ModernWpf Test Title", peer.GetName());
+
+            AutomationProperties.SetName(titleBarControl, "Explicit title bar name");
+            Assert.AreEqual("Explicit title bar name", peer.GetName());
         });
     }
 

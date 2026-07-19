@@ -391,6 +391,7 @@
                                             x:Name="Icon"
                                             Content="{TemplateBinding Icon}"
                                             Foreground="{TemplateBinding Foreground}"
+                                            Background="{DynamicResource NavigationViewItemIconBackground}"
                                             ui:AnimatedIcon.State="Normal" />
                                     </Viewbox>
                                 </Border>
@@ -550,6 +551,7 @@
                                         x:Name="Icon"
                                         Content="{TemplateBinding Icon}"
                                         Foreground="{TemplateBinding Foreground}"
+                                        Background="{DynamicResource NavigationViewItemIconBackground}"
                                         ui:AnimatedIcon.State="Normal" />
                                 </Viewbox>
                                 <ContentPresenter
@@ -766,6 +768,7 @@
                                         x:Name="Icon"
                                         Content="{TemplateBinding Icon}"
                                         Foreground="{TemplateBinding Foreground}"
+                                        Background="{DynamicResource NavigationViewItemIconBackground}"
                                         ui:AnimatedIcon.State="Normal"/>
                                 </Viewbox>
                                 <ui:ContentPresenterEx
@@ -1023,6 +1026,7 @@
                                         x:Name="Icon"
                                         Content="{TemplateBinding Icon}"
                                         Foreground="{TemplateBinding Foreground}"
+                                        Background="{DynamicResource NavigationViewItemIconBackground}"
                                         ui:AnimatedIcon.State="Normal" />
                                 </Viewbox>
                                 <ui:ContentPresenterEx
@@ -1638,7 +1642,7 @@
                                 <local:SplitView.Content>
                                     <Border
                                         x:Name="ContentGrid"
-                                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                        BorderBrush="{DynamicResource NavigationViewContentGridBorderBrush}"
                                         BorderThickness="{DynamicResource NavigationViewContentGridBorderThickness}"
                                         Background="{DynamicResource NavigationViewContentBackground}"
                                         Margin="{DynamicResource NavigationViewContentMargin}"
@@ -1811,6 +1815,7 @@
     <Style TargetType="primitives:NavigationViewItemPresenter" />
 
     <Style TargetType="local:NavigationViewItemHeader">
+        <Setter Property="Foreground" Value="{DynamicResource NavigationViewItemHeaderForeground}" />
         <Setter Property="IsEnabled" Value="False" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="MinHeight" Value="0"/>

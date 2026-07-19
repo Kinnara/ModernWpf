@@ -50,6 +50,14 @@
       "generateWrapper": false
     },
     {
+      "name": "DynamicOverflowOrder",
+      "type": "int",
+      "kind": "RegisterAttached",
+      "default": "0",
+      "changed": "OnDynamicOverflowOrderChanged",
+      "generateWrapper": false
+    },
+    {
       "name": "UseOverflowStyle",
       "type": "bool",
       "kind": "RegisterAttached",

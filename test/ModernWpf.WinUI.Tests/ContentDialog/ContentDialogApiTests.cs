@@ -3,12 +3,16 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
@@ -19,6 +23,41 @@ namespace ModernWpf.WinUI.Tests.ContentDialogs;
 [TestClass]
 public class ContentDialogApiTests
 {
+    [TestMethod]
+    public void AutomationPeerExposesSourcePopupDialogSemantics()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var dialog = new ContentDialog
+            {
+                Title = "Save your work?",
+                Content = "Upload your content to the cloud."
+            };
+            AutomationProperties.SetAutomationId(dialog, "SaveDialog");
+
+            var peer = (ContentDialogAutomationPeer)UIElementAutomationPeer.CreatePeerForElement(dialog);
+            Assert.AreEqual(AutomationControlType.Window, peer.GetAutomationControlType());
+            Assert.AreEqual(nameof(ContentDialog), peer.GetClassName());
+            Assert.AreEqual("Save your work?", peer.GetName());
+            Assert.AreEqual("SaveDialog", peer.GetAutomationId());
+            Assert.AreSame(peer, peer.GetPattern(PatternInterface.Window));
+
+            var windowProvider = (IWindowProvider)peer;
+            Assert.IsTrue(windowProvider.IsModal);
+            Assert.IsFalse(windowProvider.Maximizable);
+            Assert.IsFalse(windowProvider.Minimizable);
+            Assert.AreEqual(WindowVisualState.Normal, windowProvider.VisualState);
+            Assert.IsTrue(windowProvider.WaitForInputIdle(0));
+
+            AutomationProperties.SetName(dialog, "Explicit dialog name");
+            Assert.AreEqual("Explicit dialog name", peer.GetName());
+
+            AutomationProperties.SetName(dialog, string.Empty);
+            dialog.Title = null;
+            Assert.AreEqual("Upload your content to the cloud.", peer.GetName());
+        });
+    }
+
     [TestMethod]
     public void VerifyContentDialogDefaultPropertyValues()
     {
@@ -205,6 +244,8 @@ public class ContentDialogApiTests
             AssertDynamicResourceSetter(style, Control.BackgroundProperty, "ContentDialogBackground");
             AssertDynamicResourceSetter(style, Control.BorderThicknessProperty, "ContentDialogBorderWidth");
             AssertDynamicResourceSetter(style, Control.BorderBrushProperty, "ContentDialogBorderBrush");
+            AssertDynamicResourceSetter(style, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertDynamicResourceSetter(style, Control.FontSizeProperty, "ControlContentThemeFontSize");
             AssertDynamicResourceSetter(style, ContentDialog.CornerRadiusProperty, "OverlayCornerRadius");
             AssertDynamicResourceSetter(style, ContentDialog.PrimaryButtonStyleProperty, "DefaultButtonStyle");
             AssertDynamicResourceSetter(style, ContentDialog.SecondaryButtonStyleProperty, "DefaultButtonStyle");
@@ -223,6 +264,8 @@ public class ContentDialogApiTests
             Assert.AreSame(dialog.TryFindResource("ContentDialogBackground"), dialog.Background);
             Assert.AreEqual(dialog.TryFindResource("ContentDialogBorderWidth"), dialog.BorderThickness);
             Assert.AreSame(dialog.TryFindResource("ContentDialogBorderBrush"), dialog.BorderBrush);
+            Assert.AreSame(dialog.TryFindResource("ContentControlThemeFontFamily"), dialog.FontFamily);
+            Assert.AreEqual(dialog.TryFindResource("ControlContentThemeFontSize"), dialog.FontSize);
             Assert.AreEqual(dialog.TryFindResource("OverlayCornerRadius"), dialog.CornerRadius);
             Assert.AreSame(dialog.TryFindResource("DefaultButtonStyle"), dialog.PrimaryButtonStyle);
             Assert.AreSame(dialog.TryFindResource("DefaultButtonStyle"), dialog.SecondaryButtonStyle);
@@ -275,10 +318,11 @@ public class ContentDialogApiTests
             Assert.AreSame(dialog.TryFindResource("ContentDialogSeparatorBorderBrush"), contentBorder.BorderBrush);
 
             Assert.AreEqual(contentDialogTitleMargin, title.Margin);
+            Assert.AreEqual(27d, title.MinHeight);
             Assert.AreEqual(dialog.Title, title.Content);
             Assert.AreSame(dialog.TitleTemplate, title.ContentTemplate);
             Assert.AreSame(dialog.Foreground, title.Foreground);
-            Assert.AreSame(dialog.TryFindResource(SystemFonts.MessageFontFamilyKey), title.FontFamily);
+            Assert.AreSame(dialog.TryFindResource("ContentControlThemeFontFamily"), title.FontFamily);
 
             Assert.AreEqual(dialog.Content, contentPresenter.Content);
             Assert.AreSame(dialog.ContentTemplate, contentPresenter.ContentTemplate);
@@ -295,6 +339,12 @@ public class ContentDialogApiTests
             Assert.AreEqual(dialog.PrimaryButtonText, primaryButton.Content);
             Assert.AreEqual(dialog.SecondaryButtonText, secondaryButton.Content);
             Assert.AreEqual(dialog.CloseButtonText, closeButton.Content);
+            Assert.AreSame(dialog.TryFindResource("ContentControlThemeFontFamily"), primaryButton.FontFamily);
+            Assert.AreSame(dialog.TryFindResource("ContentControlThemeFontFamily"), secondaryButton.FontFamily);
+            Assert.AreSame(dialog.TryFindResource("ContentControlThemeFontFamily"), closeButton.FontFamily);
+            Assert.AreEqual(dialog.TryFindResource("ControlContentThemeFontSize"), primaryButton.FontSize);
+            Assert.AreEqual(dialog.TryFindResource("ControlContentThemeFontSize"), secondaryButton.FontSize);
+            Assert.AreEqual(dialog.TryFindResource("ControlContentThemeFontSize"), closeButton.FontSize);
             Assert.AreEqual(HorizontalAlignment.Stretch, primaryButton.HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Stretch, secondaryButton.HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Stretch, closeButton.HorizontalAlignment);

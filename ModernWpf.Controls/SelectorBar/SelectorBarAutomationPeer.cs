@@ -39,7 +39,17 @@ namespace ModernWpf.Automation.Peers
 
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
-            return AutomationControlType.Tab;
+            return AutomationControlType.Group;
+        }
+
+        protected override bool IsControlElementCore()
+        {
+            return false;
+        }
+
+        protected override bool IsContentElementCore()
+        {
+            return false;
         }
 
         private SelectorBar OwnerSelectorBar => (SelectorBar)Owner;

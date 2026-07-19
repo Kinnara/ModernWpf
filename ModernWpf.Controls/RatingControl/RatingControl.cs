@@ -144,6 +144,28 @@ namespace ModernWpf.Controls
             return value;
         }
 
+        double CoercePlaceholderValueBetweenMinAndMax(double value)
+        {
+            // MaxRating can be temporarily invalid while its property callback is
+            // normalizing the value. Clamp against an effective minimum of one so a
+            // valid placeholder is never forced through the unset sentinel path.
+            var effectiveMaxRating = Math.Max(1, MaxRating);
+
+            if (value < 0.0)
+            {
+                value = c_noValueSetSentinel;
+            }
+            else if (value > effectiveMaxRating)
+            {
+                value = effectiveMaxRating;
+            }
+
+            // PlaceholderValue is a display hint (for example, an average), so zero
+            // and fractional values below one remain valid. Value itself still uses
+            // the source minimum non-sentinel value of one.
+            return value;
+        }
+
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new RatingControlAutomationPeer(this);
@@ -616,6 +638,14 @@ namespace ModernWpf.Controls
                 var value = (int)args.NewValue;
                 var coercedValue = Math.Max(1, value);
 
+                if (coercedValue != value)
+                {
+                    // Commit the corrected MaxRating before Value or PlaceholderValue
+                    // callbacks can run layout against the transient invalid value.
+                    SetValue(property, coercedValue);
+                    return;
+                }
+
                 if (Value > coercedValue)
                 {
                     Value = coercedValue;
@@ -626,16 +656,13 @@ namespace ModernWpf.Controls
                     PlaceholderValue = coercedValue;
                 }
 
-                if (coercedValue != value)
-                {
-                    SetValue(property, coercedValue);
-                    return;
-                }
             }
             else if (property == PlaceholderValueProperty || property == ValueProperty)
             {
                 var value = (double)args.NewValue;
-                var coercedValue = CoerceValueBetweenMinAndMax(value);
+                var coercedValue = property == PlaceholderValueProperty
+                    ? CoercePlaceholderValueBetweenMinAndMax(value)
+                    : CoerceValueBetweenMinAndMax(value);
                 if (value != coercedValue)
                 {
                     SetValue(property, coercedValue);

@@ -10,7 +10,6 @@
     </ResourceDictionary.MergedDictionaries>
 
     <Thickness x:Key="CommandBarOverflowPresenterMargin">0,4,0,4</Thickness>
-
     <Thickness x:Key="CommandBarMoreButtonMargin">14,19,14,0</Thickness>
     <sys:Double x:Key="AppBarButtonContentHeight">16</sys:Double>
     <sys:Double x:Key="AppBarThemeMinHeight">64</sys:Double>
@@ -24,7 +23,8 @@
     <Thickness x:Key="AppBarButtonOverflowTextTouchMargin">0,9,0,12</Thickness>
     <Thickness x:Key="AppBarButtonOverflowTextLabelPadding">0,5,0,8</Thickness>
     <Thickness x:Key="AppBarButtonTextLabelMargin">2,0,2,8</Thickness>
-    <Thickness x:Key="AppBarButtonTextLabelOnRightMargin">8,16,12,10</Thickness>
+    <!-- Segoe UI text measures one pixel narrower in WPF than WinUI at Gallery scale. -->
+    <Thickness x:Key="AppBarButtonTextLabelOnRightMargin">8,16,13,10</Thickness>
     <Visibility x:Key="AppBarButtonHasFlyoutChevronVisibility">Visible</Visibility>
     <sys:Double x:Key="AppBarButtonSubItemChevronFontSize">8</sys:Double>
     <sys:Double x:Key="AppBarButtonSecondarySubItemChevronFontSize">12</sys:Double>
@@ -39,7 +39,7 @@
     <Thickness x:Key="AppBarToggleButtonOverflowCheckTouchMargin">12,10,12,10</Thickness>
     <Thickness x:Key="AppBarToggleButtonOverflowCheckMargin">12,4,12,4</Thickness>
     <Thickness x:Key="AppBarToggleButtonTextLabelMargin">2,0,2,8</Thickness>
-    <Thickness x:Key="AppBarToggleButtonTextLabelOnRightMargin">8,16,12,10</Thickness>
+    <Thickness x:Key="AppBarToggleButtonTextLabelOnRightMargin">8,16,13,10</Thickness>
     <Thickness x:Key="AppBarToggleButtonOverflowTextLabelPadding">0,5,0,8</Thickness>
 
     <Style x:Key="EllipsisButton" TargetType="ToggleButton" BasedOn="{StaticResource DefaultToggleButtonStyle}">

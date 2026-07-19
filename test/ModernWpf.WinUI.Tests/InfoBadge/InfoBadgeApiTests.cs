@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -322,6 +323,44 @@ public class InfoBadgeApiTests
             Assert.AreEqual(
                 infoBadge.TemplateSettings.InfoBadgeCornerRadius,
                 FindNamedDescendant<GridEx>(infoBadge, "RootGrid").CornerRadius);
+        });
+    }
+
+    [TestMethod]
+    public void InfoBadgeRetainsLastIconElementWhenReturningToDotLikeCurrentWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var infoBadge = new ModernWpf.Controls.InfoBadge
+            {
+                IconSource = new SymbolIconSource { Symbol = Symbol.Setting }
+            };
+            using var host = new TestWindowHost(infoBadge, width: 100, height: 100);
+            host.UpdateLayout();
+
+            var iconElement = infoBadge.TemplateSettings.IconElement;
+            Assert.IsNotNull(iconElement);
+
+            infoBadge.IconSource = null;
+            host.UpdateLayout();
+
+            Assert.AreSame(iconElement, infoBadge.TemplateSettings.IconElement);
+            Assert.AreEqual(
+                Visibility.Collapsed,
+                FindNamedDescendant<FrameworkElement>(infoBadge, "IconPresenter").Visibility);
+        });
+    }
+
+    [TestMethod]
+    public void InfoBadgeHasNoStandaloneAutomationPeerLikeCurrentWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var infoBadge = new ModernWpf.Controls.InfoBadge { Value = 5 };
+            using var host = new TestWindowHost(infoBadge, width: 100, height: 100);
+            host.UpdateLayout();
+
+            Assert.IsNull(UIElementAutomationPeer.CreatePeerForElement(infoBadge));
         });
     }
 

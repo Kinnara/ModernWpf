@@ -140,6 +140,15 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region DynamicOverflowOrder
+
+        private static void OnDynamicOverflowOrderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            CommandBar.OnCommandBarElementDependencyPropertyChanged(d);
+        }
+
+        #endregion
+
         #region IsInOverflow
 
         internal static bool GetUseOverflowStyle(DependencyObject element)

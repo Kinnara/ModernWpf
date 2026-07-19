@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 using RadioMenuItem = ModernWpf.Controls.RadioMenuItem;
@@ -130,18 +131,22 @@ public class RadioMenuFlyoutItemInteractionTests
     {
         WpfTestHost.Run(() =>
         {
+            TestApplication.EnsureInitialized();
+
             var items = CreateSubMenuItems(out var radioSubMenu);
             RadioMenuItem.SetAreCheckStatesEnabled(radioSubMenu, true);
+            radioSubMenu.Template = (ControlTemplate)Application.Current.FindResource(MenuItem.SubmenuHeaderTemplateKey);
 
             var menu = CreateNestedMenu(new object[] { items["Name"], items["Date"], items["Size"], radioSubMenu }, out var rootMenuItem);
 
             using var host = new TestWindowHost(menu);
             rootMenuItem.SetCurrentValue(MenuItem.IsSubmenuOpenProperty, true);
             host.UpdateLayout();
+            WpfTestHost.DoEvents();
 
             Assert.IsTrue(RadioMenuItem.GetAreCheckStatesEnabled(radioSubMenu));
             Assert.IsFalse(radioSubMenu.IsChecked);
-            AssertSubMenuCheckGlyph(radioSubMenu, Visibility.Collapsed, 0.0);
+            AssertSubMenuCheckGlyph(radioSubMenu, Visibility.Visible, 0.0);
 
             Check(items["ArtistName"]);
             host.UpdateLayout();
@@ -153,7 +158,7 @@ public class RadioMenuFlyoutItemInteractionTests
             host.UpdateLayout();
 
             Assert.IsFalse(radioSubMenu.IsChecked);
-            AssertSubMenuCheckGlyph(radioSubMenu, Visibility.Collapsed, 0.0);
+            AssertSubMenuCheckGlyph(radioSubMenu, Visibility.Visible, 0.0);
         });
     }
 
@@ -253,6 +258,8 @@ public class RadioMenuFlyoutItemInteractionTests
     private static void AssertSubMenuCheckGlyph(MenuItem subMenu, Visibility expectedVisibility, double expectedOpacity)
     {
         subMenu.ApplyTemplate();
+
+        Assert.AreSame(Application.Current.FindResource(MenuItem.SubmenuHeaderTemplateKey), subMenu.Template);
 
         var checkGlyph = subMenu.Template.FindName("CheckGlyph", subMenu) as UIElement;
         Assert.IsNotNull(checkGlyph, "Submenu headers should expose a check glyph visual.");

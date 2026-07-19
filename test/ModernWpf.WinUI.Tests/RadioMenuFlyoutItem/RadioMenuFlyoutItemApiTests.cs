@@ -1,5 +1,8 @@
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using ModernWpf;
 using ModernWpf.Controls;
@@ -104,6 +107,55 @@ public class RadioMenuFlyoutItemApiTests
             AssertStateSetter(root, "CheckStates", "CheckedWithIcon", "IconRoot.Visibility");
             AssertStateSetter(root, "KeyboardAcceleratorTextVisibility", "KeyboardAcceleratorTextVisible", "KeyboardAcceleratorTextBlock.Visibility");
             Assert.AreEqual(Visibility.Visible, keyboardAcceleratorTextBlock.Visibility);
+        });
+    }
+
+    [TestMethod]
+    public void AutomationPeerExposesMenuItemToggleContractAndGuardedState()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var yellow = new RadioMenuItem
+            {
+                Header = "Yellow",
+                GroupName = "ColorGroup"
+            };
+            var green = new RadioMenuItem
+            {
+                Header = "Green",
+                GroupName = "ColorGroup",
+                IsChecked = true
+            };
+            var panel = new StackPanel();
+            panel.Children.Add(yellow);
+            panel.Children.Add(green);
+
+            using var host = new TestWindowHost(panel, width: 240, height: 100);
+            host.UpdateLayout();
+
+            var yellowPeer = new MenuItemAutomationPeer(yellow);
+            var greenPeer = new MenuItemAutomationPeer(green);
+            Assert.AreEqual(AutomationControlType.MenuItem, yellowPeer.GetAutomationControlType());
+            Assert.AreEqual("Yellow", yellowPeer.GetName());
+            Assert.AreEqual(AutomationControlType.MenuItem, greenPeer.GetAutomationControlType());
+            Assert.AreEqual("Green", greenPeer.GetName());
+
+            var yellowToggle = yellowPeer.GetPattern(PatternInterface.Toggle) as IToggleProvider;
+            var greenToggle = greenPeer.GetPattern(PatternInterface.Toggle) as IToggleProvider;
+            Assert.IsNotNull(yellowToggle);
+            Assert.IsNotNull(greenToggle);
+            Assert.AreEqual(ToggleState.Off, yellowToggle!.ToggleState);
+            Assert.AreEqual(ToggleState.On, greenToggle!.ToggleState);
+
+            yellowToggle.Toggle();
+            Assert.AreEqual(ToggleState.On, yellowToggle.ToggleState);
+            Assert.AreEqual(ToggleState.Off, greenToggle.ToggleState);
+
+            yellowToggle.Toggle();
+            Assert.AreEqual(ToggleState.On, yellowToggle.ToggleState,
+                "WinUI radio-menu interaction does not allow the selected item to toggle itself off.");
         });
     }
 

@@ -1,26 +1,78 @@
 # ThemeShadow WinUI 3 Parity
 
-Source snapshot: `D:\repos\microsoft-ui-xaml`, `reference/winui3-current` / `c70471c511a0168b61dcca13af9556465f26b673`.
+Current product snapshot: `D:\repos\microsoft-ui-xaml`, official
+`microsoft/microsoft-ui-xaml` `winui3/main` commit
+`de3e767333c2f0717a6a70cb22bd192ced5ad885`.
 
-Current validation: 2026-07-17.
+Current Gallery snapshot: official `microsoft/WinUI-Gallery` commit
+`29f62479d5c046a0b854a5868e5a7cd484572d87`.
+
+Current validation: 2026-07-18.
 
 Source coverage matrix: `docs\theme-shadow-source-coverage.md`.
 
-WinUI source evidence:
+## Current Source Pins and History
 
-- `src\controls\dev\CommonStyles\Common_themeresources.xaml`: `ThemeShadowIsUsingDropShadows=True`.
-- `src\controls\dev\NumberBox\NumberBox.cpp`: popup root gets `ThemeShadow{}` and `Translation.Z` from `NumberBoxPopupShadowDepth`, default `16`.
-- `src\dxaml\xcp\dxaml\lib\CommandBar_Partial.cpp` and `src\controls\dev\CommonStyles\CommandBar_themeresources.xaml`: normal command bar overflow applies elevation to `SecondaryItemsControlShadowWrapper`, keeping `OverflowContentRoot` as the measured popup root around the shadow wrapper.
-- `src\controls\dev\CommandBarFlyout\CommandBarFlyout.cpp` and `src\controls\dev\CommandBarFlyout\CommandBarFlyout_themeresources.xaml`: command bar flyout presenter uses `Translation.Z=32`, and the command bar flyout overflow root uses `OuterOverflowContentRootShadow` / `NoOuterOverflowContentRootShadow` states to attach or clear a `ThemeShadow` at `Translation.Z=32`.
-- `src\controls\dev\NavigationView\NavigationView.cpp`: overlay pane shadow caster gets `ThemeShadow{}` and `Translation.Z` from `PaneOverlayShadowDepth`, default `16`.
-- `src\controls\dev\TeachingTip\TeachingTip.cpp`: `EstablishShadows` applies `ThemeShadow{}` to `ContentRootGrid` when `m_tipShouldHaveShadow=true`, default `m_contentElevation=32`, and expand/contract animations move translation Z between `0.01` and `32`.
-- `src\dxaml\xcp\dxaml\lib\AutoSuggestBox_Partial.cpp`: suggestions popup loaded handling applies elevation to the popup part, which maps to source base elevation `32`.
-- `src\dxaml\xcp\dxaml\lib\ContentDialog_Partial.cpp`: drop-shadow mode applies elevation to the background element with `baseElevation=128`.
-- `src\dxaml\xcp\dxaml\lib\MenuFlyoutPresenter_Partial.cpp`: drop-shadow mode applies elevation to the `MenuFlyoutPresenter` itself at `GetDepth()`, whose default nested depth is `0`, mapping through the source elevation helper to `Translation.Z=32`.
-- `src\dxaml\xcp\dxaml\lib\ElevationHelper.cpp`: default elevated flyout/menu surfaces use base `Translation.Z=32`, plus `8` for each nested depth level.
-- `src\controls\dev\CommonStyles\MenuFlyout_themeresources.xaml`: the default `MenuFlyoutPresenter` template uses a presenter border with `BackgroundSizing=InnerBorderEdge`, menu-flyout padding, `FlyoutThemeMinWidth`, `MenuFlyoutThemeMinHeight`, and `OverlayCornerRadius`.
-- `src\dxaml\xcp\core\core\elements\Popup.cpp` and `src\dxaml\xcp\components\graphics\ThemeShadow.cpp`: windowed Popup drop-shadow mode reserves tight source insets, `4,1,4,8` for tooltip popups and `10,2,10,18` for other popups.
-- `src\dxaml\test\native\external\foundation\graphics\rendering\ThemeShadowTests.cpp` and the MockDComp masters: drop-shadow visuals are `TransparentForInput`, so shadow-only pixels do not receive input, and `ThemeShadowDropShadowOpacity` shows caster opacity propagating to the generated `DropShadowVisual`.
+| Current product source | Git blob |
+| --- | --- |
+| `controls\dev\CommonStyles\Common_themeresources.xaml` | `4442cd93a301ffbb86de5248c4a99dc94d583e32` |
+| `dxaml\xcp\components\graphics\ThemeShadow.cpp` | `7165ba8601fff6c659e3fcef43bc34b534af57fe` |
+| `dxaml\xcp\components\graphics\ProjectedShadowManager.cpp` | `e0a6dcfee7027abc006c53f52d62902327237187` |
+| `dxaml\xcp\dxaml\lib\ElevationHelper.cpp` | `310de7ceda1bf92d987aeec735247d6fc290b98d` |
+| `dxaml\xcp\dxaml\lib\ThemeShadow_Partial.cpp` | `28612e3f793b0e7359eae37ea6d5c2b2b1f9af82` |
+| `dxaml\xcp\dxaml\lib\ThemeShadowFactory_Partial.cpp` | `9a3f8c00bf46242078f26d71ea10400d583a6c22` |
+| `dxaml\xcp\core\core\elements\Popup.cpp` | `ea47b2352bdb0af8f35d7da0e5f5a0e9301745cf` |
+| `dxaml\test\native\external\foundation\graphics\rendering\ThemeShadowTests.cpp` | `505ff2514950ef5277b3f682d09226055f46c0c1` |
+| `dxaml\test\resources\masters\Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowSystemThemeRedrawRTB.Light.1.master.png` | `3eb777c950e0418fc5a25c258f8d313df0ee3c37` |
+| `dxaml\test\resources\masters\Foundation_Graphics_ThemeShadowTests_ThemeShadowDropShadowSystemThemeRedrawRTB.Dark.1.master.png` | `b5425fcc7b819e907acbbd756371f8eaa43c4fb9` |
+
+The prior audit used product commit
+`c70471c511a0168b61dcca13af9556465f26b673`. Commit
+`8463f45162149de0ec3ad7df752596893fe3e13e` moves the mirror from `src\` to
+the repository root. The recipe, elevation, ThemeShadow runtime, popup-inset,
+native-test, and pixel-master sources are byte-identical moves. The only
+substantive current-source change in this surface is
+`b695e427d8ae09616d03ed69530af1a08c46ae22` (`Switch XcpList implementation
+to std::vector`, 2026-05-27): `ProjectedShadowManager` now walks open popup
+receivers through `NewestBegin` / `NewestEnd` and renames its inner iterator.
+That preserves newest-first projected receiver/caster ordering after the
+container change; it does not alter the drop-shadow recipe, pixel masters, or
+explicit windowed-popup insets. WPF has no shared compositor receiver scene,
+so ModernWpf's explicit per-host `ThemeShadowChrome` remains the documented
+platform substitute rather than emulating internal popup-scene ordering.
+
+Current Gallery commit `29f62479d5c046a0b854a5868e5a7cd484572d87`
+retains the page converted by
+`14a4a1a2b8ddc527dc4a7d5f7e743d7c2bc97db7` with no later ThemeShadow
+changes:
+
+| Current Gallery source | Git blob |
+| --- | --- |
+| `WinUIGallery\Samples\ThemeShadow\ThemeShadowPage.xaml` | `b734f335f88dd2a3ee071c64973cce7b83487e1b` |
+| `WinUIGallery\Samples\ThemeShadow\ThemeShadowPage.xaml.cs` | `958fddf5359835ee0be26f3d0100545b579b3e24` |
+| `WinUIGallery\Samples\ThemeShadow\ThemeshadowAppliedBorder.txt` | `7056132b065739ffc1fe8055a9a17bedc78235b5` |
+
+The one current example keeps a 200x200 CardBackground border inside 36-DIP
+padding, OverlayCornerRadius, a ThemeShadow receiver grid, and a 0-64
+Z-translation slider initialized to 32. ModernWpf reproduces that surface with
+`ThemeShadowChrome`, the current snippet, stable source-facing names, and
+animated depth changes that keep the card/caster bounds fixed.
+
+## WinUI Source Evidence
+
+- `controls\dev\CommonStyles\Common_themeresources.xaml`: `ThemeShadowIsUsingDropShadows=True`.
+- `controls\dev\NumberBox\NumberBox.cpp`: popup root gets `ThemeShadow{}` and `Translation.Z` from `NumberBoxPopupShadowDepth`, default `16`.
+- `dxaml\xcp\dxaml\lib\CommandBar_Partial.cpp` and `controls\dev\CommonStyles\CommandBar_themeresources.xaml`: normal command bar overflow applies elevation to `SecondaryItemsControlShadowWrapper`, keeping `OverflowContentRoot` as the measured popup root around the shadow wrapper.
+- `controls\dev\CommandBarFlyout\CommandBarFlyout.cpp` and `controls\dev\CommandBarFlyout\CommandBarFlyout_themeresources.xaml`: command bar flyout presenter uses `Translation.Z=32`, and the command bar flyout overflow root uses `OuterOverflowContentRootShadow` / `NoOuterOverflowContentRootShadow` states to attach or clear a ThemeShadow at `Translation.Z=32`.
+- `controls\dev\NavigationView\NavigationView.cpp`: overlay pane shadow caster gets ThemeShadow and `Translation.Z` from `PaneOverlayShadowDepth`, default `16`.
+- `controls\dev\TeachingTip\TeachingTip.cpp`: `EstablishShadows` applies ThemeShadow to `ContentRootGrid` when `m_tipShouldHaveShadow=true`, default `m_contentElevation=32`, and expand/contract animations move translation Z between `0.01` and `32`.
+- `dxaml\xcp\dxaml\lib\AutoSuggestBox_Partial.cpp`: suggestions popup loaded handling applies elevation to the popup part, which maps to source base elevation `32`.
+- `dxaml\xcp\dxaml\lib\ContentDialog_Partial.cpp`: drop-shadow mode applies elevation to the background element with `baseElevation=128`.
+- `dxaml\xcp\dxaml\lib\MenuFlyoutPresenter_Partial.cpp`: drop-shadow mode applies elevation to the presenter itself at `GetDepth()`, whose default nested depth is `0`, mapping through the elevation helper to `Translation.Z=32`.
+- `dxaml\xcp\dxaml\lib\ElevationHelper.cpp`: default elevated flyout/menu surfaces use base `Translation.Z=32`, plus `8` for each nested depth level.
+- `controls\dev\CommonStyles\MenuFlyout_themeresources.xaml`: the default presenter border uses `BackgroundSizing=InnerBorderEdge`, source padding/minimums, and OverlayCornerRadius.
+- `dxaml\xcp\core\core\elements\Popup.cpp` and `dxaml\xcp\components\graphics\ThemeShadow.cpp`: windowed Popup mode reserves `4,1,4,8` tooltip insets and `10,2,10,18` other-popup insets.
+- `dxaml\test\native\external\foundation\graphics\rendering\ThemeShadowTests.cpp` and MockDComp masters: drop-shadow visuals are transparent for input and caster opacity propagates to the generated DropShadowVisual.
 
 ModernWpf files:
 
@@ -229,16 +281,29 @@ WinUI also has pixel masters for `ThemeShadowDropShadowSystemThemeRedrawRTB`, re
 
 ## Installed Gallery Pixel Gate
 
-The Gallery harness now compares the actual source `Example3Grid` body rather than the stretched sample column. It removes the WinUI `ControlExample` host inset, then compares exact `272x272` Light and Dark demo surfaces. The final strict reports are `artifacts/visual-checks/20260717-083005-154-16988/report.md` at `0.22` for Light and `artifacts/visual-checks/20260717-083029-229-57484/report.md` at `0.12` for Dark, both under an enforced `0.3` gate. This isolates the 200x200 card, its 36px source padding, fill, corner radius, and shadow envelope from the unrelated options column and Gallery shell.
+The Gallery harness compares the actual source `Example3Grid` body rather than
+the stretched sample column. It removes the WinUI `ControlExample` host inset,
+then compares exact `272x272` Light and Dark demo surfaces. Fresh fully live
+evidence is:
+
+| Theme | Report | Reference | Crop sizes | Mean delta | Gate |
+| --- | --- | --- | --- | ---: | --- |
+| Light | `artifacts/visual-checks/20260718-140015-132-64340/report.md` | Fresh post-fix live installed Gallery and ModernWpf | `272x272` / `272x272` | `0.22` | `0.3`, size `0` |
+| Dark | `artifacts/visual-checks/20260718-140046-304-39564/report.md` | Fresh post-fix live installed Gallery and ModernWpf | `272x272` / `272x272` | `0.12` | `0.3`, size `0` |
+
+This isolates the 200x200 card, its 36-DIP source padding, fill, corner radius,
+and shadow envelope from the unrelated options column and Gallery shell. The
+new zero size tolerance makes exact demo-body geometry a required part of the
+gate.
 
 ## Remaining Gap
 
-This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, hollow-center behavior, and light/dark opacity constants now come from WinUI source and WinUI masters, and representative ModernWpf source-backed templates now have rendered-pixel guards for childful and childless chrome shapes. The `ThemeShadowDropShadowSystemThemeRedrawRTB` source PNG masters can be read directly from a local WinUI checkout for the core `50x50` depth-32 canvas. The live WinUI capture app generates all nine manifest PNGs from real WinUI `ThemeShadow` rendering in both source-geometry mode and actual-control mode, writes provenance sidecars for those captures, and the refreshed actual-control folder passes `-RequireReferencePngs`, the reference-directory guard, and the opted-in rendered-template PNG comparison against fresh ModernWpf snapshots. The remaining limitation is the platform boundary itself: WPF still uses a software-rendered `ThemeShadowChrome` substitute instead of compositor `UIElement.Shadow` visuals, so future source changes should keep using the manifest, masks, provenance sidecars, and opted-in PNG comparison as the parity gate.
+This is still a WPF substitution, not a literal WinUI compositor port. The depth, blur, offset, inset, hollow-center behavior, and light/dark opacity constants now come from WinUI source and WinUI masters, and representative ModernWpf source-backed templates now have rendered-pixel guards for childful and childless chrome shapes. The `ThemeShadowDropShadowSystemThemeRedrawRTB` source PNG masters can be read directly from either the current source-root layout or an older `src`-nested local WinUI checkout for the core `50x50` depth-32 canvas. The live WinUI capture app generates all nine manifest PNGs from real WinUI `ThemeShadow` rendering in both source-geometry mode and actual-control mode, writes provenance sidecars for those captures, and the refreshed actual-control folder passes `-RequireReferencePngs`, the reference-directory guard, and the opted-in rendered-template PNG comparison against fresh ModernWpf snapshots. The remaining limitation is the platform boundary itself: WPF still uses a software-rendered `ThemeShadowChrome` substitute instead of compositor `UIElement.Shadow` visuals, so future source changes should keep using the manifest, masks, provenance sidecars, and opted-in PNG comparison as the parity gate.
 
 ## Verification
 
 Focused tests cover the renderer path, rendered alpha-profile calibration metrics, input-hit-test transparency, local and animated caster-opacity propagation, actual-theme redraw behavior, direct opt-in comparison against WinUI's checked-in `ThemeShadowDropShadowSystemThemeRedrawRTB` PNG masters, dynamic corner-radius redraw behavior, the removal of `BlurEffect` border shadow internals, computed depth padding, childless explicit-size caster behavior, source windowed Popup insets, popup-host template opt-ins, renderer geometry from source control-level MockDComp masters, rendered shadow pixels from representative source-backed childful and childless template chromes, rendered-template snapshot metrics, PNG reference comparison, reference mask sidecars, reference capture staging and provenance sidecars, rendered-template coverage for FlyoutPresenter, NumberBox, AutoSuggestBox, CommandBar, CommandBarFlyout, MenuFlyoutPresenter, and TeachingTip, FlyoutPresenter's source child-elevation shadow path, the NumberBox popup's source `NumberBoxPopupShadowDepth=16` path, NavigationView's source `PaneOverlayShadowDepth=16` shadow caster, ContentDialog's source `baseElevation=128` shadow depth, TeachingTip's source `ContentRootGrid` shadow depth, CommandBar's source `SecondaryItemsControlShadowWrapper` overflow target, AutoSuggestBox's source popup-child suggestions shadow target, CommandBarFlyout's source presenter-shadow toggle lifecycle and overflow-root shadow states, MenuFlyoutPresenter's source-shaped `ThemeShadowChrome` presenter shadow path, and the static inventory of product XAML `ThemeShadowChrome` hosts.
 
-The current pixel-master, actual-theme redraw, and dynamic-corner-radius slice passes 3/3 on `net8.0-windows7.0`. The Gallery ThemeShadow sample/crop/gate slice passes 3/3 on both `net8.0-windows7.0` and `net10.0-windows7.0`.
+The current product/source ThemeShadow slice passes 33/33 on `net8.0-windows7.0`. That run covers the current-source audit plus the renderer, actual-theme redraw, dynamic-corner-radius, template-host, and source-shape paths. The direct current-source PNG-master opt-in passes 1/1 with `MODERNWPF_WINUI_SOURCE_ROOT=D:\repos\microsoft-ui-xaml`. The Gallery ThemeShadow sample/crop/gate slice passes 3/3 on both `net8.0-windows7.0` and `net10.0-windows7.0`. A `net462` Controls build succeeds with zero errors; its 20 warnings are existing TitleBar, NavigationView, ItemsRepeater, and PersonPicture diagnostics unrelated to this renderer change.
 
 `TemplateParityTests.ThemeShadowSourceCoverageAuditCoversKnownWinUIShadowInputs` keeps the source coverage matrix aligned with the known WinUI shadow inputs, shared renderer recipe sources, official WPF Fluent stock exceptions, and documented WPF substitutions.

@@ -88,6 +88,7 @@ namespace ModernWpf.Gallery.Models
             "ColorPicker",
             "HyperlinkButton",
             "ProgressRing",
+            "WinUIProgressBar",
             "InfoBadge",
             "Flyout",
             "Popup",
@@ -210,8 +211,30 @@ namespace ModernWpf.Gallery.Models
                 .Concat(sourceItems.Where(sourceItem =>
                     IsModernWpfExtensionItem(sourceItem.UniqueId) &&
                     wpfItems.All(wpfItem => !string.Equals(sourceItem.UniqueId, wpfItem.UniqueId, StringComparison.OrdinalIgnoreCase))))
+                .Concat(new[] { CreateModernWpfProgressBarItem() })
                 .ToArray();
             return NormalizeRelatedControlIds(items);
+        }
+
+        private static GalleryItem CreateModernWpfProgressBarItem()
+        {
+            return new GalleryItem(
+                "StatusAndInfo",
+                "WinUIProgressBar",
+                "ProgressBar (WinUI)",
+                "Shows an app's progress on a task, or that the app is performing ongoing work that doesn't block user interaction.",
+                "ms-appx:///Assets/ControlImages/ProgressBar.png",
+                "The WinUI-style ProgressBar has two visual representations:\nIndeterminate - shows that a task is ongoing, but doesn't block user interaction.\nDeterminate - shows how much progress has been made on a known amount of work.",
+                "ModernWpf.Controls",
+                false,
+                false,
+                new[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control", "RangeBase" },
+                new[]
+                {
+                    new GalleryDocLink("ProgressBar - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.progressbar"),
+                    new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/progress-controls")
+                },
+                new[] { "ProgressRing" });
         }
 
         private static bool IsOverviewGroup(GalleryGroup group)

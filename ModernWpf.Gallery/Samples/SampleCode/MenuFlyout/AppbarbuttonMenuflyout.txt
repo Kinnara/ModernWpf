@@ -1,0 +1,9 @@
+<AppBarButton Icon="Sort" IsCompact="True" ToolTipService.ToolTip="Sort" AutomationProperties.Name="Sort">
+    <AppBarButton.Flyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Text="By rating" Click="MenuFlyoutItem_Click" Tag="rating"/>
+            <MenuFlyoutItem Text="By match" Click="MenuFlyoutItem_Click" Tag="match"/>
+            <MenuFlyoutItem Text="By distance" Click="MenuFlyoutItem_Click" Tag="distance"/>
+        </MenuFlyout>
+    </AppBarButton.Flyout>
+</AppBarButton>

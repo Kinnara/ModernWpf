@@ -63,6 +63,17 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region DynamicOverflowOrder
+
+        public static readonly DependencyProperty DynamicOverflowOrderProperty =
+            DependencyProperty.RegisterAttached(
+                "DynamicOverflowOrder",
+                typeof(int),
+                typeof(AppBarElementProperties),
+                new PropertyMetadata(0, OnDynamicOverflowOrderChanged));
+
+        #endregion
+
         #region UseOverflowStyle
 
         internal static readonly DependencyProperty UseOverflowStyleProperty =

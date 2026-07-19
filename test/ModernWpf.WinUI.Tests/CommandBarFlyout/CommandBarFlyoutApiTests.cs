@@ -85,6 +85,10 @@ public class CommandBarFlyoutApiTests
             Assert.IsTrue(commandBar.IsOpen);
             Assert.AreEqual(CommandBarOverflowButtonVisibility.Collapsed, commandBar.OverflowButtonVisibility);
 
+            commandBar.SetCurrentValue(CommandBarFlyoutCommandBar.IsOpenProperty, false);
+            WpfTestHost.DoEvents();
+            Assert.IsTrue(commandBar.IsOpen, "AlwaysExpanded must reject an overflow-collapse request while the flyout is open.");
+
             HideAndWait(commandBarFlyout);
         });
     }
@@ -184,6 +188,100 @@ public class CommandBarFlyoutApiTests
             VerifyPrimaryCommandBottomLabel(shareButton, "Share");
             VerifyPrimaryCommandBottomLabel(saveButton, "Save");
             VerifyPrimaryCommandBottomLabel(deleteButton, "Delete");
+
+            HideAndWait(commandBarFlyout);
+        });
+    }
+
+    [TestMethod]
+    public void WidePrimaryCommandStripMovesExcessCommandsIntoOverflowLikeWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right
+            };
+
+            for (var i = 0; i < 20; i++)
+            {
+                commandBarFlyout.PrimaryCommands.Add(new AppBarButton());
+            }
+
+            for (var i = 21; i <= 25; i++)
+            {
+                commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = $"Item {i}" });
+            }
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 620, height: 420);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            var commandBar = GetCommandBar(commandBarFlyout);
+            commandBar.ApplyTemplate();
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var primaryPanel = FindTemplateChild<System.Windows.Controls.Panel>(commandBar, "PrimaryItemsPanel");
+            var secondaryPanel = FindTemplateChild<System.Windows.Controls.Panel>(commandBar, "SecondaryItemsPanel");
+
+            Assert.AreEqual(9, primaryPanel.Children.Count);
+            Assert.AreEqual(17, secondaryPanel.Children.Count, "Expected 11 moved primary commands, an automatic separator, and five secondary commands.");
+            Assert.IsInstanceOfType(secondaryPanel.Children[11], typeof(AppBarSeparator));
+
+            for (var i = 0; i < 11; i++)
+            {
+                Assert.IsTrue((bool)secondaryPanel.Children[i].GetValue(AppBarElementProperties.IsInOverflowProperty));
+            }
+
+            HideAndWait(commandBarFlyout);
+        });
+    }
+
+    [TestMethod]
+    public void DynamicallyInsertedCommandsKeepCurrentFlyoutMenuItemAutomationRoles()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = new CommandBarFlyout();
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Label = "Copy" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Select all" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 420, height: 260);
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            var insertedPrimary = new AppBarButton { Label = "Paste" };
+            var insertedSecondary = new AppBarToggleButton { Label = "Bold" };
+            commandBarFlyout.PrimaryCommands.Add(insertedPrimary);
+            commandBarFlyout.SecondaryCommands.Add(insertedSecondary);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var primaryPeer = UIElementAutomationPeer.CreatePeerForElement(insertedPrimary)
+                ?? new ModernWpf.Automation.Peers.AppBarButtonAutomationPeer(insertedPrimary);
+            var secondaryPeer = UIElementAutomationPeer.CreatePeerForElement(insertedSecondary)
+                ?? new ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer(insertedSecondary);
+
+            Assert.AreEqual(AutomationControlType.MenuItem, primaryPeer.GetAutomationControlType());
+            Assert.AreEqual("menu item", primaryPeer.GetLocalizedControlType());
+            Assert.AreEqual(AutomationControlType.MenuItem, secondaryPeer.GetAutomationControlType());
+            Assert.AreEqual("menu item", secondaryPeer.GetLocalizedControlType());
 
             HideAndWait(commandBarFlyout);
         });

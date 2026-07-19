@@ -424,6 +424,8 @@ public class MenuFlyoutApiTests
             AssertDynamicResourceSetter(style, Control.BackgroundProperty, "MenuFlyoutPresenterBackground");
             AssertDynamicResourceSetter(style, Control.BorderBrushProperty, "MenuFlyoutPresenterBorderBrush");
             AssertDynamicResourceSetter(style, Control.BorderThicknessProperty, "MenuFlyoutPresenterBorderThemeThickness");
+            AssertDynamicResourceSetter(style, Control.FontFamilyProperty, "ContentControlThemeFontFamily");
+            AssertDynamicResourceSetter(style, Control.FontSizeProperty, "ControlContentThemeFontSize");
             AssertDynamicResourceSetter(style, Control.PaddingProperty, "MenuFlyoutPresenterThemePadding");
             AssertDynamicResourceSetter(style, FrameworkElement.MinWidthProperty, "FlyoutThemeMinWidth");
             AssertDynamicResourceSetter(style, FrameworkElement.MinHeightProperty, "MenuFlyoutThemeMinHeight");
@@ -456,6 +458,8 @@ public class MenuFlyoutApiTests
                 Assert.AreSame(presenter.TryFindResource("MenuFlyoutPresenterBackground"), presenter.Background);
                 Assert.AreSame(presenter.TryFindResource("MenuFlyoutPresenterBorderBrush"), presenter.BorderBrush);
                 Assert.AreEqual(presenter.TryFindResource("MenuFlyoutPresenterBorderThemeThickness"), presenter.BorderThickness);
+                Assert.AreEqual(presenter.TryFindResource("ContentControlThemeFontFamily"), presenter.FontFamily);
+                Assert.AreEqual(presenter.TryFindResource("ControlContentThemeFontSize"), presenter.FontSize);
                 Assert.AreEqual(presenter.TryFindResource("MenuFlyoutPresenterThemePadding"), presenter.Padding);
                 Assert.AreEqual(presenter.TryFindResource("FlyoutThemeMinWidth"), presenter.MinWidth);
                 Assert.AreEqual(presenter.TryFindResource("MenuFlyoutThemeMinHeight"), presenter.MinHeight);
@@ -485,6 +489,7 @@ public class MenuFlyoutApiTests
                 Assert.AreEqual(ScrollBarVisibility.Disabled, scrollViewer.HorizontalScrollBarVisibility);
                 Assert.AreEqual(ScrollBarVisibility.Auto, scrollViewer.VerticalScrollBarVisibility);
                 Assert.AreEqual(presenter.Padding, scrollViewer.Margin);
+                Assert.AreEqual(new Thickness(0, 0, 0, 1), scrollViewer.Padding);
             }
             finally
             {
@@ -495,7 +500,7 @@ public class MenuFlyoutApiTests
     }
 
     [TestMethod]
-    public void ThemeResourcesUseWinUI2MenuFlyoutHighContrastTokens()
+    public void ThemeResourcesUseCurrentWinUIMenuFlyoutTokens()
     {
         WpfTestHost.Run(() =>
         {
@@ -510,25 +515,25 @@ public class MenuFlyoutApiTests
             AssertThemeResourceValue("HighContrast", "MenuFlyoutPresenterBorderThemeThickness", new Thickness(2));
             AssertThemeResourceValue("HighContrast", "MenuFlyoutItemBorderThickness", new Thickness(0));
             AssertThemeResourceValue("HighContrast", "MenuFlyoutSubItemBorderThickness", new Thickness(0));
-            AssertThemeResourceValue("HighContrast", "MenuFlyoutItemThemePadding", new Thickness(11, 9, 11, 10));
-            AssertThemeResourceValue("HighContrast", "MenuFlyoutItemThemePaddingNarrow", new Thickness(11, 4, 11, 7));
+            AssertThemeResourceValue("HighContrast", "MenuFlyoutItemThemePadding", new Thickness(11, 8, 11, 9));
+            AssertThemeResourceValue("HighContrast", "MenuFlyoutItemThemePaddingNarrow", new Thickness(11, 4, 11, 5));
             AssertThemeResourceValue("HighContrast", "MenuFlyoutItemDoublePlaceholderThemeThickness", new Thickness(56, 0, 0, 0));
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSeparatorBackground", "SystemColorWindowTextColorBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutPresenterBackground", "SystemColorWindowColorBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutPresenterBorderBrush", "SystemColorWindowTextColorBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutItemBackground", "SystemControlTransparentBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemBackgroundPointerOver", "SystemControlHighlightListLowBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemBackgroundPressed", "SystemControlHighlightListMediumBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemBackgroundPointerOver", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemBackgroundPressed", "SystemColorHighlightColorBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutItemBackgroundDisabled", "SystemControlTransparentBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutItemBackgroundBrush", "SystemControlTransparentBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemForeground", "SystemColorWindowTextColorBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemForegroundPressed", "SystemControlHighlightAltBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemKeyboardAcceleratorTextForeground", "SystemControlForegroundBaseMediumBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver", "SystemControlHighlightAltBaseMediumBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed", "SystemControlHighlightAltBaseMediumBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemForegroundPointerOver", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemForegroundPressed", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemForegroundDisabled", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemKeyboardAcceleratorTextForeground", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled", "SystemColorGrayTextColorBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutItemRevealBackground", "SystemControlTransparentRevealBackgroundBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutItemRevealBackgroundPointerOver", "SystemControlHighlightListLowRevealBackgroundBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutItemRevealBackgroundPressed", "SystemControlHighlightListMediumRevealBackgroundBrush");
@@ -539,16 +544,16 @@ public class MenuFlyoutApiTests
             AssertThemeResourceReference("HighContrast", "MenuFlyoutItemRevealBorderBrushDisabled", "SystemControlTransparentBrush");
             AssertHighContrastToggleMenuFlyoutItemTheme();
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemBackground", "SystemControlTransparentBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemBackgroundPointerOver", "SystemControlHighlightListLowBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemBackgroundPressed", "SystemControlHighlightListAccentHighBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemBackgroundSubMenuOpened", "SystemControlHighlightListLowBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemBackgroundPointerOver", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemBackgroundPressed", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemBackgroundSubMenuOpened", "SystemControlTransparentBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemBackgroundDisabled", "SystemControlTransparentBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemBackgroundBrush", "SystemControlTransparentBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemForeground", "SystemColorWindowTextColorBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemForegroundPressed", "SystemControlHighlightAltBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemForegroundSubMenuOpened", "SystemControlHighlightAltBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemForegroundPointerOver", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemForegroundPressed", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemForegroundSubMenuOpened", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemForegroundDisabled", "SystemColorGrayTextColorBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemChevron", "SystemColorButtonTextColorBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemChevronPointerOver", "SystemColorHighlightTextColorBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemChevronPressed", "SystemColorHighlightTextColorBrush");
@@ -557,7 +562,7 @@ public class MenuFlyoutApiTests
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemRevealBackground", "SystemControlTransparentRevealBackgroundBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemRevealBackgroundPointerOver", "SystemControlHighlightListLowRevealBackgroundBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemRevealBackgroundPressed", "SystemControlHighlightAccentRevealBackgroundBrush");
-            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemRevealBackgroundSubMenuOpened", "SystemControlHighlightListLowBrush");
+            AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemRevealBackgroundSubMenuOpened", "SystemControlHighlightListLowRevealBackgroundBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemRevealBackgroundDisabled", "SystemControlTransparentBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemRevealBorderBrush", "SystemControlTransparentBrush");
             AssertThemeResourceReference("HighContrast", "MenuFlyoutSubItemRevealBorderBrushPressed", "SystemControlTransparentRevealBorderBrush");
@@ -573,8 +578,8 @@ public class MenuFlyoutApiTests
         AssertThemeResourceValue(themeName, "MenuFlyoutPresenterBorderThemeThickness", new Thickness(1));
         AssertThemeResourceValue(themeName, "MenuFlyoutItemBorderThickness", new Thickness(0));
         AssertThemeResourceValue(themeName, "MenuFlyoutSubItemBorderThickness", new Thickness(0));
-        AssertThemeResourceValue(themeName, "MenuFlyoutItemThemePadding", new Thickness(11, 9, 11, 10));
-        AssertThemeResourceValue(themeName, "MenuFlyoutItemThemePaddingNarrow", new Thickness(11, 4, 11, 7));
+        AssertThemeResourceValue(themeName, "MenuFlyoutItemThemePadding", new Thickness(11, 8, 11, 9));
+        AssertThemeResourceValue(themeName, "MenuFlyoutItemThemePaddingNarrow", new Thickness(11, 4, 11, 5));
         AssertThemeResourceValue(themeName, "MenuFlyoutItemDoublePlaceholderThemeThickness", new Thickness(56, 0, 0, 0));
         AssertThemeResourceReference(themeName, "MenuFlyoutSeparatorBackground", "DividerStrokeColorDefaultBrush");
         AssertThemeResourceReference(themeName, "MenuFlyoutPresenterBackground", "AcrylicBackgroundFillColorDefaultBrush");
@@ -639,10 +644,10 @@ public class MenuFlyoutApiTests
         AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush");
         AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemForegroundPressed", "SystemControlHighlightAltBaseHighBrush");
         AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
-        AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground", "SystemControlForegroundBaseMediumBrush");
-        AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver", "SystemControlHighlightAltBaseMediumBrush");
-        AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed", "SystemControlHighlightAltBaseMediumBrush");
-        AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
+        AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed", "TextFillColorSecondaryBrush");
+        AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled", "TextFillColorDisabledBrush");
         AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemCheckGlyphForeground", "SystemControlForegroundBaseMediumHighBrush");
         AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemCheckGlyphForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush");
         AssertThemeResourceReference(themeName, "ToggleMenuFlyoutItemCheckGlyphForegroundPressed", "SystemControlHighlightAltBaseHighBrush");
@@ -667,10 +672,10 @@ public class MenuFlyoutApiTests
         AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush");
         AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemForegroundPressed", "SystemControlHighlightAltBaseHighBrush");
         AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
-        AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground", "SystemControlForegroundBaseMediumBrush");
-        AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver", "SystemControlHighlightAltBaseMediumBrush");
-        AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed", "SystemControlHighlightAltBaseMediumBrush");
-        AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemKeyboardAcceleratorTextForeground", "SystemColorWindowTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundPressed", "SystemColorHighlightTextColorBrush");
+        AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled", "SystemColorGrayTextColorBrush");
         AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemCheckGlyphForeground", "SystemControlForegroundBaseMediumHighBrush");
         AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemCheckGlyphForegroundPointerOver", "SystemControlHighlightAltBaseHighBrush");
         AssertThemeResourceReference("HighContrast", "ToggleMenuFlyoutItemCheckGlyphForegroundPressed", "SystemControlHighlightAltBaseHighBrush");

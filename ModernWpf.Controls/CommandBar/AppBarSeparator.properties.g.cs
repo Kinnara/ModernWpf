@@ -32,5 +32,18 @@ namespace ModernWpf.Controls
         }
 
         #endregion
+
+        #region DynamicOverflowOrder
+
+        public static readonly DependencyProperty DynamicOverflowOrderProperty =
+            AppBarElementProperties.DynamicOverflowOrderProperty.AddOwner(typeof(AppBarSeparator));
+
+        public int DynamicOverflowOrder
+        {
+            get => (int)GetValue(DynamicOverflowOrderProperty);
+            set => SetValue(DynamicOverflowOrderProperty, value);
+        }
+
+        #endregion
     }
 }

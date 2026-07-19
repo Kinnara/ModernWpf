@@ -213,6 +213,60 @@ public class RadioButtonsApiTests
         });
     }
 
+    [TestMethod]
+    public void VerifySelectionChangedArgsDoNotContainNullItems()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var radioButtons = new ModernWpf.Controls.RadioButtons
+            {
+                ItemsSource = new List<string> { "0", "1", "2", "3" }
+            };
+            var selectionChangedArgs = new List<SelectionChangedEventArgs>();
+            radioButtons.SelectionChanged += (sender, args) => selectionChangedArgs.Add(args);
+
+            using var host = new TestWindowHost(radioButtons);
+            selectionChangedArgs.Clear();
+
+            radioButtons.SelectedIndex = 0;
+            host.UpdateLayout();
+
+            Assert.IsTrue(selectionChangedArgs.Count > 0);
+            var firstSelection = selectionChangedArgs.Last();
+            Assert.AreEqual(0, firstSelection.RemovedItems.Count);
+            Assert.AreEqual(1, firstSelection.AddedItems.Count);
+            Assert.AreEqual("0", firstSelection.AddedItems[0]);
+            AssertNoNullItems(selectionChangedArgs);
+
+            selectionChangedArgs.Clear();
+            radioButtons.SelectedIndex = 2;
+            host.UpdateLayout();
+
+            Assert.AreEqual(1, selectionChangedArgs.Last().RemovedItems.Count);
+            Assert.AreEqual(1, selectionChangedArgs.Last().AddedItems.Count);
+            AssertNoNullItems(selectionChangedArgs);
+
+            selectionChangedArgs.Clear();
+            radioButtons.SelectedIndex = 99;
+            host.UpdateLayout();
+
+            Assert.AreEqual(1, selectionChangedArgs.Last().RemovedItems.Count);
+            Assert.AreEqual(0, selectionChangedArgs.Last().AddedItems.Count);
+            AssertNoNullItems(selectionChangedArgs);
+
+            radioButtons.SelectedIndex = 0;
+            host.UpdateLayout();
+            selectionChangedArgs.Clear();
+
+            radioButtons.SelectedIndex = -1;
+            host.UpdateLayout();
+
+            Assert.AreEqual(1, selectionChangedArgs.Last().RemovedItems.Count);
+            Assert.AreEqual(0, selectionChangedArgs.Last().AddedItems.Count);
+            AssertNoNullItems(selectionChangedArgs);
+        });
+    }
+
     private static bool IsBlue(Brush brush)
     {
         return brush is SolidColorBrush solidColorBrush && solidColorBrush.Color == Colors.Blue;
@@ -231,6 +285,15 @@ public class RadioButtonsApiTests
         }
 
         Assert.AreEqual(expected.ToString(), actual.ToString());
+    }
+
+    private static void AssertNoNullItems(IEnumerable<SelectionChangedEventArgs> selectionChangedArgs)
+    {
+        foreach (var args in selectionChangedArgs)
+        {
+            Assert.IsFalse(args.AddedItems.Cast<object>().Any(item => item is null));
+            Assert.IsFalse(args.RemovedItems.Cast<object>().Any(item => item is null));
+        }
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)

@@ -214,6 +214,10 @@ public class HyperlinkButtonApiTests
             invokeProvider.Invoke();
 
             Assert.AreEqual(1, clickCount);
+
+            hyperlinkButton.IsEnabled = false;
+            Assert.ThrowsException<ElementNotEnabledException>(() => invokeProvider.Invoke());
+            Assert.AreEqual(1, clickCount);
         });
     }
 

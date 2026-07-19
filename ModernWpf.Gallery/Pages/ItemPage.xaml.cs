@@ -210,7 +210,9 @@ namespace ModernWpf.Gallery.Pages
 
             var maxSnippetCount = string.Equals(uniqueId, "NavigationView", StringComparison.Ordinal)
                 ? 12
-                : 6;
+                : string.Equals(uniqueId, "MenuFlyout", StringComparison.Ordinal)
+                    ? 7
+                    : 6;
 
             return Directory.GetFiles(folder, "*.txt")
                 .OrderBy(Path.GetFileName)
@@ -431,6 +433,17 @@ namespace ModernWpf.Gallery.Pages
 
         public GalleryExample(string headerText, object exampleContent, string xamlCode, string csharpCode, object optionsContent)
             : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(10), Array.Empty<string>(), optionsContent)
+        {
+        }
+
+        public GalleryExample(
+            string headerText,
+            object exampleContent,
+            string xamlCode,
+            string csharpCode,
+            object optionsContent,
+            IReadOnlyList<string> consumedSnippetTexts)
+            : this(headerText, exampleContent, xamlCode, csharpCode, new Thickness(10), consumedSnippetTexts, optionsContent)
         {
         }
 

@@ -203,6 +203,40 @@ public class ListViewApiTests
     }
 
     [TestMethod]
+    public void AutomationPeersMatchWinUIClassTypesAndConditionalInvokePattern()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var listView = new MuxListView();
+            var listPeer = new ModernWpf.Controls.ListViewBaseAutomationPeer(listView);
+            var listItemPeer = new ModernWpf.Controls.ListViewBaseItemAutomationPeer(
+                new MuxListViewItem { Content = "List item" },
+                listPeer);
+            Assert.AreEqual("ListView", listPeer.GetClassName());
+            Assert.AreEqual(AutomationControlType.List, listPeer.GetAutomationControlType());
+            Assert.AreEqual("ListViewItem", listItemPeer.GetClassName());
+            Assert.AreEqual(AutomationControlType.ListItem, listItemPeer.GetAutomationControlType());
+            Assert.IsNull(listItemPeer.GetPattern(PatternInterface.Invoke));
+
+            var gridView = new MuxGridView();
+            var gridPeer = new ModernWpf.Controls.ListViewBaseAutomationPeer(gridView);
+            var gridItemPeer = new ModernWpf.Controls.ListViewBaseItemAutomationPeer(
+                new MuxGridViewItem { Content = "Grid item" },
+                gridPeer);
+            Assert.AreEqual("GridView", gridPeer.GetClassName());
+            Assert.AreEqual(AutomationControlType.List, gridPeer.GetAutomationControlType());
+            Assert.AreEqual("GridViewItem", gridItemPeer.GetClassName());
+            Assert.AreEqual(AutomationControlType.ListItem, gridItemPeer.GetAutomationControlType());
+            Assert.IsNull(gridItemPeer.GetPattern(PatternInterface.Invoke));
+
+            gridView.IsItemClickEnabled = true;
+            Assert.IsNotNull(gridItemPeer.GetPattern(PatternInterface.Invoke));
+        });
+    }
+
+    [TestMethod]
     public void FocusVisualBrushPropertiesUseBrushTypes()
     {
         WpfTestHost.Run(() =>

@@ -204,6 +204,8 @@ public class ProgressRingApiTests
             AutomationProperties.SetName(progressRing, "Loading");
 
             var peer = FrameworkElementAutomationPeer.CreatePeerForElement(progressRing);
+            Assert.AreEqual(AutomationControlType.ProgressBar, peer.GetAutomationControlType());
+            Assert.AreEqual("ProgressRing", peer.GetLocalizedControlType());
             Assert.AreEqual("Busy Loading", peer.GetName());
 
             progressRing.IsIndeterminate = false;

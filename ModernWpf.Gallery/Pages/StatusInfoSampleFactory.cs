@@ -84,6 +84,12 @@ namespace ModernWpf.Gallery.Pages
               IsIndeterminate=""False""
               $(Background)/>";
 
+        private const string ProgressBarIndeterminateXaml =
+@"<ProgressBar Width=""130"" IsIndeterminate=""True"" ShowPaused=""$(ShowPaused)"" ShowError=""$(ShowError)"" />";
+
+        private const string ProgressBarDeterminateXaml =
+@"<ProgressBar Width=""130"" Value=""$(DeterminateProgressValue)"" />";
+
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
@@ -94,6 +100,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateInfoBarExamples();
                 case "ProgressRing":
                     return CreateProgressRingExamples();
+                case "WinUIProgressBar":
+                    return CreateProgressBarExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -109,6 +117,8 @@ namespace ModernWpf.Gallery.Pages
                     return CreateInfoBarSample();
                 case "ProgressRing":
                     return CreateProgressRingSample();
+                case "WinUIProgressBar":
+                    return CreateProgressBarSample();
                 default:
                     return null;
             }
@@ -705,6 +715,135 @@ namespace ModernWpf.Gallery.Pages
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ProgressRing"));
             panel.Children.Add(CreateIndeterminateProgressRingExampleContent(assignRootAutomationId: false));
             return panel;
+        }
+
+        private static UIElement CreateProgressBarSample()
+        {
+            var panel = new GallerySamplePanel
+            {
+                Margin = new Thickness(0, 0, 0, 12)
+            };
+            GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("WinUIProgressBar"));
+            panel.Children.Add(CreateIndeterminateProgressBarExampleContent(assignRootAutomationId: false, out _));
+            return panel;
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateProgressBarExamples()
+        {
+            var indeterminate = CreateIndeterminateProgressBarExampleContent(assignRootAutomationId: true, out var options);
+            return new[]
+            {
+                new GalleryExample(
+                    "An indeterminate progress bar.",
+                    indeterminate,
+                    ProgressBarIndeterminateXaml,
+                    null,
+                    options),
+                new GalleryExample(
+                    "A determinate progress bar.",
+                    CreateDeterminateProgressBarExampleContent(),
+                    ProgressBarDeterminateXaml,
+                    null)
+            };
+        }
+
+        private static GallerySamplePanel CreateIndeterminateProgressBarExampleContent(
+            bool assignRootAutomationId,
+            out Mux.RadioButtons options)
+        {
+            var root = new GallerySamplePanel();
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("WinUIProgressBar"));
+            }
+
+            var progressBar = new Mux.ProgressBar
+            {
+                Name = "ProgressBar1",
+                Width = 130,
+                Margin = new Thickness(10, 10, 0, 0),
+                VerticalAlignment = VerticalAlignment.Top,
+                IsIndeterminate = true
+            };
+            GalleryAutomation.WithAutomationId(progressBar, GalleryAutomation.SampleElementId("WinUIProgressBar", "IndeterminateProgressBar"));
+
+            var radioButtons = new Mux.RadioButtons
+            {
+                Name = "ProgressStateRadioButtons",
+                Header = "Progress state"
+            };
+            radioButtons.Items.Add(new RadioButton { Name = "RunningRB", Content = "Running", IsChecked = true });
+            radioButtons.Items.Add(new RadioButton { Name = "PausedRB", Content = "Paused" });
+            radioButtons.Items.Add(new RadioButton { Name = "ErrorRB", Content = "Error" });
+            radioButtons.SelectionChanged += delegate
+            {
+                progressBar.ShowPaused = radioButtons.SelectedIndex == 1;
+                progressBar.ShowError = radioButtons.SelectedIndex == 2;
+            };
+            radioButtons.SelectedIndex = 0;
+            options = radioButtons;
+
+            root.Children.Add(progressBar);
+            return root;
+        }
+
+        private static GallerySamplePanel CreateDeterminateProgressBarExampleContent()
+        {
+            var root = new GallerySamplePanel();
+            var progressBar = new Mux.ProgressBar
+            {
+                Name = "ProgressBar2",
+                Width = 130
+            };
+            AutomationProperties.SetName(progressBar, "Determinate ProgressBar example");
+            GalleryAutomation.WithAutomationId(progressBar, GalleryAutomation.SampleElementId("WinUIProgressBar", "DeterminateProgressBar"));
+
+            var output = new TextBlock
+            {
+                Name = "Control2Output",
+                Width = 60,
+                TextAlignment = TextAlignment.Center
+            };
+            var label = new TextBlock
+            {
+                Name = "ProgressLabel",
+                Margin = new Thickness(0, 0, 10, 0),
+                VerticalAlignment = VerticalAlignment.Center,
+                Text = "Progress"
+            };
+            var progressValue = new Mux.NumberBox
+            {
+                Name = "ProgressValue",
+                Minimum = 0,
+                Maximum = 100,
+                SpinButtonPlacementMode = Mux.NumberBoxSpinButtonPlacementMode.Inline,
+                Value = 0
+            };
+            AutomationProperties.SetName(progressValue, "NumberBox controlling ProgressBar2 value");
+            AutomationProperties.SetLabeledBy(progressValue, label);
+            progressValue.ValueChanged += delegate(Mux.NumberBox sender, Mux.NumberBoxValueChangedEventArgs args)
+            {
+                if (!double.IsNaN(sender.Value))
+                {
+                    progressBar.Value = sender.Value;
+                }
+                else
+                {
+                    sender.Value = 0;
+                }
+            };
+
+            var sample = new StackPanel
+            {
+                Name = "Control2",
+                Orientation = Orientation.Horizontal
+            };
+            sample.Children.Add(progressBar);
+            sample.Children.Add(output);
+            sample.Children.Add(label);
+            sample.Children.Add(progressValue);
+            root.Children.Add(sample);
+            return root;
         }
 
         private static IReadOnlyList<GalleryExample> CreateProgressRingExamples()

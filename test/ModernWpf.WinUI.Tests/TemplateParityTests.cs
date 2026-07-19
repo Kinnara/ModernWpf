@@ -286,27 +286,27 @@ public class TemplateParityTests
         var auditFile = Path.Combine(repoRoot, "docs", "theme-shadow-source-coverage.md");
         var expectedSources = new[]
         {
-            @"src\controls\dev\CommonStyles\Common_themeresources.xaml",
-            @"src\dxaml\xcp\dxaml\lib\ElevationHelper.cpp",
-            @"src\dxaml\xcp\components\graphics\ThemeShadow.cpp",
-            @"src\dxaml\xcp\components\graphics\ProjectedShadowManager.cpp",
-            @"src\dxaml\test\native\external\foundation\graphics\rendering\ThemeShadowTests.cpp",
-            @"src\controls\dev\NumberBox\NumberBox.cpp",
-            @"src\dxaml\xcp\dxaml\lib\CommandBar_Partial.cpp",
-            @"src\controls\dev\CommandBarFlyout\CommandBarFlyout.cpp",
-            @"src\controls\dev\CommandBarFlyout\CommandBarFlyout_themeresources.xaml",
-            @"src\controls\dev\NavigationView\NavigationView.cpp",
-            @"src\controls\dev\TeachingTip\TeachingTip.cpp",
-            @"src\controls\dev\TeachingTip\TeachingTip.cpp",
-            @"src\dxaml\xcp\dxaml\lib\AutoSuggestBox_Partial.cpp",
-            @"src\dxaml\xcp\dxaml\lib\ContentDialog_Partial.cpp",
-            @"src\dxaml\xcp\dxaml\lib\FlyoutPresenter_partial.cpp",
-            @"src\dxaml\xcp\dxaml\lib\MenuFlyoutPresenter_Partial.cpp",
-            @"src\dxaml\xcp\dxaml\lib\ComboBox_Partial.cpp",
-            @"src\dxaml\xcp\dxaml\lib\ToolTip_Partial.cpp",
-            @"src\dxaml\phone\lib\DatePickerFlyoutPresenter_Partial.cpp",
-            @"src\dxaml\phone\lib\TimePickerFlyoutPresenter_Partial.cpp",
-            @"src\dxaml\xcp\dxaml\lib\UIElement_Partial.cpp"
+            @"controls\dev\CommonStyles\Common_themeresources.xaml",
+            @"dxaml\xcp\dxaml\lib\ElevationHelper.cpp",
+            @"dxaml\xcp\components\graphics\ThemeShadow.cpp",
+            @"dxaml\xcp\components\graphics\ProjectedShadowManager.cpp",
+            @"dxaml\test\native\external\foundation\graphics\rendering\ThemeShadowTests.cpp",
+            @"controls\dev\NumberBox\NumberBox.cpp",
+            @"dxaml\xcp\dxaml\lib\CommandBar_Partial.cpp",
+            @"controls\dev\CommandBarFlyout\CommandBarFlyout.cpp",
+            @"controls\dev\CommandBarFlyout\CommandBarFlyout_themeresources.xaml",
+            @"controls\dev\NavigationView\NavigationView.cpp",
+            @"controls\dev\TeachingTip\TeachingTip.cpp",
+            @"controls\dev\TeachingTip\TeachingTip.cpp",
+            @"dxaml\xcp\dxaml\lib\AutoSuggestBox_Partial.cpp",
+            @"dxaml\xcp\dxaml\lib\ContentDialog_Partial.cpp",
+            @"dxaml\xcp\dxaml\lib\FlyoutPresenter_partial.cpp",
+            @"dxaml\xcp\dxaml\lib\MenuFlyoutPresenter_Partial.cpp",
+            @"dxaml\xcp\dxaml\lib\ComboBox_Partial.cpp",
+            @"dxaml\xcp\dxaml\lib\ToolTip_Partial.cpp",
+            @"dxaml\phone\lib\DatePickerFlyoutPresenter_Partial.cpp",
+            @"dxaml\phone\lib\TimePickerFlyoutPresenter_Partial.cpp",
+            @"dxaml\xcp\dxaml\lib\UIElement_Partial.cpp"
         };
         var allowedStatuses = new[]
         {
@@ -348,11 +348,11 @@ public class TemplateParityTests
         Assert.IsFalse(badStatuses.Any(), "Invalid ThemeShadow source statuses: " + string.Join("; ", badStatuses));
         Assert.IsFalse(missingEvidence.Any(), "ThemeShadow source rows should point at existing repo evidence: " + string.Join("; ", missingEvidence));
 
-        AssertCoverageStatus(rows, @"src\controls\dev\NumberBox\NumberBox.cpp", "Source-backed ThemeShadowChrome");
-        AssertCoverageStatus(rows, @"src\dxaml\xcp\components\graphics\ThemeShadow.cpp", "Source-backed renderer recipe");
-        AssertCoverageStatus(rows, @"src\dxaml\xcp\dxaml\lib\ComboBox_Partial.cpp", "Official WPF Fluent stock exception");
-        AssertCoverageStatus(rows, @"src\dxaml\xcp\dxaml\lib\ToolTip_Partial.cpp", "Official WPF Fluent stock exception");
-        AssertCoverageStatus(rows, @"src\dxaml\phone\lib\TimePickerFlyoutPresenter_Partial.cpp", "Documented WPF substitution");
+        AssertCoverageStatus(rows, @"controls\dev\NumberBox\NumberBox.cpp", "Source-backed ThemeShadowChrome");
+        AssertCoverageStatus(rows, @"dxaml\xcp\components\graphics\ThemeShadow.cpp", "Source-backed renderer recipe");
+        AssertCoverageStatus(rows, @"dxaml\xcp\dxaml\lib\ComboBox_Partial.cpp", "Official WPF Fluent stock exception");
+        AssertCoverageStatus(rows, @"dxaml\xcp\dxaml\lib\ToolTip_Partial.cpp", "Official WPF Fluent stock exception");
+        AssertCoverageStatus(rows, @"dxaml\phone\lib\TimePickerFlyoutPresenter_Partial.cpp", "Documented WPF substitution");
     }
 
     [TestMethod]
@@ -619,6 +619,26 @@ public class TemplateParityTests
         AssertCoverageStatus(rows, "CommandBar/AppBarButton.xaml", "WinUI 3 source-backed WPF family");
         AssertCoverageStatus(rows, "Flyout/FlyoutPresenter.xaml", "WinUI 3 source-backed WPF family");
         AssertCoverageStatus(rows, "ToggleSwitch/ToggleSwitch.xaml", "WinUI 3 source-backed WPF port");
+    }
+
+    [TestMethod]
+    public void WinUI3SourceAuditDocumentsPinCurrentProductAuthority()
+    {
+        const string currentProductCommit = "de3e767333c2f0717a6a70cb22bd192ced5ad885";
+        var repoRoot = FindRepoRoot();
+        var docsDirectory = Path.Combine(repoRoot, "docs");
+        var auditFiles = Directory.GetFiles(docsDirectory, "*winui3-source-audit.md");
+        var staleAudits = auditFiles
+            .Where(path => !File.ReadAllText(path).Contains(currentProductCommit, StringComparison.Ordinal))
+            .Select(Path.GetFileName)
+            .OrderBy(name => name, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsTrue(auditFiles.Length >= 30,
+            "The current WinUI source-audit inventory unexpectedly shrank.");
+        Assert.IsFalse(staleAudits.Any(),
+            $"WinUI 3 source audits missing current product authority {currentProductCommit}: " +
+            string.Join("; ", staleAudits));
     }
 
     [TestMethod]

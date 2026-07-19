@@ -18,10 +18,31 @@ namespace ModernWpf.Controls
         {
             if (patternInterface == PatternInterface.Invoke)
             {
-                return this;
+                return _selectorAutomationPeer.OwnerListView.IsItemClickEnabled ? this : null;
             }
 
             return base.GetPattern(patternInterface);
+        }
+
+        protected override string GetClassNameCore()
+        {
+            var container = GetContainer();
+            if (container is GridViewItem)
+            {
+                return nameof(GridViewItem);
+            }
+
+            if (container is ListViewItem)
+            {
+                return nameof(ListViewItem);
+            }
+
+            return base.GetClassNameCore();
+        }
+
+        protected override AutomationControlType GetAutomationControlTypeCore()
+        {
+            return AutomationControlType.ListItem;
         }
 
         public void Invoke()
@@ -32,11 +53,7 @@ namespace ModernWpf.Controls
                 throw new ElementNotEnabledException();
             }
 
-            var container = owner.ItemContainerGenerator.ContainerFromItem(_item) as ListViewBaseItem;
-            if (container == null && _item is ListViewBaseItem itemContainer)
-            {
-                container = itemContainer;
-            }
+            var container = GetContainer();
 
             if (container == null)
             {
@@ -49,6 +66,17 @@ namespace ModernWpf.Controls
             }
 
             owner.NotifyListItemClicked(container);
+        }
+
+        private ListViewBaseItem GetContainer()
+        {
+            var container = _selectorAutomationPeer.OwnerListView.ItemContainerGenerator.ContainerFromItem(_item) as ListViewBaseItem;
+            if (container == null && _item is ListViewBaseItem itemContainer)
+            {
+                container = itemContainer;
+            }
+
+            return container;
         }
 
         private readonly object _item;

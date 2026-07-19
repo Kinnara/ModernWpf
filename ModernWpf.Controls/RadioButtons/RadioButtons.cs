@@ -372,7 +372,16 @@ namespace ModernWpf.Controls
 
                     SetCurrentValue(SelectedIndexProperty, m_selectedIndex);
                     SetCurrentValue(SelectedItemProperty, newSelectedItem);
-                    RaiseEvent(new SelectionChangedEventArgs(SelectionChangedEvent, new[] { previousSelectedItem }, new[] { newSelectedItem }));
+
+                    // A missing selection is represented by an empty collection,
+                    // not by a collection containing a null item.
+                    var removedItems = previousSelectedItem != null
+                        ? new[] { previousSelectedItem }
+                        : Array.Empty<object>();
+                    var addedItems = newSelectedItem != null
+                        ? new[] { newSelectedItem }
+                        : Array.Empty<object>();
+                    RaiseEvent(new SelectionChangedEventArgs(SelectionChangedEvent, removedItems, addedItems));
                 }
                 finally
                 {

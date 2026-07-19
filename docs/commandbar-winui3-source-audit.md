@@ -1,82 +1,115 @@
 # CommandBar WinUI 3 Source Audit
 
-Date: 2026-05-17
+Date: 2026-07-19
 
-This audit treats the local WinUI 3 checkout at `D:\repos\microsoft-ui-xaml`
-as the source of truth for the ModernWpf `CommandBar` port. The old WPF
-`ToolBar`-hosted implementation has been deleted for normal `CommandBar`; the
-control now owns its command panels, overflow popup, template settings, and
-available-command visual states directly.
+This audit pins the ModernWpf `CommandBar` product, Gallery sample, automation,
+and installed-Gallery pixel gates to current official sources. The authoritative
+Microsoft UI XAML commit is
+`de3e767333c2f0717a6a70cb22bd192ced5ad885`; the authoritative WinUI Gallery
+commit is `29f62479d5c046a0b854a5868e5a7cd484572d87`.
 
-## WinUI 3 Source Inputs
+## Current source inputs
 
-- `src\dxaml\xcp\dxaml\lib\CommandBar_Partial.cpp`
-- `src\dxaml\xcp\dxaml\lib\CommandBar_Partial.h`
-- `src\dxaml\xcp\dxaml\lib\CommandBarOverflowPresenter_Partial.cpp`
-- `src\dxaml\xcp\tools\XCPTypesAutoGen\Modules\Controls\CommandBar.cs`
-- `src\controls\dev\CommonStyles\CommandBar_themeresources.xaml`
-- `src\dxaml\test\native\external\controls\commandbar\CommandBarIntegrationTests.cpp`
-
-## ModernWpf Artifacts
-
-- `ModernWpf.Controls\CommandBar\CommandBar.cs`
-- `ModernWpf.Controls\CommandBar\CommandBar.xaml`
-- `ModernWpf.Controls\CommandBar\CommandBarTemplateSettings.cs`
-- `ModernWpf.Controls\CommandBar\CommandBarOverflowPanel.cs`
-- `ModernWpf.Controls\CommandBar\CommandBarOverflowPresenter.cs`
-- `ModernWpf.Controls\CommandBar\AppBarElementProperties.cs`
-- `test\ModernWpf.WinUI.Tests\CommandBar\CommandBarApiTests.cs`
-
-## Implementation Mapping
-
-| WinUI source behavior | ModernWpf status |
+| Source | Blob |
 | --- | --- |
-| `CommandBar` owns primary and secondary command collections and exposes source-shaped `CommandBarTemplateSettings`. | Matched with WPF observable collections, direct template settings, and tests for default/setter behavior. |
-| The template uses `PrimaryItemsControl`, `SecondaryItemsControl`, `MoreButton`, and `OverflowPopup` directly rather than an outer platform toolbar. | Matched with WPF panels inside the `CommandBar` template; `CommandBarToolBar` and `CommandBarPanel` were deleted. |
-| Primary commands render in the compact bar and secondary commands render in overflow with `UseOverflowStyle` state. | Matched without WPF `ToolBar.OverflowMode` or `ToolBar.IsOverflowItem`. |
-| `ChangeVisualState` chooses `BothCommands`, `PrimaryCommandsOnly`, or `SecondaryCommandsOnly` from visible dynamic commands. | Matched by running available-command states on `CommandBar` itself. |
-| `IsDynamicOverflowEnabled` switches the source dynamic-overflow visual state and moves primary commands into overflow when measured width is constrained. | Matched with a WPF measurement pass that rebuilds dynamic primary/secondary command lists from the original collections. |
-| Auto overflow-button visibility accounts for secondary commands and visible bottom-label primary commands. | Matched through `CommandBarTemplateSettings.EffectiveOverflowButtonVisibility` and focused tests. |
-| Overflow presenter open-up/down display states are driven from popup placement. | Matched with WPF popup geometry, reusing the existing `CommandBarOverflowPresenter` visual states. |
-| Source drop-shadow mode applies elevation to `SecondaryItemsControlShadowWrapper`, and the source template keeps `OverflowContentRoot` as the measured popup root around that wrapper. | Matched with a WPF `OverflowContentRoot` grid containing `SecondaryItemsControlShadowWrapper`, a `ThemeShadowChrome` at depth `32` with `WindowedPopupInsetMode=Medium`, and focused template-shape tests. |
-| Command execution closes the parent command bar and visibility/property changes refresh command-bar state. | Matched through parent ownership tracking and `AppBarElementProperties` callbacks. |
-| `CommandBar::UpdateInputDeviceTypeUsedToOpen` captures the input device used to open overflow and applies that input mode to secondary AppBar commands while primary commands remain in `InputModeDefault`. | Matched for WPF touch/default input with `CommandBar` input-mode tracking, `CommandBarOverflowPanel` owner propagation, and focused tests that move commands between primary and secondary collections while overflow is open. |
+| `controls/dev/CommonStyles/CommandBar_themeresources.xaml` | `f524c6d543ea735b7b4e833294891eec448b8b5f` |
+| `controls/dev/CommonStyles/CommandBar_themeresources_perf2026.xaml` | `f524c6d543ea735b7b4e833294891eec448b8b5f` |
+| `dxaml/xcp/dxaml/lib/CommandBar_Partial.cpp` | `ecf554e134db0793668a5993f87f8c80e487ef04` |
+| `dxaml/xcp/dxaml/lib/CommandBar_Partial.h` | `e111bf850a8793ea3724d3bd37f2863562cd9680` |
+| `dxaml/xcp/dxaml/lib/CommandBarOverflowPresenter_Partial.cpp` | `cbfcea3434da701a5e83b85573b98d47c7d275cf` |
+| `dxaml/xcp/tools/XCPTypesAutoGen/Modules/Controls/CommandBar.cs` | `3089af2b982481552e3f713ddfccd1edab1b5bc2` |
+| `dxaml/xcp/tools/XCPTypesAutoGen/Modules/Controls/AppBar.cs` | `12f3fdcfffa7e0cb7fb32698c674b2ab86bb5b8e` |
+| `dxaml/xcp/dxaml/lib/AppBar_Partial.cpp` | `66009da3123afb1620a999fcf1b7177f1845d9b6` |
+| `dxaml/xcp/dxaml/lib/AppBarAutomationPeer_Partial.cpp` | `efa158fccd2cc4094a390d1e15b6aa4e92cbb4e7` |
+| `dxaml/test/native/external/controls/commandbar/CommandBarIntegrationTests.cpp` | `4cb5453e89ca371774585161b74445bcbaa1b71b` |
+| WinUI Gallery `CommandBarPage.xaml` | `e2c92a5672467c5184198379f8b4b438bfeba8f3` |
+| WinUI Gallery `CommandBarPage.xaml.cs` | `452cf2578ca1b15c106fd57632dfd11c07f80af0` |
+| WinUI Gallery `CommandBarLabelsSide.txt` | `7a55d8dd9ac97cd10ba0d8bbf11fe5c1c70c2670` |
 
-## WPF Substitutions
+The Microsoft UI XAML root-layout mirror moved these paths in commit
+`8463f45162149de0ec3ad7df752596893fe3e13e`. The current classic and perf2026
+theme files are byte-identical, and the header, overflow presenter, generated
+API, and integration-test blobs remain byte-current. Commit
+`5da716a0536e14b9dc582cf63cac27ef161e1622` only corrects `recieve` to
+`receive` in an access-key comment (and changes its indentation); it has no
+runtime effect. The converted Gallery page, code-behind, and sole snippet have
+no later CommandBar change.
 
-- WinUI `CommandBar` derives from `AppBar`; ModernWpf has no separate WPF `AppBar`
-  base, so app-bar closed display modes and sticky light-dismiss policy remain
-  outside the current public surface.
-- WinUI uses generated `CommandBarElementCollection` and `ItemsControl`
-  plumbing; ModernWpf uses WPF observable collections and direct panel children
-  to avoid `ToolBar` container behavior while preserving command element reuse.
-- WinUI dynamic overflow supports `DynamicOverflowOrder` and the
-  `DynamicOverflowItemsChanging` event; those APIs are not present in the
-  existing ModernWpf surface, so this slice ports measured movement of primary
-  commands but does not add new API.
-- WPF popup placement does not expose WinUI `Popup.ActualPlacement`, so
-  `CommandBarOverflowPresenter` derives open-up/down state from measured popup
-  position.
-- WinUI compositor `ThemeShadow` and popup-root shadow animation are represented
-  by the shared WPF `ThemeShadowChrome` renderer on the source shadow-wrapper
-  template part. Root-bounds, gamepad/remote input mode, and WinRT automation
-  details remain platform substitutions shared with the CommandBarFlyout port.
-  WPF touch input is mapped to WinUI's overflow `TouchInputMode`; WPF has no
-  equivalent gamepad/remote input-device service in this control path.
+## Product mapping
 
-## Current Validation
+| WinUI behavior | ModernWpf mapping |
+| --- | --- |
+| `CommandBar` owns primary/secondary command collections and source-shaped template settings. | Observable command collections, direct WPF panels, and `CommandBarTemplateSettings`; no WPF `ToolBar` host or overflow containers. |
+| `IsSticky` defaults to false and suppresses light dismiss and Escape dismissal while set. | Public generated `IsSticky` dependency property; a stable WPF popup plus explicit process-input light dismiss closes only non-sticky bars on outside pointer input. Escape is handled for both states, closes only when non-sticky, and restores focus to More. |
+| Overflow is aligned to the command-bar right edge and flips from below when required. | The persistent WPF popup anchors to template `ContentRoot`, uses `BottomEdgeAlignedRight`, and refreshes its native placement after disconnected bitmap rendering. The outer popup HWND aligns to the command-bar edge. |
+| More and programmatic/external open paths leave the overflow open. | `StaysOpen=true` avoids WPF's incompatible mouse-capture race; ModernWpf owns WinUI light-dismiss semantics instead. This supports current Gallery ordering `IsOpen=true` then `IsSticky=true`. |
+| Source overflow item exposes label, icon, and keyboard accelerator in a 32-DIP row. | `AppBarButton` overflow states expose Settings and `Ctrl+I`; UIA reports Button / Invoke and exact `167x32` current-Gallery geometry. |
+| `ICommandBarElement.DynamicOverflowOrder` and `CommandBar::FindMovablePrimaryCommandsFromOrderSet` move complete positive order groups lowest-first with adjacent separators, then use right-to-left order-zero fallback. `DynamicOverflowItemsChanging` fires before the transition with Adding/Removing action. | Matched. All four AppBar element types own the shared public dependency property; order changes immediately reflow from the original collections. The pre-transition event compares the previous/current moved-primary sets exactly like source, so new members report Adding and pure restoration reports Removing. |
+| Source shadow wrapper surrounds the overflow presenter. | `OverflowContentRoot` owns `SecondaryItemsControlShadowWrapper`; `ThemeShadowChrome` uses depth 32 and medium windowed-popup inset mode. |
+| Command execution closes overflow and source input mode propagates to overflow commands. | Parent ownership callbacks close the bar; WPF default/touch input tracking updates secondary AppBar visual states. |
+| The inherited AppBar lifecycle raises Opening, Opened, Closing, and Closed in order and exposes protected virtual hooks. | Matched on the WPF control. `Closed` is completed from the authoritative `IsOpen=false` transition because collapsing the WPF popup content can suppress `Popup.Closed`; external popup closure still synchronizes `IsOpen`. |
+| The inherited `AppBarAutomationPeer` reports `ApplicationBar`, AppBar role, Toggle and ExpandCollapse always, Window only while open, modal/topmost Window properties, and open-state property changes. | `CommandBarAutomationPeer` matches class/localized type, Toggle/ExpandCollapse/Window providers and state transitions. WPF's `AutomationControlType` enum has no AppBar member, so the peer uses Custom while exposing localized type `app bar`; this is the sole role-ID substitution. |
 
-Run after CommandBar changes:
+## Current Gallery mapping
 
-```powershell
-dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj --no-restore
-dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter FullyQualifiedName~CommandBarApiTests
-dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter FullyQualifiedName~CommandBarFlyoutApiTests
-dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter FullyQualifiedName~TemplateParityTests
-dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter FullyQualifiedName~SyncMatrixTests
-```
+ModernWpf loads the current `CommandBarLabelsSide.txt` snippet instead of a
+stale inline string. The live sample has Right labels; Add/Edit/Share with
+`Ctrl+A`, `Ctrl+E`, and `F4`; Settings with `Ctrl+I`; and the source output
+`You clicked: <Label>`. Open sets `IsOpen` and `IsSticky`; Close resets both.
+Dynamic Button 1, Button 2, separator, Button 3, and Button 4 use `Ctrl+N`,
+`Delete`, `Ctrl+Subtract`, and `Ctrl+Add` without the named-command click
+handler, exactly matching current Gallery behavior.
 
-Latest verified result on 2026-05-19: the combined `CommandBarApiTests`,
-`LayoutCompatibilityApiTests.ThemeShadow`, and `TemplateParityTests` filter
-passed 57/57. `CommandBarApiTests.CommandBarOverflowShadowUsesSourceWrapper`
-guards the source shadow-wrapper target.
+The sample pins Button automation roles, `AppBarButton` class names, Invoke
+providers, accelerator keys, and Text output semantics. The visual harness
+uses official `PrimaryCommandBar`, opens through the source option's UIA Invoke
+pattern, requires popup-HWND proof, selects only the sample Settings IDs, and
+compares a common visible `CommandBarOpenSurface` rather than unlike shadow
+bounds.
+
+## WPF pixel substitutions
+
+- WPF Segoe UI label measurement is one pixel narrower per Right-label button
+  at Gallery scale. `AppBarButtonTextLabelOnRightMargin` and the toggle
+  equivalent retain every source value except a documented 12-to-13 trailing
+  pixel. The three primary commands therefore match WinUI exactly at `271x48`.
+- WPF's overflow accelerator column needs the same single trailing pixel.
+  AppBarButton/AppBarToggleButton use `24,0,13,0` instead of source
+  `24,0,12,0`; Settings then matches WinUI exactly at `167x32` without changing
+  the source `CommandBarOverflowMinWidth=160` resource.
+- WinUI compositor shadow and WPF's separate popup HWND are proved separately;
+  cross-app pixel comparison uses the same visible item bounds on both sides.
+- WPF has no WinUI gamepad/remote input-device service or `Popup.ActualPlacement`;
+  touch/default input and measured screen placement are the documented
+  substitutions.
+- ModernWpf cannot inherit the platform-only WinUI `AppBar` base. It now ports
+  the feasible inherited open/sticky lifecycle and automation surface directly;
+  `ClosedDisplayMode`, `LightDismissOverlayMode`, and AppBar template settings
+  remain outside this CommandBar's WPF-shaped public surface because its closed
+  layout and light-dismiss policy are owned directly by the CommandBar template
+  and popup.
+
+## Validation
+
+The final failure-on-difference installed-Gallery proofs are:
+
+- Light `artifacts/visual-checks/20260719-015618-975-54260/report.md`: resting
+  delta `1.70`, open delta `2.16`, exact `271x48` / `167x32` geometry.
+- Dark `artifacts/visual-checks/20260719-015715-320-93036/report.md`: resting
+  delta `2.08`, open delta `2.37`, exact `271x48` / `167x32` geometry.
+
+Both pass the required `2.5` resting and `2.5` open mean-delta gates with zero
+size tolerance. The current normal Light/Dark row captures supersede the prior
+gray-background evidence; their remaining delta is confined to renderer-specific
+Settings/accelerator glyph antialiasing, with identical background, icon,
+spacing, and geometry.
+
+Fresh Light `artifacts/gallery-recordings/20260719-015752-861/report.md` and
+Dark `artifacts/gallery-recordings/20260719-015932-813/report.md` OpenRepeat
+recordings pass. Both detect the expected Settings surface on two opens and
+produce dense-transition review sheets; maximum frame/local deltas are
+`0.524` / `54.178` and `0.098` / `10.513`.
+
+Product coverage passes 43/43. The current Gallery sample/source/visual-gate
+slice passes 3/3 on net8 and net10, the visual-check PowerShell parses, and
+Controls/Gallery build on net462, net8, and net10 with zero errors.

@@ -222,6 +222,7 @@ namespace ModernWpf.Controls
             _flyout.Opening += OnFlyoutOpening;
             _flyout.Closed += OnFlyoutClosed;
             _flyout.Presenter.PreviewKeyDown += OnFlyoutPresenterKeyDown;
+            _flyout.Presenter.AddHandler(MenuItem.ClickEvent, new RoutedEventHandler(OnFlyoutItemClick));
         }
 
         private void OnItemsVectorChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -278,6 +279,21 @@ namespace ModernWpf.Controls
                 _flyout.Opening -= OnFlyoutOpening;
                 _flyout.Closed -= OnFlyoutClosed;
                 _flyout.Presenter.PreviewKeyDown -= OnFlyoutPresenterKeyDown;
+                _flyout.Presenter.RemoveHandler(MenuItem.ClickEvent, new RoutedEventHandler(OnFlyoutItemClick));
+            }
+        }
+
+        private void OnFlyoutItemClick(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is MenuItem item &&
+                !item.HasItems &&
+                !item.StaysOpenOnClick)
+            {
+                // WinUI MenuFlyoutItem invocation dismisses the owning
+                // MenuBarItemFlyout. WPF's stock MenuItem does not reliably
+                // close this custom ContextMenu host, so complete the source
+                // behavior after the item's own Click handlers run.
+                Dispatcher.BeginInvoke((Action)CloseMenuFlyout);
             }
         }
 

@@ -3,12 +3,14 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using ModernWpf.Automation.Peers;
 
 namespace ModernWpf.Controls
 {
@@ -98,6 +100,13 @@ namespace ModernWpf.Controls
         }
 
         #endregion
+
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ContentDialogAutomationPeer(this);
+        }
+
+        internal bool IsShowingForAutomation => IsShowing;
 
         #region OpenInPlaceDialog
 

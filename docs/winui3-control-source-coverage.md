@@ -10,6 +10,12 @@ resource inventory. Existing controls may be grouped by source audit evidence,
 but each shipped resource dictionary still gets its own row so a new or renamed
 control resource cannot bypass source-parity review.
 
+Current product authority is `microsoft/microsoft-ui-xaml` `main` commit
+`de3e767333c2f0717a6a70cb22bd192ced5ad885`. In addition to the one-to-one
+resource inventory below, `TemplateParityTests` requires every
+`*winui3-source-audit.md` document to carry that current pin. This prevents a
+new resource or a later product refresh from leaving a silently stale audit.
+
 ## Status
 
 - `WinUI 3 source-backed WPF port`: the resource belongs to an existing

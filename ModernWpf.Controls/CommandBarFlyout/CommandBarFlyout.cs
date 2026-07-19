@@ -236,6 +236,14 @@ namespace ModernWpf.Controls
             };
             commandBar.Closing += delegate
             {
+                if (AlwaysExpanded && IsOpen)
+                {
+                    // Match AppBar::Closing in the WinUI flyout command bar: the
+                    // overflow list cannot be collapsed while AlwaysExpanded owns
+                    // an open outer flyout.
+                    commandBar.SetCurrentValue(CommandBarFlyoutCommandBar.IsOpenProperty, true);
+                }
+
                 if (commandBar.HasSecondaryOpenCloseAnimations())
                 {
                     RemoveDropShadow();

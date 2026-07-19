@@ -2608,6 +2608,9 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "<ScrollView x:Name=\"\"scrollView\"\"",
+                "scrollView.ScrollPresenter.VerticalScrollController = annotatedScrollBar.ScrollController;",
+                "AnnotatedScrollBar linked to a ScrollView.",
                 "var scrollViewer = new ScrollViewer",
                 "Name = \"scrollViewer\"",
                 "Width = AnnotatedItemWidth + 4",
@@ -2820,6 +2823,7 @@ namespace ModernWpf.Gallery.Tests
                 source.Contains("ColorPicker More-button surface", StringComparison.Ordinal) &&
                 source.Contains("ColorPicker alpha surface", StringComparison.Ordinal) &&
                 source.Contains("ColorPicker ring surface", StringComparison.Ordinal) &&
+                source.Contains("$Height = [Math]::Max($Height, 900)", StringComparison.Ordinal) &&
                 source.Contains("New-ColorPickerStateInteractionCrop $app $caseDir $window $afterPath \"after\"", StringComparison.Ordinal),
                 "ColorPicker parity must exercise and compare the WinUI Gallery's More-button, alpha, and ring option states.");
             Assert.IsTrue(
@@ -2848,6 +2852,31 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 source.Contains("Cropped the reference InfoBadge sample because the embedded NavigationView crop is larger than the badge accent.", StringComparison.Ordinal),
                 "InfoBadge primary parity must fail instead of falling back to the whole reference sample when the badge cannot be found.");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceColorPickerCurrentSourceSurfaceParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"ColorPicker\" { return \"ColorPicker editor surface\" }",
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"ColorPicker\" { return 4.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"ColorPicker\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"ColorPicker\" { return 4.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"ColorPicker\" { return 0 }",
+                "elseif ($control -eq \"ColorPicker\")",
+                "$primarySource = \"HexTextBox\"");
         }
 
         [TestMethod]
@@ -3061,7 +3090,7 @@ namespace ModernWpf.Gallery.Tests
                 "$pattern.Toggle()",
                 "function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames, [string]$control = \"\")",
                 "if ($control -eq \"MenuBar\")",
-                "$invoked = Invoke-MenuBarTriggerOnce $window $element",
+                "$invoked = Invoke-MenuBarTriggerOnce $window $element $openNames",
                 "Find-OpenInteractionElement $window $element $openNames $control",
                 "$invoked = Invoke-ElementOnce $window $element",
                 "Find-OpenInteractionElement $window $element $openNames $control",
@@ -3070,11 +3099,12 @@ namespace ModernWpf.Gallery.Tests
                 "[GalleryVisualNative]::PressSpace()");
             AssertContainsInOrder(
                 source,
-                "function Invoke-MenuBarTriggerOnce($window, $element)",
+                "function Invoke-MenuBarTriggerOnce($window, $element, [string[]]$openNames)",
                 "[GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)",
                 "$clicked = $false",
                 "[GalleryVisualNative]::Click(",
                 "$clicked = $true",
+                "if ($clicked -and $null -ne (Find-OpenInteractionElement $window $element $openNames \"MenuBar\"))",
                 "if (Invoke-ElementPatternOnce $window $element)",
                 "return $clicked");
             AssertContainsInOrder(
@@ -3121,8 +3151,8 @@ namespace ModernWpf.Gallery.Tests
                 "\"ComboBox\" { return @(\"Blue\", \"Green\", \"Red\", \"Yellow\") }",
                 "\"ContentDialog\" { return @(\"Save your work?\", \"Upload your content to the cloud.\", \"Save\", \"Don't Save\", \"Cancel\") }",
                 "\"Flyout\" { return @(\"All items will be removed. Do you want to continue?\", \"Yes, empty my cart\") }",
-                "\"Popup\" { return @(\"Simple Popup\", \"Close\") }",
-                "\"MenuBar\" { return @(\"New\", \"Open...\", \"Save\", \"Exit\") }",
+                "\"Popup\" { return @(\"Simple Popup\") }",
+                "\"MenuBar\" { return @(\"New\", \"Open\", \"Save\", \"Exit\") }",
                 "\"MenuFlyout\" { return @(\"By rating\", \"By match\", \"By distance\") }",
                 "\"DropDownButton\" { return @(\"Send\", \"Reply\", \"Reply All\") }",
                 "\"SplitButton\" { return @(\"Red\", \"Orange\", \"Yellow\", \"Green\", \"Blue\", \"Indigo\", \"Violet\", \"Gray\") }",
@@ -3422,6 +3452,8 @@ namespace ModernWpf.Gallery.Tests
                 "\"ProgressRing\" { return \"ProgressRing2\" }",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
                 "\"ProgressRing\" { return 1.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"ProgressRing\" { return 0 }",
                 "Set-ProgressRingDeterminateValue $window \"ModernWpf\" 65",
                 "Refresh-ModernWpfVisualArtifacts $window",
                 "Set-ProgressRingDeterminateValue $window \"WinUI3\" 65");
@@ -3496,7 +3528,9 @@ namespace ModernWpf.Gallery.Tests
                 "\"TitleBar\" { return \"TitleBarControl\" }",
                 "function New-TitleBarModernPrimaryCrop([string]$caseDir)",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
-                "\"TitleBar\" { return 1.0 }");
+                "\"TitleBar\" { return 1.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"TitleBar\" { return 0 }");
         }
 
         [TestMethod]
@@ -3533,6 +3567,10 @@ namespace ModernWpf.Gallery.Tests
                 "\"SplitButton\" { return 1.0 }");
             AssertContainsInOrder(
                 source,
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"SplitButton\" { return 0 }");
+            AssertContainsInOrder(
+                source,
                 "function Capture-WinUIReference([string]$control, [string]$caseDir)",
                 "Move-CursorAwayFromInteractionSurface $window",
                 "$staticCrops = Capture-StaticCrops \"WinUI3\" $control $caseDir $window $screenshot",
@@ -3555,6 +3593,10 @@ namespace ModernWpf.Gallery.Tests
                 "\"ToggleSplitButton\" { return \"myListButton\" }",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
                 "\"ToggleSplitButton\" { return 2.0 }");
+            AssertContainsInOrder(
+                source,
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"ToggleSplitButton\" { return 0 }");
         }
 
         [TestMethod]
@@ -3572,6 +3614,10 @@ namespace ModernWpf.Gallery.Tests
                 "\"ToggleSwitch\" { return \"simple ToggleSwitch\" }",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
                 "\"ToggleSwitch\" { return 1.5 }");
+            AssertContainsInOrder(
+                source,
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"ToggleSwitch\" { return 0 }");
             AssertContainsInOrder(
                 source,
                 "function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $window, [string]$screenshot)",
@@ -3595,7 +3641,13 @@ namespace ModernWpf.Gallery.Tests
                 "\"NumberBox\" { return \"GallerySample_NumberBox_SpinButtonNumberBox\" }",
                 "\"NumberBox\" { return \"NumberBoxSpinButtonPlacementExample\" }",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
-                "\"NumberBox\" { return 2.5 }");
+                "\"NumberBox\" { return 2.5 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"NumberBox\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"NumberBox\" { return 2.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"NumberBox\" { return 0 }");
         }
 
         [TestMethod]
@@ -3612,7 +3664,9 @@ namespace ModernWpf.Gallery.Tests
                 "\"AutoSuggestBox\" { return \"GallerySample_AutoSuggestBox_AutoSuggestBox\" }",
                 "\"AutoSuggestBox\" { return \"Control1\" }",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
-                "\"AutoSuggestBox\" { return 0.1 }");
+                "\"AutoSuggestBox\" { return 0.1 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"AutoSuggestBox\" { return 0 }");
             AssertContainsInOrder(
                 source,
                 "function Set-EditableElementText($window, $element, [string]$text)",
@@ -3638,7 +3692,9 @@ namespace ModernWpf.Gallery.Tests
                 "$content = Find-DescendantByAutomationId $sampleElement \"content\"",
                 "elseif ($control -eq \"AnnotatedScrollBar\")",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
-                "\"SplitView\" { return 4.0 }");
+                "\"SplitView\" { return 4.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"SplitView\" { return 0 }");
         }
 
         [TestMethod]
@@ -3657,7 +3713,9 @@ namespace ModernWpf.Gallery.Tests
                 "$modernPrimaryArtifact = Join-Path $modernArtifactDir \"GallerySample_PersonPicture_PersonPicture.png\"",
                 "elseif ($control -eq \"PersonPicture\")",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
-                "\"PersonPicture\" { return 0.5 }");
+                "\"PersonPicture\" { return 0.5 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"PersonPicture\" { return 0 }");
         }
 
         [TestMethod]
@@ -3679,7 +3737,9 @@ namespace ModernWpf.Gallery.Tests
                 "$controlExampleContentInsetY = 12",
                 "elseif ($control -eq \"ThemeShadow\")",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
-                "\"ThemeShadow\" { return 0.3 }");
+                "\"ThemeShadow\" { return 0.3 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"ThemeShadow\" { return 0 }");
             StringAssert.Contains(
                 source,
                 "$themeShadowPrimary = New-ThemeShadowModernPrimaryCrop $caseDir");
@@ -3702,7 +3762,401 @@ namespace ModernWpf.Gallery.Tests
                 "InfoBadge value badge",
                 "elseif ($control -eq \"InfoBadge\")",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
-                "\"InfoBadge\" { return 5.0 }");
+                "\"InfoBadge\" { return 5.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"InfoBadge\" { return 0 }");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceNavigationViewCurrentSourcePixelParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+            var light = ReadRepoFile("ModernWpf", "ThemeResources", "Light.xaml");
+            var dark = ReadRepoFile("ModernWpf", "ThemeResources", "Dark.xaml");
+            var highContrast = ReadRepoFile("ModernWpf", "ThemeResources", "HighContrast.xaml");
+            var template = ReadRepoFile("ModernWpf.Controls", "NavigationView", "NavigationView.xaml");
+            var styles = ReadRepoFile("ModernWpf", "Styles", "NavigationView.xaml");
+            var sample = ReadRepoFile("ModernWpf.Gallery", "Pages", "NavigationSampleFactory.cs");
+
+            AssertContainsInOrder(
+                source,
+                "\"NavigationView\" { return \"GallerySample_NavigationView_NavigationView\" }",
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"NavigationView\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"NavigationView\" { return \"nvSample5\" }",
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"NavigationView\" { return 1.2 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"NavigationView\" { return 0 }");
+
+            StringAssert.Contains(light, "x:Key=\"NavigationViewDefaultPaneBackground\" ResourceKey=\"SystemControlPageBackgroundChromeLowBrush\"");
+            StringAssert.Contains(light, "x:Key=\"NavigationViewContentBackground\" ResourceKey=\"LayerFillColorDefaultBrush\"");
+            StringAssert.Contains(light, "x:Key=\"NavigationViewItemHeaderForeground\" ResourceKey=\"TextFillColorSecondaryBrush\"");
+            StringAssert.Contains(light, "x:Key=\"NavigationViewContentGridBorderBrush\" ResourceKey=\"CardStrokeColorDefaultBrush\"");
+            StringAssert.Contains(dark, "x:Key=\"NavigationViewDefaultPaneBackground\" ResourceKey=\"SystemControlBackgroundChromeMediumBrush\"");
+            StringAssert.Contains(dark, "x:Key=\"NavigationViewContentBackground\" ResourceKey=\"LayerFillColorDefaultBrush\"");
+            StringAssert.Contains(highContrast, "x:Key=\"NavigationViewContentBackground\" ResourceKey=\"SystemColorWindowColorBrush\"");
+
+            StringAssert.Contains(template, "Background=\"{DynamicResource NavigationViewItemIconBackground}\"");
+            StringAssert.Contains(template, "BorderBrush=\"{DynamicResource NavigationViewContentGridBorderBrush}\"");
+            StringAssert.Contains(template, "Value=\"{DynamicResource NavigationViewItemHeaderForeground}\"");
+            StringAssert.Contains(styles, "<Thickness x:Key=\"NavigationViewHeaderMargin\">56,45,0,0</Thickness>");
+            StringAssert.Contains(styles, "<Thickness x:Key=\"NavigationViewContentPresenterMargin\">48,13,0,0</Thickness>");
+            AssertContainsInOrder(
+                sample,
+                "Text = \"Lorem ipsum dolor sit amet",
+                "Margin = new Thickness(0, 1, 0, 0)",
+                "text.SetResourceReference(FrameworkElement.StyleProperty, \"BodyTextBlockStyle\")",
+                "text.SetResourceReference(TextBlock.ForegroundProperty, \"TextFillColorPrimaryBrush\")");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceAppBarFamilyCurrentSourcePixelAndInteractionParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"AppBarButton\" { return $true }",
+                "\"AppBarSeparator\" { return $true }",
+                "\"AppBarToggleButton\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"AppBarButton\" { return \"Button1\" }",
+                "\"AppBarSeparator\" { return \"Control1\" }",
+                "\"AppBarToggleButton\" { return \"Button1\" }");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsOutputInteraction([string]$control)",
+                "\"AppBarButton\" { return $true }",
+                "function Get-OutputInteractionTriggerNames([string]$control)",
+                "\"AppBarButton\" { return @(\"SymbolIcon\") }",
+                "function Get-OutputInteractionCropAutomationId([string]$control)",
+                "\"AppBarButton\" { return \"Control1Output\" }",
+                "function Get-OutputInteractionExpectedNames([string]$control)",
+                "\"AppBarButton\" { return @(\"You clicked: Button1\") }",
+                "function Test-OutputInteractionAllowsBlankBaseline([string]$control)",
+                "\"AppBarButton\" { return $true }");
+            AssertContainsInOrder(
+                source,
+                "function Capture-OutputInteraction([string]$app, [string]$control, [string]$caseDir, $window, $sampleElement)",
+                "$cropAutomationId = Get-OutputInteractionCropAutomationId $control",
+                "$app -eq \"ModernWpf\" -and $control -eq \"AppBarButton\"",
+                "$cropAutomationId = \"GallerySample_AppBarButton_Output\"");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresReferenceInteractionCropParity([string]$control)",
+                "\"AppBarButton\" { return $true }",
+                "\"AppBarToggleButton\" { return $true }",
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"AppBarButton\" { return 5.0 }",
+                "\"AppBarSeparator\" { return 1.0 }",
+                "\"AppBarToggleButton\" { return 5.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"AppBarButton\" { return 0 }",
+                "\"AppBarSeparator\" { return 0 }",
+                "\"AppBarToggleButton\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"AppBarButton\" { return 7.0 }",
+                "\"AppBarToggleButton\" { return 3.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"AppBarButton\" { return 2 }",
+                "\"AppBarToggleButton\" { return 0 }");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceContentDialogCurrentSourceSurfaceParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"ContentDialog\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"ContentDialog\" { return \"ShowDialog\" }");
+            AssertContainsInOrder(
+                source,
+                "function Get-ContentDialogOpenSurfaceElements($window)",
+                "Find-ElementsByNameInProcess $processId @(\"Save your work?\")",
+                "\"Lorem ipsum dolor sit amet, adipisicing elit.\"",
+                "\"Upload your content to the cloud.\"",
+                "function Find-ImageRowTransition",
+                "function Save-ContentDialogOpenSurfaceCrop",
+                "Source = \"ContentDialogSurface\"",
+                "$contentDialogSurfaceCrop = Save-ContentDialogOpenSurfaceCrop $window $selectedFrame.Screenshot $surfaceCropPath");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresReferenceInteractionCropParity([string]$control)",
+                "\"ContentDialog\" { return $true }",
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"ContentDialog\" { return 4.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"ContentDialog\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"ContentDialog\" { return 7.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"ContentDialog\" { return 2 }");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceTeachingTipCurrentSourceSurfaceParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"TeachingTip\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"TeachingTip\" { return \"TestButton1\" }");
+            AssertContainsInOrder(
+                source,
+                "function Find-TeachingTipMarginRowTransition(",
+                "function Save-TeachingTipOpenSurfaceCrop(",
+                "$geometrySource = \"PixelTransition\"",
+                "Source = \"TeachingTipSurface\"",
+                "$teachingTipSurfaceCrop = Save-TeachingTipOpenSurfaceCrop");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresReferenceInteractionCropParity([string]$control)",
+                "\"TeachingTip\" { return $true }",
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"TeachingTip\" { return 4.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"TeachingTip\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"TeachingTip\" { return 10.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"TeachingTip\" { return 0 }");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforcePopupCurrentSourceSurfaceParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"Popup\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"Popup\" { return \"Show Popup (using Offset)\" }");
+            AssertContainsInOrder(
+                source,
+                "function Save-PopupOpenSurfaceCrop($window, $openElement, [string]$path)",
+                "$edgeInset = 17",
+                "Width = 240",
+                "Height = $edgeInset + [int]$titleBounds.Height + 8 + 32 + $edgeInset",
+                "Source = \"PopupSurface\"",
+                "$popupSurfaceCrop = Save-PopupOpenSurfaceCrop $window $openElement $surfaceCropPath");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresReferenceInteractionCropParity([string]$control)",
+                "\"Popup\" { return $true }",
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"Popup\" { return 4.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"Popup\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"Popup\" { return 3.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"Popup\" { return 0 }");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceFlyoutCurrentSourceSurfaceParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"Flyout\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"Flyout\" { return \"Control1\" }");
+            AssertContainsInOrder(
+                source,
+                "function Save-FlyoutOpenSurfaceCrop($window, $openElement, [string]$path)",
+                "$surfaceElement = Get-PopupScreenCropElement $window $openElement",
+                "return Save-ScreenElementCrop $surfaceElement $path \"FlyoutOpenSurface\" 0 $window",
+                "$flyoutSurfaceCrop = Save-FlyoutOpenSurfaceCrop $window $openElement $surfaceCropPath");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPopupWindowOpenProof([string]$control)",
+                "\"Flyout\" { return $true }",
+                "function Test-ControlRequiresReferenceInteractionCropParity([string]$control)",
+                "\"Flyout\" { return $true }",
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"Flyout\" { return 3.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"Flyout\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"Flyout\" { return 11.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"Flyout\" { return 1 }");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceMenuBarCurrentSourceSurfaceParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"MenuBar\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"MenuBar\" { return \"Example1\" }");
+            AssertContainsInOrder(
+                source,
+                "function Save-MenuBarOpenSurfaceCrop($window, $openElement, $popupCrop, [string]$path)",
+                "$surfaceElement = Get-PopupScreenCropElement $window $openElement",
+                "return Save-ScreenElementCrop $surfaceElement $path \"MenuBarOpenSurface\" 0 $window",
+                "$menuBarSurfaceCrop = Save-MenuBarOpenSurfaceCrop $window $openElement $menuBarPopupCrop $surfaceCropPath");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresReferenceInteractionCropParity([string]$control)",
+                "\"MenuBar\" { return $true }",
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"MenuBar\" { return 3.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"MenuBar\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"MenuBar\" { return 9.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"MenuBar\" { return 2 }");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceMenuFlyoutCurrentSourceSurfaceParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"MenuFlyout\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"MenuFlyout\" { return \"Sort\" }");
+            AssertContainsInOrder(
+                source,
+                "function Save-MenuFlyoutOpenSurfaceCrop($window, $openElement, [string]$path)",
+                "$surfaceElement = Get-PopupScreenCropElement $window $openElement",
+                "$rawCrop = Save-ScreenElementCrop $surfaceElement $rawPath \"MenuFlyoutOpenSurface\" 0 $window",
+                "$horizontalOverhang = [int]$rawCrop.Width - [int]$itemBounds.Width",
+                "$horizontalInset = [int][Math]::Floor(($horizontalOverhang - 4) / 2)",
+                "Height = [int]$rawCrop.Height",
+                "$menuFlyoutSurfaceCrop = Save-MenuFlyoutOpenSurfaceCrop $window $openElement $surfaceCropPath");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPopupWindowOpenProof([string]$control)",
+                "\"MenuFlyout\" { return $true }",
+                "function Test-ControlRequiresReferenceInteractionCropParity([string]$control)",
+                "\"MenuFlyout\" { return $true }",
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"MenuFlyout\" { return 1.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"MenuFlyout\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"MenuFlyout\" { return 8.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"MenuFlyout\" { return 0 }");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceCommandBarCurrentSourceSurfaceParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"CommandBar\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"CommandBar\" { return \"PrimaryCommandBar\" }");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPopupWindowOpenProof([string]$control)",
+                "\"CommandBar\" { return $true }",
+                "function Test-ControlRequiresReferenceInteractionCropParity([string]$control)",
+                "\"CommandBar\" { return $true }");
+            AssertContainsInOrder(
+                source,
+                "function Save-CommandBarOpenSurfaceCrop($window, $openElement, [string]$path)",
+                "return Save-ScreenElementCrop $openElement $path \"CommandBarOpenSurface\" 0 $window",
+                "$commandBarSurfaceCrop = Save-CommandBarOpenSurfaceCrop $window $openElement $surfaceCropPath");
+            AssertContainsInOrder(
+                source,
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"CommandBar\" { return 2.5 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"CommandBar\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"CommandBar\" { return 2.5 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"CommandBar\" { return 0 }");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceHyperlinkButtonCurrentSourcePixelParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "\"HyperlinkButton\" { return \"GallerySample_HyperlinkButton_HyperlinkButton\" }",
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"HyperlinkButton\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"HyperlinkButton\" { return \"Control1\" }");
+            AssertContainsInOrder(
+                source,
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"HyperlinkButton\" { return 1.6 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"HyperlinkButton\" { return 0 }");
         }
 
         [TestMethod]
@@ -3781,7 +4235,9 @@ namespace ModernWpf.Gallery.Tests
                 "$scrollBounds.X + $scrollBounds.Width + 5",
                 "elseif ($control -eq \"AnnotatedScrollBar\")",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
-                "\"AnnotatedScrollBar\" { return 1.5 }");
+                "\"AnnotatedScrollBar\" { return 1.5 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"AnnotatedScrollBar\" { return 0 }");
             AssertContainsInOrder(
                 diagnosticsSource,
                 "private static Rect GetArtifactViewbox(FrameworkElement element, int width, int height)",
@@ -3803,7 +4259,9 @@ namespace ModernWpf.Gallery.Tests
                 "\"InfoBar\" { return \"GallerySample_InfoBar_InfoBar\" }",
                 "\"InfoBar\" { return \"TestInfoBar1\" }",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
-                "\"InfoBar\" { return 2.0 }");
+                "\"InfoBar\" { return 2.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"InfoBar\" { return 0 }");
         }
 
         [TestMethod]
@@ -3820,7 +4278,13 @@ namespace ModernWpf.Gallery.Tests
                 "\"RatingControl\" { return \"GallerySample_RatingControl_RatingControl\" }",
                 "\"RatingControl\" { return \"RatingControl1\" }",
                 "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
-                "\"RatingControl\" { return 7.0 }");
+                "\"RatingControl\" { return 7.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"RatingControl\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"RatingControl\" { return 5.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"RatingControl\" { return 0 }");
         }
 
         [TestMethod]
@@ -3850,6 +4314,114 @@ namespace ModernWpf.Gallery.Tests
                 "private static Rect GetArtifactViewbox(FrameworkElement element, int width, int height)",
                 "GallerySample_IconElement_SlicesIcon",
                 "return GetParentOffsetViewbox(element, width, height);");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksCompareRenderedImageIconPixelsOnIconElementPage()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Get-RequiredSampleAutomationId([string]$control)",
+                "\"ImageIcon\" { return \"GallerySample_IconElement_ImageExample1\" }",
+                "function Get-SampleRootAutomationId([string]$control)",
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"ImageIcon\" { return \"ImageExample1\" }");
+            AssertContainsInOrder(
+                source,
+                "function Get-ModernPrimaryCropAutomationId([string]$control)",
+                "\"ImageIcon\" { return \"GallerySample_IconElement_ImageExample1\" }",
+                "function Get-ReferencePrimaryAutomationId([string]$control)",
+                "\"ImageIcon\" { return \"ImageExample1\" }");
+            AssertContainsInOrder(
+                source,
+                "function Get-WinUIReferencePageTitle([string]$control)",
+                "\"ImageIcon\" { return \"IconElement\" }",
+                "function Get-ControlRouteId([string]$control, [string]$app)",
+                "return \"IconElement\"");
+            AssertContainsInOrder(
+                source,
+                "$primaryCrop = New-RenderedArtifactCrop $primaryArtifact $primarySource $null",
+                "if ($control -eq \"ImageIcon\")",
+                "$primaryCrop = $null",
+                "$sampleCrop = $null");
+            AssertContainsInOrder(
+                source,
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"ImageIcon\" { return 2.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"ImageIcon\" { return 0 }");
+        }
+
+        [TestMethod]
+        public void WinUIProgressBarOwnsCurrentGallerySurfaceAndStrictPixelGate()
+        {
+            var catalog = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Models",
+                "GalleryCatalog.cs");
+            var factory = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "StatusInfoSampleFactory.cs");
+            var harness = ReadRepoFile(
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1");
+
+            AssertContainsInOrder(
+                catalog,
+                "\"ProgressRing\"",
+                "\"WinUIProgressBar\"",
+                ".Concat(new[] { CreateModernWpfProgressBarItem() })",
+                "private static GalleryItem CreateModernWpfProgressBarItem()",
+                "\"ProgressBar (WinUI)\"",
+                "\"ModernWpf.Controls\"");
+            AssertContainsInOrder(
+                factory,
+                "private const string ProgressBarIndeterminateXaml",
+                "<ProgressBar Width=\"\"130\"\" IsIndeterminate=\"\"True\"\" ShowPaused=\"\"$(ShowPaused)\"\" ShowError=\"\"$(ShowError)\"\" />",
+                "private const string ProgressBarDeterminateXaml",
+                "<ProgressBar Width=\"\"130\"\" Value=\"\"$(DeterminateProgressValue)\"\" />",
+                "case \"WinUIProgressBar\":",
+                "return CreateProgressBarExamples();",
+                "AutomationProperties.SetName(progressBar, \"Determinate ProgressBar example\")",
+                "GalleryAutomation.SampleElementId(\"WinUIProgressBar\", \"DeterminateProgressBar\")");
+            AssertContainsInOrder(
+                harness,
+                "function Set-ProgressBarDeterminateValue($window, [string]$app, [double]$value)",
+                "\"GallerySample_WinUIProgressBar_DeterminateProgressBar\"",
+                "\"ProgressBar2\"",
+                "$pattern.SetValue($value)",
+                "function Get-RequiredSampleAutomationId([string]$control)",
+                "\"WinUIProgressBar\" { return \"GallerySample_WinUIProgressBar_DeterminateProgressBar\" }");
+            AssertContainsInOrder(
+                harness,
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"WinUIProgressBar\" { return \"ProgressBar2\" }",
+                "function Get-ModernPrimaryCropAutomationId([string]$control)",
+                "\"WinUIProgressBar\" { return \"GallerySample_WinUIProgressBar_DeterminateProgressBar\" }",
+                "function Get-ReferencePrimaryAutomationId([string]$control)",
+                "\"WinUIProgressBar\" { return \"ProgressBar2\" }");
+            AssertContainsInOrder(
+                harness,
+                "function Get-WinUIReferencePageTitle([string]$control)",
+                "\"WinUIProgressBar\" { return \"ProgressBar\" }",
+                "function Get-ControlRouteId([string]$control, [string]$app)",
+                "if ($control -eq \"WinUIProgressBar\" -and $app -eq \"WinUI3\")",
+                "return \"ProgressBar\"");
+            AssertContainsInOrder(
+                harness,
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"WinUIProgressBar\" { return 2.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"WinUIProgressBar\" { return 0 }");
         }
 
         [TestMethod]
@@ -3921,24 +4493,28 @@ namespace ModernWpf.Gallery.Tests
                 source,
                 "function Capture-StateInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element)",
                 "if (!$IncludeInteractions -or !(Test-ControlSupportsStateInteraction $control))",
-                "$baselineState = Get-ToggleStateName $element",
+                "$toggleElement = Get-StateInteractionTarget $window $control $element",
+                "$baselineState = Get-StateInteractionStateName $control $toggleElement",
                 "$desiredState = if ($baselineState -eq \"On\") { \"Off\" } else { \"On\" }",
                 "$renderedArtifactPath = if ($app -eq \"ModernWpf\") { Get-ModernRenderedElementArtifactPath $caseDir $element } else { \"\" }",
-                "$baselineCrop = if (Test-Path $baselinePath)",
+                "elseif (Test-Path $baselinePath)",
                 "Save-ElementCrop $window $baselinePath $baselineCropPath $element \"UIA\" 10",
                 "$baselineCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $baselineCropPath $renderedArtifactSource",
-                "$invoked = Set-ToggleElementState $window $element $desiredState",
+                "$invoked = Set-StateInteractionElementState $window $control $toggleElement $desiredState",
                 "$settleDelayMs = Get-StateInteractionSettleDelayMs $control",
                 "Start-Sleep -Milliseconds $settleDelayMs",
-                "$afterState = Get-ToggleStateName $element",
+                "$afterState = Get-StateInteractionStateName $control $toggleElement",
+                "$stateOutputAutomationId = Get-StateInteractionOutputAutomationId $app $control",
+                "$stateOutputMatched = [string]::IsNullOrEmpty($expectedStateOutput) -or $stateOutput -eq $expectedStateOutput",
                 "[void](Refresh-ModernWpfVisualArtifacts $window)",
-                "$afterCrop = if (Test-Path $afterPath)",
+                "elseif (Test-Path $afterPath)",
                 "Save-ElementCrop $window $afterPath $afterCropPath $element \"UIA\" 10",
                 "$afterCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $afterCropPath $renderedArtifactSource",
                 "$stateDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot",
                 "$stateVisual = Test-StateInteractionVisual $control $desiredState $afterCropScreenshot",
                 "$stateChanged = ![string]::IsNullOrEmpty($baselineState)",
                 "$visualChanged = $null -ne $stateDelta -and $stateDelta.Comparable -and $stateDelta.MeanDelta -gt 0.5",
+                "elseif (!$stateOutputMatched)",
                 "elseif (!$stateVisual.Passed)");
             AssertContainsInOrder(
                 source,
@@ -4143,6 +4719,83 @@ namespace ModernWpf.Gallery.Tests
                 "Kind = \"Output\"",
                 "OutputDelta = $outputDelta",
                 "VisualChanged = $visualChanged");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceRepeatButtonCurrentSourceOutputRowParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Save-RepeatButtonOutputSurfaceCrop($window, [string]$screenshot, [string]$path, $triggerElement)",
+                "Source = \"RepeatButtonOutputRow\"",
+                "Width = 240",
+                "Height = 32",
+                "Save-Crop $screenshot $surfaceBounds $path 0");
+            AssertContainsInOrder(
+                source,
+                "$app -eq \"WinUI3\" -and $control -eq \"RepeatButton\"",
+                "$cropAutomationId = \"Control1Output\"",
+                "Save-RepeatButtonOutputSurfaceCrop $window $baselinePath $baselineCropPath $trigger",
+                "Save-RepeatButtonOutputSurfaceCrop $window $afterPath $afterCropPath $trigger");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresReferenceInteractionCropParity([string]$control)",
+                "\"RepeatButton\" { return $true }",
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"RepeatButton\" { return 4.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"RepeatButton\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"RepeatButton\" { return 11.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"RepeatButton\" { return 0 }");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksEnforceToggleButtonCurrentSourceStateAndOutputParity()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresPrimaryCrop([string]$control)",
+                "\"ToggleButton\" { return $true }",
+                "function Get-RequiredReferencePrimaryCropSource([string]$control)",
+                "\"ToggleButton\" { return \"Toggle1\" }");
+            AssertContainsInOrder(
+                source,
+                "function Get-StateInteractionOutputAutomationId([string]$app, [string]$control)",
+                "\"GallerySample_ToggleButton_Output\"",
+                "\"Control1Output\"",
+                "function Get-StateInteractionExpectedOutput([string]$control, [string]$state)",
+                "return $(if ($state -eq \"On\") { \"On\" } else { \"Off\" })",
+                "$stateOutputAutomationId = Get-StateInteractionOutputAutomationId $app $control",
+                "$expectedStateOutput = Get-StateInteractionExpectedOutput $control $desiredState",
+                "$stateOutputMatched = [string]::IsNullOrEmpty($expectedStateOutput) -or $stateOutput -eq $expectedStateOutput",
+                "elseif (!$stateOutputMatched)",
+                "OutputMatched = $stateOutputMatched");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlRequiresReferenceInteractionCropParity([string]$control)",
+                "\"ToggleButton\" { return $true }",
+                "function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control)",
+                "\"ToggleButton\" { return 3.0 }",
+                "function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control)",
+                "\"ToggleButton\" { return 0 }",
+                "function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control)",
+                "\"ToggleButton\" { return 7.0 }",
+                "function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control)",
+                "\"ToggleButton\" { return 0 }");
         }
 
         [TestMethod]
@@ -4863,8 +5516,10 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
+                "Point absolutePlacementPoint = default;",
                 "var hasAbsolutePlacementPoint =",
-                "TryGetAbsolutePlacementPoint(placementTarget, effectivePlacement, out var absolutePlacementPoint);",
+                "placement == PlacementMode.Custom &&",
+                "TryGetAbsolutePlacementPoint(placementTarget, effectivePlacement, out absolutePlacementPoint);",
                 "m_presenter.SetAbsolutePlacementPoint(absolutePlacementPoint);",
                 "m_presenter.Placement = PlacementMode.AbsolutePoint;",
                 "m_presenter.HorizontalOffset = absolutePlacementPoint.X;",
@@ -5535,10 +6190,10 @@ namespace ModernWpf.Gallery.Tests
                 "function Find-EditableDescendant($element)",
                 "[System.Windows.Automation.ControlType]::Edit",
                 "function Set-EditableElementText($window, $element, [string]$text)",
-                "[System.Windows.Automation.ValuePattern]::Pattern",
-                "$pattern.SetValue($text)",
                 "[GalleryVisualNative]::PressCtrlA()",
-                "[GalleryVisualNative]::TypeText($text)");
+                "[GalleryVisualNative]::TypeText($text)",
+                "[System.Windows.Automation.ValuePattern]::Pattern",
+                "$pattern.SetValue($text)");
             AssertContainsInOrder(
                 source,
                 "function Find-ListItemOutsideElementBounds($window, $element, [string[]]$names)",

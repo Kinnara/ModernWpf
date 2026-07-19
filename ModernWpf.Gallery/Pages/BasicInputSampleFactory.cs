@@ -23,12 +23,6 @@ namespace ModernWpf.Gallery.Pages
         private const string ToggleSwitchSimpleXaml =
 @"<ToggleSwitch AutomationProperties.Name=""simple ToggleSwitch""/>";
 
-        private const string HyperlinkButtonNavigateUriXaml =
-@"<HyperlinkButton Content=""Microsoft home page"" NavigateUri=""https://www.microsoft.com"" $(IsEnabled)/>";
-
-        private const string HyperlinkButtonClickXaml =
-@"<HyperlinkButton Content=""ToggleButton"" Click=""HyperlinkButton_Click""/>";
-
         private const string RepeatButtonSimpleXaml =
 @"<RepeatButton Content=""Click and hold"" Click=""RepeatButton_Click"" $(IsEnabled)/>";
 
@@ -38,17 +32,6 @@ namespace ModernWpf.Gallery.Pages
 
         private const string RatingControlPlaceholderXaml =
 @"<RatingControl AutomationProperties.Name=""RatingControl with placeholder"" PlaceholderValue=""$(Slider)"" />";
-
-        private const string ColorPickerPropertiesXaml =
-@"<ColorPicker
-      ColorSpectrumShape=""$(ColorSpectrumShape)""
-      IsMoreButtonVisible=""$(IsMoreButtonVisible)""
-      IsColorSliderVisible=""$(IsColorSliderVisible)""
-      IsColorChannelTextInputVisible=""$(IsColorChannelTextInputVisible)""
-      IsHexInputVisible=""$(IsHexInputVisible)""
-      IsAlphaEnabled=""$(IsAlphaEnabled)""
-      IsAlphaSliderVisible=""$(IsAlphaSliderVisible)""
-      IsAlphaTextInputVisible=""$(IsAlphaTextInputVisible)"" />";
 
         private const string ToggleButtonSimpleXaml =
 @"<ToggleButton Content=""ToggleButton"" Click=""Button_Click"" $(IsEnabled)/>";
@@ -64,9 +47,9 @@ namespace ModernWpf.Gallery.Pages
             switch (uniqueId)
             {
                 case "HyperlinkButton":
-                    return CreateHyperlinkButtonExamples();
+                    return CreateHyperlinkButtonExamples(sampleSnippets);
                 case "ColorPicker":
-                    return CreateColorPickerExamples();
+                    return CreateColorPickerExamples(sampleSnippets);
                 case "RatingControl":
                     return CreateRatingControlExamples();
                 case "RepeatButton":
@@ -217,28 +200,45 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 0, 0, 12)
             };
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("HyperlinkButton"));
-            panel.Children.Add(CreateUriHyperlinkButtonExampleContent(assignRootAutomationId: false));
+            panel.Children.Add(CreateUriHyperlinkButtonExampleContent(assignRootAutomationId: false, out _));
             return panel;
         }
 
-        private static IReadOnlyList<GalleryExample> CreateHyperlinkButtonExamples()
+        private static IReadOnlyList<GalleryExample> CreateHyperlinkButtonExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
         {
+            var uriExample = CreateUriHyperlinkButtonExampleContent(assignRootAutomationId: true, out var uriButton);
+            var navigateSnippet = FindSampleCodeText(sampleSnippets, "HyperlinkButton\\HyperlinkButtonNavigate.txt");
+            var clickSnippet = FindSampleCodeText(sampleSnippets, "HyperlinkButton\\HyperlinkButtonClick.txt");
+            var options = new StackPanel();
+            options.Children.Add(CreateOptionCheckBox(
+                "DisableControl1",
+                "Disable hyperlink button",
+                isChecked: false,
+                isEnabled: true,
+                valueChanged: isChecked => uriButton.IsEnabled = !isChecked));
+
             return new[]
             {
                 new GalleryExample(
                     "A hyperlink button that navigates to a URI.",
-                    CreateUriHyperlinkButtonExampleContent(assignRootAutomationId: true),
-                    HyperlinkButtonNavigateUriXaml,
-                    null),
+                    uriExample,
+                    FindSampleCodeSection(sampleSnippets, "HyperlinkButton\\HyperlinkButtonNavigate.txt", "xaml"),
+                    null,
+                    options,
+                    new[] { navigateSnippet }),
                 new GalleryExample(
                     "A hyperlink button that handles a Click event.",
                     CreateClickHyperlinkButtonExampleContent(),
-                    HyperlinkButtonClickXaml,
-                    null)
+                    FindSampleCodeSection(sampleSnippets, "HyperlinkButton\\HyperlinkButtonClick.txt", "xaml"),
+                    null,
+                    new Thickness(10),
+                    new[] { clickSnippet })
             };
         }
 
-        private static GallerySamplePanel CreateUriHyperlinkButtonExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateUriHyperlinkButtonExampleContent(
+            bool assignRootAutomationId,
+            out Mux.HyperlinkButton button)
         {
             var panel = new GallerySamplePanel();
             if (assignRootAutomationId)
@@ -246,7 +246,7 @@ namespace ModernWpf.Gallery.Pages
                 GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("HyperlinkButton"));
             }
 
-            var button = new Mux.HyperlinkButton
+            button = new Mux.HyperlinkButton
             {
                 Name = "Control1",
                 Content = "Microsoft home page",
@@ -397,6 +397,7 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 12, 0, 0),
                 Text = "Off"
             };
+            GalleryAutomation.WithAutomationId(output, GalleryAutomation.SampleElementId("ToggleButton", "Output"));
 
             button.Checked += delegate { output.Text = "On"; };
             button.Unchecked += delegate { output.Text = "Off"; };
@@ -703,11 +704,6 @@ namespace ModernWpf.Gallery.Pages
 
         private static void ApplyRichTextBoxListStyle(RichTextBox richTextBox, bool isChecked, TextMarkerStyle markerStyle)
         {
-            if (!isChecked)
-            {
-                return;
-            }
-
             richTextBox.Focus();
             var command = markerStyle == TextMarkerStyle.Disc
                 ? EditingCommands.ToggleBullets
@@ -715,6 +711,13 @@ namespace ModernWpf.Gallery.Pages
             if (command.CanExecute(null, richTextBox))
             {
                 command.Execute(null, richTextBox);
+            }
+
+            if (isChecked &&
+                richTextBox.Selection.Start.Paragraph?.Parent is ListItem listItem &&
+                listItem.Parent is List list)
+            {
+                list.MarkerStyle = markerStyle;
             }
         }
 
@@ -725,23 +728,37 @@ namespace ModernWpf.Gallery.Pages
                 Margin = new Thickness(0, 0, 0, 12)
             };
             GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ColorPicker"));
-            panel.Children.Add(CreateColorPickerPropertiesExampleContent(assignRootAutomationId: false));
+            panel.Children.Add(CreateColorPickerPropertiesExampleContent(
+                assignRootAutomationId: false,
+                embedOptionsInContent: true,
+                out _));
             return panel;
         }
 
-        private static IReadOnlyList<GalleryExample> CreateColorPickerExamples()
+        private static IReadOnlyList<GalleryExample> CreateColorPickerExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
         {
+            var snippet = FindSampleCodeText(sampleSnippets, "ColorPicker\\ColorPickerProperties.txt");
+            var exampleContent = CreateColorPickerPropertiesExampleContent(
+                assignRootAutomationId: true,
+                embedOptionsInContent: false,
+                out var optionsContent);
+
             return new[]
             {
                 new GalleryExample(
                     "ColorPicker Properties.",
-                    CreateColorPickerPropertiesExampleContent(assignRootAutomationId: true),
-                    ColorPickerPropertiesXaml,
-                    null)
+                    exampleContent,
+                    FindSampleCodeSection(sampleSnippets, "ColorPicker\\ColorPickerProperties.txt", "xaml"),
+                    null,
+                    optionsContent,
+                    new[] { snippet })
             };
         }
 
-        private static GallerySamplePanel CreateColorPickerPropertiesExampleContent(bool assignRootAutomationId)
+        private static GallerySamplePanel CreateColorPickerPropertiesExampleContent(
+            bool assignRootAutomationId,
+            bool embedOptionsInContent,
+            out FrameworkElement optionsContent)
         {
             var panel = new GallerySamplePanel();
             if (assignRootAutomationId)
@@ -749,14 +766,10 @@ namespace ModernWpf.Gallery.Pages
                 GalleryAutomation.WithAutomationId(panel, GalleryAutomation.SampleRootId("ColorPicker"));
             }
 
-            var layout = new Grid();
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
-            layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
             var colorPicker = new Mux.ColorPicker
             {
                 Name = "colorPicker",
+                HorizontalAlignment = HorizontalAlignment.Left,
                 IsAlphaEnabled = false,
                 IsAlphaSliderVisible = true,
                 IsAlphaTextInputVisible = true,
@@ -766,14 +779,13 @@ namespace ModernWpf.Gallery.Pages
                 IsMoreButtonVisible = false
             };
             GalleryAutomation.WithAutomationId(colorPicker, GalleryAutomation.SampleElementId("ColorPicker", "ColorPicker"));
-            layout.Children.Add(colorPicker);
 
             var options = new StackPanel
             {
                 Width = 250,
                 Margin = new Thickness(0, -5, 0, 0)
             };
-            Grid.SetColumn(options, 2);
+            optionsContent = options;
 
             var moreButtonCheck = CreateOptionCheckBox("moreBtn", "IsMoreButtonVisible", isChecked: false, isEnabled: true, value => colorPicker.IsMoreButtonVisible = value);
             var colorSliderCheck = CreateOptionCheckBox("colorSlider", "IsColorSliderVisible", isChecked: true, isEnabled: true, value => colorPicker.IsColorSliderVisible = value);
@@ -837,8 +849,23 @@ namespace ModernWpf.Gallery.Pages
             previewStack.Children.Add(previewRect);
             options.Children.Add(previewStack);
 
-            layout.Children.Add(options);
-            panel.Children.Add(layout);
+            if (embedOptionsInContent)
+            {
+                var layout = new Grid();
+                layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                layout.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(40) });
+                layout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+                layout.Children.Add(colorPicker);
+                Grid.SetColumn(options, 2);
+                layout.Children.Add(options);
+                panel.Children.Add(layout);
+            }
+            else
+            {
+                panel.HorizontalAlignment = HorizontalAlignment.Left;
+                panel.Children.Add(colorPicker);
+            }
+
             return panel;
         }
 
@@ -970,7 +997,8 @@ namespace ModernWpf.Gallery.Pages
             {
                 Name = "RatingControl2",
                 HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top
+                VerticalAlignment = VerticalAlignment.Top,
+                PlaceholderValue = 0
             };
             AutomationProperties.SetName(rating, "RatingControl with placeholder");
             GalleryAutomation.WithAutomationId(rating, GalleryAutomation.SampleElementId("RatingControl", "PlaceholderRatingControl"));
@@ -997,7 +1025,7 @@ namespace ModernWpf.Gallery.Pages
             };
             slider.ValueChanged += delegate
             {
-                rating.PlaceholderValue = slider.Value <= 0 ? -1 : slider.Value;
+                rating.PlaceholderValue = slider.Value;
             };
             options.Children.Add(slider);
             layout.Children.Add(options);
@@ -1113,6 +1141,32 @@ namespace ModernWpf.Gallery.Pages
 
             var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Samples", "SampleCode", relativePath);
             return System.IO.File.Exists(path) ? System.IO.File.ReadAllText(path) : null;
+        }
+
+        private static string FindSampleCodeSection(
+            IReadOnlyList<SampleSnippet> snippets,
+            string relativePath,
+            string sectionName)
+        {
+            var text = FindSampleCodeText(snippets, relativePath);
+            if (string.IsNullOrEmpty(text))
+            {
+                return text;
+            }
+
+            var marker = "--- " + sectionName;
+            var sectionStart = text.IndexOf(marker, StringComparison.Ordinal);
+            if (sectionStart < 0)
+            {
+                return text;
+            }
+
+            sectionStart += marker.Length;
+            var nextSection = text.IndexOf("\n--- ", sectionStart, StringComparison.Ordinal);
+            return (nextSection < 0
+                    ? text.Substring(sectionStart)
+                    : text.Substring(sectionStart, nextSection - sectionStart))
+                .Trim();
         }
 
         private static string FormatRatingValue(double value)

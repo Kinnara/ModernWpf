@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using ModernWpf.Automation.Peers;
+using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Controls
 {
@@ -15,11 +17,40 @@ namespace ModernWpf.Controls
         }
     }
 
-    public class SelectorBarItemsControlAutomationPeer : ItemsControlAutomationPeer
+    public class SelectorBarItemsControlAutomationPeer : ItemsControlAutomationPeer, ISelectionProvider
     {
         public SelectorBarItemsControlAutomationPeer(SelectorBarItemsControl owner)
             : base(owner)
         {
+            _owner = owner;
+        }
+
+        public bool CanSelectMultiple => false;
+
+        public bool IsSelectionRequired => false;
+
+        public IRawElementProviderSimple[] GetSelection()
+        {
+            var selectedItem = _owner.Items
+                .OfType<SelectorBarItem>()
+                .FirstOrDefault(item => item.IsSelected);
+            if (selectedItem == null)
+            {
+                return Array.Empty<IRawElementProviderSimple>();
+            }
+
+            var children = GetChildren();
+            var selectedPeer = children?
+                .OfType<SelectorBarItemsControlItemAutomationPeer>()
+                .FirstOrDefault(peer => ReferenceEquals(peer.OwnerItem, selectedItem));
+            return selectedPeer == null
+                ? Array.Empty<IRawElementProviderSimple>()
+                : new[] { ProviderFromPeer(selectedPeer) };
+        }
+
+        public override object GetPattern(PatternInterface patternInterface)
+        {
+            return patternInterface == PatternInterface.Selection ? this : base.GetPattern(patternInterface);
         }
 
         protected override ItemAutomationPeer CreateItemAutomationPeer(object item)
@@ -36,15 +67,27 @@ namespace ModernWpf.Controls
         {
             return AutomationControlType.List;
         }
+
+        protected override string GetClassNameCore()
+        {
+            return "ItemsView";
+        }
+
+        private readonly SelectorBarItemsControl _owner;
     }
 
     public class SelectorBarItemsControlItemAutomationPeer : ItemAutomationPeer, ISelectionItemProvider
     {
+        private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(SelectorBar));
+
         public SelectorBarItemsControlItemAutomationPeer(object item, SelectorBarItemsControlAutomationPeer itemsControlAutomationPeer)
             : base(item, itemsControlAutomationPeer)
         {
             _item = (SelectorBarItem)item;
+            _itemsControlAutomationPeer = itemsControlAutomationPeer;
         }
+
+        internal SelectorBarItem OwnerItem => _item;
 
         public bool IsSelected => _item.IsSelected;
 
@@ -52,13 +95,7 @@ namespace ModernWpf.Controls
         {
             get
             {
-                if (_item.Owner == null)
-                {
-                    return null;
-                }
-
-                var peer = FrameworkElementAutomationPeer.CreatePeerForElement(_item.Owner) ?? new SelectorBarAutomationPeer(_item.Owner);
-                return ProviderFromPeer(peer);
+                return ProviderFromPeer(_itemsControlAutomationPeer);
             }
         }
 
@@ -97,7 +134,7 @@ namespace ModernWpf.Controls
 
         protected override string GetLocalizedControlTypeCore()
         {
-            return nameof(SelectorBarItem);
+            return GetDefaultControlName();
         }
 
         protected override string GetNameCore()
@@ -113,14 +150,20 @@ namespace ModernWpf.Controls
                 name = _item.Child.ToString();
             }
 
-            return string.IsNullOrEmpty(name) ? nameof(SelectorBarItem) : name;
+            return string.IsNullOrEmpty(name) ? GetDefaultControlName() : name;
         }
 
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
-            return AutomationControlType.TabItem;
+            return AutomationControlType.ListItem;
+        }
+
+        private static string GetDefaultControlName()
+        {
+            return ResourceAccessor.GetLocalizedStringResource(SR_SelectorBarItemDefaultControlName);
         }
 
         private readonly SelectorBarItem _item;
+        private readonly SelectorBarItemsControlAutomationPeer _itemsControlAutomationPeer;
     }
 }

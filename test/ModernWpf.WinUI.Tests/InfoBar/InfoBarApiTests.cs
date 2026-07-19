@@ -131,6 +131,14 @@ public class InfoBarApiTests
             Assert.AreEqual(Visibility.Collapsed, standardIconArea.Visibility);
             Assert.AreEqual(Visibility.Visible, userIconBox.Visibility);
 
+            infoBar.IconSource = null;
+            host.UpdateLayout();
+
+            Assert.IsNull(infoBar.TemplateSettings.IconElement);
+            Assert.AreEqual("StandardIconVisible", GetCurrentStateName(contentRoot, "IconStates"));
+            Assert.AreEqual(Visibility.Visible, standardIconArea.Visibility);
+            Assert.AreEqual(Visibility.Collapsed, userIconBox.Visibility);
+
             infoBar.IsIconVisible = false;
             host.UpdateLayout();
 

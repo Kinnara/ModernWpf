@@ -24,6 +24,8 @@
         <Setter Property="Background" Value="{DynamicResource ContentDialogBackground}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ContentDialogBorderWidth}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ContentDialogBorderBrush}" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="PrimaryButtonStyle" Value="{DynamicResource DefaultButtonStyle}" />
@@ -252,7 +254,8 @@
                                                                 Content="{TemplateBinding Title}"
                                                                 ContentTemplate="{TemplateBinding TitleTemplate}"
                                                                 FontSize="20"
-                                                                FontFamily="{DynamicResource {x:Static SystemFonts.MessageFontFamilyKey}}"
+                                                                FontFamily="{DynamicResource ContentControlThemeFontFamily}"
+                                                                MinHeight="27"
                                                                 FontWeight="SemiBold"
                                                                 Foreground="{TemplateBinding Foreground}"
                                                                 HorizontalAlignment="Left"
@@ -304,18 +307,24 @@
                                                         Content="{TemplateBinding PrimaryButtonText}"
                                                         IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
                                                         Style="{TemplateBinding PrimaryButtonStyle}"
+                                                        FontFamily="{DynamicResource ContentControlThemeFontFamily}"
+                                                        FontSize="{DynamicResource ControlContentThemeFontSize}"
                                                         HorizontalAlignment="Stretch" />
                                                     <Button
                                                         x:Name="SecondaryButton"
                                                         Content="{TemplateBinding SecondaryButtonText}"
                                                         IsEnabled="{TemplateBinding IsSecondaryButtonEnabled}"
                                                         Style="{TemplateBinding SecondaryButtonStyle}"
+                                                        FontFamily="{DynamicResource ContentControlThemeFontFamily}"
+                                                        FontSize="{DynamicResource ControlContentThemeFontSize}"
                                                         HorizontalAlignment="Stretch" />
                                                     <Button
                                                         x:Name="CloseButton"
                                                         Grid.Column="4"
                                                         Content="{TemplateBinding CloseButtonText}"
                                                         Style="{TemplateBinding CloseButtonStyle}"
+                                                        FontFamily="{DynamicResource ContentControlThemeFontFamily}"
+                                                        FontSize="{DynamicResource ControlContentThemeFontSize}"
                                                         HorizontalAlignment="Stretch" />
                                                 </Grid>
                                             </Grid>

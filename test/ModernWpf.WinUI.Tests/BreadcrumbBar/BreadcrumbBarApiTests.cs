@@ -527,6 +527,45 @@ public class BreadcrumbBarApiTests
     }
 
     [TestMethod]
+    public void AutomationPeerMatchesWinUILocalizedTypeAndEllipsisAccessibilityView()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var breadcrumb = new ModernWpf.Controls.BreadcrumbBar
+            {
+                ItemsSource = new[]
+                {
+                    "Very long root node",
+                    "Very long child node",
+                    "Very long grandchild node",
+                    "Current node"
+                }
+            };
+
+            using var host = new TestWindowHost(breadcrumb, width: 800, height: 80);
+            var repeater = FindTemplatePart<ItemsRepeater>(breadcrumb, "PART_ItemsRepeater");
+            var ellipsis = repeater.TryGetElement(0) as BreadcrumbBarItem;
+            Assert.IsNotNull(ellipsis);
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(ellipsis!);
+            Assert.IsNotNull(peer);
+            Assert.AreEqual(nameof(BreadcrumbBarItem), peer!.GetClassName());
+            Assert.AreEqual(AutomationControlType.Button, peer.GetAutomationControlType());
+            Assert.AreEqual("breadcrumb bar item", peer.GetLocalizedControlType());
+            Assert.AreEqual("More", AutomationProperties.GetName(ellipsis));
+            Assert.IsFalse(peer.IsControlElement());
+            Assert.IsFalse(peer.IsContentElement());
+
+            breadcrumb.Width = 110;
+            host.UpdateLayout();
+
+            Assert.IsTrue(breadcrumb.HiddenElements().Count > 0);
+            Assert.IsTrue(peer.IsControlElement());
+            Assert.IsTrue(peer.IsContentElement());
+        });
+    }
+
+    [TestMethod]
     public void VerifyCollectionChangeGetsRespected()
     {
         WpfTestHost.Run(() =>

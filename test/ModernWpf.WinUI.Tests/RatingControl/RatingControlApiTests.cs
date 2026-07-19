@@ -281,8 +281,17 @@ public class RatingControlApiTests
 
             ratingControl.PlaceholderValue = 0.1;
             ratingControl.Value = 0.1;
-            Assert.AreEqual(1.0, ratingControl.PlaceholderValue, "Should coerce small PlaceholderValue values to 1.0");
+            Assert.AreEqual(0.1, ratingControl.PlaceholderValue, "PlaceholderValue is a display hint, so fractional values should be preserved");
             Assert.AreEqual(1.0, ratingControl.Value, "Should coerce small Value values to 1.0");
+
+            ratingControl.PlaceholderValue = 0.5;
+            Assert.AreEqual(0.5, ratingControl.PlaceholderValue);
+
+            ratingControl.PlaceholderValue = 0.0;
+            Assert.AreEqual(0.0, ratingControl.PlaceholderValue);
+
+            ratingControl.PlaceholderValue = -0.5;
+            Assert.AreEqual(-1.0, ratingControl.PlaceholderValue, "Negative PlaceholderValue should use the unset sentinel");
 
             ratingControl.PlaceholderValue = 6.0;
             ratingControl.Value = 6.0;
@@ -298,6 +307,34 @@ public class RatingControlApiTests
             ratingControl.Value = 6.0;
             Assert.AreEqual(1.0, ratingControl.PlaceholderValue, "Should coerce set PlaceholderValue above MaxRating back to MaxRating");
             Assert.AreEqual(1.0, ratingControl.Value, "Should coerce set Value above MaxRating back to MaxRating");
+        });
+    }
+
+    [TestMethod]
+    public void VerifyMaxRatingCoercionWhileLoadedDoesNotCrash()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var ratingControl = new ModernWpf.Controls.RatingControl
+            {
+                Value = 5,
+                PlaceholderValue = 5
+            };
+
+            using var host = new TestWindowHost(ratingControl, width: 420, height: 180);
+            host.UpdateLayout();
+
+            ratingControl.Value = 6;
+            ratingControl.PlaceholderValue = 6;
+            host.UpdateLayout();
+
+            ratingControl.MaxRating = -2;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(1, ratingControl.MaxRating);
+            Assert.AreEqual(1.0, ratingControl.Value);
+            Assert.AreEqual(1.0, ratingControl.PlaceholderValue);
         });
     }
 

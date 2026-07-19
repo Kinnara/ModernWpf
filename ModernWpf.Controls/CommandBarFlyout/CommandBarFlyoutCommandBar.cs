@@ -33,6 +33,7 @@ namespace ModernWpf.Controls.Primitives
             PrimaryCommands = new ObservableCollection<ICommandBarElement>();
             PrimaryCommands.CollectionChanged += delegate
             {
+                InvalidateDynamicOverflow();
                 AttachCommandElementsToPanels();
                 AttachItemEventHandlers();
                 UpdateHasOverflowItems();
@@ -44,6 +45,7 @@ namespace ModernWpf.Controls.Primitives
             SecondaryCommands.CollectionChanged += delegate
             {
                 m_secondaryItemsRootSized = false;
+                InvalidateDynamicOverflow();
                 AttachCommandElementsToPanels();
                 AttachItemEventHandlers();
                 UpdateHasOverflowItems();
@@ -67,11 +69,15 @@ namespace ModernWpf.Controls.Primitives
                 if (TryGetOwningFlyout(out var owningFlyout) &&
                     owningFlyout.ShowMode == FlyoutShowMode.Standard)
                 {
-                    var commands = PrimaryCommands.Count > 0 ? PrimaryCommands : (SecondaryCommands.Count > 0 ? SecondaryCommands : null);
+                    var displayedPrimaryCommands = GetDisplayedPrimaryCommands();
+                    var displayedSecondaryCommands = GetDisplayedSecondaryCommands();
+                    var commands = displayedPrimaryCommands.Count > 0
+                        ? displayedPrimaryCommands
+                        : (displayedSecondaryCommands.Count > 0 ? displayedSecondaryCommands : null);
 
                     if (commands != null)
                     {
-                        bool usingPrimaryCommands = commands == PrimaryCommands;
+                        bool usingPrimaryCommands = commands == displayedPrimaryCommands;
                         bool ensureTabStopUniqueness = usingPrimaryCommands;
                         var firstCommandAsFrameworkElement = commands[0] as FrameworkElement;
 
@@ -406,10 +412,62 @@ namespace ModernWpf.Controls.Primitives
                 overflowPanel.OwnerCommandBar = this;
             }
 
-            AddCommandsToPanel(m_primaryItemsPanel, PrimaryCommands, false);
-            AddCommandsToPanel(m_secondaryItemsPanel, SecondaryCommands, true);
+            AddCommandsToPanel(m_primaryItemsPanel, GetDisplayedPrimaryCommands(), false);
+            AddCommandsToPanel(m_secondaryItemsPanel, GetDisplayedSecondaryCommands(), true);
             UpdateCommandDefaultLabelPositions();
             UpdateCommandOverflowStyleParams();
+        }
+
+        private void InvalidateDynamicOverflow()
+        {
+            m_dynamicOverflowCalculated = false;
+            m_overflowedPrimaryCommands.Clear();
+        }
+
+        private IList<ICommandBarElement> GetDisplayedPrimaryCommands()
+        {
+            if (m_overflowedPrimaryCommands.Count == 0)
+            {
+                return PrimaryCommands;
+            }
+
+            var commands = new List<ICommandBarElement>(PrimaryCommands.Count - m_overflowedPrimaryCommands.Count);
+            foreach (var command in PrimaryCommands)
+            {
+                if (!m_overflowedPrimaryCommands.Contains(command))
+                {
+                    commands.Add(command);
+                }
+            }
+
+            return commands;
+        }
+
+        private IList<ICommandBarElement> GetDisplayedSecondaryCommands()
+        {
+            if (m_overflowedPrimaryCommands.Count == 0)
+            {
+                return SecondaryCommands;
+            }
+
+            var separatorCount = SecondaryCommands.Count > 0 ? 1 : 0;
+            var commands = new List<ICommandBarElement>(
+                m_overflowedPrimaryCommands.Count + separatorCount + SecondaryCommands.Count);
+
+            commands.AddRange(m_overflowedPrimaryCommands);
+
+            if (separatorCount != 0)
+            {
+                m_dynamicOverflowSeparator ??= new AppBarSeparator { IsTabStop = false };
+                commands.Add(m_dynamicOverflowSeparator);
+            }
+
+            foreach (var command in SecondaryCommands)
+            {
+                commands.Add(command);
+            }
+
+            return commands;
         }
 
         private static void ClearPanelChildren(Panel panel)
@@ -474,7 +532,11 @@ namespace ModernWpf.Controls.Primitives
 
         private void UpdateCommandOverflowStyleParams()
         {
-            AppBarElementProperties.UpdateOverflowStyleParams(PrimaryCommands, false);
+            AppBarElementProperties.UpdateOverflowStyleParams(GetDisplayedPrimaryCommands(), false);
+            AppBarElementProperties.UpdateOverflowStyleParams(
+                m_overflowedPrimaryCommands,
+                true,
+                GetInputModeForOverflowCommands());
             AppBarElementProperties.UpdateOverflowStyleParams(
                 SecondaryCommands,
                 true,
@@ -692,9 +754,11 @@ namespace ModernWpf.Controls.Primitives
         private void UpdateFlowsFromAndFlowsTo()
         {
             var moreButton = m_moreButton;
+            var displayedPrimaryCommands = GetDisplayedPrimaryCommands();
+            var displayedSecondaryCommands = GetDisplayedSecondaryCommands();
 
-            EnsureTabStopUniqueness(PrimaryCommands, moreButton);
-            EnsureTabStopUniqueness(SecondaryCommands, null);
+            EnsureTabStopUniqueness(displayedPrimaryCommands, moreButton);
+            EnsureTabStopUniqueness(displayedSecondaryCommands, null);
 
 #if NET48_OR_NEWER
             EnsureAutomationSetCountAndPosition();
@@ -711,9 +775,9 @@ namespace ModernWpf.Controls.Primitives
                     return IsControlFocusable(primaryCommandAsControl, checkTabStop);
                 }
 
-                for (int i = PrimaryCommands.Count - 1; i >= 0; i--)
+                for (int i = displayedPrimaryCommands.Count - 1; i >= 0; i--)
                 {
-                    var primaryCommand = PrimaryCommands[i];
+                    var primaryCommand = displayedPrimaryCommands[i];
                     if (isElementFocusable(primaryCommand, false))
                     {
                         m_currentPrimaryItemsEndElement = primaryCommand as FrameworkElement;
@@ -726,7 +790,7 @@ namespace ModernWpf.Controls.Primitives
                     m_currentPrimaryItemsEndElement = moreButton;
                 }
 
-                foreach (var secondaryCommand in SecondaryCommands)
+                foreach (var secondaryCommand in displayedSecondaryCommands)
                 {
                     if (isElementFocusable(secondaryCommand, false))
                     {
@@ -801,7 +865,7 @@ namespace ModernWpf.Controls.Primitives
                     updateExpansionStates();
                 }
 
-                if (PrimaryCommands.Count != 0)
+                if (GetDisplayedPrimaryCommands().Count != 0)
                 {
                     VisualStateManager.GoToState(
                         this,
@@ -833,12 +897,14 @@ namespace ModernWpf.Controls.Primitives
         private void UpdateAvailableCommandsState(bool useTransitions)
         {
             string stateName;
+            var hasPrimaryCommands = GetDisplayedPrimaryCommands().Count > 0;
+            var hasSecondaryCommands = GetDisplayedSecondaryCommands().Count > 0;
 
-            if (PrimaryCommands.Count > 0 && SecondaryCommands.Count > 0)
+            if (hasPrimaryCommands && hasSecondaryCommands)
             {
                 stateName = "BothCommands";
             }
-            else if (SecondaryCommands.Count > 0)
+            else if (hasSecondaryCommands)
             {
                 stateName = "SecondaryCommandsOnly";
             }
@@ -853,8 +919,9 @@ namespace ModernWpf.Controls.Primitives
         private void UpdatePrimaryLabelStates(bool useTransitions)
         {
             bool hasPrimaryCommandLabels = false;
+            var displayedPrimaryCommands = GetDisplayedPrimaryCommands();
 
-            foreach (var primaryCommand in PrimaryCommands)
+            foreach (var primaryCommand in displayedPrimaryCommands)
             {
                 if (HasVisibleLabel(primaryCommand as AppBarButton) ||
                     HasVisibleLabel(primaryCommand as AppBarToggleButton))
@@ -864,7 +931,7 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
-            foreach (var command in PrimaryCommands)
+            foreach (var command in displayedPrimaryCommands)
             {
                 if (command is Control commandControl)
                 {
@@ -872,7 +939,7 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
-            foreach (var command in SecondaryCommands)
+            foreach (var command in GetDisplayedSecondaryCommands())
             {
                 if (command is Control commandControl)
                 {
@@ -901,6 +968,8 @@ namespace ModernWpf.Controls.Primitives
         {
             if (m_primaryItemsRoot != null && m_secondaryItemsRoot != null)
             {
+                UpdateDynamicOverflow();
+
                 var flyoutTemplateSettings = FlyoutTemplateSettings;
                 if (flyoutTemplateSettings == null)
                 {
@@ -987,6 +1056,73 @@ namespace ModernWpf.Controls.Primitives
                     flyoutTemplateSettings.ExpandDownOverflowVerticalPosition = 0;
                 }
             }
+        }
+
+        private void UpdateDynamicOverflow()
+        {
+            if (m_dynamicOverflowCalculated ||
+                m_primaryItemsPanel == null ||
+                m_moreButton == null ||
+                PrimaryCommands.Count == 0)
+            {
+                return;
+            }
+
+            m_dynamicOverflowCalculated = true;
+
+            var maximumWidth = MaxWidth;
+            if (double.IsNaN(maximumWidth) || double.IsInfinity(maximumWidth) || maximumWidth <= 0)
+            {
+                return;
+            }
+
+            var infiniteSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
+            UpdatePrimaryLabelStates(false);
+            m_moreButton.Measure(infiniteSize);
+
+            var panelMargin = m_primaryItemsPanel is FrameworkElement panelElement
+                ? panelElement.Margin.Left + panelElement.Margin.Right
+                : 0;
+
+            // WinUI reserves the ellipsis column plus its 3-DIP spacer before deciding
+            // how many primary commands fit. With the default 440-DIP maximum this
+            // leaves 398 DIPs, so twenty 40-DIP commands retain nine primary items.
+            var availablePrimaryWidth = Math.Max(
+                0,
+                maximumWidth - Math.Max(36, m_moreButton.DesiredSize.Width) - panelMargin - 3);
+            var usedPrimaryWidth = 0d;
+
+            foreach (var command in PrimaryCommands)
+            {
+                if (!(command is UIElement element))
+                {
+                    continue;
+                }
+
+                element.Measure(infiniteSize);
+                var commandWidth = element.DesiredSize.Width;
+
+                if (usedPrimaryWidth + commandWidth <= availablePrimaryWidth &&
+                    m_overflowedPrimaryCommands.Count == 0)
+                {
+                    usedPrimaryWidth += commandWidth;
+                }
+                else
+                {
+                    m_overflowedPrimaryCommands.Add(command);
+                }
+            }
+
+            if (m_overflowedPrimaryCommands.Count == 0)
+            {
+                return;
+            }
+
+            m_secondaryItemsRootSized = false;
+            AttachCommandElementsToPanels();
+            UpdateHasOverflowItems();
+            UpdateFlowsFromAndFlowsTo();
+            UpdateOverflowPopupVisibility(IsOpen, allowOpen: IsLoaded);
         }
 
         private void UpdateOverflowPopupOffset()
@@ -1079,7 +1215,9 @@ namespace ModernWpf.Controls.Primitives
 
         private void EnsureFocusedPrimaryCommand()
         {
-            foreach (var primaryCommand in PrimaryCommands)
+            var displayedPrimaryCommands = GetDisplayedPrimaryCommands();
+
+            foreach (var primaryCommand in displayedPrimaryCommands)
             {
                 if (primaryCommand is Control control && control.IsKeyboardFocusWithin)
                 {
@@ -1087,9 +1225,9 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
 
-            if (PrimaryCommands.Count > 0)
+            if (displayedPrimaryCommands.Count > 0)
             {
-                FocusCommand(PrimaryCommands, m_moreButton, true, true);
+                FocusCommand(displayedPrimaryCommands, m_moreButton, true, true);
             }
         }
 
@@ -1118,14 +1256,15 @@ namespace ModernWpf.Controls.Primitives
                     if (m_moreButton != null && m_moreButton.IsFocused)
                     {
                         IsOpen = true;
-                        FocusCommand(SecondaryCommands, null, true, true);
+                        FocusCommand(GetDisplayedSecondaryCommands(), null, true, true);
                         args.Handled = true;
                     }
                     break;
 
                 case Key.Down:
                 case Key.Up:
-                    if (IsOpen && SecondaryCommands.Count > 0 && FocusCommand(SecondaryCommands, null, args.Key == Key.Down, true))
+                    var displayedSecondaryCommands = GetDisplayedSecondaryCommands();
+                    if (IsOpen && displayedSecondaryCommands.Count > 0 && FocusCommand(displayedSecondaryCommands, null, args.Key == Key.Down, true))
                     {
                         args.Handled = true;
                     }
@@ -1539,7 +1678,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void UpdateOverflowPopupVisibility(bool isOpen, bool allowOpen = true)
         {
-            bool shouldShowOverflow = isOpen && SecondaryCommands.Count > 0;
+            bool shouldShowOverflow = isOpen && GetDisplayedSecondaryCommands().Count > 0;
 
             if (m_secondaryItemsRoot != null)
             {
@@ -1594,7 +1733,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void UpdateHasOverflowItems()
         {
-            HasOverflowItems = SecondaryCommands.Count > 0;
+            HasOverflowItems = SecondaryCommands.Count > 0 || m_overflowedPrimaryCommands.Count > 0;
             UpdateEffectiveOverflowButtonVisibility();
         }
 
@@ -1616,6 +1755,10 @@ namespace ModernWpf.Controls.Primitives
         }
 
         private WeakReference<CommandBarFlyout> m_owningFlyout;
+
+        private readonly List<ICommandBarElement> m_overflowedPrimaryCommands = new List<ICommandBarElement>();
+        private AppBarSeparator m_dynamicOverflowSeparator;
+        private bool m_dynamicOverflowCalculated;
 
         private FrameworkElement m_layoutRoot;
         private FrameworkElement m_primaryItemsRoot;

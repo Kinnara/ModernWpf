@@ -97,6 +97,7 @@ public class SplitButtonInteractionTests
             Assert.AreEqual(AutomationControlType.SplitButton, peer!.GetAutomationControlType());
             Assert.AreEqual(nameof(ModernWpf.Controls.SplitButton), peer.GetClassName());
             Assert.AreEqual(0, peer.GetChildren()?.Count ?? 0);
+            Assert.IsNull(peer.GetPattern(PatternInterface.Toggle));
 
             var invokeProvider = GetInvokeProvider(splitButton);
             invokeProvider.Invoke();
@@ -210,6 +211,13 @@ public class SplitButtonInteractionTests
             };
 
             using var host = new TestWindowHost(toggleSplitButton, width: 360, height: 180);
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(toggleSplitButton);
+            Assert.IsNotNull(peer);
+            Assert.AreEqual(AutomationControlType.SplitButton, peer!.GetAutomationControlType());
+            Assert.AreEqual(nameof(ToggleSplitButton), peer.GetClassName());
+            Assert.AreEqual(0, peer.GetChildren()?.Count ?? 0);
+            Assert.IsNull(peer.GetPattern(PatternInterface.Invoke));
 
             var toggleProvider = GetToggleProvider(toggleSplitButton);
             Assert.AreEqual(ToggleState.Off, toggleProvider.ToggleState);

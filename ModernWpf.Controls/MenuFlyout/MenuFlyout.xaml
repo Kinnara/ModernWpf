@@ -12,6 +12,8 @@
         <Setter Property="Background" Value="{DynamicResource MenuFlyoutPresenterBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource MenuFlyoutPresenterBorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource MenuFlyoutPresenterBorderThemeThickness}" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="Padding" Value="{DynamicResource MenuFlyoutPresenterThemePadding}" />
         <Setter Property="MinWidth" Value="{DynamicResource FlyoutThemeMinWidth}" />
         <Setter Property="MinHeight" Value="{DynamicResource MenuFlyoutThemeMinHeight}" />
@@ -21,6 +23,15 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:MenuFlyoutPresenter">
+                    <ControlTemplate.Resources>
+                        <!--
+                            WPF ContextMenu popups do not inherit the target's
+                            WinUI typography. With the current 14-DIP variable
+                            font, these asymmetric narrow metrics reproduce the
+                            32-DIP WinUI menu-item slot and its text origin.
+                        -->
+                        <Thickness x:Key="MenuItemSubmenuContentMargin">7,4,7,5</Thickness>
+                    </ControlTemplate.Resources>
                     <ui:ThemeShadowChrome
                         IsShadowEnabled="{TemplateBinding IsDefaultShadowEnabled}"
                         WindowedPopupInsetMode="Medium"
@@ -42,6 +53,7 @@
                                 CanContentScroll="True"
                                 HorizontalScrollBarVisibility="Disabled"
                                 Margin="{TemplateBinding Padding}"
+                                Padding="0,0,0,1"
                                 VerticalScrollBarVisibility="Auto">
                                 <StackPanel
                                     ClipToBounds="True"

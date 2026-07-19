@@ -72,7 +72,6 @@ namespace ModernWpf.Controls
             }
             else
             {
-                TemplateSettings.IconElement = null;
                 stateName = "Dot";
             }
 

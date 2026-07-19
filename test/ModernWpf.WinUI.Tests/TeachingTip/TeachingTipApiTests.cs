@@ -136,6 +136,35 @@ public class TeachingTipApiTests
     }
 
     [TestMethod]
+    public void TeachingTipForwardsAutomationNameAndIdToPopup()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var teachingTip = new TeachingTipControl
+            {
+                Title = "New feature"
+            };
+            AutomationProperties.SetAutomationId(teachingTip, "FeatureTip");
+            using var host = new TestWindowHost(teachingTip, width: 420, height: 180);
+
+            var popup = FindNamedDescendant<Popup>(teachingTip, "Popup");
+            Assert.AreEqual("New feature", AutomationProperties.GetName(popup));
+            Assert.AreEqual("FeatureTip", AutomationProperties.GetAutomationId(popup));
+
+            AutomationProperties.SetName(teachingTip, "Explicit feature guidance");
+            AutomationProperties.SetAutomationId(teachingTip, "UpdatedFeatureTip");
+            Assert.AreEqual("Explicit feature guidance", AutomationProperties.GetName(popup));
+            Assert.AreEqual("UpdatedFeatureTip", AutomationProperties.GetAutomationId(popup));
+
+            AutomationProperties.SetName(teachingTip, string.Empty);
+            teachingTip.Title = "Updated title";
+            Assert.AreEqual("Updated title", AutomationProperties.GetName(popup));
+        });
+    }
+
+    [TestMethod]
     public void TeachingTipContentHeroAndIconDoNotCrash()
     {
         WpfTestHost.Run(() =>

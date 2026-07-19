@@ -156,6 +156,47 @@ public class MenuBarApiTests
     }
 
     [TestMethod]
+    public void FourItemFlyoutKeepsCurrentWinUIOpenSurfaceHeight()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var menuBar = new MuxMenuBar();
+            var fileItem = new MuxMenuBarItem { Title = "File" };
+            foreach (var header in new[] { "New", "Open", "Save", "Exit" })
+            {
+                fileItem.Items.Add(new WpfMenuItem { Header = header });
+            }
+
+            menuBar.Items.Add(fileItem);
+
+            using var host = new TestWindowHost(menuBar, width: 320, height: 240);
+
+            fileItem.ShowMenuFlyout();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(SystemFonts.MenuFontFamily, fileItem.Flyout.Presenter.FontFamily);
+            Assert.AreEqual(SystemFonts.MenuFontSize, fileItem.Flyout.Presenter.FontSize);
+            Assert.AreEqual(new Thickness(0, 2, 0, 1), fileItem.Flyout.Presenter.Padding);
+            Assert.AreEqual(new Thickness(8, 6, 8, 6), fileItem.Flyout.Presenter.Resources["MenuItemSubmenuContentMargin"]);
+            Assert.AreEqual(134, fileItem.Flyout.Presenter.ActualHeight, 0.5);
+
+            foreach (var item in fileItem.Items)
+            {
+                Assert.AreEqual(32, ((WpfMenuItem)item).ActualHeight, 0.5);
+            }
+
+            ((WpfMenuItem)fileItem.Items[3]).RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(fileItem.Flyout.IsOpen);
+            Assert.IsFalse(fileItem.IsFlyoutOpen);
+            Assert.IsFalse(menuBar.IsFlyoutOpen);
+        });
+    }
+
+    [TestMethod]
     public void AddRemoveFlyoutItemTest()
     {
         WpfTestHost.Run(() =>

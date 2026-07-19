@@ -11,7 +11,7 @@ namespace ModernWpf.Controls
     /// </summary>
     public class FontIconSource : IconSource
     {
-        const string c_fontIconSourceDefaultFontFamily = "Segoe MDL2 Assets";
+        const string c_fontIconSourceDefaultFontFamily = "Segoe Fluent Icons,Segoe MDL2 Assets";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FontIconSource"/> class.

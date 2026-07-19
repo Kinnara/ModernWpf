@@ -15,20 +15,6 @@ namespace ModernWpf.Gallery.Pages
 {
     internal static class MenusToolbarsSampleFactory
     {
-        private const string CommandBarExampleXaml =
-@"<CommandBar Background=""Transparent"" IsOpen=""$(IsOpen)"" DefaultLabelPosition=""Right""$(IsSticky)>
-    <AppBarButton Icon=""Add"" Label=""Add""/>
-    <AppBarButton Icon=""Edit"" Label=""Edit""/>
-    <AppBarButton Icon=""Share"" Label=""Share""/>
-    <CommandBar.SecondaryCommands>
-        <AppBarButton Icon=""Setting"" Label=""Settings"">
-            <AppBarButton.KeyboardAccelerators>
-                    <KeyboardAccelerator Modifiers=""Control"" Key=""I"" />
-            </AppBarButton.KeyboardAccelerators>
-        </AppBarButton>$(MultipleButtonsSecondaryCommands)
-    </CommandBar.SecondaryCommands>
-</CommandBar>";
-
         private const string AppBarButtonSymbolXaml =
 @"<AppBarButton Icon=""Like"" Label=""SymbolIcon"" Click=""AppBarButton_Click""/>";
 
@@ -63,12 +49,15 @@ namespace ModernWpf.Gallery.Pages
 </AppBarButton>";
 
         private const string AppBarButtonFlyoutXaml =
-@"<AppBarButton AllowFocusOnInteraction=""True"" Icon=""Edit"" Label=""Edit"">
+@"<AppBarButton
+    AllowFocusOnInteraction=""True""
+    Icon=""Edit""
+    Label=""Edit"">
     <AppBarButton.Flyout>
-        <Flyout/>
-            <TextBox MinWidth=""240"" PlaceholderText=""Input text here""/>
-        <Flyout/>
-    <AppBarButton.Flyout>
+        <Flyout>
+            <TextBox MinWidth=""240"" PlaceholderText=""Input text here"" />
+        </Flyout>
+    </AppBarButton.Flyout>
 </AppBarButton>";
 
         private const string AppBarToggleButtonSymbolXaml =
@@ -107,128 +96,6 @@ namespace ModernWpf.Gallery.Pages
     </CommandBar.PrimaryCommands>
 </CommandBar>";
 
-        private const string MenuFlyoutAppBarButtonXaml =
-@"<AppBarButton Icon=""Sort"" IsCompact=""True"" ToolTipService.ToolTip=""Sort"" AutomationProperties.Name=""Sort"">
-    <AppBarButton.Flyout>
-        <MenuFlyout>
-            <MenuFlyoutItem Text=""By rating"" Click=""MenuFlyoutItem_Click"" Tag=""rating""/>
-            <MenuFlyoutItem Text=""By match"" Click=""MenuFlyoutItem_Click"" Tag=""match""/>
-            <MenuFlyoutItem Text=""By distance"" Click=""MenuFlyoutItem_Click"" Tag=""distance""/>
-        </MenuFlyout>
-    </AppBarButton.Flyout>
-</AppBarButton>";
-
-        private const string MenuFlyoutToggleXaml =
-@"<Button Content=""Options"">
-    <Button.Flyout>
-        <MenuFlyout>
-            <MenuFlyoutItem Text=""Reset""/>
-            <MenuFlyoutSeparator/>
-            <ToggleMenuFlyoutItem Text=""Repeat"" IsChecked=""$(RepeatToggle)""/>
-            <ToggleMenuFlyoutItem Text=""Shuffle"" IsChecked=""$(ShuffleToggle)""/>
-        </MenuFlyout>
-    </Button.Flyout>
-</Button>";
-
-        private const string MenuFlyoutCascadingXaml =
-@"<Button Content=""File Options"">
-    <Button.Flyout>
-        <MenuFlyout>
-            <MenuFlyoutItem Text=""Open""/>
-            <MenuFlyoutSubItem Text=""Send to"">
-                <MenuFlyoutItem Text=""Bluetooth"" />
-                <MenuFlyoutItem Text=""Desktop (shortcut)"" />
-                <MenuFlyoutSubItem Text=""Compressed file"">
-                    <MenuFlyoutItem Text=""Compress and email"" />
-                    <MenuFlyoutItem Text=""Compress to .7z"" />
-                    <MenuFlyoutItem Text=""Compress to .zip"" />
-                </MenuFlyoutSubItem>
-            </MenuFlyoutSubItem>
-        </MenuFlyout>
-    </Button.Flyout>
-</Button>";
-
-        private const string MenuFlyoutSplitXaml =
-@"<Button Content=""File Options"">
-    <Button.Flyout>
-        <MenuFlyout>
-            <SplitMenuFlyoutItem Text=""Save"" Click=""SplitMenuFlyoutItem_Click"">
-                <SplitMenuFlyoutItem.Icon>
-                    <FontIcon Glyph=""&#xE74E;""/>
-                </SplitMenuFlyoutItem.Icon>
-                <MenuFlyoutItem Text=""Save as .docx"" Click=""SplitMenuFlyoutItem_Click""/>
-                <MenuFlyoutItem Text=""Save as .pdf"" Click=""SplitMenuFlyoutItem_Click""/>
-                <MenuFlyoutItem Text=""Save as .txt"" Click=""SplitMenuFlyoutItem_Click""/>
-            </SplitMenuFlyoutItem>
-            <SplitMenuFlyoutItem Text=""Share"" Icon=""Share"" Click=""SplitMenuFlyoutItem_Click"">
-                <MenuFlyoutItem Text=""Share via email"" Click=""SplitMenuFlyoutItem_Click""/>
-                <MenuFlyoutItem Text=""Share via link"" Click=""SplitMenuFlyoutItem_Click""/>
-            </SplitMenuFlyoutItem>
-        </MenuFlyout>
-    </Button.Flyout>
-</Button>";
-
-        private const string MenuFlyoutIconsXaml =
-@"<Button Content=""Edit Options"">
-    <Button.Flyout>
-        <MenuFlyout>
-            <MenuFlyoutItem Text=""Share"">
-                <MenuFlyoutItem.Icon>
-                    <FontIcon Glyph=""&#xE72D;""/>
-                </MenuFlyoutItem.Icon>
-            </MenuFlyoutItem>
-            <MenuFlyoutItem Text=""Copy"" Icon=""Copy""/>
-            <MenuFlyoutItem Text=""Delete"" Icon=""Delete""/>
-            <MenuFlyoutSeparator/>
-            <MenuFlyoutItem Text=""Rename""/>
-            <MenuFlyoutItem Text=""Select""/>
-        </MenuFlyout>
-    </Button.Flyout>
-</Button>";
-
-        private const string MenuFlyoutKeyboardXaml =
-@"<Button Content=""Edit Options"">
-    <Button.Flyout>
-        <MenuFlyout>
-            <MenuFlyoutItem Text=""Share"">
-                <MenuFlyoutItem.Icon>
-                    <FontIcon Glyph=""&#xE72D;""/>
-                </MenuFlyoutItem.Icon>
-                <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator Key=""S"" Modifiers=""Control""/>
-                </MenuFlyoutItem.KeyboardAccelerators>
-            </MenuFlyoutItem>
-            <MenuFlyoutItem Text=""Copy"" Icon=""Copy"">
-                <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator Key=""C"" Modifiers=""Control""/>
-                </MenuFlyoutItem.KeyboardAccelerators>
-            </MenuFlyoutItem>
-            <MenuFlyoutItem Text=""Delete"" Icon=""Delete"">
-                <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator Key=""Delete"" />
-                </MenuFlyoutItem.KeyboardAccelerators>
-            </MenuFlyoutItem>
-            <MenuFlyoutSeparator/>
-            <MenuFlyoutItem Text=""Rename""/>
-            <MenuFlyoutItem Text=""Select""/>
-        </MenuFlyout>
-    </Button.Flyout>
-</Button>";
-
-        private const string MenuFlyoutRadioXaml =
-@"<Button Content=""Options"">
-    <Button.Flyout>
-        <MenuFlyout>
-            <RadioMenuFlyoutItem Text=""Landscape"" GroupName=""OrientationGroup""/>
-            <RadioMenuFlyoutItem Text=""Portrait"" GroupName=""OrientationGroup"" IsChecked=""True""/>
-            <MenuFlyoutSeparator/>
-            <RadioMenuFlyoutItem Text=""Small icons"" GroupName=""SizeGroup""/>
-            <RadioMenuFlyoutItem Text=""Medium icons"" IsChecked=""True"" GroupName=""SizeGroup""/>
-            <RadioMenuFlyoutItem Text=""Large icons"" GroupName=""SizeGroup""/>
-        </MenuFlyout>
-    </Button.Flyout>
-</Button>";
-
         public static IReadOnlyList<GalleryExample> CreateExamples(string uniqueId, IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             switch (uniqueId)
@@ -240,11 +107,11 @@ namespace ModernWpf.Gallery.Pages
                 case "AppBarToggleButton":
                     return CreateAppBarToggleButtonExamples();
                 case "CommandBar":
-                    return CreateCommandBarExamples();
+                    return CreateCommandBarExamples(sampleSnippets);
                 case "CommandBarFlyout":
                     return CreateCommandBarFlyoutExamples(sampleSnippets);
                 case "MenuFlyout":
-                    return CreateMenuFlyoutExamples();
+                    return CreateMenuFlyoutExamples(sampleSnippets);
                 case "MenuBar":
                     return CreateMenuBarExamples(sampleSnippets);
                 default:
@@ -573,14 +440,14 @@ namespace ModernWpf.Gallery.Pages
             return panel;
         }
 
-        private static IReadOnlyList<GalleryExample> CreateCommandBarExamples()
+        private static IReadOnlyList<GalleryExample> CreateCommandBarExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             return new[]
             {
                 new GalleryExample(
                     "A command bar with labels on the side free floating in a page",
                     CreateCommandBarExampleContent(assignRootAutomationId: true),
-                    CommandBarExampleXaml,
+                    FindSnippetText(sampleSnippets, "CommandBarLabelsSide.txt"),
                     null)
             };
         }
@@ -679,10 +546,12 @@ namespace ModernWpf.Gallery.Pages
             options.Children.Add(CreateOptionButton("Open command bar", delegate
             {
                 commandBar.IsOpen = true;
+                commandBar.IsSticky = true;
             }));
             options.Children.Add(CreateOptionButton("Close command bar", delegate
             {
                 commandBar.IsOpen = false;
+                commandBar.IsSticky = false;
             }));
             options.Children.Add(new TextBlock
             {
@@ -718,11 +587,11 @@ namespace ModernWpf.Gallery.Pages
                 return;
             }
 
-            commandBar.SecondaryCommands.Add(CreateCommandBarAppBarButton(Mux.Symbol.Add, "Button 1", output, "Ctrl+N"));
-            commandBar.SecondaryCommands.Add(CreateCommandBarAppBarButton(Mux.Symbol.Delete, "Button 2", output, "Delete"));
+            commandBar.SecondaryCommands.Add(CreateCommandBarAppBarButton(Mux.Symbol.Add, "Button 1", output, "Ctrl+N", updatesOutput: false));
+            commandBar.SecondaryCommands.Add(CreateCommandBarAppBarButton(Mux.Symbol.Delete, "Button 2", output, "Delete", updatesOutput: false));
             commandBar.SecondaryCommands.Add(new Mux.AppBarSeparator());
-            commandBar.SecondaryCommands.Add(CreateCommandBarAppBarButton(Mux.Symbol.FontDecrease, "Button 3", output, "Ctrl+-"));
-            commandBar.SecondaryCommands.Add(CreateCommandBarAppBarButton(Mux.Symbol.FontIncrease, "Button 4", output, "Ctrl++"));
+            commandBar.SecondaryCommands.Add(CreateCommandBarAppBarButton(Mux.Symbol.FontDecrease, "Button 3", output, "Ctrl+Subtract", updatesOutput: false));
+            commandBar.SecondaryCommands.Add(CreateCommandBarAppBarButton(Mux.Symbol.FontIncrease, "Button 4", output, "Ctrl+Add", updatesOutput: false));
         }
 
         private static void RemoveCommandBarSecondaryCommands(Mux.CommandBar commandBar)
@@ -842,17 +711,17 @@ namespace ModernWpf.Gallery.Pages
                 new GalleryExample(
                     "A simple MenuBar",
                     CreateSimpleMenuBarExampleContent(assignRootAutomationId: true),
-                    FindSnippetText(sampleSnippets, "MenuBarSample1.txt"),
+                    FindSnippetText(sampleSnippets, "SimpleMenubar.txt"),
                     null),
                 new GalleryExample(
                     "MenuBar with keyboard accelerators",
                     CreateKeyboardAcceleratorsMenuBarExampleContent(),
-                    FindSnippetText(sampleSnippets, "MenuBarSample3.txt"),
+                    FindSnippetText(sampleSnippets, "MenubarKeyboardAccelerators.txt"),
                     null),
                 new GalleryExample(
                     "MenuBar with submenus, separators, and radio items",
                     CreateSubmenusMenuBarExampleContent(),
-                    FindSnippetText(sampleSnippets, "MenuBarSample2.txt"),
+                    FindSnippetText(sampleSnippets, "MenubarSubmenusSeparatorsRadio.txt"),
                     null)
             };
         }
@@ -877,7 +746,7 @@ namespace ModernWpf.Gallery.Pages
 
             var file = new Mux.MenuBarItem { Title = "File" };
             file.Items.Add(CreateMenuItem("New", output));
-            file.Items.Add(CreateMenuItem("Open...", output));
+            file.Items.Add(CreateMenuItem("Open", output));
             file.Items.Add(CreateMenuItem("Save", output));
             file.Items.Add(CreateMenuItem("Exit", output));
 
@@ -907,7 +776,7 @@ namespace ModernWpf.Gallery.Pages
 
             var file = new Mux.MenuBarItem { Title = "File" };
             file.Items.Add(CreateMenuItem("New", output, "Ctrl+N"));
-            file.Items.Add(CreateMenuItem("Open...", output, "Ctrl+O"));
+            file.Items.Add(CreateMenuItem("Open", output, "Ctrl+O"));
             file.Items.Add(CreateMenuItem("Save", output, "Ctrl+S"));
             file.Items.Add(CreateMenuItem("Exit", output, "Ctrl+E"));
 
@@ -939,9 +808,9 @@ namespace ModernWpf.Gallery.Pages
             var newSubmenu = new MenuItem { Header = "New" };
             newSubmenu.Items.Add(CreateMenuItem("Plain Text Document", output));
             newSubmenu.Items.Add(CreateMenuItem("Rich Text Document", output));
-            newSubmenu.Items.Add(CreateMenuItem("Other Formats...", output));
+            newSubmenu.Items.Add(CreateMenuItem("Other Formats", output));
             file.Items.Add(newSubmenu);
-            file.Items.Add(CreateMenuItem("Open...", output));
+            file.Items.Add(CreateMenuItem("Open", output));
             file.Items.Add(CreateMenuItem("Save", output));
             file.Items.Add(new Separator());
             file.Items.Add(CreateMenuItem("Exit", output));
@@ -985,44 +854,44 @@ namespace ModernWpf.Gallery.Pages
             return panel;
         }
 
-        private static IReadOnlyList<GalleryExample> CreateMenuFlyoutExamples()
+        private static IReadOnlyList<GalleryExample> CreateMenuFlyoutExamples(IReadOnlyList<SampleSnippet> sampleSnippets)
         {
             return new[]
             {
                 new GalleryExample(
                     "An AppBarButton with a MenuFlyout.",
                     CreateMenuFlyoutAppBarButtonExampleContent(assignRootAutomationId: true),
-                    MenuFlyoutAppBarButtonXaml,
+                    FindSnippetText(sampleSnippets, "AppbarbuttonMenuflyout.txt"),
                     null),
                 new GalleryExample(
                     "A MenuFlyout with ToggleMenuFlyoutItems and MenuFlyoutSeparator.",
                     CreateMenuFlyoutToggleExampleContent(),
-                    MenuFlyoutToggleXaml,
+                    FindSnippetText(sampleSnippets, "MenuflyoutTogglemenuflyoutitemsMenuflyoutseparator.txt"),
                     null),
                 new GalleryExample(
                     "A MenuFlyout with cascading menus.",
                     CreateMenuFlyoutCascadingExampleContent(),
-                    MenuFlyoutCascadingXaml,
+                    FindSnippetText(sampleSnippets, "MenuflyoutCascadingMenus.txt"),
                     null),
                 new GalleryExample(
                     "A MenuFlyout with SplitMenuFlyoutItems.",
                     CreateMenuFlyoutSplitExampleContent(),
-                    MenuFlyoutSplitXaml,
+                    FindSnippetText(sampleSnippets, "MenuflyoutSplitmenuflyoutitems.txt"),
                     null),
                 new GalleryExample(
                     "A MenuFlyout with icons.",
                     CreateMenuFlyoutIconsExampleContent(includeKeyboardAccelerators: false),
-                    MenuFlyoutIconsXaml,
+                    FindSnippetText(sampleSnippets, "MenuflyoutIcons.txt"),
                     null),
                 new GalleryExample(
                     "A MenuFlyout with icons and Keyboard Accelerators.",
                     CreateMenuFlyoutIconsExampleContent(includeKeyboardAccelerators: true),
-                    MenuFlyoutKeyboardXaml,
+                    FindSnippetText(sampleSnippets, "MenuflyoutIconsKeyboardAccelerators.txt"),
                     null),
                 new GalleryExample(
                     "A MenuFlyout with RadioMenuFlyoutItems",
                     CreateMenuFlyoutRadioExampleContent(),
-                    MenuFlyoutRadioXaml,
+                    FindSnippetText(sampleSnippets, "MenuflyoutRadiomenuflyoutitems.txt"),
                     null)
             };
         }
@@ -1046,7 +915,7 @@ namespace ModernWpf.Gallery.Pages
                 Name = "Control1",
                 Orientation = Orientation.Horizontal
             };
-            var output = CreateSelectionOutput("Control1Output");
+            var output = CreateAppBarOutput("Control1Output");
             var button = new Mux.AppBarButton
             {
                 Icon = new Mux.SymbolIcon(Mux.Symbol.Sort),
@@ -1125,7 +994,7 @@ namespace ModernWpf.Gallery.Pages
                 Orientation = Orientation.Horizontal
             };
             var button = CreateButton("File Options");
-            var output = CreateSelectionOutput("Control3bOutput");
+            var output = CreateAppBarOutput("Control3bOutput");
             var flyout = new Mux.MenuFlyout { Placement = FlyoutPlacementMode.Bottom };
 
             var save = CreateSplitMenuFlyoutItem("Save", output, new Mux.FontIcon { Glyph = "\uE74E" });
@@ -1152,13 +1021,37 @@ namespace ModernWpf.Gallery.Pages
             var panel = CreateMenuFlyoutExampleRoot(assignRootAutomationId: false);
             var button = CreateButton("Edit Options");
             button.Name = includeKeyboardAccelerators ? "Control5" : "Control4";
+            var segoeUi = new FontFamily("Segoe UI");
+            if (includeKeyboardAccelerators)
+            {
+                button.FontFamily = segoeUi;
+            }
+
             var flyout = new Mux.MenuFlyout { Placement = FlyoutPlacementMode.Bottom };
-            flyout.Items.Add(CreateIconMenuFlyoutItem("Share", new Mux.FontIcon { Glyph = "\uE72D" }, includeKeyboardAccelerators ? "Ctrl+S" : null));
-            flyout.Items.Add(CreateIconMenuFlyoutItem("Copy", new Mux.SymbolIcon(Mux.Symbol.Copy), includeKeyboardAccelerators ? "Ctrl+C" : null));
-            flyout.Items.Add(CreateIconMenuFlyoutItem("Delete", new Mux.SymbolIcon(Mux.Symbol.Delete), includeKeyboardAccelerators ? "Delete" : null));
+            var share = CreateIconMenuFlyoutItem("Share", new Mux.FontIcon { Glyph = "\uE72D" }, includeKeyboardAccelerators ? "Ctrl+S" : null);
+            var copy = CreateIconMenuFlyoutItem("Copy", new Mux.SymbolIcon(Mux.Symbol.Copy), includeKeyboardAccelerators ? "Ctrl+C" : null);
+            var delete = CreateIconMenuFlyoutItem("Delete", new Mux.SymbolIcon(Mux.Symbol.Delete), includeKeyboardAccelerators ? "Delete" : null);
+            if (includeKeyboardAccelerators)
+            {
+                share.FontFamily = segoeUi;
+                copy.FontFamily = new FontFamily("Consolas");
+                delete.FontFamily = segoeUi;
+            }
+
+            flyout.Items.Add(share);
+            flyout.Items.Add(copy);
+            flyout.Items.Add(delete);
             flyout.Items.Add(new Separator());
-            flyout.Items.Add(new MenuItem { Header = "Rename" });
-            flyout.Items.Add(new MenuItem { Header = "Select" });
+            var rename = new MenuItem { Header = "Rename" };
+            var select = new MenuItem { Header = "Select" };
+            if (includeKeyboardAccelerators)
+            {
+                rename.FontFamily = segoeUi;
+                select.FontFamily = segoeUi;
+            }
+
+            flyout.Items.Add(rename);
+            flyout.Items.Add(select);
             Mux.FlyoutService.SetFlyout(button, flyout);
             panel.Children.Add(button);
             return panel;
@@ -1300,7 +1193,12 @@ namespace ModernWpf.Gallery.Pages
             return button;
         }
 
-        private static Mux.AppBarButton CreateCommandBarAppBarButton(Mux.Symbol symbol, string label, TextBlock output, string inputGestureText)
+        private static Mux.AppBarButton CreateCommandBarAppBarButton(
+            Mux.Symbol symbol,
+            string label,
+            TextBlock output,
+            string inputGestureText,
+            bool updatesOutput = true)
         {
             var button = new Mux.AppBarButton
             {
@@ -1308,7 +1206,10 @@ namespace ModernWpf.Gallery.Pages
                 Label = label,
                 InputGestureText = inputGestureText
             };
-            button.Click += delegate { output.Text = "You clicked: " + label; };
+            if (updatesOutput)
+            {
+                button.Click += delegate { output.Text = "You clicked: " + label; };
+            }
             return button;
         }
 

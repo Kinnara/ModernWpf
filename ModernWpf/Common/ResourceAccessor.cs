@@ -148,6 +148,9 @@ namespace ModernWpf
         public const string SR_NumberBoxMinimumValueStatus = "NumberBoxMinimumValueStatus";
         public const string SR_NumberBoxMaximumValueStatus = "NumberBoxMaximumValueStatus";
         public const string SR_ExpanderDefaultControlName = "ExpanderDefaultControlName";
+        public const string SR_AutomationNameEllipsisBreadcrumbBarItem = "AutomationNameEllipsisBreadcrumbBarItem";
+        public const string SR_BreadcrumbBarItemLocalizedControlType = "BreadcrumbBarItemLocalizedControlType";
+        public const string SR_SelectorBarItemDefaultControlName = "SelectorBarItemDefaultControlName";
 
         public const string SR_InfoBarCloseButtonName = "InfoBarCloseButtonName";
         public const string SR_InfoBarOpenedNotification = "InfoBarOpenedNotification";

@@ -232,6 +232,22 @@ public class IconSourceApiTests
     }
 
     [TestMethod]
+    public void CreateIconElementAppliesBaseForegroundForCustomSource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var iconSource = new TestIconSource
+            {
+                Foreground = Brushes.Blue
+            };
+
+            var icon = iconSource.CreateIconElement();
+
+            Assert.AreSame(Brushes.Blue, icon.Foreground);
+        });
+    }
+
+    [TestMethod]
     public void PropertyChangePropagationToCreatedElements()
     {
         WpfTestHost.Run(() =>
@@ -305,14 +321,16 @@ public class IconSourceApiTests
             var textBlock = VisualTreeTestHelper.FindDescendant<TextBlock>(fontIcon);
             Assert.IsNotNull(textBlock);
 
-            var mirrorTransform = textBlock!.RenderTransform as ScaleTransform;
+            var mirrorTransform = fontIcon.RenderTransform as ScaleTransform;
             Assert.IsNotNull(mirrorTransform);
             Assert.AreEqual(-1.0, mirrorTransform!.ScaleX);
             Assert.AreEqual(1.0, mirrorTransform.ScaleY);
+            Assert.IsFalse(textBlock!.ReadLocalValue(UIElement.RenderTransformProperty) is ScaleTransform);
 
             fontIcon.FlowDirection = FlowDirection.LeftToRight;
             host.UpdateLayout();
-            Assert.IsFalse(textBlock.ReadLocalValue(UIElement.RenderTransformProperty) is ScaleTransform);
+            Assert.AreSame(mirrorTransform, fontIcon.ReadLocalValue(UIElement.RenderTransformProperty));
+            Assert.AreEqual(1.0, mirrorTransform.ScaleX);
         });
     }
 
@@ -335,6 +353,25 @@ public class IconSourceApiTests
     }
 
     [TestMethod]
+    public void SharedHelpersCopiesImageIconSource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var imageSource = CreateTestImageSource(Brushes.Blue);
+            var iconSource = new ImageIconSource
+            {
+                ImageSource = imageSource,
+                Foreground = Brushes.Red
+            };
+
+            var imageIcon = (ImageIcon)SharedHelpers.MakeIconElementFrom(iconSource);
+
+            Assert.AreSame(imageSource, imageIcon.Source);
+            Assert.AreSame(Brushes.Red, imageIcon.Foreground);
+        });
+    }
+
+    [TestMethod]
     public void VerifyFontWeightPropertyMetadata()
     {
         WpfTestHost.Run(() =>
@@ -351,5 +388,13 @@ public class IconSourceApiTests
                 brush,
                 null,
                 new RectangleGeometry(new Rect(0, 0, 16, 16))));
+    }
+
+    private sealed class TestIconSource : ModernWpf.Controls.IconSource
+    {
+        protected override IconElement CreateIconElementCore()
+        {
+            return new FontIcon();
+        }
     }
 }

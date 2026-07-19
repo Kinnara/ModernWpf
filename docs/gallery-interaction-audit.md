@@ -2197,3 +2197,438 @@ parity.
   `artifacts/visual-checks/20260717-220356-944-25124/report.md` passes at `0.53`;
   Dark `artifacts/visual-checks/20260717-220423-221-77876/report.md` passes at
   `0.42`. Both use exact `425x88` crops under a `1.0` exact-size gate.
+
+## 2026-07-18 NavigationView Current-Source and Selection Parity
+
+Fresh installed-Gallery comparison of the default `nvSample5` example found
+that ModernWpf still used WinUI 2 pane, content, and item aliases. Geometry was
+already close, but the whole content surface was `#F3F3F3` / `#202020` instead
+of current WinUI's `#F9F9F9` / `#272727`, and the compact pane did not match
+the rendered acrylic fallback.
+
+- Light, Dark, and High Contrast NavigationView resources now follow the
+  current WinUI 3 resource graph, including the missing icon background, item
+  header foreground, and content-grid border contracts consumed by the
+  template.
+- WPF's deterministic solid pane substitutes match the installed Gallery's
+  rendered acrylic result at `#F2F2F2` Light and `#1F1F1F` Dark.
+- The generated source sample uses `BodyTextBlockStyle`, the primary text
+  foreground, and a one-physical-pixel WPF baseline adapter. Tile and surface
+  geometry remain exact.
+- Gallery automation now selects `Menu Item2`, proves the `Sample Page 2`
+  header and selection state, then restores `Menu Item1` / `Sample Page 1`.
+- The product launch-state test exposed WPF attempting a nested dispatcher
+  frame while initial window layout had suspended processing. SplitView now
+  queues the same state replay at data-binding priority in that case.
+- The visual harness requires the exact `nvSample5` reference crop, exact
+  `745x460` dimensions, and mean delta `<=1.2`.
+- Final Light evidence is
+  `artifacts/visual-checks/20260718-012811-779-39820/report.md` at `1.03`;
+  final Dark evidence is
+  `artifacts/visual-checks/20260718-012832-611-91396/report.md` at `0.93`.
+- NavigationView product/source-audit tests pass 51/51, SplitView tests pass
+  14/14, and the focused Gallery sample/source-shape slice passes 7/7 on both
+  net8 and net10. Controls and Gallery build on net462, net8, and net10.
+
+## 2026-07-18 AppBar Family Current-Source and Live Interaction Parity
+
+The remaining ungated-control inventory ranked AppBarButton and
+AppBarToggleButton as the highest valid untouched controls at roughly `4.5`
+mean delta. Fresh source history against official `winui3/main` commit
+`de3e767333c2f0717a6a70cb22bd192ced5ad885` found no substantive AppBar
+implementation/resource change after the earlier audit; commit
+`8463f45162149de0ec3ad7df752596893fe3e13e` only removed the source mirror's
+old `src/` prefix.
+
+- The harness now requires the exact `Button1`, `Control1`, and `Button1`
+  official primary sources for AppBarButton, AppBarSeparator, and
+  AppBarToggleButton. All three require exact static crop size.
+- AppBarButton now uses live cross-app behavior proof: invoke `SymbolIcon`,
+  reacquire the initially empty output TextBlock after it becomes visible, and
+  compare `You clicked: Button1`. ModernWpf retains its curated
+  `GallerySample_AppBarButton_Output` ID while WinUI uses `Control1Output`.
+- AppBarToggleButton now requires cross-app state proof: both UIA peers expose
+  Off, toggle to On, and produce an exact `88x84` checked-state crop.
+- Static thresholds are `5.0` for AppBarButton/AppBarToggleButton and `1.0`
+  for AppBarSeparator. Interaction thresholds are `7.0` with at most two
+  combined size pixels for AppBarButton and `3.0` with exact size for
+  AppBarToggleButton.
+- Final Light evidence is
+  `artifacts/visual-checks/20260718-020241-131-96708/report.md`: button `4.43`
+  static / `5.64` output, toggle `4.45` static / `2.37` checked, separator
+  `0.61`.
+- Final Dark evidence is
+  `artifacts/visual-checks/20260718-020338-574-72680/report.md`: button `4.47`
+  static / `6.61` output, toggle `4.47` static / `2.51` checked, separator
+  `0.52`.
+- Button/toggle backgrounds and geometry are identical outside the
+  symbol/label bands; separator strokes differ by at most `0.021` mean. The
+  bounded remainder is WPF-vs-WinUI glyph/text rasterization, so no
+  source-breaking layout correction was introduced.
+- The source audit is pinned by `AppBarSourceAuditTests`; the product/source
+  slice passes 37/37, focused Gallery coverage passes 2/2 on net8 and net10,
+  and Controls/Gallery build on net462, net8, and net10.
+
+## 2026-07-18 ContentDialog Current-Source Open-Surface and Accessibility Parity
+
+The previous ContentDialog interaction could pass without comparing the
+dialog: ModernWpf exposed a title Text peer and produced a `172x50` crop,
+while WinUI's dialog popup peer covered nearly the full Gallery window and
+fell back to a `1172x820` difference crop.
+
+- The harness now collects the title, body text, checkbox, and three command
+  controls, records their UIA roles/rectangles, derives the source 24px/1px
+  horizontal surface bounds, and snaps its vertical search windows to the
+  actual dialog edges. Both apps therefore emit a `ContentDialogSurface` crop.
+- That evidence exposed two WPF inheritance gaps. Detached dialog content was
+  using the 12px WPF fallback (`209px` checkbox width versus WinUI's `238px`),
+  and command buttons were 28px tall instead of the source 32px. Applying the
+  WinUI font family/14px size at the ContentDialog root and explicitly to the
+  title/commands produces a `239px` checkbox UIA width, 19px body line, 32px
+  checkbox/buttons, and source-aligned vertical regions.
+- Current native source forwards popup name/ID, derives its default name from
+  title/plain content, and marks it as a dialog. ModernWpf now exposes a modal
+  Window-pattern `ContentDialogAutomationPeer` with the same explicit-name,
+  title/content fallback and provider-close semantics.
+- The closed `ShowDialog` comparison is mandatory at delta `<=4.0` with exact
+  size. The open surface is mandatory at delta `<=7.0` with no width drift and
+  at most two aggregate size pixels for WPF/WinUI centered-edge rounding.
+- Final Light evidence is
+  `artifacts/visual-checks/20260718-024312-141-69052/report.md`: closed `3.59`
+  at `101x32`, open `6.58` at `320x218` versus `320x219`.
+- Final Dark evidence is
+  `artifacts/visual-checks/20260718-024403-376-91420/report.md`: closed `2.62`
+  at `101x32`, open `6.15` at `320x220` versus `320x221`.
+
+## 2026-07-18 TeachingTip Current-Source Surface and Accessibility Parity
+
+The earlier TeachingTip click proof established that a transparent WPF popup
+opened, but its `248x82` Light / `248x86` Dark difference crops were not
+comparable with WinUI's `248x88` UIA crop. They included unrelated page pixels
+and did not gate the actual tip surface.
+
+- Current source was refreshed at official `winui3/main` commit
+  `de3e767333c2f0717a6a70cb22bd192ced5ad885`. The June TeachingTip patch only
+  compiles test hooks out of production; current XAML, theme resources, and
+  automation-peer blobs remain unchanged.
+- The harness now isolates `ContentRootGrid`: WinUI supplies its bounded UIA
+  rectangle, while ModernWpf derives the same bounds from stable top/bottom
+  surface transitions beside the target. Both paths emit
+  `TeachingTipSurface` rather than unrelated difference/UIA sources.
+- The crop intentionally compares the content root rather than Gallery pixels
+  behind the source 10px tail or platform-specific shadow. Tail points,
+  margins, placement states, and shadow depth remain independently source
+  pinned in product tests.
+- Both applications render exact `224x64` open content roots and exact
+  `135x32` closed buttons in Light and Dark.
+- The harness requires the official `TestButton1` primary source, static delta
+  `<=4.0`, exact static size, open-surface delta `<=10.0`, exact open size, and
+  a common interaction crop source.
+- Native source forwards owner automation name/ID to the popup, with title as
+  the default name. ModernWpf now mirrors initial and live forwarding; API
+  tests cover explicit name/ID updates and title fallback in addition to the
+  existing Pane/Window peer and Window-provider state coverage.
+- Final strict Light evidence is
+  `artifacts/visual-checks/20260718-031359-694-76316/report.md`: static `3.43`,
+  open `9.30`, exact `135x32` / `224x64` sizes.
+- Final strict Dark evidence is
+  `artifacts/visual-checks/20260718-031438-291-94484/report.md`: static `2.94`,
+  open `8.28`, exact `135x32` / `224x64` sizes.
+
+## 2026-07-18 Popup Current-Source Full-Surface and Accessibility Parity
+
+The previous Popup interaction found the `Simple Popup` Text peer but cropped
+that peer's main-window coordinates. WPF hosts its transparent Popup in a
+separate HWND, so the resulting ModernWpf image contained the NumberBox options
+behind the popup while WinUI contained only the heading. The reported
+`18.79`/`27.11` interaction deltas were therefore invalid surface evidence.
+
+- Current official WinUI Gallery commit
+  `29f62479d5c046a0b854a5868e5a7cd484572d87` keeps a live 240-DIP minimum-width
+  Border with 16px padding, 1px stroke, 8px stack spacing, 16px heading, and a
+  standard Close button. The current display snippet still shows the historical
+  fixed `200x160` surface; the runtime page is the parity authority.
+- The open matcher now uses only the unique `Simple Popup` heading, avoiding
+  false matches with both applications' title-bar `Close` buttons.
+- Popup is routed through separate-window proof. The common
+  `PopupSurface` crop then derives the current complete surface around the
+  heading and captures screen pixels, working for both WPF's popup HWND and
+  WinUI's in-window popup.
+- The first valid crop measured `240x95` versus `240x96`; WPF's Segoe UI 16px
+  line box was 21px versus WinUI's 22px. A 22px heading minimum bridges that
+  platform metric while preserving glyph position, producing exact `240x96`
+  surfaces.
+- The strict gate requires official trigger `Show Popup (using Offset)`, static
+  delta `<=4.0`, open delta `<=3.0`, a common interaction source, and exact
+  sizes for both crops.
+- Gallery coverage also pins offset changes, light-dismiss inversion through
+  `Popup.StaysOpen`, open/Close state restoration, heading Text semantics, Close
+  Button semantics, and the Invoke pattern.
+- Final Light evidence is
+  `artifacts/visual-checks/20260718-033922-538-90660/report.md`: static `3.33`,
+  open `2.63`, exact `189x32` / `240x96` sizes.
+- Final Dark evidence is
+  `artifacts/visual-checks/20260718-033954-721-54296/report.md`: static `3.13`,
+  open `2.66`, exact `189x32` / `240x96` sizes.
+
+## 2026-07-18 RepeatButton Current-Source Output-Row Parity
+
+The previous RepeatButton interaction proved the click counter changed, but it
+did not compare the same pixels. The harness requested ModernWpf's
+`GallerySample_RepeatButton_Output` ID from both applications; WinUI exposes
+the current source node as `Control1Output`, so reference capture fell back to
+the `Click and hold` button. The resulting `158x59` versus `152x72` crops were
+not output parity evidence.
+
+- Current dotnet/wpf `main` commit
+  `83e6cbda760818a2ab885c4aa3fc7e3a39eedf58` has byte-identical Fluent theme
+  blobs to the audited stock RepeatButton port. No product-template change was
+  needed.
+- Current WinUI Gallery commit
+  `29f62479d5c046a0b854a5868e5a7cd484572d87` retains the horizontal
+  `Click and hold` / `Control1Output` sample, 8px gap, polite live setting,
+  `Number of clicks: N` output, and `LiveRegionChanged` announcement added by
+  `b97ceb1ef7504631a9d2a7d5b46292f6f6a0e47a`.
+- The harness now uses each application's real output ID and captures a common
+  `RepeatButtonOutputRow`: a source-derived `240x32` viewport anchored to the
+  exact `112x32` button and covering the 8px gap plus rendered count.
+- The gate requires official trigger `Click and hold`, static delta `<=4.0`,
+  output-row delta `<=11.0`, common interaction source, and exact sizes for
+  both surfaces.
+- The remaining output-row delta is native text rasterization. Row origins,
+  backgrounds, button geometry, gap, and text baseline align. WPF `Display`
+  text formatting increased Light delta from `8.79` to `10.63`, so it was
+  rejected.
+- Gallery coverage pins the source snippet, click count, HelpText recorder
+  bridge, polite live setting, live-region event, Text/Button roles, and Invoke
+  provider.
+- Final strict Light evidence is
+  `artifacts/visual-checks/20260718-035917-557-37488/report.md`: static `3.23`,
+  output row `8.79`, exact `112x32` / `240x32` sizes.
+- Final strict Dark evidence is
+  `artifacts/visual-checks/20260718-035943-186-33836/report.md`: static `2.55`,
+  output row `10.71`, exact `112x32` / `240x32` sizes.
+
+## 2026-07-18 ToggleButton Current-Source Checked-State and Output Parity
+
+The existing ToggleButton interaction changed both UIA state and checked
+pixels, but it did not verify the current Gallery's `Control1Output`. A broken
+Checked handler could therefore pass the cross-app interaction.
+
+- Current dotnet/wpf `main` commit
+  `83e6cbda760818a2ab885c4aa3fc7e3a39eedf58` retains byte-identical Fluent
+  blobs to the audited stock ToggleButton port, so no product-template change
+  was needed.
+- Current WinUI Gallery commit
+  `29f62479d5c046a0b854a5868e5a7cd484572d87` retains `Toggle1`, initial output
+  `Off`, checked output `On`, unchecked output `Off`, and the disable option.
+  The 2026 path conversion `14a4a1a2b8ddc527dc4a7d5f7e743d7c2bc97db7`
+  did not alter that behavior.
+- ModernWpf now gives its output a stable
+  `GallerySample_ToggleButton_Output` ID. The harness resolves that ID or
+  WinUI's `Control1Output`, toggles Off to On, and requires output `On` in both
+  apps before the interaction can pass.
+- Strict gates require exact official source `Toggle1`, resting delta `<=3.0`
+  with exact `107x32` geometry, and checked delta `<=7.0` with exact `127x52`
+  padded geometry and common crop source.
+- Gallery coverage pins source content, initial/checked/unchecked output,
+  Button/Text automation roles, and the Toggle provider.
+- Final strict Light evidence is
+  `artifacts/visual-checks/20260718-041149-473-44704/report.md`: resting `2.98`,
+  checked `6.31`, exact `107x32` / `127x52` sizes, state/output `On`.
+- Final strict Dark evidence is
+  `artifacts/visual-checks/20260718-041222-924-22376/report.md`: resting `2.62`,
+  checked `6.98`, exact `107x32` / `127x52` sizes, state/output `On`.
+
+## 2026-07-18 Flyout Current-Source Full-Surface and Placement Parity
+
+The previous Flyout interaction found the source confirmation message, but its
+generic crop covered only that Text peer plus padding. The confirmation button,
+presenter border, corner, background, and most padding were not compared, and
+WPF's main-window frame did not contain its separate popup HWND.
+
+- Current official `microsoft-ui-xaml` commit
+  `3cae15f071f1ab8565f9a7592dbf27f04bafe651` retains the audited presenter
+  template and adds current placement fix
+  `2db27f71f857363d6a9a4485e01c8b8fdbe02499`. ModernWpf ports the fix by
+  bottom-aligning overflowing Left/Right presenters to the anchor before the
+  monitor work-area clamp.
+- Current WinUI Gallery commit
+  `29f62479d5c046a0b854a5868e5a7cd484572d87` retains `Control1`, `Empty cart`,
+  the confirmation message with 12px bottom margin, `Yes, empty my cart`, and
+  the confirmation handler that hides the flyout.
+- Flyout now requires separate-popup proof. A common `FlyoutOpenSurface` walks
+  from the unique message to the presenter root and captures exact screen
+  bounds, covering the full surface in both applications.
+- The strict gate requires official `Control1`, exact `90x32` resting geometry
+  under `3.0`, and a common 366px-wide open surface under `11.0`. WPF's
+  `366x96` popup is allowed the observed one-pixel height difference from
+  WinUI's `366x97` presenter.
+- Gallery coverage pins the trigger and confirmation Button roles/Invoke
+  providers, message Text semantics, open state, and confirmation-close path.
+- Final strict Light evidence is
+  `artifacts/visual-checks/20260718-043654-223-51584/report.md`: resting `2.63`,
+  open `10.07`, exact `90x32`, open `366x96` versus `366x97`.
+- Final strict Dark evidence is
+  `artifacts/visual-checks/20260718-043719-866-8276/report.md`: resting `2.21`,
+  open `3.72`, exact `90x32`, open `366x96` versus `366x97`.
+
+## 2026-07-18 MenuBar Current-Source Runtime, Accessibility, and Full-Menu Parity
+
+The former MenuBar sample copied the display-snippet ellipses into its live
+runtime, even though current WinUI Gallery uses `Open` and `Other Formats` at
+runtime. Its open proof also captured WPF's popup HWND and a ten-pixel-padded
+WinUI UIA element, so those images could not be required cross-app evidence.
+
+- Current official `microsoft-ui-xaml` commit
+  `3cae15f071f1ab8565f9a7592dbf27f04bafe651` retains all ten audited MenuBar
+  blobs byte-identical to the local source-shaped port; no product patch was
+  required.
+- Current WinUI Gallery commit
+  `29f62479d5c046a0b854a5868e5a7cd484572d87` uses live `Open` and
+  `Other Formats`, while `SimpleMenubar.txt`,
+  `MenubarKeyboardAccelerators.txt`, and
+  `MenubarSubmenusSeparatorsRadio.txt` intentionally retain `Open...` and
+  `Other Formats...`. ModernWpf now mirrors both surfaces exactly.
+- File opens through one real click. The harness invokes the automation pattern
+  only if that click did not expose the menu, avoiding a double open and a
+  spurious WinUI keyboard-focus outline.
+- A common `MenuBarOpenSurface` walks from New to the full presenter and
+  captures exact screen pixels in both apps. It covers all four rows, fill,
+  border, corners, padding, and labels.
+- Strict gates require official `Example1`, exact `158x40` resting geometry
+  under `3.0`, and open-surface delta `<=9.0` with only the observed two-pixel
+  aggregate width difference (`96x134` WPF versus `98x134` WinUI UIA).
+- Gallery coverage pins the three examples/snippets, current runtime labels,
+  click output, accelerator text, submenu/separator/radio shape, MenuBar and
+  MenuItem roles, Invoke and ExpandCollapse providers, actual expand/collapse,
+  opened New semantics, and selected-output Text semantics.
+- Final strict Light evidence is
+  `artifacts/visual-checks/20260718-050121-893-97368/report.md`: resting `2.63`,
+  open `8.59`, exact `158x40`, open `96x134` versus `98x134`.
+- Final strict Dark evidence is
+  `artifacts/visual-checks/20260718-050152-073-79972/report.md`: resting `2.57`,
+  open `6.74`, exact `158x40`, open `96x134` versus `98x134`.
+
+## 2026-07-18 MenuFlyout Current-Source Seven-Example and Exact-Surface Parity
+
+- Current official `microsoft-ui-xaml` commit
+  `3cae15f071f1ab8565f9a7592dbf27f04bafe651` and current WinUI Gallery commit
+  `29f62479d5c046a0b854a5868e5a7cd484572d87` are pinned with the current
+  MenuFlyout theme blob, page/code blobs, and all seven snippet blobs.
+- ModernWpf now loads and displays the seven current examples: AppBarButton,
+  toggle/separator, cascading, split, icons, icons/accelerators, and radio.
+  Current tags, outputs, default checks, font overrides, and runtime behavior
+  match the live Gallery rather than stale inline examples.
+- The presenter explicitly applies the current 14-DIP variable content font.
+  Scoped WPF item metrics reproduce the exact 32-DIP rows and `96x102`
+  three-item surface. Current standard/narrow and High Contrast tokens are
+  refreshed from source.
+- The current radio-submenu `E915` zero-opacity placeholder is restored through
+  the documented WPF `IsCheckable`/`IsChecked` substitute.
+- The harness requires official source `Sort`, popup-window proof, a common
+  complete `MenuFlyoutOpenSurface`, closed delta `<=1.0`, open delta `<=8.0`,
+  and exact sizes. Only WinUI's three reference-only horizontal theme-shadow
+  pixels are removed before open-surface comparison.
+- Gallery automation pins Sort Button/Invoke/ExpandCollapse with real state
+  changes, rating Invoke, Repeat Toggle, output Text semantics, output layout,
+  and accelerator font families.
+- Final strict Light evidence is
+  `artifacts/visual-checks/20260718-060613-667-79200/report.md`: closed `0.57`,
+  open `6.70`, exact `68x64` / `96x102` sizes.
+- Final strict Dark evidence is
+  `artifacts/visual-checks/20260718-060713-708-26040/report.md`: closed `0.55`,
+  open `4.01`, exact `68x64` / `96x102` sizes.
+
+## 2026-07-18 CommandBar Current-Source Sticky, Accessibility, and Exact-Surface Parity
+
+- Current official `microsoft-ui-xaml` commit
+  `3cae15f071f1ab8565f9a7592dbf27f04bafe651` and current WinUI Gallery commit
+  `29f62479d5c046a0b854a5868e5a7cd484572d87` are pinned with the current
+  CommandBar theme, partial, generated API, integration-test, page/code, and
+  `CommandBarLabelsSide.txt` blobs.
+- ModernWpf now exposes source `IsSticky`. A stable WPF popup plus explicit
+  process-input light dismiss reproduces WinUI's non-sticky outside-click and
+  Escape dismissal while sticky bars remain open. Escape restores More focus;
+  inside-command and inside-overflow clicks do not dismiss.
+- The popup anchors to `ContentRoot`, aligns its bottom-right edge, refreshes
+  native placement after disconnected artifact rendering, and retains the
+  source overflow minimum width. This also supports the Gallery's current
+  `IsOpen=true` then `IsSticky=true` ordering.
+- ModernWpf loads the current snippet and mirrors Right labels,
+  Add/Edit/Share/Settings accelerators, source output, and dynamic command
+  additions/removals. Button/Text roles, names, class names, accelerator keys,
+  Invoke providers, and output semantics are pinned.
+- WPF Segoe UI measures the current Right-label and accelerator rows one pixel
+  narrower. Documented one-pixel trailing-margin substitutions produce exact
+  `271x48` resting and `167x32` open geometry without changing the source
+  `CommandBarOverflowMinWidth`.
+- The harness requires official `PrimaryCommandBar`, popup-window proof, the
+  sample Settings automation ID, and a common visible
+  `CommandBarOpenSurface`. Strict gates are resting `<=2.5`, open `<=2.0`, and
+  exact size for both.
+- Final strict Light evidence is
+  `artifacts/visual-checks/20260718-073925-263-57512/report.md`: resting `1.70`,
+  open `1.20`, exact `271x48` / `167x32` sizes.
+- Final strict Dark evidence is
+  `artifacts/visual-checks/20260718-073957-403-11324/report.md`: resting `2.08`,
+  open `1.31`, exact `271x48` / `167x32` sizes.
+
+## 2026-07-18 HyperlinkButton Current-Source Sample, Accessibility, and Exact-Geometry Parity
+
+- Current official `microsoft-ui-xaml` commit
+  `3cae15f071f1ab8565f9a7592dbf27f04bafe651` retains every audited product
+  blob byte-identical to the May source-shaped port. No product visual patch
+  was justified.
+- Current WinUI Gallery commit
+  `29f62479d5c046a0b854a5868e5a7cd484572d87` retains the URI and Click
+  examples, but the current sample also includes the source
+  `Disable hyperlink button` option and two marker-delimited snippet files.
+  ModernWpf now loads those files, displays only their `xaml` sections, and
+  marks the complete source files consumed so no duplicate snippets appear.
+- The first live example exposes source `Control1`, `Microsoft home page`, the
+  Microsoft URI, and a CheckBox/Toggle option that disables and restores the
+  control. The second exposes `Control2`, live `Go to ToggleButton` content,
+  intentional displayed `ToggleButton` content, and real in-app navigation.
+- Automation coverage pins Hyperlink roles, `Hyperlink` class names,
+  content-derived names, Invoke providers, disabled Invoke rejection,
+  CheckBox/Toggle semantics, and Invoke-driven ToggleButton routing.
+- The strict gate requires official `Control1`, a primary crop, delta
+  `<=1.6`, and exact size. Final Light evidence is
+  `artifacts/visual-checks/20260718-080523-554-71612/report.md`: `1.48`, exact
+  `157x32`. Final Dark evidence is
+  `artifacts/visual-checks/20260718-080545-679-80452/report.md`: `1.47`, exact
+  `157x32`.
+
+## 2026-07-18 ColorPicker Current-Source Four-State, Accessibility, and Exact-Surface Parity
+
+- Current official `microsoft-ui-xaml` commit
+  `de3e767333c2f0717a6a70cb22bd192ced5ad885` retains all 18 audited
+  ColorPicker, ColorSpectrum, slider, peer, theme, conversion, resource, and
+  test blobs byte-identical to the May source-shaped port. The intervening
+  changes only moved the source root and packaged the same XAML into perf2026
+  dictionaries, so no product patch was justified.
+- Current WinUI Gallery commit
+  `29f62479d5c046a0b854a5868e5a7cd484572d87` uses one external
+  marker-delimited `ColorPickerProperties.txt` plus source
+  `ControlExample.Options`. ModernWpf now loads that file, displays only its
+  `xaml` section, and hosts the seven CheckBoxes, Box/Ring RadioButtons, and
+  preview through `GalleryExample.OptionsContent`.
+- Gallery automation pins all property defaults and changes, alpha-dependent
+  enablement, Box/Ring selection, preview-color propagation, CheckBox roles and
+  Toggle providers, the RadioButtons Group role, and the ColorSpectrum Slider
+  role/name/Value provider.
+- A theme-invariant hue spectrum cannot prove Light versus Dark, so the harness
+  now probes the theme-sensitive `HexTextBox`. The Alpha scenario raises both
+  windows to 900px so its complete live `312x566` surface remains visible
+  below the fixed WinUI Gallery header.
+- Static and interaction gates require common source-derived ColorPicker
+  surfaces, delta `<=4.0`, and exact sizes. Final Light evidence is Default /
+  More `artifacts/visual-checks/20260718-082916-447-87472/report.md` at `0.94`
+  / `0.82`, Opacity `artifacts/visual-checks/20260718-083553-318-17576/report.md`
+  at `1.60`, and Ring `artifacts/visual-checks/20260718-083723-381-61676/report.md`
+  at `1.11`. Final Dark evidence is Default / More
+  `artifacts/visual-checks/20260718-083011-718-58464/report.md` at `0.96` /
+  `0.79`, Opacity `artifacts/visual-checks/20260718-083641-163-94428/report.md`
+  at `1.68`, and Ring `artifacts/visual-checks/20260718-083747-519-36496/report.md`
+  at `1.23`.

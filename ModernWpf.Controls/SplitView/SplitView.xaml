@@ -702,7 +702,7 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Pane Content Area -->
-                        <Border
+                        <local:SplitViewPaneRoot
                             x:Name="PaneRoot"
                             Grid.ColumnSpan="2"
                             BorderBrush="{TemplateBinding BorderBrush}"
@@ -716,17 +716,17 @@
                             Focusable="True"
                             KeyboardNavigation.TabNavigation="Local"
                             KeyboardNavigation.TabIndex="0">
-                            <Border.Clip>
+                            <local:SplitViewPaneRoot.Clip>
                                 <RectangleGeometry x:Name="PaneClipRectangle">
                                     <RectangleGeometry.Transform>
                                         <TranslateTransform x:Name="PaneClipRectangleTransform" />
                                     </RectangleGeometry.Transform>
                                 </RectangleGeometry>
-                            </Border.Clip>
+                            </local:SplitViewPaneRoot.Clip>
                             
-                            <Border.RenderTransform>
+                            <local:SplitViewPaneRoot.RenderTransform>
                                 <TranslateTransform x:Name="PaneTransform" />
-                            </Border.RenderTransform>
+                            </local:SplitViewPaneRoot.RenderTransform>
 
                             <Grid>
                                 <Border ui:BorderHelper.Child="{TemplateBinding Pane}" />
@@ -738,7 +738,7 @@
                                     Width="1"
                                     HorizontalAlignment="Right" />
                             </Grid>
-                        </Border>
+                        </local:SplitViewPaneRoot>
                         
                         <!-- Content Area -->
                         <Grid
@@ -748,7 +748,7 @@
                                 <TranslateTransform x:Name="ContentTransform" />
                             </Grid.RenderTransform>
                             <Border ui:BorderHelper.Child="{TemplateBinding Content}" />
-                            <Rectangle
+                            <local:SplitViewLightDismissLayer
                                 x:Name="LightDismissLayer"
                                 Fill="Transparent"
                                 Visibility="Collapsed" />

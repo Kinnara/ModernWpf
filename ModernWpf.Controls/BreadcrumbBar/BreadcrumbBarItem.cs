@@ -89,6 +89,8 @@ namespace ModernWpf.Controls
 
         internal bool IsEllipsisDropDownItem => _isEllipsisDropDownItem;
 
+        internal bool IsVisibleForAutomation => !_isEllipsisItem || Owner?.IsEllipsisRendered == true;
+
         internal void SetParentBreadcrumb(BreadcrumbBar parent)
         {
             Owner = parent;

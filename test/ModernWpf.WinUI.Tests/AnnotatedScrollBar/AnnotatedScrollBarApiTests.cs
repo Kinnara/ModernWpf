@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -36,6 +37,17 @@ public class AnnotatedScrollBarApiTests
             Assert.IsTrue(scrollController.PanningInfo.IsRailEnabled);
             Assert.AreEqual(Orientation.Vertical, scrollController.PanningInfo.PanOrientation);
             Assert.IsNull(scrollController.PanningInfo.PanningElementAncestor);
+        });
+    }
+
+    [TestMethod]
+    public void AnnotatedScrollBarHasNoStandaloneAutomationPeerLikeCurrentWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var annotatedScrollBar = new ModernWpf.Controls.AnnotatedScrollBar();
+
+            Assert.IsNull(UIElementAutomationPeer.CreatePeerForElement(annotatedScrollBar));
         });
     }
 

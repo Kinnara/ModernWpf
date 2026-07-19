@@ -1698,7 +1698,7 @@ namespace ModernWpf.Controls
                                             VisualStateManager.GoToState(this, c_separatorCollapsedStateName, false);
                                             return totalAvailableHeight - footerGroupDesiredHeight;
                                         }
-                                        else if (menuItemsDesiredHeight <= totalAvailableHeightHalf)
+                                        else if (menuItemsActualHeight <= totalAvailableHeightHalf)
                                         {
                                             // Footer items exceed over the half, so let's limit them.
                                             footerItemsScrollViewer.MaxHeight = totalAvailableHeight - menuItemsActualHeight;
@@ -1720,7 +1720,7 @@ namespace ModernWpf.Controls
                                             return totalAvailableHeightHalf;
                                         }
                                     }
-                                    else
+                                    else if (totalAvailableHeight >= footerItemsRepeater.ActualHeight)
                                     {
                                         // Couldn't determine the menuItems.
                                         // Let's just take all the height and let the other repeater deal with it.

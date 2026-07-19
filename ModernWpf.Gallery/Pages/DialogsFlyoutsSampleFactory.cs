@@ -443,6 +443,10 @@ private void ClosePopupClicked(object sender, RoutedEventArgs e)
             panel.Children.Add(new TextBlock
             {
                 FontSize = 16,
+                // WPF's Segoe UI line box is one DIP shorter than WinUI's at
+                // 16px. Preserve the current Gallery surface's 22-DIP heading
+                // row and 96-DIP total popup height.
+                MinHeight = 22,
                 Text = "Simple Popup"
             });
             var closeButton = new Button

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -38,6 +39,7 @@ public class CommandBarApiTests
             Assert.IsNull(commandBar.ContentTemplate);
             Assert.IsNull(commandBar.CommandBarOverflowPresenterStyle);
             Assert.IsFalse(commandBar.IsOpen);
+            Assert.IsFalse(commandBar.IsSticky);
             Assert.IsTrue(commandBar.IsDynamicOverflowEnabled);
             Assert.AreEqual(CommandBarDefaultLabelPosition.Right, commandBar.DefaultLabelPosition);
             Assert.AreEqual(CommandBarOverflowButtonVisibility.Auto, commandBar.OverflowButtonVisibility);
@@ -56,6 +58,7 @@ public class CommandBarApiTests
                 ContentTemplate = new DataTemplate(),
                 CommandBarOverflowPresenterStyle = overflowStyle,
                 IsOpen = true,
+                IsSticky = true,
                 IsDynamicOverflowEnabled = false,
                 DefaultLabelPosition = CommandBarDefaultLabelPosition.Collapsed,
                 OverflowButtonVisibility = CommandBarOverflowButtonVisibility.Visible
@@ -65,9 +68,63 @@ public class CommandBarApiTests
             Assert.IsNotNull(commandBar.ContentTemplate);
             Assert.AreSame(overflowStyle, commandBar.CommandBarOverflowPresenterStyle);
             Assert.IsTrue(commandBar.IsOpen);
+            Assert.IsTrue(commandBar.IsSticky);
             Assert.IsFalse(commandBar.IsDynamicOverflowEnabled);
             Assert.AreEqual(CommandBarDefaultLabelPosition.Collapsed, commandBar.DefaultLabelPosition);
             Assert.AreEqual(CommandBarOverflowButtonVisibility.Visible, commandBar.OverflowButtonVisibility);
+        });
+    }
+
+    [TestMethod]
+    public void CommandBarIsStickyControlsOverflowLightDismissPolicy()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var commandBar = new TestCommandBar();
+            commandBar.SecondaryCommands.Add(new AppBarButton { Label = "Settings", InputGestureText = "Ctrl+I" });
+
+            using var host = new TestWindowHost(commandBar, width: 320, height: 160);
+            host.UpdateLayout();
+
+            var popup = FindTemplateChild<Popup>(commandBar, "OverflowPopup");
+            Assert.AreSame(FindTemplateChild<Grid>(commandBar, "ContentRoot"), popup.PlacementTarget);
+            Assert.IsTrue(popup.StaysOpen);
+
+            commandBar.IsSticky = true;
+            host.UpdateLayout();
+            Assert.IsTrue(popup.StaysOpen);
+
+            commandBar.IsSticky = false;
+            commandBar.IsOpen = true;
+            commandBar.IsSticky = true;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+            Assert.IsTrue(commandBar.IsOpen);
+            Assert.IsTrue(popup.IsOpen);
+            var settingsButton = (AppBarButton)commandBar.SecondaryCommands[0];
+            var acceleratorText = FindTemplateChild<TextBlock>(settingsButton, "KeyboardAcceleratorTextLabel");
+            Assert.AreEqual(Visibility.Visible, acceleratorText.Visibility);
+
+            commandBar.InvokeKeyDown(CreateKeyEventArgs(commandBar, Key.Escape));
+            Assert.IsTrue(commandBar.IsOpen, "Escape must not dismiss a sticky WinUI CommandBar.");
+            Assert.IsFalse(commandBar.TryLightDismissForTesting(new Button()));
+            Assert.IsTrue(commandBar.IsOpen, "Outside input must not dismiss a sticky WinUI CommandBar.");
+
+            commandBar.IsSticky = false;
+            host.UpdateLayout();
+            Assert.IsTrue(popup.StaysOpen, "ModernWpf owns WinUI light-dismiss semantics instead of WPF Popup capture.");
+            Assert.IsFalse(commandBar.TryLightDismissForTesting(settingsButton));
+            Assert.IsTrue(commandBar.IsOpen, "Input inside overflow must not light-dismiss the CommandBar.");
+
+            commandBar.InvokeKeyDown(CreateKeyEventArgs(commandBar, Key.Escape));
+            Assert.IsFalse(commandBar.IsOpen, "Escape must dismiss a non-sticky WinUI CommandBar.");
+
+            commandBar.IsOpen = true;
+            host.UpdateLayout();
+            Assert.IsTrue(commandBar.TryLightDismissForTesting(new Button()));
+            Assert.IsFalse(commandBar.IsOpen, "Outside input must dismiss a non-sticky WinUI CommandBar.");
         });
     }
 
@@ -136,6 +193,259 @@ public class CommandBarApiTests
 
             Assert.AreEqual(GridUnitType.Star, contentColumn.Width.GridUnitType);
             Assert.AreEqual(GridUnitType.Auto, primaryColumn.Width.GridUnitType);
+        });
+    }
+
+    [TestMethod]
+    public void AppBarElementsExposeCurrentWinUIDynamicOverflowOrderContract()
+    {
+        WpfTestHost.Run(() =>
+        {
+            ICommandBarElement[] elements =
+            {
+                new AppBarButton(),
+                new AppBarToggleButton(),
+                new AppBarSeparator(),
+                new AppBarElementContainer()
+            };
+
+            foreach (var element in elements)
+            {
+                Assert.AreEqual(0, element.DynamicOverflowOrder);
+                Assert.IsFalse(element.IsInOverflow);
+            }
+
+            for (int i = 0; i < elements.Length; i++)
+            {
+                elements[i].DynamicOverflowOrder = i + 1;
+                Assert.AreEqual(i + 1, elements[i].DynamicOverflowOrder);
+            }
+
+            Assert.AreSame(AppBarButton.DynamicOverflowOrderProperty, AppBarToggleButton.DynamicOverflowOrderProperty);
+            Assert.AreSame(AppBarButton.DynamicOverflowOrderProperty, AppBarSeparator.DynamicOverflowOrderProperty);
+            Assert.AreSame(AppBarButton.DynamicOverflowOrderProperty, AppBarElementContainer.DynamicOverflowOrderProperty);
+        });
+    }
+
+    [TestMethod]
+    public void CommandBarDynamicOverflowUsesSourceOrderGroupsAndReactsToOrderChanges()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var first = new AppBarButton { Label = "First" };
+            var second = new AppBarButton { Label = "Second" };
+            var third = new AppBarButton { Label = "Third", DynamicOverflowOrder = 1 };
+            var fourth = new AppBarButton { Label = "Fourth", DynamicOverflowOrder = 2 };
+            var commandBar = new ModernWpf.Controls.CommandBar();
+            commandBar.PrimaryCommands.Add(first);
+            commandBar.PrimaryCommands.Add(second);
+            commandBar.PrimaryCommands.Add(third);
+            commandBar.PrimaryCommands.Add(fourth);
+
+            using var host = new TestWindowHost(commandBar, width: 190, height: 100);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsFalse(first.IsInOverflow);
+            Assert.IsFalse(second.IsInOverflow);
+            Assert.IsTrue(third.IsInOverflow);
+            Assert.IsTrue(fourth.IsInOverflow);
+
+            first.DynamicOverflowOrder = 1;
+            second.DynamicOverflowOrder = 2;
+            third.DynamicOverflowOrder = 0;
+            fourth.DynamicOverflowOrder = 0;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(first.IsInOverflow);
+            Assert.IsTrue(second.IsInOverflow);
+            Assert.IsFalse(third.IsInOverflow);
+            Assert.IsFalse(fourth.IsInOverflow);
+        });
+    }
+
+    [TestMethod]
+    public void CommandBarDynamicOverflowMovesWholeOrderGroupsAndAdjacentSeparators()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var leadingSeparator = new AppBarSeparator();
+            var first = new AppBarButton { Label = "First", DynamicOverflowOrder = 1 };
+            var trailingSeparator = new AppBarSeparator();
+            var second = new AppBarButton { Label = "Second", DynamicOverflowOrder = 2 };
+            var commandBar = new ModernWpf.Controls.CommandBar();
+            commandBar.PrimaryCommands.Add(leadingSeparator);
+            commandBar.PrimaryCommands.Add(first);
+            commandBar.PrimaryCommands.Add(trailingSeparator);
+            commandBar.PrimaryCommands.Add(second);
+
+            using var host = new TestWindowHost(commandBar, width: 120, height: 100);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(leadingSeparator.IsInOverflow);
+            Assert.IsTrue(first.IsInOverflow);
+            Assert.IsTrue(trailingSeparator.IsInOverflow);
+            Assert.IsFalse(second.IsInOverflow);
+
+            var groupCommandBar = new ModernWpf.Controls.CommandBar();
+            var grouped = Enumerable.Range(0, 4)
+                .Select(index => new AppBarButton
+                {
+                    Label = "Grouped " + index,
+                    DynamicOverflowOrder = 1
+                })
+                .ToList();
+            foreach (var button in grouped)
+            {
+                groupCommandBar.PrimaryCommands.Add(button);
+            }
+
+            host.Window.Content = groupCommandBar;
+            host.Window.Width = 190;
+            host.Window.Height = 100;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(grouped.All(button => button.IsInOverflow));
+        });
+    }
+
+    [TestMethod]
+    public void CommandBarDynamicOverflowChangingEventUsesCurrentWinUIActionAndTiming()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var commandBar = new ModernWpf.Controls.CommandBar();
+            var commands = Enumerable.Range(0, 4)
+                .Select(index => new AppBarButton { Label = "Command " + index })
+                .ToList();
+            foreach (var command in commands)
+            {
+                commandBar.PrimaryCommands.Add(command);
+            }
+
+            var actions = new List<CommandBarDynamicOverflowAction>();
+            commandBar.DynamicOverflowItemsChanging += (sender, args) =>
+            {
+                Assert.AreSame(commandBar, sender);
+                actions.Add(args.Action);
+
+                if (args.Action == CommandBarDynamicOverflowAction.AddingToOverflow)
+                {
+                    Assert.IsTrue(commands.All(command => !command.IsInOverflow));
+                }
+                else
+                {
+                    Assert.IsTrue(commands.Any(command => command.IsInOverflow));
+                }
+            };
+
+            using var host = new TestWindowHost(commandBar, width: 190, height: 100);
+            host.UpdateLayout();
+
+            CollectionAssert.AreEqual(
+                new[] { CommandBarDynamicOverflowAction.AddingToOverflow },
+                actions);
+            Assert.IsTrue(commands.Any(command => command.IsInOverflow));
+
+            host.Window.Width = 600;
+            host.UpdateLayout();
+
+            CollectionAssert.AreEqual(
+                new[]
+                {
+                    CommandBarDynamicOverflowAction.AddingToOverflow,
+                    CommandBarDynamicOverflowAction.RemovingFromOverflow
+                },
+                actions);
+            Assert.IsTrue(commands.All(command => !command.IsInOverflow));
+        });
+    }
+
+    [TestMethod]
+    public void CommandBarOpenLifecycleUsesCurrentWinUIEventAndVirtualHookOrder()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var lifecycle = new List<string>();
+            var commandBar = new TestCommandBar { LifecycleLog = lifecycle };
+            commandBar.SecondaryCommands.Add(new AppBarButton { Label = "Settings" });
+            commandBar.Opening += (sender, args) => lifecycle.Add("Opening");
+            commandBar.Opened += (sender, args) => lifecycle.Add("Opened");
+            commandBar.Closing += (sender, args) => lifecycle.Add("Closing");
+            commandBar.Closed += (sender, args) => lifecycle.Add("Closed");
+
+            using var host = new TestWindowHost(commandBar, width: 320, height: 160);
+            commandBar.IsOpen = true;
+            host.UpdateLayout();
+            commandBar.IsOpen = false;
+            host.UpdateLayout();
+            for (int i = 0; i < 5 && !lifecycle.Contains("Closed"); i++)
+            {
+                WpfTestHost.DoEvents();
+            }
+
+            Assert.AreEqual(
+                "OnOpening,Opening,OnOpened,Opened,OnClosing,Closing,OnClosed,Closed",
+                string.Join(",", lifecycle));
+        });
+    }
+
+    [TestMethod]
+    public void CommandBarAutomationPeerUsesCurrentWinUIAppBarPatterns()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var commandBar = new ModernWpf.Controls.CommandBar();
+            commandBar.SecondaryCommands.Add(new AppBarButton { Label = "Settings" });
+            using var host = new TestWindowHost(commandBar, width: 320, height: 160);
+
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(commandBar);
+            Assert.IsInstanceOfType(peer, typeof(CommandBarAutomationPeer));
+            Assert.AreEqual("ApplicationBar", peer.GetClassName());
+            Assert.AreEqual("app bar", peer.GetLocalizedControlType());
+            Assert.AreEqual(AutomationControlType.Custom, peer.GetAutomationControlType());
+
+            var toggleProvider = (IToggleProvider)peer.GetPattern(PatternInterface.Toggle);
+            var expandCollapseProvider = (IExpandCollapseProvider)peer.GetPattern(PatternInterface.ExpandCollapse);
+            Assert.IsNotNull(toggleProvider);
+            Assert.IsNotNull(expandCollapseProvider);
+            Assert.AreEqual(ToggleState.Off, toggleProvider.ToggleState);
+            Assert.AreEqual(ExpandCollapseState.Collapsed, expandCollapseProvider.ExpandCollapseState);
+            Assert.IsNull(peer.GetPattern(PatternInterface.Window));
+
+            expandCollapseProvider.Expand();
+            host.UpdateLayout();
+            Assert.IsTrue(commandBar.IsOpen);
+            Assert.AreEqual(ToggleState.On, toggleProvider.ToggleState);
+            Assert.AreEqual(ExpandCollapseState.Expanded, expandCollapseProvider.ExpandCollapseState);
+
+            var windowProvider = (IWindowProvider)peer.GetPattern(PatternInterface.Window);
+            Assert.IsNotNull(windowProvider);
+            Assert.IsTrue(windowProvider.IsModal);
+            Assert.IsTrue(windowProvider.IsTopmost);
+            Assert.IsFalse(windowProvider.Maximizable);
+            Assert.IsFalse(windowProvider.Minimizable);
+            Assert.AreEqual(WindowInteractionState.Running, windowProvider.InteractionState);
+            Assert.AreEqual(WindowVisualState.Normal, windowProvider.VisualState);
+
+            toggleProvider.Toggle();
+            host.UpdateLayout();
+            Assert.IsFalse(commandBar.IsOpen);
+            Assert.AreEqual(ToggleState.Off, toggleProvider.ToggleState);
+            Assert.IsNull(peer.GetPattern(PatternInterface.Window));
         });
     }
 
@@ -564,6 +874,12 @@ public class CommandBarApiTests
 
             using var host = new TestWindowHost(commandBar, width: 320, height: 160);
             host.UpdateLayout();
+
+            commandBar.IsOpen = true;
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(commandBar.IsOpen);
 
             AppBarElementProperties.SetUseOverflowStyle(firstButton, true);
             AppBarElementProperties.SetUseOverflowStyle(secondButton, true);
@@ -2226,6 +2542,52 @@ public class CommandBarApiTests
         }
 
         return null;
+    }
+
+    private static KeyEventArgs CreateKeyEventArgs(Visual source, Key key)
+    {
+        return new KeyEventArgs(
+            Keyboard.PrimaryDevice,
+            PresentationSource.FromVisual(source),
+            Environment.TickCount,
+            key)
+        {
+            RoutedEvent = Keyboard.KeyDownEvent
+        };
+    }
+
+    private sealed class TestCommandBar : ModernWpf.Controls.CommandBar
+    {
+        public IList<string>? LifecycleLog { get; set; }
+
+        public void InvokeKeyDown(KeyEventArgs e)
+        {
+            OnKeyDown(e);
+        }
+
+        protected override void OnOpening(object e)
+        {
+            LifecycleLog?.Add("OnOpening");
+            base.OnOpening(e);
+        }
+
+        protected override void OnOpened(object e)
+        {
+            LifecycleLog?.Add("OnOpened");
+            base.OnOpened(e);
+        }
+
+        protected override void OnClosing(object e)
+        {
+            LifecycleLog?.Add("OnClosing");
+            base.OnClosing(e);
+        }
+
+        protected override void OnClosed(object e)
+        {
+            LifecycleLog?.Add("OnClosed");
+            base.OnClosed(e);
+        }
     }
 
     private sealed class TestAppBarButton : AppBarButton

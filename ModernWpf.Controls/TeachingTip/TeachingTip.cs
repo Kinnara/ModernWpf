@@ -110,6 +110,18 @@ namespace ModernWpf.Controls
             return new TeachingTipAutomationPeer(this);
         }
 
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property == TitleProperty ||
+                e.Property == System.Windows.Automation.AutomationProperties.NameProperty ||
+                e.Property == System.Windows.Automation.AutomationProperties.AutomationIdProperty)
+            {
+                SetPopupAutomationProperties();
+            }
+        }
+
         private void ApplySizeResources()
         {
             if (_tailOcclusionGrid == null)
@@ -289,6 +301,26 @@ namespace ModernWpf.Controls
             _popup.PopupAnimation = PopupAnimation.None;
             _popup.Placement = PlacementMode.Custom;
             _popup.CustomPopupPlacementCallback = PositionPopup;
+            SetPopupAutomationProperties();
+        }
+
+        private void SetPopupAutomationProperties()
+        {
+            if (_popup == null)
+            {
+                return;
+            }
+
+            var name = System.Windows.Automation.AutomationProperties.GetName(this);
+            if (string.IsNullOrEmpty(name))
+            {
+                name = Title;
+            }
+
+            System.Windows.Automation.AutomationProperties.SetName(_popup, name ?? string.Empty);
+            System.Windows.Automation.AutomationProperties.SetAutomationId(
+                _popup,
+                System.Windows.Automation.AutomationProperties.GetAutomationId(this));
         }
 
         private void OnActionButtonClick(object sender, RoutedEventArgs e)

@@ -21,6 +21,7 @@
       "options": [ "BindsTwoWayByDefault" ],
       "changed": "OnIsOpenChanged"
     },
+    { "name": "IsSticky", "type": "bool", "default": "false" },
     { "name": "CommandBarOverflowPresenterStyle", "type": "Style" },
     { "name": "CommandBarTemplateSettings", "type": "CommandBarTemplateSettings", "kind": "RegisterReadOnly", "setterAccessibility": "none" },
     {

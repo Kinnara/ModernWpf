@@ -145,6 +145,39 @@ public class PagerControlApiTests
     }
 
     [TestMethod]
+    public void AutoDisplayModeUsesCurrentWinUIThreshold()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var pager = new ModernWpf.Controls.PagerControl
+            {
+                NumberOfPages = 5,
+                DisplayMode = PagerControlDisplayMode.Auto
+            };
+
+            using var host = new TestWindowHost(pager, width: 420, height: 120);
+
+            var comboBox = GetTemplateChild<System.Windows.Controls.ComboBox>(pager, "ComboBoxDisplay");
+            var numberBox = GetTemplateChild<ModernWpf.Controls.NumberBox>(pager, "NumberBoxDisplay");
+
+            Assert.AreEqual(Visibility.Visible, comboBox.Visibility);
+            Assert.AreEqual(Visibility.Collapsed, numberBox.Visibility);
+
+            pager.NumberOfPages = 10;
+            host.UpdateLayout();
+
+            Assert.AreEqual(Visibility.Collapsed, comboBox.Visibility);
+            Assert.AreEqual(Visibility.Visible, numberBox.Visibility);
+
+            pager.NumberOfPages = -1;
+            host.UpdateLayout();
+
+            Assert.AreEqual(Visibility.Collapsed, comboBox.Visibility);
+            Assert.AreEqual(Visibility.Visible, numberBox.Visibility);
+        });
+    }
+
+    [TestMethod]
     public void VerifySelectedIndexChangedEventArgs()
     {
         WpfTestHost.Run(() =>

@@ -40,7 +40,7 @@ namespace ModernWpf.Controls
         {
             base.OnApplyTemplate();
 
-            _itemsView = GetTemplateChild(ItemsViewName) as ItemsControl;
+            _itemsView = GetTemplateChild(ItemsViewName) as SelectorBarItemsControl;
             if (_itemsView != null && _itemsView.ItemsSource == null)
             {
                 _itemsView.ItemsSource = Items;
@@ -63,6 +63,8 @@ namespace ModernWpf.Controls
             SelectedItem = item;
             return true;
         }
+
+        internal SelectorBarItemsControl ItemsView => _itemsView;
 
         internal void OnItemIsSelectedChanged(SelectorBarItem item, bool isSelected)
         {
@@ -275,7 +277,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        private ItemsControl _itemsView;
+        private SelectorBarItemsControl _itemsView;
         private bool _updatingSelection;
     }
 }

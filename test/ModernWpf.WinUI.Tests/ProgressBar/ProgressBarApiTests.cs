@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 using ProgressBar = ModernWpf.Controls.ProgressBar;
@@ -87,6 +88,9 @@ public class ProgressBarApiTests
             AssertProgressIndicator(progressBar, "DeterminateProgressBarIndicator");
             AssertProgressIndicator(progressBar, "IndeterminateProgressBarIndicator");
             AssertProgressIndicator(progressBar, "IndeterminateProgressBarIndicator2");
+            AssertProgressIndicatorRasterOverlay(progressBar, "DeterminateProgressBarIndicator");
+            AssertProgressIndicatorRasterOverlay(progressBar, "IndeterminateProgressBarIndicator");
+            AssertProgressIndicatorRasterOverlay(progressBar, "IndeterminateProgressBarIndicator2");
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {
@@ -145,7 +149,26 @@ public class ProgressBarApiTests
         Assert.AreEqual(HorizontalAlignment.Left, indicator.HorizontalAlignment);
         Assert.AreEqual(1.5, indicator.RadiusX);
         Assert.AreEqual(1.5, indicator.RadiusY);
+        Assert.IsNull(indicator.Stroke);
+        Assert.AreEqual(1.0, indicator.StrokeThickness);
         Assert.IsInstanceOfType(indicator.RenderTransform, typeof(TranslateTransform));
+    }
+
+    private static void AssertProgressIndicatorRasterOverlay(ProgressBar progressBar, string indicatorName)
+    {
+        var indicator = FindNamedDescendant<Rectangle>(progressBar, indicatorName);
+        var overlay = FindNamedDescendant<ProgressBarIndicatorRasterOverlay>(
+            progressBar,
+            indicatorName + "RasterOverlay");
+
+        AssertBrushEquals(indicator.Fill, overlay.Fill);
+        Assert.AreEqual(indicator.ActualWidth, overlay.ActualWidth, 0.001);
+        Assert.AreEqual(1.0 / VisualTreeHelper.GetDpi(progressBar).DpiScaleY, overlay.ActualHeight, 0.001);
+        Assert.AreEqual(indicator.Opacity, overlay.Opacity);
+        Assert.AreSame(indicator.RenderTransform, overlay.RenderTransform);
+        Assert.AreEqual(HorizontalAlignment.Left, overlay.HorizontalAlignment);
+        Assert.AreEqual(VerticalAlignment.Top, overlay.VerticalAlignment);
+        Assert.IsFalse(overlay.IsHitTestVisible);
     }
 
     private static void AssertResource(ResourceDictionary resources, string key, object expected)

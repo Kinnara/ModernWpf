@@ -68,6 +68,11 @@ headers are preserved in ModernWpf.
 - `DefaultCollectionFocusVisualStyle` is exposed as a ModernWpf theme alias
   based on `HighVisibilityFocusVisual` so the official `MenuItem` focus-style
   setter resolves through ModernWpf's existing focus visual bridge.
+- ModernWpf's existing `RadioMenuItem.AreCheckStatesEnabled` API has no stock
+  WPF equivalent. The submenu-header template retains the official WPF
+  structure but adds the current WinUI `E915` radio placeholder using plain
+  WPF elements and triggers. It is collapsed for ordinary submenu headers;
+  `IsCheckable` exposes the placeholder and `IsChecked` controls opacity.
 
 ## Tests
 
