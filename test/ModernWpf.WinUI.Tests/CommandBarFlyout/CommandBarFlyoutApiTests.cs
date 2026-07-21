@@ -231,6 +231,7 @@ public class CommandBarFlyoutApiTests
             var commandBar = GetCommandBar(commandBarFlyout);
             commandBar.ApplyTemplate();
             host.UpdateLayout();
+
             WpfTestHost.DoEvents();
 
             var primaryPanel = FindTemplateChild<System.Windows.Controls.Panel>(commandBar, "PrimaryItemsPanel");
@@ -846,7 +847,7 @@ public class CommandBarFlyoutApiTests
     }
 
     [TestMethod]
-    public void CloseAnimationCancelsFirstClosingLikeWinUISource()
+    public void CloseAnimationRunsBeforeSingleNativeClose()
     {
         WpfTestHost.Run(() =>
         {
@@ -875,26 +876,35 @@ public class CommandBarFlyoutApiTests
             commandBar.ApplyTemplate();
             host.UpdateLayout();
 
+            if (commandBar.HasOpenAnimation())
+            {
+                WaitFor(() => IsLayoutOpacity(commandBar, 1.0), "CommandBarFlyout open animation did not complete.");
+            }
+
             int closingCount = 0;
             bool sawCanceledClosing = false;
+            double closingOpacity = double.NaN;
             commandBarFlyout.Closing += (_, args) =>
             {
                 closingCount++;
                 sawCanceledClosing |= args.Cancel;
+                closingOpacity = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "LayoutRoot").Opacity;
             };
 
             commandBarFlyout.Hide();
 
             if (commandBar.HasCloseAnimation())
             {
-                Assert.IsTrue(sawCanceledClosing);
+                Assert.IsFalse(sawCanceledClosing);
                 Assert.AreEqual(1, closingCount);
+                Assert.AreEqual(1.0, closingOpacity, 0.05, "Closing should be raised before the fade begins.");
                 Assert.IsTrue(commandBarFlyout.IsOpen);
                 Assert.IsTrue(commandBar.IsOpen);
 
                 WaitFor(() => !commandBarFlyout.IsOpen, "CommandBarFlyout close animation did not complete.");
 
-                Assert.AreEqual(2, closingCount);
+                Assert.AreEqual(1, closingCount);
+                AssertLayoutOpacity(commandBar, 0.0);
                 Assert.IsFalse(commandBar.IsOpen);
             }
             else
@@ -902,6 +912,190 @@ public class CommandBarFlyoutApiTests
                 WpfTestHost.DoEvents();
                 Assert.IsFalse(commandBarFlyout.IsOpen);
                 Assert.IsFalse(commandBar.IsOpen);
+            }
+        });
+    }
+
+    [TestMethod]
+    public void ClosingAnimationDoesNotRecreatePopupHwnd()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right,
+                ShowMode = FlyoutShowMode.Transient
+            };
+
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Copy), Label = "Copy" });
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Save), Label = "Save" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Resize" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 720, height: 420);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            var presenter = commandBarFlyout.GetPresenter();
+            var popupSource = PresentationSource.FromVisual(presenter) as HwndSource
+                ?? throw new AssertFailedException("Expected the CommandBarFlyout presenter to be hosted in a popup HWND.");
+            var originalPopupHwnd = popupSource.Handle;
+            int closingCount = 0;
+            bool popupWasVisibleAtFirstClosing = false;
+
+            commandBarFlyout.Closing += (_, _) =>
+            {
+                closingCount++;
+                if (closingCount == 1)
+                {
+                    popupWasVisibleAtFirstClosing = NativeIsWindowVisible(originalPopupHwnd);
+                }
+            };
+
+            commandBarFlyout.Hide();
+
+            Assert.IsTrue(
+                popupWasVisibleAtFirstClosing,
+                "The cancellable Closing event must run before WPF tears down the popup HWND; closing and reopening that HWND produces a visible flash.");
+
+            WaitFor(() => !commandBarFlyout.IsOpen, "CommandBarFlyout close animation did not complete.");
+            Assert.AreEqual(1, closingCount, "A single close request should raise one cancellable Closing event.");
+        });
+    }
+
+    [TestMethod]
+    public void CancelingClosingKeepsOriginalPopupHwndOpen()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right,
+                ShowMode = FlyoutShowMode.Transient
+            };
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Copy), Label = "Copy" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 720, height: 420);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            var presenter = commandBarFlyout.GetPresenter();
+            var popupSource = PresentationSource.FromVisual(presenter) as HwndSource
+                ?? throw new AssertFailedException("Expected the CommandBarFlyout presenter to be hosted in a popup HWND.");
+            var originalPopupHwnd = popupSource.Handle;
+            bool cancel = true;
+            int closingCount = 0;
+
+            commandBarFlyout.Closing += (_, args) =>
+            {
+                closingCount++;
+                args.Cancel = cancel;
+
+                if (cancel)
+                {
+                    commandBarFlyout.Hide();
+                }
+            };
+
+            commandBarFlyout.Hide();
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(1, closingCount);
+            Assert.IsTrue(commandBarFlyout.IsOpen);
+            Assert.IsTrue(NativeIsWindowVisible(originalPopupHwnd));
+            Assert.AreEqual(originalPopupHwnd, (PresentationSource.FromVisual(presenter) as HwndSource)?.Handle);
+
+            cancel = false;
+            commandBarFlyout.Hide();
+            WaitFor(() => !commandBarFlyout.IsOpen, "CommandBarFlyout did not close after cancellation was removed.");
+
+            Assert.AreEqual(2, closingCount);
+        });
+    }
+
+    [TestMethod]
+    public void RepeatedCloseKeepsRetiredPopupSurfaceTransparent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right,
+                ShowMode = FlyoutShowMode.Transient
+            };
+
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Copy), Label = "Copy" });
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Save), Label = "Save" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Resize" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Move" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 720, height: 420);
+
+            CommandBarFlyoutCommandBar? activeCommandBar = null;
+            int closingPasses = 0;
+
+            commandBarFlyout.Closing += (_, _) =>
+            {
+                closingPasses++;
+            };
+
+            for (int iteration = 0; iteration < 12; iteration++)
+            {
+                commandBarFlyout.ShowAt(target);
+                WpfTestHost.DoEvents();
+
+                activeCommandBar = GetCommandBar(commandBarFlyout);
+                activeCommandBar.ApplyTemplate();
+                host.UpdateLayout();
+
+                if ((iteration & 1) != 0)
+                {
+                    WaitForExpandedOverflow(activeCommandBar, host);
+                }
+
+                closingPasses = 0;
+                bool hasCloseAnimation = activeCommandBar.HasCloseAnimation();
+
+                HideAndWait(commandBarFlyout);
+
+                if (hasCloseAnimation)
+                {
+                    Assert.AreEqual(1, closingPasses, $"Iteration {iteration} raised more than one Closing event.");
+
+                    // Exercise the Closed/Unloaded/DWM handoff for several
+                    // dispatcher frames. The retired visual must never reset
+                    // to opacity one because its presenter will be recreated.
+                    for (int frame = 0; frame < 5; frame++)
+                    {
+                        Thread.Sleep(10);
+                        WpfTestHost.DoEvents();
+                        AssertLayoutOpacity(activeCommandBar, 0.0);
+                    }
+                }
+
+                activeCommandBar = null;
             }
         });
     }
@@ -1008,7 +1202,7 @@ public class CommandBarFlyoutApiTests
             AssertLayoutOpacity(commandBar, 1.0);
 
             HideAndWait(commandBarFlyout);
-            AssertLayoutOpacity(commandBar, 1.0);
+            AssertLayoutOpacity(commandBar, 0.0);
             Assert.IsFalse(FindTemplateChild<WindowedPopup>(commandBar, "OverflowPopup").IsOpen);
 
             commandBarFlyout.ShowAt(target);
@@ -1077,10 +1271,9 @@ public class CommandBarFlyoutApiTests
 
                 commandBar.IsOpen = true;
 
-                if (commandBar.HasSecondaryOpenCloseAnimations())
-                {
-                    Assert.IsFalse(presenter.IsDefaultShadowEnabled);
-                }
+                Assert.IsTrue(
+                    presenter.IsDefaultShadowEnabled,
+                    "Opening the overflow must not resize the visible primary popup by removing its reserved shadow bounds.");
             }
             finally
             {
@@ -1692,11 +1885,17 @@ public class CommandBarFlyoutApiTests
         }
 
         var commandBar = commandBarFlyout.GetPresenter()?.Content as CommandBarFlyoutCommandBar;
+        bool shouldPreserveCloseOpacity = commandBar?.HasCloseAnimation() == true;
 
         commandBarFlyout.Hide();
         WaitFor(
-            () => !commandBarFlyout.IsOpen && (commandBar == null || IsLayoutOpacity(commandBar, 1.0)),
-            "CommandBarFlyout did not close and reset opacity.");
+            () => !commandBarFlyout.IsOpen,
+            "CommandBarFlyout did not close.");
+
+        if (commandBar != null)
+        {
+            AssertLayoutOpacity(commandBar, shouldPreserveCloseOpacity ? 0.0 : 1.0);
+        }
     }
 
     private static void WaitForExpandedOverflow(CommandBarFlyoutCommandBar commandBar, TestWindowHost host)
@@ -1741,7 +1940,7 @@ public class CommandBarFlyoutApiTests
             overflowRight - overflowLeft,
             1.0,
             $"Expected expanded CommandBarFlyout visible overflow width to match the primary command strip width. PrimaryWidth={primaryRight - primaryLeft}, OverflowWidth={overflowRight - overflowLeft}, OuterOverflowWidth={outerOverflowRight - outerOverflowLeft}.");
-        const double expectedHorizontalGap = 2.0;
+        const double expectedHorizontalGap = 0.0;
         var horizontalGap = overflowLeft - primaryLeft;
         Assert.IsTrue(
             Math.Abs(horizontalGap - expectedHorizontalGap) <= 1.0,
@@ -2700,6 +2899,9 @@ public class CommandBarFlyoutApiTests
 
     [DllImport("user32.dll", EntryPoint = "GetWindowRect", SetLastError = true)]
     private static extern bool NativeGetWindowRect(IntPtr hWnd, ref NativeRect rect);
+
+    [DllImport("user32.dll", EntryPoint = "IsWindowVisible")]
+    private static extern bool NativeIsWindowVisible(IntPtr hWnd);
 
     [DllImport("user32.dll", EntryPoint = "SetCursorPos", SetLastError = true)]
     private static extern bool NativeSetCursorPos(int x, int y);

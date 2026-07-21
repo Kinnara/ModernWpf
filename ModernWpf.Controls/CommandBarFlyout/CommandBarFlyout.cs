@@ -139,6 +139,14 @@ namespace ModernWpf.Controls
                 {
                     AddDropShadow();
                 }
+
+                // Prime the custom opacity animation before WPF shows the popup
+                // HWND. Starting at zero from Opened is one frame too late and
+                // produces an opaque/transparent/opaque flash on fast displays.
+                if (m_commandBar?.HasOpenAnimation() == true)
+                {
+                    m_commandBar.PrepareOpenAnimation();
+                }
             };
 
             Opened += delegate
@@ -152,39 +160,9 @@ namespace ModernWpf.Controls
                 }
             };
 
-            Closing += delegate (FlyoutBase sender, FlyoutBaseClosingEventArgs args)
-            {
-                var commandBar = m_commandBar;
-                if (commandBar != null)
-                {
-                    RemoveDropShadow();
-
-                    if (!m_isClosingAfterCloseAnimation && commandBar.HasCloseAnimation())
-                    {
-                        args.Cancel = true;
-
-                        commandBar.PlayCloseAnimation(() =>
-                        {
-                            m_isClosingAfterCloseAnimation = true;
-                            Hide();
-                            m_isClosingAfterCloseAnimation = false;
-                        });
-                    }
-                    else
-                    {
-                        // Close commandbar and thus other associated flyouts
-                        commandBar.IsOpen = false;
-                    }
-
-                    //CommandBarFlyoutCommandBar.Closed will be called when
-                    //clicking the more (...) button, we clear the translations
-                    //here
-                    commandBar.ClearShadow();
-                }
-            };
-
             Closed += delegate
             {
+                m_isCloseAnimationRunning = false;
                 StopLightDismissTracking();
 
                 if (m_commandBar != null)
@@ -193,6 +171,12 @@ namespace ModernWpf.Controls
                     {
                         m_commandBar.IsOpen = false;
                     }
+
+                    // Shadow changes alter the WPF popup's reserved bounds. Do
+                    // that cleanup only after the popup is hidden so open/close
+                    // and overflow transitions cannot move the visible surface.
+                    RemoveDropShadow();
+                    m_commandBar.ClearShadow();
                 }
             };
         }
@@ -204,6 +188,82 @@ namespace ModernWpf.Controls
         public ObservableCollection<ICommandBarElement> SecondaryCommands { get; }
 
         internal override PopupAnimation DesiredPopupAnimation => PopupAnimation.Fade;
+
+        internal override void HideCore()
+        {
+            if (!IsOpen || m_isClosingAfterCloseAnimation)
+            {
+                base.HideCore();
+                return;
+            }
+
+            if (m_isCloseAnimationRunning || m_isRaisingClosing)
+            {
+                return;
+            }
+
+            // PopupEx raises its cancellable Closing event only after WPF has
+            // already torn down the popup HWND. Cancelling at that point to run
+            // the close animation closes and recreates the native window, which
+            // is visible as a several-frame flash. Raise Closing while the HWND
+            // is still open, then animate in place and perform one final,
+            // uncancelled native close.
+            bool cancel;
+            m_isRaisingClosing = true;
+            try
+            {
+                cancel = OnClosing();
+            }
+            finally
+            {
+                m_isRaisingClosing = false;
+            }
+
+            if (cancel)
+            {
+                return;
+            }
+
+            var commandBar = m_commandBar;
+            if (commandBar?.HasCloseAnimation() == true)
+            {
+                m_isCloseAnimationRunning = true;
+                commandBar.PlayCloseAnimation(CompleteCloseAfterAnimation);
+            }
+            else
+            {
+                CompleteCloseAfterAnimation();
+            }
+        }
+
+        internal override bool OnClosing()
+        {
+            // The public cancellable event was raised before starting the
+            // animation. Suppress PopupEx's post-teardown duplicate event so it
+            // cannot reopen the native popup.
+            return m_isClosingAfterCloseAnimation ? false : base.OnClosing();
+        }
+
+        private void CompleteCloseAfterAnimation()
+        {
+            m_isCloseAnimationRunning = false;
+            m_isClosingAfterCloseAnimation = true;
+
+            try
+            {
+                // Close the overflow HWND before the primary HWND.
+                if (m_commandBar?.IsOpen == true)
+                {
+                    m_commandBar.IsOpen = false;
+                }
+
+                base.HideCore();
+            }
+            finally
+            {
+                m_isClosingAfterCloseAnimation = false;
+            }
+        }
 
         protected override Control CreatePresenter()
         {
@@ -244,26 +304,14 @@ namespace ModernWpf.Controls
             {
                 SetCurrentValue(ShowModeProperty, FlyoutShowMode.Standard);
             };
-            commandBar.Opening += delegate
-            {
-                if (commandBar.HasSecondaryOpenCloseAnimations() && SecondaryCommands.Count > 0)
-                {
-                    RemoveDropShadow();
-                }
-            };
             commandBar.Closing += delegate
             {
-                if (AlwaysExpanded && IsOpen)
+                if (AlwaysExpanded && IsOpen && !m_isClosingAfterCloseAnimation)
                 {
                     // Match AppBar::Closing in the WinUI flyout command bar: the
                     // overflow list cannot be collapsed while AlwaysExpanded owns
                     // an open outer flyout.
                     commandBar.SetCurrentValue(CommandBarFlyoutCommandBar.IsOpenProperty, true);
-                }
-
-                if (commandBar.HasSecondaryOpenCloseAnimations())
-                {
-                    RemoveDropShadow();
                 }
             };
 
@@ -575,6 +623,8 @@ namespace ModernWpf.Controls
 
         bool m_isLightDismissing;
 
+        bool m_isCloseAnimationRunning;
+        bool m_isRaisingClosing;
         bool m_isClosingAfterCloseAnimation;
 
         [StructLayout(LayoutKind.Sequential)]

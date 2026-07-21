@@ -113,10 +113,19 @@ namespace ModernWpf.Controls.Primitives
 
             Unloaded += delegate
             {
+                bool preserveCloseOpacity = m_isCloseAnimationHolding;
                 CancelAsyncSizeChangeUpdate();
                 StopCloseAnimation();
                 StopOpenAnimation();
-                SetOpacity(1);
+
+                // CommandBarFlyout recreates this presenter after every close.
+                // Do not make the retiring visual opaque again: WPF can raise
+                // Unloaded while DWM still owns the popup's final composition
+                // surface, which intermittently exposes one bright frame.
+                if (!preserveCloseOpacity)
+                {
+                    SetOpacity(1);
+                }
             };
 
             SizeChanged += delegate
@@ -660,26 +669,35 @@ namespace ModernWpf.Controls.Primitives
             return m_openingStoryboard != null && AreCommandBarFlyoutAnimationsEnabled();
         }
 
+        internal void PrepareOpenAnimation()
+        {
+            m_isCloseAnimationHolding = false;
+            ApplyTemplate();
+            StopCloseAnimation();
+            StopOpenAnimation();
+            SetOpacity(0);
+        }
+
         internal void PlayOpenAnimation()
         {
             StopCloseAnimation();
             StopOpenAnimation();
-            SetOpacity(1);
 
             if (m_openingStoryboard != null && m_openingStoryboardState != ClockState.Active)
             {
-                if (IsOpen)
+                if (IsOpen && GetDisplayedSecondaryCommands().Count > 0)
                 {
                     m_openAnimationPending = true;
                 }
                 else
                 {
                     m_openAnimationPending = false;
-                    SetOpacity(0);
-                    DispatcherHelper.DoEvents(DispatcherPriority.DataBind);
-                    SetOpacity(1);
                     m_openingStoryboard.Begin(m_layoutRoot, true);
                 }
+            }
+            else
+            {
+                SetOpacity(1);
             }
         }
 
@@ -862,7 +880,6 @@ namespace ModernWpf.Controls.Primitives
                     m_asyncOpenAnimation = Dispatcher.BeginInvoke(() =>
                     {
                         m_asyncOpenAnimation = null;
-                        SetOpacity(1);
                         m_openingStoryboard.Begin(m_layoutRoot, true);
                         updateExpansionStates();
                     }, DispatcherPriority.Render);
@@ -1139,11 +1156,12 @@ namespace ModernWpf.Controls.Primitives
                 return;
             }
 
-            // WPF's separate popup HWND includes a two-pixel non-client placement inset
-            // that WinUI's in-root popup does not. Compensate so the primary and overflow
-            // surfaces share the same edge and join at the same screen coordinate.
-            m_overflowPopup.HorizontalOffset = 2;
-            m_overflowPopup.VerticalOffset = IsOverflowPopupOpenDown() ? -2 : 2;
+            // WindowedPopup uses a borderless per-pixel HWND, so its content
+            // coordinates already match the placement target. Offsetting it by
+            // two pixels leaves the overflow visibly indented and overlapping
+            // the primary surface.
+            m_overflowPopup.HorizontalOffset = 0;
+            m_overflowPopup.VerticalOffset = 0;
         }
 
         private void UpdateOverflowJoinSeparatorVisibility(bool shouldExpandUp, bool hasPrimaryCommands)
@@ -1581,9 +1599,15 @@ namespace ModernWpf.Controls.Primitives
 
         private void ClosingStoryboardCompleted(object sender, EventArgs e)
         {
+            // WPF raises Completed before the final animated value is committed.
+            // Stop the clock and pin both HWND surfaces transparent so the
+            // subsequent uncancelled Closing pass cannot expose a partial or
+            // fully opaque final frame. The owning flyout resets this after its
+            // popup has actually closed.
             m_closingStoryboard.Stop(m_layoutRoot);
             m_closingStoryboardState = null;
-            SetOpacity(1);
+            SetOpacity(0);
+            m_isCloseAnimationHolding = true;
         }
 
         private void OpeningStoryboardCurrentStateInvalidated(object sender, EventArgs e)
@@ -1620,15 +1644,24 @@ namespace ModernWpf.Controls.Primitives
         {
             CancelAsyncOpenAnimation();
 
+            bool shouldResetOpacity = m_openAnimationPending ||
+                (m_openingStoryboard != null && m_openingStoryboardState == ClockState.Active);
+
             if (m_openAnimationPending)
             {
                 m_openAnimationPending = false;
-                SetOpacity(1);
             }
 
             if (m_openingStoryboard != null && m_openingStoryboardState == ClockState.Active)
             {
                 m_openingStoryboard.Stop(m_layoutRoot);
+            }
+
+            m_openingStoryboardState = null;
+
+            if (shouldResetOpacity)
+            {
+                SetOpacity(1);
             }
         }
 
@@ -1651,6 +1684,7 @@ namespace ModernWpf.Controls.Primitives
 
             if (wasClosing)
             {
+                m_isCloseAnimationHolding = false;
                 SetOpacity(1);
             }
         }
@@ -1798,6 +1832,7 @@ namespace ModernWpf.Controls.Primitives
 
         private bool m_secondaryItemsRootSized;
         private bool m_openAnimationPending;
+        private bool m_isCloseAnimationHolding;
         private DispatcherOperation m_asyncOpenAnimation;
         private DispatcherOperation m_asyncSizeChangeUpdate;
 
