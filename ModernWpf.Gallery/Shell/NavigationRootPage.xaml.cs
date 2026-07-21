@@ -120,6 +120,9 @@ namespace ModernWpf.Gallery.Shell
         private const double GroupNavigationDisclosureColumnWidth = 24;
         private const double GroupNavigationChevronLeftOffset = 0;
         private const string GroupNavigationDisclosureChevronTag = "GalleryNavigationDisclosureChevron";
+        // Segoe Fluent glyphs rendered by SymbolIcon for Symbol.List and Symbol.Page.
+        private const string DefaultNavigationGroupGlyph = "\uEA37";
+        private const string DefaultNavigationItemGlyph = "\uE729";
         private const double DefaultTopLevelNavigationContentVerticalOffset = 0;
         private const double DefaultChildNavigationContentVerticalOffset = 16;
         private static readonly Thickness DefaultNavigationSelectionIndicatorMargin = new Thickness(4, 0, 0, 0);
@@ -879,7 +882,7 @@ namespace ModernWpf.Gallery.Shell
                 return null;
             }
 
-            return new SymbolIcon(isGroup ? Symbol.List : Symbol.Page);
+            return CreateFontIcon(isGroup ? DefaultNavigationGroupGlyph : DefaultNavigationItemGlyph);
         }
 
         private static IconElement CreateWpfGalleryGlyphIcon(string uniqueId)
@@ -889,6 +892,11 @@ namespace ModernWpf.Gallery.Shell
                 return null;
             }
 
+            return CreateFontIcon(glyph);
+        }
+
+        private static FontIcon CreateFontIcon(string glyph)
+        {
             var icon = new FontIcon
             {
                 Glyph = glyph

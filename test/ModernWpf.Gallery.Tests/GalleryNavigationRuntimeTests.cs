@@ -234,6 +234,17 @@ namespace ModernWpf.Gallery.Tests
                     mediaItem.MenuItems.OfType<NavigationViewItem>().Select(GetNavigationItemText).ToArray());
                 Assert.IsNull(mediaItem.MenuItems.OfType<NavigationViewItem>().First().Icon);
 
+                var modernWpfItem = topLevelItems[14];
+                Assert.AreEqual("ModernWpf controls", GetNavigationItemText(modernWpfItem));
+                AssertFontIconGlyph(modernWpfItem, "\uEA37");
+                var modernWpfItems = modernWpfItem.MenuItems.OfType<NavigationViewItem>().ToList();
+                Assert.IsTrue(modernWpfItems.Count > 0);
+                foreach (var modernWpfChild in modernWpfItems)
+                {
+                    AssertFontIconGlyph(modernWpfChild, "\uE729");
+                    AssertNavigationItemContentMargin(modernWpfChild, expectedChildGlyphContentLeft);
+                }
+
                 var settingsButton = (Button)page.FindName("SettingsButton");
                 Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(settingsButton));
                 Assert.AreEqual("Settings", AutomationProperties.GetName(settingsButton));
