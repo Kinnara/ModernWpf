@@ -4045,6 +4045,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(monochromeButton);
                     Assert.AreSame(bitmapOptions, monochromeButton);
                     Assert.AreEqual("Monochrome", monochromeButton.Content);
+                    Assert.AreEqual(
+                        "GallerySample_IconElement_MonochromeButton",
+                        AutomationProperties.GetAutomationId(monochromeButton));
                     Assert.AreEqual(false, monochromeButton.IsChecked);
                     monochromeButton.IsChecked = true;
                     WpfTestHost.DoEvents();

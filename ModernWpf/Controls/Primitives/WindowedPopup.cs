@@ -104,6 +104,28 @@ namespace ModernWpf.Controls.Primitives
         public event EventHandler Closed;
         public event EventHandler<object> ActualPlacementChanged;
 
+        internal bool IsPointerOver
+        {
+            get
+            {
+                if (Child?.IsMouseOver == true)
+                {
+                    return true;
+                }
+
+                var source = _source;
+                if (source == null || source.IsDisposed ||
+                    !GetCursorPos(out var point) ||
+                    !GetWindowRect(source.Handle, out var bounds))
+                {
+                    return false;
+                }
+
+                return point.X >= bounds.Left && point.X < bounds.Right &&
+                       point.Y >= bounds.Top && point.Y < bounds.Bottom;
+            }
+        }
+
         void IAddChild.AddChild(object value)
         {
             if (value is UIElement child)
@@ -1005,5 +1027,12 @@ namespace ModernWpf.Controls.Primitives
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool ClientToScreen(IntPtr hWnd, ref POINT point);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool GetCursorPos(out POINT point);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+
     }
 }

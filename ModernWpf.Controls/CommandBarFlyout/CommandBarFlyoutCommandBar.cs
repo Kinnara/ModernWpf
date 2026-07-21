@@ -751,6 +751,13 @@ namespace ModernWpf.Controls.Primitives
             return true;
         }
 
+        internal bool IsPointerInsideOverflowPopup()
+        {
+            return IsOpen &&
+                   m_overflowPopup?.IsOpen == true &&
+                   m_overflowPopup.IsPointerOver;
+        }
+
         private void UpdateFlowsFromAndFlowsTo()
         {
             var moreButton = m_moreButton;

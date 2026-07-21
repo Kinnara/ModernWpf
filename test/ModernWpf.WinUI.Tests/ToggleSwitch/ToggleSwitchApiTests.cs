@@ -545,6 +545,35 @@ public class ToggleSwitchApiTests
     }
 
     [TestMethod]
+    public void OnDraggingStateKeepsOnTrackVisible()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleSwitch = new ModernWpf.Controls.ToggleSwitch
+            {
+                IsOn = true
+            };
+            using var host = new TestWindowHost(toggleSwitch, width: 260, height: 120);
+            host.UpdateLayout();
+
+            var outerBorder = FindNamedDescendant<Rectangle>(toggleSwitch, "OuterBorder");
+            var switchKnobBounds = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobBounds");
+            var switchKnobOn = FindNamedDescendant<Border>(toggleSwitch, "SwitchKnobOn");
+            var switchKnobOff = FindNamedDescendant<Rectangle>(toggleSwitch, "SwitchKnobOff");
+            Assert.IsTrue(VisualStateManager.GoToState(toggleSwitch, "On", false));
+            Assert.IsTrue(VisualStateManager.GoToState(toggleSwitch, "Dragging", false));
+            WaitForVisualStateAnimations();
+
+            Assert.AreEqual(0d, outerBorder.Opacity, 0.001, "The gray off-track must not cover the blue on-track while an On switch is pressed.");
+            Assert.AreEqual(1d, switchKnobBounds.Opacity, 0.001, "The on-track must remain visible while an On switch is pressed.");
+            Assert.AreEqual(1d, switchKnobOn.Opacity, 0.001, "The on-knob must remain visible while an On switch is pressed.");
+            Assert.AreEqual(0d, switchKnobOff.Opacity, 0.001, "The off-knob must remain hidden while an On switch is pressed.");
+        });
+    }
+
+    [TestMethod]
     public void PointerOverStateUsesWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>

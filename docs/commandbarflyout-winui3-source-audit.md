@@ -126,3 +126,27 @@ git diff --check
 ```
 
 Fresh gate-enforced Light `artifacts/visual-checks/20260719-022802-704-69300/report.md` and Dark `artifacts/visual-checks/20260719-022908-765-38068/report.md` runs both retain static primary delta `4.99` with `454x302` versus `453x302` photo crops. Expanded interaction crops are exact `229x136` matches at delta `7.05` / `8.18`, and both raw UIA command unions remain exact `217x124`. Live UIA reports Menu/MenuItem roles and `Less app bar` in both applications. The harness enforces static delta `<=6.0`, static size delta `<=2`, interaction delta `<=9.0`, and exact interaction size parity. Fresh Light/Dark OpenRepeat recordings `artifacts/gallery-recordings/20260719-023035-553/report.md` and `artifacts/gallery-recordings/20260719-023154-586/report.md` pass, detect both opens, and provide dense transition review. The refreshed focused API suite passes 29/29; focused current-source/sample/interaction/gate Gallery coverage passes 5/5 on net8 and net10; Controls and Gallery build on net462, net8, and net10 with zero errors. Controls retains the repository's 18 unrelated net462 warnings, while Gallery is warning-free.
+
+## 2026-07-21 Transition-State Follow-up
+
+The open-surface gate above did not cover first measure, pointer-down, or
+collapse transitions. A ten-state paired matrix exposed three WPF-hosting
+problems: the first Popup HWND was measured before the shadow insets existed;
+transparent AppBar roots did not consistently receive pointer input; and the
+secondary `WindowedPopup` child HWND was treated as outside the owning Popup's
+light-dismiss capture.
+
+The presenter now enables its WPF shadow substitute before its child is
+assigned, AppBar roots have a transparent hit-test background, and
+CommandBarFlyout owns light dismiss across both related HWND surfaces while
+preserving outside click and owner-deactivation dismissal. Cursor containment
+is tested against both presenter bounds and the real `WindowedPopup` HWND.
+
+Final Light
+`artifacts/visual-checks/commandbar-state-gate-light-v5/20260721-025151-971-41592/report.md`
+and Dark
+`artifacts/visual-checks/commandbar-state-gate-dark-v2/20260721-025458-794-39604/report.md`
+runs pass all ten states. Collapsed surfaces are exactly `228x66`; expanded
+surfaces are exactly `229x136` in both applications. Pointer-over and pressed
+states are also required to differ visibly from rest in each application, so a
+future hit-test regression cannot pass on static geometry alone.

@@ -2632,3 +2632,103 @@ WinUI UIA element, so those images could not be required cross-app evidence.
   `0.79`, Opacity `artifacts/visual-checks/20260718-083641-163-94428/report.md`
   at `1.68`, and Ring `artifacts/visual-checks/20260718-083747-519-36496/report.md`
   at `1.23`.
+
+## 2026-07-21 Missed-State Closure and Complete WinUI-Port Sweep
+
+The earlier sweep was green for the pixels it actually sampled, but its
+coverage model was incomplete. It compared complete Gallery cards and, for
+popup controls, one opened surface. It did not require every pointer, pressed,
+keyboard-focus, checked, expanded, collapse, and first-open transition. That is
+why a broad crop could miss a displaced three-pixel NavigationView indicator,
+and why CommandBarFlyout could pass an expanded-surface comparison while its
+first popup measure clipped the shadow and its secondary child HWND prevented
+normal pointer states.
+
+The closure work changes both the controls and the proof:
+
+- CommandBarFlyout primes the WPF shadow substitute before the first Popup
+  measure, makes the AppBar roots hit-testable, and treats its outer Popup and
+  overflow child HWND as one light-dismiss region. The paired harness now
+  requires ten ordered states: primary rest/share hover/share press/More hover,
+  expanded-after-click, expanded rest/Resize hover/More hover/Resize press, and
+  collapsed-after-expanded-More. Light
+  `artifacts/visual-checks/commandbar-state-gate-light-v5/20260721-025151-971-41592/report.md`
+  and Dark
+  `artifacts/visual-checks/commandbar-state-gate-dark-v2/20260721-025458-794-39604/report.md`
+  pass 10/10. Every collapsed crop is exactly `228x66`; every expanded crop is
+  exactly `229x136` in both applications.
+- The shared system-focus adorner no longer clips negative focus margins. A
+  real hosted-adorners regression asserts the actual private adorner keeps its
+  `-3` margin and disables clipping, while paired keyboard-focus screenshots
+  prove the complete four-sided ring. The final HyperlinkButton and
+  ToggleButton Light matrix is
+  `artifacts/visual-checks/state-matrix-buttons-light-postfocus-v6/20260721-191616-798-64492/report.md`;
+  Dark is
+  `artifacts/visual-checks/state-matrix-buttons-dark-postfocus-v1/20260721-191706-513-5272/report.md`.
+  They pass 5/5 and 10/10 respectively with exact state-crop geometry.
+- Paired state matrices now cover HyperlinkButton, RepeatButton, ToggleButton,
+  DropDownButton, AppBarButton, AppBarToggleButton, SplitButton,
+  ToggleSplitButton, and ToggleSwitch. They use real mouse down/up and keyboard
+  Tab input, include a four-pixel focus gutter, require exact/tight geometry,
+  and require both implementations to visibly depart from rest. Final focused
+  evidence includes DropDownButton Light/Dark
+  (`state-matrix-dropdown-light-v7` / `state-matrix-dropdown-dark-v1`),
+  ToggleSplitButton Light/Dark (`state-matrix-togglesplit-light-v5` /
+  `state-matrix-togglesplit-dark-v2`), SplitButton/ToggleSwitch Light/Dark
+  (`state-matrix-adjacent-light-v3` / `state-matrix-adjacent-dark-v1`), and the
+  missing Dark AppBarButton matrix at
+  `artifacts/visual-checks/state-matrix-appbar-dark-final-v1/20260721-191841-629-69416/report.md`.
+- Those matrices exposed and now lock the ToggleSplitButton checked foreground,
+  ToggleSwitch On/pressed/dragging base opacity, DropDownButton content and
+  chevron alignment, and the asymmetric right focus margin needed for its WPF
+  desired width.
+- Lower-page and popup mismatches were corrected rather than inferred from the
+  primary sample: NumberBox now holds its header row at 19 pixels;
+  ContentDialog holds the primary command column at 85 pixels and all command
+  buttons at 32 pixels; MenuBar uses the shared WinUI content font and corrected
+  presenter/item insets. Final Light evidence is
+  `artifacts/visual-checks/numberbox-rounding-light-v1/20260721-175252-350-69552/report.md`,
+  `artifacts/visual-checks/popup-fixes-light-v1/20260721-181431-286-73964/report.md`,
+  and
+  `artifacts/visual-checks/menubar-typography-light-v1/20260721-181817-004-74384/report.md`;
+  the corresponding Dark popup family passes at
+  `artifacts/visual-checks/popup-family-dark-v1/20260721-181859-976-74480/report.md`.
+
+All 37 retained WinUI-ported controls and all 94 displayed examples were
+enumerated in Light and Dark. NavigationView additionally passes all eight
+exact control crops and the strict selection-indicator gate in both themes:
+Light
+`artifacts/visual-checks/navigation-family-light-v1/20260721-182630-125-76444/report.md`
+and Dark
+`artifacts/visual-checks/navigation-family-dark-v1/20260721-183348-835-74292/report.md`.
+The one nondeterministic ItemsRepeater reference-isolation miss in the Dark
+display batch was rerun standalone and passed all six cards at
+`artifacts/visual-checks/itemsrepeater-dark-retry-v1/20260721-183537-712-51668/report.md`.
+
+Randomized and animated cards are no longer allowed to produce false green
+pixel claims. ItemsRepeater Example 6 uses `VolatileDataGeometry`; indeterminate
+ProgressRing and WinUIProgressBar use `AnimatedTemporal`. These rows require
+exact width, bounded height drift, and separate semantic/temporal evidence
+instead of ranking arbitrary names/colors/order or animation phase as stable
+pixels. Fresh Light and Dark contracts pass at
+`artifacts/visual-checks/volatile-animated-light-v1/20260721-184321-529-51384/report.md`
+and
+`artifacts/visual-checks/volatile-animated-dark-v1/20260721-184430-145-41176/report.md`.
+
+The interaction recorder now scrolls every requested sample into view before
+reacquiring its UIA element, proves ProgressRing/WinUIProgressBar animation,
+records selection-pattern changes, and uses the visible IconElement monochrome
+checkbox because BitmapIcon is intentionally absent from the UIA control view.
+The final complex Light and Dark evidence is
+`artifacts/gallery-recordings/ported-complex-light-fixes-v1/20260721-185138-900/report.md`
+plus
+`artifacts/gallery-recordings/ported-complex-dark-v1/20260721-185224-437/report.md`;
+the final IconElement proofs are
+`artifacts/gallery-recordings/icon-element-light-final-v1/20260721-190638-556/report.md`
+and
+`artifacts/gallery-recordings/icon-element-dark-fix-v2/20260721-185957-047/report.md`.
+
+Finally, cached one-frame interactions are normalized to arrays before the
+last-frame comparison. This closes a harness-only failure found during the
+post-focus rerun and prevents a deserialized frame map from being mistaken for
+four frames because it has four keys.

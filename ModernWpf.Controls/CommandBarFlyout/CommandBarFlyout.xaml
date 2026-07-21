@@ -38,6 +38,7 @@
                 <ControlTemplate TargetType="local:AppBarButton">
                     <Grid
                         x:Name="Root"
+                        Background="Transparent"
                         MinWidth="{TemplateBinding MinWidth}"
                         MaxWidth="{TemplateBinding MaxWidth}">
                         <VisualStateManager.CustomVisualStateManager>
@@ -354,6 +355,7 @@
                     </ControlTemplate.Resources>
                     <Grid
                         x:Name="Root"
+                        Background="Transparent"
                         MinWidth="{TemplateBinding MinWidth}"
                         MaxWidth="{TemplateBinding MaxWidth}">
                         <VisualStateManager.CustomVisualStateManager>

@@ -286,3 +286,52 @@ Current mismatch classification:
 | `ContentDialog` | Gallery sample mismatch fixed; remaining difference is a 1 px crop-width/text rendering difference. | Dark `8.32`, `100x32` vs `101x32`; Light `8.4`, `100x32` vs `101x32`. |
 | `NavigationView` | Gallery sample event-order mismatch fixed; remaining difference is WPF-vs-WinUI rendering drift with matching crop size and header text. | Dark `7.41`, `745x460` vs `745x460`; Light `7.55`, `745x460` vs `745x460`. |
 | `TeachingTip` | Control animation/template parity fixed and interaction checks pass; remaining static button difference is rendering drift. | Dark `3.65`, `135x32` vs `135x32`; Light `5.34`, `135x32` vs `135x32`. |
+
+## 2026-07-21 Per-State and Non-Pixel Evidence Contract
+
+`Run-GalleryVisualChecks.ps1` now separates three kinds of evidence:
+
+- `Pixel` compares the complete stable ControlExample image and applies the
+  control-specific mean-delta and geometry gate.
+- `VolatileDataGeometry` is used by randomized ItemsRepeater Example 6. It
+  requires exact width and bounded height drift, and explicitly requires
+  separate semantic evidence rather than comparing random names, colors,
+  ingredients, and ordering.
+- `AnimatedTemporal` is used by indeterminate ProgressRing and
+  WinUIProgressBar. It applies the same geometry contract and requires recorder
+  evidence that pixels change over time and that the configured state changes.
+
+The report and review sheet print the mode and evidence contract for every
+row. Geometry-only rows no longer contribute their arbitrary frame pixels to
+the crop ranking or the pixel pass/fail gate. Fresh Light and Dark validation is
+in `artifacts/visual-checks/volatile-animated-light-v1/20260721-184321-529-51384/report.md`
+and
+`artifacts/visual-checks/volatile-animated-dark-v1/20260721-184430-145-41176/report.md`.
+
+With `-IncludeInteractions`, supported button, toggle, split, and toggle-split
+controls also receive paired state matrices. The harness uses real pointer
+down/up and keyboard Tab input, captures a four-pixel focus gutter, requires
+exact or explicitly bounded geometry, compares the same named state across
+ModernWpf and WinUI Gallery, and verifies that required hover/press/focus/check
+states visibly differ from rest in both implementations. CommandBarFlyout has
+its own ordered ten-transition matrix, including first open and collapse after
+the expanded ellipsis is clicked.
+
+The state matrix is authoritative for live interaction pixels; detached primary
+artifacts remain advisory for controls covered by that matrix. Cached reference
+interactions normalize `Frames` to an array before selecting the last frame, so
+a single deserialized frame cannot be misread as a dictionary-sized sequence.
+
+Final post-fix state evidence includes:
+
+- CommandBarFlyout Light/Dark 10/10:
+  `commandbar-state-gate-light-v5/20260721-025151-971-41592` and
+  `commandbar-state-gate-dark-v2/20260721-025458-794-39604`;
+- HyperlinkButton and ToggleButton Light/Dark 15/15 combined:
+  `state-matrix-buttons-light-postfocus-v6/20260721-191616-798-64492` and
+  `state-matrix-buttons-dark-postfocus-v1/20260721-191706-513-5272`;
+- AppBarButton Dark 4/4:
+  `state-matrix-appbar-dark-final-v1/20260721-191841-629-69416`.
+
+All paths above are beneath `artifacts/visual-checks/` and contain the complete
+paired crops, JSON evidence, and Markdown report.

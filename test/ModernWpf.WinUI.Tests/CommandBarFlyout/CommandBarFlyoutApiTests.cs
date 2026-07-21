@@ -2,11 +2,14 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using ModernWpf.Controls;
@@ -373,6 +376,361 @@ public class CommandBarFlyoutApiTests
     public void VerifyCommandBarSizingSecondaryItemsMaxHeight()
     {
         VerifyCommandBarSizing(CommandBarSizingOptions.SecondaryItemsMaxHeight);
+    }
+
+    [TestMethod]
+    public void GalleryPrimaryStripIsNotClippedWhileFlyoutShadowIsVisible()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.Right,
+                ShowMode = FlyoutShowMode.Transient
+            };
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Share), Label = "Share" });
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Save), Label = "Save" });
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Delete), Label = "Delete" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Resize" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Move" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 180
+            };
+
+            using var host = new TestWindowHost(target, width: 720, height: 520);
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            try
+            {
+                var commandBar = GetCommandBar(commandBarFlyout);
+                commandBar.ApplyTemplate();
+                host.UpdateLayout();
+                WpfTestHost.DoEvents();
+                host.UpdateLayout();
+
+                var primaryItemsRoot = FindTemplateChild<System.Windows.Controls.Border>(commandBar, "PrimaryItemsRoot");
+                var moreButton = FindTemplateChild<ToggleButton>(commandBar, "MoreButton");
+                var moreButtonRight = moreButton.TranslatePoint(new Point(moreButton.ActualWidth, 0), primaryItemsRoot).X;
+                var presenter = commandBarFlyout.GetPresenter();
+                var presenterLayoutRoot = FindTemplateChild<BorderEx>(presenter, "LayoutRoot");
+                var commandBarRightInPresenter = commandBar.TranslatePoint(new Point(commandBar.ActualWidth, 0), presenterLayoutRoot).X;
+                var popupSource = PresentationSource.FromVisual(presenter) as HwndSource
+                    ?? throw new AssertFailedException("Expected the CommandBarFlyout presenter to be hosted in a popup HWND.");
+                var popupWindowBounds = GetNativeWindowRect(popupSource.Handle);
+                var presenterDeviceSize = popupSource.CompositionTarget.TransformToDevice.Transform(
+                    new Vector(presenter.ActualWidth, presenter.ActualHeight));
+
+                Assert.IsTrue(
+                    moreButtonRight <= primaryItemsRoot.ActualWidth + 0.5 &&
+                    commandBarRightInPresenter <= presenterLayoutRoot.ActualWidth + 0.5 &&
+                    popupWindowBounds.Width + 1 >= presenterDeviceSize.X &&
+                    popupWindowBounds.Height + 1 >= presenterDeviceSize.Y,
+                    $"The Gallery CommandBarFlyout primary surface clipped the More button. " +
+                    $"PrimaryActualWidth={primaryItemsRoot.ActualWidth}, PrimaryDesiredWidth={primaryItemsRoot.DesiredSize.Width}, " +
+                    $"MoreLeft={moreButton.TranslatePoint(new Point(), primaryItemsRoot).X}, MoreWidth={moreButton.ActualWidth}, " +
+                    $"MoreRight={moreButtonRight}, CurrentWidth={commandBar.FlyoutTemplateSettings.CurrentWidth}, " +
+                    $"ExpandedWidth={commandBar.FlyoutTemplateSettings.ExpandedWidth}, CommandBarActualWidth={commandBar.ActualWidth}, " +
+                    $"CommandBarRightInPresenter={commandBarRightInPresenter}, PresenterLayoutWidth={presenterLayoutRoot.ActualWidth}, " +
+                    $"PresenterActualSize={presenter.ActualWidth}x{presenter.ActualHeight}, " +
+                    $"PresenterDesiredSize={presenter.DesiredSize.Width}x{presenter.DesiredSize.Height}, " +
+                    $"PopupHwndSize={popupWindowBounds.Width}x{popupWindowBounds.Height}, " +
+                    $"PresenterDeviceSize={presenterDeviceSize.X}x{presenterDeviceSize.Y}.");
+            }
+            finally
+            {
+                HideAndWait(commandBarFlyout);
+            }
+        });
+    }
+
+    [TestMethod]
+    public void GalleryPrimaryCommandReceivesRealMousePointerStates()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var restoreCursor = NativeGetCursorPos(out var originalCursor);
+            var shareButton = new AppBarButton { Icon = new SymbolIcon(Symbol.Share), Label = "Share" };
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.RightEdgeAlignedTop,
+                ShowMode = FlyoutShowMode.Transient
+            };
+            commandBarFlyout.PrimaryCommands.Add(shareButton);
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Save), Label = "Save" });
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Delete), Label = "Delete" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Resize" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 180
+            };
+
+            using var host = new TestWindowHost(target, width: 720, height: 520);
+            host.Window.Left = 120;
+            host.Window.Top = 120;
+            host.UpdateLayout();
+            host.Window.Activate();
+            NativeSetForegroundWindow(new WindowInteropHelper(host.Window).Handle);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            var mouseIsDown = false;
+            try
+            {
+                host.UpdateLayout();
+                MoveNativePointerTo(shareButton);
+                WaitFor(
+                    () => shareButton.IsMouseOver,
+                    $"The primary CommandBarFlyout command did not enter IsMouseOver. DirectlyOver={Mouse.DirectlyOver?.GetType().FullName ?? "<null>"}.");
+
+                var root = FindTemplateChild<System.Windows.Controls.Grid>(shareButton, "Root");
+                AssertCurrentState(root, "CommonStates", "PointerOver");
+
+                NativeMouseEvent(NativeMouseLeftDown, 0, 0, 0, UIntPtr.Zero);
+                mouseIsDown = true;
+                WaitFor(
+                    () => shareButton.IsPressed,
+                    $"The primary CommandBarFlyout command did not enter IsPressed. DirectlyOver={Mouse.DirectlyOver?.GetType().FullName ?? "<null>"}.");
+                AssertCurrentState(root, "CommonStates", "Pressed");
+            }
+            finally
+            {
+                if (mouseIsDown)
+                {
+                    NativeMouseEvent(NativeMouseLeftUp, 0, 0, 0, UIntPtr.Zero);
+                }
+
+                HideAndWait(commandBarFlyout);
+                if (restoreCursor)
+                {
+                    NativeSetCursorPos(originalCursor.X, originalCursor.Y);
+                }
+            }
+        });
+    }
+
+    [TestMethod]
+    public void GallerySecondaryCommandReceivesRealMouseStatesBeforeInvocationDismissesFlyout()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var restoreCursor = NativeGetCursorPos(out var originalCursor);
+            var resizeButton = new AppBarButton { Label = "Resize" };
+            var resizeInvocations = 0;
+            resizeButton.Click += delegate { resizeInvocations++; };
+
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.RightEdgeAlignedTop,
+                ShowMode = FlyoutShowMode.Transient
+            };
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Share), Label = "Share" });
+            commandBarFlyout.SecondaryCommands.Add(resizeButton);
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 180
+            };
+
+            using var host = new TestWindowHost(target, width: 720, height: 520);
+            host.Window.Left = 120;
+            host.Window.Top = 120;
+            host.UpdateLayout();
+            host.Window.Activate();
+            NativeSetForegroundWindow(new WindowInteropHelper(host.Window).Handle);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            var mouseIsDown = false;
+            try
+            {
+                var commandBar = GetCommandBar(commandBarFlyout);
+                WaitForExpandedOverflow(commandBar, host);
+                MoveNativePointerTo(resizeButton);
+                WaitFor(
+                    () => resizeButton.IsMouseOver,
+                    $"The secondary CommandBarFlyout command did not enter IsMouseOver. DirectlyOver={Mouse.DirectlyOver?.GetType().FullName ?? "<null>"}.");
+
+                var root = FindTemplateChild<System.Windows.Controls.Grid>(resizeButton, "Root");
+                AssertCurrentState(root, "CommonStates", "PointerOver");
+
+                MoveNativePointerTo(target);
+                WaitFor(
+                    () => !resizeButton.IsMouseOver,
+                    $"The secondary CommandBarFlyout command retained IsMouseOver after the pointer crossed to the owner window. DirectlyOver={Mouse.DirectlyOver?.GetType().FullName ?? "<null>"}.");
+                MoveNativePointerTo(resizeButton);
+                WaitFor(() => resizeButton.IsMouseOver, "The secondary command did not re-enter pointer-over after crossing the native surface boundary.");
+
+                NativeMouseEvent(NativeMouseLeftDown, 0, 0, 0, UIntPtr.Zero);
+                mouseIsDown = true;
+                WaitFor(
+                    () => resizeButton.IsPressed,
+                    $"The secondary CommandBarFlyout command did not enter IsPressed. DirectlyOver={Mouse.DirectlyOver?.GetType().FullName ?? "<null>"}.");
+                Assert.IsTrue(commandBarFlyout.IsOpen, "The outer flyout must remain open while a secondary command is held pressed.");
+                Assert.IsTrue(commandBar.IsOpen, "The overflow surface must remain open while a secondary command is held pressed.");
+                AssertCurrentState(root, "CommonStates", "Pressed");
+
+                NativeMouseEvent(NativeMouseLeftUp, 0, 0, 0, UIntPtr.Zero);
+                mouseIsDown = false;
+                WaitFor(() => resizeInvocations == 1, "The held secondary command was not invoked on mouse release.");
+                WaitFor(() => !commandBarFlyout.IsOpen, "The secondary command did not dismiss the CommandBarFlyout after invocation.");
+            }
+            finally
+            {
+                if (mouseIsDown)
+                {
+                    NativeMouseEvent(NativeMouseLeftUp, 0, 0, 0, UIntPtr.Zero);
+                }
+
+                HideAndWait(commandBarFlyout);
+                if (restoreCursor)
+                {
+                    NativeSetCursorPos(originalCursor.X, originalCursor.Y);
+                }
+            }
+        });
+    }
+
+    [TestMethod]
+    public void GalleryExpandedFlyoutLightDismissesFromOwnerWindowInputOutsideBothSurfaces()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var restoreCursor = NativeGetCursorPos(out var originalCursor);
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.RightEdgeAlignedTop,
+                ShowMode = FlyoutShowMode.Transient
+            };
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Share), Label = "Share" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Resize" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 180
+            };
+
+            using var host = new TestWindowHost(target, width: 720, height: 520);
+            host.Window.Left = 120;
+            host.Window.Top = 120;
+            host.UpdateLayout();
+            host.Window.Activate();
+            NativeSetForegroundWindow(new WindowInteropHelper(host.Window).Handle);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            var mouseIsDown = false;
+            try
+            {
+                var commandBar = GetCommandBar(commandBarFlyout);
+                WaitForExpandedOverflow(commandBar, host);
+                Assert.IsTrue(commandBarFlyout.InternalPopup.StaysOpen, "CommandBarFlyout should own light-dismiss across its two native surfaces.");
+
+                var outsidePoint = target.PointToScreen(new Point(10, target.ActualHeight - 10));
+                NativeSetCursorPos((int)Math.Round(outsidePoint.X), (int)Math.Round(outsidePoint.Y));
+                NativeMouseEvent(NativeMouseMove, 1, 0, 0, UIntPtr.Zero);
+                NativeMouseEvent(NativeMouseMove, unchecked((uint)-1), 0, 0, UIntPtr.Zero);
+                NativeMouseEvent(NativeMouseLeftDown, 0, 0, 0, UIntPtr.Zero);
+                mouseIsDown = true;
+                WaitFor(() => !commandBarFlyout.IsOpen, "Owner-window input outside both flyout surfaces did not light-dismiss the CommandBarFlyout.");
+                NativeMouseEvent(NativeMouseLeftUp, 0, 0, 0, UIntPtr.Zero);
+                mouseIsDown = false;
+            }
+            finally
+            {
+                if (mouseIsDown)
+                {
+                    NativeMouseEvent(NativeMouseLeftUp, 0, 0, 0, UIntPtr.Zero);
+                }
+
+                HideAndWait(commandBarFlyout);
+                if (restoreCursor)
+                {
+                    NativeSetCursorPos(originalCursor.X, originalCursor.Y);
+                }
+            }
+        });
+    }
+
+    [TestMethod]
+    public void GalleryMoreButtonClearsPointerStateAfterCollapsingOverflow()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var restoreCursor = NativeGetCursorPos(out var originalCursor);
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.RightEdgeAlignedTop,
+                ShowMode = FlyoutShowMode.Transient
+            };
+            commandBarFlyout.PrimaryCommands.Add(new AppBarButton { Icon = new SymbolIcon(Symbol.Share), Label = "Share" });
+            commandBarFlyout.SecondaryCommands.Add(new AppBarButton { Label = "Resize" });
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 180
+            };
+
+            using var host = new TestWindowHost(target, width: 720, height: 520);
+            host.Window.Left = 120;
+            host.Window.Top = 120;
+            host.UpdateLayout();
+            host.Window.Activate();
+            NativeSetForegroundWindow(new WindowInteropHelper(host.Window).Handle);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            var mouseIsDown = false;
+            try
+            {
+                var commandBar = GetCommandBar(commandBarFlyout);
+                WaitForExpandedOverflow(commandBar, host);
+                var moreButton = FindTemplateChild<ToggleButton>(commandBar, "MoreButton");
+                MoveNativePointerTo(moreButton);
+                WaitFor(() => moreButton.IsMouseOver, "The expanded More button did not enter its pointer-over state.");
+
+                NativeMouseEvent(NativeMouseLeftDown, 0, 0, 0, UIntPtr.Zero);
+                mouseIsDown = true;
+                NativeMouseEvent(NativeMouseLeftUp, 0, 0, 0, UIntPtr.Zero);
+                mouseIsDown = false;
+                WaitFor(() => !commandBar.IsOpen, "The More-button click did not collapse the overflow surface.");
+
+                MoveNativePointerTo(target);
+                WaitFor(
+                    () => !moreButton.IsMouseOver && !moreButton.IsPressed,
+                    $"The collapsed More button retained pointer visuals. IsMouseOver={moreButton.IsMouseOver}, IsPressed={moreButton.IsPressed}.");
+            }
+            finally
+            {
+                if (mouseIsDown)
+                {
+                    NativeMouseEvent(NativeMouseLeftUp, 0, 0, 0, UIntPtr.Zero);
+                }
+
+                HideAndWait(commandBarFlyout);
+                if (restoreCursor)
+                {
+                    NativeSetCursorPos(originalCursor.X, originalCursor.Y);
+                }
+            }
+        });
     }
 
     [TestMethod]
@@ -2303,6 +2661,61 @@ public class CommandBarFlyoutApiTests
         return control.Template?.FindName(name, control) as T
             ?? throw new AssertFailedException($"Expected template child '{name}' to be {typeof(T).Name}.");
     }
+
+    private static Rect GetNativeWindowRect(IntPtr hwnd)
+    {
+        var rect = new NativeRect();
+        if (!NativeGetWindowRect(hwnd, ref rect))
+        {
+            throw new AssertFailedException("GetWindowRect failed for the CommandBarFlyout popup HWND.");
+        }
+
+        return new Rect(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
+    }
+
+    private static void MoveNativePointerTo(FrameworkElement element, double offsetY = 0)
+    {
+        var point = element.PointToScreen(new Point(element.ActualWidth / 2, element.ActualHeight / 2 + offsetY));
+        NativeSetCursorPos((int)Math.Round(point.X), (int)Math.Round(point.Y));
+        NativeMouseEvent(NativeMouseMove, 1, 0, 0, UIntPtr.Zero);
+        NativeMouseEvent(NativeMouseMove, unchecked((uint)-1), 0, 0, UIntPtr.Zero);
+        WpfTestHost.DoEvents();
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativeRect
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct NativePoint
+    {
+        public int X;
+        public int Y;
+    }
+
+    [DllImport("user32.dll", EntryPoint = "GetWindowRect", SetLastError = true)]
+    private static extern bool NativeGetWindowRect(IntPtr hWnd, ref NativeRect rect);
+
+    [DllImport("user32.dll", EntryPoint = "SetCursorPos", SetLastError = true)]
+    private static extern bool NativeSetCursorPos(int x, int y);
+
+    [DllImport("user32.dll", EntryPoint = "GetCursorPos", SetLastError = true)]
+    private static extern bool NativeGetCursorPos(out NativePoint point);
+
+    [DllImport("user32.dll", EntryPoint = "SetForegroundWindow")]
+    private static extern bool NativeSetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll", EntryPoint = "mouse_event")]
+    private static extern void NativeMouseEvent(uint flags, uint dx, uint dy, uint data, UIntPtr extraInfo);
+
+    private const uint NativeMouseMove = 0x0001;
+    private const uint NativeMouseLeftDown = 0x0002;
+    private const uint NativeMouseLeftUp = 0x0004;
 
     private static void AssertThemeResourceReference(string themeName, string resourceKey, string expectedResourceKey)
     {

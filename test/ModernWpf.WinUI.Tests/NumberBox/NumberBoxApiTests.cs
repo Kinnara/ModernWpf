@@ -220,6 +220,7 @@ public class NumberBoxApiTests
                 Assert.IsNotNull(headerPresenter.Foreground);
             }
             Assert.AreEqual(numberBox.TryFindResource("TextBoxTopHeaderMargin"), headerPresenter.Margin);
+            Assert.AreEqual(19.0, headerPresenter.MinHeight);
             Assert.AreEqual(numberBox.FontSize, headerPresenter.FontSize);
             Assert.AreEqual(numberBox.FontFamily.Source, headerPresenter.FontFamily.Source);
             Assert.AreEqual(Visibility.Collapsed, headerPresenter.Visibility);

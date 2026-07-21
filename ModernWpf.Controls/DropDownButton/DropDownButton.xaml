@@ -19,7 +19,10 @@
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
-        <Setter Property="FocusVisualMargin" Value="-3" />
+        <!-- The WPF desired width is one DIP narrower while rasterizing to the same
+             resting pixels as WinUI. Extend only the focus adorner's right edge so
+             its physical ring retains WinUI's width as well. -->
+        <Setter Property="FocusVisualMargin" Value="-3,-3,-4,-3" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
         <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
@@ -98,7 +101,15 @@
                                 VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Focusable="False"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                <!-- WPF's AccessText baseline rasterizes one physical pixel lower than
+                                     WinUI's ContentPresenter when this presenter is centered by a
+                                     horizontal StackPanel. Keep layout sizing unchanged and align only
+                                     the rendered content. -->
+                                <ui:ContentPresenterEx.RenderTransform>
+                                    <TranslateTransform Y="-1" />
+                                </ui:ContentPresenterEx.RenderTransform>
+                            </ui:ContentPresenterEx>
 
                             <ui:FontIconFallback
                                 x:Name="ChevronIcon"
@@ -110,7 +121,14 @@
                                 Data="{StaticResource ChevronDownSmall}"
                                 VerticalAlignment="Center"
                                 Margin="8,0,0,0"
-                                ui:AnimatedIcon.State="Normal" />
+                                ui:AnimatedIcon.State="Normal">
+                                <!-- The WPF button's 77-DIP layout rasterizes to the same 78 physical
+                                     pixels as WinUI. Offset only the fallback glyph so it shares the
+                                     WinUI chevron column without changing that correct outer extent. -->
+                                <ui:FontIconFallback.RenderTransform>
+                                    <TranslateTransform X="1" />
+                                </ui:FontIconFallback.RenderTransform>
+                            </ui:FontIconFallback>
                         </StackPanel>
 
                     </ui:GridEx>

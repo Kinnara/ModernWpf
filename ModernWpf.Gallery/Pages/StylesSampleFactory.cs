@@ -131,6 +131,7 @@ namespace ModernWpf.Gallery.Pages
                 Content = "Monochrome",
                 IsChecked = false
             };
+            GalleryAutomation.WithAutomationId(monochromeButton, GalleryAutomation.SampleElementId("IconElement", "MonochromeButton"));
             monochromeButton.Checked += delegate { slicesIcon.ShowAsMonochrome = true; };
             monochromeButton.Unchecked += delegate { slicesIcon.ShowAsMonochrome = false; };
 

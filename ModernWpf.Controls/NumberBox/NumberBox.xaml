@@ -405,6 +405,7 @@
                             FontWeight="Normal"
                             Foreground="{DynamicResource TextControlHeaderForeground}"
                             Margin="{DynamicResource TextBoxTopHeaderMargin}"
+                            MinHeight="19"
                             FontSize="{TemplateBinding FontSize}"
                             FontFamily="{TemplateBinding FontFamily}"
                             TextWrapping="Wrap"

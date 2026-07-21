@@ -4,18 +4,19 @@ namespace ModernWpf.Controls
     {
         public MenuBarItemFlyout()
         {
-            // MenuBar hosts stock WPF MenuItem objects. The WPF system-menu
-            // typography and content inset reproduce WinUI's 14-DIP glyph
-            // metrics more closely for this adapter while preserving four
-            // 32-DIP rows. Keep it scoped here so ordinary MenuFlyout items
-            // retain their current source typography and exact geometry.
-            Presenter.FontFamily = System.Windows.SystemFonts.MenuFontFamily;
-            Presenter.FontSize = System.Windows.SystemFonts.MenuFontSize;
-            // The stock MenuItem line box contributes a fractional DIP at
-            // 96 DPI, so the asymmetric bottom inset keeps the popup HWND at
-            // the source 134-pixel height after device rounding.
-            Presenter.Padding = new System.Windows.Thickness(0, 2, 0, 1);
-            Presenter.Resources["MenuItemSubmenuContentMargin"] = new System.Windows.Thickness(8, 6, 8, 6);
+            // Keep stock WPF MenuItem objects on the shared MenuFlyout
+            // presenter metrics. In particular, do not replace WinUI's
+            // 14-DIP content font with the smaller system-menu font: doing so
+            // shrinks every MenuBar flyout label while ordinary MenuFlyout
+            // items remain pixel-aligned.
+            // Stock WPF MenuItem rows retain a fractional aggregate height;
+            // one scoped bottom DIP rounds the four-row presenter to WinUI's
+            // 134-pixel surface at 96 DPI.
+            Presenter.Padding = new System.Windows.Thickness(0, 2, 0, 3);
+            // The stock MenuItem template otherwise starts its glyph run three
+            // pixels left of WinUI. Keep the total horizontal inset unchanged
+            // so popup width and submenu measurement are unaffected.
+            Presenter.Resources["MenuItemSubmenuContentMargin"] = new System.Windows.Thickness(10, 4, 4, 5);
         }
     }
 }

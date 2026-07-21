@@ -61,6 +61,7 @@ public class NumberBoxSourceAuditTests
         StringAssert.Contains(template, "x:Name=\"PopupIndicator\"");
         StringAssert.Contains(template, "x:Name=\"UpSpinButton\"");
         StringAssert.Contains(template, "x:Name=\"PopupUpSpinButton\"");
+        StringAssert.Contains(template, "MinHeight=\"19\"");
         StringAssert.Contains(template, "<ui:VisualStateEx x:Name=\"SpinButtonsVisible\">");
         StringAssert.Contains(template, "Target=\"UpSpinButton.IsEnabled\" Value=\"False\"");
         StringAssert.Contains(template, "Content=\"&#xE70E;\"");

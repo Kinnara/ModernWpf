@@ -332,6 +332,7 @@ public class ContentDialogApiTests
 
             Assert.AreEqual(contentDialogPadding, commandSpace.Margin);
             Assert.AreSame(dialog.Background, commandSpace.Background);
+            Assert.AreEqual(85d, commandSpace.ColumnDefinitions[0].MinWidth);
 
             Assert.AreSame(dialog.PrimaryButtonStyle, primaryButton.Style);
             Assert.AreSame(dialog.SecondaryButtonStyle, secondaryButton.Style);
@@ -345,6 +346,9 @@ public class ContentDialogApiTests
             Assert.AreEqual(dialog.TryFindResource("ControlContentThemeFontSize"), primaryButton.FontSize);
             Assert.AreEqual(dialog.TryFindResource("ControlContentThemeFontSize"), secondaryButton.FontSize);
             Assert.AreEqual(dialog.TryFindResource("ControlContentThemeFontSize"), closeButton.FontSize);
+            Assert.AreEqual(32d, primaryButton.MinHeight);
+            Assert.AreEqual(32d, secondaryButton.MinHeight);
+            Assert.AreEqual(32d, closeButton.MinHeight);
             Assert.AreEqual(HorizontalAlignment.Stretch, primaryButton.HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Stretch, secondaryButton.HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Stretch, closeButton.HorizontalAlignment);

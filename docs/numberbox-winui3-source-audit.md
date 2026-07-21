@@ -192,3 +192,17 @@ accessibility match.
   product/Gallery test builds also refresh the net8/net10 Controls outputs.
 - Both final strict Light and Dark installed-Gallery runs pass the tightened
   resting/interaction mean and exact-size gates.
+
+## 2026-07-21 Header-Line Rounding Follow-up
+
+The first and third Gallery cards could render one pixel shorter depending on
+WPF text-line rounding. `HeaderContentPresenter` now has `MinHeight=19`, which
+matches the WinUI header line without changing headerless or wrapping behavior;
+template and source-audit tests pin the value.
+
+Final Light
+`artifacts/visual-checks/numberbox-rounding-light-v1/20260721-175252-350-69552/report.md`
+passes all three cards, exact `132x59` rest and `152x79` value-state crops, at
+deltas `1.83` / `1.75`. Final Dark
+`artifacts/visual-checks/interaction-inputs-dark-v2/20260721-180019-720-41456/report.md`
+passes the same exact geometry at `1.73` / `1.09`.

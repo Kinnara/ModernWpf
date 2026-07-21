@@ -140,3 +140,19 @@ unrelated warnings.
   parameters are preserved.
 - Native access-key/gamepad routes and `VisualState.Setters` are represented by
   WPF keyboard/focus routing and `VisualStateEx.Setters`.
+
+## 2026-07-21 Screen-Origin Rounding Follow-up
+
+Moving the dialog between physical screen origins exposed a WPF star-column
+rounding split that could make the primary command four pixels narrower and a
+command button one pixel short. The primary command column now has source-sized
+`MinWidth=85`, and all three command buttons have `MinHeight=32`; wider dialogs
+still use star sizing. Template tests pin both values.
+
+Final Light
+`artifacts/visual-checks/popup-fixes-light-v1/20260721-181431-286-73964/report.md`
+passes the exact `101x32` launcher and `320x218` versus `320x219` open surface
+at delta `5.75`. Final Dark
+`artifacts/visual-checks/popup-family-dark-v1/20260721-181859-976-74480/report.md`
+passes the exact launcher and `320x220` versus `320x221` open surface at delta
+`6.31`.

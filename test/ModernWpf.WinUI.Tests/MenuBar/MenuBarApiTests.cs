@@ -176,10 +176,10 @@ public class MenuBarApiTests
             fileItem.ShowMenuFlyout();
             WpfTestHost.DoEvents();
 
-            Assert.AreEqual(SystemFonts.MenuFontFamily, fileItem.Flyout.Presenter.FontFamily);
-            Assert.AreEqual(SystemFonts.MenuFontSize, fileItem.Flyout.Presenter.FontSize);
-            Assert.AreEqual(new Thickness(0, 2, 0, 1), fileItem.Flyout.Presenter.Padding);
-            Assert.AreEqual(new Thickness(8, 6, 8, 6), fileItem.Flyout.Presenter.Resources["MenuItemSubmenuContentMargin"]);
+            Assert.AreEqual(fileItem.Flyout.Presenter.TryFindResource("ContentControlThemeFontFamily"), fileItem.Flyout.Presenter.FontFamily);
+            Assert.AreEqual(fileItem.Flyout.Presenter.TryFindResource("ControlContentThemeFontSize"), fileItem.Flyout.Presenter.FontSize);
+            Assert.AreEqual(new Thickness(0, 2, 0, 3), fileItem.Flyout.Presenter.Padding);
+            Assert.AreEqual(new Thickness(10, 4, 4, 5), fileItem.Flyout.Presenter.Resources["MenuItemSubmenuContentMargin"]);
             Assert.AreEqual(134, fileItem.Flyout.Presenter.ActualHeight, 0.5);
 
             foreach (var item in fileItem.Items)

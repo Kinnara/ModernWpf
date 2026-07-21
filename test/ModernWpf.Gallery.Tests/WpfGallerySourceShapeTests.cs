@@ -2890,6 +2890,127 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryVisualChecksRequirePairedInteractiveStateMatrices()
+        {
+            var source = ReadRepoFile("tools", "visual-checks", "Run-GalleryVisualChecks.ps1");
+
+            AssertContainsInOrder(
+                source,
+                "function Get-ControlVisualStateMatrixKind([string]$control)",
+                "\"HyperlinkButton\" { return \"Button\" }",
+                "\"RepeatButton\" { return \"Button\" }",
+                "\"DropDownButton\" { return \"Button\" }",
+                "\"AppBarButton\" { return \"Button\" }",
+                "\"ToggleButton\" { return \"Toggle\" }",
+                "\"ToggleSwitch\" { return \"Toggle\" }",
+                "\"AppBarToggleButton\" { return \"Toggle\" }",
+                "\"SplitButton\" { return \"Split\" }",
+                "\"ToggleSplitButton\" { return \"ToggleSplit\" }");
+            AssertContainsInOrder(
+                source,
+                "function Get-ControlVisualStateMatrixExpectedStates([string]$control)",
+                "@(\"Rest\", \"PointerOver\", \"Pressed\", \"Focused\")",
+                "\"OffRest\"",
+                "\"OffPointerOver\"",
+                "\"OffPressed\"",
+                "\"OffFocused\"",
+                "\"OnRest\"",
+                "\"OnPointerOver\"",
+                "\"OnPressed\"",
+                "\"OnFocused\"",
+                "\"PrimaryPointerOver\"",
+                "\"PrimaryPressed\"",
+                "\"SecondaryPointerOver\"",
+                "\"SecondaryPressed\"",
+                "\"OffPrimaryPointerOver\"",
+                "\"OffSecondaryPressed\"",
+                "\"OnPrimaryPointerOver\"",
+                "\"OnSecondaryPressed\"",
+                "\"DisabledOff\"",
+                "\"DisabledOn\"");
+            AssertContainsInOrder(
+                source,
+                "function Save-ControlVisualStateMatrixCrop(",
+                "Get-ElementScreenBounds $target 4 $window",
+                "Source = \"ControlVisualStateScreen\"",
+                "function Save-ControlVisualStateMatrixPointerCrop(",
+                "[GalleryVisualNative]::MouseDown",
+                "[GalleryVisualNative]::MouseUp()",
+                "function Save-ControlVisualStateMatrixFocusedCrop(",
+                "[GalleryVisualNative]::PressShiftTab()",
+                "[GalleryVisualNative]::PressTab()",
+                "Save-ControlVisualStateMatrixCrop $app $control $caseDir $window $target $state \"Focus\"");
+            AssertContainsInOrder(
+                source,
+                "function Compare-ControlVisualStateMatrixEvidence(",
+                "Get-ControlVisualStateMatrixExpectedStates $control",
+                "Compare-ControlStateImagesNormalized",
+                "Get-ControlVisualStateMatrixCropSizeDeltaThreshold $control",
+                "ToggleState=Off",
+                "ToggleState=On",
+                "Test-ControlVisualStateMatrixStateMustDiffer $stateName",
+                "$stateName -match \"Focused$\"",
+                "did not produce visible pixels in both applications");
+            AssertContainsInOrder(
+                source,
+                "(Test-ControlSupportsVisualStateMatrix $control) -and $IncludeInteractions",
+                "Compare-ControlVisualStateMatrixEvidence",
+                "$modern[\"VisualStateComparisons\"] = $visualStateComparisons",
+                "Set-VisualCheckReferenceFailure $modern $visualStateComparisons.Reason",
+                "## Interactive Control State Matrices");
+            AssertContainsInOrder(
+                source,
+                "$modernInteractionFrames = @()",
+                "$modernInteractionFrames = @(\u0024modern.Interaction.Frames)",
+                "$referenceInteractionFrames = @()",
+                "$referenceInteractionFrames = @(\u0024referenceCapture.Interaction.Frames)",
+                "$modernFrame = $modernInteractionFrames[$modernInteractionFrames.Count - 1]",
+                "$referenceFrame = $referenceInteractionFrames[$referenceInteractionFrames.Count - 1]");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksRequireEveryCommandBarFlyoutTransitionState()
+        {
+            var source = ReadRepoFile("tools", "visual-checks", "Run-GalleryVisualChecks.ps1");
+
+            AssertContainsInOrder(
+                source,
+                "function Compare-CommandBarFlyoutStateEvidence($modernStates, $referenceStates)",
+                "\"PrimaryRest\"",
+                "\"PrimarySharePointerOver\"",
+                "\"PrimarySharePressed\"",
+                "\"PrimaryMorePointerOver\"",
+                "\"ExpandedAfterPrimaryMoreClick\"",
+                "\"ExpandedRest\"",
+                "\"ExpandedResizePointerOver\"",
+                "\"ExpandedMorePointerOver\"",
+                "\"ExpandedResizePressed\"",
+                "\"CollapsedAfterExpandedMoreClick\"");
+            AssertContainsInOrder(
+                source,
+                "if ($control -eq \"CommandBarFlyout\" -and $invoked)",
+                "Save-CommandBarFlyoutStateCrop $app $caseDir $window \"PrimaryRest\"",
+                "Save-CommandBarFlyoutPointerStateCrop $app $caseDir $window \"PrimarySharePointerOver\"",
+                "Save-CommandBarFlyoutPointerStateCrop $app $caseDir $window \"PrimarySharePressed\"",
+                "Save-CommandBarFlyoutPointerStateCrop $app $caseDir $window \"PrimaryMorePointerOver\"",
+                "Save-CommandBarFlyoutClickTransitionStateCrop $app $caseDir $window \"ExpandedAfterPrimaryMoreClick\"",
+                "Save-CommandBarFlyoutStateCrop $app $caseDir $window \"ExpandedRest\"",
+                "Save-CommandBarFlyoutPointerStateCrop $app $caseDir $window \"ExpandedResizePointerOver\"",
+                "Save-CommandBarFlyoutPointerStateCrop $app $caseDir $window \"ExpandedMorePointerOver\"",
+                "Save-CommandBarFlyoutPointerStateCrop $app $caseDir $window \"ExpandedResizePressed\"",
+                "Save-CommandBarFlyoutClickTransitionStateCrop $app $caseDir $window \"CollapsedAfterExpandedMoreClick\"");
+            AssertContainsInOrder(
+                source,
+                "$sizeDelta -ne 0",
+                "$statesRequiredToDifferFromRest -contains $stateName",
+                "$modernRestDelta.MeanDelta -lt 0.25",
+                "$referenceRestDelta.MeanDelta -lt 0.25",
+                "$modern[\"CommandBarFlyoutStateComparisons\"] = $stateComparisons",
+                "Set-VisualCheckReferenceFailure $modern $stateComparisons.Reason",
+                "## CommandBarFlyout State Matrix");
+        }
+
+        [TestMethod]
         public void GalleryVisualChecksCropVisibleItemsRepeaterSourceBarRows()
         {
             var source = File.ReadAllText(Path.Combine(
@@ -2944,6 +3065,50 @@ namespace ModernWpf.Gallery.Tests
                 gallerySource.Contains("<Border Height='{Binding MaxHeight}' Background='{DynamicResource SystemControlBackgroundChromeMediumBrush}'>", StringComparison.Ordinal) ||
                 gallerySource.Contains("<Ellipse Width='{Binding MaxDiameter}' Height='{Binding MaxDiameter}' HorizontalAlignment='Center' VerticalAlignment='Center' Fill='{DynamicResource SystemControlBackgroundChromeMediumBrush}'/>", StringComparison.Ordinal),
                 "ItemsRepeater bar templates must not substitute the darker medium chrome resource for WinUI SystemChromeLowColor.");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksDoNotPixelGateVolatileOrAnimatedSampleFrames()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Run-GalleryVisualChecks.ps1"));
+
+            AssertContainsInOrder(
+                source,
+                "function Get-ControlExampleComparisonMode([string]$control, [string]$automationId)",
+                "$control -eq \"ItemsRepeater\"",
+                "$automationId -eq \"GallerySample_ItemsRepeater_Example6\"",
+                "return \"VolatileDataGeometry\"",
+                "$control -in @(\"ProgressRing\", \"WinUIProgressBar\")",
+                "$automationId.EndsWith(\"_Example1\"",
+                "return \"AnimatedTemporal\"",
+                "return \"Pixel\"");
+            AssertContainsInOrder(
+                source,
+                "function Get-ControlExampleEvidenceRequirement([string]$comparisonMode)",
+                "Randomized recipe pixels are informational.",
+                "ItemsRepeater recipe layout/filter/sort runtime contract.",
+                "The single-frame pixel delta is informational.",
+                "recorder animation/state-transition evidence.");
+            AssertContainsInOrder(
+                source,
+                "$comparisonMode = Get-ControlExampleComparisonMode $control $modernArtifact.AutomationId",
+                "$pixelGateApplied = $comparisonMode -eq \"Pixel\"",
+                "$geometryPassed = $comparison.Comparable",
+                "$widthDelta -eq 0",
+                "$heightDelta -le $geometryHeightTolerance",
+                "$passed = if ($pixelGateApplied)",
+                "$geometryPassed",
+                "PixelGateApplied = $pixelGateApplied",
+                "EvidenceRequirement = $evidenceRequirement");
+            AssertContainsInOrder(
+                source,
+                "| Control | Example | Mode | Pixel delta | Threshold | ModernWpf size | WinUI size | Status | Evidence contract |",
+                "Geometry passed; external proof required",
+                "$comparison.EvidenceRequirement");
         }
 
         [TestMethod]
@@ -3311,12 +3476,15 @@ namespace ModernWpf.Gallery.Tests
                 "Find-ElementsByNameInProcess $window.Current.ProcessId $openNames",
                 "$match.Current.ControlType -ne [System.Windows.Automation.ControlType]::ListItem",
                 "$outsideClosedCombo = $rect.Y -ge ($comboRect.Bottom - 1) -or $rect.Bottom -le ($comboRect.Y + 1)",
+                "function Find-SplitButtonOpenElementAtPoint($element, [string[]]$openNames)",
+                "[System.Windows.Automation.AutomationElement]::FromPoint($point)",
+                "[System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)",
                 "function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [string]$control)",
                 "if ($control -eq \"ComboBox\")",
                 "return Find-ComboBoxOpenElement $window $element $openNames",
                 "if ($control -eq \"SplitButton\" -or $control -eq \"ToggleSplitButton\")",
                 "(Get-ExpandCollapseStateName $element) -ne \"Expanded\"",
-                "return Find-InteractiveElementByNameInProcess $window.Current.ProcessId $openNames",
+                "return Find-SplitButtonOpenElementAtPoint $element $openNames",
                 "return Find-ElementByNameInProcess $window.Current.ProcessId $openNames",
                 "function Test-ControlPrefersScreenOpenCapture([string]$control)",
                 "\"TeachingTip\" { return $true }",
@@ -3475,9 +3643,11 @@ namespace ModernWpf.Gallery.Tests
                 "function Get-CommandBarFlyoutOpenSurfaceElementEvidence($window, $elements = $null)",
                 "Name = [string]$element.Current.Name",
                 "ControlType = [string]$element.Current.ControlType.ProgrammaticName",
-                "function Save-CommandBarFlyoutOpenSurfaceScreenCrop($window, [string]$path)",
+                "function Save-CommandBarFlyoutOpenSurfaceScreenCrop(",
                 "$elements = @(Get-CommandBarFlyoutOpenSurfaceElements $window)",
-                "$bounds = Get-CommandBarFlyoutOpenSurfaceScreenBounds $window $elements",
+                "$capturePlan = New-CommandBarFlyoutSurfaceCapturePlan $window $elements",
+                "$bounds = $capturePlan.RawElementBounds",
+                "$elementEvidence = @(\u0024capturePlan.Elements)",
                 "RawElementBounds = $bounds",
                 "Elements = $elementEvidence");
             Assert.IsFalse(
@@ -3516,7 +3686,9 @@ namespace ModernWpf.Gallery.Tests
                 "(Test-ControlSupportsSelectionInteraction $control) -or",
                 "(Test-ControlSupportsValueInteraction $control) -or",
                 "(Test-ControlSupportsOutputInteraction $control) -or",
-                "(Test-ControlSupportsTextInteraction $control))",
+                "(Test-ControlSupportsTextInteraction $control) -or",
+                "(Test-ControlSupportsVisualStateMatrix $control))",
+                "$visualStateMatrix = Capture-ControlVisualStateMatrix \"ModernWpf\" $control $caseDir $window $sample",
                 "$openNames = Get-OpenInteractionNames $control",
                 "$openInteraction = Capture-OpenInteraction \"ModernWpf\" $control $caseDir $window $sample $openNames",
                 "$stateInteraction = Capture-StateInteraction \"ModernWpf\" $control $caseDir $window $sample",
@@ -4926,7 +5098,7 @@ namespace ModernWpf.Gallery.Tests
                 "$allowsBlankBaseline = Test-OutputInteractionAllowsBlankBaseline $control",
                 "$baselineNonBlank = $null -ne $baselineCrop -and $baselineCrop.Contains(\"NonBlank\") -and $baselineCrop.NonBlank",
                 "$afterNonBlank = $null -ne $afterCrop -and $afterCrop.Contains(\"NonBlank\") -and $afterCrop.NonBlank",
-                "$visualChanged = ($null -ne $outputDelta -and $outputDelta.Comparable -and $outputDelta.MeanDelta -gt $minimumDelta)",
+                "$visualChanged = ($null -ne $outputDelta -and $outputDelta.Comparable -and $outputDelta.MeanDelta -ge $minimumDelta)",
                 "$allowsBlankBaseline -and !$baselineNonBlank -and $afterNonBlank",
                 "Kind = \"Output\"",
                 "OutputDelta = $outputDelta",
@@ -6298,6 +6470,55 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryInteractionRecorderProvesProgressBarAnimationAndStateChange()
+        {
+            var source = File.ReadAllText(Path.Combine(
+                GetRepoRoot(),
+                "tools",
+                "visual-checks",
+                "Record-GalleryControlInteractions.ps1"));
+
+            StringAssert.Contains(source, "\"ProgressRing\", \"WinUIProgressBar\", \"AnnotatedScrollBar\"");
+            AssertContainsInOrder(
+                source,
+                "function Get-RequiredSampleAutomationId([string]$control)",
+                "\"IconElement\" { return \"GallerySample_IconElement_MonochromeButton\" }",
+                "\"ProgressRing\" { return \"GallerySample_ProgressRing_ProgressRing\" }",
+                "\"WinUIProgressBar\" { return \"GallerySample_WinUIProgressBar_IndeterminateProgressBar\" }");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsOptionInteraction([string]$control)",
+                "\"ProgressRing\" { return $true }",
+                "\"WinUIProgressBar\" { return $true }",
+                "function Test-ControlRequiresAnimatedVisualProof([string]$control)",
+                "return $control -in @(\"ProgressRing\", \"WinUIProgressBar\", \"CommandBarFlyout\")");
+            AssertContainsInOrder(
+                source,
+                "function Get-OptionInteractionTriggerName([string]$control)",
+                "\"ProgressRing\" { return \"Progress Options\" }",
+                "\"WinUIProgressBar\" { return \"Paused\" }",
+                "function Get-OptionInteractionTriggerAutomationId([string]$control)",
+                "\"IconElement\" { return \"GallerySample_IconElement_MonochromeButton\" }",
+                "function Invoke-OptionInteraction($window, [string]$control, $sampleElement)",
+                "$beforeSelectionState = Get-SelectionItemStateName $target",
+                "$afterSelectionState = Get-SelectionItemStateName $target",
+                "$beforeSelectionState -ne $afterSelectionState",
+                "BeforeSelectionState = $beforeSelectionState",
+                "AfterSelectionState = $afterSelectionState",
+                "OptionChanged = if ($requiresExpectedElement) { $stateOrSampleChanged -and $expectedElementChanged } else { $stateOrSampleChanged }");
+            AssertContainsInOrder(
+                source,
+                "function Scroll-ModernWpfSampleIntoView([string]$artifactDir, [string]$automationId)",
+                "modernwpf-gallery-scroll-request.txt",
+                "modernwpf-gallery-scroll-result.txt",
+                "$result -eq \"$automationId|NotFound\"",
+                "$parts.Count -eq 6",
+                "$sampleId = Get-RequiredSampleAutomationId $control",
+                "Scroll-ModernWpfSampleIntoView $artifactDir $sampleId",
+                "$sampleElement = Find-DescendantByAutomationId $window $sampleId");
+        }
+
+        [TestMethod]
         public void GalleryInteractionRecorderExercisesOfficialWpfMessageBoxDialogs()
         {
             var source = File.ReadAllText(Path.Combine(
@@ -6426,8 +6647,18 @@ namespace ModernWpf.Gallery.Tests
                 "$suggestionInvoked = Invoke-ElementOnce $window $suggestionElement",
                 "Wait-ForOutputTextOutsideElementBounds $window $element $expectedOutputName 3000",
                 "Source = \"PopupWindow\"",
+                "$installedReferenceUnavailable =",
+                "$app -eq \"WinUI3\" -and",
+                "$status = if ($installedReferenceUnavailable) { \"Unavailable\" }",
+                "ReferenceInteractionUnavailable = $installedReferenceUnavailable",
                 "SuggestionElementFound = $null -ne $suggestionElement",
                 "OutputElementFound = $null -ne $outputElement");
+            StringAssert.Contains(
+                source,
+                "elseif ($null -ne $interaction -and $interaction.Status -eq \"Failed\") { \"Failed\" }");
+            StringAssert.Contains(
+                source,
+                "The installed WinUI Gallery accepts typed text in its basic sample but does not expose the source-defined suggestions popup.");
         }
 
         [TestMethod]

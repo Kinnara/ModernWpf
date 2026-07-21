@@ -78,7 +78,7 @@ public class DropDownButtonApiTests
             Assert.AreEqual(VerticalAlignment.Center, button.VerticalAlignment);
             Assert.AreEqual(HorizontalAlignment.Center, button.HorizontalContentAlignment);
             Assert.AreEqual(VerticalAlignment.Center, button.VerticalContentAlignment);
-            Assert.AreEqual(new Thickness(-3), button.FocusVisualMargin);
+            Assert.AreEqual(new Thickness(-3, -3, -4, -3), button.FocusVisualMargin);
             Assert.IsNotNull(button.TryFindResource("DropDownButtonForegroundSecondary"));
             Assert.IsNotNull(button.TryFindResource("DropDownButtonForegroundSecondaryPointerOver"));
             Assert.IsNotNull(button.TryFindResource("DropDownButtonForegroundSecondaryPressed"));
@@ -130,7 +130,7 @@ public class DropDownButtonApiTests
             AssertSetterValue(style, Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center);
             AssertSetterValue(style, Control.VerticalContentAlignmentProperty, VerticalAlignment.Center);
             AssertSetterValue(style, Control.FontWeightProperty, FontWeights.Normal);
-            AssertSetterValue(style, ModernWpf.Controls.DropDownButton.FocusVisualMarginProperty, new Thickness(-3));
+            AssertSetterValue(style, ModernWpf.Controls.DropDownButton.FocusVisualMarginProperty, new Thickness(-3, -3, -4, -3));
             AssertSetterValue(style, ModernWpf.Controls.DropDownButton.BackgroundSizingProperty, BackgroundSizing.InnerBorderEdge);
             AssertSetterValue(style, ModernWpf.Controls.Primitives.ButtonHelper.VisualStateSettersEnabledProperty, true);
 
@@ -142,7 +142,7 @@ public class DropDownButtonApiTests
             Assert.AreSame(button.TryFindResource("ContentControlThemeFontFamily"), button.FontFamily);
             Assert.AreEqual(button.TryFindResource("ControlContentThemeFontSize"), button.FontSize);
             Assert.AreEqual(button.TryFindResource("UseSystemFocusVisuals"), button.UseSystemFocusVisuals);
-            Assert.AreEqual(new Thickness(-3), button.FocusVisualMargin);
+            Assert.AreEqual(new Thickness(-3, -3, -4, -3), button.FocusVisualMargin);
             Assert.AreEqual(BackgroundSizing.InnerBorderEdge, button.BackgroundSizing);
             Assert.IsTrue(ModernWpf.Controls.Primitives.ButtonHelper.GetVisualStateSettersEnabled(button));
 
@@ -160,12 +160,16 @@ public class DropDownButtonApiTests
             Assert.AreEqual(button.CornerRadius, rootGrid.CornerRadius);
             Assert.AreEqual(button.BackgroundSizing, rootGrid.BackgroundSizing);
             Assert.AreSame(button.Foreground, presenter.Foreground);
+            Assert.IsInstanceOfType(presenter.RenderTransform, typeof(System.Windows.Media.TranslateTransform));
+            Assert.AreEqual(-1d, ((System.Windows.Media.TranslateTransform)presenter.RenderTransform).Y);
             Assert.AreSame(button.TryFindResource("DropDownButtonForegroundSecondary"), chevron.Foreground);
             Assert.AreSame(button.TryFindResource("SymbolThemeFontFamily"), chevron.FontFamily);
             Assert.AreEqual(12d, chevron.Width);
             Assert.AreEqual(12d, chevron.Height);
             Assert.AreEqual(8d, chevron.FontSize);
             Assert.AreEqual(new Thickness(8, 0, 0, 0), chevron.Margin);
+            Assert.IsInstanceOfType(chevron.RenderTransform, typeof(System.Windows.Media.TranslateTransform));
+            Assert.AreEqual(1d, ((System.Windows.Media.TranslateTransform)chevron.RenderTransform).X);
             Assert.AreEqual("Normal", AnimatedIcon.GetState(chevron));
 
             AssertStateSetterDynamicResource(rootGrid, "CommonStates", "PointerOver", "RootGrid.Background", "ButtonBackgroundPointerOver");

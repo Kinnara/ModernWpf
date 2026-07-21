@@ -151,3 +151,19 @@ element to disappear, and then reopen the same File menu:
 Reopen MenuBar only for a new current product/Gallery source change, runtime
 and snippet convergence, item-state/input regression, automation regression,
 popup/menu-flyout substitution change, or strict visual-regression evidence.
+
+## 2026-07-21 Typography and Row-Inset Follow-up
+
+The system-menu-font substitution made the complete popup geometry look close
+while visibly shrinking every label. MenuBarItemFlyout now retains the shared
+WinUI content font, uses presenter padding `0,2,0,3`, and moves the stock WPF
+submenu content inset to `10,4,4,5`. This preserves the measured `96x134`
+WPF surface (`98x134` WinUI UIA outer edge) while aligning glyph starts and
+baselines. `MenuBarApiTests` pins the resolved font resources, padding, inset,
+and four-row height.
+
+Final Light
+`artifacts/visual-checks/menubar-typography-light-v1/20260721-181817-004-74384/report.md`
+passes at closed/open deltas `2.63` / `7.94`; final Dark
+`artifacts/visual-checks/popup-family-dark-v1/20260721-181859-976-74480/report.md`
+passes at `2.57` / `3.58`.

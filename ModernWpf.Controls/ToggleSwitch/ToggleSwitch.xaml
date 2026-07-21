@@ -399,7 +399,21 @@
                                 RadiusY="10"
                                 Fill="{DynamicResource ToggleSwitchFillOff}"
                                 Stroke="{DynamicResource ToggleSwitchStrokeOff}"
-                                StrokeThickness="{DynamicResource ToggleSwitchOuterBorderStrokeThickness}" />
+                                StrokeThickness="{DynamicResource ToggleSwitchOuterBorderStrokeThickness}">
+                                <!-- WinUI retains the On storyboard's composed opacity while dragging.
+                                     WPF clears it when entering the empty Dragging state, so keep equivalent
+                                     IsOn-dependent base values underneath the transition animations. -->
+                                <Rectangle.Style>
+                                    <Style TargetType="Rectangle">
+                                        <Setter Property="Opacity" Value="1" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsOn, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                <Setter Property="Opacity" Value="0" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Rectangle.Style>
+                            </Rectangle>
                             <Rectangle
                                 x:Name="SwitchKnobBounds"
                                 Grid.Row="1"
@@ -409,8 +423,18 @@
                                 RadiusY="10"
                                 Fill="{DynamicResource ToggleSwitchFillOn}"
                                 Stroke="{DynamicResource ToggleSwitchStrokeOn}"
-                                StrokeThickness="{DynamicResource ToggleSwitchOnStrokeThickness}"
-                                Opacity="0" />
+                                StrokeThickness="{DynamicResource ToggleSwitchOnStrokeThickness}">
+                                <Rectangle.Style>
+                                    <Style TargetType="Rectangle">
+                                        <Setter Property="Opacity" Value="0" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsOn, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                <Setter Property="Opacity" Value="1" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Rectangle.Style>
+                            </Rectangle>
                             <Grid
                                 x:Name="SwitchKnob"
                                 Grid.Row="1"
@@ -421,22 +445,43 @@
                                     Background="{DynamicResource ToggleSwitchKnobFillOn}"
                                     BorderBrush="{DynamicResource ToggleSwitchKnobStrokeOn}"
                                     BackgroundSizing="OuterBorderEdge"
-                                    Width="12"
-                                    Height="12"
-                                    CornerRadius="7"
-                                    Opacity="0"
-                                    HorizontalAlignment="Center"
-                                    Margin="0,0,1,0"
-                                    RenderTransformOrigin="0.5, 0.5" />
+                                     Width="12"
+                                     Height="12"
+                                     CornerRadius="7"
+                                     HorizontalAlignment="Center"
+                                     Margin="0,0,1,0"
+                                     RenderTransformOrigin="0.5, 0.5">
+                                    <ui:BorderEx.Style>
+                                        <Style TargetType="ui:BorderEx">
+                                            <Setter Property="Opacity" Value="0" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsOn, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                    <Setter Property="Opacity" Value="1" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ui:BorderEx.Style>
+                                </ui:BorderEx>
                                 <Rectangle x:Name="SwitchKnobOff"
                                     Fill="{DynamicResource ToggleSwitchKnobFillOff}"
                                     Width="12"
                                     Height="12"
                                     RadiusX="7"
-                                    RadiusY="7"
-                                    HorizontalAlignment="Center"
-                                    Margin="-1,0,0,0"
-                                    RenderTransformOrigin="0.5, 0.5" />
+                                     RadiusY="7"
+                                     HorizontalAlignment="Center"
+                                     Margin="-1,0,0,0"
+                                     RenderTransformOrigin="0.5, 0.5">
+                                    <Rectangle.Style>
+                                        <Style TargetType="Rectangle">
+                                            <Setter Property="Opacity" Value="1" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsOn, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                    <Setter Property="Opacity" Value="0" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Rectangle.Style>
+                                </Rectangle>
                                 <Grid.RenderTransform>
                                     <TranslateTransform x:Name="KnobTranslateTransform" />
                                 </Grid.RenderTransform>

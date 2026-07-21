@@ -42,11 +42,12 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(item, "_flyout.Presenter.AddHandler(MenuItem.ClickEvent");
             StringAssert.Contains(item, "!item.StaysOpenOnClick");
             StringAssert.Contains(item, "Dispatcher.BeginInvoke((Action)CloseMenuFlyout)");
-            StringAssert.Contains(itemFlyout, "Presenter.FontFamily = System.Windows.SystemFonts.MenuFontFamily");
-            StringAssert.Contains(itemFlyout, "Presenter.FontSize = System.Windows.SystemFonts.MenuFontSize");
-            StringAssert.Contains(itemFlyout, "Presenter.Padding = new System.Windows.Thickness(0, 2, 0, 1)");
-            StringAssert.Contains(itemFlyout, "Presenter.Resources[\"MenuItemSubmenuContentMargin\"] = new System.Windows.Thickness(8, 6, 8, 6)");
+            Assert.IsFalse(itemFlyout.Contains("SystemFonts.MenuFont", StringComparison.Ordinal));
+            StringAssert.Contains(itemFlyout, "Presenter.Padding = new System.Windows.Thickness(0, 2, 0, 3)");
+            StringAssert.Contains(itemFlyout, "Presenter.Resources[\"MenuItemSubmenuContentMargin\"] = new System.Windows.Thickness(10, 4, 4, 5)");
             StringAssert.Contains(productTests, "FourItemFlyoutKeepsCurrentWinUIOpenSurfaceHeight");
+            StringAssert.Contains(productTests, "ContentControlThemeFontFamily");
+            StringAssert.Contains(productTests, "ControlContentThemeFontSize");
 
             StringAssert.Contains(sample, "FindSnippetText(sampleSnippets, \"SimpleMenubar.txt\")");
             StringAssert.Contains(sample, "FindSnippetText(sampleSnippets, \"MenubarKeyboardAccelerators.txt\")");

@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "WinUIProgressBar", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [string]$GalleryExe,
@@ -1439,12 +1439,16 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "Slider" { return "GallerySample_Slider_Slider" }
         "SplitView" { return "GallerySample_SplitView_IsPaneOpenToggle" }
         "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
-        "IconElement" { return "GallerySample_IconElement_ExampleButton1" }
+        # BitmapIcon is not a UIA control-view element. Anchor the recording to
+        # its exposed option; the clip still includes the adjacent bitmap, and
+        # Gallery automation asserts the option mutates ShowAsMonochrome.
+        "IconElement" { return "GallerySample_IconElement_MonochromeButton" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_TranslationSlider" }
         "TitleBar" { return "GallerySample_TitleBar_SearchBox" }
         "InfoBadge" { return "GallerySample_InfoBadge_NavigationView" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
+        "WinUIProgressBar" { return "GallerySample_WinUIProgressBar_IndeterminateProgressBar" }
         "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_ScrollViewer" }
         "GridView" { return "GallerySample_GridView_BasicGridView" }
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
@@ -1592,6 +1596,7 @@ function Test-ControlSupportsOptionInteraction([string]$control) {
         "InfoBadge" { return $true }
         "InfoBar" { return $true }
         "ProgressRing" { return $true }
+        "WinUIProgressBar" { return $true }
         default { return $false }
     }
 }
@@ -1605,7 +1610,7 @@ function Test-ControlSupportsScrollInteraction([string]$control) {
 }
 
 function Test-ControlRequiresAnimatedVisualProof([string]$control) {
-    return $control -eq "ProgressRing" -or $control -eq "CommandBarFlyout"
+    return $control -in @("ProgressRing", "WinUIProgressBar", "CommandBarFlyout")
 }
 
 function Test-ControlRequiresDenseTransitionReview([string]$control, [string]$interactionKind) {
@@ -2537,6 +2542,36 @@ function Refresh-ModernWpfVisualArtifacts($window) {
     return $false
 }
 
+function Scroll-ModernWpfSampleIntoView([string]$artifactDir, [string]$automationId) {
+    if ([string]::IsNullOrWhiteSpace($artifactDir) -or [string]::IsNullOrWhiteSpace($automationId)) {
+        return $false
+    }
+
+    $requestPath = Join-Path $artifactDir "modernwpf-gallery-scroll-request.txt"
+    $resultPath = Join-Path $artifactDir "modernwpf-gallery-scroll-result.txt"
+    Set-Content -LiteralPath $resultPath -Value "" -Encoding UTF8
+    Set-Content -LiteralPath $requestPath -Value $automationId -Encoding UTF8
+
+    foreach ($attempt in 1..20) {
+        Start-Sleep -Milliseconds 75
+        if (!(Test-Path -LiteralPath $resultPath)) {
+            continue
+        }
+
+        $result = (Get-Content -Raw -LiteralPath $resultPath).Trim()
+        if ($result -eq "$automationId|NotFound") {
+            return $false
+        }
+
+        $parts = $result.Split('|')
+        if ($parts.Count -eq 6 -and $parts[0] -eq $automationId -and $parts[1] -eq "Found") {
+            return $true
+        }
+    }
+
+    return $false
+}
+
 function Get-RenderedArtifactBoundsPath([string]$artifactDir, [string]$automationId) {
     if ([string]::IsNullOrWhiteSpace($artifactDir) -or [string]::IsNullOrWhiteSpace($automationId)) {
         return ""
@@ -2680,6 +2715,17 @@ function Invoke-OptionElementOnce($window, $element) {
         $pattern = $element.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
         if ($null -ne $pattern) {
             $pattern.Toggle()
+            Start-Sleep -Milliseconds 250
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Select()
             Start-Sleep -Milliseconds 250
             return $true
         }
@@ -4524,12 +4570,14 @@ function Get-OptionInteractionTriggerName([string]$control) {
         "TitleBar" { return "IsBackButtonVisible" }
         "InfoBar" { return "Is Open" }
         "ProgressRing" { return "Progress Options" }
+        "WinUIProgressBar" { return "Paused" }
         default { return "" }
     }
 }
 
 function Get-OptionInteractionTriggerAutomationId([string]$control) {
     switch ($control) {
+        "IconElement" { return "GallerySample_IconElement_MonochromeButton" }
         "SplitView" { return "GallerySample_SplitView_IsPaneOpenToggle" }
         "InfoBadge" { return "ToggleInfoBadgeOpacity" }
         "InfoBar" { return "GallerySample_InfoBar_IsOpenCheckBox" }
@@ -4560,6 +4608,7 @@ function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
     }
 
     $beforeState = Get-ToggleStateName $target
+    $beforeSelectionState = Get-SelectionItemStateName $target
     $beforeSampleEnabled = Get-IsEnabledStateName $sampleElement
     $optionBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $target)
     $sampleBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $sampleElement)
@@ -4573,6 +4622,7 @@ function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
     $invoked = Invoke-OptionElementOnce $window $target
     Start-Sleep -Milliseconds 300
     $afterState = Get-ToggleStateName $target
+    $afterSelectionState = Get-SelectionItemStateName $target
     $afterSampleEnabled = Get-IsEnabledStateName $sampleElement
     $expectedElement = if (![string]::IsNullOrWhiteSpace($expectedElementAutomationId)) {
         Find-ElementByAutomationIdInProcess $window.Current.ProcessId $expectedElementAutomationId
@@ -4584,6 +4634,7 @@ function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
     $expectedElementBounds = Format-BoundingRectangle (Get-ElementBoundingRectangle $expectedElement)
     $stateOrSampleChanged = (
         (![string]::IsNullOrWhiteSpace($beforeState) -and $beforeState -ne $afterState) -or
+        (![string]::IsNullOrWhiteSpace($beforeSelectionState) -and $beforeSelectionState -ne $afterSelectionState) -or
         (![string]::IsNullOrWhiteSpace($beforeSampleEnabled) -and $beforeSampleEnabled -ne $afterSampleEnabled))
     $requiresExpectedElement = ![string]::IsNullOrWhiteSpace($expectedElementAutomationId)
     $expectedElementChanged = $requiresExpectedElement -and !$beforeExpectedElementVisible -and $afterExpectedElementVisible
@@ -4598,6 +4649,8 @@ function Invoke-OptionInteraction($window, [string]$control, $sampleElement) {
         ExpectedElementBounds = $expectedElementBounds
         BeforeState = $beforeState
         AfterState = $afterState
+        BeforeSelectionState = $beforeSelectionState
+        AfterSelectionState = $afterSelectionState
         BeforeSampleEnabled = $beforeSampleEnabled
         AfterSampleEnabled = $afterSampleEnabled
         BeforeExpectedElementVisible = $beforeExpectedElementVisible
@@ -7700,6 +7753,10 @@ foreach ($control in $Controls) {
 
         $sampleId = Get-RequiredSampleAutomationId $control
         $sampleElement = Find-DescendantByAutomationId $window $sampleId
+        if ($null -ne $sampleElement -and (Scroll-ModernWpfSampleIntoView $artifactDir $sampleId)) {
+            Start-Sleep -Milliseconds 180
+            $sampleElement = Find-DescendantByAutomationId $window $sampleId
+        }
         if ($null -eq $sampleElement) {
             if (Test-ControlSupportsRenderedPageArtifactAnchor $control) {
                 $renderedPageArtifactAnchor = Get-RenderedPageArtifactAnchor $artifactDir

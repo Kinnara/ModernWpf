@@ -2,11 +2,15 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
@@ -256,6 +260,19 @@ public class SplitButtonApiTests
             AssertStateSetter(root, "CommonStates", "CheckedSecondaryPointerOver", "SecondaryButtonBorder.BorderBrush");
             AssertStateSetter(root, "CommonStates", "CheckedSecondaryPressed", "SecondaryBackgroundGrid.Background");
             AssertStateSetter(root, "CommonStates", "CheckedSecondaryPressed", "SecondaryButtonBorder.BorderBrush");
+            foreach (var checkedState in new[]
+            {
+                "Checked",
+                "CheckedFlyoutOpen",
+                "CheckedTouchPressed",
+                "CheckedPrimaryPointerOver",
+                "CheckedPrimaryPressed",
+                "CheckedSecondaryPointerOver",
+                "CheckedSecondaryPressed"
+            })
+            {
+                AssertStateSetter(root, "CommonStates", checkedState, null, "Foreground");
+            }
             AssertStateSetter(root, "SecondaryButtonPlacementStates", "SecondaryButtonSpan", "SecondaryButton.(Grid.Column)");
             AssertStateSetter(root, "SecondaryButtonPlacementStates", "SecondaryButtonSpan", "SecondaryButton.(Grid.ColumnSpan)");
 
@@ -268,6 +285,78 @@ public class SplitButtonApiTests
             AssertStateSetter(primaryButtonRoot, "CommonStates", "Disabled", "ContentPresenter.Foreground");
             AssertStateSetter(primaryButtonRoot, "CommonStates", "Disabled", "RootGrid.Background");
             AssertStateSetter(primaryButtonRoot, "CommonStates", "Disabled", "ContentPresenter.BorderBrush");
+        });
+    }
+
+    [TestMethod]
+    public void CheckedToggleSplitButtonIconTracksCheckedForeground()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var icon = new SymbolIcon(Symbol.List);
+            var splitButton = new ToggleSplitButton
+            {
+                Content = icon
+            };
+            var richTextBox = new RichTextBox();
+            var root = new StackPanel();
+            root.Children.Add(splitButton);
+            root.Children.Add(richTextBox);
+            ThemeManager.SetRequestedTheme(root, ElementTheme.Light);
+            splitButton.IsCheckedChanged += delegate { richTextBox.Focus(); };
+
+            using var host = new TestWindowHost(root, width: 220, height: 180);
+            host.UpdateLayout();
+
+            ((IToggleProvider)new ToggleSplitButtonAutomationPeer(splitButton)).Toggle();
+            host.UpdateLayout();
+
+            var expected = splitButton.TryFindResource("SplitButtonForegroundChecked");
+            var primaryButton = FindTemplatePart<System.Windows.Controls.Button>(splitButton, "PrimaryButton");
+            var presenter = VisualTreeTestHelper.FindDescendant<ContentPresenterEx>(primaryButton)
+                ?? throw new AssertFailedException("Expected the primary button content presenter.");
+            var glyph = VisualTreeTestHelper.FindDescendant<TextBlock>(icon)
+                ?? throw new AssertFailedException("Expected the SymbolIcon glyph TextBlock.");
+
+            Assert.AreEqual(Colors.White, ((SolidColorBrush)expected).Color, "The Light checked foreground resource must be white.");
+            Assert.AreSame(expected, primaryButton.Foreground, "The checked state must update the primary button foreground.");
+            Assert.AreSame(expected, presenter.Foreground, "The inner presenter must inherit the checked button foreground.");
+            Assert.AreSame(expected, glyph.Foreground, "The rendered SymbolIcon glyph must use the checked foreground.");
+
+            var width = Math.Max(1, (int)Math.Ceiling(splitButton.ActualWidth));
+            var height = Math.Max(1, (int)Math.Ceiling(splitButton.ActualHeight));
+            var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(splitButton);
+            var pixels = new byte[width * height * 4];
+            bitmap.CopyPixels(pixels, width * 4, 0);
+            var primaryWidth = Math.Max(1, width - 35);
+            var brightPrimaryPixels = 0;
+            var opaquePrimaryPixels = 0;
+            var maxPrimaryRed = 0;
+            var maxPrimaryGreen = 0;
+            var maxPrimaryBlue = 0;
+            for (var y = 0; y < height; y++)
+            {
+                for (var x = 0; x < primaryWidth; x++)
+                {
+                    var offset = ((y * width) + x) * 4;
+                    if (pixels[offset + 3] > 0)
+                    {
+                        opaquePrimaryPixels++;
+                    }
+                    maxPrimaryBlue = Math.Max(maxPrimaryBlue, pixels[offset]);
+                    maxPrimaryGreen = Math.Max(maxPrimaryGreen, pixels[offset + 1]);
+                    maxPrimaryRed = Math.Max(maxPrimaryRed, pixels[offset + 2]);
+                    if (pixels[offset] >= 220 && pixels[offset + 1] >= 220 && pixels[offset + 2] >= 220)
+                    {
+                        brightPrimaryPixels++;
+                    }
+                }
+            }
+
+            Assert.IsTrue(brightPrimaryPixels >= 10, $"The checked primary glyph must rasterize in the light on-accent color; size={width}x{height}, primaryWidth={primaryWidth}, bright={brightPrimaryPixels}, opaque={opaquePrimaryPixels}, maxima=R{maxPrimaryRed}/G{maxPrimaryGreen}/B{maxPrimaryBlue}.");
         });
     }
 

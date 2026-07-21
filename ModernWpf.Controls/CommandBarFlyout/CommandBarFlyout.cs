@@ -7,9 +7,11 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Markup;
 using ModernWpf.Controls.Primitives;
 
@@ -105,6 +107,13 @@ namespace ModernWpf.Controls
             Opening += delegate
             {
                 InternalPopup.SuppressFadeAnimation = true;
+                // The expanded command list is hosted in a child HWND. WPF's
+                // built-in Popup light-dismiss capture treats that HWND as an
+                // outside surface, starving both primary and secondary command
+                // buttons of their normal pointer states. Keep the outer popup
+                // open and light-dismiss the two related surfaces as one tree.
+                InternalPopup.StaysOpen = true;
+                StartLightDismissTracking();
 
                 if (m_commandBar is { } commandBar)
                 {
@@ -176,6 +185,8 @@ namespace ModernWpf.Controls
 
             Closed += delegate
             {
+                StopLightDismissTracking();
+
                 if (m_commandBar != null)
                 {
                     if (m_commandBar.IsOpen)
@@ -218,7 +229,13 @@ namespace ModernWpf.Controls
                 Padding = new Thickness(0),
                 Content = commandBar,
                 CornerRadius = new CornerRadius(0),
-                IsDefaultShadowEnabled = false
+                // WPF measures a Popup as soon as its child is assigned. If the
+                // shadow is enabled only from Opening, the first HWND keeps the
+                // unshadowed 221x60 size and clips the reserved 10/2/10/18
+                // shadow insets (including the right side of the More button).
+                // WinUI's compositor shadow does not participate in layout, so
+                // prime the WPF substitute before that first popup measure.
+                IsDefaultShadowEnabled = PrimaryCommands.Count > 0
             };
 
             m_presenter = presenter;
@@ -258,6 +275,7 @@ namespace ModernWpf.Controls
 
         protected override void OnPresenterReleased()
         {
+            StopLightDismissTracking();
             m_commandBar?.ReleaseCommandElements();
             m_commandBar = null;
             m_presenter = null;
@@ -413,6 +431,115 @@ namespace ModernWpf.Controls
             m_commandBar?.OnCommandBarElementDependencyPropertyChanged();
         }
 
+        private void StartLightDismissTracking()
+        {
+            InputManager.Current.PreProcessInput -= OnPreProcessInput;
+            InputManager.Current.PreProcessInput += OnPreProcessInput;
+
+            var ownerWindow = Window.GetWindow(Target);
+            if (!ReferenceEquals(m_lightDismissOwnerWindow, ownerWindow))
+            {
+                if (m_lightDismissOwnerWindow != null)
+                {
+                    m_lightDismissOwnerWindow.Deactivated -= OnLightDismissOwnerDeactivated;
+                }
+
+                m_lightDismissOwnerWindow = ownerWindow;
+                if (m_lightDismissOwnerWindow != null)
+                {
+                    m_lightDismissOwnerWindow.Deactivated += OnLightDismissOwnerDeactivated;
+                }
+            }
+        }
+
+        private void StopLightDismissTracking()
+        {
+            InputManager.Current.PreProcessInput -= OnPreProcessInput;
+
+            if (m_lightDismissOwnerWindow != null)
+            {
+                m_lightDismissOwnerWindow.Deactivated -= OnLightDismissOwnerDeactivated;
+                m_lightDismissOwnerWindow = null;
+            }
+
+            m_isLightDismissing = false;
+        }
+
+        private void OnPreProcessInput(object sender, PreProcessInputEventArgs args)
+        {
+            if (!IsOpen || m_isLightDismissing || !IsPointerDown(args.StagingItem.Input))
+            {
+                return;
+            }
+
+            if (IsPointerInsideFlyoutSurface())
+            {
+                return;
+            }
+
+            m_isLightDismissing = true;
+            try
+            {
+                Hide();
+            }
+            finally
+            {
+                m_isLightDismissing = false;
+            }
+        }
+
+        private void OnLightDismissOwnerDeactivated(object sender, EventArgs args)
+        {
+            if (IsOpen && !m_isLightDismissing)
+            {
+                m_isLightDismissing = true;
+                try
+                {
+                    Hide();
+                }
+                finally
+                {
+                    m_isLightDismissing = false;
+                }
+            }
+        }
+
+        private bool IsPointerInsideFlyoutSurface()
+        {
+            return IsPointerInsideElement(m_presenter) ||
+                   m_commandBar?.IsPointerInsideOverflowPopup() == true;
+        }
+
+        private static bool IsPointerDown(InputEventArgs args)
+        {
+            return (args is MouseButtonEventArgs mouseArgs &&
+                    mouseArgs.ButtonState == MouseButtonState.Pressed) ||
+                   (args is TouchEventArgs touchArgs &&
+                    touchArgs.RoutedEvent == UIElement.TouchDownEvent) ||
+                   (args is StylusEventArgs stylusArgs &&
+                    stylusArgs.RoutedEvent == UIElement.StylusDownEvent);
+        }
+
+        private static bool IsPointerInsideElement(FrameworkElement element)
+        {
+            if (element == null || !element.IsVisible || !GetCursorPos(out var point))
+            {
+                return false;
+            }
+
+            try
+            {
+                var topLeft = element.PointToScreen(new Point());
+                var bottomRight = element.PointToScreen(new Point(element.ActualWidth, element.ActualHeight));
+                return point.X >= topLeft.X && point.X < bottomRight.X &&
+                       point.Y >= topLeft.Y && point.Y < bottomRight.Y;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
+            }
+        }
+
         private static void RevokeAndRemove(IDictionary<ICommandBarElement, RoutedEventHandlerRevoker> map, ICommandBarElement element)
         {
             if (map.TryGetValue(element, out var revoker))
@@ -444,7 +571,21 @@ namespace ModernWpf.Controls
 
         FlyoutPresenter m_presenter;
 
+        Window m_lightDismissOwnerWindow;
+
+        bool m_isLightDismissing;
+
         bool m_isClosingAfterCloseAnimation;
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct NativePoint
+        {
+            public int X;
+            public int Y;
+        }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool GetCursorPos(out NativePoint point);
 
         private sealed class DependencyPropertyChangedRevoker
         {

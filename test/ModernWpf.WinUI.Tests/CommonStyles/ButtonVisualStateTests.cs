@@ -1,11 +1,13 @@
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Markup;
+using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
@@ -251,6 +253,37 @@ public class ButtonVisualStateTests
                 "SystemColorHighlightColorBrush",
                 "SystemColorHighlightTextColorBrush",
                 "SystemControlDisabledTransparentBrush");
+        });
+    }
+
+    [TestMethod]
+    public void SystemFocusAdornerDoesNotClipNegativeMarginRing()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var button = CreateButton("Focus");
+            FocusVisualHelper.SetFocusVisualMargin(button, new Thickness(-3));
+            using var host = new TestWindowHost(button, width: 140, height: 80);
+            host.UpdateLayout();
+            var focusVisualStyle = (Style)Application.Current.FindResource(SystemParameters.FocusVisualStyleKey);
+            var adornerType = typeof(FocusVisualHelper).GetNestedType("FocusVisualAdorner", BindingFlags.NonPublic)
+                ?? throw new AssertFailedException("FocusVisualAdorner type was not found.");
+            var constructor = adornerType.GetConstructor(
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                binder: null,
+                new[] { typeof(Control), typeof(UIElement), typeof(Style) },
+                modifiers: null)
+                ?? throw new AssertFailedException("FocusVisualAdorner constructor was not found.");
+
+            var adorner = (Adorner)constructor.Invoke(new object[] { button, button, focusVisualStyle });
+            Assert.IsFalse(
+                adorner.IsClipEnabled,
+                "A negative WinUI FocusVisualMargin must be allowed to paint all four strokes outside the inner focus target.");
+            Assert.AreEqual(1, VisualTreeHelper.GetChildrenCount(adorner));
+            var focusVisual = (Control)VisualTreeHelper.GetChild(adorner, 0);
+            Assert.AreEqual(new Thickness(-3), focusVisual.Margin);
         });
     }
 

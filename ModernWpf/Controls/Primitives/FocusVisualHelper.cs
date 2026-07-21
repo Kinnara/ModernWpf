@@ -538,7 +538,13 @@ namespace ModernWpf.Controls.Primitives
                 TransferValue(focusedElement, control, FocusVisualSecondaryThicknessProperty);
                 TransferValue(focusedElement, control, System.Windows.Controls.Border.CornerRadiusProperty);
                 _adorderChild = control;
-                IsClipEnabled = true;
+                // FocusVisualMargin is negative for the WinUI controls whose
+                // focus ring intentionally extends beyond the template focus
+                // target. Clipping the adorner to that inner target removes
+                // its top and left strokes (and can square the remaining
+                // corners), producing only an L-shaped ring. Let the adorner
+                // render the complete margin-expanded focus visual.
+                IsClipEnabled = false;
                 IsHitTestVisible = false;
                 IsEnabled = false;
                 AddVisualChild(_adorderChild);
