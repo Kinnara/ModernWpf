@@ -192,6 +192,7 @@ namespace ModernWpf.Gallery.Tests
                 var expectedNavigationItemRightMargin = SystemParameters.HighContrast ? 2 : 0;
                 var expectedTopLevelContentLeft = SystemParameters.HighContrast ? 20 : 32;
                 var expectedChildGlyphContentLeft = SystemParameters.HighContrast ? -12 : 0;
+                var expectedModernWpfChildGlyphContentLeft = expectedChildGlyphContentLeft - 20;
                 var expectedChildTextContentLeft = SystemParameters.HighContrast ? 4 : 16;
                 var expectedTopLevelContentTop = SystemParameters.HighContrast ? -2 : 0;
                 var expectedChildItemMargin = SystemParameters.HighContrast
@@ -242,7 +243,7 @@ namespace ModernWpf.Gallery.Tests
                 foreach (var modernWpfChild in modernWpfItems)
                 {
                     AssertFontIconGlyph(modernWpfChild, "\uE729");
-                    AssertNavigationItemContentMargin(modernWpfChild, expectedChildGlyphContentLeft);
+                    AssertNavigationItemContentMargin(modernWpfChild, expectedModernWpfChildGlyphContentLeft);
                 }
 
                 var settingsButton = (Button)page.FindName("SettingsButton");
@@ -566,6 +567,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertTextTop(page, navigationItem, "\uE700", expectedGroupGlyphTop, "Navigation glyph");
                     AssertTextTop(page, navigationItem, "Navigation", expectedGroupTextTop, "Navigation text");
                     AssertTextLeft(page, menuItem, "Menu", expectedChildTextLeft, "Menu child text");
+                    AssertNavigationItemContentVerticallyCentered(page, menuItem, new[] { "Menu" }, "Menu child row");
                     var paneBackground = (Brush)navigation.Resources["NavigationViewExpandedPaneBackground"];
                     var menuScrollViewer = FindVisualChildren<ScrollViewer>(navigation)
                         .Single(scrollViewer => string.Equals(scrollViewer.Name, "MenuItemsScrollViewer", StringComparison.Ordinal));
@@ -625,7 +627,8 @@ namespace ModernWpf.Gallery.Tests
                     AssertSelectionIndicatorBounds(menuItem, 12, 19, "Menu child selection indicator");
                     AssertNavigationItemLayoutRootMargin(navigationItem, new Thickness(4, 2, 4, 2), "Navigation child-selected row background");
                     AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(12, 7, -5, -5), "Menu selected child row background");
-                    AssertNavigationItemContentMargin(menuItem, expectedChildSelectedContentLeft, -13, "Menu selected child content");
+                    AssertNavigationItemContentMargin(menuItem, expectedChildSelectedContentLeft, 0, "Menu selected child content");
+                    AssertNavigationItemContentVerticallyCentered(page, menuItem, new[] { "Menu" }, "Menu selected child row");
                     Assert.IsInstanceOfType(contentHost.Content, typeof(ItemPage));
 
                     page.NavigateTo("category/Navigation");
@@ -636,6 +639,76 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsFalse(menuItem.IsSelected, "Menu should not keep item selection after category navigation.");
                     AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(4, 2, 4, 2), "Menu deselected child row background");
                     AssertNavigationItemContentMargin(menuItem, expectedChildDeselectedContentLeft, 0, "Menu deselected child content");
+                    AssertNavigationItemContentVerticallyCentered(page, menuItem, new[] { "Menu" }, "Menu deselected child row");
+                });
+            });
+        }
+
+        [TestMethod]
+        public void ShellModernWpfChildGlyphsShareTheirParentColumns()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new NavigationRootPage();
+                RenderPage(page, () =>
+                {
+                    var navigation = GetNavigationView(page);
+                    var modernWpfItem = navigation.MenuItems.OfType<NavigationViewItem>()
+                        .Single(item => string.Equals(GetNavigationItemText(item), "ModernWpf controls", StringComparison.Ordinal));
+                    var navigationViewItem = modernWpfItem.MenuItems.OfType<NavigationViewItem>()
+                        .Single(item => string.Equals(GetNavigationItemText(item), "NavigationView", StringComparison.Ordinal));
+
+                    modernWpfItem.IsExpanded = true;
+                    navigationViewItem.BringIntoView();
+                    WpfTestHost.DoEvents();
+                    page.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var parentGlyph = FindVisualChildren<TextBlock>(modernWpfItem)
+                        .Single(text => string.Equals(text.Text, "\uEA37", StringComparison.Ordinal));
+                    var parentTitle = FindVisualChildren<TextBlock>(modernWpfItem)
+                        .Single(text => string.Equals(text.Text, "ModernWpf controls", StringComparison.Ordinal));
+                    var childGlyph = FindVisualChildren<TextBlock>(navigationViewItem)
+                        .Single(text => string.Equals(text.Text, "\uE729", StringComparison.Ordinal));
+                    var childTitle = FindVisualChildren<TextBlock>(navigationViewItem)
+                        .Single(text => string.Equals(text.Text, "NavigationView", StringComparison.Ordinal));
+
+                    void AssertSharedColumns(string state)
+                    {
+                        Assert.AreEqual(
+                            GetElementBounds(page, parentGlyph).Left,
+                            GetElementBounds(page, childGlyph).Left,
+                            1.0,
+                            $"The {state} fallback child glyph must remain in the parent glyph column.");
+                        Assert.AreEqual(
+                            GetElementBounds(page, parentTitle).Left,
+                            GetElementBounds(page, childTitle).Left,
+                            1.0,
+                            $"The {state} fallback child label must remain in the parent text column.");
+                    }
+
+                    AssertSharedColumns("expanded");
+                    AssertNavigationItemContentVerticallyCentered(
+                        page,
+                        navigationViewItem,
+                        new[] { "\uE729", "NavigationView" },
+                        "ModernWpf expanded child row");
+                    Assert.AreEqual(
+                        GetElementBounds(page, modernWpfItem).Left + 20,
+                        GetElementBounds(page, navigationViewItem).Left,
+                        1.0,
+                        "Only the child row container should carry the hierarchy indent.");
+
+                    page.NavigateTo("item/NavigationView");
+                    WpfTestHost.DoEvents();
+                    page.UpdateLayout();
+                    WpfTestHost.DoEvents();
+                    AssertSharedColumns("selected");
+                    AssertNavigationItemContentVerticallyCentered(
+                        page,
+                        navigationViewItem,
+                        new[] { "\uE729", "NavigationView" },
+                        "ModernWpf selected child row");
                 });
             });
         }

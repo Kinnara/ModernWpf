@@ -123,13 +123,14 @@ namespace ModernWpf.Gallery.Shell
         // Segoe Fluent glyphs rendered by SymbolIcon for Symbol.List and Symbol.Page.
         private const string DefaultNavigationGroupGlyph = "\uEA37";
         private const string DefaultNavigationItemGlyph = "\uE729";
+        private const double DefaultNavigationItemGlyphContentLeftOffset = -20;
         private const double DefaultTopLevelNavigationContentVerticalOffset = 0;
-        private const double DefaultChildNavigationContentVerticalOffset = 16;
+        private const double ChildNavigationContentVerticalOffset = 0;
         private static readonly Thickness DefaultNavigationSelectionIndicatorMargin = new Thickness(4, 0, 0, 0);
         private static readonly Thickness ChildNavigationSelectionIndicatorMargin = new Thickness(-31, 0, 0, -6);
         private static readonly Thickness DefaultNavigationItemButtonMargin = new Thickness(4, 2, 4, 2);
         private static readonly Thickness ChildNavigationSelectedBackgroundMargin = new Thickness(12, 7, -5, -5);
-        private static readonly Thickness ChildNavigationSelectedContentOffset = new Thickness(-8, -13, 0, 0);
+        private static readonly Thickness ChildNavigationSelectedContentOffset = new Thickness(-8, 0, 0, 0);
         private static readonly Color WpfGalleryLightNavigationPaneBackgroundColor = Color.FromRgb(250, 250, 250);
 
         private static double TopLevelNavigationContentLeftMargin => SystemParameters.HighContrast ? 20 : DefaultTopLevelNavigationContentLeftMargin;
@@ -137,7 +138,6 @@ namespace ModernWpf.Gallery.Shell
         private static double ChildTextNavigationContentLeftMargin => SystemParameters.HighContrast ? 4 : DefaultChildTextNavigationContentLeftMargin;
         private static double GroupNavigationContentLeftMargin => SystemParameters.HighContrast ? -4 : DefaultGroupNavigationContentLeftMargin;
         private static double TopLevelNavigationContentVerticalOffset => SystemParameters.HighContrast ? -2 : DefaultTopLevelNavigationContentVerticalOffset;
-        private static double ChildNavigationContentVerticalOffset => SystemParameters.HighContrast ? 0 : DefaultChildNavigationContentVerticalOffset;
 
         public NavigationRootPage()
         {
@@ -429,10 +429,20 @@ namespace ModernWpf.Gallery.Shell
             return CreateNavigationGlyphContent(
                 title,
                 glyph,
-                target.Kind == NavigationTargetKind.Item ? ChildGlyphNavigationContentLeftMargin : TopLevelNavigationContentLeftMargin,
+                target.Kind == NavigationTargetKind.Item ? GetChildGlyphNavigationContentLeftMargin(glyph) : TopLevelNavigationContentLeftMargin,
                 16,
                 verticalOffset,
                 showDisclosureChevron);
+        }
+
+        private static double GetChildGlyphNavigationContentLeftMargin(string glyph)
+        {
+            // The child container already supplies the hierarchy indent. Keep the
+            // fallback page glyph and its label in the parent icon/text columns.
+            return ChildGlyphNavigationContentLeftMargin +
+                (string.Equals(glyph, DefaultNavigationItemGlyph, StringComparison.Ordinal)
+                    ? DefaultNavigationItemGlyphContentLeftOffset
+                    : 0);
         }
 
         private static string GetFontIconGlyph(IconElement icon)
@@ -1201,7 +1211,10 @@ namespace ModernWpf.Gallery.Shell
         {
             if (item.Tag is NavigationTarget { Kind: NavigationTargetKind.Item })
             {
-                return new Thickness(item.Content is Grid { Tag: string } ? ChildGlyphNavigationContentLeftMargin : ChildTextNavigationContentLeftMargin, 0, 0, 0);
+                var left = item.Content is Grid { Tag: string glyph }
+                    ? GetChildGlyphNavigationContentLeftMargin(glyph)
+                    : ChildTextNavigationContentLeftMargin;
+                return new Thickness(left, 0, 0, 0);
             }
 
             if (item.Tag is NavigationTarget { Kind: NavigationTargetKind.Group })
