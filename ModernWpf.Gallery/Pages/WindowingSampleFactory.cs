@@ -361,6 +361,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             var options = new StackPanel
             {
                 Width = 240,
+                MinHeight = 280,
                 Orientation = Orientation.Vertical
             };
             // WinUI TextBox reserves an 8-DIP gap between its built-in Header

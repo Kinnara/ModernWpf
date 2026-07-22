@@ -40,7 +40,7 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(commandBar, "maximumWidth - Math.Max(36, m_moreButton.DesiredSize.Width) - panelMargin - 3");
             StringAssert.Contains(commandBar, "m_dynamicOverflowSeparator ??= new AppBarSeparator");
             StringAssert.Contains(commandBar, "GetDisplayedSecondaryCommands()");
-            StringAssert.Contains(flyout, "if (AlwaysExpanded && IsOpen)");
+            StringAssert.Contains(flyout, "if (AlwaysExpanded && IsOpen && !m_isClosingAfterCloseAnimation)");
             StringAssert.Contains(flyout, "CommandBarFlyoutCommandBar.IsOpenProperty, true");
             StringAssert.Contains(template, "CommandBarFlyoutEllipsisButtonStyle");
             StringAssert.Contains(template, "<Setter Property=\"MinWidth\" Value=\"136\" />");
