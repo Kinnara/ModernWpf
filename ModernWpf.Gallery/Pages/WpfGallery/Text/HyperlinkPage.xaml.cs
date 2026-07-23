@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 
@@ -20,7 +20,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Text
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            NavigationStatusText.Text = "Navigation request: " + e.Uri.AbsoluteUri;
+            NavigationStatusText.Visibility = Visibility.Visible;
             e.Handled = true;
         }
     }

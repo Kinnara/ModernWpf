@@ -101,7 +101,6 @@ namespace ModernWpf.Gallery.Tests
             var expected = new[]
             {
                 "Design Guidance",
-                "Samples",
                 "Basic Input",
                 "Collections",
                 "Date & Calendar",
@@ -109,8 +108,6 @@ namespace ModernWpf.Gallery.Tests
                 "Navigation",
                 "Status & Info",
                 "Text",
-                "System",
-                "Media Controls",
                 "ModernWpf controls"
             };
 
@@ -124,7 +121,6 @@ namespace ModernWpf.Gallery.Tests
         [DataRow("Basic Input", "BasicInput")]
         [DataRow("Date & Calendar", "DateAndCalendar")]
         [DataRow("Status & Info", "StatusAndInfo")]
-        [DataRow("Media Controls", "Media")]
         [DataRow("ModernWpf controls", "ModernWpfControls")]
         public void FindGroupAcceptsOfficialAndDisplayedUniqueIds(string lookupId, string expectedUniqueId)
         {
@@ -137,8 +133,7 @@ namespace ModernWpf.Gallery.Tests
         [DataTestMethod]
         [DataRow("Colors", "Color", "DesignGuidance")]
         [DataRow("Icons", "Iconography", "DesignGuidance")]
-        [DataRow("File and Folder Dialogs", "FileAndFolderDialogs", "System")]
-        [DataRow("User Dashboard", "UserDashboard", "Samples")]
+        [DataRow("RichTextEdit", "RichTextBox", "Text")]
         public void FindItemAcceptsOfficialAndDisplayedUniqueIds(string lookupId, string expectedUniqueId, string expectedGroupId)
         {
             var item = GalleryCatalog.FindItem(lookupId);
@@ -148,6 +143,19 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(expectedUniqueId, item.UniqueId);
             Assert.IsNotNull(group);
             Assert.AreEqual(expectedGroupId, group.UniqueId);
+        }
+
+        [DataTestMethod]
+        [DataRow("UserDashboard")]
+        [DataRow("FileAndFolderDialogs")]
+        [DataRow("MessageBox")]
+        [DataRow("Clipboard")]
+        [DataRow("Canvas")]
+        [DataRow("Image")]
+        public void RetiredWpfGalleryPagesAreNotInThePublicCatalog(string uniqueId)
+        {
+            Assert.IsNull(GalleryCatalog.FindItem(uniqueId));
+            Assert.IsFalse(GalleryCatalog.Items.Any(item => string.Equals(item.UniqueId, uniqueId, StringComparison.OrdinalIgnoreCase)));
         }
 
         [TestMethod]
@@ -161,17 +169,17 @@ namespace ModernWpf.Gallery.Tests
                 "Layout",
                 "Navigation",
                 "StatusAndInfo",
-                "Text",
-                "System"
+                "Text"
             };
 
             var actual = GalleryCatalog.OverviewGroups.Select(group => group.UniqueId).ToArray();
 
             CollectionAssert.AreEqual(expected, actual);
             Assert.IsFalse(actual.Contains("DesignGuidance"));
-            Assert.IsFalse(actual.Contains("Media"));
-            Assert.IsFalse(actual.Contains("Samples"));
             Assert.IsFalse(actual.Contains("ModernWpfControls"));
+            Assert.IsNull(GalleryCatalog.FindGroup("Media"));
+            Assert.IsNull(GalleryCatalog.FindGroup("Samples"));
+            Assert.IsNull(GalleryCatalog.FindGroup("System"));
             Assert.IsNotNull(GalleryCatalog.FindGroup("ModernWpfControls"));
         }
 
@@ -215,20 +223,17 @@ namespace ModernWpf.Gallery.Tests
                     "Label",
                     "TextBox",
                     "TextBlock",
-                    "RichTextEdit",
+                    "RichTextBox",
                     "PasswordBox",
-                    "Hyperlink",
-                    "FileAndFolderDialogs",
-                    "MessageBox",
-                    "Clipboard"
+                    "Hyperlink"
                 },
                 allControlIds,
                 "All Controls should keep the official WPF Gallery item sequence and content extent.");
 
-            Assert.IsFalse(allControlIds.Contains("UserDashboard"), "The official WPF Gallery excludes the Samples section from All Controls.");
-            Assert.IsFalse(allControlIds.Contains("Canvas"), "The current official WPF Gallery catalog omits the orphaned Media group from All Controls.");
-            Assert.IsFalse(allControlIds.Contains("Image"), "The current official WPF Gallery catalog omits the orphaned Media group from All Controls.");
-            Assert.IsNotNull(GalleryCatalog.FindGroup("Media"), "ModernWpf still exposes the orphaned Media pages as a dedicated combined-gallery section.");
+            Assert.IsFalse(allControlIds.Contains("UserDashboard"), "Scenario-only samples are excluded from the ModernWpf control gallery.");
+            Assert.IsFalse(allControlIds.Contains("Canvas"), "The orphaned Media pages are excluded from the ModernWpf control gallery.");
+            Assert.IsFalse(allControlIds.Contains("Image"), "The orphaned Media pages are excluded from the ModernWpf control gallery.");
+            Assert.IsNull(GalleryCatalog.FindGroup("Media"), "The orphaned Media section should not remain navigable.");
             Assert.IsTrue(allControlIds.Contains("Color"), "Design guidance items remain part of All Controls.");
             Assert.IsFalse(allControlIds.Contains("NavigationView"), "ModernWpf/WinUI extension pages stay in their own navigation sections so All Controls matches the official WPF Gallery.");
             Assert.IsNotNull(GalleryCatalog.FindItem("NavigationView"), "ModernWpf control pages remain reachable outside the WPF Gallery All Controls page.");
@@ -247,16 +252,13 @@ namespace ModernWpf.Gallery.Tests
             var expected = new[]
             {
                 new { UniqueId = "DesignGuidance", PageDescription = "Design guidelines on how to use colors, typography, and icons in your app." },
-                new { UniqueId = "Samples", PageDescription = "Sample pages for common scenarios" },
                 new { UniqueId = "BasicInput", PageDescription = "Controls for getting user input" },
                 new { UniqueId = "Collections", PageDescription = "Controls for collection presentation" },
                 new { UniqueId = "DateAndCalendar", PageDescription = "Controls for date and calendar" },
                 new { UniqueId = "Layout", PageDescription = "Controls for layouting" },
-                new { UniqueId = "Media", PageDescription = "Controls for media presentation" },
                 new { UniqueId = "Navigation", PageDescription = "Controls for navigation and actions" },
                 new { UniqueId = "StatusAndInfo", PageDescription = "Controls to show progress and extra information" },
-                new { UniqueId = "Text", PageDescription = "Controls for displaying and editing text" },
-                new { UniqueId = "System", PageDescription = "System-level controls and dialogs" }
+                new { UniqueId = "Text", PageDescription = "Controls for displaying and editing text" }
             };
 
             foreach (var item in expected)
@@ -298,7 +300,6 @@ namespace ModernWpf.Gallery.Tests
                 new { UniqueId = "Spacing", ImageFileName = "Spacing.png" },
                 new { UniqueId = "Geometry", ImageFileName = "Border.png" },
                 new { UniqueId = "Iconography", ImageFileName = "IconElement.png" },
-                new { UniqueId = "UserDashboard", ImageFileName = "PersonPicture.png" },
                 new { UniqueId = "Button", ImageFileName = "Button.png" },
                 new { UniqueId = "CheckBox", ImageFileName = "Checkbox.png" },
                 new { UniqueId = "ComboBox", ImageFileName = "Checkbox.png" },
@@ -317,8 +318,6 @@ namespace ModernWpf.Gallery.Tests
                 new { UniqueId = "GroupBox", ImageFileName = "GroupBox.png" },
                 new { UniqueId = "StackPanel", ImageFileName = "StackPanel.png" },
                 new { UniqueId = "Border", ImageFileName = "Border.png" },
-                new { UniqueId = "Canvas", ImageFileName = "Canvas.png" },
-                new { UniqueId = "Image", ImageFileName = "Image.png" },
                 new { UniqueId = "Menu", ImageFileName = "MenuBar.png" },
                 new { UniqueId = "TabControl", ImageFileName = "TabView.png" },
                 new { UniqueId = "Frame", ImageFileName = "MenuBar.png" },
@@ -328,12 +327,9 @@ namespace ModernWpf.Gallery.Tests
                 new { UniqueId = "Label", ImageFileName = "Button.png" },
                 new { UniqueId = "TextBox", ImageFileName = "TextBox.png" },
                 new { UniqueId = "TextBlock", ImageFileName = "TextBlock.png" },
-                new { UniqueId = "RichTextEdit", ImageFileName = "RichEditBox.png" },
+                new { UniqueId = "RichTextBox", ImageFileName = "RichEditBox.png" },
                 new { UniqueId = "PasswordBox", ImageFileName = "PasswordBox.png" },
-                new { UniqueId = "Hyperlink", ImageFileName = "HyperlinkButton.png" },
-                new { UniqueId = "FileAndFolderDialogs", ImageFileName = "FilePicker.png" },
-                new { UniqueId = "MessageBox", ImageFileName = "ContentDialog.png" },
-                new { UniqueId = "Clipboard", ImageFileName = "Clipboard.png" }
+                new { UniqueId = "Hyperlink", ImageFileName = "HyperlinkButton.png" }
             };
 
             foreach (var item in expected)
@@ -349,11 +345,9 @@ namespace ModernWpf.Gallery.Tests
             AssertGroupCard("Collections", "Collections", "DataGrid, ListBox, ListView, TreeView", "DataGrid.png");
             AssertGroupCard("DateAndCalendar", "Date & Calendar", "Calendar, DatePicker", "CalendarView.png");
             AssertGroupCard("Layout", "Layout", "Expander,Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border", "Expander.png");
-            AssertGroupCard("Media", "Media Controls", "Canvas, Image", "Image.png");
             AssertGroupCard("Navigation", "Navigation", "Menu, TabControl, Frame, NavigationWindow", "MenuBar.png");
             AssertGroupCard("StatusAndInfo", "Status & Info", "ProgressBar, ToolTip", "ProgressBar.png");
-            AssertGroupCard("Text", "Text", "Label, TextBox, TextBlock, RichTextEdit, PasswordBox", "TextBlock.png");
-            AssertGroupCard("System", "System", "File and Folder Dialogs, MessageBox, Clipboard", "FilePicker.png");
+            AssertGroupCard("Text", "Text", "Label, TextBox, TextBlock, RichTextBox, PasswordBox", "TextBlock.png");
         }
 
         [TestMethod]
@@ -374,9 +368,9 @@ namespace ModernWpf.Gallery.Tests
                 "Frame",
                 "NavigationWindow",
                 "TextBox",
-                "FileAndFolderDialogs",
-                "MessageBox",
-                "Clipboard"
+                "Popup",
+                "SelectorBar",
+                "ThemeShadow"
             };
 
             var actual = GalleryCatalog.NewOrUpdatedItems.Select(item => item.UniqueId).ToArray();
@@ -417,7 +411,7 @@ namespace ModernWpf.Gallery.Tests
         {
             foreach (var item in GalleryCatalog.Items)
             {
-                Assert.IsNotNull(GalleryCatalog.FindGroup(item.GroupId), "Missing group '{0}' for '{1}'.", item.GroupId, item.UniqueId);
+                Assert.IsNotNull(GalleryCatalog.FindDisplayGroupForItem(item.UniqueId), "Missing display group for '{0}'.", item.UniqueId);
 
                 foreach (var relatedControlId in item.RelatedControlIds)
                 {
@@ -626,9 +620,12 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void ControlImageResourcesMatchRetainedCatalogImages()
         {
-            var retainedSampleImageResources = new[]
+            var retainedReferenceImageResources = new[]
             {
-                "assets/controlimages/combobox.png"
+                "assets/controlimages/canvas.png",
+                "assets/controlimages/clipboard.png",
+                "assets/controlimages/combobox.png",
+                "assets/controlimages/filepicker.png"
             };
 
             var expectedImageResources = GalleryCatalog.Groups
@@ -638,7 +635,7 @@ namespace ModernWpf.Gallery.Tests
                 .Concat(GalleryCatalogData.Groups.SelectMany(group => group.Items.Select(item => item.ImagePath)))
                 .Where(path => path.IndexOf("/Assets/ControlImages/", StringComparison.OrdinalIgnoreCase) >= 0)
                 .Select(GetGalleryResourceKey)
-                .Concat(retainedSampleImageResources)
+                .Concat(retainedReferenceImageResources)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
                 .ToArray();
@@ -869,8 +866,8 @@ namespace ModernWpf.Gallery.Tests
         [TestMethod]
         public void CatalogContainsWpfFirstGallerySurface()
         {
-            Assert.AreEqual(12, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(78, GalleryCatalog.Items.Count);
+            Assert.AreEqual(9, GalleryCatalog.Groups.Count);
+            Assert.AreEqual(72, GalleryCatalog.Items.Count);
         }
 
         [TestMethod]

@@ -174,25 +174,23 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(new CornerRadius(8, 0, 0, 0), contentFrameBorder.CornerRadius);
 
                 CollectionAssert.AreEqual(
-                    new[] { "Home", "What's New", "Design Guidance", "Samples", "All Controls", "Basic Input" },
-                    topLevelItems.Take(6).Select(GetNavigationItemText).ToArray());
+                    new[] { "Home", "What's New", "Design Guidance", "All Controls", "Basic Input" },
+                    topLevelItems.Take(5).Select(GetNavigationItemText).ToArray());
                 CollectionAssert.AreEqual(
-                    new[] { "Layout", "Navigation", "Status & Info", "Text", "System", "Media Controls", "ModernWpf controls" },
-                    topLevelItems.Skip(8).Select(GetNavigationItemText).ToArray());
-                Assert.AreEqual(15, topLevelItems.Count, "Deleted navigation groups should not remain in the shell menu.");
+                    new[] { "Collections", "Date & Calendar", "Layout", "Navigation", "Status & Info", "Text", "ModernWpf controls" },
+                    topLevelItems.Skip(5).Select(GetNavigationItemText).ToArray());
+                Assert.AreEqual(12, topLevelItems.Count, "Retired navigation groups should not remain in the shell menu.");
 
                 AssertFontIconGlyph(topLevelItems[0], "\uE80F");
                 AssertFontIconGlyph(topLevelItems[1], "\uEB51");
                 AssertFontIconGlyph(topLevelItems[2], "\uEB3C");
-                AssertFontIconGlyph(topLevelItems[3], "\uEF58");
-                AssertFontIconGlyph(topLevelItems[4], "\uE8A9");
-                AssertFontIconGlyph(topLevelItems[5], "\uE73A");
+                AssertFontIconGlyph(topLevelItems[3], "\uE8A9");
+                AssertFontIconGlyph(topLevelItems[4], "\uE73A");
                 AssertNavigationItemsDoNotExposeLocalAutomationIds(topLevelItems);
                 Assert.IsInstanceOfType(topLevelItems[0].Content, typeof(string));
                 Assert.AreEqual("Home", topLevelItems[0].Content);
                 Assert.IsFalse(topLevelItems[2].IsExpanded);
-                Assert.IsFalse(topLevelItems[3].IsExpanded);
-                Assert.IsFalse(topLevelItems[5].IsExpanded);
+                Assert.IsFalse(topLevelItems[4].IsExpanded);
 
                 var designGuidanceItems = topLevelItems[2].MenuItems.OfType<NavigationViewItem>().ToList();
                 CollectionAssert.AreEqual(
@@ -201,19 +199,11 @@ namespace ModernWpf.Gallery.Tests
                 AssertFontIconGlyph(designGuidanceItems[0], "\uE790");
                 Assert.AreEqual("Colors", designGuidanceItems[0].Content);
 
-                var basicInputItems = topLevelItems[5].MenuItems.OfType<NavigationViewItem>().ToList();
+                var basicInputItems = topLevelItems[4].MenuItems.OfType<NavigationViewItem>().ToList();
                 Assert.IsNull(basicInputItems[0].Icon);
                 Assert.IsInstanceOfType(basicInputItems[0].Content, typeof(string));
 
-                var mediaItem = topLevelItems[13];
-                Assert.AreEqual("Media Controls", GetNavigationItemText(mediaItem));
-                AssertFontIconGlyph(mediaItem, "\uE8B9");
-                CollectionAssert.AreEqual(
-                    new[] { "Canvas", "Image" },
-                    mediaItem.MenuItems.OfType<NavigationViewItem>().Select(GetNavigationItemText).ToArray());
-                Assert.IsNull(mediaItem.MenuItems.OfType<NavigationViewItem>().First().Icon);
-
-                var modernWpfItem = topLevelItems[14];
+                var modernWpfItem = topLevelItems[11];
                 Assert.AreEqual("ModernWpf controls", GetNavigationItemText(modernWpfItem));
                 AssertFontIconGlyph(modernWpfItem, "\uEA37");
                 var modernWpfItems = modernWpfItem.MenuItems.OfType<NavigationViewItem>().ToList();
@@ -234,7 +224,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsTrue(topLevelItems[2].IsExpanded);
 
                 page.NavigateTo("category/BasicInput");
-                Assert.IsTrue(topLevelItems[5].IsExpanded);
+                Assert.IsTrue(topLevelItems[4].IsExpanded);
 
                 page.OpenSettings();
                 WpfTestHost.DoEvents();
@@ -300,9 +290,9 @@ namespace ModernWpf.Gallery.Tests
                     var designGuidanceItem = navigation.MenuItems
                         .OfType<NavigationViewItem>()
                         .Single(item => string.Equals(GetNavigationItemText(item), "Design Guidance", StringComparison.Ordinal));
-                    var samplesItem = navigation.MenuItems
+                    var basicInputItem = navigation.MenuItems
                         .OfType<NavigationViewItem>()
-                        .Single(item => string.Equals(GetNavigationItemText(item), "Samples", StringComparison.Ordinal));
+                        .Single(item => string.Equals(GetNavigationItemText(item), "Basic Input", StringComparison.Ordinal));
 
                     Assert.IsFalse(designGuidanceItem.IsExpanded);
 
@@ -322,13 +312,13 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(designGuidanceItem.IsSelected, "Collapsing the selected group should not clear its page selection.");
                     Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(DesignGuidancePage));
 
-                    InvokeNavigationViewItem(navigation, samplesItem);
+                    InvokeNavigationViewItem(navigation, basicInputItem);
                     WpfTestHost.DoEvents();
                     page.UpdateLayout();
 
-                    Assert.IsTrue(samplesItem.IsExpanded, "User-invoked Samples row should expand.");
-                    Assert.IsTrue(samplesItem.IsSelected, "User-invoked Samples row should still navigate/select the group.");
-                    Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(SamplesPage));
+                    Assert.IsTrue(basicInputItem.IsExpanded, "User-invoked Basic Input row should expand.");
+                    Assert.IsTrue(basicInputItem.IsSelected, "User-invoked Basic Input row should still navigate/select the group.");
+                    Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(BasicInputPage));
                 });
             });
         }
@@ -983,7 +973,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void TopLevelPagesUseOfficialWpfGalleryViewModels()
+        public void TopLevelPagesUseGalleryViewModels()
         {
             WpfTestHost.Run(() =>
             {
@@ -1019,19 +1009,23 @@ namespace ModernWpf.Gallery.Tests
                 var whatsNewPage = new WhatsNewPage();
                 Assert.IsInstanceOfType(whatsNewPage, typeof(System.Windows.Controls.Page));
                 Assert.IsInstanceOfType(whatsNewPage.ViewModel, typeof(WhatsNewPageViewModel));
-                Assert.AreEqual("What's new in WPF", whatsNewPage.ViewModel.PageTitle);
-                Assert.AreEqual("Discover all the new features, enhancements and APIs introduced in WPF", whatsNewPage.ViewModel.PageDescription);
+                Assert.AreEqual("What's new in ModernWpf", whatsNewPage.ViewModel.PageTitle);
+                Assert.AreEqual(
+                    "See the current ModernWpf direction, supported targets, and gallery improvements.",
+                    whatsNewPage.ViewModel.PageDescription);
+                AssertNavigationCardIds(
+                    GalleryCatalog.NewOrUpdatedItems,
+                    whatsNewPage.ViewModel.NewOrUpdatedItems,
+                    "What's New");
 
                 string requestedItemId = null;
                 whatsNewPage.ItemRequested = uniqueId => requestedItemId = uniqueId;
-                whatsNewPage.ViewModel.NavigateCommand.Execute("MessageBox");
-                Assert.AreEqual("MessageBox", requestedItemId);
+                var whatsNewItem = GalleryCatalog.NewOrUpdatedItems.First();
+                whatsNewPage.ViewModel.NavigateCommand.Execute(whatsNewItem);
+                Assert.AreEqual(whatsNewItem.UniqueId, requestedItemId);
                 requestedItemId = null;
-                whatsNewPage.ViewModel.Navigate("MessageBox");
-                Assert.AreEqual("MessageBox", requestedItemId);
-                requestedItemId = null;
-                whatsNewPage.ViewModel.Navigate(typeof(MessageBoxPage));
-                Assert.AreEqual("MessageBox", requestedItemId);
+                whatsNewPage.ViewModel.Navigate(whatsNewItem);
+                Assert.AreEqual(whatsNewItem.UniqueId, requestedItemId);
 
                 var allControlsPage = new AllSamplesPage();
                 Assert.IsInstanceOfType(allControlsPage, typeof(System.Windows.Controls.Page));
@@ -1054,16 +1048,13 @@ namespace ModernWpf.Gallery.Tests
                 var expectedViewModels = new[]
                 {
                     new { UniqueId = "DesignGuidance", PageType = typeof(DesignGuidancePage), ViewModelType = typeof(DesignGuidancePageViewModel), PageTitle = "DesignGuidancePage" },
-                    new { UniqueId = "Samples", PageType = typeof(SamplesPage), ViewModelType = typeof(SamplesPageViewModel), PageTitle = "SamplesPage" },
                     new { UniqueId = "BasicInput", PageType = typeof(BasicInputPage), ViewModelType = typeof(BasicInputPageViewModel), PageTitle = "BasicInputPage" },
                     new { UniqueId = "Collections", PageType = typeof(CollectionsPage), ViewModelType = typeof(CollectionsPageViewModel), PageTitle = "CollectionsPage" },
                     new { UniqueId = "DateAndCalendar", PageType = typeof(DateAndTimePage), ViewModelType = typeof(DateAndTimePageViewModel), PageTitle = "DateAndTimePage" },
                     new { UniqueId = "Layout", PageType = typeof(LayoutPage), ViewModelType = typeof(LayoutPageViewModel), PageTitle = "LayoutPage" },
-                    new { UniqueId = "Media", PageType = typeof(MediaPage), ViewModelType = typeof(MediaPageViewModel), PageTitle = "MediaPage" },
                     new { UniqueId = "Navigation", PageType = typeof(NavigationPage), ViewModelType = typeof(NavigationPageViewModel), PageTitle = "NavigationPage" },
                     new { UniqueId = "StatusAndInfo", PageType = typeof(StatusAndInfoPage), ViewModelType = typeof(StatusAndInfoPageViewModel), PageTitle = "StatusAndInfoPage" },
-                    new { UniqueId = "Text", PageType = typeof(TextPage), ViewModelType = typeof(TextPageViewModel), PageTitle = "TextPage" },
-                    new { UniqueId = "System", PageType = typeof(SystemPage), ViewModelType = typeof(SystemPageViewModel), PageTitle = "SystemPage" }
+                    new { UniqueId = "Text", PageType = typeof(TextPage), ViewModelType = typeof(TextPageViewModel), PageTitle = "TextPage" }
                 };
 
                 foreach (var expected in expectedViewModels)
@@ -1121,8 +1112,7 @@ namespace ModernWpf.Gallery.Tests
                     new { LookupId = "Design Guidance", CanonicalId = "DesignGuidance", PageType = typeof(DesignGuidancePage), ViewModelType = typeof(DesignGuidancePageViewModel), PageTitle = "DesignGuidancePage" },
                     new { LookupId = "Basic Input", CanonicalId = "BasicInput", PageType = typeof(BasicInputPage), ViewModelType = typeof(BasicInputPageViewModel), PageTitle = "BasicInputPage" },
                     new { LookupId = "Date & Calendar", CanonicalId = "DateAndCalendar", PageType = typeof(DateAndTimePage), ViewModelType = typeof(DateAndTimePageViewModel), PageTitle = "DateAndTimePage" },
-                    new { LookupId = "Status & Info", CanonicalId = "StatusAndInfo", PageType = typeof(StatusAndInfoPage), ViewModelType = typeof(StatusAndInfoPageViewModel), PageTitle = "StatusAndInfoPage" },
-                    new { LookupId = "Media Controls", CanonicalId = "Media", PageType = typeof(MediaPage), ViewModelType = typeof(MediaPageViewModel), PageTitle = "MediaPage" }
+                    new { LookupId = "Status & Info", CanonicalId = "StatusAndInfo", PageType = typeof(StatusAndInfoPage), ViewModelType = typeof(StatusAndInfoPageViewModel), PageTitle = "StatusAndInfoPage" }
                 };
 
                 foreach (var expected in expectedGroups)
@@ -1208,16 +1198,6 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(basicInputGroup.Title, sectionPage.PageTitle);
                     Assert.AreEqual(basicInputGroup.PageDescription, sectionPage.PageDescription);
                     AssertRenderedNavigationCard(sectionItemsControl, basicInputGroup.Items.First().Title, basicInputGroup.Items.First().Description, sectionPage.ViewModel.NavigateCommand);
-                });
-
-                var mediaGroup = GalleryCatalog.FindGroup("Media");
-                var mediaPage = new MediaPage();
-                RenderPage(mediaPage, () =>
-                {
-                    var mediaItemsControl = GetOfficialSectionItemsControl(mediaPage);
-                    AssertReferencePageHeader(FindVisualChildren<PageHeader>(mediaPage).Single(), mediaGroup.Title, mediaGroup.PageDescription, true);
-                    AssertReferenceCategoryPageRoot(GetOfficialSectionRoot(mediaPage), false);
-                    AssertRenderedNavigationCard(mediaItemsControl, "Canvas", GalleryCatalog.FindItem("Canvas").Description, mediaPage.ViewModel.NavigateCommand);
                 });
 
                 var allControlsPage = new AllSamplesPage();

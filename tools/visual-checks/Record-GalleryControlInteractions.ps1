@@ -1495,7 +1495,7 @@ function Test-ControlSupportsRenderedPageArtifactAnchor([string]$control) {
         "PasswordBox" { return $true }
         "ProgressBar" { return $true }
         "ResizeGrip" { return $true }
-        "RichTextEdit" { return $true }
+        "RichTextBox" { return $true }
         "Spacing" { return $true }
         "StackPanel" { return $true }
         "TabControl" { return $true }
@@ -1650,7 +1650,7 @@ function Test-ControlRequiresDenseTransitionReview([string]$control, [string]$in
 function Test-ControlSupportsTextInteraction([string]$control) {
     switch ($control) {
         "AutoSuggestBox" { return $true }
-        "RichTextEdit" { return $true }
+        "RichTextBox" { return $true }
         "TextBox" { return $true }
         "PasswordBox" { return $true }
         default { return $false }
@@ -2030,20 +2030,20 @@ function Invoke-ShellNavigationInteraction($window, $navigationView) {
         "Expanded" `
         @("Colors", "Typography", "Spacing", "Geometry", "Icons") `
         @() `
-        "Samples" `
+        "All Controls" `
         48.0
     $steps.Add($designExpanded)
 
-    $samplesExpandedClick = Invoke-ShellNavigationDisclosure $window $navigationView "Samples" "Expanded"
-    $samplesExpanded = Get-ShellNavigationSnapshot `
+    $basicInputExpandedClick = Invoke-ShellNavigationDisclosure $window $navigationView "Basic Input" "Expanded"
+    $basicInputExpanded = Get-ShellNavigationSnapshot `
         $navigationView `
-        "Samples" `
+        "Basic Input" `
         "Expanded" `
-        @("User Dashboard") `
+        @("Button", "CheckBox", "ComboBox", "RadioButton", "Slider") `
         @() `
-        "All Controls" `
+        "Collections" `
         48.0
-    $steps.Add($samplesExpanded)
+    $steps.Add($basicInputExpanded)
 
     $designCollapsedClick = Invoke-ShellNavigationDisclosure $window $navigationView "Design Guidance" "Collapsed"
     $designCollapsed = Get-ShellNavigationSnapshot `
@@ -2052,22 +2052,22 @@ function Invoke-ShellNavigationInteraction($window, $navigationView) {
         "Collapsed" `
         @() `
         @("Colors", "Typography", "Spacing", "Geometry", "Icons") `
-        "Samples" `
+        "All Controls" `
         48.0
     $steps.Add($designCollapsed)
 
-    $samplesCollapsedClick = Invoke-ShellNavigationDisclosure $window $navigationView "Samples" "Collapsed"
-    $samplesCollapsed = Get-ShellNavigationSnapshot `
+    $basicInputCollapsedClick = Invoke-ShellNavigationDisclosure $window $navigationView "Basic Input" "Collapsed"
+    $basicInputCollapsed = Get-ShellNavigationSnapshot `
         $navigationView `
-        "Samples" `
+        "Basic Input" `
         "Collapsed" `
         @() `
-        @("User Dashboard") `
-        "All Controls" `
+        @("Button", "CheckBox", "ComboBox", "RadioButton", "Slider") `
+        "Collections" `
         48.0
-    $steps.Add($samplesCollapsed)
+    $steps.Add($basicInputCollapsed)
 
-    foreach ($click in @($designExpandedClick, $samplesExpandedClick, $designCollapsedClick, $samplesCollapsedClick)) {
+    foreach ($click in @($designExpandedClick, $basicInputExpandedClick, $designCollapsedClick, $basicInputCollapsedClick)) {
         if (!$click.Clicked) {
             $failures.Add(("Could not click {0} to {1}." -f $click.Name, $click.TargetState.ToLowerInvariant()))
         }
@@ -4764,7 +4764,7 @@ function Invoke-ScrollInteraction($window, [string]$control, $sampleElement) {
 function Get-TextInteractionInput([string]$control) {
     switch ($control) {
         "AutoSuggestBox" { return "ae" }
-        "RichTextEdit" { return "ModernWpf rich text" }
+        "RichTextBox" { return "ModernWpf rich text" }
         "TextBox" { return "ModernWpf text" }
         "PasswordBox" { return "ModernWpf1!" }
         default { return "" }
@@ -4773,7 +4773,7 @@ function Get-TextInteractionInput([string]$control) {
 
 function Get-TextInteractionTargetName([string]$control) {
     switch ($control) {
-        "RichTextEdit" { return "simple rich text editor" }
+        "RichTextBox" { return "simple rich text editor" }
         "TextBox" { return "simple TextBox" }
         "PasswordBox" { return "Simple Password Box" }
         default { return "" }
@@ -5047,7 +5047,7 @@ function Invoke-PlainTextInteraction($window, [string]$control) {
 }
 
 function Invoke-TextInteraction($window, [string]$control, $sampleElement) {
-    if ($control -eq "TextBox" -or $control -eq "PasswordBox" -or $control -eq "RichTextEdit") {
+    if ($control -eq "TextBox" -or $control -eq "PasswordBox" -or $control -eq "RichTextBox") {
         return Invoke-PlainTextInteraction $window $control
     }
 

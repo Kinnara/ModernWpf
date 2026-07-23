@@ -70,7 +70,6 @@ $CaseCatalog = @(
     New-Case "ShellHomeNavigation" "home" @("Home") "" "home"
     New-Case "ShellDesignGuidance" "category/Design Guidance" @("Design Guidance") "" "category/DesignGuidance"
     New-Case "ShellClickDesignGuidance" "home" @("Design Guidance") "" "category/DesignGuidance" @("Design Guidance") "home"
-    New-Case "ShellClickDesignGuidanceAfterSamples" "home" @("Design Guidance") "" "category/DesignGuidance" @("Samples", "Design Guidance") "home"
     New-Case "ShellClickDesignGuidanceCollapse" "home" @("Design Guidance") "" "category/DesignGuidance" @("Design Guidance", "Design Guidance") "home"
     New-Case "WhatsNew" "What's New" @("What's New") "" "WhatsNew"
     New-Case "AllControls" "All Controls" @("All Controls") "" "AllControls"
@@ -86,10 +85,6 @@ $CaseCatalog = @(
     New-Case "Spacing" "item/Spacing" @("Design Guidance", "Spacing")
     New-Case "Geometry" "item/Geometry" @("Design Guidance", "Geometry")
     New-Case "Iconography" "item/Icons" @("Design Guidance", "Icons") "" "item/Iconography"
-    New-Case "ShellSamples" "category/Samples" @("Samples")
-    New-Case "ShellClickSamples" "home" @("Samples") "" "category/Samples" @("Samples") "home"
-    New-Case "Samples" "category/Samples" @("Samples")
-    New-Case "UserDashboard" "item/User Dashboard" @("Samples", "User Dashboard") "" "item/UserDashboard"
     New-Case "BasicInput" "category/Basic Input" @("Basic Input") "" "category/BasicInput"
     New-Case "Button" "item/Button" @("Basic Input", "Button")
     New-Case "CheckBox" "item/CheckBox" @("Basic Input", "CheckBox")
@@ -112,9 +107,6 @@ $CaseCatalog = @(
     New-Case "GroupBox" "item/GroupBox" @("Layout", "GroupBox")
     New-Case "StackPanel" "item/StackPanel" @("Layout", "StackPanel")
     New-Case "Border" "item/Border" @("Layout", "Border")
-    New-Case "Media" "category/Media Controls" @("Media") "" "category/Media"
-    New-Case "Canvas" "item/Canvas" @("Media", "Canvas")
-    New-Case "Image" "item/Image" @("Media", "Image")
     New-Case "ShellNavigation" "item/Menu" @("Navigation", "Menu")
     New-Case "Navigation" "category/Navigation" @("Navigation")
     New-Case "Menu" "item/Menu" @("Navigation", "Menu")
@@ -128,13 +120,9 @@ $CaseCatalog = @(
     New-Case "Label" "item/Label" @("Text", "Label")
     New-Case "TextBox" "item/TextBox" @("Text", "TextBox")
     New-Case "TextBlock" "item/TextBlock" @("Text", "TextBlock")
-    New-Case "RichTextEdit" "item/RichTextEdit" @("Text", "RichTextEdit")
+    New-Case "RichTextBox" "item/RichTextBox" @("Text", "RichTextEdit")
     New-Case "PasswordBox" "item/PasswordBox" @("Text", "PasswordBox")
     New-Case "Hyperlink" "item/Hyperlink" @("Text", "Hyperlink")
-    New-Case "System" "category/System" @("System")
-    New-Case "FileAndFolderDialogs" "item/File and Folder Dialogs" @("System", "File and Folder Dialogs") "" "item/FileAndFolderDialogs"
-    New-Case "MessageBox" "item/MessageBox" @("System", "MessageBox")
-    New-Case "Clipboard" "item/Clipboard" @("System", "Clipboard")
     New-Case "Settings" "Settings" @("Settings") "" "settings"
 )
 
@@ -144,10 +132,7 @@ function Test-ShellNavigationCase($case) {
             $case.Id -eq "ShellHomeNavigation" -or
             $case.Id -eq "ShellDesignGuidance" -or
             $case.Id -eq "ShellClickDesignGuidance" -or
-            $case.Id -eq "ShellClickDesignGuidanceAfterSamples" -or
-            $case.Id -eq "ShellClickDesignGuidanceCollapse" -or
-            $case.Id -eq "ShellClickSamples" -or
-            $case.Id -eq "ShellSamples")
+            $case.Id -eq "ShellClickDesignGuidanceCollapse")
 }
 
 $OfficialDirectReferenceCaseIds = @(
@@ -155,10 +140,7 @@ $OfficialDirectReferenceCaseIds = @(
     "ShellHomeNavigation",
     "ShellDesignGuidance",
     "ShellClickDesignGuidance",
-    "ShellClickDesignGuidanceAfterSamples",
     "ShellClickDesignGuidanceCollapse",
-    "ShellClickSamples",
-    "ShellSamples",
     "WhatsNew",
     "AllControls",
     "Settings",
@@ -174,8 +156,6 @@ $OfficialDirectReferenceCaseIds = @(
     "Spacing",
     "Geometry",
     "Iconography",
-    "Samples",
-    "UserDashboard",
     "BasicInput",
     "Button",
     "CheckBox",
@@ -191,7 +171,6 @@ $OfficialDirectReferenceCaseIds = @(
     "ListView",
     "TreeView",
     "Layout",
-    "Media",
     "ShellNavigation",
     "Navigation",
     "Menu",
@@ -211,16 +190,10 @@ $OfficialDirectReferenceCaseIds = @(
     "Label",
     "TextBox",
     "TextBlock",
-    "RichTextEdit",
+    "RichTextBox",
     "PasswordBox",
     "Hyperlink",
-    "Border",
-    "System",
-    "FileAndFolderDialogs",
-    "MessageBox",
-    "Clipboard",
-    "Canvas",
-    "Image"
+    "Border"
 )
 
 function Select-Cases {
@@ -769,19 +742,7 @@ function Get-ModernShellExpectedNavigationStates($case) {
                     MinimumHeight = 220
                     MaximumHeight = 300
                     ChildNames = @("Colors", "Typography", "Spacing", "Geometry", "Icons")
-                    FollowingName = "Samples"
-                    MaximumFollowingGap = 48
-                })
-        }
-        "ShellClickDesignGuidanceAfterSamples" {
-            return @(
-                [ordered]@{
-                    Name = "Design Guidance"
-                    State = "Expanded"
-                    MinimumHeight = 220
-                    MaximumHeight = 300
-                    ChildNames = @("Colors", "Typography", "Spacing", "Geometry", "Icons")
-                    FollowingName = "Samples"
+                    FollowingName = "All Controls"
                     MaximumFollowingGap = 48
                 })
         }
@@ -793,18 +754,6 @@ function Get-ModernShellExpectedNavigationStates($case) {
                     MinimumHeight = 0
                     MaximumHeight = 64
                     HiddenChildNames = @("Colors", "Typography", "Spacing", "Geometry", "Icons")
-                    FollowingName = "Samples"
-                    MaximumFollowingGap = 48
-                })
-        }
-        "ShellClickSamples" {
-            return @(
-                [ordered]@{
-                    Name = "Samples"
-                    State = "Expanded"
-                    MinimumHeight = 80
-                    MaximumHeight = 130
-                    ChildNames = @("User Dashboard")
                     FollowingName = "All Controls"
                     MaximumFollowingGap = 48
                 })

@@ -40,9 +40,7 @@ namespace ModernWpf.Gallery.Tests
         [DataRow("category/Design%20Guidance", "DesignGuidance")]
         [DataRow("category/Basic%20Input", "BasicInput")]
         [DataRow("category/Date%20%26%20Calendar", "DateAndCalendar")]
-        [DataRow("category/Media%20Controls", "Media")]
         [DataRow("category/Status%20%26%20Info", "StatusAndInfo")]
-        [DataRow("winui3gallery://category/Media%20Controls", "Media")]
         [DataRow("winui3gallery://category/Date%20%26%20Calendar", "DateAndCalendar")]
         public void ResolveNavigationTargetAcceptsOfficialWpfGalleryCategoryIds(string value, string expectedUniqueId)
         {
@@ -56,9 +54,7 @@ namespace ModernWpf.Gallery.Tests
         [DataTestMethod]
         [DataRow("item/Colors", "Color")]
         [DataRow("item/Icons", "Iconography")]
-        [DataRow("item/File%20and%20Folder%20Dialogs", "FileAndFolderDialogs")]
-        [DataRow("item/User%20Dashboard", "UserDashboard")]
-        [DataRow("winui3gallery://item/File%20and%20Folder%20Dialogs", "FileAndFolderDialogs")]
+        [DataRow("item/RichTextEdit", "RichTextBox")]
         public void ResolveNavigationTargetAcceptsOfficialWpfGalleryItemIds(string value, string expectedUniqueId)
         {
             var target = NavigationRootPage.ResolveNavigationTarget(value);
@@ -66,6 +62,21 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsNotNull(target);
             Assert.AreEqual(NavigationTargetKind.Item, target.Kind);
             Assert.AreEqual(expectedUniqueId, target.UniqueId);
+        }
+
+        [DataTestMethod]
+        [DataRow("category/Media%20Controls")]
+        [DataRow("category/Samples")]
+        [DataRow("category/System")]
+        [DataRow("item/File%20and%20Folder%20Dialogs")]
+        [DataRow("item/User%20Dashboard")]
+        [DataRow("item/MessageBox")]
+        [DataRow("item/Clipboard")]
+        [DataRow("item/Canvas")]
+        [DataRow("item/Image")]
+        public void ResolveNavigationTargetRejectsRetiredWpfGalleryRoutes(string value)
+        {
+            Assert.IsNull(NavigationRootPage.ResolveNavigationTarget(value));
         }
 
         [DataTestMethod]

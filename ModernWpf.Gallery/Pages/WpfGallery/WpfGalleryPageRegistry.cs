@@ -14,16 +14,13 @@ namespace ModernWpf.Gallery.Pages
             {
                 { "Border", () => new WpfGallery.Layout.BorderPage(new WpfGallery.Layout.BorderPageViewModel()) },
                 { "Button", () => new WpfGallery.BasicInput.ButtonPage(new WpfGallery.BasicInput.ButtonPageViewModel()) },
-                { "Canvas", () => new WpfGallery.Media.CanvasPage(new WpfGallery.Media.CanvasPageViewModel()) },
                 { "Calendar", () => new WpfGallery.DateAndTime.CalendarPage(new WpfGallery.DateAndTime.CalendarPageViewModel()) },
                 { "CheckBox", () => new WpfGallery.BasicInput.CheckBoxPage(new WpfGallery.BasicInput.CheckBoxPageViewModel()) },
-                { "Clipboard", () => new WpfGallery.SystemPages.ClipboardPage(new WpfGallery.SystemPages.ClipboardPageViewModel()) },
                 { "Color", () => new WpfGallery.DesignGuidance.ColorsPage(new WpfGallery.DesignGuidance.ColorsPageViewModel()) },
                 { "ComboBox", () => new WpfGallery.BasicInput.ComboBoxPage(new WpfGallery.BasicInput.ComboBoxPageViewModel()) },
                 { "DataGrid", () => new WpfGallery.Collections.DataGridPage(new WpfGallery.Collections.DataGridPageViewModel()) },
                 { "DatePicker", () => new WpfGallery.DateAndTime.DatePickerPage(new WpfGallery.DateAndTime.DatePickerPageViewModel()) },
                 { "Expander", () => new WpfGallery.Layout.ExpanderPage(new WpfGallery.Layout.ExpanderPageViewModel()) },
-                { "FileAndFolderDialogs", () => new WpfGallery.SystemPages.FileAndFolderDialogsPage(new WpfGallery.SystemPages.FileAndFolderDialogsPageViewModel()) },
                 { "Frame", () => new WpfGallery.Navigation.FramePage(new WpfGallery.Navigation.FramePageViewModel()) },
                 { "Grid", () => new WpfGallery.Layout.GridPage(new WpfGallery.Layout.GridPageViewModel()) },
                 { "GridSplitter", () => new WpfGallery.Layout.GridSplitterPage(new WpfGallery.Layout.GridSplitterPageViewModel()) },
@@ -31,18 +28,16 @@ namespace ModernWpf.Gallery.Pages
                 { "GroupBox", () => new WpfGallery.Layout.GroupBoxPage(new WpfGallery.Layout.GroupBoxPageViewModel()) },
                 { "Hyperlink", () => new WpfGallery.Text.HyperlinkPage(new WpfGallery.Text.HyperlinkPageViewModel()) },
                 { "Iconography", () => new WpfGallery.DesignGuidance.IconsPage(new WpfGallery.DesignGuidance.IconsPageViewModel()) },
-                { "Image", () => new WpfGallery.Media.ImagePage(new WpfGallery.Media.ImagePageViewModel()) },
                 { "Label", () => new WpfGallery.Text.LabelPage(new WpfGallery.Text.LabelPageViewModel()) },
                 { "ListBox", () => new WpfGallery.Collections.ListBoxPage(new WpfGallery.Collections.ListBoxPageViewModel()) },
                 { "ListView", () => new WpfGallery.Collections.ListViewPage(new WpfGallery.Collections.ListViewPageViewModel()) },
                 { "Menu", () => new WpfGallery.Navigation.MenuPage(new WpfGallery.Navigation.MenuPageViewModel()) },
-                { "MessageBox", () => new WpfGallery.SystemPages.MessageBoxPage(new WpfGallery.SystemPages.MessageBoxPageViewModel()) },
                 { "NavigationWindow", () => new WpfGallery.Navigation.NavigationWindowPage(new WpfGallery.Navigation.NavigationWindowPageViewModel()) },
                 { "PasswordBox", () => new WpfGallery.Text.PasswordBoxPage(new WpfGallery.Text.PasswordBoxPageViewModel()) },
                 { "ProgressBar", () => new WpfGallery.StatusAndInfo.ProgressBarPage(new WpfGallery.StatusAndInfo.ProgressBarPageViewModel()) },
                 { "RadioButton", () => new WpfGallery.BasicInput.RadioButtonPage(new WpfGallery.BasicInput.RadioButtonPageViewModel()) },
                 { "ResizeGrip", () => new WpfGallery.Layout.ResizeGripPage(new WpfGallery.Layout.ResizeGripPageViewModel()) },
-                { "RichTextEdit", () => new WpfGallery.Text.RichTextEditPage(new WpfGallery.Text.RichTextEditPageViewModel()) },
+                { "RichTextBox", () => new WpfGallery.Text.RichTextEditPage(new WpfGallery.Text.RichTextEditPageViewModel()) },
                 { "Slider", () => new WpfGallery.BasicInput.SliderPage(new WpfGallery.BasicInput.SliderPageViewModel()) },
                 { "Spacing", () => new WpfGallery.DesignGuidance.SpacingPage(new WpfGallery.DesignGuidance.SpacingPageViewModel()) },
                 { "StackPanel", () => new WpfGallery.Layout.StackPanelPage(new WpfGallery.Layout.StackPanelPageViewModel()) },
@@ -51,8 +46,7 @@ namespace ModernWpf.Gallery.Pages
                 { "TextBox", () => new WpfGallery.Text.TextBoxPage(new WpfGallery.Text.TextBoxPageViewModel()) },
                 { "ToolTip", () => new WpfGallery.StatusAndInfo.ToolTipPage(new WpfGallery.StatusAndInfo.ToolTipPageViewModel()) },
                 { "TreeView", () => new WpfGallery.Collections.TreeViewPage(new WpfGallery.Collections.TreeViewPageViewModel()) },
-                { "Typography", () => new WpfGallery.DesignGuidance.TypographyPage(new WpfGallery.DesignGuidance.TypographyPageViewModel()) },
-                { "UserDashboard", () => new WpfGallery.Samples.UserDashboardPage(new WpfGallery.Samples.UserDashboardPageViewModel()) }
+                { "Typography", () => new WpfGallery.DesignGuidance.TypographyPage(new WpfGallery.DesignGuidance.TypographyPageViewModel()) }
             };
 
         public static IReadOnlyList<string> DirectPageIds

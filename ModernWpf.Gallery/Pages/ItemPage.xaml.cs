@@ -392,13 +392,11 @@ namespace ModernWpf.Gallery.Pages
         {
             switch (uniqueId)
             {
-                case "Canvas":
                 case "Color":
                 case "Iconography":
-                case "Image":
                 case "Label":
                 case "PasswordBox":
-                case "RichTextEdit":
+                case "RichTextBox":
                 case "Spacing":
                 case "TextBlock":
                 case "TextBox":

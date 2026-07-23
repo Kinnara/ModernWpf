@@ -17,16 +17,13 @@ namespace ModernWpf.Gallery.Tests
         {
             "Border",
             "Button",
-            "Canvas",
             "Calendar",
             "CheckBox",
-            "Clipboard",
             "Color",
             "ComboBox",
             "DataGrid",
             "DatePicker",
             "Expander",
-            "FileAndFolderDialogs",
             "Frame",
             "Geometry",
             "Grid",
@@ -34,18 +31,16 @@ namespace ModernWpf.Gallery.Tests
             "GroupBox",
             "Hyperlink",
             "Iconography",
-            "Image",
             "Label",
             "ListBox",
             "ListView",
             "Menu",
-            "MessageBox",
             "NavigationWindow",
             "PasswordBox",
             "ProgressBar",
             "RadioButton",
             "ResizeGrip",
-            "RichTextEdit",
+            "RichTextBox",
             "Slider",
             "Spacing",
             "StackPanel",
@@ -54,8 +49,7 @@ namespace ModernWpf.Gallery.Tests
             "TextBox",
             "ToolTip",
             "TreeView",
-            "Typography",
-            "UserDashboard"
+            "Typography"
         };
 
         [TestMethod]
@@ -102,8 +96,7 @@ namespace ModernWpf.Gallery.Tests
                 {
                     new { LookupId = "Colors", PageType = typeof(ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.ColorsPage) },
                     new { LookupId = "Icons", PageType = typeof(ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.IconsPage) },
-                    new { LookupId = "File and Folder Dialogs", PageType = typeof(ModernWpf.Gallery.Pages.WpfGallery.SystemPages.FileAndFolderDialogsPage) },
-                    new { LookupId = "User Dashboard", PageType = typeof(ModernWpf.Gallery.Pages.WpfGallery.Samples.UserDashboardPage) }
+                    new { LookupId = "RichTextEdit", PageType = typeof(ModernWpf.Gallery.Pages.WpfGallery.Text.RichTextEditPage) }
                 };
 
                 foreach (var item in expected)
@@ -115,6 +108,19 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsInstanceOfType(page, item.PageType, item.LookupId);
                 }
             });
+        }
+
+        [DataTestMethod]
+        [DataRow("UserDashboard")]
+        [DataRow("FileAndFolderDialogs")]
+        [DataRow("MessageBox")]
+        [DataRow("Clipboard")]
+        [DataRow("Canvas")]
+        [DataRow("Image")]
+        public void RetiredPagesAreNotRegistered(string uniqueId)
+        {
+            Assert.IsFalse(WpfGalleryPageRegistry.HasDirectPageContent(uniqueId));
+            Assert.IsNull(WpfGalleryPageRegistry.CreatePageContent(uniqueId));
         }
 
         [TestMethod]

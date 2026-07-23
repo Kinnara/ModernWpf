@@ -23,16 +23,13 @@ namespace ModernWpf.Gallery.Shell
         private static readonly ISet<string> WpfGalleryGroupIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "DesignGuidance",
-            "Samples",
             "BasicInput",
             "Collections",
             "DateAndCalendar",
             "Layout",
-            "Media",
             "Navigation",
             "StatusAndInfo",
-            "Text",
-            "System"
+            "Text"
         };
 
         private static readonly IReadOnlyDictionary<string, string> WpfGalleryGlyphs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -46,16 +43,13 @@ namespace ModernWpf.Gallery.Shell
             { "Spacing", "\uE8B3" },
             { "Geometry", "\uE743" },
             { "Iconography", "\uED58" },
-            { "Samples", "\uEF58" },
             { "BasicInput", "\uE73A" },
             { "Collections", "\uE80A" },
             { "DateAndCalendar", "\uEC92" },
             { "Layout", "\uF246" },
-            { "Media", "\uE8B9" },
             { "Navigation", "\uE700" },
             { "StatusAndInfo", "\uE8F2" },
-            { "Text", "\uE8D2" },
-            { "System", "\uE7F8" }
+            { "Text", "\uE8D2" }
         };
 
         private NavigationViewItem _homeNavigationItem;
@@ -264,7 +258,7 @@ namespace ModernWpf.Gallery.Shell
                 navigation.MenuItems.Add(groupItem);
                 _itemContainers[group.UniqueId] = groupItem;
 
-                if (string.Equals(group.UniqueId, "Samples", StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(group.UniqueId, "DesignGuidance", StringComparison.OrdinalIgnoreCase))
                 {
                     navigation.MenuItems.Add(_allControlsNavigationItem);
                 }

@@ -45,7 +45,7 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.Text
     public partial class RichTextEditPageViewModel : WpfGalleryPageViewModel
     {
         public RichTextEditPageViewModel()
-            : base("RichTextEdit", "")
+            : base("RichTextBox", "")
         {
         }
     }

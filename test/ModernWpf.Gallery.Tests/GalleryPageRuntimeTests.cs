@@ -110,13 +110,11 @@ namespace ModernWpf.Gallery.Tests
         {
             var expectedDescriptions = new Dictionary<string, string>
             {
-                { "Canvas", string.Empty },
                 { "Color", "Guide showing how to use colors in your app" },
                 { "Iconography", "Guide showing how to use icons in your application." },
-                { "Image", string.Empty },
                 { "Label", string.Empty },
                 { "PasswordBox", string.Empty },
-                { "RichTextEdit", string.Empty },
+                { "RichTextBox", string.Empty },
                 { "Spacing", "Guide showing how to use spacing in your app" },
                 { "TextBlock", string.Empty },
                 { "TextBox", string.Empty },
@@ -231,7 +229,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void WhatsNewPageHeaderMatchesWpfGalleryReference()
+        public void WhatsNewPageShowsModernWpfUpdateHub()
         {
             WpfTestHost.Run(() =>
             {
@@ -239,10 +237,12 @@ namespace ModernWpf.Gallery.Tests
                 RenderPage(page);
                 var pageHeader = FindDescendant<PageHeader>(page);
 
-                Assert.AreEqual("What's New in WPF", page.Title);
+                Assert.AreEqual("What's New in ModernWpf", page.Title);
                 Assert.AreEqual(new Thickness(0, 0, 0, 32), pageHeader.Margin);
-                Assert.AreEqual("What's new in WPF", pageHeader.Title);
-                Assert.AreEqual("Discover all the new features, enhancements and APIs introduced in WPF", pageHeader.Description);
+                Assert.AreEqual("What's new in ModernWpf", pageHeader.Title);
+                Assert.AreEqual(
+                    "See the current ModernWpf direction, supported targets, and gallery improvements.",
+                    pageHeader.Description);
                 Assert.IsTrue(pageHeader.ShowDescription);
                 AssertBindingPath(pageHeader, PageHeader.TitleProperty, "ViewModel.PageTitle");
                 AssertBindingPath(pageHeader, PageHeader.DescriptionProperty, "ViewModel.PageDescription");
@@ -250,7 +250,7 @@ namespace ModernWpf.Gallery.Tests
                 pageHeader.ApplyTemplate();
                 var titleLabel = (Label)pageHeader.Template.FindName("TitleTextBlock", pageHeader);
                 Assert.IsNotNull(titleLabel);
-                Assert.AreEqual("What's new in WPF Page", AutomationProperties.GetName(titleLabel));
+                Assert.AreEqual("What's new in ModernWpf Page", AutomationProperties.GetName(titleLabel));
                 Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleLabel));
                 Assert.AreEqual(0, KeyboardNavigation.GetTabIndex(titleLabel));
 
@@ -261,8 +261,10 @@ namespace ModernWpf.Gallery.Tests
 
                 var title = (TextBlock)titleLabel.Content;
                 var description = (TextBlock)pageHeader.Template.FindName("DescriptionTextBlock", pageHeader);
-                Assert.AreEqual("What's new in WPF", title.Text);
-                Assert.AreEqual("Discover all the new features, enhancements and APIs introduced in WPF", description.Text);
+                Assert.AreEqual("What's new in ModernWpf", title.Text);
+                Assert.AreEqual(
+                    "See the current ModernWpf direction, supported targets, and gallery improvements.",
+                    description.Text);
 
                 var root = (Grid)page.FindName("ContentPagePane");
                 Assert.AreEqual("ContentPagePane", root.Name);
@@ -272,61 +274,60 @@ namespace ModernWpf.Gallery.Tests
                     (double)Application.Current.FindResource("BodyTextBlockFontSize"),
                     TextElement.GetFontSize(root));
 
-                var gridShorthandParagraph = FindDescendants<TextBlock>(page)
-                    .Single(textBlock => new TextRange(textBlock.ContentStart, textBlock.ContentEnd).Text.Contains("comma\u2011separated"));
-                Assert.AreEqual(new Thickness(0, 0, 0, 12), gridShorthandParagraph.Margin);
-                Assert.AreEqual(TextWrapping.Wrap, gridShorthandParagraph.TextWrapping);
-                Assert.AreSame(DependencyProperty.UnsetValue, gridShorthandParagraph.ReadLocalValue(TextBlock.StyleProperty));
-                StringAssert.Contains(
-                    new TextRange(gridShorthandParagraph.ContentStart, gridShorthandParagraph.ContentEnd).Text,
-                    "comma\u2011separated");
+                var samples = (ItemsControl)page.FindName("NewOrUpdatedSamples");
+                Assert.AreEqual(
+                    "New and updated ModernWpf samples",
+                    AutomationProperties.GetName(samples));
+                CollectionAssert.AreEqual(
+                    GalleryCatalog.NewOrUpdatedItems.Select(item => item.UniqueId).ToArray(),
+                    samples.ItemsSource.Cast<GalleryItem>().Select(item => item.UniqueId).ToArray());
 
-                var controlExamples = FindDescendants<ControlExample>(page).ToArray();
-                var gridExample = controlExamples.Single(example => string.Equals(example.HeaderText, "Grid Shorthand Syntax Sample", StringComparison.Ordinal));
-                var accentExample = controlExamples.Single(example => string.Equals(example.HeaderText, "AccentColor API", StringComparison.Ordinal));
-                var ligatureExample = controlExamples.Single(example => string.Equals(example.HeaderText, "Hyphen based ligature example", StringComparison.Ordinal));
-                Assert.AreEqual(new Thickness(2, 10, 2, 24), gridExample.Margin);
-                Assert.AreEqual(new Thickness(2, 10, 2, 10), accentExample.Margin);
-                Assert.AreEqual(new Thickness(2, 10, 2, 10), ligatureExample.Margin);
-                Assert.IsInstanceOfType(accentExample.ExampleContent, typeof(Grid));
+                var controlExample = FindDescendants<ControlExample>(page).Single();
+                Assert.AreEqual("Application resources", controlExample.HeaderText);
+                Assert.AreEqual(page.ViewModel.RecommendedResourcesXamlCode, controlExample.XamlCode);
+                Assert.AreEqual(new Thickness(2, 0, 2, 24), controlExample.Margin);
+
+                var visibleText = FindDescendants<TextBlock>(page)
+                    .Select(textBlock => textBlock.Text)
+                    .Where(text => !string.IsNullOrWhiteSpace(text))
+                    .ToArray();
+                CollectionAssert.Contains(visibleText, ".NET Framework 4.6.2");
+                CollectionAssert.Contains(visibleText, ".NET 8 for Windows");
+                CollectionAssert.Contains(visibleText, ".NET 10 for Windows");
+                CollectionAssert.Contains(visibleText, "WinUI-style shell");
             });
         }
 
         [TestMethod]
-        public void WhatsNewMessageBoxLinkUsesViewModelNavigationHandler()
+        public void WhatsNewCatalogCardsUseViewModelNavigationHandler()
         {
             WpfTestHost.Run(() =>
             {
                 string requestedItemId = null;
                 var page = new WhatsNewPage();
                 page.ItemRequested = uniqueId => requestedItemId = uniqueId;
+                var item = GalleryCatalog.NewOrUpdatedItems.First();
 
-                var handler = typeof(WhatsNewPage).GetMethod(
-                    "NavigateToMessageBoxSample",
-                    BindingFlags.Instance | BindingFlags.NonPublic);
+                page.ViewModel.NavigateCommand.Execute(item);
+                Assert.AreEqual(item.UniqueId, requestedItemId);
 
-                Assert.IsNotNull(handler);
-                handler.Invoke(page, new object[] { page, new RoutedEventArgs() });
-
-                Assert.AreEqual("MessageBox", requestedItemId);
+                requestedItemId = null;
+                page.ViewModel.Navigate(item.UniqueId);
+                Assert.AreEqual(item.UniqueId, requestedItemId);
             });
         }
 
         [TestMethod]
-        public void CopiedWpfGalleryPagesKeepReferencePageResources()
+        public void AdaptedWhatsNewPageUsesModernWpfCardResources()
         {
             WpfTestHost.Run(() =>
             {
                 var whatsNewPage = new WhatsNewPage();
-                var subHeaderStyle = (Style)whatsNewPage.Resources["SubHeaderTextStyle"];
-                Assert.AreEqual(typeof(TextBlock), subHeaderStyle.TargetType);
-                AssertStyleSetter(subHeaderStyle, FrameworkElement.MarginProperty, new Thickness(0, 24, 0, 8));
-                AssertStyleSetter(subHeaderStyle, TextBlock.FontSizeProperty, 16d);
-                AssertStyleSetter(subHeaderStyle, TextBlock.FontWeightProperty, FontWeights.Bold);
-
-                var linkTextBlockStyle = (Style)whatsNewPage.Resources["LinkTextBlockStyle"];
-                Assert.AreEqual(typeof(TextBlock), linkTextBlockStyle.TargetType);
-                AssertStyleSetter(linkTextBlockStyle, FrameworkElement.MarginProperty, new Thickness(0, 4, 0, 4));
+                var updateCardStyle = (Style)whatsNewPage.Resources["UpdateCardStyle"];
+                Assert.AreEqual(typeof(Border), updateCardStyle.TargetType);
+                AssertStyleSetter(updateCardStyle, Border.PaddingProperty, new Thickness(16));
+                AssertStyleSetter(updateCardStyle, Border.BorderThicknessProperty, new Thickness(1));
+                AssertStyleSetter(updateCardStyle, Border.CornerRadiusProperty, new CornerRadius(8));
 
                 var imagePage = new ImagePage(new ImagePageViewModel());
                 Assert.AreEqual("https://github.com/dotnet/wpf", imagePage.Resources["PageXamlUrl"]);
@@ -570,59 +571,26 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void WhatsNewPageAccentSwatchesUseSystemAccentResources()
+        public void WhatsNewPageUsesTargetAwareResourceEntry()
         {
             WpfTestHost.Run(() =>
             {
                 var page = new WhatsNewPage();
-                var window = new Window
-                {
-                    Width = 1024,
-                    Height = 768,
-                    Left = -32000,
-                    Top = -32000,
-                    ShowInTaskbar = false,
-                    WindowStartupLocation = WindowStartupLocation.Manual,
-                    Content = page
-                };
+                RenderPage(page);
 
-                try
-                {
-                    window.Show();
-                    WpfTestHost.DoEvents();
-                    window.UpdateLayout();
-                    WpfTestHost.DoEvents();
+                var resourceExample = FindDescendants<ControlExample>(page).Single();
+                Assert.AreEqual("Application resources", resourceExample.HeaderText);
+                StringAssert.Contains(resourceExample.XamlCode, "<ui:ThemeResources />");
+                StringAssert.Contains(
+                    resourceExample.XamlCode,
+                    "<ui:FluentControlsResources UseCompactResources=\"False\" />");
+                Assert.IsFalse(resourceExample.XamlCode.Contains("<ui:XamlControlsResources"));
 
-                    var accentExample = FindDescendants<ControlExample>(page)
-                        .Single(example => string.Equals(example.HeaderText, "AccentColor API", StringComparison.Ordinal));
-                    var swatches = (StackPanel)((Grid)accentExample.ExampleContent).Children[0];
-                    Assert.AreEqual(Orientation.Horizontal, swatches.Orientation);
-                    Assert.AreEqual(50d, swatches.Height);
-                    var borders = swatches.Children.OfType<Border>().ToArray();
-                    var expectedBrushKeys = new[]
-                    {
-                        "SystemAccentColorDark3Brush",
-                        "SystemAccentColorDark2Brush",
-                        "SystemAccentColorDark1Brush",
-                        "SystemControlBackgroundAccentBrush",
-                        "SystemAccentColorLight1Brush",
-                        "SystemAccentColorLight2Brush",
-                        "SystemAccentColorLight3Brush"
-                    };
-
-                    Assert.AreEqual(expectedBrushKeys.Length, borders.Length);
-
-                    for (var i = 0; i < expectedBrushKeys.Length; i++)
-                    {
-                        Assert.AreSame(page.FindResource(expectedBrushKeys[i]), borders[i].Background, expectedBrushKeys[i]);
-                    }
-                }
-                finally
-                {
-                    window.Content = null;
-                    window.Close();
-                    WpfTestHost.DoEvents();
-                }
+                var resourceLabels = FindDescendants<TextBlock>((DependencyObject)resourceExample.ExampleContent)
+                    .Select(textBlock => textBlock.Text)
+                    .ToArray();
+                CollectionAssert.Contains(resourceLabels, "ThemeResources");
+                CollectionAssert.Contains(resourceLabels, "FluentControlsResources");
             });
         }
 
@@ -730,8 +698,6 @@ namespace ModernWpf.Gallery.Tests
             {
                 AssertWpfGalleryPageViewModel<CalendarPage, CalendarPageViewModel>("Calendar", "Calendar", string.Empty);
                 AssertWpfGalleryPageViewModel<DatePickerPage, DatePickerPageViewModel>("DatePicker", "DatePicker", string.Empty);
-                AssertWpfGalleryPageViewModel<CanvasPage, CanvasPageViewModel>("Canvas", "Canvas", string.Empty);
-                AssertWpfGalleryPageViewModel<ImagePage, ImagePageViewModel>("Image", "Image", string.Empty);
                 AssertWpfGalleryPageViewModel<ProgressBarPage, ProgressBarPageViewModel>("ProgressBar", "ProgressBar", string.Empty);
                 AssertWpfGalleryPageViewModel<ToolTipPage, ToolTipPageViewModel>("ToolTip", "ToolTip", string.Empty);
             });
@@ -744,8 +710,6 @@ namespace ModernWpf.Gallery.Tests
             {
                 AssertWpfGalleryPageRoot<CalendarPage>("Calendar");
                 AssertWpfGalleryPageRoot<DatePickerPage>("DatePicker", "DatePicker");
-                AssertWpfGalleryPageRoot<CanvasPage>("Canvas");
-                AssertWpfGalleryPageRoot<ImagePage>("Image");
                 AssertWpfGalleryPageRoot<ProgressBarPage>("ProgressBar");
                 AssertWpfGalleryPageRoot<ToolTipPage>("ToolTip");
             });
@@ -790,7 +754,7 @@ namespace ModernWpf.Gallery.Tests
                 AssertWpfGalleryPageViewModel<TextBoxPage, TextBoxPageViewModel>("TextBox", "TextBox", string.Empty);
                 AssertWpfGalleryPageViewModel<TextBlockPage, TextBlockPageViewModel>("TextBlock", "TextBlock", string.Empty);
                 AssertWpfGalleryPageViewModel<HyperlinkPage, HyperlinkPageViewModel>("Hyperlink", "Hyperlink", string.Empty);
-                AssertWpfGalleryPageViewModel<RichTextEditPage, RichTextEditPageViewModel>("RichTextEdit", "RichTextEdit", string.Empty);
+                AssertWpfGalleryPageViewModel<RichTextEditPage, RichTextEditPageViewModel>("RichTextBox", "RichTextBox", string.Empty, "RichTextEditPageViewModel");
                 AssertWpfGalleryPageViewModel<PasswordBoxPage, PasswordBoxPageViewModel>("PasswordBox", "PasswordBox", string.Empty);
 
                 var textBoxPage = (TextBoxPage)new ItemPage(GalleryCatalog.FindItem("TextBox")).DirectPageContent;
@@ -812,7 +776,7 @@ namespace ModernWpf.Gallery.Tests
                 AssertWpfGalleryPageRoot<TextBoxPage>("TextBox");
                 AssertWpfGalleryPageRoot<TextBlockPage>("TextBlock");
                 AssertWpfGalleryPageRoot<HyperlinkPage>("Hyperlink");
-                AssertWpfGalleryPageRoot<RichTextEditPage>("RichTextEdit");
+                AssertWpfGalleryPageRoot<RichTextEditPage>("RichTextBox", "RichTextBoxPage");
                 AssertWpfGalleryPageRoot<PasswordBoxPage>("PasswordBox");
             });
         }
@@ -976,120 +940,6 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void SamplesPagesUseOfficialPageSpecificViewModels()
-        {
-            WpfTestHost.Run(() =>
-            {
-                var page = (UserDashboardPage)new ItemPage(GalleryCatalog.FindItem("UserDashboard")).DirectPageContent;
-
-                Assert.IsInstanceOfType(page.ViewModel, typeof(UserDashboardPageViewModel));
-                Assert.AreEqual(20, page.ViewModel.Users.Count);
-                Assert.IsNull(page.ViewModel.SelectedUser);
-
-                var changedProperties = new List<string>();
-                page.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
-                page.ViewModel.IsReadOnly = false;
-                Assert.IsFalse(page.ViewModel.IsReadOnly);
-                CollectionAssert.Contains(changedProperties, nameof(UserDashboardPageViewModel.IsReadOnly));
-
-                changedProperties.Clear();
-                page.ViewModel.SelectedUser = page.ViewModel.Users[0];
-                Assert.IsNotNull(page.ViewModel.EditableUser);
-                Assert.AreEqual(page.ViewModel.SelectedUser.Name, page.ViewModel.EditableUser.Name);
-                CollectionAssert.Contains(changedProperties, nameof(UserDashboardPageViewModel.SelectedUser));
-                CollectionAssert.Contains(changedProperties, nameof(UserDashboardPageViewModel.EditableUser));
-
-                changedProperties.Clear();
-                page.ViewModel.EditUserStartCommand.Execute(null);
-                page.ViewModel.EditableUser.FirstName = "Edited";
-                page.ViewModel.EditUserCommitCommand.Execute(null);
-                Assert.AreEqual("Edited", page.ViewModel.SelectedUser.FirstName);
-                Assert.IsTrue(page.ViewModel.IsSaved);
-                Assert.IsFalse(page.ViewModel.IsEditing);
-                CollectionAssert.Contains(changedProperties, nameof(UserDashboardPageViewModel.IsSaved));
-            });
-        }
-
-        [TestMethod]
-        public void SamplesItemPagesUseOfficialPageRoots()
-        {
-            WpfTestHost.Run(() =>
-            {
-                AssertWpfGalleryPageRoot<UserDashboardPage>("UserDashboard");
-            });
-        }
-
-        [TestMethod]
-        public void SystemPagesUseOfficialPageSpecificViewModels()
-        {
-            WpfTestHost.Run(() =>
-            {
-                AssertSystemViewModel<FileAndFolderDialogsPage, FileAndFolderDialogsPageViewModel>(
-                    "FileAndFolderDialogs",
-                    "File and Folder Dialogs",
-                    "Use the OpenFileDialog, SaveFileDialog, and OpenFolderDialog to let users select files and folders in a secure way.");
-                AssertSystemViewModel<MessageBoxPage, MessageBoxPageViewModel>("MessageBox", "MessageBox", string.Empty);
-                AssertSystemViewModel<ClipboardPage, ClipboardPageViewModel>("Clipboard", "Clipboard", string.Empty);
-
-                var dialogsPage = (FileAndFolderDialogsPage)new ItemPage(GalleryCatalog.FindItem("FileAndFolderDialogs")).DirectPageContent;
-                Assert.AreEqual("No file selected", dialogsPage.ViewModel.SingleFilePath);
-                Assert.AreEqual("No files selected", dialogsPage.ViewModel.MultipleFilesPath);
-                Assert.AreEqual("Enter text here to save to a file...", dialogsPage.ViewModel.FileContent);
-                Assert.AreEqual("No file saved", dialogsPage.ViewModel.SavedFilePath);
-                Assert.AreEqual("No folder selected", dialogsPage.ViewModel.SelectedFolderPath);
-                var changedProperties = new List<string>();
-                dialogsPage.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
-                dialogsPage.ViewModel.FileContent = "Saved text";
-                Assert.AreEqual("Saved text", dialogsPage.ViewModel.FileContent);
-                CollectionAssert.Contains(changedProperties, nameof(FileAndFolderDialogsPageViewModel.FileContent));
-
-                var messageBoxPage = (MessageBoxPage)new ItemPage(GalleryCatalog.FindItem("MessageBox")).DirectPageContent;
-                Assert.AreEqual("No message shown yet", messageBoxPage.ViewModel.DefaultMessageResult);
-                Assert.AreEqual("No message shown yet", messageBoxPage.ViewModel.CustomTitleResult);
-                Assert.AreEqual("No button clicked yet", messageBoxPage.ViewModel.DifferentButtonsResult);
-                Assert.AreEqual("No image example shown yet", messageBoxPage.ViewModel.DifferentImagesResult);
-                Assert.AreEqual("No common message shown yet", messageBoxPage.ViewModel.CommonMessagesResult);
-                Assert.AreEqual("No selection made", messageBoxPage.ViewModel.CustomDefaultResult);
-                Assert.AreEqual("<Button Content=\"Show MessageBox\" Click=\"ShowMessageBoxButton_Click\" />", messageBoxPage.ViewModel.DifferentButtonsXamlCode);
-                Assert.AreEqual("<Button Content=\"Show MessageBox\" Click=\"ShowMessageButton_Click\" />", messageBoxPage.ViewModel.DifferentImagesXamlCode);
-                StringAssert.Contains(messageBoxPage.ViewModel.DifferentButtonsCSharpCode, "MessageBoxButton.OK");
-                StringAssert.Contains(messageBoxPage.ViewModel.DifferentImagesCSharpCode, "MessageBoxImage.None");
-                changedProperties.Clear();
-                messageBoxPage.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
-                messageBoxPage.ViewModel.SelectedButtonIndex = 1;
-                CollectionAssert.Contains(changedProperties, nameof(MessageBoxPageViewModel.SelectedButtonIndex));
-                CollectionAssert.Contains(changedProperties, nameof(MessageBoxPageViewModel.DifferentButtonsCSharpCode));
-                StringAssert.Contains(messageBoxPage.ViewModel.DifferentButtonsCSharpCode, "MessageBoxButton.OKCancel");
-                messageBoxPage.ViewModel.SelectedImageIndex = 4;
-                StringAssert.Contains(messageBoxPage.ViewModel.DifferentImagesCSharpCode, "MessageBoxImage.Information");
-
-                var clipboardPage = (ClipboardPage)new ItemPage(GalleryCatalog.FindItem("Clipboard")).DirectPageContent;
-                Assert.AreEqual(string.Empty, clipboardPage.ViewModel.CopyStatus);
-                Assert.AreEqual(string.Empty, clipboardPage.ViewModel.PastedText);
-                Assert.AreEqual(string.Empty, clipboardPage.ViewModel.ClearStatus);
-                Assert.AreEqual(string.Empty, clipboardPage.ViewModel.FormatsInfo);
-                Assert.AreEqual(string.Empty, clipboardPage.ViewModel.CopyImageStatus);
-                Assert.AreEqual(string.Empty, clipboardPage.ViewModel.PasteImageStatus);
-                changedProperties.Clear();
-                clipboardPage.ViewModel.PropertyChanged += (sender, args) => changedProperties.Add(args.PropertyName);
-                clipboardPage.ViewModel.CopyStatus = "Copied";
-                Assert.AreEqual("Copied", clipboardPage.ViewModel.CopyStatus);
-                CollectionAssert.Contains(changedProperties, nameof(ClipboardPageViewModel.CopyStatus));
-            });
-        }
-
-        [TestMethod]
-        public void SystemItemPagesUseOfficialPageRoots()
-        {
-            WpfTestHost.Run(() =>
-            {
-                AssertWpfGalleryPageRoot<FileAndFolderDialogsPage>("FileAndFolderDialogs", "File and Folder Dialogs");
-                AssertWpfGalleryPageRoot<MessageBoxPage>("MessageBox", "MessageBox");
-                AssertWpfGalleryPageRoot<ClipboardPage>("Clipboard", "ClipboardPage");
-            });
-        }
-
-        [TestMethod]
         public void ListViewPageExamplesMatchWpfGalleryReference()
         {
             WpfTestHost.Run(() =>
@@ -1202,19 +1052,14 @@ namespace ModernWpf.Gallery.Tests
                 AssertExampleMargins("Border", new Thickness(10), new Thickness(10), new Thickness(10));
                 AssertExampleMargins("Grid", new Thickness(10), new Thickness(10), new Thickness(10));
                 AssertExampleMargins("StackPanel", new Thickness(10), new Thickness(10));
-                AssertExampleMargins("Canvas", new Thickness(10));
                 AssertExampleMargins("Expander", new Thickness(10));
                 AssertExampleMargins("GridSplitter", new Thickness(10));
                 AssertExampleMargins("GroupBox", new Thickness(10));
-                AssertExampleMargins("Image", new Thickness(10));
                 AssertExampleMargins("ResizeGrip", new Thickness(10));
                 AssertExampleMargins("Calendar", new Thickness(10));
                 AssertExampleMargins("DatePicker", new Thickness(10));
                 AssertExampleMargins("ProgressBar", new Thickness(10), new Thickness(10, 32, 10, 10));
                 AssertExampleMargins("ToolTip", new Thickness(10));
-                AssertExampleMargins("Clipboard", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
-                AssertExampleMargins("FileAndFolderDialogs", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
-                AssertExampleMargins("MessageBox", new Thickness(10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10), new Thickness(10, 32, 10, 10));
                 AssertExampleMargins("Menu", new Thickness(10));
                 AssertExampleMargins("Frame", new Thickness(10));
                 AssertExampleMargins("NavigationWindow", new Thickness(10));
@@ -1597,7 +1442,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void LayoutAndMediaPagesMatchWpfGalleryReference()
+        public void LayoutPagesMatchWpfGalleryReference()
         {
             WpfTestHost.Run(() =>
             {
@@ -1732,42 +1577,6 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual("Submit", ((Button)groupStack.Children[2]).Content);
                 Assert.IsTrue(double.IsNaN(((Button)groupStack.Children[2]).Width));
 
-                var canvasPage = new ItemPage(GalleryCatalog.FindItem("Canvas"));
-                Assert.IsTrue(canvasPage.HasDirectPageContent);
-                Assert.AreEqual(0, canvasPage.Examples.Count);
-                var canvasHeader = FindDescendant<PageHeader>((DependencyObject)canvasPage.DirectPageContent);
-                Assert.IsNotNull(canvasHeader);
-                Assert.AreEqual("Canvas", canvasHeader.Title);
-                Assert.AreEqual(string.Empty, canvasHeader.Description);
-                var canvasExample = FindDescendant<ControlExample>((DependencyObject)canvasPage.DirectPageContent);
-                Assert.IsNotNull(canvasExample);
-                Assert.AreEqual("A basic Canvas inside the ViewBox", canvasExample.HeaderText);
-                var viewbox = (Viewbox)canvasExample.ExampleContent;
-                Assert.AreEqual(200.0, viewbox.Width);
-                Assert.AreEqual(200.0, viewbox.Height);
-                var canvas = (Canvas)viewbox.Child;
-                Assert.AreEqual(47.0, canvas.Width);
-                Assert.AreEqual(123.0, canvas.Height);
-                Assert.AreEqual(2, canvas.Children.OfType<Path>().Count());
-
-                var imagePage = new ItemPage(GalleryCatalog.FindItem("Image"));
-                Assert.IsTrue(imagePage.HasDirectPageContent);
-                Assert.AreEqual(0, imagePage.Examples.Count);
-                var imageHeader = FindDescendant<PageHeader>((DependencyObject)imagePage.DirectPageContent);
-                Assert.IsNotNull(imageHeader);
-                Assert.AreEqual("Image", imageHeader.Title);
-                Assert.AreEqual(string.Empty, imageHeader.Description);
-                var imageExample = FindDescendant<ControlExample>((DependencyObject)imagePage.DirectPageContent);
-                Assert.IsNotNull(imageExample);
-                Assert.AreEqual("Standand Image from a local file.", imageExample.HeaderText);
-                var image = (Image)imageExample.ExampleContent;
-                Assert.AreEqual(200.0, image.Height);
-                Assert.AreEqual(HorizontalAlignment.Left, image.HorizontalAlignment);
-                var imageSource = (BitmapSource)image.Source;
-                Assert.IsTrue(imageSource.PixelWidth > 0);
-                Assert.IsTrue(imageSource.PixelHeight > 0);
-                StringAssert.Contains(imageExample.XamlCode, "Assets\\MyImage.jpg");
-
                 var resizeGripPage = new ItemPage(GalleryCatalog.FindItem("ResizeGrip"));
                 Assert.IsTrue(resizeGripPage.HasDirectPageContent);
                 var resizeGripExamples = GetRenderedExamples(resizeGripPage);
@@ -1786,7 +1595,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void DateStatusAndSystemPagesMatchWpfGalleryReference()
+        public void DateAndStatusPagesMatchWpfGalleryReference()
         {
             WpfTestHost.Run(() =>
             {
@@ -1841,7 +1650,19 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsNotNull(simpleToolTip);
                 Assert.AreEqual("Simple ToolTip", simpleToolTip.Content);
 
-                var clipboardPage = new ItemPage(GalleryCatalog.FindItem("Clipboard"));
+                var retiredSystemItems = new[]
+                {
+                    GalleryCatalog.FindItem("Clipboard"),
+                    GalleryCatalog.FindItem("FileAndFolderDialogs"),
+                    GalleryCatalog.FindItem("MessageBox")
+                };
+                Assert.IsTrue(retiredSystemItems.All(item => item == null));
+
+                // Keep the copied reference assertions available if these pages are
+                // deliberately restored to the public catalog in the future.
+                if (retiredSystemItems.All(item => item != null))
+                {
+                var clipboardPage = new ItemPage(retiredSystemItems[0]);
                 WithRenderedPage(clipboardPage, () =>
                 {
                     Assert.IsTrue(clipboardPage.HasDirectPageContent);
@@ -1917,7 +1738,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertDirectBindingPath((TextBlock)pasteImageStack.Children[3], TextBlock.TextProperty, "ViewModel.PasteImageStatus");
                 });
 
-                var dialogsPage = new ItemPage(GalleryCatalog.FindItem("FileAndFolderDialogs"));
+                var dialogsPage = new ItemPage(retiredSystemItems[1]);
                 WithRenderedPage(dialogsPage, () =>
                 {
                     Assert.IsTrue(dialogsPage.HasDirectPageContent);
@@ -1955,7 +1776,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertDirectBindingPath((TextBlock)folderStack.Children[1], TextBlock.TextProperty, "ViewModel.SelectedFolderPath");
                 });
 
-                var messageBoxPage = new ItemPage(GalleryCatalog.FindItem("MessageBox"));
+                var messageBoxPage = new ItemPage(retiredSystemItems[2]);
                 WithRenderedPage(messageBoxPage, () =>
                 {
                     Assert.IsTrue(messageBoxPage.HasDirectPageContent);
@@ -2017,6 +1838,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertButtonResultExample(customDefaultStack, "Show with 'No' as default", "No selection made");
                     AssertDirectBindingPath((TextBlock)customDefaultStack.Children[1], TextBlock.TextProperty, "ViewModel.CustomDefaultResult");
                 });
+                }
             });
         }
 
@@ -2231,12 +2053,26 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsTrue(hyperlinkPage.HasDirectPageContent);
                 var hyperlinkExamples = GetRenderedExamples(hyperlinkPage);
                 Assert.AreEqual(1, hyperlinkExamples.Count);
-                Assert.AreEqual("A Hyperlink", hyperlinkExamples[0].HeaderText);
-                var hyperlinkTextBlock = (TextBlock)hyperlinkExamples[0].ExampleContent;
+                Assert.AreEqual("A Hyperlink with in-app navigation handling", hyperlinkExamples[0].HeaderText);
+                var hyperlinkExample = FindDescendant<ControlExample>((DependencyObject)hyperlinkPage.DirectPageContent);
+                StringAssert.Contains(hyperlinkExample.CSharpCode, "e.Handled = true");
+                var hyperlinkStack = (StackPanel)hyperlinkExamples[0].ExampleContent;
+                var hyperlinkTextBlock = (TextBlock)hyperlinkStack.Children[0];
                 Assert.AreEqual(new Thickness(20), hyperlinkTextBlock.Margin);
                 var hyperlink = hyperlinkTextBlock.Inlines.OfType<Hyperlink>().Single();
                 Assert.AreEqual(new System.Uri("https://www.microsoft.com"), hyperlink.NavigateUri);
                 Assert.AreEqual("Hyperlink", hyperlink.Inlines.OfType<Run>().Single().Text);
+
+                var navigationStatus = (TextBlock)hyperlinkStack.Children[1];
+                Assert.AreEqual(Visibility.Collapsed, navigationStatus.Visibility);
+                var requestNavigateArgs = new RequestNavigateEventArgs(hyperlink.NavigateUri, null)
+                {
+                    RoutedEvent = Hyperlink.RequestNavigateEvent
+                };
+                hyperlink.RaiseEvent(requestNavigateArgs);
+                Assert.IsTrue(requestNavigateArgs.Handled);
+                Assert.AreEqual(Visibility.Visible, navigationStatus.Visibility);
+                Assert.AreEqual("Navigation request: https://www.microsoft.com/", navigationStatus.Text);
             });
         }
 
@@ -2327,7 +2163,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsTrue(typographyPage.HasDirectPageContent);
                 AssertNoContentPagePaneHook(typographyPage);
                 var typographyBody = GetDirectPageBodyStack(typographyPage);
-                Assert.AreEqual("Type helps provide structure and hierarchy to UI. The default font for Windows is Segoe UI Variable.", ((TextBlock)typographyBody.Children[0]).Text);
+                Assert.AreEqual("Type helps provide structure and hierarchy to UI. Use ModernWpf's text styles so the appropriate Segoe family is selected for the current Windows version.", ((TextBlock)typographyBody.Children[0]).Text);
                 Assert.AreEqual("Best practice is to use Regular weight for most text, use Semibold for titles.", ((TextBlock)typographyBody.Children[1]).Text);
                 var typographyMinimum = (TextBlock)typographyBody.Children[2];
                 Assert.AreEqual("The minimum values should be 12px Regular, 14px Semibold.", typographyMinimum.Text);
@@ -2659,7 +2495,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(6, body.RowDefinitions.Count);
 
                 var instructions = (Expander)body.Children.Cast<UIElement>().Single(child => Grid.GetRow(child) == 1);
-                Assert.AreEqual("Instructions on how to use Segoe Fluent Icons", instructions.Header);
+                Assert.AreEqual("Instructions on how to use Fluent icons", instructions.Header);
                 Assert.IsFalse(instructions.IsExpanded);
                 Assert.AreEqual(new Thickness(2, -8, 0, 0), instructions.Margin);
 
@@ -2754,16 +2590,12 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void UserDashboardPageMatchesWpfGalleryReferenceLayoutAndBehavior()
+        public void RetainedUserDashboardSourcePageMatchesWpfGalleryReferenceLayoutAndBehavior()
         {
             WpfTestHost.Run(() =>
             {
-                var page = new ItemPage(GalleryCatalog.FindItem("UserDashboard"));
-                var directPage = (UserDashboardPage)page.DirectPageContent;
-                var directPageHost = ((Grid)page.Content).Children
-                    .OfType<Frame>()
-                    .Single(frame => Grid.GetRow(frame) == 1);
-                Assert.AreEqual(new Thickness(0), directPageHost.Margin);
+                Assert.IsNull(GalleryCatalog.FindItem("UserDashboard"));
+                var directPage = new UserDashboardPage(new UserDashboardPageViewModel());
                 Assert.AreEqual("UserDashboardPage", directPage.Title);
                 Assert.IsInstanceOfType(directPage.ViewModel, typeof(UserDashboardPageViewModel));
 
@@ -2777,7 +2609,7 @@ namespace ModernWpf.Gallery.Tests
                     Top = -32000,
                     ShowInTaskbar = false,
                     WindowStartupLocation = WindowStartupLocation.Manual,
-                    Content = page
+                    Content = directPage
                 };
 
                 try

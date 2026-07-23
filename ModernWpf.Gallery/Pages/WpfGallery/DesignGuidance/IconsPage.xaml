@@ -155,20 +155,17 @@
         <controls:PageHeader Margin="2,0,0,32" Title="{Binding ViewModel.PageTitle}" Description="{Binding ViewModel.PageDescription}" />
 
         <Expander Grid.Row="1"
-            Header="Instructions on how to use Segoe Fluent Icons"
+            Header="Instructions on how to use Fluent icons"
             IsExpanded="False"
             Margin="2 -8 0 0">
 
             <TextBlock TextWrapping="Wrap">
             <Run FontWeight="SemiBold">
-                How to get the font
+                Use the theme font resource
             </Run>
             <LineBreak />
             <Span>
-                On Windows 11: There's nothing you need to do, the font comes with Windows.
-                <LineBreak />
-                On Windows 10: Segoe Fluent Icons is not included by default on Windows 10. You can download it
-                <Hyperlink Click="Open_SegoeFontDownloadPage">here</Hyperlink> .
+                Use {StaticResource SymbolThemeFontFamily} instead of hard-coding a font family. ModernWpf resolves that resource to a symbol font available on the current Windows version, keeping icon XAML compatible across the library's supported targets.
             </Span>
             <LineBreak/>
             <LineBreak/>
@@ -182,9 +179,7 @@
             </Span>
             <LineBreak/>
             <Span>
-                All glyphs in Segoe Fluent Icons have the same fixed width with a consistent height and left origin point, so
-                <Hyperlink Click="Open_IconDesignGuidelinesPage">
-                    layering</Hyperlink> and colorization effects can be achieved by drawing glyphs directly on top of each other.
+                Fluent icon glyphs use predictable metrics, so layering and colorization effects can be achieved by drawing glyphs directly on top of each other.
             </Span>
             <LineBreak/>
             <LineBreak/>

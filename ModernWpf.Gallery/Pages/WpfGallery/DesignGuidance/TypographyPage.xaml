@@ -22,7 +22,7 @@
                 <TextBlock
                     HorizontalAlignment="Left"
                     TextWrapping="Wrap">
-                    Type helps provide structure and hierarchy to UI. The default font for Windows is Segoe UI Variable.
+                    Type helps provide structure and hierarchy to UI. Use ModernWpf's text styles so the appropriate Segoe family is selected for the current Windows version.
                 </TextBlock>
                 <TextBlock
                     HorizontalAlignment="Left"

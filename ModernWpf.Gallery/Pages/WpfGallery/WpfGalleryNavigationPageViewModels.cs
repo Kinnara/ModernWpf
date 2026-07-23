@@ -50,34 +50,29 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
 
     public partial class WhatsNewPageViewModel : WpfGalleryPageViewModel
     {
-        private string _accentColorXamlCode = _accentColorBrushApiXamlUsage;
-        private string _hyphenBasedLigatureXamlCode = _hyphenBasedLiagatureXamlUsage;
-        private string _gridShorthandSyntaxXamlCode = _gridShorthandSyntaxXamlUsage;
+        private IReadOnlyList<GalleryItem> _newOrUpdatedItems = GalleryCatalog.NewOrUpdatedItems;
+        private string _recommendedResourcesXamlCode = _recommendedResourcesXamlUsage;
         private readonly Action<object> _navigate;
 
         public WhatsNewPageViewModel(Action<object> navigate)
-            : base("What's new in WPF", "Discover all the new features, enhancements and APIs introduced in WPF")
+            : base(
+                "What's new in ModernWpf",
+                "See the current ModernWpf direction, supported targets, and gallery improvements.")
         {
             _navigate = navigate;
             NavigateCommand = new GalleryCommand(Navigate);
         }
 
-        public string AccentColorXamlCode
+        public IReadOnlyList<GalleryItem> NewOrUpdatedItems
         {
-            get { return _accentColorXamlCode; }
-            set { SetProperty(ref _accentColorXamlCode, value); }
+            get { return _newOrUpdatedItems; }
+            set { SetProperty(ref _newOrUpdatedItems, value ?? Array.Empty<GalleryItem>()); }
         }
 
-        public string HyphenBasedLigatureXamlCode
+        public string RecommendedResourcesXamlCode
         {
-            get { return _hyphenBasedLigatureXamlCode; }
-            set { SetProperty(ref _hyphenBasedLigatureXamlCode, value); }
-        }
-
-        public string GridShorthandSyntaxXamlCode
-        {
-            get { return _gridShorthandSyntaxXamlCode; }
-            set { SetProperty(ref _gridShorthandSyntaxXamlCode, value); }
+            get { return _recommendedResourcesXamlCode; }
+            set { SetProperty(ref _recommendedResourcesXamlCode, value); }
         }
 
         public ICommand NavigateCommand { get; }
@@ -97,42 +92,19 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
             }
         }
 
-        private const string _accentColorBrushApiXamlUsage =
-            "<StackPanel Orientation=\"Horizontal\" Height=\"50\">\n"
-            + "    <StackPanel.Resources>\n"
-            + "        <Style TargetType=\"Border\">\n"
-            + "            <Setter Property=\"Height\" Value=\"50\" />\n"
-            + "            <Setter Property=\"Width\" Value=\"30\" />\n"
-            + "        </Style>\n"
-            + "    </StackPanel.Resources>\n"
-            + "    <Border CornerRadius=\"2 0 0 2\" Background=\"{DynamicResource {x:Static SystemColors.AccentColorDark3BrushKey}}\" />\n"
-            + "    <Border Background=\"{DynamicResource {x:Static SystemColors.AccentColorDark2BrushKey}}\" />\n"
-            + "    <Border Background=\"{DynamicResource {x:Static SystemColors.AccentColorDark1BrushKey}}\" />\n"
-            + "    <Border Background=\"{DynamicResource {x:Static SystemColors.AccentColorBrushKey}}\" />\n"
-            + "    <Border Background=\"{DynamicResource {x:Static SystemColors.AccentColorLight1BrushKey}}\" />\n"
-            + "    <Border Background=\"{DynamicResource {x:Static SystemColors.AccentColorLight2BrushKey}}\" />\n"
-            + "    <Border CornerRadius=\"0 2 2 0\" Background=\"{DynamicResource {x:Static SystemColors.AccentColorLight3BrushKey}}\" />\n"
-            + "</StackPanel>";
-
-        private const string _hyphenBasedLiagatureXamlUsage =
-            "<StackPanel Orientation=\"Horizontal\">\n"
-            + "    <TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"-->\" />\n"
-            + "    <TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"&lt;!--\" />\n"
-            + "    <TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"&lt;--\" />\n"
-            + "</StackPanel>";
-
-        private const string _gridShorthandSyntaxXamlUsage =
-            "<Grid RowDefinitions=\"Auto,Auto,Auto\" ColumnDefinitions=\"Auto 80 *\" HorizontalAlignment=\"Left\">\n"
-            + "    <TextBlock Grid.Row=\"0\" Grid.Column=\"0\" FontWeight=\"Bold\" Margin=\"0 0 10 0\">Sl. No.</TextBlock>\n"
-            + "    <TextBlock Grid.Row=\"0\" Grid.Column=\"1\" FontWeight=\"Bold\">Name</TextBlock>\n"
-            + "    <TextBlock Grid.Row=\"0\" Grid.Column=\"2\" FontWeight=\"Bold\">Description</TextBlock>\n"
-            + "    <TextBlock Grid.Row=\"1\" Grid.Column=\"0\">1</TextBlock>\n"
-            + "    <TextBlock Grid.Row=\"1\" Grid.Column=\"1\">Rectangle</TextBlock>\n"
-            + "    <TextBlock Grid.Row=\"1\" Grid.Column=\"2\" TextWrapping=\"Wrap\">Quadrilateral where all the adjacent sides form a right angle.</TextBlock>\n"
-            + "    <TextBlock Grid.Row=\"2\" Grid.Column=\"0\">2</TextBlock>\n"
-            + "    <TextBlock Grid.Row=\"2\" Grid.Column=\"1\">Circle</TextBlock>\n"
-            + "    <TextBlock Grid.Row=\"2\" Grid.Column=\"2\" TextWrapping=\"Wrap\">Set of all points that are equidistant from a fixed point.</TextBlock>\n"
-            + "</Grid>";
+        private const string _recommendedResourcesXamlUsage =
+            "<Application\n"
+            + "    ...\n"
+            + "    xmlns:ui=\"http://schemas.modernwpf.com/2019\">\n"
+            + "    <Application.Resources>\n"
+            + "        <ResourceDictionary>\n"
+            + "            <ResourceDictionary.MergedDictionaries>\n"
+            + "                <ui:ThemeResources />\n"
+            + "                <ui:FluentControlsResources UseCompactResources=\"False\" />\n"
+            + "            </ResourceDictionary.MergedDictionaries>\n"
+            + "        </ResourceDictionary>\n"
+            + "    </Application.Resources>\n"
+            + "</Application>";
     }
 
     public class WpfGalleryNavigationPageViewModel : WpfGalleryPageViewModel

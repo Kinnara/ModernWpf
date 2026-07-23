@@ -21,13 +21,20 @@ namespace ModernWpf.Gallery.Tests
                 AssertExamples(
                     new HyperlinkPage(new HyperlinkPageViewModel()),
                     new ExpectedExample(
-                        "A Hyperlink",
+                        "A Hyperlink with in-app navigation handling",
                         Lines(
                             "<TextBlock Margin=\"20\">",
                             "<Hyperlink NavigateUri=\"https://www.microsoft.com\" RequestNavigate=\"Hyperlink_RequestNavigate\">",
-                            "Lorem Ipsum link",
+                            "Hyperlink",
                             "</Hyperlink>",
-                            "</TextBlock>")));
+                            "</TextBlock>"),
+                        Lines(
+                            "private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)",
+                            "{",
+                            "NavigationStatusText.Text = $\"Navigation request: {e.Uri.AbsoluteUri}\";",
+                            "NavigationStatusText.Visibility = Visibility.Visible;",
+                            "e.Handled = true;",
+                            "}")));
 
                 AssertExamples(
                     new LabelPage(new LabelPageViewModel()),

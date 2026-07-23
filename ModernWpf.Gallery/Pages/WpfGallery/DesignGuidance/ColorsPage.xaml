@@ -33,7 +33,7 @@
                     <Run FontWeight="SemiBold">Using Colors</Run>
                     <LineBreak />
                     <Span>
-                        The colors below are provided as part of WPF .NET 9 onwards. You can reference them in your app using DynamicResource bindings. For example: Color="{DynamicResource CardBackgroundFillColorDefault}"
+                        This gallery resolves the colors below through ModernWpf on its supported targets and through WPF's Fluent theme on newer .NET releases. Reference them with DynamicResource bindings so theme changes flow through your UI. For example: Color="{DynamicResource CardBackgroundFillColorDefault}"
                     </Span>
                 </TextBlock>
 

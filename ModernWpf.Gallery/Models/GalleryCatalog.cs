@@ -42,12 +42,9 @@ namespace ModernWpf.Gallery.Models
             "Label",
             "TextBox",
             "TextBlock",
-            "RichTextEdit",
+            "RichTextBox",
             "PasswordBox",
-            "Hyperlink",
-            "FileAndFolderDialogs",
-            "MessageBox",
-            "Clipboard"
+            "Hyperlink"
         };
 
         private static readonly string[] OfficialWpfGalleryOverviewGroupIds =
@@ -58,8 +55,14 @@ namespace ModernWpf.Gallery.Models
             "Layout",
             "Navigation",
             "StatusAndInfo",
-            "Text",
-            "System"
+            "Text"
+        };
+
+        private static readonly string[] RetiredWpfGalleryGroupIds =
+        {
+            "Samples",
+            "System",
+            "Media"
         };
 
         private static readonly string[] ModernWpfExtensionItemIds =
@@ -115,12 +118,10 @@ namespace ModernWpf.Gallery.Models
             { "Date and Calendar", "DateAndCalendar" },
             { "Status & Info", "StatusAndInfo" },
             { "Status and Info", "StatusAndInfo" },
-            { "Media Controls", "Media" },
             { "ModernWpf controls", "ModernWpfControls" },
-            { "File and Folder Dialogs", "FileAndFolderDialogs" },
             { "Colors", "Color" },
             { "Icons", "Iconography" },
-            { "User Dashboard", "UserDashboard" }
+            { "RichTextEdit", "RichTextBox" }
         };
 
         private static readonly IReadOnlyList<GalleryItem> CatalogItems = CreateItems();
@@ -159,8 +160,13 @@ namespace ModernWpf.Gallery.Models
         public static GalleryGroup FindGroup(string uniqueId)
         {
             uniqueId = NormalizeLookupId(uniqueId);
-            return Groups.FirstOrDefault(group => string.Equals(group.UniqueId, uniqueId, StringComparison.OrdinalIgnoreCase))
-                ?? SourceGroups.FirstOrDefault(group => string.Equals(group.UniqueId, uniqueId, StringComparison.OrdinalIgnoreCase));
+            var displayGroup = Groups.FirstOrDefault(group => string.Equals(group.UniqueId, uniqueId, StringComparison.OrdinalIgnoreCase));
+            if (displayGroup != null || RetiredWpfGalleryGroupIds.Contains(uniqueId, StringComparer.OrdinalIgnoreCase))
+            {
+                return displayGroup;
+            }
+
+            return SourceGroups.FirstOrDefault(group => string.Equals(group.UniqueId, uniqueId, StringComparison.OrdinalIgnoreCase));
         }
 
         public static GalleryGroup FindDisplayGroupForItem(string uniqueId)
@@ -327,16 +333,6 @@ namespace ModernWpf.Gallery.Models
                     new[] { "Typography", "Color" },
                     isUpdated: true),
                 CreateWpfItem(
-                    "Samples",
-                    "UserDashboard",
-                    "User Dashboard",
-                    "A dashboard for a user to view and interact with.",
-                    "PersonPicture.png",
-                    "A dashboard for viewing, editing, adding, and removing users.",
-                    "",
-                    new string[0],
-                    new[] { "ListView", "TextBox", "DatePicker", "Slider", "CheckBox" }),
-                CreateWpfItem(
                     "BasicInput",
                     "Button",
                     "Button",
@@ -466,7 +462,7 @@ namespace ModernWpf.Gallery.Models
                     "Grid positions child elements in a flexible row and column layout.",
                     "System.Windows.Controls.Grid",
                     new[] { "Object", "DispatcherObject", "DependencyObject", "Visual", "UIElement", "FrameworkElement", "Panel", "Grid" },
-                    new[] { "GridSplitter", "StackPanel", "Canvas" },
+                    new[] { "GridSplitter", "StackPanel" },
                     isNew: true),
                 CreateWpfItem(
                     "Layout",
@@ -510,7 +506,7 @@ namespace ModernWpf.Gallery.Models
                     "StackPanel arranges child elements in a single horizontal or vertical line.",
                     "System.Windows.Controls.StackPanel",
                     new[] { "Object", "DispatcherObject", "DependencyObject", "Visual", "UIElement", "FrameworkElement", "Panel", "StackPanel" },
-                    new[] { "Grid", "Canvas" },
+                    new[] { "Grid" },
                     isNew: true),
                 CreateWpfItem(
                     "Layout",
@@ -523,26 +519,6 @@ namespace ModernWpf.Gallery.Models
                     new[] { "Object", "DispatcherObject", "DependencyObject", "Visual", "UIElement", "FrameworkElement", "Decorator", "Border" },
                     new[] { "Grid", "GroupBox" },
                     isNew: true),
-                CreateWpfItem(
-                    "Media",
-                    "Canvas",
-                    "Canvas",
-                    "A layout panel that positions child elements by explicit coordinates.",
-                    "Canvas.png",
-                    "",
-                    "System.Windows.Controls.Canvas",
-                    new[] { "Object", "DispatcherObject", "DependencyObject", "Visual", "UIElement", "FrameworkElement", "Panel", "Canvas" },
-                    new[] { "Grid", "StackPanel" }),
-                CreateWpfItem(
-                    "Media",
-                    "Image",
-                    "Image",
-                    "A control that displays image content.",
-                    "Image.png",
-                    "",
-                    "System.Windows.Controls.Image",
-                    new[] { "Object", "DispatcherObject", "DependencyObject", "Visual", "UIElement", "FrameworkElement", "Image" },
-                    new[] { "Canvas" }),
                 CreateWpfItem(
                     "Navigation",
                     "Menu",
@@ -624,7 +600,7 @@ namespace ModernWpf.Gallery.Models
                     "",
                     "System.Windows.Controls.TextBox",
                     new[] { "Object", "DispatcherObject", "DependencyObject", "Visual", "UIElement", "FrameworkElement", "Control", "TextBoxBase", "TextBox" },
-                    new[] { "PasswordBox", "RichTextEdit" },
+                    new[] { "PasswordBox", "RichTextBox" },
                     isUpdated: true),
                 CreateWpfItem(
                     "Text",
@@ -638,8 +614,8 @@ namespace ModernWpf.Gallery.Models
                     new[] { "Label", "TextBox" }),
                 CreateWpfItem(
                     "Text",
-                    "RichTextEdit",
-                    "RichTextEdit",
+                    "RichTextBox",
+                    "RichTextBox",
                     "A control that displays formatted text, hyperlinks, inline images, and other rich content.",
                     "RichEditBox.png",
                     "",
@@ -665,40 +641,7 @@ namespace ModernWpf.Gallery.Models
                     "Hyperlink appears inside flow or text content and raises navigation events for links.",
                     "System.Windows.Documents.Hyperlink",
                     new[] { "Object", "DispatcherObject", "DependencyObject", "ContentElement", "FrameworkContentElement", "TextElement", "Inline", "Span", "Hyperlink" },
-                    new[] { "HyperlinkButton", "TextBlock" }),
-                CreateWpfItem(
-                    "System",
-                    "FileAndFolderDialogs",
-                    "File and Folder Dialogs",
-                    "File and folder picker dialogs for opening and saving files.",
-                    "FilePicker.png",
-                    "WPF apps use Microsoft.Win32 dialogs for common file and save picker workflows.",
-                    "Microsoft.Win32.OpenFileDialog",
-                    new[] { "Object", "CommonDialog", "FileDialog", "OpenFileDialog" },
-                    new string[0],
-                    isNew: true),
-                CreateWpfItem(
-                    "System",
-                    "MessageBox",
-                    "MessageBox",
-                    "Display messages and get user responses through dialog boxes.",
-                    "ContentDialog.png",
-                    "MessageBox displays simple modal prompts through the WPF windowing stack.",
-                    "System.Windows.MessageBox",
-                    new[] { "MessageBox" },
-                    new[] { "ContentDialog" },
-                    isNew: true),
-                CreateWpfItem(
-                    "System",
-                    "Clipboard",
-                    "Clipboard",
-                    "Access and manipulate data stored in the system clipboard.",
-                    "Clipboard.png",
-                    "Clipboard stores data that users and apps can copy, cut, and paste.",
-                    "System.Windows.Clipboard",
-                    new[] { "Clipboard" },
-                    new string[0],
-                    isNew: true)
+                    new[] { "HyperlinkButton", "TextBlock" })
             };
         }
 
@@ -748,16 +691,6 @@ namespace ModernWpf.Gallery.Models
                         "Iconography"
                     },
                     "Design guidelines on how to use colors, typography, and icons in your app."),
-                CreateGroup(
-                    "Samples",
-                    "Samples",
-                    "User-facing app samples that combine WPF controls into realistic screens.",
-                    "pack://application:,,,/Assets/ControlImages/PersonPicture.png",
-                    new[]
-                    {
-                        "UserDashboard"
-                    },
-                    "Sample pages for common scenarios"),
                 CreateGroup(
                     "BasicInput",
                     "Basic Input",
@@ -839,41 +772,18 @@ namespace ModernWpf.Gallery.Models
                 CreateGroup(
                     "Text",
                     "Text",
-                    "Label, TextBox, TextBlock, RichTextEdit, PasswordBox",
+                    "Label, TextBox, TextBlock, RichTextBox, PasswordBox",
                     "pack://application:,,,/Assets/ControlImages/TextBlock.png",
                     new[]
                     {
                         "Label",
                         "TextBox",
                         "TextBlock",
-                        "RichTextEdit",
+                        "RichTextBox",
                         "PasswordBox",
                         "Hyperlink"
                     },
                     "Controls for displaying and editing text"),
-                CreateGroup(
-                    "System",
-                    "System",
-                    "File and Folder Dialogs, MessageBox, Clipboard",
-                    "pack://application:,,,/Assets/ControlImages/FilePicker.png",
-                    new[]
-                    {
-                        "FileAndFolderDialogs",
-                        "MessageBox",
-                        "Clipboard"
-                    },
-                    "System-level controls and dialogs"),
-                CreateGroup(
-                    "Media",
-                    "Media Controls",
-                    "Canvas, Image",
-                    "pack://application:,,,/Assets/ControlImages/Image.png",
-                    new[]
-                    {
-                        "Canvas",
-                        "Image"
-                    },
-                    "Controls for media presentation"),
                 CreateGroup(
                     "ModernWpfControls",
                     "ModernWpf controls",
@@ -1021,7 +931,7 @@ namespace ModernWpf.Gallery.Models
         {
             get
             {
-                var group = GalleryCatalog.FindGroup(GroupId);
+                var group = GalleryCatalog.FindDisplayGroupForItem(UniqueId) ?? GalleryCatalog.FindGroup(GroupId);
                 return group == null ? string.Empty : group.Title;
             }
         }

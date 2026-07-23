@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -77,14 +76,5 @@ namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
             }
         }
 
-        private void Open_SegoeFontDownloadPage(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("https://learn.microsoft.com/windows/apps/design/downloads/#fonts") { UseShellExecute = true });
-        }
-
-        private void Open_IconDesignGuidelinesPage(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("https://learn.microsoft.com/windows/apps/design/style/segoe-fluent-icons-font#layering-and-mirroring") { UseShellExecute = true });
-        }
     }
 }

@@ -52,7 +52,8 @@ namespace ModernWpf.Gallery.Tests
 
                 foreach (var token in officialTokens)
                 {
-                    if (!localSource.Contains(token, StringComparison.Ordinal))
+                    if (!localSource.Contains(token, StringComparison.Ordinal) &&
+                        !IsOfficialXamlHookTokenAdaptedAway(officialRelativePath, token))
                     {
                         missingTokens.Add(officialRelativePath + " :: " + token);
                     }
@@ -106,7 +107,8 @@ namespace ModernWpf.Gallery.Tests
 
                 foreach (var token in officialTokens)
                 {
-                    if (!localSource.Contains(token, StringComparison.Ordinal))
+                    if (!localSource.Contains(token, StringComparison.Ordinal) &&
+                        !IsOfficialSamplePaneTokenAdaptedAway(officialRelativePath, token))
                     {
                         missingTokens.Add(officialRelativePath + " :: " + token);
                     }
@@ -185,7 +187,7 @@ namespace ModernWpf.Gallery.Tests
             }
 
             Assert.AreEqual(57, mappedClassCount, "The active WPF Gallery ViewModel mapping count changed; update the 5.4 observable-field scan deliberately.");
-            Assert.AreEqual(79, officialFieldCount, "The active WPF Gallery observable field count changed; update the 5.4 observable-field scan deliberately.");
+            Assert.AreEqual(76, officialFieldCount, "The active WPF Gallery observable field count changed; update the 5.4 observable-field scan deliberately.");
             Assert.AreEqual(
                 0,
                 missingFields.Count,
@@ -694,11 +696,49 @@ namespace ModernWpf.Gallery.Tests
                 .Replace("\t", string.Empty);
         }
 
+        private static bool IsOfficialXamlHookTokenAdaptedAway(string relativePath, string token)
+        {
+            if (relativePath.EndsWith("WhatsNewPage.xaml", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            if (relativePath.EndsWith(@"DesignGuidance\IconsPage.xaml", StringComparison.OrdinalIgnoreCase))
+            {
+                return token == "Click=\"Open_IconDesignGuidelinesPage\"" ||
+                    token == "Click=\"Open_SegoeFontDownloadPage\"";
+            }
+
+            return false;
+        }
+
+        private static bool IsOfficialSamplePaneTokenAdaptedAway(string relativePath, string token)
+        {
+            if (relativePath.EndsWith("WhatsNewPage.xaml", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            return relativePath.EndsWith(@"Text\HyperlinkPage.xaml", StringComparison.OrdinalIgnoreCase) &&
+                (token.StartsWith("HeaderText=", StringComparison.Ordinal) ||
+                 token.StartsWith("XamlCode=", StringComparison.Ordinal));
+        }
+
         private static bool IsOfficialObservableFieldAdaptedAway(string className, string fieldName)
         {
             if (fieldName == "_pageTitle" || fieldName == "_pageDescription")
             {
                 return true;
+            }
+
+            if (className == "WhatsNewPageViewModel")
+            {
+                return fieldName == "_accentColorXamlCode" ||
+                    fieldName == "_accentColorBrushApiXamlUsage" ||
+                    fieldName == "_hyphenBasedLigatureXamlCode" ||
+                    fieldName == "_hyphenBasedLiagatureXamlUsage" ||
+                    fieldName == "_gridShorthandSyntaxXamlCode" ||
+                    fieldName == "_gridShorthandSyntaxXamlUsage";
             }
 
             return className == "MainWindowViewModel"
@@ -1061,29 +1101,27 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "public partial class WhatsNewPageViewModel : WpfGalleryPageViewModel",
-                "private string _accentColorXamlCode = _accentColorBrushApiXamlUsage;",
-                "private string _hyphenBasedLigatureXamlCode = _hyphenBasedLiagatureXamlUsage;",
-                "private string _gridShorthandSyntaxXamlCode = _gridShorthandSyntaxXamlUsage;",
+                "private IReadOnlyList<GalleryItem> _newOrUpdatedItems = GalleryCatalog.NewOrUpdatedItems;",
+                "private string _recommendedResourcesXamlCode = _recommendedResourcesXamlUsage;",
                 "private readonly Action<object> _navigate;",
                 "public WhatsNewPageViewModel(Action<object> navigate)",
-                ": base(\"What's new in WPF\", \"Discover all the new features, enhancements and APIs introduced in WPF\")",
+                "\"What's new in ModernWpf\"",
+                "\"See the current ModernWpf direction, supported targets, and gallery improvements.\"",
                 "_navigate = navigate;",
                 "NavigateCommand = new GalleryCommand(Navigate);",
-                "public string AccentColorXamlCode",
-                "SetProperty(ref _accentColorXamlCode, value);",
-                "public string HyphenBasedLigatureXamlCode",
-                "SetProperty(ref _hyphenBasedLigatureXamlCode, value);",
-                "public string GridShorthandSyntaxXamlCode",
-                "SetProperty(ref _gridShorthandSyntaxXamlCode, value);",
+                "public IReadOnlyList<GalleryItem> NewOrUpdatedItems",
+                "SetProperty(ref _newOrUpdatedItems, value ?? Array.Empty<GalleryItem>());",
+                "public string RecommendedResourcesXamlCode",
+                "SetProperty(ref _recommendedResourcesXamlCode, value);",
                 "public ICommand NavigateCommand { get; }",
                 "public void Navigate(object pageType)",
                 "if (pageType is Type page)",
                 "_navigate(page);",
                 "else if (pageType != null && _navigate != null)",
                 "_navigate(pageType);",
-                "private const string _accentColorBrushApiXamlUsage =",
-                "private const string _hyphenBasedLiagatureXamlUsage =",
-                "private const string _gridShorthandSyntaxXamlUsage =");
+                "private const string _recommendedResourcesXamlUsage =",
+                "<ui:ThemeResources />",
+                "<ui:FluentControlsResources UseCompactResources=\\\"False\\\" />");
         }
 
         [TestMethod]
@@ -1509,7 +1547,7 @@ namespace ModernWpf.Gallery.Tests
                 "public partial class HyperlinkPageViewModel : WpfGalleryPageViewModel",
                 ": base(\"Hyperlink\", \"\")",
                 "public partial class RichTextEditPageViewModel : WpfGalleryPageViewModel",
-                ": base(\"RichTextEdit\", \"\")",
+                ": base(\"RichTextBox\", \"\")",
                 "public partial class PasswordBoxPageViewModel : WpfGalleryPageViewModel",
                 ": base(\"PasswordBox\", \"\")");
 
@@ -3158,7 +3196,7 @@ namespace ModernWpf.Gallery.Tests
                 "\"ComboBox\"",
                 "\"PasswordBox\"",
                 "\"RadioButton\"",
-                "\"RichTextEdit\"",
+                "\"RichTextBox\"",
                 "\"Slider\"",
                 "\"TextBox\"",
                 "if ($Reference -eq \"InstalledWinUI3Gallery\")",
@@ -5676,7 +5714,7 @@ namespace ModernWpf.Gallery.Tests
                 "UsedAutomationFallback = $usedAutomationFallback");
             AssertContainsInOrder(
                 source,
-                "foreach ($click in @($designExpandedClick, $samplesExpandedClick, $designCollapsedClick, $samplesCollapsedClick))",
+                "foreach ($click in @($designExpandedClick, $basicInputExpandedClick, $designCollapsedClick, $basicInputCollapsedClick))",
                 "elseif ($click.StateAfterClick -ne $click.TargetState)",
                 "pointer disclosure click expected",
                 "if ($click.UsedAutomationFallback)",
@@ -6091,11 +6129,11 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 source,
                 "function Test-ControlSupportsTextInteraction([string]$control)",
-                "\"RichTextEdit\" { return $true }",
+                "\"RichTextBox\" { return $true }",
                 "function Get-TextInteractionInput([string]$control)",
-                "\"RichTextEdit\" { return \"ModernWpf rich text\" }",
+                "\"RichTextBox\" { return \"ModernWpf rich text\" }",
                 "function Get-TextInteractionTargetName([string]$control)",
-                "\"RichTextEdit\" { return \"simple rich text editor\" }");
+                "\"RichTextBox\" { return \"simple rich text editor\" }");
             AssertContainsInOrder(
                 source,
                 "function Get-ControlInteractionKind([string]$control)",
@@ -6125,7 +6163,7 @@ namespace ModernWpf.Gallery.Tests
                 "ToolTip must use the hover/open-repeat path, not the pre-opened diagnostic path.");
             Assert.IsFalse(
                 source.Contains("PreparedText", StringComparison.Ordinal),
-                "RichTextEdit must use recorder-driven text input, not diagnostic-prepared text.");
+                "RichTextBox must use recorder-driven text input, not diagnostic-prepared text.");
             var diagnosticPreparationFunctionStart = source.IndexOf(
                 "function Test-ControlRequiresDiagnosticPreparation([string]$control)",
                 StringComparison.Ordinal);
@@ -6139,8 +6177,8 @@ namespace ModernWpf.Gallery.Tests
                 diagnosticPreparationFunctionStart,
                 diagnosticPreparationFunctionEnd - diagnosticPreparationFunctionStart);
             Assert.IsFalse(
-                diagnosticPreparationFunction.Contains("RichTextEdit", StringComparison.Ordinal),
-                "RichTextEdit must not opt into --open-interactions diagnostic preparation.");
+                diagnosticPreparationFunction.Contains("RichTextBox", StringComparison.Ordinal),
+                "RichTextBox must not opt into --open-interactions diagnostic preparation.");
             AssertContainsInOrder(
                 source,
                 "private const uint WM_CHAR = 0x0102;",
@@ -6776,22 +6814,34 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(source, "New-Case \"ShellHomeNavigation\" \"home\" @(\"Home\") \"\" \"home\"");
             StringAssert.Contains(source, "New-Case \"ShellDesignGuidance\" \"category/Design Guidance\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\"");
             StringAssert.Contains(source, "New-Case \"ShellClickDesignGuidance\" \"home\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\" @(\"Design Guidance\") \"home\"");
-            StringAssert.Contains(source, "New-Case \"ShellClickDesignGuidanceAfterSamples\" \"home\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\" @(\"Samples\", \"Design Guidance\") \"home\"");
             StringAssert.Contains(source, "New-Case \"ShellClickDesignGuidanceCollapse\" \"home\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\" @(\"Design Guidance\", \"Design Guidance\") \"home\"");
-            StringAssert.Contains(source, "New-Case \"ShellSamples\" \"category/Samples\" @(\"Samples\")");
-            StringAssert.Contains(source, "New-Case \"ShellClickSamples\" \"home\" @(\"Samples\") \"\" \"category/Samples\" @(\"Samples\") \"home\"");
             StringAssert.Contains(source, "New-Case \"AllControls\" \"All Controls\" @(\"All Controls\") \"\" \"AllControls\"");
             StringAssert.Contains(source, "New-Case \"DesignGuidance\" \"category/Design Guidance\" @(\"Design Guidance\") \"\" \"category/DesignGuidance\"");
             StringAssert.Contains(source, "New-Case \"Color\" \"item/Colors\" @(\"Design Guidance\", \"Colors\") \"\" \"item/Color\"");
             StringAssert.Contains(source, "New-Case \"Iconography\" \"item/Icons\" @(\"Design Guidance\", \"Icons\") \"\" \"item/Iconography\"");
             StringAssert.Contains(source, "New-Case \"DateAndCalendar\" \"category/Date & Calendar\" @(\"Date & Calendar\") \"\" \"category/DateAndCalendar\"");
-            StringAssert.Contains(source, "New-Case \"Media\" \"category/Media Controls\" @(\"Media\") \"\" \"category/Media\"");
             StringAssert.Contains(source, "New-Case \"StatusAndInfo\" \"category/Status & Info\" @(\"Status & Info\") \"\" \"category/StatusAndInfo\"");
-            StringAssert.Contains(source, "New-Case \"FileAndFolderDialogs\" \"item/File and Folder Dialogs\" @(\"System\", \"File and Folder Dialogs\") \"\" \"item/FileAndFolderDialogs\"");
+            StringAssert.Contains(source, "New-Case \"RichTextBox\" \"item/RichTextBox\" @(\"Text\", \"RichTextEdit\")");
             Assert.IsFalse(source.Contains("New-Case \"DateAndCalendar\" \"category/DateAndCalendar\"", StringComparison.Ordinal));
-            Assert.IsFalse(source.Contains("New-Case \"Media\" \"category/Media\"", StringComparison.Ordinal));
             Assert.IsFalse(source.Contains("New-Case \"StatusAndInfo\" \"category/StatusAndInfo\"", StringComparison.Ordinal));
             Assert.IsFalse(source.Contains("New-Case \"Iconography\" \"item/Iconography\"", StringComparison.Ordinal));
+            foreach (var retiredCase in new[]
+            {
+                "Samples",
+                "UserDashboard",
+                "Media",
+                "Canvas",
+                "Image",
+                "System",
+                "FileAndFolderDialogs",
+                "MessageBox",
+                "Clipboard"
+            })
+            {
+                Assert.IsFalse(
+                    source.Contains("New-Case \"" + retiredCase + "\"", StringComparison.Ordinal),
+                    retiredCase + " should not be scheduled by the active WPF Gallery visual audit.");
+            }
         }
 
         [TestMethod]
@@ -6808,13 +6858,9 @@ namespace ModernWpf.Gallery.Tests
                 "function Get-ModernShellExpectedNavigationStates($case)",
                 "\"ShellClickDesignGuidance\"",
                 "ChildNames = @(\"Colors\", \"Typography\", \"Spacing\", \"Geometry\", \"Icons\")",
-                "FollowingName = \"Samples\"",
-                "\"ShellClickDesignGuidanceAfterSamples\"",
-                "MaximumHeight = 300",
+                "FollowingName = \"All Controls\"",
                 "\"ShellClickDesignGuidanceCollapse\"",
                 "HiddenChildNames = @(\"Colors\", \"Typography\", \"Spacing\", \"Geometry\", \"Icons\")",
-                "\"ShellClickSamples\"",
-                "ChildNames = @(\"User Dashboard\")",
                 "FollowingName = \"All Controls\"");
             AssertContainsInOrder(
                 source,
@@ -7772,13 +7818,12 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void WhatsNewPageKeepsOfficialDeclarationSourceShape()
+        public void WhatsNewPageUsesModernWpfSpecificContentShape()
         {
             var xaml = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "Pages",
                 "WhatsNewPage.xaml");
-            var normalizedXaml = xaml.Replace("\r\n", "\n").Replace('\r', '\n');
 
             AssertContainsInOrder(
                 xaml,
@@ -7787,59 +7832,70 @@ namespace ModernWpf.Gallery.Tests
                 "xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"",
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
-                "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Pages\"",
+                "xmlns:pages=\"clr-namespace:ModernWpf.Gallery.Pages\"",
                 "xmlns:controls=\"clr-namespace:ModernWpf.Gallery.Controls\"",
                 "mc:Ignorable=\"d\"",
                 "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
-                "d:DesignHeight=\"450\"",
+                "d:DesignHeight=\"900\"",
                 "d:DesignWidth=\"800\"",
-                "Title=\"What's New in WPF\">");
+                "Title=\"What's New in ModernWpf\">");
             StringAssert.Contains(
                 xaml,
-                "<Style x:Key=\"SubHeaderTextStyle\" TargetType=\"TextBlock\">");
+                "<Style x:Key=\"UpdateCardStyle\" TargetType=\"Border\">");
             StringAssert.Contains(
                 xaml,
-                "<Style x:Key=\"LinkTextBlockStyle\" TargetType=\"TextBlock\">");
+                "x:Key=\"SectionHeadingStyle\"");
             AssertContainsInOrder(
                 xaml,
                 "<Grid x:Name=\"ContentPagePane\" Height=\"Auto\" Style=\"{StaticResource GalleryPageRootStyle}\">",
                 "<Grid.RowDefinitions>",
                 "<RowDefinition Height=\"Auto\" />",
-                "<RowDefinition Height=\"*\" />");
-            StringAssert.Contains(
-                xaml,
-                "<controls:PageHeader Margin=\"0,0,0,32\" Title=\"{Binding ViewModel.PageTitle}\" Description=\"{Binding ViewModel.PageDescription}\" ShowDescription=\"True\" />");
-            StringAssert.Contains(
-                xaml,
-                "<ScrollViewer Grid.Row=\"1\" Margin=\"0,0,0,24\" Padding=\"0,0,24,0\">");
-            AssertContainsInOrder(
-                normalizedXaml,
-                "<TextBlock Style=\"{StaticResource TitleTextBlockStyle}\" Margin=\"0 0 0 12\">\n                    .NET 10\n                </TextBlock>",
-                "<TextBlock Style=\"{StaticResource SubtitleTextBlockStyle}\" Margin=\"0 0 0 12\">\n                    New and Enhanced Fluent Styles\n                </TextBlock>",
-                "<TextBlock TextWrapping=\"Wrap\" Margin=\"0 0 0 12\">\n                    <Run>\n                        The WPF Grid supports a shorthand syntax for defining row and column sizes using the RowDefinitions and ColumnDefinitions attribute.",
-                "<controls:ControlExample\n                    Margin=\"2 10 2 24\"\n                    HeaderText=\"Grid Shorthand Syntax Sample\"",
-                "<Grid HorizontalAlignment=\"Left\">\n                        <Grid.RowDefinitions>",
-                "<TextBlock Grid.Row=\"0\" Grid.Column=\"0\" FontWeight=\"Bold\" Margin=\"0 0 10 0\">Sl. No.</TextBlock>",
-                "<TextBlock Grid.Row=\"0\" Grid.Column=\"1\" FontWeight=\"Bold\">Name</TextBlock>",
-                "<TextBlock Grid.Row=\"0\" Grid.Column=\"2\" FontWeight=\"Bold\">Description</TextBlock>",
-                "<TextBlock Grid.Row=\"1\" Grid.Column=\"2\" TextWrapping=\"Wrap\">Quadrilateral where all the adjacent sides form a right angle.</TextBlock>",
-                "<TextBlock Grid.Row=\"2\" Grid.Column=\"2\" TextWrapping=\"Wrap\">Set of all points that are equidistant from a fixed point.</TextBlock>",
-                "<TextBlock Style=\"{StaticResource TitleTextBlockStyle}\" Margin=\"0 0 0 12\">\n                    .NET 9\n                </TextBlock>",
-                "<TextBlock Style=\"{StaticResource SubtitleTextBlockStyle}\" Margin=\"0 24 0 12\">\n                    Hyphen based ligature support\n                </TextBlock>",
-                "<TextBlock Margin=\"0 0 16 0\" FontFamily=\"Cascadia Code\" Text=\"-->\" />");
+                "<RowDefinition Height=\"*\" />",
+                "<controls:PageHeader",
+                "Description=\"{Binding ViewModel.PageDescription}\"",
+                "ShowDescription=\"True\"",
+                "Title=\"{Binding ViewModel.PageTitle}\" />",
+                "<ScrollViewer",
+                "Grid.Row=\"1\"",
+                "HorizontalScrollBarVisibility=\"Disabled\">");
             AssertContainsInOrder(
                 xaml,
-                "<Border CornerRadius=\"2 0 0 2\" Background=\"{DynamicResource SystemAccentColorDark3Brush}\" />",
-                "<Border Background=\"{DynamicResource SystemAccentColorDark2Brush}\" />",
-                "<Border Background=\"{DynamicResource SystemAccentColorDark1Brush}\" />",
-                "<Border Background=\"{DynamicResource SystemControlBackgroundAccentBrush}\" />",
-                "<Border Background=\"{DynamicResource SystemAccentColorLight1Brush}\" />",
-                "<Border Background=\"{DynamicResource SystemAccentColorLight2Brush}\" />",
-                "<Border CornerRadius=\"0 2 2 0\" Background=\"{DynamicResource SystemAccentColorLight3Brush}\" />");
+                "x:Name=\"MaintenanceStatusCard\"",
+                "Text=\"1.x preview\"",
+                "Text=\"Active maintenance line\"",
+                "The package name remains ModernWpfUI",
+                "Text=\"Supported targets\"",
+                "x:Name=\"Net462TargetCard\"",
+                "Text=\".NET Framework 4.6.2\"",
+                "x:Name=\"Net8TargetCard\"",
+                "Text=\".NET 8 for Windows\"",
+                "x:Name=\"Net10TargetCard\"",
+                "Text=\".NET 10 for Windows\"",
+                "Text=\"Recommended resource setup\"",
+                "x:Name=\"ResourceSetupExample\"",
+                "HeaderText=\"Application resources\"",
+                "XamlCode=\"{Binding ViewModel.RecommendedResourcesXamlCode}\"",
+                "Text=\"Gallery updates\"",
+                "x:Name=\"WinUiShellUpdateCard\"",
+                "Text=\"WinUI-style shell\"",
+                "x:Name=\"CuratedSamplesUpdateCard\"",
+                "Text=\"Curated sample set\"",
+                "x:Name=\"TargetAwareUpdateCard\"",
+                "Text=\"Target-aware behavior\"",
+                "Text=\"New and updated samples\"",
+                "x:Name=\"NewOrUpdatedSamples\"",
+                "ItemsSource=\"{Binding ViewModel.NewOrUpdatedItems}\"");
+
+            Assert.IsFalse(xaml.Contains("New and Enhanced Fluent Styles", StringComparison.Ordinal));
+            Assert.IsFalse(xaml.Contains("Grid Shorthand Syntax", StringComparison.Ordinal));
+            Assert.IsFalse(xaml.Contains("Extended MessageBox Options", StringComparison.Ordinal));
+            Assert.IsFalse(xaml.Contains("Accent colors as SystemColors", StringComparison.Ordinal));
+            Assert.IsFalse(xaml.Contains("Hyphen based ligature", StringComparison.Ordinal));
+            Assert.IsFalse(xaml.Contains("Click=\"Open_", StringComparison.Ordinal));
         }
 
         [TestMethod]
-        public void WhatsNewPageMessageBoxHandlerKeepsOfficialTypeSelectorShape()
+        public void WhatsNewPageRoutesCurrentCatalogItems()
         {
             var source = ReadRepoFile(
                 "ModernWpf.Gallery",
@@ -7847,15 +7903,17 @@ namespace ModernWpf.Gallery.Tests
                 "WhatsNewPage.xaml.cs");
 
             Assert.IsFalse(
-                source.Contains("ViewModel.Navigate(\"MessageBox\")", StringComparison.Ordinal),
-                "Copied What's New handler should keep the official MessageBoxPage type selector instead of a local string selector.");
+                source.Contains("Process.Start", StringComparison.Ordinal),
+                "What's New should not launch copied WPF release-note links.");
+            Assert.IsFalse(source.Contains("MessageBox", StringComparison.Ordinal));
             AssertContainsInOrder(
                 source,
-                "using ModernWpf.Gallery.Pages.WpfGallery.SystemPages;",
-                "private void NavigateToMessageBoxSample(object sender, RoutedEventArgs e)",
-                "ViewModel.Navigate(typeof(MessageBoxPage));",
-                "else if (parameter is Type pageType && pageType == typeof(MessageBoxPage))",
-                "ItemRequested?.Invoke(\"MessageBox\");");
+                "using ModernWpf.Gallery.Models;",
+                "private void OnNavigateCard(object parameter)",
+                "if (parameter is GalleryItem item)",
+                "ItemRequested?.Invoke(item.UniqueId);",
+                "else if (parameter is string uniqueId)",
+                "ItemRequested?.Invoke(uniqueId);");
         }
 
         [TestMethod]
@@ -9304,21 +9362,21 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 iconographyXaml,
                 "<Expander Grid.Row=\"1\"",
-                "Header=\"Instructions on how to use Segoe Fluent Icons\"",
+                "Header=\"Instructions on how to use Fluent icons\"",
                 "IsExpanded=\"False\"",
                 "Margin=\"2 -8 0 0\">");
             AssertContainsInOrder(
                 normalizedIconographyXaml,
-                "<Run FontWeight=\"SemiBold\">\n                How to get the font\n            </Run>",
+                "<Run FontWeight=\"SemiBold\">\n                Use the theme font resource\n            </Run>",
                 "<LineBreak />",
-                "On Windows 10: Segoe Fluent Icons is not included by default on Windows 10.",
+                "Use {StaticResource SymbolThemeFontFamily} instead of hard-coding a font family.",
                 "<LineBreak/>",
                 "<LineBreak/>",
                 "<Span FontWeight=\"SemiBold\">\n                How to use the font\n            </Span>",
                 "<LineBreak/>",
                 "For optimal appearance, use these specific sizes: 16, 20, 24, 32, 40, 48, and 64.",
                 "<LineBreak/>",
-                "<Hyperlink Click=\"Open_IconDesignGuidelinesPage\">\n                    layering</Hyperlink> and colorization effects can be achieved by drawing glyphs directly on top of each other.",
+                "Fluent icon glyphs use predictable metrics, so layering and colorization effects can be achieved by drawing glyphs directly on top of each other.",
                 "<LineBreak/>",
                 "<LineBreak/>",
                 "<Run FontWeight=\"SemiBold\">\n                XAML\n            </Run>",
@@ -10267,18 +10325,39 @@ namespace ModernWpf.Gallery.Tests
                 hyperlinkXaml,
                 "<controls:ControlExample",
                 "Margin=\"10\"",
-                "HeaderText=\"A Hyperlink\"",
-                "XamlCode=\"&lt;TextBlock Margin=&quot;20&quot;&gt;&#10;    &lt;Hyperlink NavigateUri=&quot;https://www.microsoft.com&quot; RequestNavigate=&quot;Hyperlink_RequestNavigate&quot;&gt;&#10;        Lorem Ipsum link&#10;    &lt;/Hyperlink&gt;&#10;&lt;/TextBlock&gt;\"",
+                "HeaderText=\"A Hyperlink with in-app navigation handling\"",
+                "XamlCode=\"&lt;TextBlock Margin=&quot;20&quot;&gt;&#10;    &lt;Hyperlink NavigateUri=&quot;https://www.microsoft.com&quot; RequestNavigate=&quot;Hyperlink_RequestNavigate&quot;&gt;&#10;        Hyperlink&#10;    &lt;/Hyperlink&gt;&#10;&lt;/TextBlock&gt;\"",
+                "CSharpCode=\"private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)",
+                "<StackPanel>",
                 "<TextBlock Margin=\"20\">",
                 "<Hyperlink NavigateUri=\"https://www.microsoft.com\" RequestNavigate=\"Hyperlink_RequestNavigate\">",
                 "Hyperlink",
-                "</Hyperlink>");
+                "</Hyperlink>",
+                "x:Name=\"NavigationStatusText\"",
+                "AutomationProperties.Name=\"Hyperlink navigation status\"",
+                "Visibility=\"Collapsed\"");
             StringAssert.Contains(
-                hyperlinkXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
-                "<TextBlock Margin=\"20\">\n                                <Hyperlink NavigateUri=\"https://www.microsoft.com\" RequestNavigate=\"Hyperlink_RequestNavigate\">\n                                    Hyperlink\n                                </Hyperlink>\n                        </TextBlock>");
+                hyperlinkXaml,
+                "e.Handled = true");
             StringAssert.Contains(
                 hyperlinkXaml.Replace("\r\n", "\n").Replace('\r', '\n'),
                 "            </ScrollViewer>\n        </Grid>\n\n    </Grid>\n</Page>");
+
+            var hyperlinkCodeBehind = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "Pages",
+                "WpfGallery",
+                "Text",
+                "HyperlinkPage.xaml.cs");
+            Assert.IsFalse(
+                hyperlinkCodeBehind.Contains("Process.Start", StringComparison.Ordinal),
+                "The gallery sample must not launch an external process when clicked.");
+            AssertContainsInOrder(
+                hyperlinkCodeBehind,
+                "private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)",
+                "NavigationStatusText.Text = \"Navigation request: \" + e.Uri.AbsoluteUri;",
+                "NavigationStatusText.Visibility = Visibility.Visible;",
+                "e.Handled = true;");
         }
 
         [TestMethod]
