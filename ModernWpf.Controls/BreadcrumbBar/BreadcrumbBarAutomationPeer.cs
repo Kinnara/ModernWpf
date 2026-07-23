@@ -3,7 +3,7 @@ using ModernWpf.Controls;
 
 namespace ModernWpf.Automation.Peers
 {
-    public class BreadcrumbBarAutomationPeer : FrameworkElementAutomationPeer
+    internal class BreadcrumbBarAutomationPeer : FrameworkElementAutomationPeer
     {
         public BreadcrumbBarAutomationPeer(BreadcrumbBar owner)
             : base(owner)

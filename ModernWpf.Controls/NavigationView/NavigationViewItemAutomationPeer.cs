@@ -82,6 +82,10 @@ namespace ModernWpf.Automation.Peers
         }
 
 #if NET48_OR_NEWER
+        // These overrides only exist on WPF versions whose base peer exposes
+        // them. Package validation tracks their per-TFM contract; the shared
+        // source API file cannot represent a framework-conditional override.
+#pragma warning disable RS0016
         protected override int GetPositionInSetCore()
         {
             int positionInSet = 0;
@@ -116,6 +120,7 @@ namespace ModernWpf.Automation.Peers
 
             return sizeOfSet;
         }
+#pragma warning restore RS0016
 #endif
 
         void IInvokeProvider.Invoke()

@@ -6,7 +6,7 @@ namespace ModernWpf.Controls
     /// <summary>
     /// Default styles for ModernWpf controls with the platform Fluent theme when available.
     /// </summary>
-    public class FluentControlsResources : ResourceDictionary
+    public sealed class FluentControlsResources : ResourceDictionary
     {
         /// <summary>
         /// Initializes a new instance of the FluentControlsResources class.

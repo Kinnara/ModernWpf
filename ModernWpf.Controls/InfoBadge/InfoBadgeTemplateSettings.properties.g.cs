@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace ModernWpf.Controls
 {
-    public sealed partial class InfoBadgeTemplateSettings
+    public partial class InfoBadgeTemplateSettings
     {
         #region InfoBadgeCornerRadius
 

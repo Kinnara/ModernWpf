@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public sealed class ProgressRingIndicator : FrameworkElement
+    internal sealed class ProgressRingIndicator : FrameworkElement
     {
         // ProgressRingDeterminate.cpp and ProgressRingIndeterminate.cpp define a
         // 32x32 visual with an 8px ellipse and 1.5px stroke under a 1.77 scale.

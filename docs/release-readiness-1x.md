@@ -25,6 +25,32 @@ For each supported target framework, the package must contain:
 
 The package metadata must declare `readme.md`, dependency groups for all supported target frameworks, and WPF framework-reference groups for the modern .NET targets. NuGet normalizes the `net462` dependency group to `.NETFramework4.6.2` in the generated nuspec.
 
+## Forward contract gate
+
+`1.0.0-preview.1` is the first forward-compatibility baseline. Compatibility
+with 0.9.x is not a release requirement.
+
+The release gate enforces:
+
+- The shipped CLR inventories in `ModernWpf/PublicAPI.Shipped.txt` and
+  `ModernWpf.Controls/PublicAPI.Shipped.txt`. New APIs go in the corresponding
+  `PublicAPI.Unshipped.txt`; removals and signature changes fail the build.
+- NuGet package validation, including strict validation between compatible
+  target frameworks. Releases after preview 1 automatically use
+  `1.0.0-preview.1` as their package-validation baseline.
+- The source-qualified public resource-key inventories in
+  `ModernWpf/PublicResourceKeys.Shipped.txt` and
+  `ModernWpf/PublicResourceKeys.Unshipped.txt`.
+- Package export checks. Public top-level types must be in `ModernWpf`
+  namespaces, apart from WPF's compiler-generated
+  `XamlGeneratedNamespace.GeneratedInternalTypeHelper`, and the supported
+  top-level type set must agree across all three target frameworks.
+- XML documentation checks that reject entries for non-public types.
+
+Template parts, visual states, implicit/type resource keys, and unlisted style
+or template resources are intentionally outside this contract. See
+`docs/public-api-contract-1x.md` for the complete boundary.
+
 ## Local release gate
 
 Run these commands from the repository root:
@@ -42,6 +68,15 @@ $package = Get-ChildItem .\artifacts\ModernWpfUI.*.nupkg | Sort-Object LastWrite
 ```
 
 Build and test are intentionally serialized. Running solution build and test builds in parallel can create shared `obj` file locks in WPF projects.
+
+When adding an explicitly supported resource key, run:
+
+```powershell
+.\tools\api-contracts\Update-PublicResourceKeyContract.ps1
+```
+
+Review the resulting unshipped entries. Promote them to the shipped resource
+manifest only as part of a release baseline update.
 
 ## Source-backed WinUI parity surface
 

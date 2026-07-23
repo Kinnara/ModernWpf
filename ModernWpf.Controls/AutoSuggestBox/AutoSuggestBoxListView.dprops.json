@@ -4,7 +4,7 @@
   ],
   "namespace": "ModernWpf.Controls.Primitives",
   "type": {
-    "declaration": "public partial class",
+    "declaration": "internal partial class",
     "name": "AutoSuggestBoxListView"
   },
   "properties": [

@@ -23,4 +23,28 @@
     <ProjectReference Include="..\ModernWpf.WinUI.TestInfra\ModernWpf.WinUI.TestInfra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\..\ModernWpf\PublicResourceKeys.Shipped.txt"
+          Link="PublicResourceContract\PublicResourceKeys.Shipped.txt"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\ModernWpf\PublicResourceKeys.Unshipped.txt"
+          Link="PublicResourceContract\PublicResourceKeys.Unshipped.txt"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\ModernWpf\DensityStyles\Compact.xaml"
+          Link="PublicResourceContract\DensityStyles\Compact.xaml"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\ModernWpf\ModernWpfControlsResources.xaml"
+          Link="PublicResourceContract\ModernWpfControlsResources.xaml"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\ModernWpf\ThemeResources\Dark.xaml"
+          Link="PublicResourceContract\ThemeResources\Dark.xaml"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\ModernWpf\ThemeResources\HighContrast.xaml"
+          Link="PublicResourceContract\ThemeResources\HighContrast.xaml"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\ModernWpf\ThemeResources\Light.xaml"
+          Link="PublicResourceContract\ThemeResources\Light.xaml"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

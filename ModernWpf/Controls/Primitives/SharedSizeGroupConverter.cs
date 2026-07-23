@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class SharedSizeGroupConverter : IValueConverter
+    internal class SharedSizeGroupConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

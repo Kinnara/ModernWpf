@@ -6,7 +6,7 @@ using WpfOrientation = System.Windows.Controls.Orientation;
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Children))]
-    public class ItemsWrapGrid : WrapGrid
+    public sealed class ItemsWrapGrid : WrapGrid
     {
         public static readonly DependencyProperty GroupPaddingProperty =
             DependencyProperty.Register(

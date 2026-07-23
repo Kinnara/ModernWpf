@@ -2,7 +2,7 @@ using System.Windows;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public sealed class FlyoutShowOptions
+    public class FlyoutShowOptions
     {
         public Rect? ExclusionRect { get; set; }
 

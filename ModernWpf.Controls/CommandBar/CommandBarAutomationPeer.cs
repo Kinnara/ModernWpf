@@ -5,7 +5,7 @@ using ModernWpf.Controls;
 
 namespace ModernWpf.Automation.Peers
 {
-    public class CommandBarAutomationPeer : FrameworkElementAutomationPeer,
+    internal class CommandBarAutomationPeer : FrameworkElementAutomationPeer,
         IToggleProvider,
         IExpandCollapseProvider,
         IWindowProvider

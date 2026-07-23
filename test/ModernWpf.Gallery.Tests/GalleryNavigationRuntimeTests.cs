@@ -134,7 +134,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void ShellNavigationMenuMatchesWpfGalleryReferenceChrome()
+        public void ShellNavigationMenuUsesWinUIGalleryChromeAndWpfContentHost()
         {
             WpfTestHost.Run(() =>
             {
@@ -143,36 +143,35 @@ namespace ModernWpf.Gallery.Tests
                 var navigation = GetNavigationView(page);
                 var topLevelItems = navigation.MenuItems.OfType<NavigationViewItem>().ToList();
 
-                Assert.AreEqual(258d, navigation.OpenPaneLength);
+                Assert.AreEqual(320d, navigation.OpenPaneLength);
+                Assert.AreEqual(NavigationViewPaneDisplayMode.Auto, navigation.PaneDisplayMode);
                 Assert.AreEqual("Navigation Pane", AutomationProperties.GetName(navigation));
                 Assert.AreEqual(NavigationViewBackButtonVisible.Collapsed, navigation.IsBackButtonVisible);
                 Assert.IsFalse(navigation.IsPaneToggleButtonVisible);
-                Assert.IsFalse(navigation.IsSettingsVisible);
+                Assert.IsTrue(navigation.IsSettingsVisible);
+                Assert.IsFalse(navigation.IsTabStop);
+                Assert.IsFalse(navigation.IsTitleBarAutoPaddingEnabled);
                 Assert.AreEqual(string.Empty, navigation.PaneTitle);
                 Assert.IsNull(navigation.PaneCustomContent);
                 Assert.AreEqual(0, navigation.MenuItems.OfType<NavigationViewItemSeparator>().Count());
-                Assert.IsNotNull(navigation.PaneFooter);
+                Assert.IsNull(navigation.PaneFooter);
                 Assert.AreEqual(0, navigation.FooterMenuItems.Count);
-                var footerPanel = (StackPanel)navigation.PaneFooter;
-                Assert.AreEqual(new Thickness(8, 10, 0, 10), footerPanel.Margin);
-                Assert.AreEqual(Orientation.Vertical, footerPanel.Orientation);
-                var footerSeparator = footerPanel.Children.OfType<Separator>().Single();
-                Assert.IsTrue(double.IsNaN(footerSeparator.Width));
-                Assert.AreEqual(HorizontalAlignment.Stretch, footerSeparator.HorizontalAlignment);
-                Assert.AreSame(Geometry.Empty, page.Resources["NavigationViewItemExpandedPath"]);
-                Assert.AreSame(Geometry.Empty, navigation.Resources["NavigationViewItemExpandedPath"]);
+                Assert.IsFalse(page.Resources.Contains("NavigationViewItemExpandedPath"));
+                Assert.IsFalse(navigation.Resources.Contains("NavigationViewItemExpandedPath"));
+                Assert.IsFalse(navigation.Resources.Contains("NavigationViewItemBackground"));
                 Assert.AreEqual(new Thickness(0), navigation.Resources["NavigationViewContentGridBorderThickness"]);
+                Assert.AreEqual(new Thickness(0, 4, 0, 4), navigation.Resources["NavigationViewPaneContentGridMargin"]);
                 Assert.AreEqual(new CornerRadius(0), navigation.Resources["NavigationViewContentGridCornerRadius"]);
                 Assert.AreEqual(Colors.Transparent, ((SolidColorBrush)navigation.Resources["NavigationViewContentBackground"]).Color);
-                foreach (var resourcePair in WpfGalleryNavigationResourceAliases)
-                {
-                    AssertNavigationViewResourceAlias(navigation, resourcePair.Item1, resourcePair.Item2);
-                }
 
                 Assert.IsNull(page.FindName("ContentFrameBorder"));
                 var contentFrameBorder = GetContentFrameBorder(page);
                 Assert.AreEqual(new Thickness(4, 0, 0, 0), contentFrameBorder.Margin);
                 Assert.AreEqual(new Thickness(24, 16, 24, 0), contentFrameBorder.Padding);
+                Assert.AreSame(page.FindResource("LayerFillColorDefaultBrush"), contentFrameBorder.Background);
+                Assert.AreSame(page.FindResource("CardStrokeColorDefaultBrush"), contentFrameBorder.BorderBrush);
+                Assert.AreEqual(new Thickness(1), contentFrameBorder.BorderThickness);
+                Assert.AreEqual(new CornerRadius(8, 0, 0, 0), contentFrameBorder.CornerRadius);
 
                 CollectionAssert.AreEqual(
                     new[] { "Home", "What's New", "Design Guidance", "Samples", "All Controls", "Basic Input" },
@@ -186,23 +185,11 @@ namespace ModernWpf.Gallery.Tests
                 AssertFontIconGlyph(topLevelItems[1], "\uEB51");
                 AssertFontIconGlyph(topLevelItems[2], "\uEB3C");
                 AssertFontIconGlyph(topLevelItems[3], "\uEF58");
-                AssertFontIconGlyph(topLevelItems[4], "\uE71D");
+                AssertFontIconGlyph(topLevelItems[4], "\uE8A9");
                 AssertFontIconGlyph(topLevelItems[5], "\uE73A");
                 AssertNavigationItemsDoNotExposeLocalAutomationIds(topLevelItems);
-                var expectedNavigationItemRightMargin = SystemParameters.HighContrast ? 2 : 0;
-                var expectedTopLevelContentLeft = SystemParameters.HighContrast ? 20 : 32;
-                var expectedChildGlyphContentLeft = SystemParameters.HighContrast ? -12 : 0;
-                var expectedModernWpfChildGlyphContentLeft = expectedChildGlyphContentLeft - 20;
-                var expectedChildTextContentLeft = SystemParameters.HighContrast ? 4 : 16;
-                var expectedTopLevelContentTop = SystemParameters.HighContrast ? -2 : 0;
-                var expectedChildItemMargin = SystemParameters.HighContrast
-                    ? new Thickness(20, 0, -1, 0)
-                    : new Thickness(20, 1, 0, 1);
-                Assert.AreEqual(new Thickness(8, 1, expectedNavigationItemRightMargin, 1), topLevelItems[0].Margin);
-                AssertNavigationItemContentMargin(topLevelItems[0], expectedTopLevelContentLeft);
-                AssertNavigationTitleTextLayout(topLevelItems[0], "Home");
-                AssertNavigationTitleTextLayout(topLevelItems[4], "All Controls");
-                Assert.IsNull(GetNavigationDisclosureChevron(topLevelItems[0]));
+                Assert.IsInstanceOfType(topLevelItems[0].Content, typeof(string));
+                Assert.AreEqual("Home", topLevelItems[0].Content);
                 Assert.IsFalse(topLevelItems[2].IsExpanded);
                 Assert.IsFalse(topLevelItems[3].IsExpanded);
                 Assert.IsFalse(topLevelItems[5].IsExpanded);
@@ -211,21 +198,12 @@ namespace ModernWpf.Gallery.Tests
                 CollectionAssert.AreEqual(
                     new[] { "Colors", "Typography", "Spacing", "Geometry", "Icons" },
                     designGuidanceItems.Select(GetNavigationItemText).ToArray());
-                Assert.AreEqual(expectedChildItemMargin, designGuidanceItems[0].Margin);
                 AssertFontIconGlyph(designGuidanceItems[0], "\uE790");
-                AssertNavigationItemContentMargin(designGuidanceItems[0], expectedChildGlyphContentLeft);
-                var designGuidanceChevron = GetNavigationDisclosureChevron(topLevelItems[2]);
-                Assert.IsNotNull(designGuidanceChevron);
-                Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(designGuidanceChevron));
-                Assert.AreEqual("\uE76C", designGuidanceChevron.Text);
-                Assert.AreEqual(10d, designGuidanceChevron.FontSize);
-                Assert.AreEqual(new Thickness(0, expectedTopLevelContentTop, 0, 0), designGuidanceChevron.Margin);
-                Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
+                Assert.AreEqual("Colors", designGuidanceItems[0].Content);
 
                 var basicInputItems = topLevelItems[5].MenuItems.OfType<NavigationViewItem>().ToList();
-                Assert.AreEqual(expectedChildItemMargin, basicInputItems[0].Margin);
                 Assert.IsNull(basicInputItems[0].Icon);
-                AssertNavigationItemContentMargin(basicInputItems[0], expectedChildTextContentLeft);
+                Assert.IsInstanceOfType(basicInputItems[0].Content, typeof(string));
 
                 var mediaItem = topLevelItems[13];
                 Assert.AreEqual("Media Controls", GetNavigationItemText(mediaItem));
@@ -243,48 +221,24 @@ namespace ModernWpf.Gallery.Tests
                 foreach (var modernWpfChild in modernWpfItems)
                 {
                     AssertFontIconGlyph(modernWpfChild, "\uE729");
-                    AssertNavigationItemContentMargin(modernWpfChild, expectedModernWpfChildGlyphContentLeft);
+                    Assert.IsInstanceOfType(modernWpfChild.Content, typeof(string));
                 }
 
-                var settingsButton = (Button)page.FindName("SettingsButton");
-                Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(settingsButton));
-                Assert.AreEqual("Settings", AutomationProperties.GetName(settingsButton));
-                Assert.AreEqual(250d, settingsButton.Width);
-                Assert.AreEqual(36d, settingsButton.Height);
-                Assert.AreEqual(new Thickness(0, 4, 0, 0), settingsButton.Margin);
-                Assert.AreEqual(HorizontalAlignment.Left, settingsButton.HorizontalContentAlignment);
-                Assert.AreEqual(VerticalAlignment.Center, settingsButton.VerticalContentAlignment);
-                Assert.AreEqual("ViewModel.SettingsCommand",
-                    BindingOperations.GetBindingExpression(settingsButton, System.Windows.Controls.Primitives.ButtonBase.CommandProperty)?.ParentBinding.Path.Path);
-
-                var settingsContent = (StackPanel)settingsButton.Content;
-                Assert.AreEqual(Orientation.Horizontal, settingsContent.Orientation);
-                Assert.AreEqual(new Thickness(11, 0, 0, 0), settingsContent.Margin);
-
-                Assert.IsNull(page.FindName("SettingsIcon"));
-                var settingsIcon = settingsContent.Children.OfType<TextBlock>()
-                    .Single(text => string.Equals(text.Text, "\uE713", StringComparison.Ordinal));
-                Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(settingsIcon));
-                Assert.AreEqual("\uE713", settingsIcon.Text);
-                Assert.AreEqual(14d, settingsIcon.FontSize);
-                Assert.AreEqual(VerticalAlignment.Center, settingsIcon.VerticalAlignment);
-
-                var settingsText = settingsContent.Children.OfType<TextBlock>()
-                    .Single(text => string.Equals(text.Text, "Settings", StringComparison.Ordinal));
-                Assert.AreEqual(14d, settingsText.FontSize);
-                Assert.AreEqual(new Thickness(8, 0, 0, 0), settingsText.Margin);
+                Assert.IsNull(page.FindName("SettingsButton"));
+                navigation.ApplyTemplate();
+                Assert.IsInstanceOfType(navigation.SettingsItem, typeof(NavigationViewItem));
+                Assert.AreEqual("Settings", GetNavigationItemText((NavigationViewItem)navigation.SettingsItem));
 
                 page.NavigateTo("item/Color");
                 WpfTestHost.DoEvents();
                 Assert.IsTrue(topLevelItems[2].IsExpanded);
-                Assert.AreEqual(90d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
 
                 page.NavigateTo("category/BasicInput");
                 Assert.IsTrue(topLevelItems[5].IsExpanded);
 
-                settingsButton.Command.Execute(settingsButton.CommandParameter);
+                page.OpenSettings();
                 WpfTestHost.DoEvents();
-                Assert.IsNull(navigation.SelectedItem);
+                Assert.AreSame(navigation.SettingsItem, navigation.SelectedItem);
                 Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(SettingsPage));
             });
         }
@@ -346,23 +300,11 @@ namespace ModernWpf.Gallery.Tests
                     var designGuidanceItem = navigation.MenuItems
                         .OfType<NavigationViewItem>()
                         .Single(item => string.Equals(GetNavigationItemText(item), "Design Guidance", StringComparison.Ordinal));
-                    var designGuidanceChevron = GetNavigationDisclosureChevron(designGuidanceItem);
-                    var designGuidanceChildItem = designGuidanceItem.MenuItems
-                        .OfType<NavigationViewItem>()
-                        .Single(item => string.Equals(GetNavigationItemText(item), "Colors", StringComparison.Ordinal));
                     var samplesItem = navigation.MenuItems
                         .OfType<NavigationViewItem>()
                         .Single(item => string.Equals(GetNavigationItemText(item), "Samples", StringComparison.Ordinal));
-                    var samplesChildItem = samplesItem.MenuItems
-                        .OfType<NavigationViewItem>()
-                        .Single(item => string.Equals(GetNavigationItemText(item), "User Dashboard", StringComparison.Ordinal));
-                    var allControlsItem = navigation.MenuItems
-                        .OfType<NavigationViewItem>()
-                        .Single(item => string.Equals(GetNavigationItemText(item), "All Controls", StringComparison.Ordinal));
 
                     Assert.IsFalse(designGuidanceItem.IsExpanded);
-                    AssertNavigationItemPresenterRowAutoHeight(designGuidanceItem, "Design Guidance row template");
-                    Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
 
                     InvokeNavigationViewItem(navigation, designGuidanceItem);
                     WpfTestHost.DoEvents();
@@ -370,9 +312,6 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.IsTrue(designGuidanceItem.IsExpanded, "User-invoked group rows should expand.");
                     Assert.IsTrue(designGuidanceItem.IsSelected, "User-invoked group rows should still navigate/select the group.");
-                    Assert.AreEqual(90d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
-                    AssertNavigationItemLayoutRootHeight(page, designGuidanceItem, 36d, "Expanded selected group row background");
-                    AssertExpandedNavigationChildVisible(page, designGuidanceItem, designGuidanceChildItem, samplesItem, "Colors");
                     Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(DesignGuidancePage));
 
                     InvokeNavigationViewItem(navigation, designGuidanceItem);
@@ -381,9 +320,6 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.IsFalse(designGuidanceItem.IsExpanded, "User-invoked expanded group rows should collapse.");
                     Assert.IsTrue(designGuidanceItem.IsSelected, "Collapsing the selected group should not clear its page selection.");
-                    Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
-                    AssertNavigationItemLayoutRootHeight(page, designGuidanceItem, 36d, "Collapsed selected group row background");
-                    AssertCollapsedNavigationChildrenReleased(page, designGuidanceItem, designGuidanceChildItem, samplesItem, "Colors");
                     Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(DesignGuidancePage));
 
                     InvokeNavigationViewItem(navigation, samplesItem);
@@ -392,58 +328,74 @@ namespace ModernWpf.Gallery.Tests
 
                     Assert.IsTrue(samplesItem.IsExpanded, "User-invoked Samples row should expand.");
                     Assert.IsTrue(samplesItem.IsSelected, "User-invoked Samples row should still navigate/select the group.");
-                    AssertExpandedNavigationChildVisible(page, samplesItem, samplesChildItem, allControlsItem, "User Dashboard");
                     Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(SamplesPage));
                 });
             });
         }
 
         [TestMethod]
-        public void ShellNavigationDisclosureChevronTogglesExpansionWhenClicked()
+        public void ShellTitlePaneToggleChangesNavigationViewState()
         {
             WpfTestHost.Run(() =>
             {
                 var page = new NavigationRootPage();
-                page.DataContext = new { ViewModel = new MainWindowViewModel(page.GoBack, page.OpenSettings, page.GoForward) };
+                var navigation = GetNavigationView(page);
+                navigation.IsPaneOpen = true;
 
-                RenderPage(page, () =>
+                page.ToggleNavigationPane();
+                Assert.IsFalse(navigation.IsPaneOpen);
+
+                page.ToggleNavigationPane();
+                Assert.IsTrue(navigation.IsPaneOpen);
+            });
+        }
+
+        [TestMethod]
+        public void ShellSearchSuggestsAndNavigatesToGalleryItems()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new NavigationRootPage();
+                var searchBox = new AutoSuggestBox
                 {
-                    var navigation = GetNavigationView(page);
-                    var designGuidanceItem = navigation.MenuItems
-                        .OfType<NavigationViewItem>()
-                        .Single(item => string.Equals(GetNavigationItemText(item), "Design Guidance", StringComparison.Ordinal));
-                    var designGuidanceChevron = GetNavigationDisclosureChevron(designGuidanceItem);
-                    var designGuidanceChildItem = designGuidanceItem.MenuItems
-                        .OfType<NavigationViewItem>()
-                        .Single(item => string.Equals(GetNavigationItemText(item), "Colors", StringComparison.Ordinal));
-                    var samplesItem = navigation.MenuItems
-                        .OfType<NavigationViewItem>()
-                        .Single(item => string.Equals(GetNavigationItemText(item), "Samples", StringComparison.Ordinal));
+                    Text = "NavigationView"
+                };
 
-                    Assert.IsFalse(designGuidanceItem.IsExpanded);
-                    Assert.IsFalse(designGuidanceItem.IsSelected);
-                    Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
+                page.OnSearchTextChanged(
+                    searchBox,
+                    new AutoSuggestBoxTextChangedEventArgs(
+                        searchBox,
+                        searchBox.TextChangedEventCounter,
+                        AutoSuggestionBoxTextChangeReason.UserInput));
 
-                    RaiseMouseClick(designGuidanceChevron, timestamp: 1);
-                    WpfTestHost.DoEvents();
-                    page.UpdateLayout();
+                var suggestions = ((System.Collections.IEnumerable)searchBox.ItemsSource).Cast<object>().ToArray();
+                var navigationViewSuggestion = suggestions
+                    .OfType<GalleryItem>()
+                    .Single(item => string.Equals(item.UniqueId, "NavigationView", StringComparison.Ordinal));
 
-                    Assert.IsTrue(designGuidanceItem.IsExpanded, "Clicking the visible shell disclosure glyph should expand the group.");
-                    Assert.IsFalse(designGuidanceItem.IsSelected, "Chevron-only expansion should not navigate/select the group row.");
-                    Assert.AreEqual(90d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
-                    AssertExpandedNavigationChildVisible(page, designGuidanceItem, designGuidanceChildItem, samplesItem, "Colors");
-                    Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(DashboardPage));
+                page.OnSearchQuerySubmitted(
+                    searchBox,
+                    new AutoSuggestBoxQuerySubmittedEventArgs
+                    {
+                        ChosenSuggestion = navigationViewSuggestion,
+                        QueryText = navigationViewSuggestion.Title
+                    });
+                WpfTestHost.DoEvents();
 
-                    RaiseMouseClick(designGuidanceChevron, timestamp: 4);
-                    WpfTestHost.DoEvents();
-                    page.UpdateLayout();
+                var itemPage = (ItemPage)GetContentHost(page).Content;
+                Assert.AreEqual("NavigationView", itemPage.UniqueId);
+                Assert.IsTrue(page.CanGoBack);
 
-                    Assert.IsFalse(designGuidanceItem.IsExpanded, "Clicking the visible shell disclosure glyph again should collapse the group.");
-                    Assert.IsFalse(designGuidanceItem.IsSelected);
-                    Assert.AreEqual(0d, ((RotateTransform)designGuidanceChevron.RenderTransform).Angle);
-                    AssertCollapsedNavigationChildrenReleased(page, designGuidanceItem, designGuidanceChildItem, samplesItem, "Colors");
-                    Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(DashboardPage));
-                });
+                searchBox.Text = "no-gallery-result-expected";
+                page.OnSearchTextChanged(
+                    searchBox,
+                    new AutoSuggestBoxTextChangedEventArgs(
+                        searchBox,
+                        searchBox.TextChangedEventCounter,
+                        AutoSuggestionBoxTextChangeReason.UserInput));
+                CollectionAssert.AreEqual(
+                    new object[] { "No results found" },
+                    ((System.Collections.IEnumerable)searchBox.ItemsSource).Cast<object>().ToArray());
             });
         }
 
@@ -516,7 +468,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void ShellNavigationPaneRowsUseWpfGalleryTreeViewInsets()
+        public void ShellNavigationUsesDefaultWinUIHierarchyAndWpfCanvas()
         {
             WpfTestHost.Run(() =>
             {
@@ -524,9 +476,8 @@ namespace ModernWpf.Gallery.Tests
                 RenderPage(page, () =>
                 {
                     page.NavigateTo("category/Navigation");
-                    Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.ContextIdle, new Action(() => { }));
-                    page.UpdateLayout();
                     WpfTestHost.DoEvents();
+                    page.UpdateLayout();
 
                     var navigation = GetNavigationView(page);
                     var contentHost = GetContentHost(page);
@@ -535,117 +486,38 @@ namespace ModernWpf.Gallery.Tests
                     var navigationItem = topLevelItems.Single(item => string.Equals(GetNavigationItemText(item), "Navigation", StringComparison.Ordinal));
                     var menuItem = navigationItem.MenuItems.OfType<NavigationViewItem>()
                         .Single(item => string.Equals(GetNavigationItemText(item), "Menu", StringComparison.Ordinal));
-                    var settingsButton = (Button)page.FindName("SettingsButton");
-                    var isHighContrast = SystemParameters.HighContrast;
-                    var expectedTopLevelGlyphLeft = isHighContrast ? 44 : 56;
-                    var expectedTopLevelTextLeft = isHighContrast ? 77 : 89;
-                    var expectedGroupChevronLeft = isHighContrast ? 22.5 : 34.5;
-                    var expectedTopLevelGlyphTop = isHighContrast ? 20 : 21;
-                    var expectedTopLevelTextTop = isHighContrast ? 19 : 20;
-                    var expectedGroupChevronTop = isHighContrast ? 399 : 400;
-                    var expectedGroupGlyphTop = isHighContrast ? 398 : 399;
-                    var expectedGroupTextTop = isHighContrast ? 397 : 398;
-                    var expectedChildTextLeft = isHighContrast ? 80 : 92;
-                    var expectedGroupContentLeft = isHighContrast ? -4 : 8;
-                    var expectedChildSelectedContentLeft = isHighContrast ? -4 : 8;
-                    var expectedChildDeselectedContentLeft = isHighContrast ? 4 : 16;
 
-                    AssertBounds(page, homeItem, 8, 248, "Home row");
-                    AssertBounds(page, navigationItem, 8, 248, "Navigation row");
-                    AssertBounds(page, menuItem, 28, isHighContrast ? 229 : 228, "Navigation child row");
-                    AssertBounds(page, settingsButton, 8, 250, "Settings row");
-
-                    AssertTextLeft(page, homeItem, "\uE80F", expectedTopLevelGlyphLeft, "Home glyph");
-                    AssertTextLeft(page, homeItem, "Home", expectedTopLevelTextLeft, "Home text");
-                    AssertTextTop(page, homeItem, "\uE80F", expectedTopLevelGlyphTop, "Home glyph");
-                    AssertTextTop(page, homeItem, "Home", expectedTopLevelTextTop, "Home text");
-                    AssertNavigationItemContentVerticallyCentered(page, homeItem, new[] { "\uE80F", "Home" }, "Home selected row");
-                    AssertTextLeft(page, navigationItem, "\uE76C", expectedGroupChevronLeft, "Navigation disclosure chevron");
-                    AssertTextLeft(page, navigationItem, "\uE700", expectedTopLevelGlyphLeft, "Navigation glyph");
-                    AssertTextLeft(page, navigationItem, "Navigation", expectedTopLevelTextLeft, "Navigation text");
-                    AssertTextTop(page, navigationItem, "\uE76C", expectedGroupChevronTop, "Navigation disclosure chevron");
-                    AssertTextTop(page, navigationItem, "\uE700", expectedGroupGlyphTop, "Navigation glyph");
-                    AssertTextTop(page, navigationItem, "Navigation", expectedGroupTextTop, "Navigation text");
-                    AssertTextLeft(page, menuItem, "Menu", expectedChildTextLeft, "Menu child text");
-                    AssertNavigationItemContentVerticallyCentered(page, menuItem, new[] { "Menu" }, "Menu child row");
-                    var paneBackground = (Brush)navigation.Resources["NavigationViewExpandedPaneBackground"];
-                    var menuScrollViewer = FindVisualChildren<ScrollViewer>(navigation)
-                        .Single(scrollViewer => string.Equals(scrollViewer.Name, "MenuItemsScrollViewer", StringComparison.Ordinal));
-                    Assert.AreSame(paneBackground, menuScrollViewer.Background);
-                    Assert.AreEqual(ScrollBarVisibility.Hidden, menuScrollViewer.VerticalScrollBarVisibility);
-                    var itemsContainerGrid = FindVisualChildren<Grid>(navigation)
-                        .Single(grid => string.Equals(grid.Name, "ItemsContainerGrid", StringComparison.Ordinal));
-                    Assert.AreSame(paneBackground, itemsContainerGrid.Background);
-
-                    Assert.AreSame(paneBackground, navigation.Resources["NavigationViewItemSeparatorForeground"]);
-                    var rootSplitView = FindVisualChildren<SplitView>(navigation)
-                        .Single(splitView => string.Equals(splitView.Name, "RootSplitView", StringComparison.Ordinal));
-                    Assert.AreSame(paneBackground, rootSplitView.Background);
-                    Assert.AreSame(paneBackground, rootSplitView.PaneBackground);
-                    Assert.AreSame(paneBackground, rootSplitView.BorderBrush);
-                    Assert.AreEqual(new Thickness(0), rootSplitView.BorderThickness);
-                    var paneContentGrid = FindVisualChildren<Border>(navigation)
-                        .Single(border => string.Equals(border.Name, "PaneContentGrid", StringComparison.Ordinal));
-                    Assert.AreSame(paneBackground, paneContentGrid.Background);
-                    Assert.AreSame(paneBackground, paneContentGrid.BorderBrush);
-                    var expectedPaneBorderThickness = SystemParameters.HighContrast
-                        ? new Thickness(0)
-                        : new Thickness(0, 0, 1, 0);
-                    Assert.AreEqual(expectedPaneBorderThickness, paneContentGrid.BorderThickness);
-                    Assert.IsNull(page.FindName("HighContrastNavigationPaneEdgeCover"));
-                    var edgeCover = GetHighContrastNavigationPaneEdgeCover(page);
-                    Assert.AreSame(paneBackground, edgeCover.Background);
-                    Assert.AreEqual(SystemParameters.HighContrast ? Visibility.Visible : Visibility.Collapsed, edgeCover.Visibility);
-                    Assert.AreEqual(1d, edgeCover.Width);
-                    Assert.AreEqual(698d, edgeCover.Height);
-                    Assert.AreEqual(new Thickness(257, 8, 0, 0), edgeCover.Margin);
-                    Assert.IsFalse(edgeCover.IsHitTestVisible);
-                    var paneShadow = FindVisualChildren<ThemeShadowChrome>(navigation)
-                        .Single(shadow => string.Equals(shadow.Name, "ShadowCaster", StringComparison.Ordinal));
-                    Assert.AreEqual(Visibility.Collapsed, paneShadow.Visibility);
-                    Assert.AreEqual(0d, paneShadow.Opacity);
-                    Assert.AreEqual(0d, paneShadow.Depth);
-                    Assert.IsFalse(paneShadow.IsShadowEnabled);
+                    Assert.AreEqual("Navigation", navigationItem.Content);
+                    Assert.AreEqual("Menu", menuItem.Content);
+                    Assert.IsTrue(navigationItem.IsExpanded);
                     Assert.IsFalse(homeItem.IsSelected, "Home should not retain the shell selection after category navigation.");
                     Assert.IsTrue(navigationItem.IsSelected, "Navigation category should own the shell selection.");
                     Assert.IsFalse(navigationItem.IsChildSelected, "Category selection should not mark a child selected.");
                     Assert.IsFalse(menuItem.IsSelected, "Menu should not be selected until item navigation.");
-                    AssertNavigationItemLayoutRootMargin(navigationItem, new Thickness(4, 2, 4, 2), "Navigation selected row background");
-                    AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(4, 2, 4, 2), "Menu unselected child row background");
-                    AssertNavigationItemContentMargin(navigationItem, expectedGroupContentLeft, 0, "Navigation category content");
+                    Assert.AreEqual(0, navigationItem.Depth);
+                    Assert.AreEqual(1, menuItem.Depth);
                     Assert.IsInstanceOfType(contentHost.Content, typeof(NavigationPage));
 
                     page.NavigateTo("item/Menu");
-                    Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.ContextIdle, new Action(() => { }));
-                    page.UpdateLayout();
                     WpfTestHost.DoEvents();
+                    page.UpdateLayout();
 
                     Assert.IsFalse(homeItem.IsSelected, "Home should not retain the shell selection after child navigation.");
                     Assert.IsFalse(navigationItem.IsSelected, "Parent row should not stay directly selected after child navigation.");
                     Assert.IsTrue(navigationItem.IsChildSelected, "Parent row should track selected child navigation.");
                     Assert.IsTrue(menuItem.IsSelected, "Menu child row should own item navigation selection.");
-                    AssertSelectionIndicatorBounds(menuItem, 12, 19, "Menu child selection indicator");
-                    AssertNavigationItemLayoutRootMargin(navigationItem, new Thickness(4, 2, 4, 2), "Navigation child-selected row background");
-                    AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(12, 7, -5, -5), "Menu selected child row background");
-                    AssertNavigationItemContentMargin(menuItem, expectedChildSelectedContentLeft, 0, "Menu selected child content");
-                    AssertNavigationItemContentVerticallyCentered(page, menuItem, new[] { "Menu" }, "Menu selected child row");
                     Assert.IsInstanceOfType(contentHost.Content, typeof(ItemPage));
 
-                    page.NavigateTo("category/Navigation");
-                    Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.ContextIdle, new Action(() => { }));
-                    page.UpdateLayout();
-                    WpfTestHost.DoEvents();
-
-                    Assert.IsFalse(menuItem.IsSelected, "Menu should not keep item selection after category navigation.");
-                    AssertNavigationItemLayoutRootMargin(menuItem, new Thickness(4, 2, 4, 2), "Menu deselected child row background");
-                    AssertNavigationItemContentMargin(menuItem, expectedChildDeselectedContentLeft, 0, "Menu deselected child content");
-                    AssertNavigationItemContentVerticallyCentered(page, menuItem, new[] { "Menu" }, "Menu deselected child row");
+                    var contentBorder = GetContentFrameBorder(page);
+                    Assert.AreEqual(new Thickness(4, 0, 0, 0), contentBorder.Margin);
+                    Assert.AreEqual(new Thickness(24, 16, 24, 0), contentBorder.Padding);
+                    Assert.AreEqual(new CornerRadius(8, 0, 0, 0), contentBorder.CornerRadius);
                 });
             });
         }
 
         [TestMethod]
-        public void ShellModernWpfChildGlyphsShareTheirParentColumns()
+        public void ShellModernWpfChildrenUseDefaultWinUIHierarchy()
         {
             WpfTestHost.Run(() =>
             {
@@ -664,57 +536,26 @@ namespace ModernWpf.Gallery.Tests
                     page.UpdateLayout();
                     WpfTestHost.DoEvents();
 
-                    var parentGlyph = FindVisualChildren<TextBlock>(modernWpfItem)
-                        .Single(text => string.Equals(text.Text, "\uEA37", StringComparison.Ordinal));
-                    var parentTitle = FindVisualChildren<TextBlock>(modernWpfItem)
-                        .Single(text => string.Equals(text.Text, "ModernWpf controls", StringComparison.Ordinal));
-                    var childGlyph = FindVisualChildren<TextBlock>(navigationViewItem)
-                        .Single(text => string.Equals(text.Text, "\uE729", StringComparison.Ordinal));
-                    var childTitle = FindVisualChildren<TextBlock>(navigationViewItem)
-                        .Single(text => string.Equals(text.Text, "NavigationView", StringComparison.Ordinal));
-
-                    void AssertSharedColumns(string state)
-                    {
-                        Assert.AreEqual(
-                            GetElementBounds(page, parentGlyph).Left,
-                            GetElementBounds(page, childGlyph).Left,
-                            1.0,
-                            $"The {state} fallback child glyph must remain in the parent glyph column.");
-                        Assert.AreEqual(
-                            GetElementBounds(page, parentTitle).Left,
-                            GetElementBounds(page, childTitle).Left,
-                            1.0,
-                            $"The {state} fallback child label must remain in the parent text column.");
-                    }
-
-                    AssertSharedColumns("expanded");
-                    AssertNavigationItemContentVerticallyCentered(
-                        page,
-                        navigationViewItem,
-                        new[] { "\uE729", "NavigationView" },
-                        "ModernWpf expanded child row");
-                    Assert.AreEqual(
-                        GetElementBounds(page, modernWpfItem).Left + 20,
-                        GetElementBounds(page, navigationViewItem).Left,
-                        1.0,
-                        "Only the child row container should carry the hierarchy indent.");
+                    Assert.AreEqual("ModernWpf controls", modernWpfItem.Content);
+                    Assert.AreEqual("NavigationView", navigationViewItem.Content);
+                    AssertFontIconGlyph(modernWpfItem, "\uEA37");
+                    AssertFontIconGlyph(navigationViewItem, "\uE729");
+                    Assert.AreEqual(0, modernWpfItem.Depth);
+                    Assert.AreEqual(1, navigationViewItem.Depth);
 
                     page.NavigateTo("item/NavigationView");
                     WpfTestHost.DoEvents();
                     page.UpdateLayout();
                     WpfTestHost.DoEvents();
-                    AssertSharedColumns("selected");
-                    AssertNavigationItemContentVerticallyCentered(
-                        page,
-                        navigationViewItem,
-                        new[] { "\uE729", "NavigationView" },
-                        "ModernWpf selected child row");
+                    Assert.IsTrue(modernWpfItem.IsChildSelected);
+                    Assert.IsTrue(navigationViewItem.IsSelected);
+                    Assert.IsInstanceOfType(GetContentHost(page).Content, typeof(ItemPage));
                 });
             });
         }
 
         [TestMethod]
-        public void ShellNavigationViewTreeViewResourceAliasesTrackThemeChanges()
+        public void ShellNavigationViewUsesThemeNativeWinUIResources()
         {
             WpfTestHost.Run(() =>
             {
@@ -729,19 +570,19 @@ namespace ModernWpf.Gallery.Tests
 
                         ThemeManager.Current.ApplicationTheme = ApplicationTheme.Light;
                         WpfTestHost.DoEvents();
-                        AssertWpfGalleryNavigationResourceAliases(navigation);
-                        AssertWpfGalleryNavigationPaneBackground(navigation, "NavigationViewDefaultPaneBackground", Color.FromRgb(250, 250, 250));
-                        AssertWpfGalleryNavigationPaneBackground(navigation, "NavigationViewExpandedPaneBackground", Color.FromRgb(250, 250, 250));
+                        Assert.IsFalse(navigation.Resources.Contains("NavigationViewItemBackground"));
+                        Assert.IsFalse(navigation.Resources.Contains("NavigationViewItemForeground"));
+                        Assert.IsFalse(navigation.Resources.Contains("NavigationViewSelectionIndicatorForeground"));
+                        Assert.IsNotNull(navigation.TryFindResource("NavigationViewItemBackground"));
+                        Assert.IsNotNull(navigation.TryFindResource("NavigationViewItemForeground"));
+                        Assert.IsNotNull(navigation.TryFindResource("NavigationViewSelectionIndicatorForeground"));
 
                         ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
                         WpfTestHost.DoEvents();
-                        AssertWpfGalleryNavigationResourceAliases(navigation);
-                        Assert.AreSame(
-                            navigation.TryFindResource("SolidBackgroundFillColorBaseBrush"),
-                            navigation.Resources["NavigationViewDefaultPaneBackground"]);
-                        Assert.AreSame(
-                            navigation.TryFindResource("SolidBackgroundFillColorBaseBrush"),
-                            navigation.Resources["NavigationViewExpandedPaneBackground"]);
+                        Assert.IsFalse(navigation.Resources.Contains("NavigationViewItemBackground"));
+                        Assert.IsNotNull(navigation.TryFindResource("NavigationViewItemBackground"));
+                        Assert.IsNotNull(navigation.TryFindResource("NavigationViewItemForeground"));
+                        Assert.IsNotNull(navigation.TryFindResource("NavigationViewSelectionIndicatorForeground"));
                     });
                 }
                 finally
@@ -753,7 +594,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void ShellNavigationViewAliasesHaveWpfGalleryTreeViewHighContrastTokens()
+        public void ThemeResourcesProvideNativeNavigationViewTokens()
         {
             WpfTestHost.Run(() =>
             {
@@ -761,28 +602,24 @@ namespace ModernWpf.Gallery.Tests
                 foreach (var themeName in new[] { "Light", "Dark", "HighContrast" })
                 {
                     var themeDictionary = GetModernWpfThemeDictionary(themeResources, themeName);
-                    foreach (var resourcePair in WpfGalleryNavigationResourceAliases)
+                    foreach (var resourceKey in new[]
+                    {
+                        "NavigationViewItemBackground",
+                        "NavigationViewItemForeground",
+                        "NavigationViewItemBorderBrush",
+                        "NavigationViewSelectionIndicatorForeground"
+                    })
                     {
                         Assert.IsTrue(
-                            themeDictionary.Contains(resourcePair.Item2),
-                            themeName + " is missing the WPF Gallery TreeView token " + resourcePair.Item2 + " for " + resourcePair.Item1 + ".");
+                            themeDictionary.Contains(resourceKey),
+                            themeName + " is missing the native NavigationView token " + resourceKey + ".");
                     }
-                }
-
-                var highContrastDictionary = GetModernWpfThemeDictionary(themeResources, "HighContrast");
-                foreach (var resourcePair in WpfGalleryNavigationResourceAliases)
-                {
-                    AssertHighContrastTreeViewResourceReference(
-                        highContrastDictionary,
-                        resourcePair.Item2,
-                        GetExpectedHighContrastTreeViewResourceKey(resourcePair.Item2),
-                        resourcePair.Item1);
                 }
             });
         }
 
         [TestMethod]
-        public void MainWindowUsesWpfGalleryTitleChrome()
+        public void MainWindowUsesWinUITitleBarWithWpfContentHost()
         {
             WpfTestHost.Run(() =>
             {
@@ -791,7 +628,7 @@ namespace ModernWpf.Gallery.Tests
                 {
                     var chrome = WindowChrome.GetWindowChrome(window);
                     Assert.IsNotNull(chrome);
-                    Assert.AreEqual(50d, chrome.CaptionHeight);
+                    Assert.AreEqual(48d, chrome.CaptionHeight);
                     Assert.AreEqual(new CornerRadius(12), chrome.CornerRadius);
                     Assert.AreEqual(new Thickness(-1), chrome.GlassFrameThickness);
                     Assert.AreEqual(new Thickness(4), chrome.ResizeBorderThickness);
@@ -808,59 +645,98 @@ namespace ModernWpf.Gallery.Tests
                         BindingOperations.GetBindingExpression(window, Window.TitleProperty)?.ParentBinding.Path.Path);
 
                     var mainGrid = (Grid)window.FindName("MainGrid");
-                    Assert.AreEqual(44d, mainGrid.RowDefinitions[0].Height.Value);
-                    Assert.AreEqual(new Thickness(0), mainGrid.Margin);
+                    Assert.AreEqual(48d, mainGrid.RowDefinitions[0].Height.Value);
+                    Assert.AreEqual(
+                        MainWindow.GetMainGridMargin(WindowState.Normal, SystemParameters.HighContrast),
+                        mainGrid.Margin);
 
                     var highContrastBorder = (Border)window.FindName("HighContrastBorder");
                     Assert.AreEqual(new Thickness(0), highContrastBorder.BorderThickness);
 
                     var backButton = (Button)window.FindName("BackButton");
                     Assert.AreEqual("Back", AutomationProperties.GetName(backButton));
-                    Assert.IsTrue(double.IsNaN(backButton.Width));
-                    Assert.AreEqual(36d, backButton.Height);
-                    Assert.AreEqual(36d, backButton.MinWidth);
-                    Assert.AreEqual(new Thickness(8, 0, 8, 0), backButton.Margin);
+                    Assert.AreEqual(40d, backButton.Width);
+                    Assert.IsTrue(double.IsNaN(backButton.Height));
+                    Assert.AreEqual(40d, backButton.MinWidth);
+                    Assert.AreEqual(new Thickness(2), backButton.Margin);
+                    Assert.AreEqual(VerticalAlignment.Stretch, backButton.VerticalAlignment);
+                    Assert.AreEqual(HorizontalAlignment.Center, backButton.HorizontalContentAlignment);
+                    Assert.AreEqual(VerticalAlignment.Center, backButton.VerticalContentAlignment);
                     Assert.AreSame(window.ViewModel.BackCommand, backButton.Command);
                     Assert.AreEqual("ViewModel.BackCommand",
                         BindingOperations.GetBindingExpression(backButton, System.Windows.Controls.Primitives.ButtonBase.CommandProperty)?.ParentBinding.Path.Path);
                     Assert.AreEqual("ViewModel.CanNavigateback",
                         BindingOperations.GetBindingExpression(backButton, UIElement.IsEnabledProperty)?.ParentBinding.Path.Path);
+                    Assert.AreEqual("ViewModel.CanNavigateback",
+                        BindingOperations.GetBindingExpression(backButton, UIElement.VisibilityProperty)?.ParentBinding.Path.Path);
                     Assert.IsFalse(window.ViewModel.CanNavigateback);
                     Assert.IsFalse(backButton.IsEnabled);
+                    Assert.AreEqual(Visibility.Collapsed, backButton.Visibility);
 
-                    Assert.IsNull(window.FindName("AppTitleBar"));
-                    Assert.IsNull(window.FindName("TitleIcon"));
-                    Assert.IsNull(window.FindName("TitleText"));
                     var titleBar = mainGrid.Children.OfType<Grid>()
                         .Single(grid => Grid.GetRow(grid) == 0);
-                    var titleText = FindVisualChildren<TextBlock>(titleBar)
+                    Assert.AreEqual(48d, titleBar.Height);
+                    Assert.AreEqual(10, titleBar.ColumnDefinitions.Count);
+                    Assert.AreEqual(0d, titleBar.ColumnDefinitions[0].Width.Value);
+                    Assert.AreEqual(2d, titleBar.ColumnDefinitions[3].Width.Value);
+                    Assert.AreEqual(48d, titleBar.ColumnDefinitions[6].Width.Value);
+
+                    var paneToggleButton = (Button)window.FindName("PaneToggleButton");
+                    Assert.AreEqual("Navigation", AutomationProperties.GetName(paneToggleButton));
+                    Assert.AreEqual(40d, paneToggleButton.Width);
+                    Assert.IsTrue(double.IsNaN(paneToggleButton.Height));
+                    Assert.AreEqual(new Thickness(2), paneToggleButton.Margin);
+                    Assert.AreEqual(VerticalAlignment.Stretch, paneToggleButton.VerticalAlignment);
+                    Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(paneToggleButton));
+                    Assert.AreEqual(
+                        "\uE700",
+                        ((TextBlock)paneToggleButton.Content).Text);
+
+                    var titleHeader = titleBar.Children.OfType<StackPanel>().Single();
+                    Assert.AreEqual(1d, ((TranslateTransform)titleHeader.RenderTransform).Y);
+                    var appIcon = titleHeader.Children.OfType<Image>().Single();
+                    Assert.AreEqual(16d, appIcon.Width);
+                    Assert.AreEqual(16d, appIcon.Height);
+                    Assert.AreEqual(new Thickness(0, 0, 16, 0), appIcon.Margin);
+
+                    var titleText = titleHeader.Children.OfType<TextBlock>()
                         .Single(text => string.Equals(text.Text, "WPF Gallery", StringComparison.Ordinal));
                     Assert.AreEqual("WPF Gallery", titleText.Text);
                     Assert.AreEqual("ViewModel.ApplicationTitle",
                         BindingOperations.GetBindingExpression(titleText, TextBlock.TextProperty)?.ParentBinding.Path.Path);
                     Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleText));
 
+                    var searchBox = (AutoSuggestBox)window.FindName("ControlsSearchBox");
+                    Assert.AreEqual(320d, searchBox.Width);
+                    Assert.AreEqual(32d, searchBox.Height);
+                    Assert.AreEqual(160d, searchBox.MinWidth);
+                    Assert.AreEqual(580d, searchBox.MaxWidth);
+                    Assert.AreEqual(new Thickness(20, 0, 0, 0), searchBox.Margin);
+                    Assert.AreEqual(1d, ((TranslateTransform)searchBox.RenderTransform).Y);
+                    Assert.AreEqual("Search controls and samples...", searchBox.PlaceholderText);
+                    Assert.AreEqual(string.Empty, searchBox.DisplayMemberPath);
+                    Assert.AreEqual(string.Empty, searchBox.TextMemberPath);
+                    Assert.AreEqual("ControlsSearchBox", AutomationProperties.GetAutomationId(searchBox));
+                    Assert.AreEqual("Search controls and samples", AutomationProperties.GetName(searchBox));
+                    Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(searchBox));
+                    Assert.IsInstanceOfType(searchBox.QueryIcon, typeof(SymbolIcon));
+                    Assert.AreEqual(Symbol.Find, ((SymbolIcon)searchBox.QueryIcon).Symbol);
+
                     Assert.IsNull(window.FindName("RootPage"));
                     var rootPage = GetNavigationRootPage(window);
                     rootPage.UpdateLayout();
                     WpfTestHost.DoEvents();
-                    var settingsButton = (Button)rootPage.FindName("SettingsButton");
-                    Assert.AreSame(
-                        window.ViewModel.SettingsCommand,
-                        settingsButton.Command,
-                        "Settings button command should bind to the MainWindow ViewModel. Actual command: " +
-                        (settingsButton.Command == null ? "<null>" : settingsButton.Command.GetType().FullName) +
-                        "; root DataContext: " +
-                        (rootPage.DataContext == null ? "<null>" : rootPage.DataContext.GetType().FullName));
-                    Assert.AreEqual("ViewModel.SettingsCommand",
-                        BindingOperations.GetBindingExpression(settingsButton, System.Windows.Controls.Primitives.ButtonBase.CommandProperty)?.ParentBinding.Path.Path);
+                    var navigation = GetNavigationView(rootPage);
+                    navigation.ApplyTemplate();
                     var contentHost = GetContentHost(rootPage);
                     window.ViewModel.SettingsCommand.Execute(null);
                     WpfTestHost.DoEvents();
                     Assert.IsTrue(rootPage.CanGoBack);
                     Assert.IsTrue(window.ViewModel.CanNavigateback);
                     Assert.IsTrue(backButton.IsEnabled);
+                    Assert.AreEqual(Visibility.Visible, backButton.Visibility);
                     Assert.IsInstanceOfType(contentHost.Content, typeof(SettingsPage));
+                    Assert.AreSame(navigation.SettingsItem, navigation.SelectedItem);
 
                     var minimizeButton = (Button)window.FindName("MinimizeButton");
                     var maximizeButton = (Button)window.FindName("MaximizeButton");
@@ -871,6 +747,9 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(minimizeButton));
                     Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(maximizeButton));
                     Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(closeButton));
+                    Assert.AreEqual(48d, minimizeButton.Height);
+                    Assert.AreEqual(48d, maximizeButton.Height);
+                    Assert.AreEqual(48d, closeButton.Height);
                     Assert.AreEqual("\uE922", ((TextBlock)window.FindName("MaximizeIcon")).Text);
 
                     Assert.IsInstanceOfType(rootPage, typeof(NavigationRootPage));
@@ -989,14 +868,31 @@ namespace ModernWpf.Gallery.Tests
             WpfTestHost.Run(() =>
             {
                 var chrome = MainWindow.CreateWpfGalleryWindowChrome(ResizeMode.NoResize);
-                Assert.AreEqual(50d, chrome.CaptionHeight);
+                Assert.AreEqual(48d, chrome.CaptionHeight);
                 Assert.AreEqual(new CornerRadius(12), chrome.CornerRadius);
                 Assert.AreEqual(new Thickness(-1), chrome.GlassFrameThickness);
                 Assert.AreEqual(new Thickness(0), chrome.ResizeBorderThickness);
                 Assert.IsTrue(chrome.UseAeroCaptionButtons);
                 Assert.AreEqual(MainWindow.GetPrefferedNonClientFrameEdges(), chrome.NonClientFrameEdges);
 
-                Assert.AreEqual(new Thickness(0), MainWindow.GetMainGridMargin(WindowState.Normal, false));
+                Assert.AreEqual(
+                    new Thickness(8, 0, 8, 8),
+                    MainWindow.GetMainGridMargin(
+                        WindowState.Normal,
+                        isHighContrast: false,
+                        isWindows11OrGreater: true));
+                Assert.AreEqual(
+                    new Thickness(0),
+                    MainWindow.GetMainGridMargin(
+                        WindowState.Normal,
+                        isHighContrast: false,
+                        isWindows11OrGreater: false));
+                Assert.AreEqual(
+                    new Thickness(0),
+                    MainWindow.GetMainGridMargin(
+                        WindowState.Normal,
+                        isHighContrast: true,
+                        isWindows11OrGreater: true));
                 Assert.AreEqual(new Thickness(8), MainWindow.GetMainGridMargin(WindowState.Maximized, false));
                 Assert.AreEqual(new Thickness(0, 8, 0, 0), MainWindow.GetMainGridMargin(WindowState.Maximized, true));
                 Assert.AreEqual(new Thickness(0), MainWindow.GetHighContrastBorderThickness(false));
@@ -1015,7 +911,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void ShellHighContrastHoverStylesMatchWpfGalleryReferenceChrome()
+        public void WinUITitleBarButtonsKeepAccessibleHighContrastHoverStyles()
         {
             WpfTestHost.Run(() =>
             {
@@ -1027,13 +923,37 @@ namespace ModernWpf.Gallery.Tests
 
                     var defaultButtonStyle = (Style)window.Resources["TitleBarDefaultButtonStyle"];
                     Assert.AreSame(titleBarButtonStyle, defaultButtonStyle.BasedOn);
+                    Assert.AreEqual(
+                        48d,
+                        defaultButtonStyle.Setters.OfType<Setter>().Single(setter => setter.Property == FrameworkElement.HeightProperty).Value);
+                    Assert.AreEqual(
+                        48d,
+                        defaultButtonStyle.Setters.OfType<Setter>().Single(setter => setter.Property == FrameworkElement.MinHeightProperty).Value);
 
                     var closeButtonStyle = (Style)window.Resources["TitleBarDefaultCloseButtonStyle"];
                     AssertWpfGalleryHighContrastHoverTrigger(closeButtonStyle, "title bar close button");
 
-                    var rootPage = GetNavigationRootPage(window);
-                    var footerButtonStyle = (Style)rootPage.Resources["BorderlessButtonStyle"];
-                    AssertWpfGalleryHighContrastHoverTrigger(footerButtonStyle, "navigation footer button");
+                    var navigationButtonStyle = (Style)window.Resources["WinUITitleBarNavigationButtonStyle"];
+                    Assert.AreSame(titleBarButtonStyle, navigationButtonStyle.BasedOn);
+                    Assert.AreEqual(
+                        40d,
+                        navigationButtonStyle.Setters.OfType<Setter>().Single(setter => setter.Property == FrameworkElement.WidthProperty).Value);
+                    Assert.AreEqual(
+                        40d,
+                        navigationButtonStyle.Setters.OfType<Setter>().Single(setter => setter.Property == FrameworkElement.MinWidthProperty).Value);
+                    Assert.AreEqual(
+                        new Thickness(2),
+                        navigationButtonStyle.Setters.OfType<Setter>().Single(setter => setter.Property == FrameworkElement.MarginProperty).Value);
+                    Assert.AreEqual(
+                        VerticalAlignment.Stretch,
+                        navigationButtonStyle.Setters.OfType<Setter>().Single(setter => setter.Property == FrameworkElement.VerticalAlignmentProperty).Value);
+                    Assert.AreEqual(
+                        1d,
+                        ((TranslateTransform)navigationButtonStyle.Setters
+                            .OfType<Setter>()
+                            .Single(setter => setter.Property == UIElement.RenderTransformProperty)
+                            .Value).Y);
+                    AssertWpfGalleryHighContrastHoverTrigger(navigationButtonStyle, "WinUI title bar navigation button");
                 }
                 finally
                 {

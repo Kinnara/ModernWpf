@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace ModernWpf.Controls
 {
-    public sealed partial class TeachingTipTemplateSettings
+    public partial class TeachingTipTemplateSettings
     {
         #region TopRightHighlightMargin
 

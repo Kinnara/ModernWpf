@@ -3,9 +3,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shell;
 using Microsoft.Win32;
+using ModernWpf.Controls;
 using ModernWpf.Gallery.Shell;
 using ModernWpf.Gallery.Testing;
 using ModernWpf.Gallery.ViewModels;
@@ -54,6 +56,30 @@ namespace ModernWpf.Gallery
         private void OpenSettings()
         {
             GetNavigationRootPage().OpenSettings();
+        }
+
+        private void ToggleNavigationPane(object sender, RoutedEventArgs e)
+        {
+            GetNavigationRootPage().ToggleNavigationPane();
+        }
+
+        private void OnSearchTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            GetNavigationRootPage().OnSearchTextChanged(sender, args);
+        }
+
+        private void OnSearchQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            GetNavigationRootPage().OnSearchQuerySubmitted(sender, args);
+        }
+
+        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                ControlsSearchBox.Focus();
+                e.Handled = true;
+            }
         }
 
         internal void UpdateCanNavigateBack()
@@ -144,7 +170,7 @@ namespace ModernWpf.Gallery
         {
             return new WindowChrome
             {
-                CaptionHeight = 50,
+                CaptionHeight = 48,
                 CornerRadius = new CornerRadius(12),
                 GlassFrameThickness = new Thickness(-1),
                 ResizeBorderThickness = resizeMode == ResizeMode.NoResize ? default : new Thickness(4),
@@ -155,9 +181,26 @@ namespace ModernWpf.Gallery
 
         internal static Thickness GetMainGridMargin(WindowState windowState, bool isHighContrast)
         {
+            return GetMainGridMargin(windowState, isHighContrast, IsWindows11OrGreater());
+        }
+
+        internal static Thickness GetMainGridMargin(
+            WindowState windowState,
+            bool isHighContrast,
+            bool isWindows11OrGreater)
+        {
             if (windowState == WindowState.Maximized)
             {
                 return isHighContrast ? new Thickness(0, 8, 0, 0) : new Thickness(8);
+            }
+
+            // A WinUI 3 AppWindow lays its client content inside the normal
+            // eight-DIP resize frame. WindowChrome extends WPF content beneath
+            // that frame, so compensate here to keep the title bar,
+            // NavigationView, and right content on the same pixel boundaries.
+            if (!isHighContrast && isWindows11OrGreater)
+            {
+                return new Thickness(8, 0, 8, 8);
             }
 
             return default;

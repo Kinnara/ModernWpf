@@ -90,7 +90,7 @@ multi-target builds without substituting the singular control page.
 - The default template keeps the WinUI source shape: disabled header state via `VisualStateEx.Setters`, `ContentPresenterEx` for the header slot, `ItemsRepeater`, and `ColumnMajorUniformToLargestGridLayout`.
 - `ColumnMajorUniformToLargestGridLayout.MaxColumns` is bound from the template, matching the WinUI XAML ownership model, instead of being re-bound imperatively from `OnApplyTemplate`.
 - `RadioButtonsAutomationPeer` now exists and maps the WinUI peer behavior: class name `RadioButtons`, control type `Group`, and header text as the name fallback when no explicit automation name is set.
-- `RadioButtonsElementFactory` now recognizes `DataTemplate`, `DataTemplateSelector`, and custom `IElementFactoryShim`, matching the WinUI factory order. WPF also forwards `ContentTemplateSelector` to the wrapped `RadioButton` because WPF exposes that direct equivalent.
+- `RadioButtonsElementFactory` now recognizes `DataTemplate`, `DataTemplateSelector`, and custom `IElementFactory`, matching the WinUI factory order. WPF also forwards `ContentTemplateSelector` to the wrapped `RadioButton` because WPF exposes that direct equivalent.
 - Selection, checked-state synchronization, inserted checked item handling, `SelectionChanged`, UIA position/size metadata, layout test hooks, and collection updates already follow the WinUI source algorithm with WPF event and dependency-property substitutions.
 - `SelectionChanged` now matches current source by omitting nonexistent items from `RemovedItems` and `AddedItems`; the collections never contain a `null` placeholder.
 

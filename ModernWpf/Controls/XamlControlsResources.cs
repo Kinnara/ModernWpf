@@ -5,7 +5,7 @@ namespace ModernWpf.Controls
     /// <summary>
     /// Default styles for controls.
     /// </summary>
-    public class XamlControlsResources : ResourceDictionary
+    public sealed class XamlControlsResources : ResourceDictionary
     {
         /// <summary>
         /// Initializes a new instance of the XamlControlsResources class.

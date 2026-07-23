@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class DebugVisualStateManager : VisualStateManager
+    internal class DebugVisualStateManager : VisualStateManager
     {
         protected override bool GoToStateCore(
             FrameworkElement control,

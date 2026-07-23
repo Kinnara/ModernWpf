@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public partial class AutoSuggestBoxListView : System.Windows.Controls.ListView
+    internal partial class AutoSuggestBoxListView : System.Windows.Controls.ListView
     {
         static AutoSuggestBoxListView()
         {

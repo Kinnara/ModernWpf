@@ -5,11 +5,16 @@
     <UseWPF>true</UseWPF>
     <NeutralLanguage>en-US</NeutralLanguage>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <NoWarn>1701;1702;1573;1591</NoWarn>
+    <NoWarn>1701;1702;1573;1591;RS0041</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);RS0016;RS0017;RS0024;RS0025</WarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup>
     <CsWinRTEmbedded>true</CsWinRTEmbedded>
+    <!-- CsWinRT 1.6 has no dedicated property for an internal embedded
+         projection. Its command-line switch is supplied here so the Windows
+         SDK projection remains an implementation detail of ModernWpf.dll. -->
+    <CsWinRTCommandVerbosity>-internal</CsWinRTCommandVerbosity>
     <CsWinRTWindowsMetadata>10.0.19041.0</CsWinRTWindowsMetadata>
     <CsWinRTIncludes>
       Windows.Foundation;
@@ -63,7 +68,18 @@
     <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.2.1-beta">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
+
+  <Target Name="InternalizeCsWinRTContractMarkers"
+          AfterTargets="CsWinRTGenerateProjection"
+          BeforeTargets="CsWinRTIncludeProjection"
+          Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and '$(CsWinRTEmbedded)' == 'true'">
+    <Exec Command="powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\tools\api-contracts\Set-CsWinRTContractMarkersInternal.ps1&quot; -ProjectionPath &quot;$(CsWinRTGeneratedFilesDir)Windows.Foundation.cs&quot;" />
+  </Target>
 
   <ItemGroup>
     <Page Remove="Properties\DesignTimeResources.xaml" />

@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace ModernWpf.Controls
 {
-    public class ElementFactory : DependencyObject, IElementFactoryShim
+    public class ElementFactory : DependencyObject, IElementFactory
     {
         public ElementFactory()
         {

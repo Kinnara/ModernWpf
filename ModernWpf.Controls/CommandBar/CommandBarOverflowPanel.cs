@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class CommandBarOverflowPanel : Panel
+    internal class CommandBarOverflowPanel : Panel
     {
         public CommandBarOverflowPanel()
         {

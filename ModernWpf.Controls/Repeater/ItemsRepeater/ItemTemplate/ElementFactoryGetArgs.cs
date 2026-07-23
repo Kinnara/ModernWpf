@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace ModernWpf.Controls
 {
-    public sealed class ElementFactoryGetArgs
+    public class ElementFactoryGetArgs
     {
         public ElementFactoryGetArgs()
         {

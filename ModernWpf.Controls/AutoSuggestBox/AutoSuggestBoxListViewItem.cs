@@ -8,7 +8,7 @@ using System.Windows.Input;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class AutoSuggestBoxListViewItem : System.Windows.Controls.ListViewItem
+    internal class AutoSuggestBoxListViewItem : System.Windows.Controls.ListViewItem
     {
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {

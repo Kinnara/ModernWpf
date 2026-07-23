@@ -13,6 +13,9 @@ ModernWpf is restarting active maintenance on a new 1.x line.
 | 1.x | Active preview | New maintenance line for current WPF applications. |
 
 The NuGet package name remains `ModernWpfUI`. The first 1.x maintenance release is planned as `1.0.0-preview.1`.
+See the [1.x public API contract](docs/public-api-contract-1x.md) for the
+forward-compatibility boundary and the comparison with 0.9.x, current WinUI,
+and official WPF Fluent.
 
 ## Supported targets
 
@@ -83,11 +86,11 @@ For existing 0.9.x applications, the old resource entry remains supported:
     ...
     xmlns:ui="http://schemas.modernwpf.com/2019"
     ui:WindowHelper.UseModernWindowStyle="True">
-    <ui:SimpleStackPanel Margin="12" Spacing="24">
+    <ui:StackPanelEx Margin="12" Spacing="24">
         <TextBlock Text="My first ModernWPF app" Style="{StaticResource HeaderTextBlockStyle}" />
         <Button Content="I am a button" />
         <Button Content="I am an accent button" Style="{StaticResource AccentButtonStyle}" />
-    </ui:SimpleStackPanel>
+    </ui:StackPanelEx>
 </Window>
 ```
 

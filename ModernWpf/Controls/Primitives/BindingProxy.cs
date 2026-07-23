@@ -2,7 +2,7 @@
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class BindingProxy : Freezable
+    public sealed class BindingProxy : Freezable
     {
         #region Value
 

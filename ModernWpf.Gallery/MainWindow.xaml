@@ -14,6 +14,7 @@
     MinHeight="470"
     WindowStartupLocation="CenterScreen"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    PreviewKeyDown="OnPreviewKeyDown"
     mc:Ignorable="d"
     ui:ThemeManager.IsThemeAware="True">
     <Window.Resources>
@@ -65,6 +66,53 @@
         <Style x:Key="TitleBarDefaultButtonStyle" BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
             <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
             <Setter Property="Border.CornerRadius" Value="0" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="MinHeight" Value="48" />
+        </Style>
+
+        <Style x:Key="WinUITitleBarNavigationButtonStyle" BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
+            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+            <Setter Property="Width" Value="40" />
+            <Setter Property="MinWidth" Value="40" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
+            <Setter Property="Border.CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+            <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
+            <Setter Property="FontSize" Value="16" />
+            <!-- WPF's WindowChrome client origin is one pixel above WinUI's AppWindow title-bar origin. -->
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <TranslateTransform Y="1" />
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{DynamicResource ControlFillColorDisabledBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                </Trigger>
+                <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="False">
+                    <Setter Property="Opacity" Value="0.5" />
+                </DataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource SystemColorHighlightColorBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource SystemColorHighlightTextColorBrush}" />
+                </MultiDataTrigger>
+            </Style.Triggers>
         </Style>
 
         <Style x:Key="TitleBarDefaultCloseButtonStyle" BasedOn="{StaticResource TitleBarDefaultButtonStyle}" TargetType="Button">
@@ -91,17 +139,24 @@
         BorderThickness="8 1 8 8">
         <Grid x:Name="MainGrid">
             <Grid.RowDefinitions>
-                <RowDefinition Height="44" />
+                <RowDefinition Height="48" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
             <Grid
                 Grid.Row="0"
                 Grid.ColumnSpan="2"
-                Height="44">
+                Height="48">
                 <Grid.ColumnDefinitions>
+                    <!-- WindowChrome already contributes WinUI's two-DIP left inset. -->
+                    <ColumnDefinition Width="0" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <!-- No LeftHeader is present, so WinUI uses its two-DIP negative-inset spacing state. -->
+                    <ColumnDefinition Width="2" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="48" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -109,20 +164,18 @@
 
                 <Button
                     x:Name="BackButton"
-                    Height="36"
-                    MinWidth="36"
-                    Margin="8,0"
-                    VerticalAlignment="Center"
+                    Grid.Column="1"
                     AutomationProperties.Name="Back"
-                    Style="{StaticResource BorderlessButtonStyle}"
+                    Style="{StaticResource WinUITitleBarNavigationButtonStyle}"
                     Command="{Binding ViewModel.BackCommand}"
                     IsEnabled="{Binding ViewModel.CanNavigateback}"
+                    Visibility="{Binding ViewModel.CanNavigateback, Converter={StaticResource BooleanToVisibilityConverter}}"
                     WindowChrome.IsHitTestVisibleInChrome="True"
                     ToolTipService.ToolTip="Back">
                     <TextBlock
                         VerticalAlignment="Center"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        FontSize="12"
+                        FontSize="16"
                         Text="&#xE72B;">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
@@ -136,25 +189,65 @@
                     </TextBlock>
                 </Button>
 
+                <Button
+                    x:Name="PaneToggleButton"
+                    Grid.Column="2"
+                    AutomationProperties.Name="Navigation"
+                    Click="ToggleNavigationPane"
+                    Style="{StaticResource WinUITitleBarNavigationButtonStyle}"
+                    ToolTipService.ToolTip="Navigation">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="16"
+                        Text="&#xE700;" />
+                </Button>
+
                 <StackPanel
-                    Grid.Column="1"
-                    Margin="4,0,0,0"
+                    Grid.Column="4"
+                    Margin="0,0,8,0"
                     Orientation="Horizontal">
+                    <StackPanel.RenderTransform>
+                        <TranslateTransform Y="1" />
+                    </StackPanel.RenderTransform>
                     <Image
-                        Width="20"
+                        Width="16"
+                        Height="16"
+                        Margin="0,0,16,0"
                         VerticalAlignment="Center"
                         Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/AppIcons/WPFGallery_48px.png" />
                     <TextBlock
-                        Margin="16,0,0,0"
                         VerticalAlignment="Center"
                         Style="{StaticResource CaptionTextBlockStyle}"
                         pages:GalleryAutomation.HeadingLevel="Level1"
                         Text="{Binding ViewModel.ApplicationTitle}" />
                 </StackPanel>
 
+                <ui:AutoSuggestBox
+                    x:Name="ControlsSearchBox"
+                    Grid.Column="5"
+                    Width="320"
+                    Height="32"
+                    MinWidth="160"
+                    MaxWidth="580"
+                    Margin="20,0,0,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    AutomationProperties.AutomationId="ControlsSearchBox"
+                    AutomationProperties.Name="Search controls and samples"
+                    PlaceholderText="Search controls and samples..."
+                    QueryIcon="Find"
+                    QuerySubmitted="OnSearchQuerySubmitted"
+                    TextChanged="OnSearchTextChanged"
+                    WindowChrome.IsHitTestVisibleInChrome="True">
+                    <ui:AutoSuggestBox.RenderTransform>
+                        <TranslateTransform Y="1" />
+                    </ui:AutoSuggestBox.RenderTransform>
+                </ui:AutoSuggestBox>
+
                 <Button
                     x:Name="MinimizeButton"
-                    Grid.Column="2"
+                    Grid.Column="7"
                     Click="MinimizeWindow"
                     Style="{StaticResource TitleBarDefaultButtonStyle}">
                     <TextBlock
@@ -166,7 +259,7 @@
 
                 <Button
                     x:Name="MaximizeButton"
-                    Grid.Column="3"
+                    Grid.Column="8"
                     Click="MaximizeWindow"
                     Style="{StaticResource TitleBarDefaultButtonStyle}">
                     <TextBlock
@@ -179,7 +272,7 @@
 
                 <Button
                     x:Name="CloseButton"
-                    Grid.Column="4"
+                    Grid.Column="9"
                     Click="CloseWindow"
                     Style="{StaticResource TitleBarDefaultCloseButtonStyle}">
                     <TextBlock

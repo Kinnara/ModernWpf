@@ -2079,7 +2079,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void ShellChromeKeepsWpfGalleryHighContrastSourceShape()
+        public void ShellChromeKeepsWinUITitleBarAndWpfContentSourceShape()
         {
             var mainWindowXaml = ReadRepoFile(
                 "ModernWpf.Gallery",
@@ -2098,6 +2098,25 @@ namespace ModernWpf.Gallery.Tests
                 "<Style x:Key=\"TitleBarDefaultButtonStyle\" BasedOn=\"{StaticResource BorderlessButtonStyle}\" TargetType=\"Button\">",
                 "<Setter Property=\"WindowChrome.IsHitTestVisibleInChrome\" Value=\"True\" />",
                 "<Setter Property=\"Border.CornerRadius\" Value=\"0\" />",
+                "<Setter Property=\"Height\" Value=\"48\" />",
+                "<Setter Property=\"MinHeight\" Value=\"48\" />",
+                "<Style x:Key=\"WinUITitleBarNavigationButtonStyle\" BasedOn=\"{StaticResource BorderlessButtonStyle}\" TargetType=\"Button\">",
+                "<Setter Property=\"WindowChrome.IsHitTestVisibleInChrome\" Value=\"True\" />",
+                "<Setter Property=\"Width\" Value=\"40\" />",
+                "<Setter Property=\"MinWidth\" Value=\"40\" />",
+                "<Setter Property=\"Margin\" Value=\"2\" />",
+                "<Setter Property=\"Padding\" Value=\"0\" />",
+                "<Setter Property=\"VerticalAlignment\" Value=\"Stretch\" />",
+                "<Setter Property=\"HorizontalContentAlignment\" Value=\"Center\" />",
+                "<Setter Property=\"VerticalContentAlignment\" Value=\"Center\" />",
+                "<Setter Property=\"Background\" Value=\"{DynamicResource SubtleFillColorTransparentBrush}\" />",
+                "<Setter Property=\"Border.CornerRadius\" Value=\"{StaticResource ControlCornerRadius}\" />",
+                "<Setter Property=\"FontFamily\" Value=\"{StaticResource SymbolThemeFontFamily}\" />",
+                "<Setter Property=\"FontSize\" Value=\"16\" />",
+                "<Setter Property=\"RenderTransform\">",
+                "<TranslateTransform Y=\"1\" />",
+                "<Setter Property=\"Background\" Value=\"{DynamicResource SubtleFillColorSecondaryBrush}\" />",
+                "<Setter Property=\"Background\" Value=\"{DynamicResource SubtleFillColorTertiaryBrush}\" />",
                 "<Style x:Key=\"TitleBarDefaultCloseButtonStyle\" BasedOn=\"{StaticResource TitleBarDefaultButtonStyle}\" TargetType=\"Button\">");
             AssertContainsInOrder(
                 mainWindowXaml,
@@ -2112,23 +2131,23 @@ namespace ModernWpf.Gallery.Tests
                 "x:Name=\"HighContrastBorder\"",
                 "BorderBrush=\"Transparent\"",
                 "BorderThickness=\"8 1 8 8\"",
+                "<Grid x:Name=\"MainGrid\">",
+                "<RowDefinition Height=\"48\" />",
                 "Grid.Row=\"0\"",
                 "Grid.ColumnSpan=\"2\"",
-                "Height=\"44\"");
+                "Height=\"48\"");
             Assert.IsFalse(
                 mainWindowXaml.Contains("Background=\"{DynamicResource WindowBackground}\"", StringComparison.Ordinal),
                 "MainWindow should keep the official WPF Gallery source shape by applying WindowBackground from code-behind instead of the Window root declaration.");
             AssertContainsInOrder(
                 mainWindowXaml,
                 "x:Name=\"BackButton\"",
-                "Height=\"36\"",
-                "MinWidth=\"36\"",
-                "Margin=\"8,0\"",
-                "VerticalAlignment=\"Center\"",
+                "Grid.Column=\"1\"",
                 "AutomationProperties.Name=\"Back\"",
-                "Style=\"{StaticResource BorderlessButtonStyle}\"",
+                "Style=\"{StaticResource WinUITitleBarNavigationButtonStyle}\"",
                 "Command=\"{Binding ViewModel.BackCommand}\"",
                 "IsEnabled=\"{Binding ViewModel.CanNavigateback}\"",
+                "Visibility=\"{Binding ViewModel.CanNavigateback, Converter={StaticResource BooleanToVisibilityConverter}}\"",
                 "WindowChrome.IsHitTestVisibleInChrome=\"True\"",
                 "ToolTipService.ToolTip=\"Back\"");
             Assert.IsFalse(
@@ -2137,9 +2156,32 @@ namespace ModernWpf.Gallery.Tests
             AssertContainsInOrder(
                 mainWindowXaml,
                 "Text=\"&#xE72B;\"",
+                "x:Name=\"PaneToggleButton\"",
+                "Grid.Column=\"2\"",
+                "AutomationProperties.Name=\"Navigation\"",
+                "Click=\"ToggleNavigationPane\"",
+                "Style=\"{StaticResource WinUITitleBarNavigationButtonStyle}\"",
+                "Text=\"&#xE700;\"",
+                "Width=\"16\"",
+                "Height=\"16\"",
+                "Margin=\"0,0,16,0\"",
                 "Style=\"{StaticResource CaptionTextBlockStyle}\"",
                 "pages:GalleryAutomation.HeadingLevel=\"Level1\"",
-                "Text=\"{Binding ViewModel.ApplicationTitle}\"");
+                "Text=\"{Binding ViewModel.ApplicationTitle}\"",
+                "<ui:AutoSuggestBox",
+                "x:Name=\"ControlsSearchBox\"",
+                "Grid.Column=\"5\"",
+                "Width=\"320\"",
+                "Height=\"32\"",
+                "MinWidth=\"160\"",
+                "MaxWidth=\"580\"",
+                "Margin=\"20,0,0,0\"",
+                "AutomationProperties.AutomationId=\"ControlsSearchBox\"",
+                "PlaceholderText=\"Search controls and samples...\"",
+                "QueryIcon=\"Find\"",
+                "QuerySubmitted=\"OnSearchQuerySubmitted\"",
+                "TextChanged=\"OnSearchTextChanged\"",
+                "WindowChrome.IsHitTestVisibleInChrome=\"True\"");
             AssertContainsInOrder(
                 mainWindowXaml,
                 "<galleryShell:NavigationRootPage Grid.Row=\"1\" />");
@@ -2173,45 +2215,31 @@ namespace ModernWpf.Gallery.Tests
                 "AutomationProperties.Name=\"Navigation Pane\"",
                 "IsBackButtonVisible=\"Collapsed\"",
                 "IsPaneToggleButtonVisible=\"False\"",
-                "IsSettingsVisible=\"False\"",
-                "OpenPaneLength=\"258\"",
-                "PaneDisplayMode=\"Left\"");
+                "IsSettingsVisible=\"True\"",
+                "IsTabStop=\"False\"",
+                "IsTitleBarAutoPaddingEnabled=\"False\"",
+                "ItemInvoked=\"OnNavigationItemInvoked\"",
+                "PaneDisplayMode=\"Auto\"");
             Assert.IsFalse(
                 navigationRootXaml.Contains("x:Name=\"Navigation\"", StringComparison.Ordinal),
                 "The retained shell NavigationView should be located structurally instead of by a local-only NavigationRootPage name hook.");
-            AssertContainsInOrder(
-                navigationRootXaml,
-                "x:Key=\"BorderlessButtonStyle\"",
-                "<MultiDataTrigger>",
-                "<Condition Binding=\"{Binding Path=(SystemParameters.HighContrast)}\" Value=\"True\" />",
-                "<Condition Binding=\"{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}\" Value=\"True\" />",
-                "<Setter Property=\"Background\" Value=\"{DynamicResource SystemColorHighlightColorBrush}\" />",
-                "<Setter Property=\"Foreground\" Value=\"{DynamicResource SystemColorHighlightTextColorBrush}\" />");
-            AssertContainsInOrder(
-                navigationRootXaml,
-                "<ui:NavigationView.PaneFooter>",
-                "<StackPanel",
-                "DataContext=\"{Binding Value, Source={StaticResource NavigationRootDataContextProxy}}\"",
-                "Margin=\"8,10,0,10\"",
-                "Orientation=\"Vertical\"",
-                "x:Name=\"SettingsButton\"",
-                "Width=\"250\"",
-                "Height=\"36\"",
-                "Margin=\"0,4,0,0\"",
-                "Padding=\"{StaticResource ButtonPadding}\"",
-                "HorizontalContentAlignment=\"Left\"",
-                "VerticalContentAlignment=\"Center\"",
-                "AutomationProperties.Name=\"Settings\"",
-                "Command=\"{Binding ViewModel.SettingsCommand}\"",
-                "Style=\"{StaticResource BorderlessButtonStyle}\"",
-                "Click=\"SettingsButton_Click\"",
-                "<StackPanel Orientation=\"Horizontal\" Margin=\"11,0,0,0\">");
             Assert.IsFalse(
-                navigationRootXaml.Contains("Command=\"{Binding Value.ViewModel.SettingsCommand", StringComparison.Ordinal),
-                "The retained Settings footer should put the proxy bridge on the footer panel and keep the button command path in the official ViewModel.SettingsCommand shape.");
+                navigationRootXaml.Contains("<ui:NavigationView.PaneFooter>", StringComparison.Ordinal),
+                "The WinUI shell should use NavigationView's native Settings item.");
+            Assert.IsFalse(
+                navigationRootXaml.Contains("SettingsButton", StringComparison.Ordinal),
+                "The WinUI shell should not keep the retired custom Settings footer.");
+            Assert.IsFalse(
+                navigationRootXaml.Contains("NavigationRootDataContextProxy", StringComparison.Ordinal),
+                "The native Settings item should not require the retired binding proxy.");
             AssertContainsInOrder(
                 navigationRootXaml,
-                "PaneDisplayMode=\"Left\"",
+                "PaneDisplayMode=\"Auto\"",
+                "<ui:NavigationView.Resources>",
+                "<Thickness x:Key=\"NavigationViewContentGridBorderThickness\">0</Thickness>",
+                "<Thickness x:Key=\"NavigationViewPaneContentGridMargin\">0,4</Thickness>",
+                "<CornerRadius x:Key=\"NavigationViewContentGridCornerRadius\">0</CornerRadius>",
+                "<SolidColorBrush x:Key=\"NavigationViewContentBackground\" Color=\"Transparent\" />",
                 "<Border",
                 "Margin=\"4,0,0,0\"",
                 "Padding=\"24,16,24,0\"",
@@ -2223,20 +2251,9 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 navigationRootXaml.Contains("x:Name=\"ContentHost\"", StringComparison.Ordinal),
                 "The retained shell content Frame should be located structurally instead of by a local-only NavigationRootPage name hook.");
-            AssertContainsInOrder(
-                navigationRootXaml,
-                "</ui:NavigationView>",
-                "<Border",
-                "Width=\"1\"",
-                "Height=\"698\"",
-                "Margin=\"257,8,0,0\"",
-                "HorizontalAlignment=\"Left\"",
-                "VerticalAlignment=\"Top\"",
-                "IsHitTestVisible=\"False\"",
-                "Visibility=\"Collapsed\" />");
             Assert.IsFalse(
-                navigationRootXaml.Contains("one pixel narrower", StringComparison.Ordinal),
-                "The retained NavigationView pane should use the official 258px left shell width instead of a local one-pixel compensation comment.");
+                navigationRootXaml.Contains("HighContrastNavigationPaneEdgeCover", StringComparison.Ordinal),
+                "The native WinUI pane should not need the retired manual edge cover.");
 
             var mainWindowCode = ReadRepoFile(
                 "ModernWpf.Gallery",
@@ -2253,6 +2270,12 @@ namespace ModernWpf.Gallery.Tests
                 "GetNavigationRootPage().GoForward();",
                 "private void OpenSettings()",
                 "GetNavigationRootPage().OpenSettings();",
+                "private void ToggleNavigationPane(object sender, RoutedEventArgs e)",
+                "GetNavigationRootPage().ToggleNavigationPane();",
+                "private void OnSearchTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)",
+                "GetNavigationRootPage().OnSearchTextChanged(sender, args);",
+                "private void OnSearchQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)",
+                "GetNavigationRootPage().OnSearchQuerySubmitted(sender, args);",
                 "internal void UpdateCanNavigateBack()",
                 "ViewModel.UpdateCanNavigateBack();",
                 "internal void NavigateTo(string uniqueId)",
@@ -2305,17 +2328,22 @@ namespace ModernWpf.Gallery.Tests
                 "window.UpdateCanNavigateBack();");
             AssertContainsInOrder(
                 navigationRootCode,
-                "ThemeManager.Current.ActualApplicationThemeChanged += OnActualApplicationThemeChanged;",
-                "SystemParameters.StaticPropertyChanged += OnSystemParametersChanged;",
-                "ThemeManager.Current.ActualApplicationThemeChanged -= OnActualApplicationThemeChanged;",
-                "SystemParameters.StaticPropertyChanged -= OnSystemParametersChanged;",
-                "private void OnActualApplicationThemeChanged(ThemeManager sender, object args)",
-                "AlignNavigationViewShellResourcesWithWpfGallery();",
-                "private void OnSystemParametersChanged(object sender, PropertyChangedEventArgs e)",
-                "if (string.Equals(e.PropertyName, nameof(SystemParameters.HighContrast), StringComparison.Ordinal))",
-                "AlignNavigationViewShellResourcesWithWpfGallery();",
-                "private void SettingsButton_Click(object sender, RoutedEventArgs e)",
-                "RaiseSettingsOpenedNotification((UIElement)sender);");
+                "private void BuildNavigationMenu()",
+                "navigation.MenuItems.Add(_homeNavigationItem);",
+                "navigation.MenuItems.Add(_whatsNewNavigationItem);",
+                "private NavigationViewItem CreateNavigationItem(string title, NavigationTarget target, IconElement icon)",
+                "Content = title,",
+                "Icon = icon,",
+                "Tag = target",
+                "internal void OpenSettings()",
+                "Navigate(NavigationTarget.Settings(), true);",
+                "internal void ToggleNavigationPane()",
+                "navigation.IsPaneOpen = !navigation.IsPaneOpen;",
+                "private void OnNavigationItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)",
+                "if (args.IsSettingsInvoked)",
+                "Navigate(NavigationTarget.Settings(), true);",
+                "internal void OnSearchTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)",
+                "internal void OnSearchQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)");
             AssertContainsInOrder(
                 navigationRootCode,
                 "AutomationProperties.SetAutomationId(GetNavigationView(), \"GalleryNavigationView\");",
@@ -2331,14 +2359,15 @@ namespace ModernWpf.Gallery.Tests
                 "private NavigationView GetNavigationView()",
                 "var root = (Grid)Content;",
                 "return root.Children.OfType<NavigationView>().Single();");
-            AssertContainsInOrder(
-                navigationRootCode,
-                "var highContrastNavigationPaneEdgeCover = GetHighContrastNavigationPaneEdgeCover();",
-                "highContrastNavigationPaneEdgeCover.Background = paneBackground;",
-                "highContrastNavigationPaneEdgeCover.Visibility = SystemParameters.HighContrast",
-                "private Border GetHighContrastNavigationPaneEdgeCover()",
-                "var root = (Grid)Content;",
-                "return root.Children.OfType<Border>().Single();");
+            Assert.IsFalse(
+                navigationRootCode.Contains("AlignNavigationViewShellResourcesWithWpfGallery", StringComparison.Ordinal),
+                "The WinUI shell should use native NavigationView theme resources.");
+            Assert.IsFalse(
+                navigationRootCode.Contains("GetHighContrastNavigationPaneEdgeCover", StringComparison.Ordinal),
+                "The WinUI shell should not keep the retired manual pane edge cover.");
+            Assert.IsFalse(
+                navigationRootCode.Contains("SettingsButton_Click", StringComparison.Ordinal),
+                "The WinUI shell should route the native Settings item through ItemInvoked.");
             AssertContainsInOrder(
                 navigationRootCode,
                 "GetVisualTestStatusPanel().Visibility = GalleryDiagnostics.IsEnabled",
@@ -2505,6 +2534,7 @@ namespace ModernWpf.Gallery.Tests
                 .Concat(new[] { Path.Combine(repoRoot, "ModernWpf.Gallery", "MainWindow.xaml") });
             var allowedActiveAutomationIdAssignments = new[]
             {
+                @"ModernWpf.Gallery\MainWindow.xaml: AutomationProperties.AutomationId=""ControlsSearchBox""",
                 @"ModernWpf.Gallery\Pages\ItemPage.xaml: AutomationProperties.AutomationId=""GalleryItemPageScrollViewer""",
                 @"ModernWpf.Gallery\Pages\ItemPage.xaml: AutomationProperties.AutomationId=""{Binding AutomationId}"""
             };

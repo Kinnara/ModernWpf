@@ -13,7 +13,4 @@ namespace ModernWpf.Controls
         public CommandBarDynamicOverflowAction Action { get; internal set; }
     }
 
-    public delegate void DynamicOverflowItemsChangingEventHandler(
-        object sender,
-        DynamicOverflowItemsChangingEventArgs e);
 }

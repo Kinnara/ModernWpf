@@ -165,7 +165,7 @@ namespace ModernWpf.Controls
 
         public event EventHandler<object> Closed;
 
-        public event DynamicOverflowItemsChangingEventHandler DynamicOverflowItemsChanging;
+        public event TypedEventHandler<CommandBar, DynamicOverflowItemsChangingEventArgs> DynamicOverflowItemsChanging;
 
         protected virtual void OnOpening(object e)
         {

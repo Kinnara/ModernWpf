@@ -7,6 +7,16 @@
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetDocumentationFile</TargetsForTfmSpecificBuildOutput>
     <NuspecFile>$(MSBuildThisFileDirectory)ModernWpfUI.nuspec</NuspecFile>
     <PackageId>ModernWpfUI</PackageId>
+    <!-- WPF's pass-2 project is an intermediate assembly with compiler-only
+         public glue. Analyze the final, shipped compilation instead. -->
+    <RunAnalyzers Condition="'$(_TargetAssemblyProjectName)' != ''">false</RunAnalyzers>
+    <NoWarn>$(NoWarn);RS0036;RS0041</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);RS0016;RS0017;RS0024;RS0025</WarningsAsErrors>
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <EnableStrictModeForCompatibleFrameworksInPackage>true</EnableStrictModeForCompatibleFrameworksInPackage>
+    <EnableStrictModeForBaselineValidation>true</EnableStrictModeForBaselineValidation>
+    <PackageValidationBaselineVersion
+      Condition="'$(Version)' != '1.0.0-preview.1' and '$(PackageValidationBaselineVersion)' == ''">1.0.0-preview.1</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,6 +36,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="ModernWpf.Controls.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -35,6 +52,11 @@
     <ItemGroup>
       <BuildOutputInPackage Include="$(OutputPath)$(AssemblyName).xml" />
     </ItemGroup>
+  </Target>
+
+  <Target Name="RemoveNonPublicPackageXmlDocumentation"
+          BeforeTargets="GenerateNuspec">
+    <Exec Command="pwsh.exe -NoProfile -NonInteractive -File &quot;$(MSBuildThisFileDirectory)..\tools\api-contracts\Remove-NonPublicXmlDocumentation.ps1&quot; -OutputRoot &quot;$(MSBuildThisFileDirectory)bin\$(Configuration)&quot;" />
   </Target>
 
   <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">

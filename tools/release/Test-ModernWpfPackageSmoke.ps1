@@ -136,9 +136,15 @@ if ($LASTEXITCODE -ne 0) {
     throw "Package smoke restore failed."
 }
 
-dotnet build $projectPath --configuration $Configuration --no-restore
-if ($LASTEXITCODE -ne 0) {
-    throw "Package smoke build failed."
+foreach ($targetFramework in $TargetFrameworks) {
+    dotnet build $projectPath `
+        --configuration $Configuration `
+        --framework $targetFramework `
+        --no-restore `
+        --maxcpucount:1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Package smoke build failed for '$targetFramework'."
+    }
 }
 
 Write-Host "Verified ModernWpfUI package consumer smoke project: $projectDirectory"

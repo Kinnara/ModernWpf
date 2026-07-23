@@ -5,7 +5,7 @@ using System.Windows.Media;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class FallbackBrushConverter : IValueConverter
+    internal class FallbackBrushConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

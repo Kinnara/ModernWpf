@@ -6,7 +6,7 @@ using ModernWpf.Controls;
 
 namespace ModernWpf.Automation.Peers
 {
-    public class ContentDialogAutomationPeer : FrameworkElementAutomationPeer, IWindowProvider
+    internal class ContentDialogAutomationPeer : FrameworkElementAutomationPeer, IWindowProvider
     {
         public ContentDialogAutomationPeer(ContentDialog owner)
             : base(owner)

@@ -10,7 +10,7 @@ namespace ModernWpf.Controls
     /// WPF's Slider updates those dimensions after the normal Canvas measure
     /// pass, so Canvas can otherwise retain a stale zero DesiredSize.
     /// </summary>
-    public class SliderRangeCanvas : Canvas
+    internal class SliderRangeCanvas : Canvas
     {
         private static readonly DependencyPropertyDescriptor WidthDescriptor =
             DependencyPropertyDescriptor.FromProperty(FrameworkElement.WidthProperty, typeof(FrameworkElement));

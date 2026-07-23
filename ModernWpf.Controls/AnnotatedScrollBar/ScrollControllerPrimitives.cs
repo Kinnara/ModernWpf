@@ -16,7 +16,7 @@ namespace ModernWpf.Controls.Primitives
         Ignore = 1
     }
 
-    public sealed class ScrollingScrollOptions
+    public class ScrollingScrollOptions
     {
         public ScrollingScrollOptions(ScrollingAnimationMode animationMode)
             : this(animationMode, ScrollingSnapPointsMode.Default)

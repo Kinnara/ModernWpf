@@ -235,7 +235,7 @@ namespace ModernWpf.Controls
         public event TypedEventHandler<ItemsRepeater, ItemsRepeaterElementIndexChangedEventArgs> ElementIndexChanged;
         public event TypedEventHandler<ItemsRepeater, ItemsRepeaterElementPreparedEventArgs> ElementPrepared;
 
-        internal IElementFactoryShim ItemTemplateShim => m_itemTemplateWrapper;
+        internal IElementFactory ItemTemplateShim => m_itemTemplateWrapper;
 
         internal ViewManager ViewManager { get; }
 
@@ -611,10 +611,10 @@ namespace ModernWpf.Controls
                 }
                 // Clear flag for bug #776
                 m_isItemTemplateEmpty = false;
-                m_itemTemplateWrapper = newValue as IElementFactoryShim;
+                m_itemTemplateWrapper = newValue as IElementFactory;
                 if (m_itemTemplateWrapper == null)
                 {
-                    // ItemTemplate set does not implement IElementFactoryShim. We also 
+                    // ItemTemplate set does not implement IElementFactory. We also
                     // want to support DataTemplate and DataTemplateSelectors automagically.
                     if (newValue is DataTemplate dataTemplate)
                     {
@@ -769,7 +769,7 @@ namespace ModernWpf.Controls
 
         private readonly ViewportManager m_viewportManager;
 
-        private IElementFactoryShim m_itemTemplateWrapper;
+        private IElementFactory m_itemTemplateWrapper;
 
         private VirtualizingLayoutContext m_layoutContext;
         // Value is different from null only while we are on the OnItemsSourceChanged call stack.

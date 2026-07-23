@@ -2,7 +2,7 @@
 
 namespace ModernWpf.Controls.Primitives
 {
-    public partial class CommandBarFlyoutCommandBarTemplateSettingsProxy : Freezable
+    internal partial class CommandBarFlyoutCommandBarTemplateSettingsProxy : Freezable
     {
         protected override Freezable CreateInstanceCore()
         {

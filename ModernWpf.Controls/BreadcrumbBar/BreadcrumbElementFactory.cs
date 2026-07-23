@@ -15,7 +15,7 @@ namespace ModernWpf.Controls
             {
                 _itemTemplateWrapper = new ItemTemplateWrapper(dataTemplateSelector);
             }
-            else if (newValue is IElementFactoryShim customElementFactory)
+            else if (newValue is IElementFactory customElementFactory)
             {
                 _itemTemplateWrapper = customElementFactory;
             }
@@ -60,6 +60,6 @@ namespace ModernWpf.Controls
             }
         }
 
-        private IElementFactoryShim _itemTemplateWrapper;
+        private IElementFactory _itemTemplateWrapper;
     }
 }

@@ -13,7 +13,7 @@ namespace ModernWpf.Controls
 {
     // TODO: move to framework level element tracking.
     [ContentProperty(nameof(ScrollViewer))]
-    public class ItemsRepeaterScrollHost : Panel, IRepeaterScrollingSurface
+    public sealed class ItemsRepeaterScrollHost : Panel, IRepeaterScrollingSurface
     {
         public ItemsRepeaterScrollHost()
         {

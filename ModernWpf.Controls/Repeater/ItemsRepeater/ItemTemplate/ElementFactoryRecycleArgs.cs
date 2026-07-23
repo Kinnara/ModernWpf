@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace ModernWpf.Controls
 {
-    public sealed class ElementFactoryRecycleArgs
+    public class ElementFactoryRecycleArgs
     {
         public ElementFactoryRecycleArgs()
         {

@@ -6,7 +6,7 @@ using System;
 namespace ModernWpf.Controls
 {
     [Flags]
-    public enum AnimationContext
+    internal enum AnimationContext
     {
         None = 0,
         CollectionChangeAdd = 1,

@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class AnimationFactorToValueConverter : IMultiValueConverter
+    internal class AnimationFactorToValueConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {

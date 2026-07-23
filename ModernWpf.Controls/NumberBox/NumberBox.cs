@@ -16,7 +16,7 @@ using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Controls
 {
-    public class NumberBoxValueChangedEventArgs : EventArgs
+    public sealed class NumberBoxValueChangedEventArgs : EventArgs
     {
         public NumberBoxValueChangedEventArgs(double oldValue, double newValue)
         {

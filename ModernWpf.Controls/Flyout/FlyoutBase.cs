@@ -151,7 +151,11 @@ namespace ModernWpf.Controls.Primitives
             HideCore();
         }
 
-        protected abstract Control CreatePresenter();
+        protected virtual Control CreatePresenter()
+        {
+            throw new NotSupportedException(
+                $"{GetType().FullName} must override {nameof(CreatePresenter)}.");
+        }
 
         protected virtual Control FocusTarget => m_presenter;
 

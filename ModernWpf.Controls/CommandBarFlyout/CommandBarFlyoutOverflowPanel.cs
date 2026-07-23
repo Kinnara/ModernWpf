@@ -4,7 +4,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class CommandBarFlyoutOverflowPanel : Panel
+    internal class CommandBarFlyoutOverflowPanel : Panel
     {
         public CommandBarFlyoutOverflowPanel()
         {

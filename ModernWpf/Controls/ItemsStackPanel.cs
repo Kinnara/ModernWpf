@@ -6,7 +6,7 @@ using WpfOrientation = System.Windows.Controls.Orientation;
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Children))]
-    public class ItemsStackPanel : StackPanelEx
+    public sealed class ItemsStackPanel : StackPanelEx
     {
         public static readonly DependencyProperty GroupPaddingProperty =
             DependencyProperty.Register(

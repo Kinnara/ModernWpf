@@ -8,55 +8,6 @@
     d:DesignHeight="820"
     d:DesignWidth="1180"
     mc:Ignorable="d">
-    <UserControl.Resources>
-        <ui:BindingProxy x:Key="NavigationRootDataContextProxy" Value="{Binding}" />
-
-        <Style x:Key="BorderlessButtonStyle" TargetType="Button">
-            <Setter Property="MinWidth" Value="48" />
-            <Setter Property="MinHeight" Value="32" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="Border.CornerRadius" Value="{StaticResource ControlCornerRadius}" />
-            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            x:Name="EnclosingBorder"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding Border.CornerRadius}"
-                            SnapsToDevicePixels="True">
-                            <ContentPresenter
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource ControlAltFillColorTertiaryBrush}" />
-                </Trigger>
-                <Trigger Property="IsPressed" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource ControlAltFillColorQuarternaryBrush}" />
-                </Trigger>
-                <MultiDataTrigger>
-                    <MultiDataTrigger.Conditions>
-                        <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
-                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
-                    </MultiDataTrigger.Conditions>
-                    <Setter Property="Background" Value="{DynamicResource SystemColorHighlightColorBrush}" />
-                    <Setter Property="Foreground" Value="{DynamicResource SystemColorHighlightTextColorBrush}" />
-                </MultiDataTrigger>
-            </Style.Triggers>
-        </Style>
-    </UserControl.Resources>
-
     <Grid>
         <StackPanel
             Width="1"
@@ -84,48 +35,18 @@
             AutomationProperties.Name="Navigation Pane"
             IsBackButtonVisible="Collapsed"
             IsPaneToggleButtonVisible="False"
-            IsSettingsVisible="False"
+            IsSettingsVisible="True"
+            IsTabStop="False"
+            IsTitleBarAutoPaddingEnabled="False"
             ItemInvoked="OnNavigationItemInvoked"
-            OpenPaneLength="258"
-            PaneDisplayMode="Left">
+            PaneDisplayMode="Auto">
             <ui:NavigationView.Resources>
                 <Thickness x:Key="NavigationViewContentGridBorderThickness">0</Thickness>
-                <Thickness x:Key="NavigationViewPaneContentGridMargin">0,8</Thickness>
+                <!-- WinUI uses -1,3; this port's client origin needs the existing +1,+1 WPF adapter. -->
+                <Thickness x:Key="NavigationViewPaneContentGridMargin">0,4</Thickness>
                 <CornerRadius x:Key="NavigationViewContentGridCornerRadius">0</CornerRadius>
                 <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
             </ui:NavigationView.Resources>
-            <ui:NavigationView.PaneFooter>
-                <StackPanel
-                    DataContext="{Binding Value, Source={StaticResource NavigationRootDataContextProxy}}"
-                    Margin="8,10,0,10"
-                    Orientation="Vertical">
-                    <Separator />
-                    <Button
-                        x:Name="SettingsButton"
-                        Width="250"
-                        Height="36"
-                        Margin="0,4,0,0"
-                        Padding="{StaticResource ButtonPadding}"
-                        HorizontalContentAlignment="Left"
-                        VerticalContentAlignment="Center"
-                        AutomationProperties.Name="Settings"
-                        Command="{Binding ViewModel.SettingsCommand}"
-                        Style="{StaticResource BorderlessButtonStyle}"
-                        Click="SettingsButton_Click">
-                        <StackPanel Orientation="Horizontal" Margin="11,0,0,0">
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                FontSize="14"
-                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                Text="&#xE713;" />
-                            <TextBlock
-                                Margin="8,0,0,0"
-                                FontSize="14"
-                                Text="Settings" />
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-            </ui:NavigationView.PaneFooter>
             <Border
                 Margin="4,0,0,0"
                 Padding="24,16,24,0"
@@ -136,13 +57,5 @@
                 <Frame NavigationUIVisibility="Hidden" />
             </Border>
         </ui:NavigationView>
-        <Border
-            Width="1"
-            Height="698"
-            Margin="257,8,0,0"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            IsHitTestVisible="False"
-            Visibility="Collapsed" />
     </Grid>
 </UserControl>

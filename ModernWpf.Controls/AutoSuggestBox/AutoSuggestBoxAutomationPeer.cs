@@ -8,7 +8,7 @@ using ModernWpf.Controls;
 
 namespace ModernWpf.Automation.Peers
 {
-    public class AutoSuggestBoxAutomationPeer : FrameworkElementAutomationPeer, IInvokeProvider
+    public sealed class AutoSuggestBoxAutomationPeer : FrameworkElementAutomationPeer, IInvokeProvider
     {
         public AutoSuggestBoxAutomationPeer(AutoSuggestBox owner)
             : base(owner)

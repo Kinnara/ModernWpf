@@ -9,7 +9,7 @@ using System.Windows.Media;
 namespace ModernWpf.Controls
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public sealed class SplitViewPaneRoot : Border
+    internal sealed class SplitViewPaneRoot : Border
     {
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -18,7 +18,7 @@ namespace ModernWpf.Controls
     }
 
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public sealed class SplitViewLightDismissLayer : FrameworkElement
+    internal sealed class SplitViewLightDismissLayer : FrameworkElement
     {
         public static readonly DependencyProperty FillProperty = DependencyProperty.Register(
             nameof(Fill),

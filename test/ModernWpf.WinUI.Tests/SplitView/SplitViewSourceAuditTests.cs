@@ -49,12 +49,12 @@ public class SplitViewSourceAuditTests
         StringAssert.Contains(properties, "RestoreSavedFocusElement();");
         StringAssert.Contains(properties, "UpdateVisualState();");
 
-        StringAssert.Contains(peers, "public sealed class SplitViewPaneRoot : Border");
+        StringAssert.Contains(peers, "internal sealed class SplitViewPaneRoot : Border");
         StringAssert.Contains(peers, "patternInterface == PatternInterface.Window && IsWindowContextEnabled");
         StringAssert.Contains(peers, "return AutomationControlType.Window;");
         StringAssert.Contains(peers, "public bool IsModal => true;");
         StringAssert.Contains(peers, "WindowInteractionState.Running");
-        StringAssert.Contains(peers, "public sealed class SplitViewLightDismissLayer : FrameworkElement");
+        StringAssert.Contains(peers, "internal sealed class SplitViewLightDismissLayer : FrameworkElement");
         StringAssert.Contains(peers, "patternInterface == PatternInterface.Invoke && IsLightDismissEnabled");
         StringAssert.Contains(peers, "return AutomationControlType.Button;");
         StringAssert.Contains(peers, "return \"Close\";");

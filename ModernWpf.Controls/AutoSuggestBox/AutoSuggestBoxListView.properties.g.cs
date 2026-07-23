@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public partial class AutoSuggestBoxListView
+    internal partial class AutoSuggestBoxListView
     {
         #region IsItemClickEnabled
 

@@ -50,7 +50,7 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(control, "CustomPlacementMode.BottomEdgeAlignedRight");
             StringAssert.Contains(control, "public event EventHandler<object> Opening");
             StringAssert.Contains(control, "public event EventHandler<object> Closing");
-            StringAssert.Contains(control, "public event DynamicOverflowItemsChangingEventHandler DynamicOverflowItemsChanging");
+            StringAssert.Contains(control, "public event TypedEventHandler<CommandBar, DynamicOverflowItemsChangingEventArgs> DynamicOverflowItemsChanging");
             StringAssert.Contains(control, "RaiseDynamicOverflowItemsChangingIfNeeded(movedPrimaryCommands)");
             StringAssert.Contains(control, "OnClosed(null)");
             StringAssert.Contains(dynamicOverflow, "public enum CommandBarDynamicOverflowAction");
@@ -58,6 +58,7 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(dynamicOverflow, "RemovingFromOverflow = 1");
             StringAssert.Contains(dynamicOverflow, "public sealed class DynamicOverflowItemsChangingEventArgs");
             StringAssert.Contains(dynamicOverflow, "public CommandBarDynamicOverflowAction Action { get; internal set; }");
+            StringAssert.Contains(peer, "internal class CommandBarAutomationPeer");
             StringAssert.Contains(peer, "return \"ApplicationBar\"");
             StringAssert.Contains(peer, "return \"app bar\"");
             StringAssert.Contains(peer, "PatternInterface.Toggle");
@@ -70,7 +71,7 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(productTests, "CommandBarOpenLifecycleUsesCurrentWinUIEventAndVirtualHookOrder");
             StringAssert.Contains(productTests, "CommandBarAutomationPeerUsesCurrentWinUIAppBarPatterns");
             StringAssert.Contains(publicDocumentation, "E:ModernWpf.Controls.CommandBar.DynamicOverflowItemsChanging");
-            StringAssert.Contains(publicDocumentation, "T:ModernWpf.Automation.Peers.CommandBarAutomationPeer");
+            Assert.IsFalse(publicDocumentation.Contains("T:ModernWpf.Automation.Peers.CommandBarAutomationPeer"));
             StringAssert.Contains(style, "AppBarButtonTextLabelOnRightMargin\">8,16,13,10");
             StringAssert.Contains(style, "AppBarToggleButtonTextLabelOnRightMargin\">8,16,13,10");
             StringAssert.Contains(appBarButton, "Margin=\"24,0,13,0\"");

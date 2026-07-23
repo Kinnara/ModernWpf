@@ -5,7 +5,7 @@ using ModernWpf.Controls;
 
 namespace ModernWpf.Automation.Peers
 {
-    public class SelectorBarAutomationPeer : FrameworkElementAutomationPeer, ISelectionProvider
+    internal class SelectorBarAutomationPeer : FrameworkElementAutomationPeer, ISelectionProvider
     {
         public SelectorBarAutomationPeer(SelectorBar owner)
             : base(owner)

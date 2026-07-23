@@ -1,18 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Automation;
-using System.Windows.Automation.Peers;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using ModernWpf.Controls;
-using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Testing;
 using ModernWpf.Gallery.Models;
 using ModernWpf.Gallery.Pages;
@@ -26,7 +20,6 @@ namespace ModernWpf.Gallery.Shell
         private readonly Stack<NavigationTarget> _forwardStack = new Stack<NavigationTarget>();
         private readonly Dictionary<string, NavigationViewItem> _itemContainers = new Dictionary<string, NavigationViewItem>(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, NavigationViewItem> _parentContainers = new Dictionary<string, NavigationViewItem>(StringComparer.OrdinalIgnoreCase);
-        private readonly Dictionary<NavigationViewItem, bool> _pendingGroupExpansionStates = new Dictionary<NavigationViewItem, bool>();
         private static readonly ISet<string> WpfGalleryGroupIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "DesignGuidance",
@@ -46,7 +39,7 @@ namespace ModernWpf.Gallery.Shell
         {
             { "Home", "\uE80F" },
             { "WhatsNew", "\uEB51" },
-            { "AllControls", "\uE71D" },
+            { "AllControls", "\uE8A9" },
             { "DesignGuidance", "\uEB3C" },
             { "Color", "\uE790" },
             { "Typography", "\uE8D2" },
@@ -65,79 +58,14 @@ namespace ModernWpf.Gallery.Shell
             { "System", "\uE7F8" }
         };
 
-        private static readonly IReadOnlyDictionary<string, string> WpfGalleryNavigationResourceAliases = new Dictionary<string, string>(StringComparer.Ordinal)
-        {
-            { "NavigationViewItemBackground", "TreeViewItemBackground" },
-            { "NavigationViewItemBackgroundPointerOver", "TreeViewItemBackgroundPointerOver" },
-            { "NavigationViewItemBackgroundPressed", "TreeViewItemBackgroundPressed" },
-            { "NavigationViewItemBackgroundDisabled", "TreeViewItemBackgroundDisabled" },
-            { "NavigationViewItemBackgroundChecked", "TreeViewItemBackgroundSelected" },
-            { "NavigationViewItemBackgroundCheckedPointerOver", "TreeViewItemBackgroundSelectedPointerOver" },
-            { "NavigationViewItemBackgroundCheckedPressed", "TreeViewItemBackgroundSelectedPressed" },
-            { "NavigationViewItemBackgroundCheckedDisabled", "TreeViewItemBackgroundSelectedDisabled" },
-            { "NavigationViewItemBackgroundSelected", "TreeViewItemBackgroundSelected" },
-            { "NavigationViewItemBackgroundSelectedPointerOver", "TreeViewItemBackgroundSelectedPointerOver" },
-            { "NavigationViewItemBackgroundSelectedPressed", "TreeViewItemBackgroundSelectedPressed" },
-            { "NavigationViewItemBackgroundSelectedDisabled", "TreeViewItemBackgroundSelectedDisabled" },
-            { "NavigationViewItemForeground", "TreeViewItemForeground" },
-            { "NavigationViewItemForegroundPointerOver", "TreeViewItemForegroundPointerOver" },
-            { "NavigationViewItemForegroundPressed", "TreeViewItemForegroundPressed" },
-            { "NavigationViewItemForegroundDisabled", "TreeViewItemForegroundDisabled" },
-            { "NavigationViewItemForegroundChecked", "TreeViewItemForegroundSelected" },
-            { "NavigationViewItemForegroundCheckedPointerOver", "TreeViewItemForegroundSelectedPointerOver" },
-            { "NavigationViewItemForegroundCheckedPressed", "TreeViewItemForegroundSelectedPressed" },
-            { "NavigationViewItemForegroundCheckedDisabled", "TreeViewItemForegroundSelectedDisabled" },
-            { "NavigationViewItemForegroundSelected", "TreeViewItemForegroundSelected" },
-            { "NavigationViewItemForegroundSelectedPointerOver", "TreeViewItemForegroundSelectedPointerOver" },
-            { "NavigationViewItemForegroundSelectedPressed", "TreeViewItemForegroundSelectedPressed" },
-            { "NavigationViewItemForegroundSelectedDisabled", "TreeViewItemForegroundSelectedDisabled" },
-            { "NavigationViewItemBorderBrush", "TreeViewItemBorderBrush" },
-            { "NavigationViewItemBorderBrushPointerOver", "TreeViewItemBorderBrushPointerOver" },
-            { "NavigationViewItemBorderBrushPressed", "TreeViewItemBorderBrushPressed" },
-            { "NavigationViewItemBorderBrushDisabled", "TreeViewItemBorderBrushDisabled" },
-            { "NavigationViewItemBorderBrushChecked", "TreeViewItemBorderBrushSelected" },
-            { "NavigationViewItemBorderBrushCheckedPointerOver", "TreeViewItemBorderBrushSelectedPointerOver" },
-            { "NavigationViewItemBorderBrushCheckedPressed", "TreeViewItemBorderBrushSelectedPressed" },
-            { "NavigationViewItemBorderBrushCheckedDisabled", "TreeViewItemBorderBrushSelectedDisabled" },
-            { "NavigationViewItemBorderBrushSelected", "TreeViewItemBorderBrushSelected" },
-            { "NavigationViewItemBorderBrushSelectedPointerOver", "TreeViewItemBorderBrushSelectedPointerOver" },
-            { "NavigationViewItemBorderBrushSelectedPressed", "TreeViewItemBorderBrushSelectedPressed" },
-            { "NavigationViewItemBorderBrushSelectedDisabled", "TreeViewItemBorderBrushSelectedDisabled" },
-            { "NavigationViewSelectionIndicatorForeground", "TreeViewItemSelectionIndicatorForeground" }
-        };
-
         private NavigationViewItem _homeNavigationItem;
         private NavigationViewItem _whatsNewNavigationItem;
         private NavigationViewItem _allControlsNavigationItem;
         private NavigationTarget _currentTarget;
         private bool _isProgrammaticNavigation;
-        private bool _themeHandlersAttached;
         private readonly DispatcherTimer _visualTestCommandTimer;
-        private const double DefaultTopLevelNavigationContentLeftMargin = 32;
-        private const double DefaultChildGlyphNavigationContentLeftMargin = 0;
-        private const double DefaultChildTextNavigationContentLeftMargin = 16;
-        private const double DefaultGroupNavigationContentLeftMargin = 8;
-        private const double GroupNavigationDisclosureColumnWidth = 24;
-        private const double GroupNavigationChevronLeftOffset = 0;
-        private const string GroupNavigationDisclosureChevronTag = "GalleryNavigationDisclosureChevron";
-        // Segoe Fluent glyphs rendered by SymbolIcon for Symbol.List and Symbol.Page.
         private const string DefaultNavigationGroupGlyph = "\uEA37";
         private const string DefaultNavigationItemGlyph = "\uE729";
-        private const double DefaultNavigationItemGlyphContentLeftOffset = -20;
-        private const double DefaultTopLevelNavigationContentVerticalOffset = 0;
-        private const double ChildNavigationContentVerticalOffset = 0;
-        private static readonly Thickness DefaultNavigationSelectionIndicatorMargin = new Thickness(4, 0, 0, 0);
-        private static readonly Thickness ChildNavigationSelectionIndicatorMargin = new Thickness(-31, 0, 0, -6);
-        private static readonly Thickness DefaultNavigationItemButtonMargin = new Thickness(4, 2, 4, 2);
-        private static readonly Thickness ChildNavigationSelectedBackgroundMargin = new Thickness(12, 7, -5, -5);
-        private static readonly Thickness ChildNavigationSelectedContentOffset = new Thickness(-8, 0, 0, 0);
-        private static readonly Color WpfGalleryLightNavigationPaneBackgroundColor = Color.FromRgb(250, 250, 250);
-
-        private static double TopLevelNavigationContentLeftMargin => SystemParameters.HighContrast ? 20 : DefaultTopLevelNavigationContentLeftMargin;
-        private static double ChildGlyphNavigationContentLeftMargin => SystemParameters.HighContrast ? -12 : DefaultChildGlyphNavigationContentLeftMargin;
-        private static double ChildTextNavigationContentLeftMargin => SystemParameters.HighContrast ? 4 : DefaultChildTextNavigationContentLeftMargin;
-        private static double GroupNavigationContentLeftMargin => SystemParameters.HighContrast ? -4 : DefaultGroupNavigationContentLeftMargin;
-        private static double TopLevelNavigationContentVerticalOffset => SystemParameters.HighContrast ? -2 : DefaultTopLevelNavigationContentVerticalOffset;
 
         public NavigationRootPage()
         {
@@ -149,7 +77,6 @@ namespace ModernWpf.Gallery.Shell
                 AutomationProperties.SetAutomationId(GetContentHost(), "GalleryContentHost");
             }
 
-            AlignNavigationViewShellResourcesWithWpfGallery();
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
             GetVisualTestStatusPanel().Visibility = GalleryDiagnostics.IsEnabled
@@ -163,8 +90,6 @@ namespace ModernWpf.Gallery.Shell
                 };
                 _visualTestCommandTimer.Tick += OnVisualTestCommandTimerTick;
             }
-            SuppressNavigationViewDefaultExpandGlyph();
-
             BuildNavigationMenu();
             Navigate(NavigationTarget.Home(), false);
         }
@@ -350,493 +275,27 @@ namespace ModernWpf.Gallery.Shell
         {
             var item = new NavigationViewItem
             {
-                Content = CreateNavigationItemContent(title, target, icon),
-                Margin = GetNavigationItemMargin(target),
+                Content = title,
+                Icon = icon,
                 Tag = target
             };
             AutomationProperties.SetName(item, title);
-            if (target.Kind == NavigationTargetKind.Group)
-            {
-                item.PreviewMouseLeftButtonDown += OnGroupNavigationItemPreviewMouseLeftButtonDown;
-                item.AddHandler(UIElement.MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnGroupNavigationItemMouseLeftButtonUp), true);
-            }
-
             return item;
-        }
-
-        private void OnGroupNavigationItemPreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (IsGroupNavigationDisclosureChevronSource(e.OriginalSource))
-            {
-                return;
-            }
-
-            if (sender is NavigationViewItem item && e.ChangedButton == MouseButton.Left)
-            {
-                _pendingGroupExpansionStates[item] = !item.IsExpanded;
-            }
-        }
-
-        private void OnGroupNavigationItemMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            if (sender is not NavigationViewItem item ||
-                !_pendingGroupExpansionStates.TryGetValue(item, out var desiredIsExpanded))
-            {
-                return;
-            }
-
-            _pendingGroupExpansionStates.Remove(item);
-            Dispatcher.BeginInvoke(
-                DispatcherPriority.Input,
-                new Action(() =>
-                {
-                    item.IsExpanded = desiredIsExpanded;
-                    item.Focus();
-                }));
-            e.Handled = true;
-        }
-
-        private static Thickness GetNavigationItemMargin(NavigationTarget target)
-        {
-            var right = SystemParameters.HighContrast && target.Kind != NavigationTargetKind.Item ? 2 : 0;
-            if (SystemParameters.HighContrast && target.Kind == NavigationTargetKind.Item)
-            {
-                return new Thickness(20, 0, -1, 0);
-            }
-
-            return target.Kind == NavigationTargetKind.Item
-                ? new Thickness(20, 1, right, 1)
-                : new Thickness(8, 1, right, 1);
-        }
-
-        private static object CreateNavigationItemContent(string title, NavigationTarget target, IconElement icon)
-        {
-            var glyph = GetFontIconGlyph(icon);
-            var showDisclosureChevron = target.Kind == NavigationTargetKind.Group;
-            var verticalOffset = target.Kind == NavigationTargetKind.Item
-                ? ChildNavigationContentVerticalOffset
-                : TopLevelNavigationContentVerticalOffset;
-            // These offsets preserve NavigationView behavior while matching the official WPF Gallery TreeView columns.
-            if (glyph == null)
-            {
-                return CreateNavigationTextContent(
-                    title,
-                    target.Kind == NavigationTargetKind.Item ? ChildTextNavigationContentLeftMargin : TopLevelNavigationContentLeftMargin,
-                    verticalOffset,
-                    showDisclosureChevron);
-            }
-
-            return CreateNavigationGlyphContent(
-                title,
-                glyph,
-                target.Kind == NavigationTargetKind.Item ? GetChildGlyphNavigationContentLeftMargin(glyph) : TopLevelNavigationContentLeftMargin,
-                16,
-                verticalOffset,
-                showDisclosureChevron);
-        }
-
-        private static double GetChildGlyphNavigationContentLeftMargin(string glyph)
-        {
-            // The child container already supplies the hierarchy indent. Keep the
-            // fallback page glyph and its label in the parent icon/text columns.
-            return ChildGlyphNavigationContentLeftMargin +
-                (string.Equals(glyph, DefaultNavigationItemGlyph, StringComparison.Ordinal)
-                    ? DefaultNavigationItemGlyphContentLeftOffset
-                    : 0);
-        }
-
-        private static string GetFontIconGlyph(IconElement icon)
-        {
-            return (icon as FontIcon)?.Glyph;
-        }
-
-        private static Grid CreateNavigationGlyphContent(
-            string title,
-            string glyph,
-            double leftMargin,
-            double textGap,
-            double verticalOffset,
-            bool showDisclosureChevron,
-            double glyphColumnWidth = 16,
-            double glyphFontSize = 16)
-        {
-            var grid = CreateNavigationContentGrid(showDisclosureChevron ? GroupNavigationContentLeftMargin : leftMargin);
-            grid.Tag = glyph;
-            if (showDisclosureChevron)
-            {
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(GroupNavigationDisclosureColumnWidth) });
-            }
-
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(glyphColumnWidth) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(textGap) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-
-            var glyphText = new TextBlock
-            {
-                MaxWidth = glyphColumnWidth,
-                VerticalAlignment = VerticalAlignment.Center,
-                FontSize = glyphFontSize,
-                Margin = new Thickness(0, verticalOffset, 0, 0),
-                Text = glyph,
-                Focusable = false
-            };
-            AutomationProperties.SetName(glyphText, title + " Page");
-            var fontFamily = Application.Current.TryFindResource("SymbolThemeFontFamily") as FontFamily;
-            if (fontFamily != null)
-            {
-                glyphText.FontFamily = fontFamily;
-            }
-
-            var titleText = CreateNavigationTitleText(title, verticalOffset);
-            var glyphColumn = showDisclosureChevron ? 1 : 0;
-            Grid.SetColumn(glyphText, glyphColumn);
-            Grid.SetColumn(titleText, glyphColumn + 2);
-
-            grid.Children.Add(glyphText);
-            grid.Children.Add(titleText);
-            AddDisclosureChevron(grid, showDisclosureChevron, verticalOffset);
-            return grid;
-        }
-
-        private static Grid CreateNavigationTextContent(string title, double leftMargin, double verticalOffset, bool showDisclosureChevron)
-        {
-            var grid = CreateNavigationContentGrid(showDisclosureChevron ? GroupNavigationContentLeftMargin : leftMargin);
-            if (showDisclosureChevron)
-            {
-                grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(GroupNavigationDisclosureColumnWidth) });
-            }
-
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            var titleText = CreateNavigationTitleText(title, verticalOffset);
-            if (showDisclosureChevron)
-            {
-                Grid.SetColumn(titleText, 1);
-            }
-
-            grid.Children.Add(titleText);
-            AddDisclosureChevron(grid, showDisclosureChevron, verticalOffset);
-            return grid;
-        }
-
-        private static Grid CreateNavigationContentGrid(double leftMargin)
-        {
-            return new Grid
-            {
-                MinHeight = 30,
-                Margin = new Thickness(leftMargin, 0, 0, 0)
-            };
-        }
-
-        private static TextBlock CreateNavigationTitleText(string title, double verticalOffset)
-        {
-            return new TextBlock
-            {
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0, verticalOffset, 0, 0),
-                Text = title
-            };
-        }
-
-        private static void AddDisclosureChevron(Grid grid, bool showDisclosureChevron, double verticalOffset)
-        {
-            if (!showDisclosureChevron)
-            {
-                return;
-            }
-
-            var chevron = new TextBlock
-            {
-                Width = 15,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center,
-                FontSize = 10,
-                Margin = new Thickness(GroupNavigationChevronLeftOffset, verticalOffset, 0, 0),
-                Focusable = false,
-                Tag = GroupNavigationDisclosureChevronTag,
-                Text = "\uE76C",
-                RenderTransformOrigin = new Point(0.5, 0.5),
-                RenderTransform = new RotateTransform()
-            };
-            chevron.MouseLeftButtonDown += OnGroupNavigationDisclosureChevronMouseLeftButtonDown;
-            chevron.MouseLeftButtonUp += OnGroupNavigationDisclosureChevronMouseLeftButtonUp;
-
-            var fontFamily = Application.Current.TryFindResource("SymbolThemeFontFamily") as FontFamily;
-            if (fontFamily != null)
-            {
-                chevron.FontFamily = fontFamily;
-            }
-
-            BindingOperations.SetBinding(
-                chevron.RenderTransform,
-                RotateTransform.AngleProperty,
-                new Binding(nameof(NavigationViewItem.IsExpanded))
-                {
-                    RelativeSource = new RelativeSource(RelativeSourceMode.FindAncestor, typeof(NavigationViewItem), 1),
-                    Converter = TreeViewChevronAngleConverter.Instance
-                });
-
-            Grid.SetColumn(chevron, 0);
-            grid.Children.Add(chevron);
-        }
-
-        private static void OnGroupNavigationDisclosureChevronMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
-            {
-                e.Handled = true;
-            }
-        }
-
-        private static void OnGroupNavigationDisclosureChevronMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton != MouseButton.Left ||
-                sender is not DependencyObject source ||
-                FindVisualAncestor<NavigationViewItem>(source) is not { } item)
-            {
-                return;
-            }
-
-            item.IsExpanded = !item.IsExpanded;
-            item.Focus();
-            e.Handled = true;
-        }
-
-        private static bool IsGroupNavigationDisclosureChevronSource(object source)
-        {
-            var element = source as DependencyObject;
-            while (element != null)
-            {
-                if (element is TextBlock { Tag: string tag } &&
-                    string.Equals(tag, GroupNavigationDisclosureChevronTag, StringComparison.Ordinal))
-                {
-                    return true;
-                }
-
-                element = VisualTreeHelper.GetParent(element);
-            }
-
-            return false;
-        }
-
-        private void SuppressNavigationViewDefaultExpandGlyph()
-        {
-            Resources["NavigationViewItemExpandedPath"] = Geometry.Empty;
-            GetNavigationView().Resources["NavigationViewItemExpandedPath"] = Geometry.Empty;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            AttachThemeHandlers();
-            AlignNavigationViewShellResourcesWithWpfGallery();
             _visualTestCommandTimer?.Start();
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
             _visualTestCommandTimer?.Stop();
-            DetachThemeHandlers();
         }
 
         private void OnVisualTestCommandTimerTick(object sender, EventArgs e)
         {
             GalleryDiagnostics.TryProcessVisualScrollRequest(Window.GetWindow(this) ?? (DependencyObject)this);
-        }
-
-        private void AttachThemeHandlers()
-        {
-            if (_themeHandlersAttached)
-            {
-                return;
-            }
-
-            ThemeManager.Current.ActualApplicationThemeChanged += OnActualApplicationThemeChanged;
-            SystemParameters.StaticPropertyChanged += OnSystemParametersChanged;
-            _themeHandlersAttached = true;
-        }
-
-        private void DetachThemeHandlers()
-        {
-            if (!_themeHandlersAttached)
-            {
-                return;
-            }
-
-            ThemeManager.Current.ActualApplicationThemeChanged -= OnActualApplicationThemeChanged;
-            SystemParameters.StaticPropertyChanged -= OnSystemParametersChanged;
-            _themeHandlersAttached = false;
-        }
-
-        private void OnActualApplicationThemeChanged(ThemeManager sender, object args)
-        {
-            AlignNavigationViewShellResourcesWithWpfGallery();
-        }
-
-        private void OnSystemParametersChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (string.Equals(e.PropertyName, nameof(SystemParameters.HighContrast), StringComparison.Ordinal))
-            {
-                AlignNavigationViewShellResourcesWithWpfGallery();
-            }
-        }
-
-        private void AlignNavigationViewShellResourcesWithWpfGallery()
-        {
-            var navigation = GetNavigationView();
-            foreach (var alias in WpfGalleryNavigationResourceAliases)
-            {
-                navigation.Resources[alias.Key] = TryFindResource(alias.Value);
-            }
-
-            var paneBackground = GetWpfGalleryNavigationPaneBackground();
-            navigation.Resources["NavigationViewDefaultPaneBackground"] = paneBackground;
-            navigation.Resources["NavigationViewExpandedPaneBackground"] = paneBackground;
-            navigation.Resources["NavigationViewItemSeparatorForeground"] = paneBackground;
-            AlignNavigationItemMarginsWithWpfGalleryTreeView();
-            AlignNavigationItemContentLayoutWithWpfGalleryTreeView();
-            AlignNavigationItemTemplateLayoutWithWpfGalleryTreeView();
-            AlignNavigationViewShellChromeWithWpfGallery(paneBackground);
-            if (_currentTarget != null)
-            {
-                SelectNavigationItem(_currentTarget);
-            }
-        }
-
-        private void AlignNavigationItemMarginsWithWpfGalleryTreeView()
-        {
-            foreach (var item in GetNavigationItems(GetNavigationView().MenuItems))
-            {
-                if (item.Tag is NavigationTarget target)
-                {
-                    item.Margin = GetNavigationItemMargin(target);
-                }
-            }
-        }
-
-        private void AlignNavigationItemContentLayoutWithWpfGalleryTreeView()
-        {
-            foreach (var item in GetNavigationItems(GetNavigationView().MenuItems))
-            {
-                if (item.Content is Grid contentGrid)
-                {
-                    contentGrid.Margin = GetDefaultNavigationItemContentMargin(item);
-                    var verticalOffset = item.Tag is NavigationTarget { Kind: NavigationTargetKind.Item }
-                        ? ChildNavigationContentVerticalOffset
-                        : TopLevelNavigationContentVerticalOffset;
-                    foreach (var textBlock in contentGrid.Children.OfType<TextBlock>())
-                    {
-                        textBlock.Margin = new Thickness(
-                            textBlock.Margin.Left,
-                            verticalOffset,
-                            textBlock.Margin.Right,
-                            textBlock.Margin.Bottom);
-                    }
-                }
-            }
-        }
-
-        private void AlignNavigationItemTemplateLayoutWithWpfGalleryTreeView()
-        {
-            foreach (var item in GetNavigationItems(GetNavigationView().MenuItems))
-            {
-                AlignNavigationItemTemplateWithWpfGalleryTreeView(item);
-            }
-        }
-
-        private static IEnumerable<NavigationViewItem> GetNavigationItems(System.Collections.IEnumerable items)
-        {
-            foreach (var item in items.OfType<NavigationViewItem>())
-            {
-                yield return item;
-
-                foreach (var child in GetNavigationItems(item.MenuItems))
-                {
-                    yield return child;
-                }
-            }
-        }
-
-        private void AlignNavigationViewShellChromeWithWpfGallery(Brush paneBackground)
-        {
-            var navigation = GetNavigationView();
-            var menuScrollViewer = FindVisualChild<ScrollViewer>(
-                navigation,
-                scrollViewer => string.Equals(scrollViewer.Name, "MenuItemsScrollViewer", StringComparison.Ordinal));
-            if (menuScrollViewer != null)
-            {
-                menuScrollViewer.Background = paneBackground;
-                menuScrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Hidden;
-            }
-
-            var itemsContainerGrid = FindVisualChild<Grid>(
-                navigation,
-                grid => string.Equals(grid.Name, "ItemsContainerGrid", StringComparison.Ordinal));
-            if (itemsContainerGrid != null)
-            {
-                itemsContainerGrid.Background = paneBackground;
-            }
-
-            var rootSplitView = FindVisualChild<SplitView>(
-                navigation,
-                splitView => string.Equals(splitView.Name, "RootSplitView", StringComparison.Ordinal));
-            if (rootSplitView != null)
-            {
-                rootSplitView.Background = paneBackground;
-                rootSplitView.PaneBackground = paneBackground;
-                rootSplitView.BorderBrush = paneBackground;
-                rootSplitView.CornerRadius = new CornerRadius(0);
-            }
-
-            var paneContentGrid = FindVisualChild<Border>(
-                navigation,
-                border => string.Equals(border.Name, "PaneContentGrid", StringComparison.Ordinal));
-            if (paneContentGrid != null)
-            {
-                paneContentGrid.Background = paneBackground;
-                paneContentGrid.BorderBrush = paneBackground;
-                paneContentGrid.BorderThickness = SystemParameters.HighContrast
-                    ? new Thickness(0)
-                    : new Thickness(0, 0, 1, 0);
-            }
-
-            var highContrastNavigationPaneEdgeCover = GetHighContrastNavigationPaneEdgeCover();
-            highContrastNavigationPaneEdgeCover.Background = paneBackground;
-            highContrastNavigationPaneEdgeCover.Visibility = SystemParameters.HighContrast
-                ? Visibility.Visible
-                : Visibility.Collapsed;
-
-            var paneShadow = FindVisualChild<ThemeShadowChrome>(
-                navigation,
-                shadow => string.Equals(shadow.Name, "ShadowCaster", StringComparison.Ordinal));
-            if (paneShadow != null)
-            {
-                paneShadow.Visibility = Visibility.Collapsed;
-                paneShadow.Opacity = 0;
-                paneShadow.Depth = 0;
-                paneShadow.IsShadowEnabled = false;
-            }
-        }
-
-        private Brush GetWpfGalleryNavigationPaneBackground()
-        {
-            if (SystemParameters.HighContrast)
-            {
-                return SystemColors.WindowBrush;
-            }
-
-            if (ThemeManager.Current.ActualApplicationTheme == ApplicationTheme.Dark)
-            {
-                return TryFindResource("SolidBackgroundFillColorBaseBrush") as Brush
-                    ?? new SolidColorBrush(Color.FromRgb(32, 32, 32));
-            }
-
-            return new SolidColorBrush(WpfGalleryLightNavigationPaneBackgroundColor);
-        }
-
-        private Border GetHighContrastNavigationPaneEdgeCover()
-        {
-            var root = (Grid)Content;
-            return root.Children.OfType<Border>().Single();
         }
 
         private StackPanel GetVisualTestStatusPanel()
@@ -856,27 +315,15 @@ namespace ModernWpf.Gallery.Shell
                     StringComparison.Ordinal));
         }
 
-        private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {
-            RaiseSettingsOpenedNotification((UIElement)sender);
-        }
-
         internal void OpenSettings()
         {
             Navigate(NavigationTarget.Settings(), true);
         }
 
-        private static void RaiseSettingsOpenedNotification(UIElement element)
+        internal void ToggleNavigationPane()
         {
-#if NET8_0_OR_GREATER
-            var peer = UIElementAutomationPeer.FromElement(element)
-                ?? UIElementAutomationPeer.CreatePeerForElement(element);
-            peer?.RaiseNotificationEvent(
-                AutomationNotificationKind.Other,
-                AutomationNotificationProcessing.ImportantMostRecent,
-                "Settings Page Opened",
-                "ButtonClickedActivity");
-#endif
+            var navigation = GetNavigationView();
+            navigation.IsPaneOpen = !navigation.IsPaneOpen;
         }
 
         private static IconElement CreateNavigationIcon(string uniqueId, bool isGroup, bool isWpfGalleryChild)
@@ -942,7 +389,7 @@ namespace ModernWpf.Gallery.Shell
             }
         }
 
-        private void OnSearchTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        internal void OnSearchTextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             if (args.Reason != AutoSuggestionBoxTextChangeReason.UserInput)
             {
@@ -953,7 +400,7 @@ namespace ModernWpf.Gallery.Shell
             sender.ItemsSource = suggestions.Length == 0 ? new object[] { "No results found" } : suggestions.Cast<object>().ToArray();
         }
 
-        private void OnSearchQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        internal void OnSearchQuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             var item = args.ChosenSuggestion as GalleryItem;
             if (item == null && !string.IsNullOrWhiteSpace(args.QueryText))
@@ -1073,6 +520,7 @@ namespace ModernWpf.Gallery.Shell
 
         private void SelectNavigationItem(NavigationTarget target, bool expandNavigationPath = true)
         {
+            var navigation = GetNavigationView();
             NavigationViewItem selectedItem = null;
             if (target.Kind == NavigationTargetKind.Home)
             {
@@ -1086,6 +534,10 @@ namespace ModernWpf.Gallery.Shell
             {
                 selectedItem = _allControlsNavigationItem;
             }
+            else if (target.Kind == NavigationTargetKind.Settings)
+            {
+                selectedItem = navigation.SettingsItem as NavigationViewItem;
+            }
             else if (!string.IsNullOrEmpty(target.UniqueId))
             {
                 _itemContainers.TryGetValue(target.UniqueId, out selectedItem);
@@ -1096,7 +548,6 @@ namespace ModernWpf.Gallery.Shell
             {
                 ExpandNavigationPath(target);
             }
-            var navigation = GetNavigationView();
             if (target.Kind == NavigationTargetKind.Item)
             {
                 navigation.UpdateLayout();
@@ -1110,7 +561,6 @@ namespace ModernWpf.Gallery.Shell
         {
             navigation.SelectedItem = null;
             ClearNavigationSelection(navigation.MenuItems);
-            AlignNavigationItemTemplateLayoutWithWpfGalleryTreeView();
             if (selectedItem == null)
             {
                 return;
@@ -1123,163 +573,6 @@ namespace ModernWpf.Gallery.Shell
             {
                 parentItem.IsChildSelected = true;
             }
-
-            AlignSelectionIndicatorWithWpfGalleryTreeView(selectedItem);
-        }
-
-        private static void AlignSelectionIndicatorWithWpfGalleryTreeView(NavigationViewItem selectedItem)
-        {
-            AlignNavigationItemTemplateWithWpfGalleryTreeView(selectedItem);
-
-            var indicator = FindVisualChild<FrameworkElement>(
-                selectedItem,
-                element => string.Equals(element.Name, "SelectionIndicator", StringComparison.Ordinal));
-            if (indicator == null)
-            {
-                return;
-            }
-
-            indicator.HorizontalAlignment = HorizontalAlignment.Left;
-            indicator.VerticalAlignment = VerticalAlignment.Center;
-            indicator.Margin = selectedItem.Tag is NavigationTarget { Kind: NavigationTargetKind.Item }
-                ? ChildNavigationSelectionIndicatorMargin
-                : DefaultNavigationSelectionIndicatorMargin;
-
-            AlignSelectedNavigationItemBackgroundWithWpfGalleryTreeView(selectedItem);
-            AlignSelectedNavigationItemContentWithWpfGalleryTreeView(selectedItem);
-        }
-
-        private static void AlignNavigationItemTemplateWithWpfGalleryTreeView(NavigationViewItem item)
-        {
-            var rootGrid = GetNavigationItemRootGrid(item);
-            if (rootGrid?.RowDefinitions.Count > 0)
-            {
-                rootGrid.RowDefinitions[0].Height = GridLength.Auto;
-            }
-        }
-
-        private static void AlignSelectedNavigationItemBackgroundWithWpfGalleryTreeView(NavigationViewItem selectedItem)
-        {
-            var layoutRoot = GetNavigationItemLayoutRoot(selectedItem);
-            if (layoutRoot == null)
-            {
-                return;
-            }
-
-            layoutRoot.Margin = selectedItem.Tag is NavigationTarget { Kind: NavigationTargetKind.Item }
-                ? ChildNavigationSelectedBackgroundMargin
-                : DefaultNavigationItemButtonMargin;
-        }
-
-        private static void ResetNavigationItemBackgroundAlignment(NavigationViewItem item)
-        {
-            var layoutRoot = GetNavigationItemLayoutRoot(item);
-            if (layoutRoot != null)
-            {
-                layoutRoot.Margin = DefaultNavigationItemButtonMargin;
-            }
-        }
-
-        private static void AlignSelectedNavigationItemContentWithWpfGalleryTreeView(NavigationViewItem selectedItem)
-        {
-            if (selectedItem.Tag is not NavigationTarget { Kind: NavigationTargetKind.Item })
-            {
-                ResetNavigationItemContentAlignment(selectedItem);
-                return;
-            }
-
-            if (selectedItem.Content is Grid contentGrid)
-            {
-                var defaultMargin = GetDefaultNavigationItemContentMargin(selectedItem);
-                contentGrid.Margin = new Thickness(
-                    defaultMargin.Left + ChildNavigationSelectedContentOffset.Left,
-                    defaultMargin.Top + ChildNavigationSelectedContentOffset.Top,
-                    defaultMargin.Right + ChildNavigationSelectedContentOffset.Right,
-                    defaultMargin.Bottom + ChildNavigationSelectedContentOffset.Bottom);
-            }
-        }
-
-        private static void ResetNavigationItemContentAlignment(NavigationViewItem item)
-        {
-            if (item.Content is Grid contentGrid)
-            {
-                contentGrid.Margin = GetDefaultNavigationItemContentMargin(item);
-            }
-        }
-
-        private static Thickness GetDefaultNavigationItemContentMargin(NavigationViewItem item)
-        {
-            if (item.Tag is NavigationTarget { Kind: NavigationTargetKind.Item })
-            {
-                var left = item.Content is Grid { Tag: string glyph }
-                    ? GetChildGlyphNavigationContentLeftMargin(glyph)
-                    : ChildTextNavigationContentLeftMargin;
-                return new Thickness(left, 0, 0, 0);
-            }
-
-            if (item.Tag is NavigationTarget { Kind: NavigationTargetKind.Group })
-            {
-                return new Thickness(GroupNavigationContentLeftMargin, 0, 0, 0);
-            }
-
-            return new Thickness(TopLevelNavigationContentLeftMargin, 0, 0, 0);
-        }
-
-        private static Border GetNavigationItemLayoutRoot(NavigationViewItem item)
-        {
-            return FindVisualChild<Border>(
-                item,
-                border => string.Equals(border.Name, "LayoutRoot", StringComparison.Ordinal));
-        }
-
-        private static Grid GetNavigationItemRootGrid(NavigationViewItem item)
-        {
-            return FindVisualChild<Grid>(
-                item,
-                grid => string.Equals(grid.Name, "NVIRootGrid", StringComparison.Ordinal));
-        }
-
-        private static T FindVisualChild<T>(DependencyObject element, Func<T, bool> predicate)
-            where T : DependencyObject
-        {
-            if (element == null)
-            {
-                return null;
-            }
-
-            for (var i = 0; i < VisualTreeHelper.GetChildrenCount(element); i++)
-            {
-                var child = VisualTreeHelper.GetChild(element, i);
-                if (child is T match && predicate(match))
-                {
-                    return match;
-                }
-
-                var descendant = FindVisualChild(child, predicate);
-                if (descendant != null)
-                {
-                    return descendant;
-                }
-            }
-
-            return null;
-        }
-
-        private static T FindVisualAncestor<T>(DependencyObject element)
-            where T : DependencyObject
-        {
-            var parent = VisualTreeHelper.GetParent(element);
-            while (parent != null)
-            {
-                if (parent is T value)
-                {
-                    return value;
-                }
-
-                parent = VisualTreeHelper.GetParent(parent);
-            }
-
-            return null;
         }
 
         private static void ClearNavigationSelection(System.Collections.IEnumerable items)
@@ -1290,8 +583,6 @@ namespace ModernWpf.Gallery.Shell
                 {
                     navigationItem.IsSelected = false;
                     navigationItem.IsChildSelected = false;
-                    ResetNavigationItemBackgroundAlignment(navigationItem);
-                    ResetNavigationItemContentAlignment(navigationItem);
                     ClearNavigationSelection(navigationItem.MenuItems);
                 }
             }
@@ -1378,20 +669,6 @@ namespace ModernWpf.Gallery.Shell
             return "item/" + target.UniqueId;
         }
 
-        private sealed class TreeViewChevronAngleConverter : IValueConverter
-        {
-            public static readonly TreeViewChevronAngleConverter Instance = new TreeViewChevronAngleConverter();
-
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                return value is bool isExpanded && isExpanded ? 90d : 0d;
-            }
-
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                throw new NotSupportedException();
-            }
-        }
     }
 
     internal enum NavigationTargetKind

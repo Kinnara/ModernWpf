@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class CornerRadiusFilterConverter : DependencyObject, IValueConverter
+    public sealed class CornerRadiusFilterConverter : DependencyObject, IValueConverter
     {
         public CornerRadiusFilterKind Filter { get; set; }
 

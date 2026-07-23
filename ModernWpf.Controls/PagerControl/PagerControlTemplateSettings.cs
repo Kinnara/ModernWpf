@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace ModernWpf.Controls
 {
-    public sealed class PagerControlTemplateSettings : DependencyObject
+    public class PagerControlTemplateSettings : DependencyObject
     {
         internal PagerControlTemplateSettings(IList<object> pages, IList<object> numberPanelItems)
         {

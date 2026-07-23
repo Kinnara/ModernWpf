@@ -1,6 +1,6 @@
 namespace ModernWpf.Controls.Primitives
 {
-    public sealed class ThemeShadow
+    public class ThemeShadow
     {
     }
 }

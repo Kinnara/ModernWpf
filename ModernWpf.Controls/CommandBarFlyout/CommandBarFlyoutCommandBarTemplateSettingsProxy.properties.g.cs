@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public partial class CommandBarFlyoutCommandBarTemplateSettingsProxy
+    internal partial class CommandBarFlyoutCommandBarTemplateSettingsProxy
     {
         #region FlyoutTemplateSettings
 

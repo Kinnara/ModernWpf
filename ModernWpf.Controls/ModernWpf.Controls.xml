@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <doc>
   <assembly>
     <name>ModernWpf.Controls</name>
@@ -35,13 +35,8 @@
     <member name="M:ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer.Toggle">
       <summary>Cycles through the toggle states of a control.</summary>
     </member>
-    <member name="T:ModernWpf.Automation.Peers.CommandBarAutomationPeer">
-      <summary>Exposes CommandBar types to Microsoft UI Automation.</summary>
-    </member>
-    <member name="M:ModernWpf.Automation.Peers.CommandBarAutomationPeer.#ctor(ModernWpf.Controls.CommandBar)">
-      <summary>Initializes a new instance of the CommandBarAutomationPeer class.</summary>
-      <param name="owner">The CommandBar control instance to create the peer for.</param>
-    </member>
+
+
     <member name="T:ModernWpf.Automation.Peers.AutoSuggestBoxAutomationPeer">
       <summary>Exposes AutoSuggestBox types to Microsoft UI Automation.</summary>
     </member>
@@ -128,24 +123,12 @@
     <member name="M:ModernWpf.Automation.Peers.ToggleSplitButtonAutomationPeer.Toggle">
       <summary>Cycles through the toggle states of a control.</summary>
     </member>
-    <member name="T:ModernWpf.Controls.AnimationContext">
-      <summary>Defines constants that specify information about changes to a data collection that is useful for animating data elements.</summary>
-    </member>
-    <member name="F:ModernWpf.Controls.AnimationContext.CollectionChangeAdd">
-      <summary>An item was added to the collection.</summary>
-    </member>
-    <member name="F:ModernWpf.Controls.AnimationContext.CollectionChangeRemove">
-      <summary>An item was removed from the collection.</summary>
-    </member>
-    <member name="F:ModernWpf.Controls.AnimationContext.CollectionChangeReset">
-      <summary>The collection was reset.</summary>
-    </member>
-    <member name="F:ModernWpf.Controls.AnimationContext.LayoutTransition">
-      <summary>The layout of items was changed.</summary>
-    </member>
-    <member name="F:ModernWpf.Controls.AnimationContext.None">
-      <summary>There was no change.</summary>
-    </member>
+
+
+
+
+
+
     <member name="T:ModernWpf.Controls.AppBarButton">
       <summary>Represents a templated button control to be displayed in an AppBar.</summary>
     </member>
@@ -591,9 +574,7 @@
       <summary>Gets a value that indicates whether commands are moving into or out of the overflow menu.</summary>
       <returns>The dynamic overflow action.</returns>
     </member>
-    <member name="T:ModernWpf.Controls.DynamicOverflowItemsChangingEventHandler">
-      <summary>Represents the method that handles the CommandBar.DynamicOverflowItemsChanging event.</summary>
-    </member>
+
     <member name="T:ModernWpf.Controls.CommandBarDefaultLabelPosition">
       <summary>Defines constants that specify the placement and visibility of AppBarButton labels in a CommandBar.</summary>
     </member>
@@ -614,7 +595,7 @@
     </member>
     <member name="P:ModernWpf.Controls.CommandBarFlyout.AlwaysExpanded">
       <summary>Gets or sets whether the secondary commands remain expanded and the overflow button stays hidden while the flyout is open.</summary>
-      <returns><see langword="true"/> to keep the secondary commands expanded; otherwise, <see langword="false"/>. The default is <see langword="false"/>.</returns>
+      <returns><see langword="true" /> to keep the secondary commands expanded; otherwise, <see langword="false" />. The default is <see langword="false" />.</returns>
     </member>
     <member name="P:ModernWpf.Controls.CommandBarFlyout.PrimaryCommands">
       <summary>Gets the collection of primary command elements for the CommandBarFlyout.</summary>
@@ -645,12 +626,8 @@
     <member name="F:ModernWpf.Controls.CommandBarOverflowButtonVisibility.Visible">
       <summary>The overflow button is always shown.</summary>
     </member>
-    <member name="T:ModernWpf.Controls.CommandBarOverflowPresenter">
-      <summary>Displays the overflow content of a CommandBar.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.CommandBarOverflowPresenter.#ctor">
-      <summary>Initializes a new instance of the CommandBarOverflowPresenter class.</summary>
-    </member>
+
+
     <member name="T:ModernWpf.Controls.Primitives.CommandBarTemplateSettings">
       <summary>Provides calculated values that can be referenced as TemplateBinding sources when defining templates for a CommandBar.</summary>
     </member>
@@ -941,123 +918,30 @@
     <member name="M:ModernWpf.Controls.DropDownButton.#ctor">
       <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.DropDownButton?text=DropDownButton" /> class.</summary>
     </member>
-    <member name="T:ModernWpf.Controls.ElementAnimator">
-      <summary>Represents the base class for components that coordinate the animations of elements that are being conceptually added, repositioned/resized, or removed from the live visual tree.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.#ctor">
-      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.ElementAnimator?text=ElementAnimator" /> class.</summary>
-    </member>
-    <member name="E:ModernWpf.Controls.ElementAnimator.BoundsChangeAnimationCompleted">
-      <summary>Raised by a derived class to notify the framework that a bounds change animation has completed.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.HasBoundsChangeAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext,System.Windows.Rect,System.Windows.Rect)">
-      <summary>Determines whether a bounds change animation is being provided by this animator.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the reason for the animation.</param>
-      <param name="oldBounds">The old bounds used to arrange the element.</param>
-      <param name="newBounds">The new bounds used to arrange the element.</param>
-      <returns>true if the animation is being provided by this animator.; otherwise, false.</returns>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.HasBoundsChangeAnimationCore(System.Windows.UIElement,ModernWpf.Controls.AnimationContext,System.Windows.Rect,System.Windows.Rect)">
-      <summary>When implemented in a derived class, determines whether a bounds change animation is being provided by this animator.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the reason for the animation.</param>
-      <param name="oldBounds">The old bounds used to arrange the element.</param>
-      <param name="newBounds">The new bounds used to arrange the element.</param>
-      <returns>true if the animation is being provided by this animator; otherwise, false.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.ElementAnimator.HasBoundsChangeAnimationsPending">
-      <summary>Gets a value that indicates whether a bounds change animation is pending.</summary>
-      <returns>true if a bounds change animation is pending; otherwise, false.</returns>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.HasHideAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>Determines whether a hide animation is being provided by this animator.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the reason for the animation.</param>
-      <returns>true if the animation is being provided by this animator; otherwise, false.</returns>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.HasHideAnimationCore(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>When implemented in a derived class, determines whether a hide animation is being provided by this animator.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the reason for the animation.</param>
-      <returns>true if the animation is being provided by this animator; otherwise, false.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.ElementAnimator.HasHideAnimationsPending">
-      <summary>Gets a value that indicates whether a hide animation is pending.</summary>
-      <returns>true if a hide animation is pending; otherwise, false.</returns>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.HasShowAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>Determines whether a show animation is being provided by this animator.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the reason for the animation.</param>
-      <returns>true if the animation is being provided by this animator; otherwise, false.</returns>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.HasShowAnimationCore(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>When implemented in a derived class, determines whether a show animation is being provided by this animator.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the reason for the animation.</param>
-      <returns>true if the animation is being provided by this animator, false.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.ElementAnimator.HasShowAnimationsPending">
-      <summary>Gets a value that indicates whether a show animation is pending.</summary>
-      <returns>true if a show animation is pending; otherwise, false.</returns>
-    </member>
-    <member name="E:ModernWpf.Controls.ElementAnimator.HideAnimationCompleted">
-      <summary>Raised by a derived class to notify the framework that a hide animation has completed.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.OnBoundsChangeAnimationCompleted(System.Windows.UIElement)">
-      <summary>Called when a bounds changed animation completes.</summary>
-      <param name="element">The element that was animated.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.OnElementBoundsChanged(System.Windows.UIElement,ModernWpf.Controls.AnimationContext,System.Windows.Rect,System.Windows.Rect)">
-      <summary>Determines whether a bounds changed animation is needed, and prepares the animation if it is.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the change that is being animated.</param>
-      <param name="oldBounds">The old bounds used to arrange the element.</param>
-      <param name="newBounds">The new bounds used to arrange the element.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.OnElementHidden(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>Determines whether a hide animation is needed, and prepares the animation if it is.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the change that is being animated.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.OnElementShown(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>Determines whether a show animation is needed, and prepares the animation if it is.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the change that is being animated.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.OnHideAnimationCompleted(System.Windows.UIElement)">
-      <summary>Called when a hide animation completes.</summary>
-      <param name="element">The element that was animated.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.OnShowAnimationCompleted(System.Windows.UIElement)">
-      <summary>Called when a show animation completes.</summary>
-      <param name="element">The element that was animated.</param>
-    </member>
-    <member name="P:ModernWpf.Controls.ElementAnimator.SharedContext">
-      <summary>Gets the union of all animation contexts during the current tick.</summary>
-      <returns>The union of all animation contexts during the current tick.</returns>
-    </member>
-    <member name="E:ModernWpf.Controls.ElementAnimator.ShowAnimationCompleted">
-      <summary>Raised by a derived class to notify the framework that a show animation has completed.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.StartBoundsChangeAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext,System.Windows.Rect,System.Windows.Rect)">
-      <summary>Starts the animation to play when the bounds used to arrange an element change.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the change that is being animated.</param>
-      <param name="oldBounds">The old bounds used to arrange the element.</param>
-      <param name="newBounds">The new bounds used to arrange the element.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.StartHideAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>Starts the animation to play when an element is conceptually removed from the visual tree.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the change that is being animated.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.StartShowAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>Starts the animation to play when an element is conceptually added to the visual tree.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the change that is being animated.</param>
-    </member>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <member name="T:ModernWpf.Controls.ElementFactory">
       <summary>Represents the base class for components that create and optionally recycle elements for use in a <see cref="ModernWpf.Controls.Layout?text=Layout" />.</summary>
     </member>
@@ -2177,12 +2061,8 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     <member name="M:ModernWpf.Controls.NavigationViewItemSeparator.#ctor">
       <summary>Initializes a new instance of the NavigationViewItemSeparator class.</summary>
     </member>
-    <member name="T:ModernWpf.Controls.NavigationViewList">
-      <summary>Represents a control that displays menu items in a <see cref="ModernWpf.Controls.NavigationView?text=NavigationView" /> control.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.NavigationViewList.#ctor">
-      <summary>Initializes a new instance of the NavigationViewList class.</summary>
-    </member>
+
+
     <member name="T:ModernWpf.Controls.NavigationViewOverflowLabelMode">
       <summary>Defines constants that specify the label for the overflow button in a NavigationView.</summary>
     </member>
@@ -2578,14 +2458,10 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Gets the maximum bounding size of the progress ring as rendered.</summary>
       <returns>The maximum bounding size of the progress ring as rendered, in pixels.</returns>
     </member>
-    <member name="T:ModernWpf.Controls.Primitives.RadioButtonsListView" />
-    <member name="M:ModernWpf.Controls.Primitives.RadioButtonsListView.#ctor">
-      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.Primitives.RadioButtonsListView?text=RadioButtonsListView" /> class.</summary>
-    </member>
-    <member name="T:ModernWpf.Controls.Primitives.RadioButtonsListViewItem" />
-    <member name="M:ModernWpf.Controls.Primitives.RadioButtonsListViewItem.#ctor">
-      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.Primitives.RadioButtonsListViewItem?text=RadioButtonsListViewItem" /> class.</summary>
-    </member>
+
+
+
+
     <member name="T:ModernWpf.Controls.Primitives.SplitViewTemplateSettings">
       <summary>Provides calculated values that can be referenced as **TemplatedParent** sources when defining templates for a SplitView. Not intended for general use.</summary>
     </member>
@@ -2778,60 +2654,20 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Identifies the Value dependency property.</summary>
       <returns>The identifier for Value dependency property.</returns>
     </member>
-    <member name="T:ModernWpf.Controls.RatingItemFontInfo">
-      <summary>Represents information about the visual states of font elements that represent a rating.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.RatingItemFontInfo.#ctor">
-      <summary>Initializes a new instance of the RatingItemFontInfo class.</summary>
-    </member>
-    <member name="P:ModernWpf.Controls.RatingItemFontInfo.DisabledGlyph">
-      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that is disabled.</summary>
-      <returns>The hexadecimal character code for the rating element glyph.</returns>
-    </member>
-    <member name="F:ModernWpf.Controls.RatingItemFontInfo.DisabledGlyphProperty">
-      <summary>Identifies the DisabledGlyph dependency property.</summary>
-      <returns>The identifier for DisabledGlyph dependency property.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.RatingItemFontInfo.Glyph">
-      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that has been set by the user.</summary>
-      <returns>The hexadecimal character code for the rating element glyph.</returns>
-    </member>
-    <member name="F:ModernWpf.Controls.RatingItemFontInfo.GlyphProperty">
-      <summary>Identifies the Glyph dependency property.</summary>
-      <returns>The identifier for Glyph dependency property.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.RatingItemFontInfo.PlaceholderGlyph">
-      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that is showing a placeholder value.</summary>
-      <returns>The hexadecimal character code for the rating element glyph.</returns>
-    </member>
-    <member name="F:ModernWpf.Controls.RatingItemFontInfo.PlaceholderGlyphProperty">
-      <summary>Identifies the PlaceholderGlyph dependency property.</summary>
-      <returns>The identifier for PlaceholderGlyph dependency property.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.RatingItemFontInfo.PointerOverGlyph">
-      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that has the pointer over it.</summary>
-      <returns>The hexadecimal character code for the rating element glyph.</returns>
-    </member>
-    <member name="F:ModernWpf.Controls.RatingItemFontInfo.PointerOverGlyphProperty">
-      <summary>Identifies the PointerOverGlyph dependency property.</summary>
-      <returns>The identifier for PointerOverGlyph dependency property.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.RatingItemFontInfo.PointerOverPlaceholderGlyph">
-      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element showing a placeholder value with the pointer over it.</summary>
-      <returns>The hexadecimal character code for the rating element glyph.</returns>
-    </member>
-    <member name="F:ModernWpf.Controls.RatingItemFontInfo.PointerOverPlaceholderGlyphProperty">
-      <summary>Identifies the PointerOverPlaceholderGlyph dependency property.</summary>
-      <returns>The identifier for PointerOverPlaceholderGlyph dependency property.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.RatingItemFontInfo.UnsetGlyph">
-      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that has not been set.</summary>
-      <returns>The hexadecimal character code for the rating element glyph.</returns>
-    </member>
-    <member name="F:ModernWpf.Controls.RatingItemFontInfo.UnsetGlyphProperty">
-      <summary>Identifies the UnsetGlyph dependency property.</summary>
-      <returns>The identifier for UnsetGlyph dependency property.</returns>
-    </member>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <member name="T:ModernWpf.Controls.RatingItemImageInfo">
       <summary>Represents information about the visual states of image elements that represent a rating.</summary>
     </member>
@@ -2886,12 +2722,8 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Identifies the UnsetImage dependency property.</summary>
       <returns>The identifier for UnsetImage dependency property.</returns>
     </member>
-    <member name="T:ModernWpf.Controls.RatingItemInfo">
-      <summary>Represents information about the visual states of the elements that represent a rating.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.RatingItemInfo.#ctor">
-      <summary>Initializes a new instance of the RatingItemInfo class.</summary>
-    </member>
+
+
     <member name="T:ModernWpf.Controls.RecyclePool">
       <summary>Represents a cache of elements that can be re-used to display data items.</summary>
     </member>

@@ -9,7 +9,7 @@ using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Controls
 {
-    public class SelectorBarItemsControl : ItemsControl
+    internal class SelectorBarItemsControl : ItemsControl
     {
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -17,7 +17,7 @@ namespace ModernWpf.Controls
         }
     }
 
-    public class SelectorBarItemsControlAutomationPeer : ItemsControlAutomationPeer, ISelectionProvider
+    internal class SelectorBarItemsControlAutomationPeer : ItemsControlAutomationPeer, ISelectionProvider
     {
         public SelectorBarItemsControlAutomationPeer(SelectorBarItemsControl owner)
             : base(owner)
@@ -76,7 +76,7 @@ namespace ModernWpf.Controls
         private readonly SelectorBarItemsControl _owner;
     }
 
-    public class SelectorBarItemsControlItemAutomationPeer : ItemAutomationPeer, ISelectionItemProvider
+    internal class SelectorBarItemsControlItemAutomationPeer : ItemAutomationPeer, ISelectionItemProvider
     {
         private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(SelectorBar));
 

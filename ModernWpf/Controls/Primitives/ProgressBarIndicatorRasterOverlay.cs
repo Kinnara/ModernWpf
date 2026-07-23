@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public sealed class ProgressBarIndicatorRasterOverlay : FrameworkElement
+    internal sealed class ProgressBarIndicatorRasterOverlay : FrameworkElement
     {
         public static readonly DependencyProperty FillProperty =
             DependencyProperty.Register(
