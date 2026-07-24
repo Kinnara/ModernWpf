@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -344,6 +345,7 @@ namespace ModernWpf.Controls
             PrimaryButton = GetTemplateChild(nameof(PrimaryButton)) as Button;
             SecondaryButton = GetTemplateChild(nameof(SecondaryButton)) as Button;
             CloseButton = GetTemplateChild(nameof(CloseButton)) as Button;
+            m_adorner?.SetSmokeLayerStateSource(LayoutRoot);
 
             if (LayoutRoot != null)
             {
@@ -629,7 +631,14 @@ namespace ModernWpf.Controls
 
         private void UpdateDialogShowingStates(bool useTransitions)
         {
-            string stateName = IsShowing && IsLoaded ? DialogShowingState : DialogHiddenState;
+            string stateName = DialogHiddenState;
+
+            if (IsShowing && IsLoaded)
+            {
+                stateName = m_adornerLayer != null
+                    ? DialogShowingWithoutSmokeLayerState
+                    : DialogShowingState;
+            }
 
             if (DesignerProperties.GetIsInDesignMode(this))
             {
@@ -737,11 +746,12 @@ namespace ModernWpf.Controls
         {
             if (m_adorner == null)
             {
-                m_adorner = new ContentDialogAdorner(cp, child);
+                m_adorner = new ContentDialogAdorner(cp, child, LayoutRoot);
             }
             else
             {
                 m_adorner.Child = child;
+                m_adorner.SetSmokeLayerStateSource(LayoutRoot);
             }
         }
 
@@ -883,10 +893,18 @@ namespace ModernWpf.Controls
 
         private class ContentDialogAdorner : Adorner
         {
+            private readonly Border _smokeLayer;
             private UIElement _child;
 
-            public ContentDialogAdorner(UIElement adornedElement, UIElement child) : base(adornedElement)
+            public ContentDialogAdorner(
+                UIElement adornedElement,
+                UIElement child,
+                FrameworkElement smokeLayerStateSource) : base(adornedElement)
             {
+                _smokeLayer = new Border();
+                _smokeLayer.SetResourceReference(Border.BackgroundProperty, "ContentDialogSmokeFill");
+                AddVisualChild(_smokeLayer);
+                SetSmokeLayerStateSource(smokeLayerStateSource);
                 Child = child ?? throw new ArgumentNullException(nameof(child));
             }
 
@@ -912,11 +930,31 @@ namespace ModernWpf.Controls
                 }
             }
 
-            protected override int VisualChildrenCount => _child != null ? 1 : 0;
+            public void SetSmokeLayerStateSource(FrameworkElement source)
+            {
+                BindingOperations.ClearBinding(_smokeLayer, OpacityProperty);
+                BindingOperations.ClearBinding(_smokeLayer, VisibilityProperty);
+
+                if (source != null)
+                {
+                    _smokeLayer.SetBinding(
+                        OpacityProperty,
+                        new Binding(nameof(Opacity)) { Source = source });
+                    _smokeLayer.SetBinding(
+                        VisibilityProperty,
+                        new Binding(nameof(Visibility)) { Source = source });
+                }
+            }
+
+            protected override int VisualChildrenCount => _child != null ? 2 : 1;
 
             protected override Visual GetVisualChild(int index)
             {
-                if (index == 0 && _child != null)
+                if (index == 0)
+                {
+                    return _smokeLayer;
+                }
+                else if (index == 1 && _child != null)
                 {
                     return _child;
                 }
@@ -930,6 +968,7 @@ namespace ModernWpf.Controls
             {
                 var desiredSize = AdornedElement.RenderSize;
                 constraint = desiredSize;
+                _smokeLayer.Measure(constraint);
                 Child?.Measure(constraint);
                 return desiredSize;
             }
@@ -937,6 +976,7 @@ namespace ModernWpf.Controls
             protected override Size ArrangeOverride(Size size)
             {
                 var finalSize = base.ArrangeOverride(size);
+                _smokeLayer.Arrange(new Rect(new Point(), finalSize));
                 Child?.Arrange(new Rect(new Point(), finalSize));
                 return finalSize;
             }
