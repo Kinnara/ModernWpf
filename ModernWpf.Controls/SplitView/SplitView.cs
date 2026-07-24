@@ -292,12 +292,10 @@ namespace ModernWpf.Controls
             PaneOpening?.Invoke(this, null);
             OnPaneOpening();
 
-            if (UpdateDisplayModeState())
+            _isPaneOpening = true;
+            if (!UpdateDisplayModeState())
             {
-                _isPaneOpening = true;
-            }
-            else
-            {
+                _isPaneOpening = false;
                 PaneOpened?.Invoke(this, null);
             }
 
@@ -313,12 +311,10 @@ namespace ModernWpf.Controls
 
             OnPaneClosing();
 
-            if (UpdateDisplayModeState())
+            _isPaneClosing = true;
+            if (!UpdateDisplayModeState())
             {
-                _isPaneClosing = true;
-            }
-            else
-            {
+                _isPaneClosing = false;
                 OnPaneClosed();
             }
 

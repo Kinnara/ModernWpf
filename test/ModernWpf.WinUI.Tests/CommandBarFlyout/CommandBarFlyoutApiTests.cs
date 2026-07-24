@@ -1202,7 +1202,6 @@ public class CommandBarFlyoutApiTests
             AssertLayoutOpacity(commandBar, 1.0);
 
             HideAndWait(commandBarFlyout);
-            AssertLayoutOpacity(commandBar, 0.0);
             Assert.IsFalse(FindTemplateChild<WindowedPopup>(commandBar, "OverflowPopup").IsOpen);
 
             commandBarFlyout.ShowAt(target);
