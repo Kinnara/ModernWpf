@@ -16,6 +16,9 @@ namespace ModernWpf.Controls.Primitives
         private readonly PasswordBox _passwordBox;
 
         private bool _hideRevealButton;
+        private bool _isUpdatingPasswordBox;
+        private bool _isUpdatingTextBox;
+        private TextBox _textBox;
 
         static PasswordBoxHelper()
         {
@@ -71,7 +74,11 @@ namespace ModernWpf.Controls.Primitives
         private static void OnPasswordRevealModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var helper = GetHelperInstance((PasswordBox)d);
-            helper?.UpdateVisualState(true);
+            if (helper != null)
+            {
+                helper.UpdateTextBox();
+                helper.UpdateVisualState(true);
+            }
         }
 
         #endregion
@@ -167,8 +174,6 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        private TextBox TextBox { get; set; }
-
         private PasswordRevealMode PasswordRevealMode => GetPasswordRevealMode(_passwordBox);
 
         private static void OnDisabledCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -200,13 +205,7 @@ namespace ModernWpf.Controls.Primitives
             _passwordBox.LostFocus -= OnLostFocus;
             _passwordBox.Loaded -= OnLoaded;
 
-            if (TextBox != null)
-            {
-                TextBox.CommandBindings.Remove(TextBoxCutBinding);
-                TextBox.CommandBindings.Remove(TextBoxCopyBinding);
-                TextBox.TextChanged -= OnTextBoxTextChanged;
-                TextBox = null;
-            }
+            DetachTextBox();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -217,17 +216,19 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnApplyTemplate()
         {
+            DetachTextBox();
             _passwordBox.ApplyTemplate();
 
-            TextBox = _passwordBox.GetTemplateChild<TextBox>(nameof(TextBox));
+            _textBox = _passwordBox.GetTemplateChild<TextBox>("TextBox");
 
-            if (TextBox != null)
+            if (_textBox != null)
             {
-                TextBox.IsUndoEnabled = false;
-                SpellCheck.SetIsEnabled(TextBox, false);
-                TextBox.CommandBindings.Add(TextBoxCutBinding);
-                TextBox.CommandBindings.Add(TextBoxCopyBinding);
-                TextBox.TextChanged += OnTextBoxTextChanged;
+                _textBox.IsUndoEnabled = false;
+                SpellCheck.SetIsEnabled(_textBox, false);
+                _textBox.CommandBindings.Add(TextBoxCutBinding);
+                _textBox.CommandBindings.Add(TextBoxCopyBinding);
+                _textBox.TextChanged += OnTextBoxTextChanged;
+                _textBox.IsVisibleChanged += OnTextBoxIsVisibleChanged;
                 UpdateTextBox();
             }
 
@@ -236,16 +237,16 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnGotFocus(object sender, RoutedEventArgs e)
         {
-            if (PasswordRevealMode == PasswordRevealMode.Visible && TextBox != null)
+            if (PasswordRevealMode == PasswordRevealMode.Visible && _textBox != null)
             {
                 if (e.OriginalSource == _passwordBox)
                 {
-                    TextBox.Focus();
+                    _textBox.Focus();
                     e.Handled = true;
                 }
             }
 
-            if (!string.IsNullOrEmpty(_passwordBox.Password))
+            if (HasPassword())
             {
                 _hideRevealButton = true;
             }
@@ -260,7 +261,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnPasswordChanged(object sender, RoutedEventArgs e)
         {
-            bool hasPassword = !string.IsNullOrEmpty(_passwordBox.Password);
+            bool hasPassword = HasPassword();
 
             if (!hasPassword)
             {
@@ -274,17 +275,74 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnTextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (PasswordRevealMode == PasswordRevealMode.Visible)
+            if (!_isUpdatingTextBox &&
+                PasswordRevealMode == PasswordRevealMode.Visible &&
+                _textBox.IsVisible)
             {
-                _passwordBox.Password = ((TextBox)sender).Text;
+                _isUpdatingPasswordBox = true;
+                try
+                {
+                    _passwordBox.Password = ((TextBox)sender).Text;
+                }
+                finally
+                {
+                    _isUpdatingPasswordBox = false;
+                }
             }
+        }
+
+        private void OnTextBoxIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            UpdateTextBox();
+        }
+
+        private void DetachTextBox()
+        {
+            if (_textBox == null)
+            {
+                return;
+            }
+
+            _textBox.CommandBindings.Remove(TextBoxCutBinding);
+            _textBox.CommandBindings.Remove(TextBoxCopyBinding);
+            _textBox.TextChanged -= OnTextBoxTextChanged;
+            _textBox.IsVisibleChanged -= OnTextBoxIsVisibleChanged;
+            _textBox.Text = string.Empty;
+            _textBox = null;
+        }
+
+        private bool HasPassword()
+        {
+            using var password = _passwordBox.SecurePassword;
+            return password.Length > 0;
         }
 
         private void UpdateTextBox()
         {
-            if (TextBox != null)
+            if (_isUpdatingPasswordBox || _textBox == null)
             {
-                TextBox.Text = _passwordBox.Password;
+                return;
+            }
+
+            string text = string.Empty;
+            if (PasswordRevealMode != PasswordRevealMode.Hidden && _textBox.IsVisible)
+            {
+                // Password creates a managed plaintext string, so only read it
+                // while the template is intentionally displaying plaintext.
+                text = _passwordBox.Password;
+            }
+
+            if (_textBox.Text != text)
+            {
+                _isUpdatingTextBox = true;
+                try
+                {
+                    _textBox.Text = text;
+                }
+                finally
+                {
+                    _isUpdatingTextBox = false;
+                }
             }
         }
 
@@ -296,7 +354,7 @@ namespace ModernWpf.Controls.Primitives
                 switch (PasswordRevealMode)
                 {
                     case PasswordRevealMode.Peek:
-                        buttonVisible = !_hideRevealButton && !string.IsNullOrEmpty(_passwordBox.Password);
+                        buttonVisible = !_hideRevealButton && HasPassword();
                         break;
                     case PasswordRevealMode.Hidden:
                     case PasswordRevealMode.Visible:
