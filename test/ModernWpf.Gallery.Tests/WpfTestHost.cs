@@ -99,13 +99,14 @@ namespace ModernWpf.Gallery.Tests
                 return;
             }
 
-            dispatcher.Invoke(() =>
-            {
-                Application.Current?.Shutdown();
-                dispatcher.BeginInvokeShutdown(DispatcherPriority.Background);
-            });
+            dispatcher.Invoke(() => Application.Current?.Shutdown());
+            dispatcher.BeginInvokeShutdown(DispatcherPriority.Normal);
 
-            _thread.Join(TimeSpan.FromSeconds(10));
+            if (!_thread.Join(TimeSpan.FromSeconds(10)))
+            {
+                throw new TimeoutException("Timed out stopping the WPF test dispatcher.");
+            }
+
             _dispatcher = null;
             _thread = null;
             _ready?.Dispose();

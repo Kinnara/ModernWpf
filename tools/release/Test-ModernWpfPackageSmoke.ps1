@@ -23,18 +23,18 @@ if ($packageFileName -notmatch "^ModernWpfUI\.(?<version>.+)$") {
 
 $packageVersion = $Matches.version
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..\..")
-$stamp = Get-Date -Format "yyyyMMdd-HHmmss"
+$stamp = "{0}-{1}" -f (Get-Date -Format "yyyyMMdd-HHmmssfff"), $PID
 $workRoot = Join-Path $repoRoot "artifacts\package-smoke\$stamp"
-$projectDirectory = Join-Path $workRoot "ModernWpf.PackageSmoke"
-
-New-Item -ItemType Directory -Force $projectDirectory | Out-Null
-
 $targetFrameworksValue = $TargetFrameworks -join ";"
 
-@"
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+foreach ($resourceType in @("FluentControlsResources", "XamlControlsResources")) {
+    $projectDirectory = Join-Path $workRoot $resourceType
+    New-Item -ItemType Directory -Force $projectDirectory | Out-Null
+
+    @"
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFrameworks>$targetFrameworksValue</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
@@ -47,7 +47,7 @@ $targetFrameworksValue = $TargetFrameworks -join ";"
 </Project>
 "@ | Set-Content -Path (Join-Path $projectDirectory "ModernWpf.PackageSmoke.csproj") -Encoding UTF8
 
-@"
+    @"
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <packageSources>
@@ -58,7 +58,7 @@ $targetFrameworksValue = $TargetFrameworks -join ";"
 </configuration>
 "@ | Set-Content -Path (Join-Path $projectDirectory "nuget.config") -Encoding UTF8
 
-@"
+    @"
 <Application x:Class="ModernWpf.PackageSmoke.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -67,84 +67,110 @@ $targetFrameworksValue = $TargetFrameworks -join ";"
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
         <ui:ThemeResources />
-        <ui:XamlControlsResources />
+        <ui:$resourceType />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>
 </Application>
 "@ | Set-Content -Path (Join-Path $projectDirectory "App.xaml") -Encoding UTF8
 
-@"
+    @"
+using System;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Threading;
+using ModernWpf.Controls;
 
 namespace ModernWpf.PackageSmoke;
 
 public partial class App : Application
 {
+    protected override void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+
+        try
+        {
+            if (!Resources.Contains("SystemControlBackgroundChromeMediumLowBrush"))
+            {
+                throw new InvalidOperationException("Expected ModernWpf theme resources were not resolved.");
+            }
+
+            var button = new Button { Content = "Styled button" };
+            var navigationView = new NavigationView
+            {
+                Content = new TextBlock { Text = "Packaged control content" }
+            };
+            navigationView.MenuItems.Add(new NavigationViewItem { Content = "Home" });
+
+            var root = new StackPanel();
+            root.Children.Add(button);
+            root.Children.Add(navigationView);
+
+            var window = new Window
+            {
+                Content = root,
+                Width = 320,
+                Height = 200,
+                WindowStyle = WindowStyle.None,
+                ShowInTaskbar = false,
+                ShowActivated = false,
+                Opacity = 0
+            };
+
+            MainWindow = window;
+            window.Show();
+            window.UpdateLayout();
+            Dispatcher.Invoke(() => { }, DispatcherPriority.ContextIdle);
+
+            if (button.Template == null || navigationView.Template == null)
+            {
+                throw new InvalidOperationException("Packaged WPF and ModernWpf control templates were not applied.");
+            }
+
+            window.Close();
+            Console.WriteLine("PASS: $resourceType");
+            Shutdown(0);
+        }
+        catch (Exception exception)
+        {
+            Console.Error.WriteLine(exception);
+            Shutdown(1);
+        }
+    }
 }
 "@ | Set-Content -Path (Join-Path $projectDirectory "App.xaml.cs") -Encoding UTF8
 
-@"
-<Window x:Class="ModernWpf.PackageSmoke.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ui="http://schemas.modernwpf.com/2019"
-        Title="ModernWpf Package Smoke"
-        Width="360"
-        Height="220"
-        ui:WindowHelper.UseModernWindowStyle="True">
-  <ui:GridEx Padding="12"
-             RowSpacing="8"
-             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-    <ui:GridEx.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="Auto" />
-    </ui:GridEx.RowDefinitions>
-    <TextBlock Text="ModernWpf package smoke" />
-    <Button Grid.Row="1"
-            Content="Styled button" />
-    <ui:ContentPresenterEx Grid.Row="2"
-                           Content="WinUI presenter surface"
-                           Padding="4"
-                           CornerRadius="3"
-                           Background="Transparent"
-                           BackgroundSizing="OuterBorderEdge" />
-  </ui:GridEx>
-</Window>
-"@ | Set-Content -Path (Join-Path $projectDirectory "MainWindow.xaml") -Encoding UTF8
+    $projectPath = Join-Path $projectDirectory "ModernWpf.PackageSmoke.csproj"
+    $nugetConfigPath = Join-Path $projectDirectory "nuget.config"
 
-@"
-using System.Windows;
-
-namespace ModernWpf.PackageSmoke;
-
-public partial class MainWindow : Window
-{
-    public MainWindow()
-    {
-        InitializeComponent();
-    }
-}
-"@ | Set-Content -Path (Join-Path $projectDirectory "MainWindow.xaml.cs") -Encoding UTF8
-
-$projectPath = Join-Path $projectDirectory "ModernWpf.PackageSmoke.csproj"
-$nugetConfigPath = Join-Path $projectDirectory "nuget.config"
-
-dotnet restore $projectPath --configfile $nugetConfigPath
-if ($LASTEXITCODE -ne 0) {
-    throw "Package smoke restore failed."
-}
-
-foreach ($targetFramework in $TargetFrameworks) {
-    dotnet build $projectPath `
-        --configuration $Configuration `
-        --framework $targetFramework `
-        --no-restore `
-        --maxcpucount:1
+    dotnet restore $projectPath --configfile $nugetConfigPath
     if ($LASTEXITCODE -ne 0) {
-        throw "Package smoke build failed for '$targetFramework'."
+        throw "Package smoke restore failed for '$resourceType'."
+    }
+
+    foreach ($targetFramework in $TargetFrameworks) {
+        dotnet build $projectPath `
+            --configuration $Configuration `
+            --framework $targetFramework `
+            --no-restore `
+            --maxcpucount:1
+        if ($LASTEXITCODE -ne 0) {
+            throw "Package smoke build failed for '$resourceType' on '$targetFramework'."
+        }
+
+        $executablePath = Join-Path `
+            $projectDirectory `
+            "bin\$Configuration\$targetFramework\ModernWpf.PackageSmoke.exe"
+        if (-not (Test-Path $executablePath)) {
+            throw "Package smoke executable was not produced for '$resourceType' on '$targetFramework'."
+        }
+
+        & $executablePath
+        if ($LASTEXITCODE -ne 0) {
+            throw "Package smoke execution failed for '$resourceType' on '$targetFramework' with exit code $LASTEXITCODE."
+        }
     }
 }
 
-Write-Host "Verified ModernWpfUI package consumer smoke project: $projectDirectory"
+Write-Host "Executed ModernWpfUI package smoke applications from '$resolvedPackagePath' for both resource entries on: $($TargetFrameworks -join ', ')"

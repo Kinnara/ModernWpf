@@ -1,6 +1,6 @@
 // C# Code
 
-// ==========================  Recipe class used for items ========================== 
+// ==========================  Recipe class used for items ==========================
 public class Recipe
 {
     public int Num { get; set; }
@@ -18,7 +18,7 @@ public class Recipe
 
     public void RandomizeIngredients()
     {
-        // To give the items different heights for visual variety, give recipes 
+        // To give the items different heights for visual variety, give recipes
         // random numbers of random "extra" ingredients
         Random rndNum = new Random();
         Random rndIng = new Random();
@@ -45,15 +45,15 @@ public class Recipe
     }
 }
 
-// ==========================  Data source class ========================== 
+// ==========================  Data source class ==========================
 /* To hold the recipe items, a data source class was created called MyItemsSource. The class
-   inherits from IList and IKeyIndexMapping interfaces, basically creating a collection class 
+   inherits from IList and IKeyIndexMapping interfaces, basically creating a collection class
    that can easily filter and sort its items. Important methods are shown below, but full source
    code can be found in WinUI Gallery repo. See the linked ItemsRepeater guidance documentation as
    well for a full tutorial on how to implement this type of class. */
 
-public class MyItemsSource : IList, 
-                             Microsoft.UI.Xaml.Controls.IKeyIndexMapping, 
+public class MyItemsSource : IList,
+                             Microsoft.UI.Xaml.Controls.IKeyIndexMapping,
                              INotifyCollectionChanged
 {
     private List<Recipe> inner = new List<Recipe>();
@@ -68,13 +68,13 @@ public class MyItemsSource : IList,
         inner.Clear();
         if (collection != null)
         {
-            inner.AddRange(collection);  
+            inner.AddRange(collection);
         }
 
         if (CollectionChanged != null)
         {
             CollectionChanged?.Invoke(
-                this, 
+                this,
                 new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
     }
@@ -121,16 +121,16 @@ private void InitializeData()
                                     Color = colors[k % 15 + 1]
                                 }));
 
-    // The lists fruits, vegetables, grains, and proteins were all populated with strings. 
-    // This loop goes through each Recipe item and populates its ingredients list with one 
-    // string from each list/category, then randomizes the ingredients list by adding extras.            
+    // The lists fruits, vegetables, grains, and proteins were all populated with strings.
+    // This loop goes through each Recipe item and populates its ingredients list with one
+    // string from each list/category, then randomizes the ingredients list by adding extras.
     foreach (Recipe rec in tempList)
     {
         string fruitOption = fruits[rnd.Next(0, 6)];
         string vegOption = vegetables[rnd.Next(0, 6)];
         string grainOption = grains[rnd.Next(0, 6)];
         string proteinOption = proteins[rnd.Next(0, 6)];
-        rec.Ingredients = "\n" + fruitOption + "\n" + vegOption + "\n" + 
+        rec.Ingredients = "\n" + fruitOption + "\n" + vegOption + "\n" +
         grainOption + "\n" + proteinOption;
         rec.IngList = new List<string>() { fruitOption, vegOption, grainOption, proteinOption };
         rec.RandomizeIngredients();
@@ -146,7 +146,7 @@ private void InitializeData()
     // ...
 }
 
-// ========================== Filtering, sorting, animating ========================== 
+// ========================== Filtering, sorting, animating ==========================
 public void FilterRecipes_FilterChanged(object sender, RoutedEventArgs e)
 {
     UpdateSortAndFilter();
@@ -172,13 +172,13 @@ private void OnSortDesClick(object sender, RoutedEventArgs e)
 
 private void UpdateSortAndFilter()
 {
-    // This is a Linq query that fetches all Recipes containing the ingredient 
+    // This is a Linq query that fetches all Recipes containing the ingredient
     // typed into the filter text box.
     var filteredTypes = staticRecipeData
         .Where(i => i.Ingredients.Contains(
             FilterRecipes.Text,
             StringComparison.InvariantCultureIgnoreCase));
-    // After filtering, sort the collection    
+    // After filtering, sort the collection
     var sortedFilteredTypes = IsSortDescending ?
         filteredTypes.OrderByDescending(i => i.numIngredients) :
         filteredTypes.OrderBy(i => i.numIngredients);

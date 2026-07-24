@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -22,10 +22,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
-    <PackageReference Include="MSTest.TestAdapter" Version="2.1.2" />
-    <PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
-    <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.7.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="MSTest.TestAdapter" />
+    <PackageReference Include="MSTest.TestFramework" />
+    <PackageReference Include="System.Runtime.WindowsRuntime" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\ModernWpf\PublicResourceKeys.Shipped.txt"
+          Link="PublicResourceContract\PublicResourceKeys.Shipped.txt"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\ModernWpf\PublicResourceKeys.Unshipped.txt"
+          Link="PublicResourceContract\PublicResourceKeys.Unshipped.txt"
+          CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

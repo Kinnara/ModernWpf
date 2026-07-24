@@ -92,14 +92,13 @@ public class ThemeResourceExtensionTests
                 }
 
                 Assert.Fail(
-                    "Could not find repository file '{0}'.",
-                    string.Join(Path.DirectorySeparatorChar.ToString(), relativePath));
+                    $"Could not find repository file '{string.Join(Path.DirectorySeparatorChar.ToString(), relativePath)}'.");
             }
 
             directory = directory.Parent;
         }
 
-        Assert.Fail("Could not find repository root from '{0}'.", AppContext.BaseDirectory);
+        Assert.Fail($"Could not find repository root from '{AppContext.BaseDirectory}'.");
         return string.Empty;
     }
 }

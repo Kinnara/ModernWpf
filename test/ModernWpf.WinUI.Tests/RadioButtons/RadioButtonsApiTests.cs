@@ -178,8 +178,8 @@ public class RadioButtonsApiTests
         {
             var radioButtons = new ModernWpf.Controls.RadioButtons();
 
-            Assert.ThrowsException<ArgumentException>(() => radioButtons.MaxColumns = 0);
-            Assert.ThrowsException<ArgumentException>(() => radioButtons.MaxColumns = -1);
+            Assert.ThrowsExactly<ArgumentException>(() => radioButtons.MaxColumns = 0);
+            Assert.ThrowsExactly<ArgumentException>(() => radioButtons.MaxColumns = -1);
             radioButtons.MaxColumns = 1;
         });
     }

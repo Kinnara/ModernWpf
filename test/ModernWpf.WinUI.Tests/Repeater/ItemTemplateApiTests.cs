@@ -128,7 +128,7 @@ public class ItemTemplateApiTests
         {
             var factory = new RecyclingElementFactory { RecyclePool = new RecyclePool() };
 
-            var exception = Assert.ThrowsException<InvalidOperationException>(() =>
+            var exception = Assert.ThrowsExactly<InvalidOperationException>(() =>
                 factory.GetElement(new ElementFactoryGetArgs { Parent = new StackPanel(), Data = 0 }));
             StringAssert.Contains(exception.Message, "Templates property cannot be null or empty.");
         });
@@ -150,7 +150,7 @@ public class ItemTemplateApiTests
             };
             factory.SelectTemplateKey += (sender, args) => { args.TemplateKey = "missing"; };
 
-            var exception = Assert.ThrowsException<InvalidOperationException>(() =>
+            var exception = Assert.ThrowsExactly<InvalidOperationException>(() =>
                 factory.GetElement(new ElementFactoryGetArgs { Parent = new StackPanel(), Data = 0 }));
             StringAssert.Contains(exception.Message, "No templates of key missing were found in the templates collection.");
         });
@@ -172,7 +172,7 @@ public class ItemTemplateApiTests
             };
             factory.SelectTemplateKey += (sender, args) => { args.TemplateKey = string.Empty; };
 
-            var exception = Assert.ThrowsException<InvalidOperationException>(() =>
+            var exception = Assert.ThrowsExactly<InvalidOperationException>(() =>
                 factory.GetElement(new ElementFactoryGetArgs { Parent = new StackPanel(), Data = 0 }));
             StringAssert.Contains(exception.Message, "Please provide a valid template identifier");
         });

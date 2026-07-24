@@ -377,7 +377,7 @@ public class InfoBadgeApiTests
             var infoBadge = new ModernWpf.Controls.InfoBadge();
             using var host = new TestWindowHost(infoBadge, width: 100, height: 100);
 
-            Assert.ThrowsException<ArgumentException>(() => infoBadge.Value = -10);
+            Assert.ThrowsExactly<ArgumentException>(() => infoBadge.Value = -10);
         });
     }
 

@@ -1,4 +1,4 @@
-﻿<NavigationView x:Name="nvSample" PaneDisplayMode="Top" 
+﻿<NavigationView x:Name="nvSample" PaneDisplayMode="Top"
     SelectionFollowsFocus="Enabled" IsBackButtonVisible="Collapsed">
     <NavigationView.MenuItems>
         <NavigationViewItem Icon="Play" Content="Item1" x:Name="SamplePage1Item" />

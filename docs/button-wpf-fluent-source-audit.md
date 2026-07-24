@@ -60,4 +60,3 @@ trigger structure as the stock default/accent button templates.
 ## Tests And Validation
 
 - `dotnet test test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter ButtonVisualStateTests`
-

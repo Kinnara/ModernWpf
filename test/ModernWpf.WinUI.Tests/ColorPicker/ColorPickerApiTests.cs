@@ -367,11 +367,11 @@ public class ColorPickerApiTests
         WpfTestHost.Run(() =>
         {
             var colorPicker = new ColorPickerControl();
-            var hueException = Assert.ThrowsException<ArgumentException>(() => colorPicker.MinHue = -1);
+            var hueException = Assert.ThrowsExactly<ArgumentException>(() => colorPicker.MinHue = -1);
             Assert.IsTrue(hueException.Message.Contains("MinHue must be between 0 and 359."));
 
             var colorSpectrum = new ColorSpectrum();
-            var saturationException = Assert.ThrowsException<ArgumentException>(() => colorSpectrum.MaxSaturation = 101);
+            var saturationException = Assert.ThrowsExactly<ArgumentException>(() => colorSpectrum.MaxSaturation = 101);
             Assert.IsTrue(saturationException.Message.Contains("MaxSaturation must be between 0 and 100."));
         });
     }

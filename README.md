@@ -12,10 +12,14 @@ ModernWpf is restarting active maintenance on a new 1.x line.
 | 0.9.x | Legacy | Security-only fixes for existing applications. |
 | 1.x | Active preview | New maintenance line for current WPF applications. |
 
-The NuGet package name remains `ModernWpfUI`. The first 1.x maintenance release is planned as `1.0.0-preview.1`.
+The NuGet package name remains `ModernWpfUI`. The first 1.x maintenance
+release candidate is `1.0.0-preview.1`.
 See the [1.x public API contract](docs/public-api-contract-1x.md) for the
 forward-compatibility boundary and the comparison with 0.9.x, current WinUI,
 and official WPF Fluent.
+Applications upgrading from 0.9.x should also read the
+[migration guide](docs/migrating-from-0.9.md) and
+[preview release notes](docs/release-notes-1.0.0-preview.1.md).
 
 ## Supported targets
 

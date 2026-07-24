@@ -141,6 +141,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         }
 
         [TestMethod]
+        [Ignore("Retired for 1.x: covered by ModernWpf.WinUI.Tests.PersonPictureApiTests.VerifyVSMStatesForPhotosAndInitials.")]
         public void VerifyVSMStatesForPhotosAndInitials()
         {
             RunOnUIThread.Execute(() =>

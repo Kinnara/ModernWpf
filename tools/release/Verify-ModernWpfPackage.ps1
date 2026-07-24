@@ -2,6 +2,8 @@ param(
     [Parameter(Mandatory = $true)]
     [string]$PackagePath,
 
+    [string]$SymbolPackagePath,
+
     [string[]]$TargetFrameworks = @(
         "net462",
         "net8.0-windows7.0",
@@ -15,10 +17,19 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 Add-Type -AssemblyName System.Reflection.Metadata
 
 $resolvedPackagePath = (Resolve-Path $PackagePath).Path
+$symbolPackageCandidate = if ($SymbolPackagePath) {
+    $SymbolPackagePath
+}
+else {
+    [System.IO.Path]::ChangeExtension($resolvedPackagePath, ".snupkg")
+}
+$resolvedSymbolPackagePath = (Resolve-Path $symbolPackageCandidate).Path
 $zip = [System.IO.Compression.ZipFile]::OpenRead($resolvedPackagePath)
+$symbolZip = [System.IO.Compression.ZipFile]::OpenRead($resolvedSymbolPackagePath)
 
 try {
     $entries = @($zip.Entries | ForEach-Object { $_.FullName })
+    $symbolEntries = @($symbolZip.Entries | ForEach-Object { $_.FullName })
     $publicTypeSurfaces = @{}
 
     function Assert-PackageEntry {
@@ -26,6 +37,72 @@ try {
 
         if ($entries -notcontains $Path) {
             throw "Package '$resolvedPackagePath' is missing '$Path'."
+        }
+    }
+
+    function Assert-PortablePdb {
+        param([string]$Path)
+
+        $entry = $symbolZip.Entries |
+            Where-Object { $_.FullName -eq $Path } |
+            Select-Object -First 1
+        if ($null -eq $entry) {
+            throw "Symbol package '$resolvedSymbolPackagePath' is missing '$Path'."
+        }
+
+        $entryStream = $entry.Open()
+        $pdbStream = [System.IO.MemoryStream]::new()
+        try {
+            $entryStream.CopyTo($pdbStream)
+            $entryStream.Dispose()
+            $entryStream = $null
+
+            $bytes = $pdbStream.ToArray()
+            if ($bytes.Length -lt 4 -or
+                $bytes[0] -ne 0x42 -or
+                $bytes[1] -ne 0x53 -or
+                $bytes[2] -ne 0x4A -or
+                $bytes[3] -ne 0x42) {
+                throw "Symbol '$Path' is not a portable PDB."
+            }
+
+            $pdbStream.Position = 0
+            $provider =
+                [System.Reflection.Metadata.MetadataReaderProvider]::FromPortablePdbStream($pdbStream)
+            try {
+                $metadataReader = $provider.GetMetadataReader()
+                $sourceLinkKind =
+                    [Guid]::Parse("CC110556-A091-4D38-9FEC-25AB9A351A6A")
+                $sourceLinkJson = $null
+
+                foreach ($handle in $metadataReader.CustomDebugInformation) {
+                    $information = $metadataReader.GetCustomDebugInformation($handle)
+                    if ($metadataReader.GetGuid($information.Kind) -eq $sourceLinkKind) {
+                        $sourceLinkJson = [Text.Encoding]::UTF8.GetString(
+                            $metadataReader.GetBlobBytes($information.Value))
+                        break
+                    }
+                }
+
+                if ([string]::IsNullOrWhiteSpace($sourceLinkJson)) {
+                    throw "Portable PDB '$Path' has no SourceLink record."
+                }
+
+                $sourceLink = $sourceLinkJson | ConvertFrom-Json
+                if ($null -eq $sourceLink.documents -or
+                    @($sourceLink.documents.PSObject.Properties).Count -eq 0) {
+                    throw "Portable PDB '$Path' has an empty SourceLink document map."
+                }
+            }
+            finally {
+                $provider.Dispose()
+            }
+        }
+        finally {
+            if ($null -ne $entryStream) {
+                $entryStream.Dispose()
+            }
+            $pdbStream.Dispose()
         }
     }
 
@@ -173,6 +250,26 @@ try {
         Assert-PublicAssemblySurface $targetFramework "ModernWpf.Controls"
         Assert-PublicXmlDocumentation $targetFramework "ModernWpf"
         Assert-PublicXmlDocumentation $targetFramework "ModernWpf.Controls"
+        Assert-PortablePdb "lib/$targetFramework/ModernWpf.pdb"
+        Assert-PortablePdb "lib/$targetFramework/ModernWpf.Controls.pdb"
+    }
+
+    $pdbEntriesInPackage = @($entries | Where-Object { $_ -match "\.pdb$" })
+    if ($pdbEntriesInPackage.Count -ne 0) {
+        throw "Main package '$resolvedPackagePath' must not contain PDB files: $($pdbEntriesInPackage -join ', ')"
+    }
+
+    $unexpectedSymbolEntries = @(
+        $symbolEntries |
+            Where-Object {
+                $_ -notmatch "^lib/[^/]+/ModernWpf(\.Controls)?\.pdb$" -and
+                $_ -notmatch "(^|/)ModernWpfUI\.nuspec$" -and
+                $_ -notmatch "(^|/)(_rels|package)/" -and
+                $_ -ne "[Content_Types].xml"
+            }
+    )
+    if ($unexpectedSymbolEntries.Count -ne 0) {
+        throw "Symbol package '$resolvedSymbolPackagePath' contains unexpected entries: $($unexpectedSymbolEntries -join ', ')"
     }
 
     foreach ($assemblyName in @("ModernWpf", "ModernWpf.Controls")) {
@@ -228,6 +325,24 @@ try {
         throw "Package '$resolvedPackagePath' must declare readme.md in nuspec metadata."
     }
 
+    $repository = $metadata.SelectSingleNode("*[local-name()='repository']")
+    if ($null -eq $repository) {
+        throw "Package '$resolvedPackagePath' has no repository metadata."
+    }
+
+    if ($repository.GetAttribute("type") -ne "git") {
+        throw "Package '$resolvedPackagePath' repository type must be 'git'."
+    }
+
+    if ($repository.GetAttribute("url") -ne "https://github.com/Kinnara/ModernWpf") {
+        throw "Package '$resolvedPackagePath' has an unexpected repository URL."
+    }
+
+    $repositoryCommit = $repository.GetAttribute("commit")
+    if ($repositoryCommit -notmatch "^[0-9a-fA-F]{40}$") {
+        throw "Package '$resolvedPackagePath' repository commit must be a full Git SHA."
+    }
+
     $dependencyGroups = @($metadata.SelectNodes("*[local-name()='dependencies']/*[local-name()='group']") | ForEach-Object {
         $_.GetAttribute("targetFramework")
     })
@@ -261,6 +376,7 @@ try {
 }
 finally {
     $zip.Dispose()
+    $symbolZip.Dispose()
 }
 
-Write-Host "Verified ModernWpfUI package: $resolvedPackagePath"
+Write-Host "Verified ModernWpfUI packages: $resolvedPackagePath and $resolvedSymbolPackagePath"

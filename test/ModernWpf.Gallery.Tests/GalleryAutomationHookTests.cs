@@ -45,19 +45,19 @@ namespace ModernWpf.Gallery.Tests
                 GalleryAutomation.WithAutomationId(sampleElement, GalleryAutomation.SampleElementId("Example", "Button"));
                 Assert.AreEqual("GallerySample_Example_Button", AutomationProperties.GetAutomationId(sampleElement));
 
-                Assert.ThrowsException<ArgumentException>(() =>
+                Assert.ThrowsExactly<ArgumentException>(() =>
                     GalleryAutomation.WithAutomationId(new Border(), "ExampleButton"));
-                Assert.ThrowsException<ArgumentException>(() =>
+                Assert.ThrowsExactly<ArgumentException>(() =>
                     GalleryAutomation.WithAutomationId(new Border(), string.Empty));
-                Assert.ThrowsException<ArgumentException>(() =>
+                Assert.ThrowsExactly<ArgumentException>(() =>
                     GalleryAutomation.WithAutomationId(new Border(), "GallerySample_Example"));
-                Assert.ThrowsException<ArgumentException>(() =>
+                Assert.ThrowsExactly<ArgumentException>(() =>
                     GalleryAutomation.WithAutomationId(new Border(), "GallerySample_Example_Button_Extra"));
-                Assert.ThrowsException<ArgumentException>(() =>
+                Assert.ThrowsExactly<ArgumentException>(() =>
                     GalleryAutomation.WithAutomationId(new Border(), "GallerySample_Example Button"));
-                Assert.ThrowsException<ArgumentException>(() =>
+                Assert.ThrowsExactly<ArgumentException>(() =>
                     GalleryAutomation.SampleRootId("Bad_Name"));
-                Assert.ThrowsException<ArgumentException>(() =>
+                Assert.ThrowsExactly<ArgumentException>(() =>
                     GalleryAutomation.SampleElementId("Example", string.Empty));
             });
         }
@@ -190,8 +190,8 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "CommandBarFlyout", "N" };
         }
 
-        [DataTestMethod]
-        [DynamicData(nameof(WinUIPortedControlExampleSupplementalContent), DynamicDataSourceType.Method)]
+        [TestMethod]
+        [DynamicData(nameof(WinUIPortedControlExampleSupplementalContent))]
         public void EveryWinUIPortedControlExampleUsesTheSourceOutputAndOptionsSlots(string uniqueId, string expectedShape)
         {
             WpfTestHost.Run(() =>
@@ -211,8 +211,8 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
-        [DataTestMethod]
-        [DynamicData(nameof(WinUIPortedControlExampleCounts), DynamicDataSourceType.Method)]
+        [TestMethod]
+        [DynamicData(nameof(WinUIPortedControlExampleCounts))]
         public void EveryWinUIPortedControlExampleExposesStableVisualArtifactIdentity(string uniqueId, int expectedCount)
         {
             WpfTestHost.Run(() =>
@@ -303,7 +303,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        [DynamicData(nameof(CuratedSampleAutomationIds), DynamicDataSourceType.Method)]
+        [DynamicData(nameof(CuratedSampleAutomationIds))]
         public void CuratedSamplesExposeStableAutomationIds(string uniqueId, string rootAutomationId, string primaryAutomationId)
         {
             WpfTestHost.Run(() =>
@@ -3137,7 +3137,7 @@ namespace ModernWpf.Gallery.Tests
                     disableControl.IsChecked = true;
                     WpfTestHost.DoEvents();
                     Assert.IsFalse(uriButton.IsEnabled);
-                    Assert.ThrowsException<ElementNotEnabledException>(() =>
+                    Assert.ThrowsExactly<ElementNotEnabledException>(() =>
                         ((IInvokeProvider)uriPeer.GetPattern(PatternInterface.Invoke)).Invoke());
                     disableControl.IsChecked = false;
                     WpfTestHost.DoEvents();
@@ -6614,7 +6614,7 @@ namespace ModernWpf.Gallery.Tests
             var expectedNames = includeBlack
                 ? new[] { "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Gray", "Black" }
                 : new[] { "Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Gray" };
-            Assert.AreEqual(expectedNames.Length, expectedCount);
+            Assert.AreEqual(expectedCount, expectedNames.Length);
             for (var i = 0; i < expectedNames.Length; i++)
             {
                 var button = grid.Children[i] as Button;

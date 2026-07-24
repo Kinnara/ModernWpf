@@ -223,13 +223,15 @@ namespace System.Windows.Controls
                 {
                     if (_currentEnumerator == -1)
                     {
-#pragma warning suppress 6503 // IEnumerator.Current is documented to throw this exception
+#pragma warning disable 6503 // IEnumerator.Current is documented to throw this exception
                         throw new InvalidOperationException(EnumeratorNotStarted);
+#pragma warning restore 6503
                     }
                     if (_currentEnumerator >= 3)
                     {
-#pragma warning suppress 6503 // IEnumerator.Current is documented to throw this exception
+#pragma warning disable 6503 // IEnumerator.Current is documented to throw this exception
                         throw new InvalidOperationException(EnumeratorNotStarted);
+#pragma warning restore 6503
                     }
 
                     //  assert below is not true anymore since UIElementCollection allowes for null children

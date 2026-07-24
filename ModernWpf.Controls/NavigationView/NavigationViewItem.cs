@@ -1007,9 +1007,6 @@ namespace ModernWpf.Controls
             UnhookInputEvents();
 
             m_flyoutClosingRevoker?.Revoke();
-            m_splitViewIsPaneOpenChangedRevoker?.Revoke();
-            m_splitViewDisplayModeChangedRevoker?.Revoke();
-            m_splitViewCompactPaneLengthChangedRevoker?.Revoke();
             m_repeaterElementPreparedRevoker?.Revoke();
             m_repeaterElementClearingRevoker?.Revoke();
             IsEnabledChanged -= OnIsEnabledChanged;
@@ -1021,10 +1018,6 @@ namespace ModernWpf.Controls
             m_repeater = null;
             m_flyoutContentGrid = null;
         }
-
-        SplitViewIsPaneOpenChangedRevoker m_splitViewIsPaneOpenChangedRevoker;
-        SplitViewDisplayModeChangedRevoker m_splitViewDisplayModeChangedRevoker;
-        SplitViewCompactPaneLengthChangedRevoker m_splitViewCompactPaneLengthChangedRevoker;
 
         ItemsRepeaterElementPreparedRevoker m_repeaterElementPreparedRevoker;
         ItemsRepeaterElementClearingRevoker m_repeaterElementClearingRevoker;

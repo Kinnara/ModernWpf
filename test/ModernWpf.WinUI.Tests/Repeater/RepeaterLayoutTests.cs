@@ -492,17 +492,17 @@ public class RepeaterLayoutTests
 
             using var host = new TestWindowHost(scrollViewer, width: 160, height: 160);
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsExactly<ArgumentException>(
                 () => scrollViewer.ChangeView(double.NaN, null, null, disableAnimation: true));
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsExactly<ArgumentException>(
                 () => scrollViewer.ChangeView(null, double.PositiveInfinity, null, disableAnimation: true));
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsExactly<ArgumentException>(
                 () => scrollViewer.ChangeView(null, null, float.PositiveInfinity, disableAnimation: true));
 
             Assert.IsTrue(scrollViewer.ChangeView(20, 30, null, disableAnimation: true));
             host.UpdateLayout();
 
-            Assert.ThrowsException<ArgumentException>(
+            Assert.ThrowsExactly<ArgumentException>(
                 () => scrollViewer.ChangeView(60, 70, float.NaN, disableAnimation: true));
             host.UpdateLayout();
             Assert.AreEqual(20, scrollViewer.HorizontalOffset, 0.001);

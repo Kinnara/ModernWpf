@@ -1763,7 +1763,7 @@ public class ToggleSwitchApiTests
 
             toggleSwitch.IsEnabled = false;
 
-            Assert.ThrowsException<ElementNotEnabledException>(() => toggleProvider.Toggle());
+            Assert.ThrowsExactly<ElementNotEnabledException>(() => toggleProvider.Toggle());
             Assert.IsFalse(toggleSwitch.IsOn);
         });
     }

@@ -62,7 +62,7 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(sampleTests, "PatternInterface.Invoke");
             StringAssert.Contains(sampleTests, "new CheckBoxAutomationPeer(disableControl)");
             StringAssert.Contains(sampleTests, "PatternInterface.Toggle");
-            StringAssert.Contains(sampleTests, "Assert.ThrowsException<ElementNotEnabledException>");
+            StringAssert.Contains(sampleTests, "Assert.ThrowsExactly<ElementNotEnabledException>");
 
             StringAssert.Contains(harness, "\"HyperlinkButton\" { return $true }");
             StringAssert.Contains(harness, "\"HyperlinkButton\" { return \"Control1\" }");

@@ -1,6 +1,6 @@
 // C# Code
 
-// CustomDataObject class definition: 
+// CustomDataObject class definition:
 public class CustomDataObject
 {
     public string Title { get; set; } = string.Empty;
@@ -13,6 +13,6 @@ public class CustomDataObject
     {
     }
 
-	
+
     // ... Methods ...
 }

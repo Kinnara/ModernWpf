@@ -21,7 +21,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        [DynamicData(nameof(CatalogItems), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetDisplayName))]
+        [DynamicData(nameof(CatalogItems), DynamicDataDisplayName = nameof(GetDisplayName))]
         public void CatalogItemCreatesWpfSample(string uniqueId)
         {
             var item = GalleryCatalog.FindItem(uniqueId);

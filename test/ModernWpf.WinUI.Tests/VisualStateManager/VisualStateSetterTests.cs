@@ -334,7 +334,7 @@ public class VisualStateSetterTests
 
             using var host = new TestWindowHost(control);
 
-            Assert.ThrowsException<InvalidOperationException>(
+            Assert.ThrowsExactly<InvalidOperationException>(
                 () => System.Windows.VisualStateManager.GoToState(control, "Broken", false));
         });
     }

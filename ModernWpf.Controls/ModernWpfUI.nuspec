@@ -9,6 +9,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">$license$</license>
     <projectUrl>$projectUrl$</projectUrl>
+    <repository type="$repositoryType$" url="$repositoryUrl$" commit="$repositoryCommit$" />
     <readme>readme.md</readme>
     <description>Modern styles and controls for your WPF applications.</description>
     <tags>$tags$</tags>
@@ -31,6 +32,7 @@
   </metadata>
   <files>
     <file src="bin\$configuration$\**\ModernWpf*.dll" target="lib" />
+    <file src="bin\$configuration$\**\ModernWpf*.pdb" target="lib" />
     <file src="bin\$configuration$\**\ModernWpf*.xml" target="lib" />
     <file src="readme.md" target="" />
   </files>

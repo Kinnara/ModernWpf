@@ -28,7 +28,7 @@
         <RadioMenuFlyoutItem Text="Medium icons" IsChecked="True" GroupName="SizeGroup"/>
         <RadioMenuFlyoutItem Text="Large icons" GroupName="SizeGroup"/>
     </MenuBarItem>
-                    
+
     <MenuBarItem Title="Help">
         <MenuFlyoutItem Text="About"/>
     </MenuBarItem>

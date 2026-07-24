@@ -8,19 +8,19 @@ private void NavView_ItemInvoked(NavigationView sender, NavigationViewItemInvoke
         navOptions.IsNavigationStackEnabled = False;
     }
     Type pageType;
-    if (args.InvokedItem == SamplePage1Item) 
+    if (args.InvokedItem == SamplePage1Item)
     {
         pageType = typeof(SamplePage1);
     }
-    else if (args.InvokedItem == SamplePage2Item) 
+    else if (args.InvokedItem == SamplePage2Item)
     {
         pageType = typeof(SamplePage2);
     }
-    else if (args.InvokedItem == SamplePage3Item) 
+    else if (args.InvokedItem == SamplePage3Item)
     {
         pageType = typeof(SamplePage3);
     }
-    else if (args.InvokedItem == SamplePage4Item) 
+    else if (args.InvokedItem == SamplePage4Item)
     {
         pageType = typeof(SamplePage4);
     }

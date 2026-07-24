@@ -6,7 +6,7 @@ namespace ModernWpf.Gallery.Tests
     [TestClass]
     public class NavigationRootPageTests
     {
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("TeachingTip")]
         [DataRow("item/TeachingTip")]
         [DataRow("/item/TeachingTip")]
@@ -21,7 +21,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual("TeachingTip", target.UniqueId);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("DialogsAndFlyouts")]
         [DataRow("category/DialogsAndFlyouts")]
         [DataRow("/category/DialogsAndFlyouts")]
@@ -36,7 +36,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual("DialogsAndFlyouts", target.UniqueId);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("category/Design%20Guidance", "DesignGuidance")]
         [DataRow("category/Basic%20Input", "BasicInput")]
         [DataRow("category/Date%20%26%20Calendar", "DateAndCalendar")]
@@ -51,7 +51,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(expectedUniqueId, target.UniqueId);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("item/Colors", "Color")]
         [DataRow("item/Icons", "Iconography")]
         [DataRow("item/RichTextEdit", "RichTextBox")]
@@ -64,7 +64,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(expectedUniqueId, target.UniqueId);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("category/Media%20Controls")]
         [DataRow("category/Samples")]
         [DataRow("category/System")]
@@ -79,7 +79,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsNull(NavigationRootPage.ResolveNavigationTarget(value));
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("")]
         [DataRow(" ")]
         [DataRow("NewControls")]
@@ -100,7 +100,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(NavigationTargetKind.AllControls, target.Kind);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Home", "Home")]
         [DataRow("All Controls", "AllControls")]
         [DataRow("item/All%20Controls", "AllControls")]
@@ -112,7 +112,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(expectedKind, target.Kind.ToString());
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("WhatsNew")]
         [DataRow("What's New")]
         [DataRow("Whats New")]
@@ -125,7 +125,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(NavigationTargetKind.WhatsNew, target.Kind);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Settings")]
         [DataRow("settings")]
         [DataRow("/settings")]

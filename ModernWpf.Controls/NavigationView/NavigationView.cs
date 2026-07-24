@@ -5868,7 +5868,6 @@ namespace ModernWpf.Controls
         FrameworkElement m_menuItemsScrollViewer;
         FrameworkElement m_footerItemsScrollViewer;
         UIElement m_paneContentGrid;
-        ColumnDefinition m_paneToggleButtonIconGridColumn;
         FrameworkElement m_paneTitleHolderFrameworkElement;
         FrameworkElement m_paneTitleFrameworkElement;
         Button m_paneSearchButton;
@@ -5947,8 +5946,6 @@ namespace ModernWpf.Controls
         // Customer select an item from SelectedItem property->ChangeSelection update ListView->LIstView raise OnSelectChange(we want stop here)->change property do do animation again.
         // Customer clicked listview->listview raised OnSelectChange->SelectedItem property changed->ChangeSelection->Undo the selection by SelectedItem(prevItem) (we want it stop here)->ChangeSelection again ->...
         bool m_shouldIgnoreNextSelectionChange = false;
-        // Used to disable raising selection change iff settings item gets restored because of displaymode change
-        bool m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore = false;
         // A flag to track that the selectionchange is caused by selection a item in topnav overflow menu
         bool m_selectionChangeFromOverflowMenu = false;
         // Flag indicating whether selection change should raise item invoked. This is needed to be able to raise ItemInvoked before SelectionChanged while SelectedItem should point to the clicked item

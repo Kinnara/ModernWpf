@@ -742,7 +742,7 @@ public class ContentDialogApiTests
             using (new TestWindowHost(siblingRoot, width: 640, height: 480))
             {
                 var firstTask = ShowInPlace(firstSibling);
-                Assert.ThrowsException<InvalidOperationException>(() => secondSibling.ShowAsync(ContentDialogPlacement.InPlace));
+                Assert.ThrowsExactly<InvalidOperationException>(() => secondSibling.ShowAsync(ContentDialogPlacement.InPlace));
 
                 firstSibling.Hide();
                 Assert.AreEqual(ContentDialogResult.None, WaitForResult(firstTask));

@@ -79,13 +79,27 @@ namespace ModernWpf.Controls
         public double HorizontalAnchorRatio
         {
             get => m_horizontalEdge;
-            set => m_horizontalEdge = value;
+            set
+            {
+                if (m_horizontalEdge != value)
+                {
+                    m_horizontalEdge = value;
+                    ConfigurationChanged?.Invoke(this);
+                }
+            }
         }
 
         public double VerticalAnchorRatio
         {
             get => m_verticalEdge;
-            set => m_verticalEdge = value;
+            set
+            {
+                if (m_verticalEdge != value)
+                {
+                    m_verticalEdge = value;
+                    ConfigurationChanged?.Invoke(this);
+                }
+            }
         }
 
         public UIElement CurrentAnchor

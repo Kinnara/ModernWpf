@@ -43,13 +43,15 @@ public sealed class TestWindowHost : IDisposable
 
     public void Dispose()
     {
+        Window.Content = null;
+        WpfTestHost.DoEvents();
+
         var app = Application.Current;
         if (app != null && ReferenceEquals(app.MainWindow, Window))
         {
             app.MainWindow = previousMainWindow;
         }
 
-        Window.Content = null;
         Window.Close();
         WpfTestHost.DoEvents();
     }

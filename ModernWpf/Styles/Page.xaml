@@ -18,8 +18,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Page}">
-                    <Border 
-                        Background="{TemplateBinding Background}" 
+                    <Border
+                        Background="{TemplateBinding Background}"
                         CornerRadius="8">
                         <ContentPresenter
                             Content="{TemplateBinding ContentControl.Content}"

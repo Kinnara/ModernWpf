@@ -169,8 +169,6 @@ namespace MUXControlsTestApp
             simpleVerify.IsTrue(contentPresenter != null, "HeaderContentPresenter can't be found");
 
             string expectedHeaderMargin = "0,0,0,4";
-            string expectDatePickerFlyoutPresenterItemPadding = "0,3,0,6";
-            string expectDatePickerFlyoutPresenterMonthPadding = "9,3,0,6";
 
             if (contentPresenter != null)
             {

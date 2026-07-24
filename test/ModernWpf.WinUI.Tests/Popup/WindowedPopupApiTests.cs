@@ -33,6 +33,7 @@ public class WindowedPopupApiTests
     [TestMethod]
     public void PopupPlacementModeMatchesWinUIOrder()
     {
+#pragma warning disable MSTEST0032 // Numeric enum values are a shipped WinUI-compatibility contract.
         Assert.AreEqual(0, (int)PopupPlacementMode.Auto);
         Assert.AreEqual(1, (int)PopupPlacementMode.Top);
         Assert.AreEqual(2, (int)PopupPlacementMode.Bottom);
@@ -46,6 +47,7 @@ public class WindowedPopupApiTests
         Assert.AreEqual(10, (int)PopupPlacementMode.LeftEdgeAlignedBottom);
         Assert.AreEqual(11, (int)PopupPlacementMode.RightEdgeAlignedTop);
         Assert.AreEqual(12, (int)PopupPlacementMode.RightEdgeAlignedBottom);
+#pragma warning restore MSTEST0032
     }
 
     [TestMethod]

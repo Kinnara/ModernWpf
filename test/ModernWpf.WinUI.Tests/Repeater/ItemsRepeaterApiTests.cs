@@ -106,7 +106,7 @@ public class ItemsRepeaterApiTests
         {
             var repeater = new ItemsRepeater();
 
-            var exception = Assert.ThrowsException<InvalidOperationException>(() => repeater.GetOrCreateElement(0));
+            var exception = Assert.ThrowsExactly<InvalidOperationException>(() => repeater.GetOrCreateElement(0));
             StringAssert.Contains(exception.Message, "ItemSource doesn't have a value");
         });
     }
@@ -121,11 +121,11 @@ public class ItemsRepeaterApiTests
                 ItemsSource = Enumerable.Range(0, 5).Select(i => $"Item #{i}")
             };
 
-            var negativeException = Assert.ThrowsException<ArgumentException>(() => repeater.GetOrCreateElement(-1));
+            var negativeException = Assert.ThrowsExactly<ArgumentException>(() => repeater.GetOrCreateElement(-1));
             StringAssert.Contains(negativeException.Message, "Argument index is invalid.");
             Assert.AreEqual("index", negativeException.ParamName);
 
-            var pastEndException = Assert.ThrowsException<ArgumentException>(() => repeater.GetOrCreateElement(5));
+            var pastEndException = Assert.ThrowsExactly<ArgumentException>(() => repeater.GetOrCreateElement(5));
             StringAssert.Contains(pastEndException.Message, "Argument index is invalid.");
             Assert.AreEqual("index", pastEndException.ParamName);
         });

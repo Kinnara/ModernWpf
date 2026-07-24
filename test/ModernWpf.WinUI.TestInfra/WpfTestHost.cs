@@ -1,5 +1,11 @@
 using System;
+using System.Linq;
 using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace ModernWpf.WinUI.TestInfra;
@@ -28,8 +34,15 @@ public static class WpfTestHost
 
         Invoke(() =>
         {
-            action();
-            return true;
+            try
+            {
+                action();
+                return true;
+            }
+            finally
+            {
+                CleanupUiState();
+            }
         });
     }
 
@@ -72,10 +85,75 @@ public static class WpfTestHost
             return;
         }
 
+        var currentThread = thread;
+        currentDispatcher.Invoke(() =>
+        {
+            CleanupUiState();
+            Application.Current?.Shutdown();
+        });
         currentDispatcher.BeginInvokeShutdown(DispatcherPriority.Normal);
-        thread?.Join(TimeSpan.FromSeconds(5));
+
+        if (currentThread != null && !currentThread.Join(TimeSpan.FromSeconds(10)))
+        {
+            throw new TimeoutException("Timed out stopping the WPF test dispatcher.");
+        }
+
         dispatcher = null;
         thread = null;
+    }
+
+    private static void CleanupUiState()
+    {
+        if (!Dispatcher.CurrentDispatcher.CheckAccess())
+        {
+            throw new InvalidOperationException("WPF test cleanup must run on the host dispatcher.");
+        }
+
+        Keyboard.ClearFocus();
+        Mouse.Capture(null);
+
+        var app = Application.Current;
+        if (app == null)
+        {
+            return;
+        }
+
+        foreach (var window in app.Windows.Cast<Window>().ToArray())
+        {
+            CloseTransientSurfaces(window);
+            window.Content = null;
+            window.Close();
+        }
+
+        app.MainWindow = null;
+        DoEvents();
+    }
+
+    private static void CloseTransientSurfaces(DependencyObject root)
+    {
+        if (root is Popup popup)
+        {
+            popup.IsOpen = false;
+        }
+
+        if (root is FrameworkElement element)
+        {
+            if (element.ContextMenu is { IsOpen: true } contextMenu)
+            {
+                contextMenu.IsOpen = false;
+            }
+
+            if (element.ToolTip is ToolTip { IsOpen: true } toolTip)
+            {
+                toolTip.IsOpen = false;
+            }
+        }
+
+        var childCount = VisualTreeHelper.GetChildrenCount(root);
+        for (var index = 0; index < childCount; index++)
+        {
+            CloseTransientSurfaces(VisualTreeHelper.GetChild(root, index));
+        }
     }
 
     private static void EnsureStarted()

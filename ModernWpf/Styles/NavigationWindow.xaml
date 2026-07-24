@@ -3,7 +3,7 @@
     The .NET Foundation licenses this file to you under the MIT license.
     See the LICENSE file in the project root for more information.
     ==================================================================-->
-    
+
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
@@ -18,22 +18,22 @@
     <system:String x:Key="NavigationWindowMenuItemArrowRightGlyph">&#xE72A;</system:String>
 
     <ControlTemplate x:Key="NavigationWindowTemplateKey" TargetType="{x:Type NavigationWindow}">
-        <Border 
+        <Border
             Background="{TemplateBinding Background}"
             BorderBrush="{TemplateBinding BorderBrush}"
             BorderThickness="{TemplateBinding BorderThickness}">
             <DockPanel>
-                <Menu 
+                <Menu
                     Name="NavMenu"
-                    VerticalAlignment="Center" 
+                    VerticalAlignment="Center"
                     DockPanel.Dock="Top">
-                    <MenuItem 
+                    <MenuItem
                         Background="Transparent"
                         BorderBrush="Transparent"
                         Command="NavigationCommands.BrowseBack"
                         FontFamily="{DynamicResource SymbolThemeFontFamily}"
                         Header ="{StaticResource NavigationWindowMenuItemArrowLeftGlyph}"/>
-                    <MenuItem 
+                    <MenuItem
                         Background="Transparent"
                         BorderBrush="Transparent"
                         Command="NavigationCommands.BrowseForward"
@@ -44,7 +44,7 @@
                         x:Name="Arrow"
                         SnapsToDevicePixels="False"
                         HorizontalAlignment="Right"
-                        VerticalAlignment="Center"                 
+                        VerticalAlignment="Center"
                         ItemContainerStyle="{StaticResource FrameNavigationButtonJournalEntryStyle}"
                         IsSubmenuOpen="{Binding Path=(MenuItem.IsSubmenuOpen),Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"  >
                         <MenuItem.Icon>
@@ -64,7 +64,7 @@
                     <AdornerDecorator>
                         <ContentPresenter Name="PART_NavWinCP" ClipToBounds="True"/>
                     </AdornerDecorator>
-                    <ResizeGrip 
+                    <ResizeGrip
                         x:Name="WindowResizeGrip"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"

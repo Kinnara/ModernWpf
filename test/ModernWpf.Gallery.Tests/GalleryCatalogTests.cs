@@ -116,7 +116,7 @@ namespace ModernWpf.Gallery.Tests
             CollectionAssert.AreEqual(expected, actual);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Design Guidance", "DesignGuidance")]
         [DataRow("Basic Input", "BasicInput")]
         [DataRow("Date & Calendar", "DateAndCalendar")]
@@ -130,7 +130,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(expectedUniqueId, group.UniqueId);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Colors", "Color", "DesignGuidance")]
         [DataRow("Icons", "Iconography", "DesignGuidance")]
         [DataRow("RichTextEdit", "RichTextBox", "Text")]
@@ -145,7 +145,7 @@ namespace ModernWpf.Gallery.Tests
             Assert.AreEqual(expectedGroupId, group.UniqueId);
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("UserDashboard")]
         [DataRow("FileAndFolderDialogs")]
         [DataRow("MessageBox")]
@@ -411,15 +411,13 @@ namespace ModernWpf.Gallery.Tests
         {
             foreach (var item in GalleryCatalog.Items)
             {
-                Assert.IsNotNull(GalleryCatalog.FindDisplayGroupForItem(item.UniqueId), "Missing display group for '{0}'.", item.UniqueId);
+                Assert.IsNotNull(GalleryCatalog.FindDisplayGroupForItem(item.UniqueId), $"Missing display group for '{item.UniqueId}'.");
 
                 foreach (var relatedControlId in item.RelatedControlIds)
                 {
                     Assert.IsNotNull(
                         GalleryCatalog.FindItem(relatedControlId),
-                        "Missing related item '{0}' referenced by '{1}'.",
-                        relatedControlId,
-                        item.UniqueId);
+                        $"Missing related item '{relatedControlId}' referenced by '{item.UniqueId}'.");
                 }
             }
         }
@@ -481,9 +479,7 @@ namespace ModernWpf.Gallery.Tests
                         {
                             Assert.IsTrue(
                                 retainedItemIds.Contains(relatedControl),
-                                "Source item '{0}' still references deleted page '{1}'.",
-                                itemId,
-                                relatedControl);
+                                $"Source item '{itemId}' still references deleted page '{relatedControl}'.");
                         }
                     }
                 }
@@ -927,9 +923,7 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.IsTrue(
                 imagePath.EndsWith(expectedSuffix, StringComparison.OrdinalIgnoreCase),
-                "Expected '{0}' to end with '{1}'.",
-                imagePath,
-                expectedSuffix);
+                $"Expected '{imagePath}' to end with '{expectedSuffix}'.");
         }
 
         private static string[] GetGalleryResourceNames()
@@ -975,7 +969,7 @@ namespace ModernWpf.Gallery.Tests
                 directory = directory.Parent;
             }
 
-            Assert.Fail("Could not find repository file '{0}'.", string.Join(Path.DirectorySeparatorChar.ToString(), relativePath));
+            Assert.Fail($"Could not find repository file '{string.Join(Path.DirectorySeparatorChar.ToString(), relativePath)}'.");
             return null;
         }
 
@@ -993,7 +987,7 @@ namespace ModernWpf.Gallery.Tests
                 directory = directory.Parent;
             }
 
-            Assert.Fail("Could not find repository directory '{0}'.", string.Join(Path.DirectorySeparatorChar.ToString(), relativePath));
+            Assert.Fail($"Could not find repository directory '{string.Join(Path.DirectorySeparatorChar.ToString(), relativePath)}'.");
             return null;
         }
 

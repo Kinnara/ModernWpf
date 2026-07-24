@@ -361,7 +361,7 @@ public class SelectorBarApiTests
         {
             var selectorBar = new ModernWpf.Controls.SelectorBar();
 
-            Assert.ThrowsException<System.ArgumentException>(() => selectorBar.SelectedItem = new SelectorBarItem());
+            Assert.ThrowsExactly<System.ArgumentException>(() => selectorBar.SelectedItem = new SelectorBarItem());
         });
     }
 

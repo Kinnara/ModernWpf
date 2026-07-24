@@ -110,7 +110,7 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("UserDashboard")]
         [DataRow("FileAndFolderDialogs")]
         [DataRow("MessageBox")]

@@ -1,11 +1,11 @@
 ﻿<Page x:Class="ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.SignalSection"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance"
       xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
-      mc:Ignorable="d" 
+      mc:Ignorable="d"
       d:DesignHeight="450" d:DesignWidth="800"
       Foreground="{DynamicResource WindowForeground}"
       Title="SignalSection">
@@ -24,7 +24,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-           
+
             <controls:ColorTile
                 Background="{DynamicResource SystemFillColorSuccessBrush}"
                 ColorBrushName="SystemFillColorSuccessBrush"
@@ -60,7 +60,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
+
             <controls:ColorTile
                 Grid.Column="0"
                 Background="{DynamicResource SystemFillColorSuccessBackgroundBrush}"
@@ -104,7 +104,7 @@
                 ColorValue="#60CDFF (100%)"
                 Foreground="{DynamicResource TextFillColorInverseBrush}"
                 ShowSeparator="False" />
-          
+
             <controls:ColorTile
                 Grid.Column="1"
                 Background="{DynamicResource SystemFillColorNeutralBrush}"
@@ -112,7 +112,7 @@
                 ColorExplanation="Badge"
                 ColorName="System / Neutral"
                 ColorValue="#FFFFFF (8B, 54,42%)"
-                Foreground="{DynamicResource TextFillColorInverseBrush}" 
+                Foreground="{DynamicResource TextFillColorInverseBrush}"
                 ShowSeparator="True"/>
 
 

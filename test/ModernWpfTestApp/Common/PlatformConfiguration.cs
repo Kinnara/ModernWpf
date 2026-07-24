@@ -32,8 +32,6 @@ namespace Common
         const OSVersion MaxOSVersion = OSVersion.Redstone2;
 
         private const ushort InvalidAPIVersion = 255;
-        private static ushort _currentAPIVersion = InvalidAPIVersion;
-
         /*private static bool IsApiContractPresent(ushort version)
         {
             return ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", version);

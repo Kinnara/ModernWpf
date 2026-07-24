@@ -37,8 +37,8 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         CornerRadius="{TemplateBinding Border.CornerRadius}">
-                        <ContentPresenter 
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                        <ContentPresenter
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                     </Border>

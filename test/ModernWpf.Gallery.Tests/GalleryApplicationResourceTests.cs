@@ -155,7 +155,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(
                     Visibility.Visible,
                     nullConverter.Convert(new object(), typeof(Visibility), null, CultureInfo.InvariantCulture));
-                Assert.ThrowsException<NotImplementedException>(
+                Assert.ThrowsExactly<NotImplementedException>(
                     () => nullConverter.ConvertBack(Visibility.Visible, typeof(object), null, CultureInfo.InvariantCulture));
 
                 var emptyConverter = new EmptyToVisibilityConverter();
@@ -171,7 +171,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(
                     Visibility.Visible,
                     emptyConverter.Convert("Deleted", typeof(Visibility), null, CultureInfo.InvariantCulture));
-                Assert.ThrowsException<NotImplementedException>(
+                Assert.ThrowsExactly<NotImplementedException>(
                     () => emptyConverter.ConvertBack(Visibility.Visible, typeof(object), null, CultureInfo.InvariantCulture));
             });
         }
@@ -1013,9 +1013,7 @@ namespace ModernWpf.Gallery.Tests
 
             Assert.IsTrue(
                 imagePath.StartsWith(prefix, StringComparison.OrdinalIgnoreCase),
-                "Expected '{0}' to start with '{1}'.",
-                imagePath,
-                prefix);
+                $"Expected '{imagePath}' to start with '{prefix}'.");
 
             return imagePath.Substring(prefix.Length);
         }

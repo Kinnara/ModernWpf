@@ -283,7 +283,9 @@ public class FlyoutBaseApiTests
 
         Assert.AreEqual(FlyoutShowMode.Auto, options.ShowMode);
         Assert.AreEqual(FlyoutPlacementMode.Auto, options.Placement);
+#pragma warning disable MSTEST0032 // Numeric enum values are a shipped interop contract.
         Assert.AreEqual(13, (int)FlyoutPlacementMode.Auto);
+#pragma warning restore MSTEST0032
         Assert.IsNull(options.Position);
         Assert.IsNull(options.ExclusionRect);
     }
@@ -424,8 +426,8 @@ public class FlyoutBaseApiTests
     {
         var flyout = new Flyout();
 
-        Assert.ThrowsException<ArgumentException>(() => flyout.ShowAt(null, null));
-        Assert.ThrowsException<ArgumentException>(() => flyout.ShowAt(null, new FlyoutShowOptions()));
+        Assert.ThrowsExactly<ArgumentException>(() => flyout.ShowAt(null, null));
+        Assert.ThrowsExactly<ArgumentException>(() => flyout.ShowAt(null, new FlyoutShowOptions()));
     }
 
     [TestMethod]
@@ -593,7 +595,9 @@ public class FlyoutBaseApiTests
     [TestMethod]
     public void ShowModeTransientWithDismissOnPointerMoveAwayUsesWinUIThreshold()
     {
+#pragma warning disable MSTEST0032 // Numeric enum values are a shipped interop contract.
         Assert.AreEqual(3, (int)FlyoutShowMode.TransientWithDismissOnPointerMoveAway);
+#pragma warning restore MSTEST0032
 
         var presenterBounds = new Rect(10, 20, 100, 50);
 

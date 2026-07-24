@@ -342,8 +342,8 @@ public class AnnotatedScrollBarApiTests
             var annotatedScrollBar = new ModernWpf.Controls.AnnotatedScrollBar();
             var controller = annotatedScrollBar.ScrollController;
 
-            Assert.ThrowsException<ArgumentException>(() => controller.SetValues(100, 0, 0, 0));
-            Assert.ThrowsException<ArgumentException>(() => controller.SetValues(0, 100, 0, -1));
+            Assert.ThrowsExactly<ArgumentException>(() => controller.SetValues(100, 0, 0, 0));
+            Assert.ThrowsExactly<ArgumentException>(() => controller.SetValues(0, 100, 0, -1));
         });
     }
 

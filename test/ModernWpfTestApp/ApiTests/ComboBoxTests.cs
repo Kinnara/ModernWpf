@@ -24,6 +24,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
     public class ComboBoxTests : ApiTestBase
     {
         [TestMethod]
+        [Ignore("Retired for 1.x: covered by the current-style corner-radius tests in ModernWpf.WinUI.Tests.ComboBoxApiTests.")]
         public void VerifyComboBoxOverlayCornerRadius()
         {
             /*
@@ -60,6 +61,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         }
 
         [TestMethod]
+        [Ignore("Retired for 1.x: covered by the editable template tests in ModernWpf.WinUI.Tests.ComboBoxApiTests.")]
         public void VerifyComboBoxEditModeCornerRadius()
         {
             /*

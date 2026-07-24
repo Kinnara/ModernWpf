@@ -80,7 +80,7 @@ namespace ModernWpf.Gallery.Tests
                 return File.ReadAllText(candidate);
             }
 
-            Assert.Fail("Could not find repository file '{0}'.", string.Join(Path.DirectorySeparatorChar.ToString(), relativePath));
+            Assert.Fail($"Could not find repository file '{string.Join(Path.DirectorySeparatorChar.ToString(), relativePath)}'.");
             return null;
         }
 
@@ -90,7 +90,7 @@ namespace ModernWpf.Gallery.Tests
             foreach (var snippet in snippets)
             {
                 var index = source.IndexOf(snippet, startIndex, StringComparison.Ordinal);
-                Assert.IsTrue(index >= 0, "Could not find expected source snippet after index {0}: {1}", startIndex, snippet);
+                Assert.IsTrue(index >= 0, $"Could not find expected source snippet after index {startIndex}: {snippet}");
                 startIndex = index + snippet.Length;
             }
         }
@@ -109,7 +109,7 @@ namespace ModernWpf.Gallery.Tests
                 directory = directory.Parent;
             }
 
-            Assert.Fail("Could not find repository root from '{0}'.", AppContext.BaseDirectory);
+            Assert.Fail($"Could not find repository root from '{AppContext.BaseDirectory}'.");
             return null;
         }
 

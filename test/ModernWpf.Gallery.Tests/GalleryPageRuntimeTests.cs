@@ -48,7 +48,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        [DynamicData(nameof(CatalogItems), DynamicDataSourceType.Method, DynamicDataDisplayName = nameof(GetDisplayName))]
+        [DynamicData(nameof(CatalogItems), DynamicDataDisplayName = nameof(GetDisplayName))]
         public void CatalogItemPageCanLoadAndLayout(string uniqueId)
         {
             var item = GalleryCatalog.FindItem(uniqueId);
@@ -2422,7 +2422,7 @@ namespace ModernWpf.Gallery.Tests
             });
         }
 
-        [DataTestMethod]
+        [TestMethod]
         [DataRow("Text", "TextSection", 7, "Text")]
         [DataRow("Fill", "FillSection", 17, "Control Fill")]
         [DataRow("Stroke", "StrokeSection", 16, "Control Elevation (gradient strokes)")]

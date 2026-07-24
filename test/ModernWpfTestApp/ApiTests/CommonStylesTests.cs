@@ -20,6 +20,7 @@ using System;
 using ModernWpf.Controls;
 using System.Text;
 using System.Collections;
+using System.IO;
 
 #if USING_TAEF
 using WEX.TestExecution;
@@ -77,22 +78,45 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         }
 
         [TestMethod]
-        public void VerifyNoResourceKeysWereRemovedFromPreviousStableReleaseInV2Styles()
+        public void VerifyPublicResourceKeysMatchTheV1Contract()
         {
-            /*
-            if (PlatformConfiguration.IsOSVersionLessThan(OSVersion.Redstone5))
-            {
-                // https://github.com/microsoft/microsoft-ui-xaml/issues/4674
-                Log.Comment("Skipping validation below RS5.");
-                return;
-            }
-            */
-
             RunOnUIThread.Execute(() =>
             {
-                EnsureNoMissingThemeResources(
-                BaselineResources.BaselineResourcesList2dot5Stable,
-                ThemeResources.Current);
+                var controlsResources = new XamlControlsResources();
+                var compactResources = new XamlControlsResources
+                {
+                    UseCompactResources = true
+                };
+
+                foreach (var entry in ReadPublicResourceContract())
+                {
+                    ResourceDictionary dictionary;
+                    switch (entry.SourcePath)
+                    {
+                        case "ThemeResources/Dark.xaml":
+                            dictionary = ThemeResources.Current.GetThemeDictionary("Dark");
+                            break;
+                        case "ThemeResources/Light.xaml":
+                            dictionary = ThemeResources.Current.GetThemeDictionary("Light");
+                            break;
+                        case "ThemeResources/HighContrast.xaml":
+                            dictionary = ThemeResources.Current.GetThemeDictionary("HighContrast");
+                            break;
+                        case "ModernWpfControlsResources.xaml":
+                            dictionary = controlsResources;
+                            break;
+                        case "DensityStyles/Compact.xaml":
+                            dictionary = compactResources;
+                            break;
+                        default:
+                            Verify.Fail("Unknown public resource contract source: " + entry.SourcePath);
+                            return;
+                    }
+
+                    Verify.IsTrue(
+                        dictionary.Contains(entry.Key),
+                        $"Public resource key '{entry.Key}' is missing from '{entry.SourcePath}'.");
+                }
             });
         }
 
@@ -119,50 +143,36 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
             return (missingKeysInActualDictionary.Count == 0);
         }
 
-        private void EnsureNoMissingThemeResources(IList<string> baseline, ThemeResources dictionaryToVerify)
+        private static IEnumerable<(string SourcePath, string Key)> ReadPublicResourceContract()
         {
-            var actualResourcesKeys = new HashSet<string>();
-            var resourceDictionaries = dictionaryToVerify;
-
-            foreach (var dictionaryName in resourceDictionaries.ThemeDictionaries.Keys)
+            var contractRoot = Path.Combine(
+                AppDomain.CurrentDomain.BaseDirectory,
+                "PublicResourceContract");
+            foreach (var fileName in new[]
             {
-                var themeDictionary = resourceDictionaries.ThemeDictionaries[dictionaryName] as ResourceDictionary;
+                "PublicResourceKeys.Shipped.txt",
+                "PublicResourceKeys.Unshipped.txt"
+            })
+            {
+                var path = Path.Combine(contractRoot, fileName);
+                Verify.IsTrue(File.Exists(path), "Missing public resource contract: " + path);
 
-                foreach (DictionaryEntry entry in themeDictionary)
+                foreach (var rawLine in File.ReadLines(path))
                 {
-                    string entryKey = entry.Key as string;
-                    if (!actualResourcesKeys.Contains(entryKey))
+                    var line = rawLine.Trim();
+                    if (line.Length == 0 || line.StartsWith("#", StringComparison.Ordinal))
                     {
-                        actualResourcesKeys.Add(entryKey);
+                        continue;
                     }
+
+                    var separator = line.IndexOf('|');
+                    Verify.IsTrue(
+                        separator > 0 && separator < line.Length - 1,
+                        "Invalid public resource contract entry: " + line);
+                    yield return (
+                        line.Substring(0, separator),
+                        line.Substring(separator + 1));
                 }
-            }
-
-            foreach (DictionaryEntry entry in resourceDictionaries)
-            {
-                string entryKey = entry.Key as string;
-                if (!actualResourcesKeys.Contains(entryKey))
-                {
-                    actualResourcesKeys.Add(entryKey);
-                }
-            }
-
-            StringBuilder missingKeysList = new StringBuilder();
-
-            bool allBaselineResourceKeysExist = true;
-            foreach (var baselineResourceKey in baseline)
-            {
-                if (!actualResourcesKeys.Contains(baselineResourceKey))
-                {
-                    missingKeysList.Append(baselineResourceKey + ", ");
-                    allBaselineResourceKeysExist = false;
-                }
-            }
-
-            Verify.IsTrue(allBaselineResourceKeysExist, "List of missing resource keys: " + missingKeysList.ToString());
-            if (!allBaselineResourceKeysExist)
-            {
-                Log.Error("List of missing resource keys: " + missingKeysList.ToString());
             }
         }
 

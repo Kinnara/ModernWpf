@@ -44,9 +44,9 @@ public class RecyclePoolApiTests
             Assert.IsNotNull((StackPanel)pool.TryGetElement(stackPanelKey));
             Assert.IsNull(pool.TryGetElement(stackPanelKey));
 
-            Assert.ThrowsException<ArgumentNullException>(() => pool.PutElement(new Button(), null!, null));
-            Assert.ThrowsException<ArgumentException>(() => pool.PutElement(new Button(), buttonKey, new Button()));
-            Assert.ThrowsException<ArgumentNullException>(() => pool.TryGetElement(null!, null));
+            Assert.ThrowsExactly<ArgumentNullException>(() => pool.PutElement(new Button(), null!, null));
+            Assert.ThrowsExactly<ArgumentException>(() => pool.PutElement(new Button(), buttonKey, new Button()));
+            Assert.ThrowsExactly<ArgumentNullException>(() => pool.TryGetElement(null!, null));
         });
     }
 

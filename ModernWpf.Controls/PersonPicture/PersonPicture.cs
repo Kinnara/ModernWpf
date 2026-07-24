@@ -65,7 +65,7 @@ namespace ModernWpf.Controls
             }
             else
             {
-                return m_contactDisplayNameInitials;
+                return null;
             }
         }
 
@@ -74,14 +74,7 @@ namespace ModernWpf.Controls
         /// </summary>
         ImageSource GetImageSource()
         {
-            if (ProfilePicture != null)
-            {
-                return ProfilePicture;
-            }
-            else
-            {
-                return m_contactImageSource;
-            }
+            return ProfilePicture;
         }
 
         /// <summary>
@@ -514,14 +507,5 @@ namespace ModernWpf.Controls
         /// </summary>
         string m_displayNameInitials;
 
-        /// <summary>
-        /// The initials from the Contact property.
-        /// </summary>
-        string m_contactDisplayNameInitials;
-
-        /// <summary>
-        /// The ImageSource from the Contact property.
-        /// </summary>
-        ImageSource m_contactImageSource;
     }
 }

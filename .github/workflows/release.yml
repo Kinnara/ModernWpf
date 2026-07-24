@@ -1,0 +1,281 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing annotated v<Version> tag to publish
+        required: true
+        type: string
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  RELEASE_TAG: ${{ inputs.tag }}
+  TEST_RESULTS: artifacts/release-test-results
+  RELEASE_ROOT: artifacts/release
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-2022
+    outputs:
+      artifact-name: ${{ steps.validate.outputs.artifact-name }}
+      version: ${{ steps.validate.outputs.version }}
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ inputs.tag }}
+        fetch-depth: 0
+
+    - name: Validate immutable release tag
+      id: validate
+      shell: pwsh
+      run: |
+        if ($env:RELEASE_TAG -notmatch '^v(?<version>[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?)$') {
+          throw "Release tag must have the form v<Version>."
+        }
+        $tagVersion = $Matches.version
+
+        git fetch origin refs/heads/master:refs/remotes/origin/master --tags --force
+        if ($LASTEXITCODE -ne 0) {
+          throw "Could not fetch master and release tags."
+        }
+
+        $tagType = git cat-file -t "refs/tags/$env:RELEASE_TAG"
+        if ($LASTEXITCODE -ne 0 -or $tagType -ne 'tag') {
+          throw "Release tag '$env:RELEASE_TAG' must be an existing annotated tag."
+        }
+
+        $tagCommit = git rev-list -n 1 "refs/tags/$env:RELEASE_TAG"
+        $headCommit = git rev-parse HEAD
+        if ($tagCommit -ne $headCommit) {
+          throw "Checkout HEAD '$headCommit' does not match tag commit '$tagCommit'."
+        }
+
+        git merge-base --is-ancestor $tagCommit origin/master
+        if ($LASTEXITCODE -ne 0) {
+          throw "Release tag '$env:RELEASE_TAG' is not on master."
+        }
+
+        [xml]$props = Get-Content Directory.Build.props
+        $projectVersion = [string]$props.Project.PropertyGroup.Version
+        if ($projectVersion -ne $tagVersion) {
+          throw "Tag version '$tagVersion' does not match Directory.Build.props version '$projectVersion'."
+        }
+
+        "version=$projectVersion" >> $env:GITHUB_OUTPUT
+        "artifact-name=modernwpf-$projectVersion" >> $env:GITHUB_OUTPUT
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        global-json-file: global.json
+
+    - name: Setup Windows SDK
+      uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.5
+      with:
+        sdk-version: 19041
+
+    - name: Restore and audit dependencies
+      run: dotnet restore ModernWpf.sln
+
+    - name: Build Release solution once
+      run: dotnet build ModernWpf.sln --configuration Release --no-restore --maxcpucount:1
+
+    - name: Test build tools
+      run: >-
+        dotnet test test\ModernWpf.Tools.Tests\ModernWpf.Tools.Tests.csproj
+        --configuration Release --framework net10.0 --no-build --no-restore
+        --logger "trx;LogFileName=tools-net10.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Test theme resources (net8)
+      run: >-
+        dotnet test test\ModernWpf.Theme.Tests\ModernWpf.Theme.Tests.csproj
+        --configuration Release --framework net8.0-windows7.0 --no-build --no-restore
+        --logger "trx;LogFileName=theme-net8.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Test theme resources (net10)
+      run: >-
+        dotnet test test\ModernWpf.Theme.Tests\ModernWpf.Theme.Tests.csproj
+        --configuration Release --framework net10.0-windows7.0 --no-build --no-restore
+        --logger "trx;LogFileName=theme-net10.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Test gallery (net8)
+      run: >-
+        dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj
+        --configuration Release --framework net8.0-windows7.0 --no-build --no-restore
+        --logger "trx;LogFileName=gallery-net8.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Test gallery (net10)
+      run: >-
+        dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj
+        --configuration Release --framework net10.0-windows7.0 --no-build --no-restore
+        --logger "trx;LogFileName=gallery-net10.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Test complete WinUI suite
+      run: >-
+        dotnet test test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj
+        --configuration Release --framework net8.0-windows7.0 --no-build --no-restore
+        --logger "trx;LogFileName=winui-net8.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Test retained legacy suite
+      run: >-
+        dotnet test test\ModernWpfTestApp\ModernWpfTestApp.csproj
+        --configuration Release --framework net48 --no-build --no-restore
+        --logger "trx;LogFileName=legacy-net48.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Verify test outcomes and skip reasons
+      shell: pwsh
+      run: .\tools\test\Assert-TestResults.ps1 -ResultsPath "${{ env.TEST_RESULTS }}"
+
+    - name: Pack tagged sources
+      run: >-
+        dotnet pack ModernWpf.Controls\ModernWpf.Controls.csproj
+        --configuration Release --no-build --no-restore
+        --output "${{ env.RELEASE_ROOT }}\packages"
+
+    - name: Verify package and execute consumers
+      shell: pwsh
+      run: |
+        $package = Get-ChildItem "$env:RELEASE_ROOT\packages\ModernWpfUI.*.nupkg" | Select-Object -Single
+        .\tools\release\Verify-ModernWpfPackage.ps1 -PackagePath $package.FullName
+        .\tools\release\Test-ModernWpfPackageSmoke.ps1 -PackagePath $package.FullName
+
+    - name: Prepare immutable release artifact
+      shell: pwsh
+      run: |
+        Copy-Item docs\release-notes-1.0.0-preview.1.md "$env:RELEASE_ROOT\release-notes.md"
+        Copy-Item $env:TEST_RESULTS "$env:RELEASE_ROOT\test-results" -Recurse
+        Compress-Archive -Path "$env:RELEASE_ROOT\test-results\*" -DestinationPath "$env:RELEASE_ROOT\test-results.zip"
+
+        $releaseRoot = (Resolve-Path $env:RELEASE_ROOT).Path
+        $hashLines = Get-ChildItem $releaseRoot -File -Recurse |
+          Where-Object Name -ne 'SHA256SUMS' |
+          Sort-Object FullName |
+          ForEach-Object {
+            $relativePath = [IO.Path]::GetRelativePath($releaseRoot, $_.FullName).Replace('\', '/')
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $relativePath"
+          }
+        $hashLines | Set-Content "$releaseRoot\SHA256SUMS" -Encoding ascii
+
+    - name: Upload retained release artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.validate.outputs.artifact-name }}
+        path: ${{ env.RELEASE_ROOT }}
+        if-no-files-found: error
+        retention-days: 90
+
+  publish:
+    needs: build
+    runs-on: windows-2022
+    environment:
+      name: nuget-production
+      url: https://github.com/Kinnara/ModernWpf/releases/tag/${{ inputs.tag }}
+    permissions:
+      contents: write
+
+    steps:
+    - name: Download exact build artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.build.outputs.artifact-name }}
+        path: release
+
+    - name: Verify retained artifact hashes
+      shell: pwsh
+      run: |
+        $releaseRoot = (Resolve-Path release).Path
+        $expectedPaths = @()
+
+        foreach ($line in Get-Content "$releaseRoot\SHA256SUMS") {
+          if ($line -notmatch '^(?<hash>[0-9a-f]{64})  (?<path>.+)$') {
+            throw "Malformed SHA256SUMS line: $line"
+          }
+
+          $relativePath = $Matches.path
+          $expectedPaths += $relativePath
+          $filePath = Join-Path $releaseRoot $relativePath
+          if (-not (Test-Path -LiteralPath $filePath -PathType Leaf)) {
+            throw "Hashed release file is missing: $relativePath"
+          }
+
+          $actualHash = (Get-FileHash $filePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actualHash -ne $Matches.hash) {
+            throw "SHA-256 mismatch for '$relativePath'."
+          }
+        }
+
+        $actualPaths = @(
+          Get-ChildItem $releaseRoot -File -Recurse |
+            Where-Object Name -ne 'SHA256SUMS' |
+            ForEach-Object {
+              [IO.Path]::GetRelativePath($releaseRoot, $_.FullName).Replace('\', '/')
+            }
+        )
+        $differences = @(Compare-Object ($expectedPaths | Sort-Object) ($actualPaths | Sort-Object))
+        if ($differences.Count -ne 0) {
+          throw "Downloaded artifact contents do not match SHA256SUMS."
+        }
+
+    - name: Create draft prerelease and attach artifacts
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        $isDraft = gh release view $env:RELEASE_TAG --json isDraft --jq .isDraft 2>$null
+        if ($LASTEXITCODE -eq 0) {
+          if ($isDraft -ne 'true') {
+            throw "GitHub release '$env:RELEASE_TAG' already exists and is not a draft."
+          }
+        }
+        else {
+          gh release create $env:RELEASE_TAG `
+            --verify-tag `
+            --draft `
+            --prerelease `
+            --title "ModernWpf ${{ needs.build.outputs.version }}" `
+            --notes-file release\release-notes.md
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not create draft GitHub prerelease."
+          }
+        }
+
+        $assets = @(
+          Get-ChildItem release\packages\ModernWpfUI.*.nupkg | Select-Object -ExpandProperty FullName
+          Get-ChildItem release\packages\ModernWpfUI.*.snupkg | Select-Object -ExpandProperty FullName
+          (Resolve-Path release\SHA256SUMS).Path
+          (Resolve-Path release\test-results.zip).Path
+        )
+        gh release upload $env:RELEASE_TAG @assets --clobber
+        if ($LASTEXITCODE -ne 0) {
+          throw "Could not attach the retained release artifacts."
+        }
+
+    - name: Publish exact NuGet package
+      shell: pwsh
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      run: |
+        $package = Get-ChildItem release\packages\ModernWpfUI.*.nupkg | Select-Object -Single
+        dotnet nuget push $package.FullName `
+          --api-key $env:NUGET_API_KEY `
+          --source https://api.nuget.org/v3/index.json `
+          --skip-duplicate
+        if ($LASTEXITCODE -ne 0) {
+          throw "NuGet publication failed."
+        }
+
+    - name: Publish GitHub prerelease
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        gh release edit $env:RELEASE_TAG --draft=false --prerelease=true
+        if ($LASTEXITCODE -ne 0) {
+          throw "Could not publish GitHub prerelease '$env:RELEASE_TAG'."
+        }

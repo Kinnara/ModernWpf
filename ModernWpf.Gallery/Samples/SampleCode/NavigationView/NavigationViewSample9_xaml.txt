@@ -1,6 +1,6 @@
-<NavigationView x:Name="nvSample9" 
-                            Header="This is Header Text" 
-                            PaneDisplayMode="$(PaneDisplay)" 
+<NavigationView x:Name="nvSample9"
+                            Header="This is Header Text"
+                            PaneDisplayMode="$(PaneDisplay)"
                             SelectionChanged="NavigationView_SelectionChanged9"
                             IsSettingsVisible="False">
         <NavigationView.MenuItems>

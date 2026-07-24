@@ -9,7 +9,7 @@ color-changing rectangle besides it. -->
         <ColumnDefinition Width="1*"/>
     </Grid.ColumnDefinitions>
 
-    <ScrollViewer x:Name="Animated_ScrollViewer" 
+    <ScrollViewer x:Name="Animated_ScrollViewer"
                     Grid.Column="0"
                     Height="175"
                     Width="250"
@@ -19,8 +19,8 @@ color-changing rectangle besides it. -->
                 <DataTemplate x:DataType="x:String">
                     <Button Content="{x:Bind}"
                             Background="{x:Bind}"
-                            Click="Animated_GotItem" 
-                            GotFocus="Animated_GotItem" 
+                            Click="Animated_GotItem"
+                            GotFocus="Animated_GotItem"
                             HorizontalAlignment="Stretch"
                             Foreground="{ThemeResource ButtonForeground}"/>
                 </DataTemplate>

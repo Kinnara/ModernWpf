@@ -3890,11 +3890,11 @@ public class LayoutCompatibilityApiTests
             interval = snapInfo.GetRegularSnapPoints(Orientation.Vertical, SnapPointsAlignment.Near, out offset);
             Assert.AreEqual(0.0f, offset, 0.001f);
             Assert.AreEqual(0.0f, interval, 0.001f);
-            Assert.ThrowsException<InvalidOperationException>(() => snapInfo.GetIrregularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Near));
+            Assert.ThrowsExactly<InvalidOperationException>(() => snapInfo.GetIrregularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Near));
 
             panel.AreScrollSnapPointsRegular = false;
 
-            Assert.ThrowsException<InvalidOperationException>(() => snapInfo.GetRegularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Near, out _));
+            Assert.ThrowsExactly<InvalidOperationException>(() => snapInfo.GetRegularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Near, out _));
             AssertSnapPoints(new[] { 0.0f, 53.0f }, snapInfo.GetIrregularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Near));
             AssertSnapPoints(new[] { 28.0f, 78.0f }, snapInfo.GetIrregularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Center));
             AssertSnapPoints(new[] { 53.0f, 103.0f }, snapInfo.GetIrregularSnapPoints(Orientation.Horizontal, SnapPointsAlignment.Far));
@@ -4606,8 +4606,8 @@ public class LayoutCompatibilityApiTests
 
             Assert.AreEqual(-10, grid.RowSpacing);
             Assert.AreEqual(-11, grid.ColumnSpacing);
-            Assert.ThrowsException<ArgumentException>(() => grid.RowSpacing = double.NaN);
-            Assert.ThrowsException<ArgumentException>(() => grid.ColumnSpacing = double.NaN);
+            Assert.ThrowsExactly<ArgumentException>(() => grid.RowSpacing = double.NaN);
+            Assert.ThrowsExactly<ArgumentException>(() => grid.ColumnSpacing = double.NaN);
         });
     }
 
@@ -4798,14 +4798,14 @@ public class LayoutCompatibilityApiTests
             panel.Children.Add(first);
             panel.Children.Add(second);
 
-            Assert.ThrowsException<ArgumentException>(() => ModernRelativePanel.SetRightOf(second, true));
+            Assert.ThrowsExactly<ArgumentException>(() => ModernRelativePanel.SetRightOf(second, true));
 
             ModernRelativePanel.SetRightOf(second, "missing");
-            Assert.ThrowsException<InvalidOperationException>(() => panel.Measure(new Size(300, 300)));
+            Assert.ThrowsExactly<InvalidOperationException>(() => panel.Measure(new Size(300, 300)));
 
             ModernRelativePanel.SetRightOf(second, first);
             ModernRelativePanel.SetLeftOf(first, second);
-            Assert.ThrowsException<InvalidOperationException>(() => panel.Measure(new Size(300, 300)));
+            Assert.ThrowsExactly<InvalidOperationException>(() => panel.Measure(new Size(300, 300)));
         });
     }
 
