@@ -274,7 +274,9 @@ public class SelectorBarApiTests
             Assert.IsInstanceOfType(itemsViewPeer.GetPattern(PatternInterface.Selection), typeof(ISelectionProvider));
             Assert.AreEqual(AutomationControlType.ListItem, itemPeer.GetAutomationControlType());
             Assert.AreEqual("SelectorBarItem", itemPeer.GetLocalizedControlType());
-            Assert.IsNotNull(selectionItemProvider.SelectionContainer);
+            Assert.AreSame(
+                new AutomationPeerBridge(itemsView).GetProviderFromPeer(itemsViewPeer),
+                selectionItemProvider.SelectionContainer);
         });
     }
 
@@ -484,5 +486,18 @@ public class SelectorBarApiTests
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         Assert.IsNotNull(resourceKeyProperty, "Expected ResourceReferenceExpression.ResourceKey.");
         Assert.AreEqual(expectedResourceKey, resourceKeyProperty!.GetValue(value));
+    }
+
+    private sealed class AutomationPeerBridge : FrameworkElementAutomationPeer
+    {
+        public AutomationPeerBridge(FrameworkElement owner)
+            : base(owner)
+        {
+        }
+
+        public IRawElementProviderSimple? GetProviderFromPeer(AutomationPeer peer)
+        {
+            return ProviderFromPeer(peer);
+        }
     }
 }

@@ -1879,18 +1879,22 @@ public class CommandBarFlyoutApiTests
 
     private static void HideAndWait(CommandBarFlyout commandBarFlyout)
     {
-        if (!commandBarFlyout.IsOpen)
-        {
-            return;
-        }
-
         var commandBar = commandBarFlyout.GetPresenter()?.Content as CommandBarFlyoutCommandBar;
         bool shouldPreserveCloseOpacity = commandBar?.HasCloseAnimation() == true;
 
-        commandBarFlyout.Hide();
+        if (commandBarFlyout.IsOpen)
+        {
+            commandBarFlyout.Hide();
+        }
+
         WaitFor(
-            () => !commandBarFlyout.IsOpen,
-            "CommandBarFlyout did not close.");
+            () =>
+                !commandBarFlyout.IsOpen &&
+                commandBarFlyout.GetPresenter() == null &&
+                (commandBar == null ||
+                 IsLayoutOpacity(commandBar, shouldPreserveCloseOpacity ? 0.0 : 1.0)),
+            "CommandBarFlyout did not finish closing and release its presenter.",
+            timeoutMilliseconds: 5000);
 
         if (commandBar != null)
         {

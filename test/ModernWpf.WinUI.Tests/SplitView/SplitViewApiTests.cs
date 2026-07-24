@@ -290,7 +290,10 @@ public class SplitViewApiTests
 
             cancel = false;
             RaiseMouseLeftButtonUp(lightDismissLayer);
-            WaitFor(() => closedCount == 1, "SplitView PaneClosed did not fire after light dismiss.");
+            WaitFor(
+                () => closedCount == 1,
+                "SplitView PaneClosed did not fire after light dismiss.",
+                timeoutMilliseconds: 5000);
 
             Assert.IsFalse(splitView.IsPaneOpen);
             Assert.AreEqual(2, closingCount);

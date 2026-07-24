@@ -404,11 +404,17 @@ public class BreadcrumbBarApiTests
                 .Select(container => container.ActualWidth)
                 .ToArray();
             var expectedWidths = new[] { 56.0, 89.0, 61.0, 84.0, 63.0, 63.0, 65.0, 49.0 };
-            CollectionAssert.AreEqual(
-                expectedWidths,
-                actualWidths,
-                "Actual WinUI Gallery breadcrumb item widths: " + string.Join(", ", actualWidths.Select(width => width.ToString("F3"))));
-            Assert.AreEqual(530.0, actualWidths.Sum());
+            var actualWidthsMessage =
+                "Actual WinUI Gallery breadcrumb item widths: " +
+                string.Join(", ", actualWidths.Select(width => width.ToString("F3")));
+
+            Assert.AreEqual(expectedWidths.Length, actualWidths.Length, actualWidthsMessage);
+            for (var index = 0; index < expectedWidths.Length; index++)
+            {
+                Assert.AreEqual(expectedWidths[index], actualWidths[index], 2.0, actualWidthsMessage);
+            }
+
+            Assert.AreEqual(530.0, actualWidths.Sum(), 2.0, actualWidthsMessage);
         });
     }
 

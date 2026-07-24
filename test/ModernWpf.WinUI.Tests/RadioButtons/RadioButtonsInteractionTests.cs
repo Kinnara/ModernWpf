@@ -394,35 +394,41 @@ public class RadioButtonsInteractionTests
     {
         WpfTestHost.Run(() =>
         {
-            var radioButtons = CreateRadioButtons(10);
-            using var host = new TestWindowHost(radioButtons, width: 2600, height: 1000);
+            var radioButtons = CreateRadioButtons(10, compactContent: true);
+            radioButtons.Width = 2600;
+            using var host = new TestWindowHost(radioButtons, width: 800, height: 1000);
             ModernWpf.Controls.RadioButtonsTestHooks.SetTestHooksEnabled(radioButtons, true);
-            radioButtons.MaxColumns = 2;
-            host.UpdateLayout();
+            try
+            {
+                radioButtons.MaxColumns = 2;
+                host.UpdateLayout();
 
-            SetNumberOfColumns(radioButtons, host, 1);
-            AssertLayoutData(radioButtons, rows: 10, columns: 1, largerColumns: 0);
+                SetNumberOfColumns(radioButtons, host, 1);
+                AssertLayoutData(radioButtons, rows: 10, columns: 1, largerColumns: 0);
 
-            SetNumberOfColumns(radioButtons, host, 3);
-            AssertLayoutData(radioButtons, rows: 3, columns: 3, largerColumns: 1);
+                SetNumberOfColumns(radioButtons, host, 3);
+                AssertLayoutData(radioButtons, rows: 3, columns: 3, largerColumns: 1);
 
-            SetNumberOfColumns(radioButtons, host, 5);
-            AssertLayoutData(radioButtons, rows: 2, columns: 5, largerColumns: 0);
+                SetNumberOfColumns(radioButtons, host, 5);
+                AssertLayoutData(radioButtons, rows: 2, columns: 5, largerColumns: 0);
 
-            SetNumberOfColumns(radioButtons, host, 7);
-            AssertLayoutData(radioButtons, rows: 1, columns: 7, largerColumns: 3);
+                SetNumberOfColumns(radioButtons, host, 7);
+                AssertLayoutData(radioButtons, rows: 1, columns: 7, largerColumns: 3);
 
-            SetNumberOfColumns(radioButtons, host, 10);
-            AssertLayoutData(radioButtons, rows: 1, columns: 10, largerColumns: 0);
+                SetNumberOfColumns(radioButtons, host, 10);
+                AssertLayoutData(radioButtons, rows: 1, columns: 10, largerColumns: 0);
 
-            SetNumberOfColumns(radioButtons, host, 20);
-            AssertLayoutData(radioButtons, rows: 1, columns: 10, largerColumns: 0);
+                SetNumberOfColumns(radioButtons, host, 20);
+                AssertLayoutData(radioButtons, rows: 1, columns: 10, largerColumns: 0);
 
-            SetNumberOfItems(radioButtons, 77, compactContent: true);
-            host.UpdateLayout();
-            AssertLayoutData(radioButtons, rows: 3, columns: 20, largerColumns: 17);
-
-            ModernWpf.Controls.RadioButtonsTestHooks.SetTestHooksEnabled(radioButtons, false);
+                SetNumberOfItems(radioButtons, 77, compactContent: true);
+                host.UpdateLayout();
+                AssertLayoutData(radioButtons, rows: 3, columns: 20, largerColumns: 17);
+            }
+            finally
+            {
+                ModernWpf.Controls.RadioButtonsTestHooks.SetTestHooksEnabled(radioButtons, false);
+            }
         });
     }
 
