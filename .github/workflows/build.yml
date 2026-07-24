@@ -2,29 +2,134 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, maintenance-reboot-1x ]
   pull_request:
     branches: [ '**' ]
 
-jobs:
-  build:
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  TEST_RESULTS: artifacts/test-results
 
-    runs-on: windows-latest
+jobs:
+  release-gate:
+    runs-on: windows-2022
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
+    - uses: actions/checkout@v4
       with:
-        dotnet-version: 6.0.x
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        global-json-file: global.json
+
     - name: Setup Windows SDK
       uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.5
-    - name: Install dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --configuration Release --no-restore
-    - name: Publish
-      if: success() && github.ref_name == 'master' && github.event.head_commit.message == 'Bump version'
+      with:
+        sdk-version: 19041
+
+    - name: Verify Windows SDK metadata
+      shell: pwsh
       run: |
-         dotnet pack ModernWpf.Controls\ModernWpf.Controls.csproj -c Release --no-build
-         dotnet nuget push "artifacts\*.nupkg" -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+        $programFilesX86 = [Environment]::GetFolderPath([Environment+SpecialFolder]::ProgramFilesX86)
+        $platformXml = Join-Path $programFilesX86 'Windows Kits\10\Platforms\UAP\10.0.19041.0\Platform.xml'
+        if (-not (Test-Path -LiteralPath $platformXml)) {
+          throw "Missing Windows SDK metadata file: $platformXml"
+        }
+
+    - name: Check whitespace
+      shell: pwsh
+      run: |
+        git diff --check HEAD^ HEAD
+        if ('${{ github.ref_name }}' -ne 'master') {
+          git diff --check origin/master...HEAD
+        }
+
+    - name: Restore and audit dependencies
+      run: dotnet restore ModernWpf.sln
+
+    - name: Build Release solution
+      run: dotnet build ModernWpf.sln --configuration Release --no-restore --maxcpucount:1
+
+    - name: Test build tools
+      run: >-
+        dotnet test test\ModernWpf.Tools.Tests\ModernWpf.Tools.Tests.csproj
+        --configuration Release --framework net10.0 --no-build --no-restore
+        --logger "trx;LogFileName=tools-net10.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Test theme resources (net8)
+      run: >-
+        dotnet test test\ModernWpf.Theme.Tests\ModernWpf.Theme.Tests.csproj
+        --configuration Release --framework net8.0-windows7.0 --no-build --no-restore
+        --logger "trx;LogFileName=theme-net8.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Test theme resources (net10)
+      run: >-
+        dotnet test test\ModernWpf.Theme.Tests\ModernWpf.Theme.Tests.csproj
+        --configuration Release --framework net10.0-windows7.0 --no-build --no-restore
+        --logger "trx;LogFileName=theme-net10.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Test gallery (net8)
+      run: >-
+        dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj
+        --configuration Release --framework net8.0-windows7.0 --no-build --no-restore
+        --logger "trx;LogFileName=gallery-net8.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Test gallery (net10)
+      run: >-
+        dotnet test test\ModernWpf.Gallery.Tests\ModernWpf.Gallery.Tests.csproj
+        --configuration Release --framework net10.0-windows7.0 --no-build --no-restore
+        --logger "trx;LogFileName=gallery-net10.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Test complete WinUI suite
+      run: >-
+        dotnet test test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj
+        --configuration Release --framework net8.0-windows7.0 --no-build --no-restore
+        --logger "trx;LogFileName=winui-net8.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Test retained legacy suite
+      run: >-
+        dotnet test test\ModernWpfTestApp\ModernWpfTestApp.csproj
+        --configuration Release --framework net48 --no-build --no-restore
+        --logger "trx;LogFileName=legacy-net48.trx" --results-directory "${{ env.TEST_RESULTS }}"
+
+    - name: Verify test outcomes and skip reasons
+      shell: pwsh
+      run: .\tools\test\Assert-TestResults.ps1 -ResultsPath "${{ env.TEST_RESULTS }}"
+
+    - name: Pack
+      run: >-
+        dotnet pack ModernWpf.Controls\ModernWpf.Controls.csproj
+        --configuration Release --no-build --no-restore
+
+    - name: Verify package and symbols
+      shell: pwsh
+      run: |
+        $package = Get-ChildItem artifacts\ModernWpfUI.*.nupkg | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+        .\tools\release\Verify-ModernWpfPackage.ps1 -PackagePath $package.FullName
+
+    - name: Execute packaged consumers
+      shell: pwsh
+      run: |
+        $package = Get-ChildItem artifacts\ModernWpfUI.*.nupkg | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+        .\tools\release\Test-ModernWpfPackageSmoke.ps1 -PackagePath $package.FullName
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-gate-test-results
+        path: ${{ env.TEST_RESULTS }}
+        if-no-files-found: warn
+        retention-days: 30
+
+    - name: Upload validated packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-gate-packages
+        path: |
+          artifacts/ModernWpfUI.*.nupkg
+          artifacts/ModernWpfUI.*.snupkg
+        if-no-files-found: error
+        retention-days: 30

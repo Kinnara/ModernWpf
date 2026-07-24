@@ -1,0 +1,20 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public sealed partial class",
+    "name": "ToggleSwitchTemplateSettings"
+  },
+  "properties": [
+    { "name": "CurtainCurrentToOffOffset", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "CurtainCurrentToOnOffset", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "CurtainOffToOnOffset", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "CurtainOnToOffOffset", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "KnobCurrentToOffOffset", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "KnobCurrentToOnOffset", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "KnobOffToOnOffset", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "KnobOnToOffOffset", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives",
+    "ModernWpf.Media.Animation"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "FlyoutPresenter"
+  },
+  "properties": [
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty"
+    },
+    {
+      "name": "ContentTransitions",
+      "type": "TransitionCollection",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.ContentTransitionsProperty"
+    },
+    {
+      "name": "IsDefaultShadowEnabled",
+      "type": "bool",
+      "default": "true"
+    }
+  ]
+}

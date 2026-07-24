@@ -9,7 +9,7 @@ using ElementAnimator = ModernWpf.Controls.ElementAnimator;
 
 namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests.Common
 {
-    public class ElementAnimatorDerived : ElementAnimator
+    internal class ElementAnimatorDerived : ElementAnimator
     {
         public bool HasShowAnimationValue { get; set; }
         public bool HasHideAnimationValue { get; set; }

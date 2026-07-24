@@ -2,7 +2,7 @@
 
 namespace ModernWpf.Controls
 {
-    public class ContentDialogClosedEventArgs : EventArgs
+    public sealed class ContentDialogClosedEventArgs : EventArgs
     {
         internal ContentDialogClosedEventArgs(ContentDialogResult result)
         {

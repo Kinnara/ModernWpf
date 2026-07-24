@@ -5,23 +5,17 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace ModernWpf.Controls
 {
-    public class LayoutPanel : Panel
+    public partial class LayoutPanel : Panel
     {
         public LayoutPanel()
         {
         }
 
         #region Layout
-
-        public static readonly DependencyProperty LayoutProperty =
-            DependencyProperty.Register(
-                nameof(Layout),
-                typeof(Layout),
-                typeof(LayoutPanel),
-                new FrameworkPropertyMetadata(OnLayoutChanged));
 
         public Layout Layout
         {
@@ -36,25 +30,6 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region Padding
-
-        public static readonly DependencyProperty PaddingProperty =
-            DependencyProperty.Register(
-                nameof(Padding),
-                typeof(Thickness),
-                typeof(LayoutPanel),
-                new FrameworkPropertyMetadata(
-                    new Thickness(0, 0, 0, 0),
-                    FrameworkPropertyMetadataOptions.AffectsMeasure));
-
-        public Thickness Padding
-        {
-            get => (Thickness)GetValue(PaddingProperty);
-            set => SetValue(PaddingProperty, value);
-        }
-
-        #endregion
-
         internal object LayoutState { get; set; }
 
         protected override Size MeasureOverride(Size availableSize)
@@ -62,8 +37,9 @@ namespace ModernWpf.Controls
             Size desiredSize;
 
             var padding = Padding;
-            var effectiveHorizontalPadding = padding.Left + padding.Right;
-            var effectiveVerticalPadding = padding.Top + padding.Bottom;
+            var borderThickness = BorderThickness;
+            var effectiveHorizontalPadding = padding.Left + padding.Right + borderThickness.Left + borderThickness.Right;
+            var effectiveVerticalPadding = padding.Top + padding.Bottom + borderThickness.Top + borderThickness.Bottom;
 
             var adjustedSize = availableSize;
             adjustedSize.Width -= effectiveHorizontalPadding;
@@ -101,11 +77,12 @@ namespace ModernWpf.Controls
             Size result = finalSize;
 
             var padding = Padding;
+            var borderThickness = BorderThickness;
 
-            var effectiveHorizontalPadding = padding.Left + padding.Right;
-            var effectiveVerticalPadding = padding.Top + padding.Bottom;
-            var leftAdjustment = padding.Left;
-            var topAdjustment = padding.Top;
+            var effectiveHorizontalPadding = padding.Left + padding.Right + borderThickness.Left + borderThickness.Right;
+            var effectiveVerticalPadding = padding.Top + padding.Bottom + borderThickness.Top + borderThickness.Bottom;
+            var leftAdjustment = padding.Left + borderThickness.Left;
+            var topAdjustment = padding.Top + borderThickness.Top;
 
             var adjustedSize = finalSize;
             adjustedSize.Width -= effectiveHorizontalPadding;
@@ -146,6 +123,36 @@ namespace ModernWpf.Controls
             }
 
             return result;
+        }
+
+        protected override void OnRender(DrawingContext drawingContext)
+        {
+            LayoutChromeHelper.DrawChrome(
+                drawingContext,
+                RenderSize,
+                Background,
+                BackgroundSizing.InnerBorderEdge,
+                BorderBrush,
+                BorderThickness,
+                CornerRadius);
+        }
+
+        protected override Geometry GetLayoutClip(Size layoutSlotSize)
+        {
+            return LayoutChromeHelper.CreateRoundedLayoutClip(
+                layoutSlotSize,
+                CornerRadius,
+                base.GetLayoutClip(layoutSlotSize));
+        }
+
+        protected override HitTestResult HitTestCore(PointHitTestParameters hitTestParameters)
+        {
+            if (!LayoutChromeHelper.FillContainsRoundedRectangle(RenderSize, CornerRadius, hitTestParameters.HitPoint))
+            {
+                return null;
+            }
+
+            return base.HitTestCore(hitTestParameters);
         }
 
         private LayoutContext m_layoutContext = null;

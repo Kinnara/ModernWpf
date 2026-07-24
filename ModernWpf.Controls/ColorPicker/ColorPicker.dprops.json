@@ -1,0 +1,36 @@
+{
+  "usings": [
+    "ModernWpf.Controls.Primitives",
+    "System.Windows",
+    "System.Windows.Controls",
+    "System.Windows.Media"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ColorPicker"
+  },
+  "properties": [
+    { "name": "Color", "type": "Color", "default": "Colors.White", "changed": "OnColorPropertyChanged" },
+    { "name": "PreviousColor", "type": "Color?", "default": "null", "changed": "OnPreviousColorPropertyChanged" },
+    { "name": "IsAlphaEnabled", "type": "bool", "default": "false", "changed": "OnIsAlphaEnabledPropertyChanged" },
+    { "name": "IsColorSpectrumVisible", "type": "bool", "default": "true", "changed": "OnPartVisibilityPropertyChanged" },
+    { "name": "IsColorPreviewVisible", "type": "bool", "default": "true", "changed": "OnPartVisibilityPropertyChanged" },
+    { "name": "IsColorSliderVisible", "type": "bool", "default": "true", "changed": "OnPartVisibilityPropertyChanged" },
+    { "name": "IsAlphaSliderVisible", "type": "bool", "default": "true", "changed": "OnPartVisibilityPropertyChanged" },
+    { "name": "IsMoreButtonVisible", "type": "bool", "default": "false", "changed": "OnPartVisibilityPropertyChanged" },
+    { "name": "IsColorChannelTextInputVisible", "type": "bool", "default": "true", "changed": "OnPartVisibilityPropertyChanged" },
+    { "name": "IsAlphaTextInputVisible", "type": "bool", "default": "true", "changed": "OnPartVisibilityPropertyChanged" },
+    { "name": "IsHexInputVisible", "type": "bool", "default": "true", "changed": "OnPartVisibilityPropertyChanged" },
+    { "name": "MinHue", "type": "int", "default": "0", "changed": "OnMinMaxHuePropertyChanged" },
+    { "name": "MaxHue", "type": "int", "default": "359", "changed": "OnMinMaxHuePropertyChanged" },
+    { "name": "MinSaturation", "type": "int", "default": "0", "changed": "OnMinMaxSaturationPropertyChanged" },
+    { "name": "MaxSaturation", "type": "int", "default": "100", "changed": "OnMinMaxSaturationPropertyChanged" },
+    { "name": "MinValue", "type": "int", "default": "0", "changed": "OnMinMaxValuePropertyChanged" },
+    { "name": "MaxValue", "type": "int", "default": "100", "changed": "OnMinMaxValuePropertyChanged" },
+    { "name": "ColorSpectrumShape", "type": "ColorSpectrumShape", "default": "ColorSpectrumShape.Box", "changed": "OnColorSpectrumShapePropertyChanged" },
+    { "name": "ColorSpectrumComponents", "type": "ColorSpectrumComponents", "default": "ColorSpectrumComponents.HueSaturation", "changed": "OnColorSpectrumComponentsPropertyChanged" },
+    { "name": "Orientation", "type": "Orientation", "default": "Orientation.Vertical", "changed": "OnOrientationPropertyChanged" },
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty" }
+  ]
+}

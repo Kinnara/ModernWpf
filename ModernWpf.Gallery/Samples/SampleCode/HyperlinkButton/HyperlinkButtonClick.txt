@@ -1,0 +1,4 @@
+--- header
+A hyperlink button that handles a Click event.
+--- xaml
+<HyperlinkButton Content="ToggleButton" Click="HyperlinkButton_Click"/>

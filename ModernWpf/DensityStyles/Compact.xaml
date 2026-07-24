@@ -12,6 +12,9 @@
     <Thickness x:Key="TextControlThemePadding">2,2,6,1</Thickness>
     <sys:Double x:Key="ListViewItemMinHeight">32</sys:Double>
     <sys:Double x:Key="TreeViewItemMinHeight">24</sys:Double>
+    <sys:Double x:Key="TreeViewItemMultiSelectCheckBoxMinHeight">24</sys:Double>
+    <sys:Double x:Key="TreeViewItemPresenterMargin">0</sys:Double>
+    <sys:Double x:Key="TreeViewItemPresenterPadding">0</sys:Double>
     <Thickness x:Key="TimePickerHostPadding">0,1,0,2</Thickness>
     <Thickness x:Key="DatePickerHostPadding">0,1,0,2</Thickness>
     <Thickness x:Key="DatePickerHostMonthPadding">9,0,0,1</Thickness>

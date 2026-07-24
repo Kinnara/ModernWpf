@@ -25,6 +25,7 @@ namespace ModernWpf
         private readonly Data _data;
         private bool _isInitialized;
         private bool _applicationInitialized;
+        private bool _platformFluentThemeEnabled;
 
         static ThemeManager()
         {
@@ -74,7 +75,9 @@ namespace ModernWpf
 
         private static void OnApplicationThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((ThemeManager)d).UpdateActualApplicationTheme();
+            var tm = (ThemeManager)d;
+            tm.UpdateActualApplicationTheme();
+            tm.ApplyPlatformApplicationThemeMode();
         }
 
         #endregion
@@ -135,6 +138,42 @@ namespace ModernWpf
             {
                 Debug.Assert(ThemeResources.Current != null);
                 ThemeResources.Current.ApplyApplicationTheme(ActualApplicationTheme);
+            }
+        }
+
+        internal void EnablePlatformFluentTheme()
+        {
+            _platformFluentThemeEnabled = true;
+            ApplyPlatformApplicationThemeMode();
+            ApplyPlatformWindowThemeModes();
+        }
+
+        private void ApplyPlatformApplicationThemeMode()
+        {
+            if (_platformFluentThemeEnabled)
+            {
+                PlatformThemeModeBridge.ApplyApplicationTheme(ApplicationTheme);
+            }
+        }
+
+        private void ApplyPlatformWindowThemeModes()
+        {
+            if (!_platformFluentThemeEnabled || Application.Current == null)
+            {
+                return;
+            }
+
+            foreach (Window window in Application.Current.Windows)
+            {
+                ApplyPlatformWindowThemeMode(window);
+            }
+        }
+
+        private void ApplyPlatformWindowThemeMode(Window window)
+        {
+            if (_platformFluentThemeEnabled)
+            {
+                PlatformThemeModeBridge.ApplyWindowTheme(window, GetRequestedTheme(window));
             }
         }
 
@@ -334,6 +373,8 @@ namespace ModernWpf
             {
                 SetTheme(window, Current._defaultActualTheme);
             }
+
+            Current.ApplyPlatformWindowThemeMode(window);
         }
 
         #endregion
@@ -794,6 +835,7 @@ namespace ModernWpf
 
                 _applicationInitialized = true;
 
+                ApplyPlatformApplicationThemeMode();
                 ApplyAccentColor();
                 ApplyApplicationTheme();
             }

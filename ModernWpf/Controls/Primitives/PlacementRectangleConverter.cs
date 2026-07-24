@@ -5,7 +5,7 @@ using System.Windows.Data;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class PlacementRectangleConverter : IMultiValueConverter
+    internal class PlacementRectangleConverter : IMultiValueConverter
     {
         public Thickness Margin { get; set; }
 

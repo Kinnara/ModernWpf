@@ -1,0 +1,14 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public static partial class",
+    "name": "FlyoutService"
+  },
+  "properties": [
+    { "name": "Flyout", "type": "FlyoutBase", "kind": "RegisterAttached", "changed": "OnFlyoutChanged", "generateWrapper": false }
+  ]
+}

@@ -1,0 +1,200 @@
+<UserControl
+    x:Class="ModernWpf.Gallery.Pages.ItemPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="760"
+    d:DesignWidth="900"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    mc:Ignorable="d">
+    <Grid Style="{StaticResource GalleryPageRootStyle}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <controls:PageHeader
+            Margin="0,0,0,32"
+            Title="{Binding Title}"
+            Description="{Binding PageHeaderDescription}"
+            Visibility="{Binding ShowPageHeader, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+        <ScrollViewer
+            AutomationProperties.AutomationId="GalleryItemPageScrollViewer"
+            Grid.Row="1"
+            Margin="0,0,0,24"
+            Padding="0,0,24,0"
+            Visibility="{Binding ShowScrolledPageContent, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel Margin="0,0,0,24">
+                <ContentControl
+                    Content="{Binding IntroContent}"
+                    Visibility="{Binding ShowIntroContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <ItemsControl
+                    AlternationCount="2147483647"
+                    ItemsSource="{Binding Examples}"
+                    Visibility="{Binding ShowExamples, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Margin" Value="0" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <controls:ControlExample
+                                AutomationProperties.AutomationId="{Binding AutomationId}"
+                                AutomationProperties.Name="{Binding HeaderText}"
+                                HeaderText="{Binding HeaderText}"
+                                XamlCode="{Binding XamlCode}"
+                                CSharpCode="{Binding CSharpCode}"
+                                ExampleContent="{Binding ExampleContent}"
+                                OutputContent="{Binding OutputContent}"
+                                OptionsContent="{Binding OptionsContent}"
+                                OptionsMaxWidth="{Binding OptionsMaxWidth}"
+                                HorizontalContentAlignment="{Binding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{Binding VerticalContentAlignment}"
+                                UseWinUIGalleryLayout="True"
+                                Margin="{Binding Margin}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <Grid Margin="0,24,0,0">
+                    <Grid.Visibility>
+                        <Binding
+                            Converter="{StaticResource BooleanToVisibilityConverter}"
+                            Path="ShowCatalogDetails" />
+                    </Grid.Visibility>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="24" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border
+                        Padding="16"
+                        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8">
+                        <StackPanel>
+                            <TextBlock
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="API surface" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Style="{StaticResource GalleryMetaTextBlockStyle}"
+                                Text="{Binding ApiNamespace}" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Style="{StaticResource GalleryMetaTextBlockStyle}"
+                                Text="{Binding BaseClassText}" />
+                        </StackPanel>
+                    </Border>
+                    <Border
+                        Grid.Column="2"
+                        Padding="16"
+                        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="8">
+                        <StackPanel>
+                            <TextBlock
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="Catalog" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Style="{StaticResource GalleryMetaTextBlockStyle}"
+                                Text="{Binding GroupTitle}" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Style="{StaticResource GalleryMetaTextBlockStyle}"
+                                Text="{Binding UniqueId}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <TextBlock
+                    Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
+                    Text="Upstream design references"
+                    Visibility="{Binding ShowDocs, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock
+                    Margin="0,0,0,12"
+                    Opacity="0.7"
+                    Text="These Windows design and WinUI API links describe the upstream model that ModernWPF adapts for WPF. Use the namespace shown above in application code."
+                    TextWrapping="Wrap"
+                    Visibility="{Binding ShowDocs, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl
+                    ItemsSource="{Binding Docs}"
+                    Visibility="{Binding ShowDocs, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="0,0,0,8">
+                                <Hyperlink NavigateUri="{Binding Uri}" RequestNavigate="OnDocumentationRequestNavigate">
+                                    <Run Text="{Binding Title, Mode=OneWay}" />
+                                </Hyperlink>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock
+                    Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
+                    Text="Additional sample code"
+                    Visibility="{Binding ShowAdditionalSampleSnippets, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl
+                    ItemsSource="{Binding AdditionalSampleSnippets}"
+                    Visibility="{Binding ShowAdditionalSampleSnippets, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Expander
+                                Margin="0,0,0,8"
+                                Header="{Binding Title}">
+                                <TextBox
+                                    AcceptsReturn="True"
+                                    FontFamily="Consolas"
+                                    FontSize="12"
+                                    HorizontalScrollBarVisibility="Auto"
+                                    IsReadOnly="True"
+                                    Text="{Binding Text, Mode=OneWay}"
+                                    TextWrapping="NoWrap"
+                                    VerticalScrollBarVisibility="Auto" />
+                            </Expander>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <TextBlock
+                    Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
+                    Text="Related controls"
+                    Visibility="{Binding ShowRelatedItems, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <ItemsControl
+                    ItemsSource="{Binding RelatedItems}"
+                    Visibility="{Binding ShowRelatedItems, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button
+                                Width="180"
+                                Margin="0,0,8,8"
+                                Click="OnRelatedItemClick"
+                                Content="{Binding Title}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Frame
+            Grid.Row="1"
+            Margin="{Binding DirectPageContentMargin}"
+            Content="{Binding DirectPageContent}"
+            NavigationUIVisibility="Hidden"
+            Visibility="{Binding HasDirectPageContent, Converter={StaticResource BooleanToVisibilityConverter}}" />
+    </Grid>
+</UserControl>

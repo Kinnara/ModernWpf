@@ -1,4 +1,4 @@
-﻿using ModernWpf;
+using ModernWpf;
 using ModernWpf.Controls.Primitives;
 using System;
 using System.ComponentModel;
@@ -48,12 +48,12 @@ namespace MUXControlsTestApp.Utilities
 
         public static CornerRadius GetCornerRadius(this Control control)
         {
-            return ControlHelper.GetCornerRadius(control);
+            return ((CornerRadius)control.GetValue(System.Windows.Controls.Border.CornerRadiusProperty));
         }
 
         public static void SetCornerRadius(this Control control, CornerRadius value)
         {
-            ControlHelper.SetCornerRadius(control, value);
+            control.SetValue(System.Windows.Controls.Border.CornerRadiusProperty, value);
         }
     }
 }

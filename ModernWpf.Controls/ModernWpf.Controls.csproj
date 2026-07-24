@@ -1,17 +1,25 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;net462;netcoreapp3.0;net5.0-windows7.0</TargetFrameworks>
+    <TargetFrameworks>net462;net8.0-windows7.0;net10.0-windows7.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
     <NeutralLanguage>en-US</NeutralLanguage>
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetDocumentationFile</TargetsForTfmSpecificBuildOutput>
     <NuspecFile>$(MSBuildThisFileDirectory)ModernWpfUI.nuspec</NuspecFile>
     <PackageId>ModernWpfUI</PackageId>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <!-- WPF's pass-2 project is an intermediate assembly with compiler-only
+         public glue. Analyze the final, shipped compilation instead. -->
+    <RunAnalyzers Condition="'$(_TargetAssemblyProjectName)' != ''">false</RunAnalyzers>
+    <NoWarn>$(NoWarn);RS0036;RS0041</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);RS0016;RS0017;RS0024;RS0025</WarningsAsErrors>
+    <EnablePackageValidation>true</EnablePackageValidation>
+    <EnableStrictModeForCompatibleFrameworksInPackage>true</EnableStrictModeForCompatibleFrameworksInPackage>
+    <EnableStrictModeForBaselineValidation>true</EnableStrictModeForBaselineValidation>
+    <PackageValidationBaselineVersion
+      Condition="'$(Version)' != '1.0.0-preview.1' and '$(PackageValidationBaselineVersion)' == ''">1.0.0-preview.1</PackageValidationBaselineVersion>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="AutoSuggestBox\AutoSuggestBoxHelper.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <Page Remove="Properties\DesignTimeResources.xaml" />
@@ -30,7 +38,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="AutoSuggestBox\AutoSuggestBoxHelper.cs" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -45,8 +59,14 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="RemoveNonPublicPackageXmlDocumentation"
+          BeforeTargets="GenerateNuspec">
+    <Exec Command="pwsh.exe -NoProfile -NonInteractive -File &quot;$(MSBuildThisFileDirectory)..\tools\api-contracts\Remove-NonPublicXmlDocumentation.ps1&quot; -OutputRoot &quot;$(MSBuildThisFileDirectory)bin\$(Configuration)&quot;" />
+  </Target>
+
   <Target Name="SetNuspecProperties" BeforeTargets="GenerateNuspec">
     <PropertyGroup>
+      <RepositoryCommit Condition="'$(RepositoryCommit)' == ''">$(SourceRevisionId)</RepositoryCommit>
       <NuspecProperties>$(NuspecProperties);id=$(PackageId)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);version=$(PackageVersion)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);authors=$(Authors)</NuspecProperties>
@@ -54,6 +74,9 @@
       <NuspecProperties>$(NuspecProperties);license=$(PackageLicenseExpression)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);projectUrl=$(PackageProjectUrl)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);tags=$(PackageTags)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);repositoryType=$(RepositoryType)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);repositoryUrl=$(RepositoryUrl)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);repositoryCommit=$(RepositoryCommit)</NuspecProperties>
     </PropertyGroup>
   </Target>
 

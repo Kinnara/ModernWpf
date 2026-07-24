@@ -4,25 +4,68 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
     internal interface IAppBarElement
     {
         void UpdateApplicationViewState();
-        void ApplyApplicationViewState();
     }
 
-    internal static class AppBarElementProperties
+    internal interface IAppBarButtonElement : IAppBarElement
     {
-        #region Icon
+        IconElement Icon { get; }
 
-        public static readonly DependencyProperty IconProperty =
+        string KeyboardAcceleratorTextOverride { get; }
+
+        void SetDefaultLabelPosition(CommandBarDefaultLabelPosition defaultLabelPosition);
+
+        bool GetHasBottomLabel();
+
+        bool GetHasRightLabel();
+
+        void SetOverflowStyleParams(bool hasIcons, bool hasToggleButtons, bool hasKeyboardAcceleratorText);
+
+        void SetInputMode(AppBarButtonInputMode inputMode);
+
+        double GetKeyboardAcceleratorTextDesiredWidth();
+
+        void UpdateTemplateSettings(double maxKeyboardAcceleratorTextWidth);
+    }
+
+    internal enum AppBarButtonInputMode
+    {
+        Default,
+        Touch,
+        GameController
+    }
+
+    internal static partial class AppBarElementProperties
+    {
+        internal static readonly DependencyProperty IsInCommandBarFlyoutProperty =
             DependencyProperty.RegisterAttached(
-                "Icon",
-                typeof(IconElement),
+                "IsInCommandBarFlyout",
+                typeof(bool),
                 typeof(AppBarElementProperties),
-                new PropertyMetadata(OnIconChanged));
+                new PropertyMetadata(false));
+
+        internal static bool GetIsInCommandBarFlyout(DependencyObject element)
+        {
+            return (bool)element.GetValue(IsInCommandBarFlyoutProperty);
+        }
+
+        internal static void SetIsInCommandBarFlyout(DependencyObject element, bool value)
+        {
+            element.SetValue(IsInCommandBarFlyoutProperty, value);
+        }
+
+        static AppBarElementProperties()
+        {
+            InputGestureTextProperty = KeyboardAcceleratorTextOverrideProperty;
+        }
+
+        #region Icon
 
         private static void OnIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -33,16 +76,11 @@ namespace ModernWpf.Controls
 
         #region Label
 
-        public static readonly DependencyProperty LabelProperty =
-            DependencyProperty.RegisterAttached(
-                "Label",
-                typeof(string),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(string.Empty, OnLabelChanged, CoerceLabel));
-
         private static void OnLabelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as FrameworkElement)?.CoerceValue(FrameworkElement.ToolTipProperty);
+            (d as IAppBarElement)?.UpdateApplicationViewState();
+            CommandBar.OnCommandBarElementDependencyPropertyChanged(d);
         }
 
         // Set the label to the command text if no label has been explicitly specified
@@ -67,30 +105,33 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region LabelPosition
+        #region DefaultLabelPosition
 
-        public static readonly DependencyProperty LabelPositionProperty =
-            DependencyProperty.RegisterAttached(
-                "LabelPosition",
-                typeof(CommandBarLabelPosition),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(CommandBarLabelPosition.Default, OnLabelPositionChanged));
+        private static void OnDefaultLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is IAppBarButtonElement appBarButtonElement)
+            {
+                appBarButtonElement.SetDefaultLabelPosition((CommandBarDefaultLabelPosition)e.NewValue);
+            }
+            else
+            {
+                (d as IAppBarElement)?.UpdateApplicationViewState();
+            }
+        }
+
+        #endregion
+
+        #region LabelPosition
 
         private static void OnLabelPositionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             (d as IAppBarElement)?.UpdateApplicationViewState();
+            CommandBar.OnCommandBarElementDependencyPropertyChanged(d);
         }
 
         #endregion
 
         #region IsCompact
-
-        public static readonly DependencyProperty IsCompactProperty =
-            DependencyProperty.RegisterAttached(
-                "IsCompact",
-                typeof(bool),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(false, OnIsCompactChanged));
 
         private static void OnIsCompactChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -99,17 +140,31 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region DynamicOverflowOrder
+
+        private static void OnDynamicOverflowOrderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            CommandBar.OnCommandBarElementDependencyPropertyChanged(d);
+        }
+
+        #endregion
+
         #region IsInOverflow
 
-        internal static readonly DependencyPropertyKey IsInOverflowPropertyKey =
-            DependencyProperty.RegisterAttachedReadOnly(
-                "IsInOverflow",
-                typeof(bool),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(false, OnIsInOverflowChanged));
+        internal static bool GetUseOverflowStyle(DependencyObject element)
+        {
+            return (bool)element.GetValue(UseOverflowStyleProperty);
+        }
 
-        public static readonly DependencyProperty IsInOverflowProperty =
-            IsInOverflowPropertyKey.DependencyProperty;
+        internal static void SetUseOverflowStyle(DependencyObject element, bool value)
+        {
+            element.SetValue(UseOverflowStyleProperty, value);
+        }
+
+        private static void OnUseOverflowStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            d.SetValue(IsInOverflowPropertyKey, e.NewValue);
+        }
 
         private static void OnIsInOverflowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -118,46 +173,16 @@ namespace ModernWpf.Controls
             (d as FrameworkElement)?.CoerceValue(FrameworkElement.ToolTipProperty);
         }
 
-        internal static void UpdateIsInOverflow(DependencyObject element)
+        internal static void SetIsInOverflow(DependencyObject element, bool value)
         {
-            bool value = ToolBar.GetIsOverflowItem(element) || ToolBar.GetOverflowMode(element) == OverflowMode.Always;
-            element.SetValue(IsInOverflowPropertyKey, value);
-        }
-
-        #endregion
-
-        #region ApplicationViewState
-
-        internal static readonly DependencyPropertyKey ApplicationViewStatePropertyKey =
-            DependencyProperty.RegisterAttachedReadOnly(
-                "ApplicationViewState",
-                typeof(AppBarElementApplicationViewState),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(
-                    AppBarElementApplicationViewState.FullSize,
-                    OnApplicationViewStateChanged));
-
-        internal static readonly DependencyProperty ApplicationViewStateProperty =
-            ApplicationViewStatePropertyKey.DependencyProperty;
-
-        private static void OnApplicationViewStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            (d as IAppBarElement)?.ApplyApplicationViewState();
+            SetUseOverflowStyle(element, value);
         }
 
         #endregion
 
         #region InputGestureText
 
-        public static readonly DependencyProperty InputGestureTextProperty =
-            DependencyProperty.RegisterAttached(
-                "InputGestureText",
-                typeof(string),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(
-                    string.Empty,
-                    OnInputGestureTextChanged,
-                    CoerceInputGestureText));
+        public static readonly DependencyProperty InputGestureTextProperty;
 
         private static void OnInputGestureTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -196,16 +221,6 @@ namespace ModernWpf.Controls
 
         #region HasInputGestureText
 
-        private static readonly DependencyPropertyKey HasInputGestureTextPropertyKey =
-            DependencyProperty.RegisterAttachedReadOnly(
-                "HasInputGestureText",
-                typeof(bool),
-                typeof(AppBarElementProperties),
-                new PropertyMetadata(false, OnHasInputGestureTextChanged));
-
-        public static readonly DependencyProperty HasInputGestureTextProperty =
-            HasInputGestureTextPropertyKey.DependencyProperty;
-
         private static void OnHasInputGestureTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             UpdateShowKeyboardAcceleratorText(d as FrameworkElement);
@@ -219,12 +234,6 @@ namespace ModernWpf.Controls
         #endregion
 
         #region ShowKeyboardAcceleratorText
-
-        internal static readonly DependencyProperty ShowKeyboardAcceleratorTextProperty =
-            DependencyProperty.RegisterAttached(
-                "ShowKeyboardAcceleratorText",
-                typeof(bool),
-                typeof(AppBarElementProperties));
 
         internal static bool GetShowKeyboardAcceleratorText(DependencyObject element)
         {
@@ -241,12 +250,83 @@ namespace ModernWpf.Controls
             if (element != null)
             {
                 bool value = (bool)element.GetValue(HasInputGestureTextProperty) &&
-                             (bool)element.GetValue(IsInOverflowProperty);
+                             GetUseOverflowStyle(element);
                 SetShowKeyboardAcceleratorText(element, value);
             }
         }
 
         #endregion
+
+        internal static void UpdateOverflowStyleParams(
+            IEnumerable commands,
+            bool useOverflowStyle,
+            AppBarButtonInputMode inputMode = AppBarButtonInputMode.Default)
+        {
+            if (!useOverflowStyle)
+            {
+                foreach (object command in commands)
+                {
+                    if (command is DependencyObject dependencyObject)
+                    {
+                        SetUseOverflowStyle(dependencyObject, false);
+                    }
+
+                    if (command is IAppBarButtonElement appBarElement)
+                    {
+                        appBarElement.SetOverflowStyleParams(false, false, false);
+                        appBarElement.SetInputMode(AppBarButtonInputMode.Default);
+                        appBarElement.UpdateTemplateSettings(0);
+                    }
+                }
+
+                return;
+            }
+
+            bool hasAppBarToggleButtons = false;
+            bool hasAppBarIcons = false;
+            bool hasAppBarAcceleratorText = false;
+            double maxAppBarKeyboardAcceleratorTextWidth = 0;
+
+            foreach (object command in commands)
+            {
+                if (command is UIElement element && !element.IsVisible)
+                {
+                    continue;
+                }
+
+                if (command is IAppBarButtonElement appBarElement)
+                {
+                    if (command is AppBarToggleButton)
+                    {
+                        hasAppBarToggleButtons = true;
+                    }
+
+                    hasAppBarIcons = hasAppBarIcons || appBarElement.Icon != null;
+                    hasAppBarAcceleratorText = hasAppBarAcceleratorText || !string.IsNullOrEmpty(appBarElement.KeyboardAcceleratorTextOverride);
+                    maxAppBarKeyboardAcceleratorTextWidth = System.Math.Max(
+                        maxAppBarKeyboardAcceleratorTextWidth,
+                        appBarElement.GetKeyboardAcceleratorTextDesiredWidth());
+                }
+            }
+
+            foreach (object command in commands)
+            {
+                if (command is DependencyObject dependencyObject)
+                {
+                    SetUseOverflowStyle(dependencyObject, useOverflowStyle);
+                }
+
+                if (command is IAppBarButtonElement appBarElement)
+                {
+                    appBarElement.SetOverflowStyleParams(
+                        hasAppBarIcons,
+                        hasAppBarToggleButtons,
+                        hasAppBarAcceleratorText);
+                    appBarElement.SetInputMode(inputMode);
+                    appBarElement.UpdateTemplateSettings(maxAppBarKeyboardAcceleratorTextWidth);
+                }
+            }
+        }
 
         internal static object CoerceToolTip(DependencyObject d, object baseValue)
         {
@@ -255,10 +335,10 @@ namespace ModernWpf.Controls
             if (baseValue == null &&
                 button.HasDefaultValue(FrameworkElement.ToolTipProperty) &&
                 (bool)button.GetValue(HasInputGestureTextProperty) &&
-                !(bool)button.GetValue(IsInOverflowProperty))
+                !GetUseOverflowStyle(button))
             {
                 string label = (string)button.GetValue(LabelProperty);
-                string inputGestureText = (string)button.GetValue(InputGestureTextProperty);
+                string inputGestureText = (string)button.GetValue(KeyboardAcceleratorTextOverrideProperty);
                 return $"{label} ({inputGestureText})".Trim();
             }
 

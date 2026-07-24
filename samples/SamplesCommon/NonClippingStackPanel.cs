@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace SamplesCommon
 {
-    public class NonClippingStackPanel : SimpleStackPanel
+    public class NonClippingStackPanel : StackPanelEx
     {
         protected override Geometry GetLayoutClip(Size layoutSlotSize)
         {

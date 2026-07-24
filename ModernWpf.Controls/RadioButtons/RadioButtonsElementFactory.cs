@@ -14,14 +14,21 @@ namespace ModernWpf.Controls
 
         internal void UserElementFactory(object newValue)
         {
-            m_itemTemplateWrapper = newValue as IElementFactoryShim;
-            if (m_itemTemplateWrapper is null)
+            if (newValue is DataTemplate dataTemplate)
             {
-                // ItemTemplate set does not implement IElementFactoryShim. We also want to support DataTemplate.
-                if (newValue is DataTemplate dataTemplate)
-                {
-                    m_itemTemplateWrapper = new ItemTemplateWrapper(dataTemplate);
-                }
+                m_itemTemplateWrapper = new ItemTemplateWrapper(dataTemplate);
+            }
+            else if (newValue is DataTemplateSelector selector)
+            {
+                m_itemTemplateWrapper = new ItemTemplateWrapper(selector);
+            }
+            else if (newValue is IElementFactory customElementFactory)
+            {
+                m_itemTemplateWrapper = customElementFactory;
+            }
+            else
+            {
+                m_itemTemplateWrapper = null;
             }
         }
 
@@ -51,6 +58,7 @@ namespace ModernWpf.Controls
             if (m_itemTemplateWrapper is ItemTemplateWrapper itemTemplateWrapper)
             {
                 newRadioButton.ContentTemplate = itemTemplateWrapper.Template;
+                newRadioButton.ContentTemplateSelector = itemTemplateWrapper.TemplateSelector;
             }
 
             return newRadioButton;
@@ -60,6 +68,6 @@ namespace ModernWpf.Controls
         {
         }
 
-        IElementFactoryShim m_itemTemplateWrapper;
+        IElementFactory m_itemTemplateWrapper;
     }
 }

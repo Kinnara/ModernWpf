@@ -1,0 +1,56 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Media",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ListViewBaseItem"
+  },
+  "properties": [
+    {
+      "name": "UseSystemFocusVisuals",
+      "type": "bool",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty"
+    },
+    {
+      "name": "FocusVisualMargin",
+      "type": "Thickness",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty"
+    },
+    {
+      "name": "FocusVisualPrimaryBrush",
+      "type": "Brush",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.FocusVisualPrimaryBrushProperty"
+    },
+    {
+      "name": "FocusVisualPrimaryThickness",
+      "type": "Thickness",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.FocusVisualPrimaryThicknessProperty"
+    },
+    {
+      "name": "FocusVisualSecondaryBrush",
+      "type": "Brush",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.FocusVisualSecondaryBrushProperty"
+    },
+    {
+      "name": "FocusVisualSecondaryThickness",
+      "type": "Thickness",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.FocusVisualSecondaryThicknessProperty"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty"
+    }
+  ]
+}

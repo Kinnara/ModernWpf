@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives"
+    xmlns:root="clr-namespace:ModernWpf"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <sys:Double x:Key="{x:Static local:TitleBar.HeightKey}">32</sys:Double>
@@ -30,6 +31,74 @@
                         x:Name="LayoutRoot"
                         Background="{TemplateBinding Background}"
                         SnapsToDevicePixels="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <root:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ActivationStateGroup">
+                                <root:VisualStateEx x:Name="Activated" />
+                                <root:VisualStateEx x:Name="Deactivated">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="LayoutRoot.Background" Value="{Binding InactiveBackground, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        <root:VisualStateSetter Target="HighContrastBackground.Fill" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
+                                        <root:VisualStateSetter Target="Title.Foreground" Value="{Binding InactiveForeground, RelativeSource={RelativeSource TemplatedParent}}" />
+                                        <root:VisualStateSetter Target="PART_BackButton.Foreground" Value="{Binding InactiveForeground, RelativeSource={RelativeSource TemplatedParent}}" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="BackButtonVisibilityGroup">
+                                <root:VisualStateEx x:Name="BackButtonVisible">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="PART_BackButton.Visibility" Value="Visible" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="BackButtonCollapsed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="PART_BackButton.Visibility" Value="Collapsed" />
+                                        <root:VisualStateSetter Target="Icon.Margin" Value="16,0,0,0" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="IconVisibilityGroup">
+                                <root:VisualStateEx x:Name="IconVisible">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="Icon.Visibility" Value="Visible" />
+                                        <root:VisualStateSetter Target="Title.Margin" Value="5,0,12,0" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="IconCollapsed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="Icon.Visibility" Value="Collapsed" />
+                                        <root:VisualStateSetter Target="Title.Margin" Value="12,0,12,0" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="TitleTextVisibilityGroup">
+                                <root:VisualStateEx x:Name="TitleTextVisible">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="Title.Visibility" Value="Visible" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                                <root:VisualStateEx x:Name="TitleTextCollapsed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="Title.Visibility" Value="Collapsed" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="ExtendViewIntoTitleBarStates">
+                                <root:VisualStateEx x:Name="TitleContentVisible" />
+                                <root:VisualStateEx x:Name="TitleContentCollapsed">
+                                    <root:VisualStateEx.Setters>
+                                        <root:VisualStateSetter Target="LayoutRoot.Background" Value="{x:Null}" />
+                                        <root:VisualStateSetter Target="IconTitlePanel.Visibility" Value="Collapsed" />
+                                    </root:VisualStateEx.Setters>
+                                </root:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition />
@@ -127,22 +196,6 @@
                         </StackPanel>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsActive" Value="False">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{Binding InactiveBackground, RelativeSource={RelativeSource TemplatedParent}}" />
-                            <Setter TargetName="HighContrastBackground" Property="Fill" Value="{DynamicResource {x:Static SystemColors.InactiveCaptionBrushKey}}" />
-                            <Setter TargetName="Title" Property="Foreground" Value="{Binding InactiveForeground, RelativeSource={RelativeSource TemplatedParent}}" />
-                        </Trigger>
-                        <Trigger Property="ExtendViewIntoTitleBar" Value="True">
-                            <Setter TargetName="LayoutRoot" Property="Background" Value="{x:Null}" />
-                            <Setter TargetName="IconTitlePanel" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
-                        <Trigger Property="IsBackButtonVisible" Value="True">
-                            <Setter TargetName="PART_BackButton" Property="Visibility" Value="Visible" />
-                        </Trigger>
-                        <Trigger Property="IsIconVisible" Value="True">
-                            <Setter TargetName="Icon" Property="Visibility" Value="Visible" />
-                            <Setter TargetName="Title" Property="Margin" Value="5,0,12,0" />
-                        </Trigger>
                         <DataTrigger Binding="{Binding WindowStyle, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="ToolWindow">
                             <Setter TargetName="MinimizeButton" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PART_MaximizeRestoreButton" Property="Visibility" Value="Collapsed" />

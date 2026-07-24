@@ -1,0 +1,290 @@
+<Window
+    x:Class="ModernWpf.Gallery.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:galleryShell="clr-namespace:ModernWpf.Gallery.Shell"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="clr-namespace:ModernWpf.Gallery.Pages"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="{Binding ViewModel.ApplicationTitle}"
+    Icon="{StaticResource ModernWpfLogoImage}"
+    Width="1180"
+    Height="820"
+    MinWidth="780"
+    MinHeight="470"
+    WindowStartupLocation="CenterScreen"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    PreviewKeyDown="OnPreviewKeyDown"
+    mc:Ignorable="d"
+    ui:ThemeManager.IsThemeAware="True">
+    <Window.Resources>
+        <Style x:Key="BorderlessButtonStyle" TargetType="Button">
+            <Setter Property="MinWidth" Value="48" />
+            <Setter Property="MinHeight" Value="32" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Border.CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+            <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+            <Setter Property="VerticalAlignment" Value="Top" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="EnclosingBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding Border.CornerRadius}"
+                            SnapsToDevicePixels="True">
+                            <ContentPresenter
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ControlAltFillColorTertiaryBrush}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource ControlAltFillColorQuarternaryBrush}" />
+                </Trigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource SystemColorHighlightColorBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource SystemColorHighlightTextColorBrush}" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TitleBarDefaultButtonStyle" BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
+            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+            <Setter Property="Border.CornerRadius" Value="0" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="MinHeight" Value="48" />
+        </Style>
+
+        <Style x:Key="WinUITitleBarNavigationButtonStyle" BasedOn="{StaticResource BorderlessButtonStyle}" TargetType="Button">
+            <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+            <Setter Property="Width" Value="40" />
+            <Setter Property="MinWidth" Value="40" />
+            <Setter Property="Margin" Value="2" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Background" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
+            <Setter Property="Border.CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+            <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
+            <Setter Property="FontSize" Value="16" />
+            <!-- WPF's WindowChrome client origin is one pixel above WinUI's AppWindow title-bar origin. -->
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <TranslateTransform Y="1" />
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{DynamicResource ControlFillColorDisabledBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                </Trigger>
+                <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" Value="False">
+                    <Setter Property="Opacity" Value="0.5" />
+                </DataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource SystemColorHighlightColorBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource SystemColorHighlightTextColorBrush}" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="TitleBarDefaultCloseButtonStyle" BasedOn="{StaticResource TitleBarDefaultButtonStyle}" TargetType="Button">
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#C42B1C" />
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="True" />
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource SystemColorHighlightColorBrush}" />
+                    <Setter Property="Foreground" Value="{DynamicResource SystemColorHighlightTextColorBrush}" />
+                </MultiDataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Border
+        x:Name="HighContrastBorder"
+        BorderBrush="Transparent"
+        BorderThickness="8 1 8 8">
+        <Grid x:Name="MainGrid">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid
+                Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Height="48">
+                <Grid.ColumnDefinitions>
+                    <!-- WindowChrome already contributes WinUI's two-DIP left inset. -->
+                    <ColumnDefinition Width="0" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <!-- No LeftHeader is present, so WinUI uses its two-DIP negative-inset spacing state. -->
+                    <ColumnDefinition Width="2" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="48" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    x:Name="BackButton"
+                    Grid.Column="1"
+                    AutomationProperties.Name="Back"
+                    Style="{StaticResource WinUITitleBarNavigationButtonStyle}"
+                    Command="{Binding ViewModel.BackCommand}"
+                    IsEnabled="{Binding ViewModel.CanNavigateback}"
+                    Visibility="{Binding ViewModel.CanNavigateback, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    WindowChrome.IsHitTestVisibleInChrome="True"
+                    ToolTipService.ToolTip="Back">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="16"
+                        Text="&#xE72B;">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Button>
+
+                <Button
+                    x:Name="PaneToggleButton"
+                    Grid.Column="2"
+                    AutomationProperties.Name="Navigation"
+                    Click="ToggleNavigationPane"
+                    Style="{StaticResource WinUITitleBarNavigationButtonStyle}"
+                    ToolTipService.ToolTip="Navigation">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="16"
+                        Text="&#xE700;" />
+                </Button>
+
+                <StackPanel
+                    Grid.Column="4"
+                    Margin="0,0,8,0"
+                    Orientation="Horizontal">
+                    <StackPanel.RenderTransform>
+                        <TranslateTransform Y="1" />
+                    </StackPanel.RenderTransform>
+                    <Image
+                        Width="16"
+                        Height="16"
+                        Margin="0,0,16,0"
+                        VerticalAlignment="Center"
+                        Source="{StaticResource ModernWpfLogoImage}" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        pages:GalleryAutomation.HeadingLevel="Level1"
+                        Text="{Binding ViewModel.ApplicationTitle}" />
+                </StackPanel>
+
+                <ui:AutoSuggestBox
+                    x:Name="ControlsSearchBox"
+                    Grid.Column="5"
+                    Width="320"
+                    Height="32"
+                    MinWidth="160"
+                    MaxWidth="580"
+                    Margin="20,0,0,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    AutomationProperties.AutomationId="ControlsSearchBox"
+                    AutomationProperties.Name="Search controls and samples"
+                    PlaceholderText="Search controls and samples..."
+                    QueryIcon="Find"
+                    QuerySubmitted="OnSearchQuerySubmitted"
+                    TextChanged="OnSearchTextChanged"
+                    WindowChrome.IsHitTestVisibleInChrome="True">
+                    <ui:AutoSuggestBox.RenderTransform>
+                        <TranslateTransform Y="1" />
+                    </ui:AutoSuggestBox.RenderTransform>
+                </ui:AutoSuggestBox>
+
+                <Button
+                    x:Name="MinimizeButton"
+                    Grid.Column="7"
+                    Click="MinimizeWindow"
+                    Style="{StaticResource TitleBarDefaultButtonStyle}">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="10"
+                        Text="&#xE921;" />
+                </Button>
+
+                <Button
+                    x:Name="MaximizeButton"
+                    Grid.Column="8"
+                    Click="MaximizeWindow"
+                    Style="{StaticResource TitleBarDefaultButtonStyle}">
+                    <TextBlock
+                        x:Name="MaximizeIcon"
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="10"
+                        Text="&#xE922;" />
+                </Button>
+
+                <Button
+                    x:Name="CloseButton"
+                    Grid.Column="9"
+                    Click="CloseWindow"
+                    Style="{StaticResource TitleBarDefaultCloseButtonStyle}">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="16"
+                        Text="&#xE711;" />
+                </Button>
+            </Grid>
+
+            <galleryShell:NavigationRootPage Grid.Row="1" />
+        </Grid>
+    </Border>
+</Window>

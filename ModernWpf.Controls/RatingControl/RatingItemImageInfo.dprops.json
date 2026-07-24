@@ -1,0 +1,37 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Media"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "RatingItemImageInfo"
+  },
+  "properties": [
+    {
+      "name": "DisabledImage",
+      "type": "ImageSource"
+    },
+    {
+      "name": "Image",
+      "type": "ImageSource"
+    },
+    {
+      "name": "PlaceholderImage",
+      "type": "ImageSource"
+    },
+    {
+      "name": "PointerOverImage",
+      "type": "ImageSource"
+    },
+    {
+      "name": "PointerOverPlaceholderImage",
+      "type": "ImageSource"
+    },
+    {
+      "name": "UnsetImage",
+      "type": "ImageSource"
+    }
+  ]
+}

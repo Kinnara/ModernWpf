@@ -1,0 +1,2301 @@
+param(
+    [string[]]$Cases = @(),
+    [ValidateSet("None", "OfficialWpfGallery")]
+    [string]$Reference = "OfficialWpfGallery",
+    [ValidateSet("Light", "Dark", "Default", "HighContrast")]
+    [string]$Theme = "Light",
+    [string]$ModernGalleryExe,
+    [string]$WpfGalleryExe,
+    [string]$OfficialDirectHostExe,
+    [string]$OutputRoot = "artifacts\wpf-gallery-visual-audit",
+    [int]$Width = 1180,
+    [int]$Height = 820,
+    [int]$TimeoutSeconds = 30,
+    [ValidateRange(1, 100)]
+    [int]$ComparisonSampleStep = 4,
+    [switch]$BuildModern,
+    [switch]$BuildOfficial,
+    [switch]$ListCases,
+    [switch]$FailOnDifference
+)
+
+Set-StrictMode -Version 2.0
+$ErrorActionPreference = "Stop"
+
+$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+$OfficialWpfGalleryRoot = "D:\repos\WPF-Samples\Sample Applications\WPFGallery"
+
+if ([string]::IsNullOrWhiteSpace($ModernGalleryExe)) {
+    $ModernGalleryExe = Join-Path $RepoRoot "ModernWpf.Gallery\bin\Debug\net8.0-windows7.0\ModernWpf.Gallery.exe"
+}
+
+if ([string]::IsNullOrWhiteSpace($WpfGalleryExe)) {
+    $WpfGalleryExe = Join-Path $OfficialWpfGalleryRoot "bin\Debug\net10.0-windows\WPFGallery.exe"
+}
+$OfficialWpfGalleryOutput = Split-Path -Parent $WpfGalleryExe
+
+if ([string]::IsNullOrWhiteSpace($OfficialDirectHostExe)) {
+    $OfficialDirectHostExe = Join-Path $RepoRoot "tools\visual-checks\OfficialWpfGalleryDirectHost\bin\Debug\net10.0-windows\OfficialWpfGalleryDirectHost.exe"
+}
+
+function New-Case(
+    [string]$id,
+    [string]$modernRoute,
+    [string[]]$officialPath,
+    [string]$colorSubpage = "",
+    [string]$readyRoute = "",
+    [string[]]$modernClickPath = @(),
+    [string]$modernInitialReadyRoute = "") {
+    if ([string]::IsNullOrWhiteSpace($readyRoute)) {
+        $readyRoute = $modernRoute
+    }
+
+    if ([string]::IsNullOrWhiteSpace($modernInitialReadyRoute)) {
+        $modernInitialReadyRoute = $readyRoute
+    }
+
+    return [ordered]@{
+        Id = $id
+        ModernRoute = $modernRoute
+        ReadyRoute = $readyRoute
+        ModernInitialReadyRoute = $modernInitialReadyRoute
+        ModernClickPath = $modernClickPath
+        OfficialPath = $officialPath
+        ColorSubpage = $colorSubpage
+    }
+}
+
+$CaseCatalog = @(
+    New-Case "Home" "Home" @("Home") "" "home"
+    New-Case "ShellHomeNavigation" "home" @("Home") "" "home"
+    New-Case "ShellDesignGuidance" "category/Design Guidance" @("Design Guidance") "" "category/DesignGuidance"
+    New-Case "ShellClickDesignGuidance" "home" @("Design Guidance") "" "category/DesignGuidance" @("Design Guidance") "home"
+    New-Case "ShellClickDesignGuidanceCollapse" "home" @("Design Guidance") "" "category/DesignGuidance" @("Design Guidance", "Design Guidance") "home"
+    New-Case "WhatsNew" "What's New" @("What's New") "" "WhatsNew"
+    New-Case "AllControls" "All Controls" @("All Controls") "" "AllControls"
+    New-Case "DesignGuidance" "category/Design Guidance" @("Design Guidance") "" "category/DesignGuidance"
+    New-Case "Color" "item/Colors" @("Design Guidance", "Colors") "" "item/Color"
+    New-Case "ColorText" "item/Colors" @("Design Guidance", "Colors") "Text" "item/Color"
+    New-Case "ColorFill" "item/Colors" @("Design Guidance", "Colors") "Fill" "item/Color"
+    New-Case "ColorStroke" "item/Colors" @("Design Guidance", "Colors") "Stroke" "item/Color"
+    New-Case "ColorBackground" "item/Colors" @("Design Guidance", "Colors") "Background" "item/Color"
+    New-Case "ColorSignal" "item/Colors" @("Design Guidance", "Colors") "Signal" "item/Color"
+    New-Case "ColorHighContrast" "item/Colors" @("Design Guidance", "Colors") "HighContrast" "item/Color"
+    New-Case "Typography" "item/Typography" @("Design Guidance", "Typography")
+    New-Case "Spacing" "item/Spacing" @("Design Guidance", "Spacing")
+    New-Case "Geometry" "item/Geometry" @("Design Guidance", "Geometry")
+    New-Case "Iconography" "item/Icons" @("Design Guidance", "Icons") "" "item/Iconography"
+    New-Case "BasicInput" "category/Basic Input" @("Basic Input") "" "category/BasicInput"
+    New-Case "Button" "item/Button" @("Basic Input", "Button")
+    New-Case "CheckBox" "item/CheckBox" @("Basic Input", "CheckBox")
+    New-Case "ComboBox" "item/ComboBox" @("Basic Input", "ComboBox")
+    New-Case "RadioButton" "item/RadioButton" @("Basic Input", "RadioButton")
+    New-Case "Slider" "item/Slider" @("Basic Input", "Slider")
+    New-Case "Collections" "category/Collections" @("Collections")
+    New-Case "DataGrid" "item/DataGrid" @("Collections", "DataGrid")
+    New-Case "ListBox" "item/ListBox" @("Collections", "ListBox")
+    New-Case "ListView" "item/ListView" @("Collections", "ListView")
+    New-Case "TreeView" "item/TreeView" @("Collections", "TreeView")
+    New-Case "DateAndCalendar" "category/Date & Calendar" @("Date & Calendar") "" "category/DateAndCalendar"
+    New-Case "Calendar" "item/Calendar" @("Date & Calendar", "Calendar")
+    New-Case "DatePicker" "item/DatePicker" @("Date & Calendar", "DatePicker")
+    New-Case "Layout" "category/Layout" @("Layout")
+    New-Case "Expander" "item/Expander" @("Layout", "Expander")
+    New-Case "Grid" "item/Grid" @("Layout", "Grid")
+    New-Case "ResizeGrip" "item/ResizeGrip" @("Layout", "ResizeGrip")
+    New-Case "GridSplitter" "item/GridSplitter" @("Layout", "GridSplitter")
+    New-Case "GroupBox" "item/GroupBox" @("Layout", "GroupBox")
+    New-Case "StackPanel" "item/StackPanel" @("Layout", "StackPanel")
+    New-Case "Border" "item/Border" @("Layout", "Border")
+    New-Case "ShellNavigation" "item/Menu" @("Navigation", "Menu")
+    New-Case "Navigation" "category/Navigation" @("Navigation")
+    New-Case "Menu" "item/Menu" @("Navigation", "Menu")
+    New-Case "TabControl" "item/TabControl" @("Navigation", "TabControl")
+    New-Case "Frame" "item/Frame" @("Navigation", "Frame")
+    New-Case "NavigationWindow" "item/NavigationWindow" @("Navigation", "NavigationWindow")
+    New-Case "StatusAndInfo" "category/Status & Info" @("Status & Info") "" "category/StatusAndInfo"
+    New-Case "ProgressBar" "item/ProgressBar" @("Status & Info", "ProgressBar")
+    New-Case "ToolTip" "item/ToolTip" @("Status & Info", "ToolTip")
+    New-Case "Text" "category/Text" @("Text")
+    New-Case "Label" "item/Label" @("Text", "Label")
+    New-Case "TextBox" "item/TextBox" @("Text", "TextBox")
+    New-Case "TextBlock" "item/TextBlock" @("Text", "TextBlock")
+    New-Case "RichTextBox" "item/RichTextBox" @("Text", "RichTextEdit")
+    New-Case "PasswordBox" "item/PasswordBox" @("Text", "PasswordBox")
+    New-Case "Hyperlink" "item/Hyperlink" @("Text", "Hyperlink")
+    New-Case "Settings" "Settings" @("Settings") "" "settings"
+)
+
+function Test-ShellNavigationCase($case) {
+    return $null -ne $case -and
+        ($case.Id -eq "ShellNavigation" -or
+            $case.Id -eq "ShellHomeNavigation" -or
+            $case.Id -eq "ShellDesignGuidance" -or
+            $case.Id -eq "ShellClickDesignGuidance" -or
+            $case.Id -eq "ShellClickDesignGuidanceCollapse")
+}
+
+$OfficialDirectReferenceCaseIds = @(
+    "Home",
+    "ShellHomeNavigation",
+    "ShellDesignGuidance",
+    "ShellClickDesignGuidance",
+    "ShellClickDesignGuidanceCollapse",
+    "WhatsNew",
+    "AllControls",
+    "Settings",
+    "DesignGuidance",
+    "Color",
+    "ColorText",
+    "ColorFill",
+    "ColorStroke",
+    "ColorBackground",
+    "ColorSignal",
+    "ColorHighContrast",
+    "Typography",
+    "Spacing",
+    "Geometry",
+    "Iconography",
+    "BasicInput",
+    "Button",
+    "CheckBox",
+    "ComboBox",
+    "RadioButton",
+    "Slider",
+    "Collections",
+    "DateAndCalendar",
+    "Calendar",
+    "DatePicker",
+    "DataGrid",
+    "ListBox",
+    "ListView",
+    "TreeView",
+    "Layout",
+    "ShellNavigation",
+    "Navigation",
+    "Menu",
+    "TabControl",
+    "Frame",
+    "NavigationWindow",
+    "Expander",
+    "Grid",
+    "ResizeGrip",
+    "GridSplitter",
+    "GroupBox",
+    "StackPanel",
+    "StatusAndInfo",
+    "ProgressBar",
+    "ToolTip",
+    "Text",
+    "Label",
+    "TextBox",
+    "TextBlock",
+    "RichTextBox",
+    "PasswordBox",
+    "Hyperlink",
+    "Border"
+)
+
+function Select-Cases {
+    if ($Cases.Count -eq 0) {
+        return $CaseCatalog
+    }
+
+    $selected = New-Object System.Collections.Generic.List[object]
+    foreach ($caseId in $Cases) {
+        $match = $CaseCatalog | Where-Object {
+            $_.Id -eq $caseId -or
+            $_.ModernRoute -eq $caseId -or
+            $_.ReadyRoute -eq $caseId -or
+            ($_.OfficialPath -join "/") -eq $caseId
+        } | Select-Object -First 1
+
+        if ($null -eq $match) {
+            throw "Unknown WPF Gallery visual audit case '$caseId'. Run with -ListCases to see valid case IDs."
+        }
+
+        $selected.Add($match)
+    }
+
+    return $selected.ToArray()
+}
+
+function Test-OfficialDirectReferenceCase($case) {
+    return $OfficialDirectReferenceCaseIds -contains $case.Id
+}
+
+function Test-OsHighContrastEnabled {
+    Add-Type -AssemblyName PresentationFramework
+    return [System.Windows.SystemParameters]::HighContrast
+}
+
+function Ensure-OfficialDirectHostBuilt {
+    $projectPath = Join-Path $RepoRoot "tools\visual-checks\OfficialWpfGalleryDirectHost\OfficialWpfGalleryDirectHost.csproj"
+    & dotnet build $projectPath -c Debug -p:OfficialWpfGalleryOutput="$OfficialWpfGalleryOutput"
+    if ($LASTEXITCODE -ne 0) {
+        throw "Official WPF Gallery direct reference host build failed."
+    }
+}
+
+function Enter-WpfGalleryVisualAuditRunLock {
+    $mutexName = "ModernWpfGalleryWpfVisualAudit"
+    $mutex = [System.Threading.Mutex]::new($false, $mutexName)
+    try {
+        $acquired = $mutex.WaitOne([TimeSpan]::FromSeconds(1))
+    }
+    catch [System.Threading.AbandonedMutexException] {
+        $acquired = $true
+    }
+
+    if (!$acquired) {
+        $mutex.Dispose()
+        throw "Another WPF Gallery visual audit is already running. Run these GUI audits sequentially; concurrent runs can shift focus/window capture and produce invalid visual comparison evidence."
+    }
+
+    return $mutex
+}
+
+function Exit-WpfGalleryVisualAuditRunLock($mutex) {
+    if ($null -ne $mutex) {
+        $mutex.ReleaseMutex()
+        $mutex.Dispose()
+    }
+}
+
+$visualAuditRunMutex = $null
+
+if ($ListCases) {
+    Select-Cases |
+        ForEach-Object {
+            [pscustomobject]@{
+                Id = $_.Id
+                ModernRoute = $_.ModernRoute
+                ReadyRoute = $_.ReadyRoute
+                ModernClickPath = $_.ModernClickPath -join " > "
+                OfficialPath = $_.OfficialPath -join " > "
+            }
+        } |
+        Format-Table Id, ModernRoute, ReadyRoute, ModernClickPath, OfficialPath -AutoSize
+    return
+}
+
+$visualAuditRunMutex = Enter-WpfGalleryVisualAuditRunLock
+
+if ($BuildModern) {
+    & dotnet build (Join-Path $RepoRoot "ModernWpf.Gallery\ModernWpf.Gallery.csproj") -f net8.0-windows7.0 -c Debug --no-restore
+    if ($LASTEXITCODE -ne 0) {
+        throw "ModernWpf.Gallery build failed."
+    }
+}
+
+if ($BuildOfficial) {
+    & dotnet build (Join-Path $OfficialWpfGalleryRoot "WPFGallery.csproj") -f net10.0-windows -c Debug
+    if ($LASTEXITCODE -ne 0) {
+        throw "Official WPF Gallery build failed."
+    }
+}
+
+$osHighContrastEnabled = Test-OsHighContrastEnabled
+if ($Theme -eq "HighContrast" -and !$osHighContrastEnabled) {
+    throw "HighContrast visual audit requested, but OS High Contrast is not enabled. Enable a Windows High Contrast theme and rerun with -Theme HighContrast; this script does not simulate High Contrast via Light/Dark theme switching."
+}
+
+if (($Theme -eq "Light" -or $Theme -eq "Dark") -and $osHighContrastEnabled) {
+    throw "$Theme visual audit requested, but OS High Contrast is enabled. Disable Windows High Contrast before running Light/Dark audits, or rerun with -Theme HighContrast. Light/Dark audits under OS High Contrast produce mismatched ModernWpf and official direct-host content-crop sizes and invalid comparison evidence."
+}
+
+if (!(Test-Path $ModernGalleryExe)) {
+    throw "Local Gallery executable was not found at '$ModernGalleryExe'. Build first or pass -ModernGalleryExe."
+}
+
+if ($Reference -eq "OfficialWpfGallery" -and !(Test-Path $WpfGalleryExe)) {
+    throw "Official WPF Gallery executable was not found at '$WpfGalleryExe'. Build D:\repos\WPF-Samples\Sample Applications\WPFGallery or pass -WpfGalleryExe."
+}
+
+$selectedCases = Select-Cases
+if ($Reference -eq "OfficialWpfGallery" -and ($selectedCases | Where-Object { Test-OfficialDirectReferenceCase $_ } | Select-Object -First 1)) {
+    Ensure-OfficialDirectHostBuilt
+}
+
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+try {
+    Add-Type -AssemblyName System.Drawing.Common
+}
+catch {
+    Add-Type -AssemblyName System.Drawing
+}
+
+Add-Type -TypeDefinition @"
+using System;
+using System.Runtime.InteropServices;
+
+public static class WpfGalleryVisualNative
+{
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+
+    [DllImport("user32.dll")]
+    private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
+
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int command);
+
+    [DllImport("user32.dll")]
+    public static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, uint flags);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr insertAfter, int x, int y, int cx, int cy, uint flags);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetCursorPos(int x, int y);
+
+    [DllImport("user32.dll")]
+    private static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extraInfo);
+
+    [DllImport("user32.dll")]
+    private static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, UIntPtr extraInfo);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetWindowDC(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern int ReleaseDC(IntPtr hWnd, IntPtr hdc);
+
+    [DllImport("gdi32.dll")]
+    private static extern bool BitBlt(IntPtr hdcDest, int xDest, int yDest, int width, int height, IntPtr hdcSrc, int xSrc, int ySrc, int rop);
+
+    public static bool Move(IntPtr hWnd, int x, int y, int width, int height)
+    {
+        ShowWindow(hWnd, 9);
+        return MoveWindow(hWnd, x, y, width, height, true);
+    }
+
+    public static void Activate(IntPtr hWnd)
+    {
+        ShowWindow(hWnd, 9);
+        SetWindowPos(hWnd, new IntPtr(-1), 0, 0, 0, 0, 0x0043);
+        SetForegroundWindow(hWnd);
+        SetWindowPos(hWnd, new IntPtr(-2), 0, 0, 0, 0, 0x0043);
+    }
+
+    public static void Click(int x, int y)
+    {
+        SetCursorPos(x, y);
+        System.Threading.Thread.Sleep(80);
+        mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
+        System.Threading.Thread.Sleep(80);
+        mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
+    }
+
+    public static void PressEnter()
+    {
+        keybd_event(0x0D, 0, 0, UIntPtr.Zero);
+        keybd_event(0x0D, 0, 0x0002, UIntPtr.Zero);
+    }
+
+    public static RECT GetRect(IntPtr hWnd)
+    {
+        RECT rect;
+        if (!GetWindowRect(hWnd, out rect))
+        {
+            throw new InvalidOperationException("GetWindowRect failed.");
+        }
+
+        return rect;
+    }
+
+    public static bool CopyWindowSurface(IntPtr hWnd, IntPtr hdcDest, int width, int height)
+    {
+        IntPtr hdcSource = GetWindowDC(hWnd);
+        if (hdcSource == IntPtr.Zero)
+        {
+            return false;
+        }
+
+        try
+        {
+            return BitBlt(hdcDest, 0, 0, width, height, hdcSource, 0, 0, 0x00CC0020);
+        }
+        finally
+        {
+            ReleaseDC(hWnd, hdcSource);
+        }
+    }
+}
+"@
+
+function New-RunDirectory {
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss-fff"
+    $root = Join-Path $RepoRoot $OutputRoot
+    $baseName = "$timestamp-$PID"
+    New-Item -ItemType Directory -Force -Path $root | Out-Null
+
+    for ($attempt = 0; $attempt -lt 100; $attempt++) {
+        $name = if ($attempt -eq 0) { $baseName } else { "$baseName-$attempt" }
+        $path = Join-Path $root $name
+        try {
+            New-Item -ItemType Directory -Path $path -ErrorAction Stop | Out-Null
+            return $path
+        }
+        catch {
+            if (Test-Path -LiteralPath $path) {
+                continue
+            }
+
+            throw
+        }
+    }
+
+    throw "Could not create a unique visual audit output directory under '$root'."
+}
+
+function ConvertTo-SafeName([string]$name) {
+    return ($name -replace '[^A-Za-z0-9_.-]', '_').Trim('_')
+}
+
+function Join-ProcessArguments([string[]]$arguments) {
+    return ($arguments | ForEach-Object {
+        if ($_ -match '[\s"]') {
+            '"' + ($_ -replace '"', '\"') + '"'
+        }
+        else {
+            $_
+        }
+    }) -join " "
+}
+
+function Start-AppProcess([string]$exe, [string[]]$arguments) {
+    return Start-Process -FilePath $exe -ArgumentList (Join-ProcessArguments $arguments) -PassThru
+}
+
+function Close-AppProcess($process) {
+    if ($null -eq $process) {
+        return
+    }
+
+    try {
+        $process.Refresh()
+        if (!$process.HasExited) {
+            $process.CloseMainWindow() | Out-Null
+            if (!$process.WaitForExit(3000)) {
+                $process.Kill()
+            }
+        }
+    }
+    catch {
+    }
+}
+
+function Get-RootElement {
+    return [System.Windows.Automation.AutomationElement]::RootElement
+}
+
+function Wait-Until([scriptblock]$Probe, [int]$timeoutSeconds, [string]$description) {
+    $deadline = (Get-Date).AddSeconds($timeoutSeconds)
+    do {
+        $value = & $Probe
+        if ($null -ne $value -and $false -ne $value) {
+            return $value
+        }
+
+        Start-Sleep -Milliseconds 250
+    } while ((Get-Date) -lt $deadline)
+
+    throw "Timed out waiting for $description."
+}
+
+function Read-ModernWpfStatusFile([string]$artifactDir) {
+    $path = Join-Path $artifactDir "modernwpf-gallery-status.txt"
+    if (!(Test-Path $path)) {
+        return $null
+    }
+
+    try {
+        $lines = @(Get-Content -Path $path -ErrorAction Stop)
+        if ($lines.Count -lt 2) {
+            return $null
+        }
+
+        $lastException = ""
+        if ($lines.Count -ge 3 -and ![string]::IsNullOrEmpty($lines[2])) {
+            try {
+                $lastException = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($lines[2]))
+            }
+            catch {
+                $lastException = $lines[2]
+            }
+        }
+
+        return [ordered]@{
+            CurrentRoute = $lines[0]
+            ReadyState = $lines[1]
+            LastException = $lastException
+            Path = $path
+        }
+    }
+    catch {
+        return $null
+    }
+}
+
+function Find-WindowByProcessId([int]$processId) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    $fallback = $null
+    foreach ($window in $windows) {
+        if ($null -eq $fallback) {
+            $fallback = $window
+        }
+
+        if ($window.Current.Name -like "*Gallery*") {
+            return $window
+        }
+    }
+
+    return $fallback
+}
+
+function Find-ElementByNameAndTypeInProcess([int]$processId, [string]$name, $controlType) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        $match = Find-DescendantByNameAndType $window $name $controlType
+        if ($null -ne $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
+function Find-DescendantByAutomationId($root, [string]$automationId) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::AutomationIdProperty,
+        $automationId)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-DescendantByNameAndType($root, [string]$name, $controlType) {
+    $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::NameProperty,
+        $name)
+    $typeCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        $controlType)
+    $condition = New-Object System.Windows.Automation.AndCondition($nameCondition, $typeCondition)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-TreeItemByName($root, [string]$name) {
+    $exact = Find-DescendantByNameAndType $root $name ([System.Windows.Automation.ControlType]::TreeItem)
+    if ($null -ne $exact) {
+        return $exact
+    }
+
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        [System.Windows.Automation.ControlType]::TreeItem)
+    $items = $root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $condition)
+    foreach ($item in $items) {
+        if ($item.Current.Name -like "*$name*") {
+            return $item
+        }
+    }
+
+    return $null
+}
+
+function Invoke-Element($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Select()
+            Start-Sleep -Milliseconds 100
+        }
+    }
+    catch {
+    }
+
+    $rect = $element.Current.BoundingRectangle
+    if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+        [WpfGalleryVisualNative]::Click(
+            [int][Math]::Round($rect.X + ($rect.Width / 2)),
+            [int][Math]::Round($rect.Y + ($rect.Height / 2)))
+        return $true
+    }
+
+    return $false
+}
+
+function Invoke-LegacyDefaultAction($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.LegacyIAccessiblePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.DoDefaultAction()
+            Start-Sleep -Milliseconds 250
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Click-Element($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    $rect = $element.Current.BoundingRectangle
+    if ($rect.Width -le 0 -or $rect.Height -le 0) {
+        return $false
+    }
+
+    [WpfGalleryVisualNative]::Click(
+        [int][Math]::Round($rect.X + ($rect.Width / 2)),
+        [int][Math]::Round($rect.Y + ($rect.Height / 2)))
+    return $true
+}
+
+function Click-TreeItemHeader($item, [string]$name) {
+    if ($null -eq $item) {
+        return $false
+    }
+
+    $text = Find-DescendantByNameAndType $item $name ([System.Windows.Automation.ControlType]::Text)
+    if ($null -eq $text) {
+        return $false
+    }
+
+    $itemRect = $item.Current.BoundingRectangle
+    $textRect = $text.Current.BoundingRectangle
+    if ($itemRect.Width -le 0 -or $itemRect.Height -le 0 -or
+        $textRect.Width -le 0 -or $textRect.Height -le 0) {
+        return $false
+    }
+
+    [WpfGalleryVisualNative]::Click(
+        [int][Math]::Round($textRect.X + ($textRect.Width / 2)),
+        [int][Math]::Round($itemRect.Y + [Math]::Min(20.0, $itemRect.Height / 2.0)))
+    return $true
+}
+
+function Click-ModernNavigationItemChevron($item) {
+    if ($null -eq $item) {
+        return $false
+    }
+
+    $rect = $item.Current.BoundingRectangle
+    if ($rect.Width -le 0 -or $rect.Height -le 0) {
+        return $false
+    }
+
+    [WpfGalleryVisualNative]::Click(
+        [int][Math]::Round($rect.X + 32.0),
+        [int][Math]::Round($rect.Y + [Math]::Min(20.0, $rect.Height / 2.0)))
+    return $true
+}
+
+function Get-ModernShellExpectedNavigationStates($case) {
+    switch ($case.Id) {
+        "ShellClickDesignGuidance" {
+            return @(
+                [ordered]@{
+                    Name = "Design Guidance"
+                    State = "Expanded"
+                    MinimumHeight = 220
+                    MaximumHeight = 300
+                    ChildNames = @("Colors", "Typography", "Spacing", "Geometry", "Icons")
+                    FollowingName = "All Controls"
+                    MaximumFollowingGap = 48
+                })
+        }
+        "ShellClickDesignGuidanceCollapse" {
+            return @(
+                [ordered]@{
+                    Name = "Design Guidance"
+                    State = "Collapsed"
+                    MinimumHeight = 0
+                    MaximumHeight = 64
+                    HiddenChildNames = @("Colors", "Typography", "Spacing", "Geometry", "Icons")
+                    FollowingName = "All Controls"
+                    MaximumFollowingGap = 48
+                })
+        }
+        default {
+            return @()
+        }
+    }
+}
+
+function Get-ExpandCollapseStateName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return $pattern.Current.ExpandCollapseState.ToString()
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Test-ModernShellNavigationState($window, $case) {
+    $expectedStates = @(Get-ModernShellExpectedNavigationStates $case)
+    if ($expectedStates.Count -eq 0) {
+        return ""
+    }
+
+    $failures = New-Object System.Collections.Generic.List[string]
+    foreach ($expected in $expectedStates) {
+        $item = Find-ModernNavigationItemByName $window $expected.Name
+        if ($null -eq $item) {
+            $failures.Add("Navigation item '$($expected.Name)' was not found.")
+            continue
+        }
+
+        $actualState = Get-ExpandCollapseStateName $item
+        if ($actualState -ne $expected.State) {
+            $failures.Add("Navigation item '$($expected.Name)' expected $($expected.State), observed '$actualState'.")
+        }
+
+        $rect = $item.Current.BoundingRectangle
+        if ($expected.MinimumHeight -gt 0 -and $rect.Height -lt $expected.MinimumHeight) {
+            $failures.Add("Navigation item '$($expected.Name)' expected expanded height >= $($expected.MinimumHeight), observed $([int][Math]::Round($rect.Height)).")
+        }
+
+        if ($expected.MaximumHeight -gt 0 -and $rect.Height -gt $expected.MaximumHeight) {
+            $failures.Add("Navigation item '$($expected.Name)' expected height <= $($expected.MaximumHeight), observed $([int][Math]::Round($rect.Height)).")
+        }
+
+        if ($expected.Contains("ChildNames")) {
+            $previousChildBottom = 0.0
+            foreach ($childName in $expected.ChildNames) {
+                $child = Find-DescendantByNameAndType $item $childName ([System.Windows.Automation.ControlType]::ListItem)
+                if ($null -eq $child) {
+                    $failures.Add("Expanded navigation item '$($expected.Name)' did not expose child '$childName'.")
+                    continue
+                }
+
+                $childRect = $child.Current.BoundingRectangle
+                if ($childRect.Width -le 0 -or $childRect.Height -le 0) {
+                    $failures.Add("Expanded navigation child '$childName' had an empty rectangle.")
+                    continue
+                }
+
+                if ($childRect.Top -lt ($rect.Top + 20)) {
+                    $failures.Add("Expanded navigation child '$childName' was not below parent '$($expected.Name)'.")
+                }
+
+                if ($childRect.Bottom -gt ($rect.Bottom + 2)) {
+                    $failures.Add("Expanded navigation child '$childName' extended below parent '$($expected.Name)' bounds.")
+                }
+
+                if ($previousChildBottom -gt 0 -and $childRect.Top -lt ($previousChildBottom - 1)) {
+                    $failures.Add("Expanded navigation child '$childName' was not arranged after the previous child.")
+                }
+
+                $previousChildBottom = $childRect.Bottom
+            }
+        }
+
+        if ($expected.Contains("HiddenChildNames")) {
+            foreach ($childName in $expected.HiddenChildNames) {
+                $child = Find-DescendantByNameAndType $item $childName ([System.Windows.Automation.ControlType]::ListItem)
+                if ($null -ne $child) {
+                    $childRect = $child.Current.BoundingRectangle
+                    if ($childRect.Width -gt 0 -and $childRect.Height -gt 0) {
+                        $failures.Add("Collapsed navigation item '$($expected.Name)' still exposed visible child '$childName'.")
+                    }
+                }
+            }
+        }
+
+        if ($expected.Contains("FollowingName")) {
+            $following = Find-ModernNavigationItemByName $window $expected.FollowingName
+            if ($null -eq $following) {
+                $failures.Add("Navigation item '$($expected.FollowingName)' following '$($expected.Name)' was not found.")
+            }
+            else {
+                $followingRect = $following.Current.BoundingRectangle
+                $followingGap = $followingRect.Top - $rect.Bottom
+                if ($expected.MaximumFollowingGap -gt 0 -and $followingGap -gt $expected.MaximumFollowingGap) {
+                    $failures.Add("Navigation item '$($expected.FollowingName)' was too far below '$($expected.Name)'. Gap=$([int][Math]::Round($followingGap)).")
+                }
+            }
+        }
+    }
+
+    if ($failures.Count -eq 0) {
+        return ""
+    }
+
+    return $failures -join " "
+}
+
+
+function Expand-Element($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+        if ($null -ne $pattern -and $pattern.Current.ExpandCollapseState -ne [System.Windows.Automation.ExpandCollapseState]::Expanded) {
+            $pattern.Expand()
+            Start-Sleep -Milliseconds 250
+        }
+
+        return $true
+    }
+    catch {
+        return Invoke-Element $element
+    }
+}
+
+function Navigate-OfficialWpfGallery($window, $case) {
+    [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $path = $case.OfficialPath
+    if ($path.Count -eq 1 -and $path[0] -eq "Settings") {
+        $settings = Find-DescendantByNameAndType $window "Settings" ([System.Windows.Automation.ControlType]::Button)
+        if ($null -eq $settings -or !(Invoke-Element $settings)) {
+            throw "Could not invoke official WPF Gallery Settings button."
+        }
+
+        Start-Sleep -Milliseconds 800
+        return
+    }
+
+    for ($i = 0; $i -lt $path.Count; $i++) {
+        $name = $path[$i]
+        $item = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery navigation item '$name'" -Probe {
+            Find-TreeItemByName $window $name
+        }
+
+        if ($i -lt ($path.Count - 1)) {
+            [void](Expand-Element $item)
+        }
+        else {
+            [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+            try {
+                $item.SetFocus()
+                $selectionPattern = $item.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+                if ($null -ne $selectionPattern) {
+                    $selectionPattern.Select()
+                }
+
+                $tree = Find-DescendantByAutomationId $window "ControlsList"
+                if ($null -ne $tree) {
+                    $tree.SetFocus()
+                }
+            }
+            catch {
+            }
+
+            [WpfGalleryVisualNative]::PressEnter()
+            Start-Sleep -Milliseconds 250
+            $clicked = Click-TreeItemHeader $item $name
+            if (!$clicked) {
+                $clicked = Click-Element $item
+            }
+
+            $legacyInvoked = Invoke-LegacyDefaultAction $item
+            if (!$clicked -and !$legacyInvoked) {
+                throw "Could not invoke official WPF Gallery navigation item '$name'."
+            }
+        }
+    }
+
+    try {
+        Wait-OfficialWpfGalleryContentReady $window $case
+    }
+    catch {
+        $treeNavigationException = $_.Exception.Message
+        try {
+            Navigate-OfficialWpfGalleryByCards $window $case
+            Wait-OfficialWpfGalleryContentReady $window $case
+        }
+        catch {
+            throw "$treeNavigationException; card fallback: $($_.Exception.Message)"
+        }
+    }
+
+    Start-Sleep -Milliseconds 1000
+}
+
+function Navigate-OfficialWpfGalleryByCards($window, $case) {
+    $path = $case.OfficialPath
+    if ($path.Count -eq 0 -or $path.Count -gt 2) {
+        throw "No card navigation fallback is defined for '$($path -join " > ")'."
+    }
+
+    if ($path.Count -eq 1) {
+        Invoke-OfficialContentButton $window ($path[0] + "Page")
+        return
+    }
+
+    Invoke-OfficialContentButton $window ($path[0] + "Page")
+    $parentCase = New-Case $path[0] "" @($path[0])
+    Wait-OfficialWpfGalleryContentReady $window $parentCase
+    Invoke-OfficialContentButton $window ($path[1] + "Page")
+}
+
+function Invoke-OfficialContentButton($window, [string]$name) {
+    $button = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery content button '$name'" -Probe {
+        $frame = Find-DescendantByAutomationId $window "RootContentFrame"
+        if ($null -eq $frame) {
+            return $null
+        }
+
+        return Find-DescendantByNameAndType $frame $name ([System.Windows.Automation.ControlType]::Button)
+    }
+
+    if (!(Invoke-Element $button)) {
+        throw "Could not invoke official WPF Gallery content button '$name'."
+    }
+
+    Start-Sleep -Milliseconds 700
+}
+
+function Get-OfficialWpfGalleryReadyText($case) {
+    switch ($case.Id) {
+        "Home" { return ".NET 10" }
+        "WhatsNew" { return "What's new in WPF Page" }
+        "Media" { return "Media Controls Page" }
+        "NavigationWindow" { return "Navigation Window Page" }
+        "Settings" { return "Settings Page" }
+        default { return "$($case.OfficialPath[$case.OfficialPath.Count - 1]) Page" }
+    }
+}
+
+function Wait-OfficialWpfGalleryContentReady($window, $case, [int]$waitTimeoutSeconds = $TimeoutSeconds) {
+    if ($case.Id -eq "UserDashboard") {
+        Wait-Until -TimeoutSeconds $waitTimeoutSeconds -Description "official WPF Gallery content 'User Dashboard'" -Probe {
+            $frame = Find-DescendantByAutomationId $window "RootContentFrame"
+            if ($null -eq $frame) {
+                return $null
+            }
+
+            $users = Find-DescendantByAutomationId $frame "UserList"
+            if ($null -ne $users) {
+                return $users
+            }
+
+            return Find-DescendantByAutomationId $frame "NewUserButton"
+        } | Out-Null
+        return
+    }
+
+    $readyText = Get-OfficialWpfGalleryReadyText $case
+    if ([string]::IsNullOrWhiteSpace($readyText)) {
+        return
+    }
+
+    Wait-Until -TimeoutSeconds $waitTimeoutSeconds -Description "official WPF Gallery content '$readyText'" -Probe {
+        $frame = Find-DescendantByAutomationId $window "RootContentFrame"
+        if ($null -eq $frame) {
+            return $null
+        }
+
+        return Find-DescendantByNameAndType $frame $readyText ([System.Windows.Automation.ControlType]::Text)
+    } | Out-Null
+}
+
+function Return-OfficialWpfGalleryToHome($window) {
+    [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $homeCase = New-Case "Home" "home" @("Home")
+    $backButton = Find-DescendantByAutomationId $window "BackButton"
+    if ($null -ne $backButton) {
+        [void](Invoke-Element $backButton)
+        [void](Click-Element $backButton)
+        Start-Sleep -Milliseconds 700
+    }
+
+    try {
+        Wait-OfficialWpfGalleryContentReady $window $homeCase 3
+        return
+    }
+    catch {
+    }
+
+    $homeItem = Find-TreeItemByName $window "Home"
+    if ($null -ne $homeItem) {
+        try {
+            $homeItem.SetFocus()
+        }
+        catch {
+        }
+
+        [WpfGalleryVisualNative]::PressEnter()
+        [void](Click-Element $homeItem)
+        Wait-OfficialWpfGalleryContentReady $window $homeCase
+    }
+}
+
+function Ensure-OfficialWpfGalleryTheme([int]$processId, $window) {
+    if ($Theme -eq "Default" -or $Theme -eq "HighContrast") {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            Status = "Skipped"
+            LastException = $(if ($Theme -eq "HighContrast") { "OS High Contrast theme requested; app theme selector is not changed." } else { "Default theme requested." })
+        }
+    }
+
+    try {
+        [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+        $settings = Find-DescendantByNameAndType $window "Settings" ([System.Windows.Automation.ControlType]::Button)
+        if ($null -eq $settings -or !(Invoke-Element $settings)) {
+            throw "Could not invoke official WPF Gallery Settings button."
+        }
+
+        $comboBox = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery theme ComboBox" -Probe {
+            Find-DescendantByNameAndType $window "Change ThemeMode" ([System.Windows.Automation.ControlType]::ComboBox)
+        }
+
+        [void](Expand-Element $comboBox)
+        $item = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery theme item '$Theme'" -Probe {
+            $match = Find-DescendantByNameAndType $comboBox $Theme ([System.Windows.Automation.ControlType]::ListItem)
+            if ($null -ne $match) {
+                return $match
+            }
+
+            return Find-ElementByNameAndTypeInProcess $processId $Theme ([System.Windows.Automation.ControlType]::ListItem)
+        }
+
+        [void](Invoke-Element $item)
+        [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+        [void](Click-Element $item)
+
+        Start-Sleep -Milliseconds 700
+        return [ordered]@{
+            RequestedTheme = $Theme
+            Status = "Passed"
+            LastException = ""
+        }
+    }
+    catch {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            Status = "Failed"
+            LastException = $_.Exception.Message
+        }
+    }
+}
+
+function Get-AutomationText($root, [string]$automationId) {
+    $element = Find-DescendantByAutomationId $root $automationId
+    if ($null -eq $element) {
+        return ""
+    }
+
+    return $element.Current.Name
+}
+
+function Test-ModernClickCase($case) {
+    return $null -ne $case -and
+        $null -ne $case.ModernClickPath -and
+        $case.ModernClickPath.Count -gt 0
+}
+
+function Wait-ModernWpfRouteReady($window, [string]$route, [string]$description, [string]$artifactDir = "") {
+    Wait-Until -TimeoutSeconds $TimeoutSeconds -Description $description -Probe {
+        $readyElement = Test-ModernWpfRouteReady $window $route
+        if ($null -ne $readyElement) {
+            return $readyElement
+        }
+
+        $readyElement = Find-DescendantByAutomationId $window "GalleryVisualTestReadyState"
+        if ($null -ne $readyElement -and $readyElement.Current.Name -like "Failed:*") {
+            return $null
+        }
+
+        if (![string]::IsNullOrWhiteSpace($artifactDir) -and (Test-ModernRenderedContentArtifact $artifactDir)) {
+            return [pscustomobject]@{
+                Source = "RenderedContentArtifact"
+            }
+        }
+
+        return $null
+    } | Out-Null
+}
+
+function Test-ModernWpfRouteReady($window, [string]$route) {
+    $readyElement = Find-DescendantByAutomationId $window "GalleryVisualTestReadyState"
+    if ($null -ne $readyElement -and $readyElement.Current.Name -eq "Ready:$route") {
+        return $readyElement
+    }
+
+    return $null
+}
+
+function Find-ModernNavigationItemByName($window, [string]$name) {
+    $menu = Find-DescendantByAutomationId $window "MenuItemsHost"
+    if ($null -eq $menu) {
+        return $null
+    }
+
+    return Find-DescendantByNameAndType $menu $name ([System.Windows.Automation.ControlType]::ListItem)
+}
+
+function Navigate-ModernWpfGalleryByClicks($window, $case) {
+    if (!(Test-ModernClickCase $case)) {
+        return
+    }
+
+    [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $lastItem = $null
+    for ($clickIndex = 0; $clickIndex -lt $case.ModernClickPath.Count; $clickIndex++) {
+        $name = $case.ModernClickPath[$clickIndex]
+        $item = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "local Gallery navigation item '$name'" -Probe {
+            Find-ModernNavigationItemByName $window $name
+        }
+
+        $lastItem = $item
+        $clicked = $false
+        if ($case.Id -eq "ShellClickDesignGuidanceCollapse" -and $clickIndex -gt 0) {
+            $clicked = Click-ModernNavigationItemChevron $item
+        }
+        if (!$clicked) {
+            $clicked = Click-TreeItemHeader $item $name
+        }
+        if (!$clicked) {
+            $clicked = Click-Element $item
+        }
+
+        if (!$clicked) {
+            throw "Could not click local Gallery navigation item '$name'."
+        }
+
+        Start-Sleep -Milliseconds 500
+    }
+
+    if ($case.Id -ne "ShellClickDesignGuidanceCollapse" -and
+        $null -eq (Test-ModernWpfRouteReady $window $case.ReadyRoute) -and
+        $null -ne $lastItem) {
+        [void](Invoke-Element $lastItem)
+        Start-Sleep -Milliseconds 500
+    }
+
+    if ($case.Id -ne "ShellClickDesignGuidanceCollapse") {
+        Wait-ModernWpfRouteReady `
+            $window `
+            $case.ReadyRoute `
+            "ModernWpf clicked route '$($case.ReadyRoute)' to become ready"
+    }
+    Start-Sleep -Milliseconds 500
+}
+
+function Write-UiaTree($element, [string]$path, [int]$maxDepth) {
+    $lines = New-Object System.Collections.Generic.List[string]
+    $walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
+
+    function Format-RectCoordinate($value) {
+        $number = [double]$value
+        if ([double]::IsInfinity($number) -or [double]::IsNaN($number)) {
+            return $number.ToString([System.Globalization.CultureInfo]::InvariantCulture)
+        }
+
+        return ([int][Math]::Round($number)).ToString([System.Globalization.CultureInfo]::InvariantCulture)
+    }
+
+    function Append-Element($node, [int]$depth) {
+        if ($null -eq $node -or $depth -gt $maxDepth) {
+            return
+        }
+
+        $indent = "  " * $depth
+        $rect = $node.Current.BoundingRectangle
+        $line = "{0}{1} name='{2}' id='{3}' rect='{4},{5},{6},{7}'" -f `
+            $indent,
+            $node.Current.ControlType.ProgrammaticName,
+            ($node.Current.Name -replace "'", "''"),
+            ($node.Current.AutomationId -replace "'", "''"),
+            (Format-RectCoordinate $rect.X),
+            (Format-RectCoordinate $rect.Y),
+            (Format-RectCoordinate $rect.Width),
+            (Format-RectCoordinate $rect.Height)
+        $lines.Add($line)
+
+        $child = $walker.GetFirstChild($node)
+        while ($null -ne $child) {
+            Append-Element $child ($depth + 1)
+            $child = $walker.GetNextSibling($child)
+        }
+    }
+
+    Append-Element $element 0
+    Set-Content -Path $path -Value $lines -Encoding UTF8
+}
+
+function Test-BitmapNotBlank([System.Drawing.Bitmap]$bitmap) {
+    $colors = New-Object "System.Collections.Generic.Dictionary[int,int]"
+    $visibleSamples = 0
+    $nonBlackSamples = 0
+    $stepX = [Math]::Max(1, [int]($bitmap.Width / 32))
+    $stepY = [Math]::Max(1, [int]($bitmap.Height / 32))
+    for ($x = 0; $x -lt $bitmap.Width; $x += $stepX) {
+        for ($y = 0; $y -lt $bitmap.Height; $y += $stepY) {
+            $pixel = $bitmap.GetPixel($x, $y)
+            if ($pixel.A -gt 16) {
+                $visibleSamples++
+                $colorKey = ($pixel.R -shl 16) -bor ($pixel.G -shl 8) -bor $pixel.B
+                if (!$colors.ContainsKey($colorKey)) {
+                    $colors[$colorKey] = 0
+                }
+
+                $colors[$colorKey]++
+                if (($pixel.R + $pixel.G + $pixel.B) -gt 36) {
+                    $nonBlackSamples++
+                }
+            }
+        }
+    }
+
+    $dominantSamples = 0
+    foreach ($count in $colors.Values) {
+        $dominantSamples = [Math]::Max($dominantSamples, $count)
+    }
+
+    # Sparse section pages can be mostly background while still rendering valid text/card content.
+    return $colors.Count -gt 4 -and
+        $visibleSamples -gt 0 -and
+        ($nonBlackSamples / [double]$visibleSamples) -gt 0.1 -and
+        ($dominantSamples / [double]$visibleSamples) -lt 0.995
+}
+
+function Test-WindowBitmapNotBlank([System.Drawing.Bitmap]$bitmap) {
+    if (!(Test-BitmapNotBlank $bitmap)) {
+        return $false
+    }
+
+    if ($bitmap.Height -le 80) {
+        return $true
+    }
+
+    $clientTop = [Math]::Min(44, $bitmap.Height - 1)
+    $clientHeight = $bitmap.Height - $clientTop
+    if ($clientHeight -le 0) {
+        return $true
+    }
+
+    $clientBitmap = $bitmap.Clone(
+        [System.Drawing.Rectangle]::new(0, $clientTop, $bitmap.Width, $clientHeight),
+        [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    try {
+        return Test-BitmapNotBlank $clientBitmap
+    }
+    finally {
+        $clientBitmap.Dispose()
+    }
+}
+
+function Test-ImageNotBlank([string]$path) {
+    if (!(Test-Path $path)) {
+        return $false
+    }
+
+    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
+    try {
+        return Test-BitmapNotBlank $bitmap
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
+function Get-ImageArtifactInfo([string]$path, [string]$source) {
+    if ([string]::IsNullOrWhiteSpace($path) -or !(Test-Path $path)) {
+        return [ordered]@{
+            Found = $false
+            Source = $source
+            Screenshot = ""
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
+    try {
+        return [ordered]@{
+            Found = $true
+            Source = $source
+            Screenshot = $path
+            Width = $bitmap.Width
+            Height = $bitmap.Height
+            NonBlank = Test-BitmapNotBlank $bitmap
+        }
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
+function Get-ModernRenderedContentArtifactCandidates() {
+    return @(
+        [ordered]@{ FileName = "HomeContentRootPane.png"; Source = "HomeContentRootPaneRenderedArtifact" },
+        [ordered]@{ FileName = "AllControlsContentRootPane.png"; Source = "AllControlsContentRootPaneRenderedArtifact" },
+        [ordered]@{ FileName = "SettingsContentRootPane.png"; Source = "SettingsContentRootPaneRenderedArtifact" },
+        [ordered]@{ FileName = "ContentPagePane.png"; Source = "ContentPagePaneRenderedArtifact" },
+        [ordered]@{ FileName = "GalleryItemPageRoot.png"; Source = "GalleryItemPageRootRenderedArtifact" },
+        [ordered]@{ FileName = "ContentRootGrid.png"; Source = "ContentRootGridRenderedArtifact" },
+        [ordered]@{ FileName = "GalleryContentHost.png"; Source = "GalleryContentHostRenderedArtifact" }
+    )
+}
+
+function Get-ModernRenderedContentArtifactCrop([string]$artifactDir) {
+    foreach ($candidate in (Get-ModernRenderedContentArtifactCandidates)) {
+        $path = Join-Path $artifactDir $candidate.FileName
+        try {
+            $contentCrop = Get-ImageArtifactInfo $path $candidate.Source
+            if ($contentCrop.NonBlank) {
+                return $contentCrop
+            }
+        }
+        catch {
+        }
+    }
+
+    return $null
+}
+
+function Test-ModernRenderedContentArtifact([string]$artifactDir) {
+    return $null -ne (Get-ModernRenderedContentArtifactCrop $artifactDir)
+}
+
+function Capture-Window([IntPtr]$hwnd, [string]$path) {
+    [WpfGalleryVisualNative]::Activate($hwnd)
+    Start-Sleep -Milliseconds 300
+    $rect = [WpfGalleryVisualNative]::GetRect($hwnd)
+    $width = [Math]::Max(1, $rect.Right - $rect.Left)
+    $height = [Math]::Max(1, $rect.Bottom - $rect.Top)
+
+    $bitmap = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+    try {
+        foreach ($attempt in 1..5) {
+            foreach ($flags in @(2, 0)) {
+                $graphics.Clear([System.Drawing.Color]::Transparent)
+                $hdc = $graphics.GetHdc()
+                $printed = $false
+                try {
+                    $printed = [WpfGalleryVisualNative]::PrintWindow($hwnd, $hdc, [uint32]$flags)
+                }
+                finally {
+                    $graphics.ReleaseHdc($hdc)
+                }
+
+                if ($printed -and (Test-WindowBitmapNotBlank $bitmap)) {
+                    $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+                    return
+                }
+            }
+
+            Start-Sleep -Milliseconds 250
+        }
+
+        $graphics.Clear([System.Drawing.Color]::Transparent)
+        $hdc = $graphics.GetHdc()
+        $copied = $false
+        try {
+            $copied = [WpfGalleryVisualNative]::CopyWindowSurface($hwnd, $hdc, $width, $height)
+        }
+        finally {
+            $graphics.ReleaseHdc($hdc)
+        }
+
+        if ($copied -and (Test-WindowBitmapNotBlank $bitmap)) {
+            $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+            return
+        }
+    }
+    finally {
+        $graphics.Dispose()
+        $bitmap.Dispose()
+    }
+
+    try {
+        Capture-ScreenRect $hwnd $path
+        if (Test-ImageNotBlank $path) {
+            return
+        }
+    }
+    catch {
+    }
+
+    throw "Could not capture a nonblank window surface for handle $hwnd."
+}
+
+function Try-CaptureWindow([IntPtr]$hwnd, [string]$path) {
+    try {
+        Capture-Window $hwnd $path
+        return [ordered]@{
+            Succeeded = $true
+            Screenshot = $path
+            LastException = ""
+        }
+    }
+    catch {
+        return [ordered]@{
+            Succeeded = $false
+            Screenshot = ""
+            LastException = $_.Exception.Message
+        }
+    }
+}
+
+function Capture-ScreenRect([IntPtr]$hwnd, [string]$path) {
+    $rect = [WpfGalleryVisualNative]::GetRect($hwnd)
+    $width = [Math]::Max(1, $rect.Right - $rect.Left)
+    $height = [Math]::Max(1, $rect.Bottom - $rect.Top)
+    $bitmap = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+    try {
+        $graphics.CopyFromScreen($rect.Left, $rect.Top, 0, 0, [System.Drawing.Size]::new($width, $height))
+        $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+    }
+    finally {
+        $graphics.Dispose()
+        $bitmap.Dispose()
+    }
+}
+
+function Save-Crop([string]$screenshot, [string]$path, [int]$left, [int]$top, [int]$width, [int]$height, [string]$source) {
+    $bitmap = [System.Drawing.Bitmap]::FromFile($screenshot)
+    try {
+        $x = [Math]::Max(0, $left)
+        $y = [Math]::Max(0, $top)
+        $right = [Math]::Min($bitmap.Width, $left + $width)
+        $bottom = [Math]::Min($bitmap.Height, $top + $height)
+        $cropWidth = [Math]::Max(0, $right - $x)
+        $cropHeight = [Math]::Max(0, $bottom - $y)
+        if ($cropWidth -le 0 -or $cropHeight -le 0) {
+            return [ordered]@{
+                Found = $false
+                Source = $source
+                Screenshot = ""
+                Width = 0
+                Height = 0
+                NonBlank = $false
+            }
+        }
+
+        $crop = [System.Drawing.Bitmap]::new($cropWidth, $cropHeight, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+        $graphics = [System.Drawing.Graphics]::FromImage($crop)
+        try {
+            $graphics.DrawImage(
+                $bitmap,
+                [System.Drawing.Rectangle]::new(0, 0, $cropWidth, $cropHeight),
+                [System.Drawing.Rectangle]::new($x, $y, $cropWidth, $cropHeight),
+                [System.Drawing.GraphicsUnit]::Pixel)
+            $nonBlank = Test-BitmapNotBlank $crop
+            $crop.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+            return [ordered]@{
+                Found = $true
+                Source = $source
+                Screenshot = $path
+                Width = $cropWidth
+                Height = $cropHeight
+                NonBlank = $nonBlank
+            }
+        }
+        finally {
+            $graphics.Dispose()
+            $crop.Dispose()
+        }
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
+function Save-ElementCrop($window, [string]$screenshot, [string]$path, $element, [string]$source, [int]$padding) {
+    if ($null -eq $element) {
+        return [ordered]@{
+            Found = $false
+            Source = $source
+            Screenshot = ""
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    $windowRect = [WpfGalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+    $elementRect = $element.Current.BoundingRectangle
+    return Save-Crop `
+        $screenshot `
+        $path `
+        ([int][Math]::Floor($elementRect.X - $windowRect.Left - $padding)) `
+        ([int][Math]::Floor($elementRect.Y - $windowRect.Top - $padding)) `
+        ([int][Math]::Ceiling($elementRect.Width + ($padding * 2))) `
+        ([int][Math]::Ceiling($elementRect.Height + ($padding * 2))) `
+        $source
+}
+
+function Find-ModernHomeContentRootPane($window) {
+    $paneCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        [System.Windows.Automation.ControlType]::Pane)
+    $panes = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, $paneCondition)
+    $bestPane = $null
+    $bestArea = [double]::MaxValue
+
+    foreach ($pane in $panes) {
+        $paneRect = $pane.Current.BoundingRectangle
+        if ($paneRect.Width -lt 880 -or $paneRect.Height -lt 700) {
+            continue
+        }
+
+        $heroText = Find-DescendantByNameAndType $pane ".NET 10" ([System.Windows.Automation.ControlType]::Text)
+        if ($null -eq $heroText) {
+            continue
+        }
+
+        $area = [double]$paneRect.Width * [double]$paneRect.Height
+        if ($area -lt $bestArea) {
+            $bestArea = $area
+            $bestPane = $pane
+        }
+    }
+
+    return $bestPane
+}
+
+function Save-OfficialContentCrop($window, [string]$screenshot, [string]$path, $case) {
+    if (Test-ShellNavigationCase $case) {
+        $navigationPane = Find-DescendantByNameAndType $window "Navigation Pane" ([System.Windows.Automation.ControlType]::Tree)
+        if ($null -ne $navigationPane) {
+            $paneCrop = Save-ElementCrop $window $screenshot $path $navigationPane "OfficialNavigationPane" 0
+            if ($paneCrop.NonBlank) {
+                return $paneCrop
+            }
+        }
+    }
+
+    if ($case.Id -eq "Home") {
+        $frame = Find-DescendantByAutomationId $window "RootContentFrame"
+        if ($null -ne $frame) {
+            $paneCondition = New-Object System.Windows.Automation.PropertyCondition(
+                [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                [System.Windows.Automation.ControlType]::Pane)
+            $panes = $frame.FindAll([System.Windows.Automation.TreeScope]::Children, $paneCondition)
+            foreach ($pane in $panes) {
+                $paneRect = $pane.Current.BoundingRectangle
+                if ($paneRect.Width -gt 0 -and $paneRect.Height -gt 0) {
+                    $paneCrop = Save-ElementCrop $window $screenshot $path $pane "OfficialHomeContentRootPane" 0
+                    if ($paneCrop.NonBlank) {
+                        return $paneCrop
+                    }
+                }
+            }
+        }
+    }
+
+    if ($case.Id -ne "Home") {
+        $frame = Find-DescendantByAutomationId $window "RootContentFrame"
+        if ($null -ne $frame) {
+            $frameCrop = Save-ElementCrop $window $screenshot $path $frame "OfficialRootContentFrame" 0
+            if ($frameCrop.NonBlank) {
+                return $frameCrop
+            }
+        }
+    }
+
+    $windowRect = [WpfGalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+    $windowWidth = $windowRect.Right - $windowRect.Left
+    $windowHeight = $windowRect.Bottom - $windowRect.Top
+    $left = 260
+    $top = 44
+
+    $navigationPane = Find-DescendantByNameAndType $window "Navigation Pane" ([System.Windows.Automation.ControlType]::Tree)
+    if ($null -ne $navigationPane) {
+        $paneRect = $navigationPane.Current.BoundingRectangle
+        if ($paneRect.Width -gt 0) {
+            $left = [int][Math]::Round(($paneRect.X + $paneRect.Width) - $windowRect.Left + 4)
+        }
+    }
+
+    return Save-Crop $screenshot $path $left $top ($windowWidth - $left) ($windowHeight - $top) "OfficialContentRegion"
+}
+
+function Save-ModernContentCrop($window, [string]$screenshot, [string]$path, $case, [bool]$isRenderedWindowArtifact = $false) {
+    if (Test-ShellNavigationCase $case) {
+        $menu = Find-DescendantByAutomationId $window "MenuItemsHost"
+        if ($null -ne $menu) {
+            $windowRect = [WpfGalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+            $menuRect = $menu.Current.BoundingRectangle
+            $renderedArtifactHighContrastInset = if ($isRenderedWindowArtifact -and $Theme -eq "HighContrast") { 8 } else { 0 }
+            $left = [int][Math]::Round($menuRect.X - $windowRect.Left + 8 - $renderedArtifactHighContrastInset)
+            $top = [int][Math]::Round($menuRect.Y - $windowRect.Top - $renderedArtifactHighContrastInset)
+            $width = 250
+            $height = if ($Theme -eq "HighContrast") { 698 } else { 707 }
+            $scrollBar = Find-DescendantByAutomationId $menu "PART_VerticalScrollBar"
+            if ($null -ne $scrollBar) {
+                $scrollBarRect = $scrollBar.Current.BoundingRectangle
+                if ($scrollBarRect.Height -gt 0) {
+                    $height = [int][Math]::Round($scrollBarRect.Height + 8)
+                }
+            }
+
+            $menuCrop = Save-Crop $screenshot $path $left $top $width $height "ModernWpfNavigationPaneComparable"
+            if ($menuCrop.NonBlank) {
+                return $menuCrop
+            }
+        }
+
+        $navigation = Find-DescendantByAutomationId $window "GalleryNavigationView"
+        if ($null -ne $navigation) {
+            $windowRect = [WpfGalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+            $navigationRect = $navigation.Current.BoundingRectangle
+            $left = [int][Math]::Round($navigationRect.X - $windowRect.Left)
+            $top = [int][Math]::Round($navigationRect.Y - $windowRect.Top)
+            $width = [int][Math]::Min(258, [Math]::Round($navigationRect.Width))
+            $height = [int][Math]::Round($navigationRect.Height)
+            return Save-Crop $screenshot $path $left $top $width $height "ModernWpfNavigationPaneFallback"
+        }
+    }
+
+    $content = Find-DescendantByAutomationId $window "GalleryContentHost"
+    if ($null -ne $content) {
+        if ($null -ne $case -and $case.Id -eq "Home") {
+            $paneCondition = New-Object System.Windows.Automation.PropertyCondition(
+                [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+                [System.Windows.Automation.ControlType]::Pane)
+            $panes = $content.FindAll([System.Windows.Automation.TreeScope]::Children, $paneCondition)
+            foreach ($pane in $panes) {
+                $paneRect = $pane.Current.BoundingRectangle
+                if ($paneRect.Width -gt 0 -and $paneRect.Height -gt 0) {
+                    $paneCrop = Save-ElementCrop $window $screenshot $path $pane "ModernWpfHomeContentRootPane" 0
+                    if ($paneCrop.NonBlank) {
+                        return $paneCrop
+                    }
+                }
+            }
+        }
+
+        if ($null -ne $case -and $case.Id -ne "Home") {
+            $contentCrop = Save-ElementCrop $window $screenshot $path $content "ModernWpfGalleryContentHost" 0
+            if ($contentCrop.NonBlank) {
+                return $contentCrop
+            }
+        }
+
+        if ($null -eq $case) {
+            return Save-ElementCrop $window $screenshot $path $content "GalleryContentHost" 0
+        }
+    }
+
+    if ($null -ne $case -and $case.Id -eq "Home") {
+        $homePane = Find-ModernHomeContentRootPane $window
+        if ($null -ne $homePane) {
+            return Save-ElementCrop $window $screenshot $path $homePane "ModernWpfHomeContentRootPane" 0
+        }
+    }
+
+    $windowRect = [WpfGalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+    $windowWidth = $windowRect.Right - $windowRect.Left
+    $windowHeight = $windowRect.Bottom - $windowRect.Top
+    $root = Find-DescendantByAutomationId $window "GalleryNavigationRoot"
+    $menu = Find-DescendantByAutomationId $window "MenuItemsHost"
+
+    # Normal section pages compare against the official RootContentFrame, so trim
+    # ModernWpf's navigation host padding instead of using the broader Home crop.
+    $normalContentLeftInset = 31
+    $normalContentTopInset = 17
+    $normalContentRightInset = 25
+    $normalContentBottomInset = 1
+    if (($null -eq $case -or $case.Id -ne "Home") -and $null -ne $root -and $null -ne $menu) {
+        $rootRect = $root.Current.BoundingRectangle
+        $menuRect = $menu.Current.BoundingRectangle
+        $left = [int][Math]::Round(($menuRect.X + $menuRect.Width) - $windowRect.Left + $normalContentLeftInset)
+        $top = [int][Math]::Round($rootRect.Y - $windowRect.Top + $normalContentTopInset)
+        $right = [int][Math]::Round(($rootRect.X + $rootRect.Width) - $windowRect.Left - $normalContentRightInset)
+        $bottom = [int][Math]::Round(($rootRect.Y + $rootRect.Height) - $windowRect.Top - $normalContentBottomInset)
+        return Save-Crop $screenshot $path $left $top ($right - $left) ($bottom - $top) "ModernWpfGalleryContentHost"
+    }
+
+    $homeContentLeftInset = 7
+    $homeContentTopInset = 2
+    $homeContentRightInset = 1
+    $homeContentBottomInset = 12
+    if ($null -ne $root -and $null -ne $menu) {
+        $rootRect = $root.Current.BoundingRectangle
+        $menuRect = $menu.Current.BoundingRectangle
+        $left = [int][Math]::Round(($menuRect.X + $menuRect.Width) - $windowRect.Left + $homeContentLeftInset)
+        $top = [int][Math]::Round($rootRect.Y - $windowRect.Top + $homeContentTopInset)
+        $right = [int][Math]::Round(($rootRect.X + $rootRect.Width) - $windowRect.Left - $homeContentRightInset)
+        $bottom = [int][Math]::Round(($rootRect.Y + $rootRect.Height) - $windowRect.Top - $homeContentBottomInset)
+        return Save-Crop $screenshot $path $left $top ($right - $left) ($bottom - $top) "ModernWpfContentRegion"
+    }
+
+    if ($null -eq $case -or $case.Id -ne "Home") {
+        $fallbackLeft = 287
+        $fallbackTop = 61
+        $fallbackRightInset = 312
+        $fallbackBottomInset = 62
+        return Save-Crop $screenshot $path $fallbackLeft $fallbackTop ($windowWidth - $fallbackRightInset) ($windowHeight - $fallbackBottomInset) "ModernWpfContentFallback"
+    }
+
+    return Save-Crop $screenshot $path 320 40 ($windowWidth - 320) 760 "ModernWpfContentFallback"
+}
+
+function Save-ModernShellNavigationArtifactCrop([string]$artifactDir, [string]$path) {
+    $navigationArtifact = Join-Path $artifactDir "GalleryNavigationView.png"
+    if (!(Test-Path -LiteralPath $navigationArtifact)) {
+        return Get-ImageArtifactInfo $navigationArtifact "MissingModernWpfNavigationViewRenderedArtifact"
+    }
+
+    $height = if ($Theme -eq "HighContrast") { 698 } else { 707 }
+    return Save-Crop $navigationArtifact $path 12 8 250 $height "ModernWpfNavigationPaneRenderedArtifact"
+}
+
+function Compare-ImagesNormalized([string]$leftPath, [string]$rightPath, [int]$sampleStep = 4) {
+    if ([string]::IsNullOrWhiteSpace($leftPath) -or [string]::IsNullOrWhiteSpace($rightPath) -or
+        !(Test-Path $leftPath) -or !(Test-Path $rightPath)) {
+        return [ordered]@{
+            Comparable = $false
+            MeanDelta = $null
+            LeftSize = ""
+            RightSize = ""
+            SampleStep = $sampleStep
+            ComparedSamples = 0
+            ChangedSamples = 0
+            ChangedSamplePercent = $null
+            MaxRgbSumDelta = $null
+            MaxChannelDelta = $null
+        }
+    }
+
+    $left = [System.Drawing.Bitmap]::FromFile($leftPath)
+    $right = [System.Drawing.Bitmap]::FromFile($rightPath)
+    try {
+        $width = [Math]::Min($left.Width, $right.Width)
+        $height = [Math]::Min($left.Height, $right.Height)
+        if ($width -le 0 -or $height -le 0) {
+            return [ordered]@{
+                Comparable = $false
+                MeanDelta = $null
+                LeftSize = "$($left.Width)x$($left.Height)"
+                RightSize = "$($right.Width)x$($right.Height)"
+                SampleStep = $sampleStep
+                ComparedSamples = 0
+                ChangedSamples = 0
+                ChangedSamplePercent = $null
+                MaxRgbSumDelta = $null
+                MaxChannelDelta = $null
+            }
+        }
+
+        $delta = 0.0
+        $samples = 0
+        $changedSamples = 0
+        $maxRgbSumDelta = 0
+        $maxChannelDelta = 0
+        for ($y = 0; $y -lt $height; $y += $sampleStep) {
+            for ($x = 0; $x -lt $width; $x += $sampleStep) {
+                $leftX = [Math]::Min($left.Width - 1, [int][Math]::Floor($x * $left.Width / [double]$width))
+                $leftY = [Math]::Min($left.Height - 1, [int][Math]::Floor($y * $left.Height / [double]$height))
+                $rightX = [Math]::Min($right.Width - 1, [int][Math]::Floor($x * $right.Width / [double]$width))
+                $rightY = [Math]::Min($right.Height - 1, [int][Math]::Floor($y * $right.Height / [double]$height))
+                $leftPixel = $left.GetPixel($leftX, $leftY)
+                $rightPixel = $right.GetPixel($rightX, $rightY)
+                $redDelta = [Math]::Abs($leftPixel.R - $rightPixel.R)
+                $greenDelta = [Math]::Abs($leftPixel.G - $rightPixel.G)
+                $blueDelta = [Math]::Abs($leftPixel.B - $rightPixel.B)
+                $rgbSumDelta = $redDelta + $greenDelta + $blueDelta
+                $delta += $rgbSumDelta / 3.0
+                if ($rgbSumDelta -gt 0) {
+                    $changedSamples++
+                    $maxRgbSumDelta = [Math]::Max($maxRgbSumDelta, $rgbSumDelta)
+                    $maxChannelDelta = [Math]::Max(
+                        $maxChannelDelta,
+                        [Math]::Max($redDelta, [Math]::Max($greenDelta, $blueDelta)))
+                }
+
+                $samples++
+            }
+        }
+
+        return [ordered]@{
+            Comparable = $samples -gt 0
+            MeanDelta = $(if ($samples -gt 0) { [Math]::Round($delta / $samples, 2) } else { $null })
+            LeftSize = "$($left.Width)x$($left.Height)"
+            RightSize = "$($right.Width)x$($right.Height)"
+            SampleStep = $sampleStep
+            ComparedSamples = $samples
+            ChangedSamples = $changedSamples
+            ChangedSamplePercent = $(if ($samples -gt 0) { [Math]::Round(($changedSamples * 100.0) / $samples, 3) } else { $null })
+            MaxRgbSumDelta = $(if ($samples -gt 0) { $maxRgbSumDelta } else { $null })
+            MaxChannelDelta = $(if ($samples -gt 0) { $maxChannelDelta } else { $null })
+        }
+    }
+    finally {
+        $left.Dispose()
+        $right.Dispose()
+    }
+}
+
+function Capture-ModernWpf($case, [string]$caseDir) {
+    $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
+    $modernArgs = @(
+        "--visual-test",
+        "--route", $case.ModernRoute,
+        "--theme", $Theme,
+        "--visual-artifact-dir", $artifactDir)
+    if (![string]::IsNullOrWhiteSpace($case.ColorSubpage)) {
+        $modernArgs += @("--color-subpage", $case.ColorSubpage)
+    }
+
+    $process = Start-AppProcess $ModernGalleryExe $modernArgs
+
+    try {
+        $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "local Gallery window for $($case.Id)" -Probe {
+            Find-WindowByProcessId $process.Id
+        }
+        [void][WpfGalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
+        Wait-ModernWpfRouteReady `
+            $window `
+            $case.ModernInitialReadyRoute `
+            "ModernWpf route '$($case.ModernRoute)' to become ready as '$($case.ModernInitialReadyRoute)'" `
+            $artifactDir
+
+        Navigate-ModernWpfGalleryByClicks $window $case
+
+        $settleDelayMilliseconds = 500
+        if (Test-ShellNavigationCase $case) {
+            $settleDelayMilliseconds = 1000
+        }
+
+        Start-Sleep -Milliseconds $settleDelayMilliseconds
+        $screenshot = Join-Path $caseDir "modernwpf-$($case.Id).png"
+        $treePath = Join-Path $caseDir "modernwpf-$($case.Id).uia.txt"
+        $contentCropPath = Join-Path $caseDir "modernwpf-$($case.Id)-content.png"
+        $capture = Try-CaptureWindow $window.Current.NativeWindowHandle $screenshot
+        $screenshot = $capture.Screenshot
+        Write-UiaTree $window $treePath 7
+        $windowNonBlank = $false
+        $windowScreenshotSource = ""
+        if ($capture.Succeeded) {
+            $windowNonBlank = Test-ImageNotBlank $screenshot
+            if ($windowNonBlank) {
+                $windowScreenshotSource = "Win32WindowCapture"
+            }
+        }
+
+        if (!$windowNonBlank) {
+            $renderedWindowArtifact = Get-ImageArtifactInfo `
+                (Join-Path $artifactDir "ModernWpfGalleryMainWindow.png") `
+                "ModernWpfGalleryMainWindowRenderedArtifact"
+            if ($renderedWindowArtifact.NonBlank) {
+                $screenshot = $renderedWindowArtifact.Screenshot
+                $windowNonBlank = $true
+                $windowScreenshotSource = $renderedWindowArtifact.Source
+            }
+        }
+
+        $contentCrop = $null
+        if (Test-ShellNavigationCase $case) {
+            $contentCrop = Save-ModernShellNavigationArtifactCrop $artifactDir $contentCropPath
+            if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and $windowNonBlank) {
+                $isRenderedWindowArtifact = $windowScreenshotSource -eq "ModernWpfGalleryMainWindowRenderedArtifact"
+                $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case $isRenderedWindowArtifact
+                if ($null -eq $contentCrop -or !$contentCrop.NonBlank -or
+                    !$contentCrop.Source.StartsWith("ModernWpfNavigationPane", [StringComparison]::Ordinal)) {
+                    $contentCrop = Save-ModernShellNavigationArtifactCrop $artifactDir $contentCropPath
+                }
+            }
+        }
+        else {
+            $contentCrop = Get-ModernRenderedContentArtifactCrop $artifactDir
+        }
+
+        if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and
+            !(Test-OfficialDirectReferenceCase $case) -and
+            $windowNonBlank) {
+            $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case
+        }
+
+        if ($null -eq $contentCrop -or !$contentCrop.NonBlank) {
+            $contentCrop = Get-ModernRenderedContentArtifactCrop $artifactDir
+        }
+
+        if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and $windowNonBlank) {
+            $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case
+        }
+
+        $statusFile = Read-ModernWpfStatusFile $artifactDir
+        $lastException = if ($null -ne $statusFile) { $statusFile.LastException } else { Get-AutomationText $window "GalleryVisualTestLastException" }
+        if ([string]::IsNullOrWhiteSpace($lastException)) {
+            $lastException = Get-AutomationText $window "GalleryVisualTestLastException"
+        }
+        if ([string]::IsNullOrWhiteSpace($lastException) -and
+            ($null -eq $contentCrop -or !$contentCrop.NonBlank) -and
+            !$capture.Succeeded) {
+            $lastException = $capture.LastException
+        }
+        if ([string]::IsNullOrWhiteSpace($lastException)) {
+            $lastException = Test-ModernShellNavigationState $window $case
+        }
+
+        return [ordered]@{
+            App = "ModernWpf"
+            Case = $case.Id
+            Route = $case.ModernRoute
+            ReadyRoute = $case.ReadyRoute
+            Status = $(if (($windowNonBlank -or $contentCrop.NonBlank) -and $contentCrop.NonBlank -and [string]::IsNullOrWhiteSpace($lastException)) { "Passed" } else { "Failed" })
+            Screenshot = $screenshot
+            ContentCrop = $contentCrop
+            WindowNonBlank = $windowNonBlank
+            WindowScreenshotSource = $windowScreenshotSource
+            UiaTree = $treePath
+            WindowCaptureException = $(if ($capture.Succeeded) { "" } else { $capture.LastException })
+            LastException = $lastException
+        }
+    }
+    finally {
+        Close-AppProcess $process
+    }
+}
+
+function Capture-OfficialWpfGalleryDirectHost($case, [string]$caseDir) {
+    $artifactDir = Join-Path $caseDir "official-wpf-artifacts"
+    New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
+    $process = Start-AppProcess $OfficialDirectHostExe @(
+        "--page", $case.Id,
+        "--theme", $Theme,
+        "--official-output", $OfficialWpfGalleryOutput,
+        "--width", $Width,
+        "--height", $Height,
+        "--visual-artifact-dir", $artifactDir)
+    $window = $null
+    try {
+        $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery direct reference window for $($case.Id)" -Probe {
+            Find-WindowByProcessId $process.Id
+        }
+        [void][WpfGalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
+        [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+        if (Test-ShellNavigationCase $case) {
+            $navigationPaneArtifact = Join-Path $artifactDir "NavigationPane.png"
+            Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery direct navigation pane artifact" -Probe {
+                if (!(Test-Path -LiteralPath $navigationPaneArtifact)) {
+                    return $null
+                }
+
+                $navigationPaneInfo = Get-ImageArtifactInfo $navigationPaneArtifact "OfficialDirectNavigationPaneRenderedArtifact"
+                if ($navigationPaneInfo.NonBlank) {
+                    return $navigationPaneInfo
+                }
+
+                return $null
+            } | Out-Null
+        }
+        else {
+            Wait-OfficialWpfGalleryContentReady $window $case
+        }
+        Start-Sleep -Milliseconds 500
+
+        $screenshot = Join-Path $caseDir "official-wpf-$($case.Id).png"
+        $treePath = Join-Path $caseDir "official-wpf-$($case.Id).uia.txt"
+        $contentCropPath = Join-Path $caseDir "official-wpf-$($case.Id)-content.png"
+        $capture = Try-CaptureWindow $window.Current.NativeWindowHandle $screenshot
+        $screenshot = $capture.Screenshot
+        Write-UiaTree $window $treePath 7
+        $frame = Find-DescendantByAutomationId $window "RootContentFrame"
+        if (Test-ShellNavigationCase $case) {
+            $renderedContentArtifact = Join-Path $artifactDir "NavigationPane.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "OfficialDirectNavigationPaneRenderedArtifact"
+        }
+        else {
+            $renderedContentArtifact = Join-Path $artifactDir "RootContentFrame.png"
+            $contentCrop = Get-ImageArtifactInfo $renderedContentArtifact "OfficialDirectRootContentFrameRenderedArtifact"
+        }
+
+        if (!$contentCrop.NonBlank -and $capture.Succeeded) {
+            if (Test-ShellNavigationCase $case) {
+                $contentCrop = Save-OfficialContentCrop $window $screenshot $contentCropPath $case
+            }
+            else {
+                $contentCrop = Save-ElementCrop $window $screenshot $contentCropPath $frame "OfficialDirectRootContentFrame" 0
+            }
+        }
+        $windowNonBlank = $false
+        if ($capture.Succeeded) {
+            $windowNonBlank = Test-ImageNotBlank $screenshot
+        }
+
+        return [ordered]@{
+            App = "OfficialWpfGallery"
+            Case = $case.Id
+            Route = "Direct reference host: $($case.Id)"
+            Status = $(if (($windowNonBlank -or $contentCrop.NonBlank) -and $contentCrop.NonBlank) { "Passed" } else { "Failed" })
+            Screenshot = $screenshot
+            ContentCrop = $contentCrop
+            WindowNonBlank = $windowNonBlank
+            UiaTree = $treePath
+            ThemeProbe = [ordered]@{
+                RequestedTheme = $Theme
+                Status = "Passed"
+                LastException = "Direct reference host"
+            }
+            WindowCaptureException = $(if ($capture.Succeeded) { "" } else { $capture.LastException })
+            LastException = $(if (($windowNonBlank -or $contentCrop.NonBlank) -and $contentCrop.NonBlank) { "" } elseif (!$capture.Succeeded) { $capture.LastException } else { "" })
+        }
+    }
+    finally {
+        Close-AppProcess $process
+    }
+}
+
+function Capture-OfficialWpfGallery($case, [string]$caseDir) {
+    if ($Reference -eq "None") {
+        return [ordered]@{
+            App = "OfficialWpfGallery"
+            Case = $case.Id
+            Route = $case.OfficialPath -join " > "
+            Status = "Skipped"
+            Screenshot = ""
+            ContentCrop = $null
+            UiaTree = ""
+            LastException = "Reference=None"
+        }
+    }
+
+    if (Test-OfficialDirectReferenceCase $case) {
+        return Capture-OfficialWpfGalleryDirectHost $case $caseDir
+    }
+
+    $process = Start-AppProcess $WpfGalleryExe @()
+    $window = $null
+    $themeProbe = $null
+    try {
+        $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "official WPF Gallery window for $($case.Id)" -Probe {
+            Find-WindowByProcessId $process.Id
+        }
+        [void][WpfGalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
+        [WpfGalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+        Start-Sleep -Milliseconds 700
+        $themeProbe = Ensure-OfficialWpfGalleryTheme $process.Id $window
+        if ($case.Id -ne "Settings") {
+            Return-OfficialWpfGalleryToHome $window
+        }
+        Navigate-OfficialWpfGallery $window $case
+        Start-Sleep -Milliseconds 500
+
+        $screenshot = Join-Path $caseDir "official-wpf-$($case.Id).png"
+        $treePath = Join-Path $caseDir "official-wpf-$($case.Id).uia.txt"
+        $contentCropPath = Join-Path $caseDir "official-wpf-$($case.Id)-content.png"
+        Capture-Window $window.Current.NativeWindowHandle $screenshot
+        Write-UiaTree $window $treePath 7
+        $contentCrop = Save-OfficialContentCrop $window $screenshot $contentCropPath $case
+
+        $status = if ((Test-ImageNotBlank $screenshot) -and $contentCrop.NonBlank -and $themeProbe.Status -ne "Failed") { "Passed" } else { "Failed" }
+        return [ordered]@{
+            App = "OfficialWpfGallery"
+            Case = $case.Id
+            Route = $case.OfficialPath -join " > "
+            Status = $status
+            Screenshot = $screenshot
+            ContentCrop = $contentCrop
+            UiaTree = $treePath
+            ThemeProbe = $themeProbe
+            LastException = $(if ($themeProbe.Status -eq "Failed") { $themeProbe.LastException } else { "" })
+        }
+    }
+    catch {
+        $lastException = $_.Exception.Message
+        $screenshot = ""
+        $treePath = ""
+        $contentCrop = $null
+
+        if ($null -ne $window) {
+            try {
+                $screenshot = Join-Path $caseDir "official-wpf-$($case.Id)-failure.png"
+                $treePath = Join-Path $caseDir "official-wpf-$($case.Id)-failure.uia.txt"
+                $contentCropPath = Join-Path $caseDir "official-wpf-$($case.Id)-failure-content.png"
+                Capture-Window $window.Current.NativeWindowHandle $screenshot
+                Write-UiaTree $window $treePath 7
+                $contentCrop = Save-OfficialContentCrop $window $screenshot $contentCropPath $case
+            }
+            catch {
+                if ([string]::IsNullOrWhiteSpace($lastException)) {
+                    $lastException = $_.Exception.Message
+                }
+                else {
+                    $lastException = "$lastException; failure capture: $($_.Exception.Message)"
+                }
+            }
+        }
+
+        return [ordered]@{
+            App = "OfficialWpfGallery"
+            Case = $case.Id
+            Route = $case.OfficialPath -join " > "
+            Status = "Failed"
+            Screenshot = $screenshot
+            ContentCrop = $contentCrop
+            UiaTree = $treePath
+            ThemeProbe = $themeProbe
+            LastException = $lastException
+        }
+    }
+    finally {
+        Close-AppProcess $process
+    }
+}
+
+$runDir = New-RunDirectory
+$results = New-Object System.Collections.Generic.List[object]
+
+foreach ($case in $selectedCases) {
+    $caseDir = Join-Path $runDir (ConvertTo-SafeName $case.Id)
+    New-Item -ItemType Directory -Force -Path $caseDir | Out-Null
+
+    $modernResult = $null
+    try {
+        $modernResult = Capture-ModernWpf $case $caseDir
+    }
+    catch {
+        $modernResult = [ordered]@{
+            App = "ModernWpf"
+            Case = $case.Id
+            Route = $case.ModernRoute
+            ReadyRoute = $case.ReadyRoute
+            Status = "Failed"
+            Screenshot = ""
+            ContentCrop = $null
+            UiaTree = ""
+            LastException = $_.Exception.Message
+        }
+    }
+    $results.Add($modernResult)
+
+    $officialResult = $null
+    try {
+        $officialResult = Capture-OfficialWpfGallery $case $caseDir
+    }
+    catch {
+        $officialResult = [ordered]@{
+            App = "OfficialWpfGallery"
+            Case = $case.Id
+            Route = $case.OfficialPath -join " > "
+            Status = "Failed"
+            Screenshot = ""
+            ContentCrop = $null
+            UiaTree = ""
+            LastException = $_.Exception.Message
+        }
+    }
+    $results.Add($officialResult)
+
+    if ($null -ne $modernResult.ContentCrop -and $null -ne $officialResult.ContentCrop -and
+        $modernResult.ContentCrop.Found -and $officialResult.ContentCrop.Found) {
+        $comparison = Compare-ImagesNormalized $modernResult.ContentCrop.Screenshot $officialResult.ContentCrop.Screenshot $ComparisonSampleStep
+        $modernResult["OfficialContentComparison"] = $comparison
+        if ($FailOnDifference -and $comparison.Comparable -and $comparison.MeanDelta -gt 24) {
+            $modernResult["Status"] = "Failed"
+            $modernResult["LastException"] = "Mean content crop delta $($comparison.MeanDelta) exceeded visual threshold 24."
+        }
+    }
+}
+
+$reportJson = Join-Path $runDir "report.json"
+$reportMarkdown = Join-Path $runDir "report.md"
+$results.ToArray() | ConvertTo-Json -Depth 7 | Set-Content -Path $reportJson -Encoding UTF8
+
+$markdown = New-Object System.Collections.Generic.List[string]
+$markdown.Add("# WPF Gallery Visual Audit Report")
+$markdown.Add("")
+$markdown.Add("- Theme: $Theme")
+$markdown.Add("- Size: ${Width}x${Height}")
+$markdown.Add("- Reference: $Reference")
+$markdown.Add("- Comparison sample step: $ComparisonSampleStep")
+$markdown.Add("- ModernWpf executable: $ModernGalleryExe")
+if ($Reference -eq "OfficialWpfGallery") {
+    $markdown.Add("- Official WPF Gallery executable: $WpfGalleryExe")
+    if ($selectedCases | Where-Object { Test-OfficialDirectReferenceCase $_ } | Select-Object -First 1) {
+        $markdown.Add("- Official WPF Gallery direct reference host: $OfficialDirectHostExe")
+    }
+}
+$markdown.Add("")
+$markdown.Add("| Case | Modern status | Official status | Content delta | Changed samples | Max RGB diff | Modern crop | Official crop | Notes |")
+$markdown.Add("| --- | --- | --- | ---: | ---: | ---: | --- | --- | --- |")
+
+foreach ($case in $selectedCases) {
+    $modern = $results | Where-Object { $_.App -eq "ModernWpf" -and $_.Case -eq $case.Id } | Select-Object -First 1
+    $official = $results | Where-Object { $_.App -eq "OfficialWpfGallery" -and $_.Case -eq $case.Id } | Select-Object -First 1
+    $comparison = if ($modern.Contains("OfficialContentComparison")) { $modern.OfficialContentComparison } else { $null }
+    $delta = if ($null -ne $comparison -and $comparison.Comparable) { $comparison.MeanDelta } else { "" }
+    $changedSamples = if ($null -ne $comparison -and $comparison.Comparable) { "$($comparison.ChangedSamples)/$($comparison.ComparedSamples) ($($comparison.ChangedSamplePercent)%)" } else { "" }
+    $maxRgbDiff = if ($null -ne $comparison -and $comparison.Comparable) { $comparison.MaxRgbSumDelta } else { "" }
+    $modernCrop = if ($null -ne $modern.ContentCrop -and $modern.ContentCrop.Found) { "$($modern.ContentCrop.Width)x$($modern.ContentCrop.Height)" } else { "" }
+    $officialCrop = if ($null -ne $official.ContentCrop -and $official.ContentCrop.Found) { "$($official.ContentCrop.Width)x$($official.ContentCrop.Height)" } else { "" }
+    $notes = @($modern.LastException, $official.LastException) | Where-Object { ![string]::IsNullOrWhiteSpace($_) }
+    $markdown.Add("| $($case.Id) | $($modern.Status) | $($official.Status) | $delta | $changedSamples | $maxRgbDiff | $modernCrop | $officialCrop | $($notes -join '; ') |")
+}
+
+$markdown.Add("")
+$markdown.Add("Screenshots, content crops, UIA trees, and JSON results are beside this report.")
+$markdown | Set-Content -Path $reportMarkdown -Encoding UTF8
+
+$failed = @($results | Where-Object { $_.Status -eq "Failed" })
+Write-Host "WPF Gallery visual audit artifacts: $runDir"
+Write-Host "Report: $reportMarkdown"
+if ($failed.Count -gt 0) {
+    Exit-WpfGalleryVisualAuditRunLock $visualAuditRunMutex
+    $failed |
+        ForEach-Object {
+            [pscustomobject]@{
+                App = $_.App
+                Case = $_.Case
+                Status = $_.Status
+                LastException = $_.LastException
+            }
+        } |
+        Format-Table App, Case, Status, LastException -AutoSize
+    exit 1
+}
+
+Exit-WpfGalleryVisualAuditRunLock $visualAuditRunMutex

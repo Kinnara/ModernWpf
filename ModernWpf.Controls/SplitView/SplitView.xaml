@@ -314,6 +314,88 @@
                                     <SplineDoubleKeyFrame KeySpline="0.0,0.35 0.15,1.0" KeyTime="{StaticResource SplitViewPaneAnimationOpenDuration}" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
+                            <Storyboard x:Key="FromClosedToOpenInlineRight">
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HCPaneBorder" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <Int32AnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="(Grid.ColumnSpan)">
+                                    <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="1" />
+                                </Int32AnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <GridLength>*</GridLength>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition2" Storyboard.TargetProperty="Width">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="(Grid.Column)">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="1" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="(Grid.ColumnSpan)">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="1" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="HorizontalAlignment">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static HorizontalAlignment.Right}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HCPaneBorder" Storyboard.TargetProperty="HorizontalAlignment">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static HorizontalAlignment.Left}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PaneTransform" Storyboard.TargetProperty="X">
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLength}" />
+                                    <SplineDoubleKeyFrame KeyTime="{StaticResource SplitViewPaneAnimationOpenDuration}" KeySpline="0.0,0.35 0.15,1.0" Value="0" />
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames FillBehavior="Stop" Storyboard.TargetName="ContentTransform" Storyboard.TargetProperty="X">
+                                    <LinearDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLength}" />
+                                    <SplineDoubleKeyFrame KeyTime="{StaticResource SplitViewPaneAnimationOpenPreDuration}" KeySpline="0.0,0.35 0.15,1.0" Value="0" />
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PaneClipRectangleTransform" Storyboard.TargetProperty="X">
+                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLength}" />
+                                    <SplineDoubleKeyFrame KeyTime="{StaticResource SplitViewPaneAnimationOpenDuration}" KeySpline="0.0,0.35 0.15,1.0" Value="0" />
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
+                            <Storyboard x:Key="FromOpenInlineRightToClosed">
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="{StaticResource SplitViewPaneAnimationCloseDuration}" Value="{x:Static Visibility.Collapsed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HCPaneBorder" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="{StaticResource SplitViewPaneAnimationCloseDuration}" Value="{x:Static Visibility.Collapsed}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <GridLength>*</GridLength>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition2" Storyboard.TargetProperty="Width">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <Int32AnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="(Grid.ColumnSpan)">
+                                    <DiscreteInt32KeyFrame KeyTime="0" Value="2" />
+                                </Int32AnimationUsingKeyFrames>
+                                <Int32AnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="(Grid.Column)">
+                                    <DiscreteInt32KeyFrame KeyTime="0" Value="0" />
+                                </Int32AnimationUsingKeyFrames>
+                                <Int32AnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="(Grid.ColumnSpan)">
+                                    <DiscreteInt32KeyFrame KeyTime="{StaticResource SplitViewPaneAnimationCloseDuration}" Value="2" />
+                                </Int32AnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PaneClipRectangleTransform" Storyboard.TargetProperty="X">
+                                    <SplineDoubleKeyFrame KeyTime="{StaticResource SplitViewPaneAnimationCloseDuration}" KeySpline="0.0,0.35 0.15,1.0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.NegativeOpenPaneLength}" />
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PaneTransform" Storyboard.TargetProperty="X">
+                                    <SplineDoubleKeyFrame KeyTime="{StaticResource SplitViewPaneAnimationCloseDuration}" KeySpline="0.0,0.35 0.15,1.0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLength}" />
+                                </DoubleAnimationUsingKeyFrames>
+                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentTransform" Storyboard.TargetProperty="X">
+                                    <DiscreteDoubleKeyFrame KeyTime="0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.NegativeOpenPaneLength}" />
+                                    <SplineDoubleKeyFrame KeyTime="{StaticResource SplitViewPaneAnimationCloseDuration}" KeySpline="0.0,0.35 0.15,1.0" Value="0" />
+                                </DoubleAnimationUsingKeyFrames>
+                            </Storyboard>
                             <Storyboard x:Key="FromClosedCompactLeftToOpenInlineLeft">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
@@ -361,24 +443,41 @@
                                     <SplineDoubleKeyFrame KeySpline="0.0,0.35 0.15,1.0" KeyTime="{StaticResource SplitViewPaneAnimationOpenDuration}" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.NegativeOpenPaneLengthMinusCompactLength}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            <Storyboard x:Key="ClosedCompactLeft">
+                            <Storyboard x:Key="FromClosedCompactRightToOpenInlineRight">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
-                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.CompactPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0">
+                                        <DiscreteObjectKeyFrame.Value>
+                                            <GridLength>*</GridLength>
+                                        </DiscreteObjectKeyFrame.Value>
+                                    </DiscreteObjectKeyFrame>
                                 </ObjectAnimationUsingKeyFrames>
-                                <Int32AnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="(Grid.Column)">
-                                    <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="1" />
-                                </Int32AnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition2" Storyboard.TargetProperty="Width">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
+                                </ObjectAnimationUsingKeyFrames>
                                 <Int32AnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="(Grid.ColumnSpan)">
                                     <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="1" />
                                 </Int32AnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
                                 </ObjectAnimationUsingKeyFrames>
+                                <Int32AnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="(Grid.Column)">
+                                    <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="1" />
+                                </Int32AnimationUsingKeyFrames>
+                                <Int32AnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="(Grid.ColumnSpan)">
+                                    <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="1" />
+                                </Int32AnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HCPaneBorder" Storyboard.TargetProperty="HorizontalAlignment">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static HorizontalAlignment.Left}" />
+                                </ObjectAnimationUsingKeyFrames>
+                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HCPaneBorder" Storyboard.TargetProperty="Visibility">
+                                    <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
+                                </ObjectAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PaneClipRectangleTransform" Storyboard.TargetProperty="X">
-                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.NegativeOpenPaneLengthMinusCompactLength}" />
+                                    <LinearDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLengthMinusCompactLength}" />
+                                    <SplineDoubleKeyFrame KeySpline="0.0,0.35 0.15,1.0" KeyTime="{StaticResource SplitViewPaneAnimationOpenPreDuration}" Value="0" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
-                            <Storyboard x:Key="ClosedCompactRight">
+                            <Storyboard x:Key="FromOpenInlineRightToClosedCompactRight">
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0">
                                         <DiscreteObjectKeyFrame.Value>
@@ -402,7 +501,7 @@
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static HorizontalAlignment.Right}" />
                                 </ObjectAnimationUsingKeyFrames>
                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PaneClipRectangleTransform" Storyboard.TargetProperty="X">
-                                    <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLengthMinusCompactLength}" />
+                                    <SplineDoubleKeyFrame KeyTime="{StaticResource SplitViewPaneAnimationCloseDuration}" KeySpline="0.0,0.35 0.15,1.0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLengthMinusCompactLength}" />
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                             <Storyboard x:Key="OpenInlineRight">
@@ -439,12 +538,6 @@
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ColumnDefinition1" Storyboard.TargetProperty="Width">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.CompactPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
                                 </ObjectAnimationUsingKeyFrames>
-                                <Int32AnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="(Grid.Column)">
-                                    <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="1" />
-                                </Int32AnimationUsingKeyFrames>
-                                <Int32AnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="(Grid.ColumnSpan)">
-                                    <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="1" />
-                                </Int32AnimationUsingKeyFrames>
                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="Visibility">
                                     <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
                                 </ObjectAnimationUsingKeyFrames>
@@ -488,7 +581,7 @@
                         </Grid.Resources>
 
                         <VisualStateManager.CustomVisualStateManager>
-                            <ui:SimpleVisualStateManager />
+                            <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DisplayModeStates">
@@ -504,12 +597,34 @@
                                     <VisualTransition From="OpenCompactOverlayRight" To="ClosedCompactRight" Storyboard="{StaticResource FromOpenCompactOverlayRightToClosedCompactRight}" />
                                     <VisualTransition From="OpenInlineLeft" To="Closed" Storyboard="{StaticResource FromOpenInlineLeftToClosed}" />
                                     <VisualTransition From="Closed" To="OpenInlineLeft" Storyboard="{StaticResource FromClosedToOpenInlineLeft}" />
+                                    <VisualTransition From="Closed" To="OpenInlineRight" Storyboard="{StaticResource FromClosedToOpenInlineRight}" />
+                                    <VisualTransition From="OpenInlineRight" To="Closed" Storyboard="{StaticResource FromOpenInlineRightToClosed}" />
                                     <VisualTransition From="ClosedCompactLeft" To="OpenInlineLeft" Storyboard="{StaticResource FromClosedCompactLeftToOpenInlineLeft}" />
                                     <VisualTransition From="OpenInlineLeft" To="ClosedCompactLeft" Storyboard="{StaticResource FromOpenInlineLeftToClosedCompactLeft}" />
+                                    <VisualTransition From="ClosedCompactRight" To="OpenInlineRight" Storyboard="{StaticResource FromClosedCompactRightToOpenInlineRight}" />
+                                    <VisualTransition From="OpenInlineRight" To="ClosedCompactRight" Storyboard="{StaticResource FromOpenInlineRightToClosedCompactRight}" />
                                 </VisualStateGroup.Transitions>
                                 <VisualState x:Name="Closed" />
-                                <VisualState x:Name="ClosedCompactLeft" Storyboard="{StaticResource ClosedCompactLeft}" />
-                                <VisualState x:Name="ClosedCompactRight" Storyboard="{StaticResource ClosedCompactRight}" />
+                                <ui:VisualStateEx x:Name="ClosedCompactLeft">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ColumnDefinition1.Width" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.CompactPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
+                                        <ui:VisualStateSetter Target="ContentRoot.(Grid.Column)" Value="1" />
+                                        <ui:VisualStateSetter Target="ContentRoot.(Grid.ColumnSpan)" Value="1" />
+                                        <ui:VisualStateSetter Target="PaneRoot.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PaneClipRectangleTransform.X" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.NegativeOpenPaneLengthMinusCompactLength}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="ClosedCompactRight">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ColumnDefinition1.Width" Value="*" />
+                                        <ui:VisualStateSetter Target="ColumnDefinition2.Width" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.CompactPaneGridLength, FallbackValue={StaticResource ZeroGridLength}}" />
+                                        <ui:VisualStateSetter Target="ContentRoot.(Grid.ColumnSpan)" Value="1" />
+                                        <ui:VisualStateSetter Target="PaneRoot.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PaneRoot.(Grid.ColumnSpan)" Value="2" />
+                                        <ui:VisualStateSetter Target="PaneRoot.HorizontalAlignment" Value="Right" />
+                                        <ui:VisualStateSetter Target="PaneClipRectangleTransform.X" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLengthMinusCompactLength}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <VisualState x:Name="OpenOverlayLeft">
 
                                     <Storyboard>
@@ -544,36 +659,25 @@
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="OpenInlineLeft">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HCPaneBorder" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="(Grid.ColumnSpan)">
-                                            <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="1" />
-                                        </Int32AnimationUsingKeyFrames>
-                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="ContentRoot" Storyboard.TargetProperty="(Grid.Column)">
-                                            <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="1" />
-                                        </Int32AnimationUsingKeyFrames>
-                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PaneRoot" Storyboard.TargetProperty="(Grid.ColumnSpan)">
-                                            <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="1" />
-                                        </Int32AnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PaneTransform" Storyboard.TargetProperty="X">
-                                            <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ContentTransform" Storyboard.TargetProperty="X">
-                                            <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PaneClipRectangleTransform" Storyboard.TargetProperty="X">
-                                            <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="OpenInlineLeft">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PaneRoot.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="HCPaneBorder.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="ContentRoot.(Grid.ColumnSpan)" Value="1" />
+                                        <ui:VisualStateSetter Target="ContentRoot.(Grid.Column)" Value="1" />
+                                        <ui:VisualStateSetter Target="PaneRoot.(Grid.ColumnSpan)" Value="1" />
+                                        <ui:VisualStateSetter Target="PaneTransform.X" Value="0" />
+                                        <ui:VisualStateSetter Target="ContentTransform.X" Value="0" />
+                                        <ui:VisualStateSetter Target="PaneClipRectangleTransform.X" Value="0" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <VisualState x:Name="OpenInlineRight" Storyboard="{StaticResource OpenInlineRight}" />
-                                <VisualState x:Name="OpenCompactOverlayLeft" Storyboard="{StaticResource OpenCompactOverlayLeft}" />
+                                <ui:VisualStateEx x:Name="OpenCompactOverlayLeft" Storyboard="{StaticResource OpenCompactOverlayLeft}">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ContentRoot.(Grid.ColumnSpan)" Value="1" />
+                                        <ui:VisualStateSetter Target="ContentRoot.(Grid.Column)" Value="1" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <VisualState x:Name="OpenCompactOverlayRight" Storyboard="{StaticResource OpenCompactOverlayRight}" />
 
                             </VisualStateGroup>
@@ -598,7 +702,7 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Pane Content Area -->
-                        <Border
+                        <local:SplitViewPaneRoot
                             x:Name="PaneRoot"
                             Grid.ColumnSpan="2"
                             BorderBrush="{TemplateBinding BorderBrush}"
@@ -609,19 +713,20 @@
                             Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.OpenPaneLength}"
                             Canvas.ZIndex="1"
                             CornerRadius="{TemplateBinding CornerRadius}"
+                            Focusable="True"
                             KeyboardNavigation.TabNavigation="Local"
                             KeyboardNavigation.TabIndex="0">
-                            <Border.Clip>
+                            <local:SplitViewPaneRoot.Clip>
                                 <RectangleGeometry x:Name="PaneClipRectangle">
                                     <RectangleGeometry.Transform>
                                         <TranslateTransform x:Name="PaneClipRectangleTransform" />
                                     </RectangleGeometry.Transform>
                                 </RectangleGeometry>
-                            </Border.Clip>
+                            </local:SplitViewPaneRoot.Clip>
                             
-                            <Border.RenderTransform>
+                            <local:SplitViewPaneRoot.RenderTransform>
                                 <TranslateTransform x:Name="PaneTransform" />
-                            </Border.RenderTransform>
+                            </local:SplitViewPaneRoot.RenderTransform>
 
                             <Grid>
                                 <Border ui:BorderHelper.Child="{TemplateBinding Pane}" />
@@ -633,7 +738,7 @@
                                     Width="1"
                                     HorizontalAlignment="Right" />
                             </Grid>
-                        </Border>
+                        </local:SplitViewPaneRoot>
                         
                         <!-- Content Area -->
                         <Grid
@@ -643,7 +748,7 @@
                                 <TranslateTransform x:Name="ContentTransform" />
                             </Grid.RenderTransform>
                             <Border ui:BorderHelper.Child="{TemplateBinding Content}" />
-                            <Rectangle
+                            <local:SplitViewLightDismissLayer
                                 x:Name="LightDismissLayer"
                                 Fill="Transparent"
                                 Visibility="Collapsed" />

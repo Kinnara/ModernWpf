@@ -1,0 +1,49 @@
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using ModernWpf.Gallery.Testing;
+
+namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
+{
+    /// <summary>
+    /// Interaction logic for ColorsPage.xaml
+    /// </summary>
+    public partial class ColorsPage : Page
+    {
+        public ColorsPageViewModel ViewModel { get; }
+        public ColorsPage(ColorsPageViewModel viewModel)
+        {
+            InitializeComponent();
+            ViewModel = viewModel;
+            DataContext = this;
+        }
+
+        private void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var section = WpfGalleryColorSectionFactory.Create(PageSelector.SelectedIndex);
+            section.SetResourceReference(TextElement.FontSizeProperty, "BodyTextBlockFontSize");
+            ColorSubpageNavigationFrame.Navigate(section);
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            PageSelector.SelectedItem = ResolveInitialSubpage();
+        }
+
+        private object ResolveInitialSubpage()
+        {
+            if (GalleryDiagnostics.IsEnabled && !string.IsNullOrWhiteSpace(GalleryDiagnostics.ColorSubpage))
+            {
+                foreach (var item in PageSelector.Items)
+                {
+                    if (string.Equals(item as string, GalleryDiagnostics.ColorSubpage, System.StringComparison.OrdinalIgnoreCase))
+                    {
+                        return item;
+                    }
+                }
+            }
+
+            return PageSelector.Items[0];
+        }
+    }
+}

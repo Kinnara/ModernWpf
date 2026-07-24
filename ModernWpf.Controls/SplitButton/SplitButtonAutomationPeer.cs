@@ -37,6 +37,11 @@ namespace ModernWpf.Automation.Peers
             return AutomationControlType.SplitButton;
         }
 
+        protected override System.Collections.Generic.List<AutomationPeer> GetChildrenCore()
+        {
+            return null;
+        }
+
         private SplitButton GetImpl()
         {
             SplitButton impl = null;
@@ -91,7 +96,7 @@ namespace ModernWpf.Automation.Peers
             var splitButton = GetImpl();
             if (splitButton != null)
             {
-                splitButton.OnClickPrimary(null, null);
+                splitButton.Invoke();
             }
         }
     }

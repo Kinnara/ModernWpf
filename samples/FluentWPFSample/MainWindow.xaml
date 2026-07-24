@@ -36,7 +36,7 @@
             </ui:NavigationView.MenuItems>
 
             <Border Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}">
-                <ui:SimpleStackPanel
+                <ui:StackPanelEx
                     Spacing="24"
                     Margin="24,32,24,0">
                     <TextBlock
@@ -48,7 +48,7 @@
                         Width="200"
                         Padding="12"
                         CornerRadius="{DynamicResource ControlCornerRadius}">
-                        <ui:SimpleStackPanel Spacing="24">
+                        <ui:StackPanelEx Spacing="24">
                             <TextBox
                                 ui:ControlHelper.Header="Application theme"
                                 Text="{Binding ActualApplicationTheme, Source={x:Static ui:ThemeManager.Current}, Mode=OneWay}"
@@ -57,7 +57,7 @@
                                 ui:ControlHelper.Header="Inherited element theme"
                                 Text="{Binding Path=(ui:ThemeManager.ActualTheme), RelativeSource={RelativeSource Self}, Mode=OneWay}"
                                 IsReadOnly="True" />
-                        </ui:SimpleStackPanel>
+                        </ui:StackPanelEx>
                     </Border>
                     <Border
                         Background="{DynamicResource SystemControlPageBackgroundAltHighBrush}"
@@ -74,7 +74,7 @@
                     <Button
                         Content="Toggle theme"
                         Click="ToggleTheme" />
-                </ui:SimpleStackPanel>
+                </ui:StackPanelEx>
             </Border>
         </ui:NavigationView>
     </Grid>

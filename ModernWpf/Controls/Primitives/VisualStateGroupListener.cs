@@ -2,7 +2,7 @@
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class VisualStateGroupListener : FrameworkElement
+    internal class VisualStateGroupListener : FrameworkElement
     {
         static VisualStateGroupListener()
         {

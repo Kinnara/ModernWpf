@@ -1,0 +1,143 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Media",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "NumberBox"
+  },
+  "properties": [
+    {
+      "name": "Minimum",
+      "type": "double",
+      "default": "double.MinValue",
+      "changed": "OnMinimumPropertyChanged",
+      "changedForwardTo": "OnMinimumPropertyChanged"
+    },
+    {
+      "name": "Maximum",
+      "type": "double",
+      "default": "double.MaxValue",
+      "changed": "OnMaximumPropertyChanged",
+      "changedForwardTo": "OnMaximumPropertyChanged"
+    },
+    {
+      "name": "Value",
+      "type": "double",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "double.NaN",
+      "options": [
+        "BindsTwoWayByDefault",
+        "Journal"
+      ],
+      "changed": "OnValuePropertyChanged",
+      "changedForwardTo": "OnValuePropertyChanged",
+      "setterGuard": "!double.IsNaN(value) || !double.IsNaN(Value)"
+    },
+    {
+      "name": "SmallChange",
+      "type": "double",
+      "default": "1d",
+      "changed": "OnSmallChangePropertyChanged",
+      "changedForwardTo": "OnSmallChangePropertyChanged"
+    },
+    {
+      "name": "LargeChange",
+      "type": "double",
+      "default": "10d"
+    },
+    {
+      "name": "Text",
+      "type": "string",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "string.Empty",
+      "options": [
+        "BindsTwoWayByDefault",
+        "Journal"
+      ],
+      "changed": "OnTextPropertyChanged",
+      "changedForwardTo": "OnTextPropertyChanged"
+    },
+    {
+      "name": "Header",
+      "type": "object",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.HeaderProperty",
+      "metadataType": "FrameworkPropertyMetadata",
+      "changed": "OnHeaderPropertyChanged",
+      "changedForwardTo": "OnHeaderPropertyChanged"
+    },
+    {
+      "name": "HeaderTemplate",
+      "type": "DataTemplate",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.HeaderTemplateProperty",
+      "metadataType": "FrameworkPropertyMetadata",
+      "changed": "OnHeaderTemplatePropertyChanged",
+      "changedForwardTo": "OnHeaderTemplatePropertyChanged"
+    },
+    {
+      "name": "PlaceholderText",
+      "type": "string",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.PlaceholderTextProperty"
+    },
+    {
+      "name": "SelectionBrush",
+      "type": "Brush",
+      "metadata": "null"
+    },
+    {
+      "name": "TextAlignment",
+      "type": "TextAlignment",
+      "default": "TextAlignment.Left"
+    },
+    {
+      "name": "Description",
+      "type": "object",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.DescriptionProperty"
+    },
+    {
+      "name": "ValidationMode",
+      "type": "NumberBoxValidationMode",
+      "changed": "OnValidationModePropertyChanged",
+      "changedForwardTo": "OnValidationModePropertyChanged"
+    },
+    {
+      "name": "SpinButtonPlacementMode",
+      "type": "NumberBoxSpinButtonPlacementMode",
+      "default": "NumberBoxSpinButtonPlacementMode.Hidden",
+      "changed": "OnSpinButtonPlacementModePropertyChanged",
+      "changedForwardTo": "OnSpinButtonPlacementModePropertyChanged"
+    },
+    {
+      "name": "IsWrapEnabled",
+      "type": "bool",
+      "default": "false",
+      "changed": "OnIsWrapEnabledPropertyChanged",
+      "changedForwardTo": "OnIsWrapEnabledPropertyChanged"
+    },
+    {
+      "name": "AcceptsExpression",
+      "type": "bool",
+      "default": "false"
+    },
+    {
+      "name": "NumberFormatter",
+      "type": "INumberBoxNumberFormatter",
+      "changed": "OnNumberFormatterPropertyChanged",
+      "setterBody": "INumberBoxNumberFormatter coercedValue = value;\nValidateNumberFormatter(coercedValue);\nSetValue(NumberFormatterProperty, coercedValue);",
+      "changedBody": "var owner = (NumberBox)sender;\n\nvar value = (INumberBoxNumberFormatter)args.NewValue;\nvar coercedValue = value;\nowner.ValidateNumberFormatter(coercedValue);\nif (value != coercedValue)\n{\n    sender.SetCurrentValue(args.Property, coercedValue);\n    return;\n}\n\nowner.OnNumberFormatterPropertyChanged(args);"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty"
+    }
+  ]
+}

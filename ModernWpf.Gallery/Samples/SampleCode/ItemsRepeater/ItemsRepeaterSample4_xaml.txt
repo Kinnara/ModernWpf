@@ -1,0 +1,37 @@
+<!-- XAML Code: -->
+<ItemsRepeaterScrollHost>
+    <ScrollViewer>
+        <ItemsRepeater x:Name="VariedImageSizeRepeater"
+			    ItemTemplate="{StaticResource RecipeTemplate}">
+
+           <!-- IMPORTANT: This ItemsRepeater uses a custom-created layout
+		called VariedImageSizeLayout (referenced below). Its WPF implementation
+		is included in ModernWpf.Gallery/Pages/VariedImageSizeLayout.cs. -->
+
+            <ItemsRepeater.Layout>
+                <common:VariedImageSizeLayout Width="200" />
+            </ItemsRepeater.Layout>
+        </ItemsRepeater>
+    </ScrollViewer>
+</ItemsRepeaterScrollHost>
+
+<!-- DataTemplate used: -->
+<!-- This repeater holds Recipe objects, which is a custom class defined in
+     the code-behind, and shown below. -->
+<DataTemplate DataType="{x:Type l:Recipe}" x:Key="RecipeTemplate">
+    <Border BorderThickness="1" Background="LightGray" Margin="5">
+      <StackPanel>
+        <StackPanel Background="{Binding Color}" Margin="8" Height="75" Opacity=".8">
+            <TextBlock Text="{Binding Num}" FontSize="35" TextAlignment="Center"
+                        Padding="12" Foreground="{DynamicResource SystemControlForegroundAltHighBrush}"/>
+        </StackPanel>
+        <TextBlock
+            x:Name="recipeName"
+            Text="{Binding Name}"
+            TextWrapping="Wrap"
+            Margin="15,0,10,0"
+            Style="{StaticResource TitleTextBlockStyle}"/>
+        <TextBlock Text="{Binding Ingredients}" Style="{StaticResource BodyTextBlockStyle}" Margin="15,0,15,15"/>
+      </StackPanel>
+    </Border>
+</DataTemplate>

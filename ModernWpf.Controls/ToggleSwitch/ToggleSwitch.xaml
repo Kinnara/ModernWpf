@@ -24,49 +24,56 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="IsManipulationEnabled" Value="True" />
         <Setter Property="MinWidth" Value="{DynamicResource ToggleSwitchThemeMinWidth}"/>
+        <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="ui:FocusVisualHelper.FocusVisualMargin" Value="-7,-3,-7,-3" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:ToggleSwitch">
-                    <Border
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        SnapsToDevicePixels="True">
+                    <Grid>
+                        <Grid.Resources>
+                            <ui:BindingProxy x:Key="ToggleSwitchStrokeOffProxy" Value="{DynamicResource ToggleSwitchStrokeOff}" />
+                            <ui:BindingProxy x:Key="ToggleSwitchFillOffProxy" Value="{DynamicResource ToggleSwitchFillOff}" />
+                            <ui:BindingProxy x:Key="ToggleSwitchContainerBackgroundProxy" Value="{DynamicResource ToggleSwitchContainerBackground}" />
 
-                        <Border.Resources>
                             <ui:BindingProxy x:Key="ToggleSwitchStrokeOffPointerOverProxy" Value="{DynamicResource ToggleSwitchStrokeOffPointerOver}" />
                             <ui:BindingProxy x:Key="ToggleSwitchFillOffPointerOverProxy" Value="{DynamicResource ToggleSwitchFillOffPointerOver}" />
-                            <ui:BindingProxy x:Key="ToggleSwitchKnobFillOffPointerOverProxy" Value="{DynamicResource ToggleSwitchKnobFillOffPointerOver}" />
-                            <ui:BindingProxy x:Key="ToggleSwitchKnobFillOnPointerOverProxy" Value="{DynamicResource ToggleSwitchKnobFillOnPointerOver}" />                            
                             <ui:BindingProxy x:Key="ToggleSwitchContainerBackgroundPointerOverProxy" Value="{DynamicResource ToggleSwitchContainerBackgroundPointerOver}" />
 
                             <ui:BindingProxy x:Key="ToggleSwitchStrokeOffPressedProxy" Value="{DynamicResource ToggleSwitchStrokeOffPressed}" />
                             <ui:BindingProxy x:Key="ToggleSwitchFillOffPressedProxy" Value="{DynamicResource ToggleSwitchFillOffPressed}" />
-                            <ui:BindingProxy x:Key="ToggleSwitchKnobFillOffPressedProxy" Value="{DynamicResource ToggleSwitchKnobFillOffPressed}" />
-                            <ui:BindingProxy x:Key="ToggleSwitchKnobFillOnPressedProxy" Value="{DynamicResource ToggleSwitchKnobFillOnPressed}" />
                             <ui:BindingProxy x:Key="ToggleSwitchContainerBackgroundPressedProxy" Value="{DynamicResource ToggleSwitchContainerBackgroundPressed}" />
 
                             <ui:BindingProxy x:Key="ToggleSwitchStrokeOffDisabledProxy" Value="{DynamicResource ToggleSwitchStrokeOffDisabled}" />
                             <ui:BindingProxy x:Key="ToggleSwitchFillOffDisabledProxy" Value="{DynamicResource ToggleSwitchFillOffDisabled}" />
-                            <ui:BindingProxy x:Key="ToggleSwitchFillOnDisabledProxy" Value="{DynamicResource ToggleSwitchFillOnDisabled}" />
-                            <ui:BindingProxy x:Key="ToggleSwitchStrokeOnDisabledProxy" Value="{DynamicResource ToggleSwitchStrokeOnDisabled}" />
-                            <ui:BindingProxy x:Key="ToggleSwitchKnobFillOffDisabledProxy" Value="{DynamicResource ToggleSwitchKnobFillOffDisabled}" />
-                            <ui:BindingProxy x:Key="ToggleSwitchKnobFillOnDisabledProxy" Value="{DynamicResource ToggleSwitchKnobFillOnDisabled}" />
                             <ui:BindingProxy x:Key="ToggleSwitchContainerBackgroundDisabledProxy" Value="{DynamicResource ToggleSwitchContainerBackgroundDisabled}" />
-                        </Border.Resources>
+                        </Grid.Resources>
 
                         <VisualStateManager.CustomVisualStateManager>
-                            <ui:SimpleVisualStateManager />
+                            <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
+                                <ui:VisualStateEx x:Name="Normal">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SwitchKnobOff.Fill" Value="{DynamicResource ToggleSwitchKnobFillOff}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOn.Background" Value="{DynamicResource ToggleSwitchKnobFillOn}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Fill" Value="{DynamicResource ToggleSwitchFillOn}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Stroke" Value="{DynamicResource ToggleSwitchStrokeOn}" />
+                                    </ui:VisualStateEx.Setters>
                                     <Storyboard>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
+                                            <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchStrokeOffProxy}, Converter={StaticResource BrushToColorConverter}}" />
+                                        </ColorAnimationUsingKeyFrames>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
+                                            <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchFillOffProxy}, Converter={StaticResource BrushToColorConverter}}" />
+                                        </ColorAnimationUsingKeyFrames>
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchAreaGrid" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)">
+                                            <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchContainerBackgroundProxy}, Converter={StaticResource BrushToColorConverter}}" />
+                                        </ColorAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Width">
                                             <SplineDoubleKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="12" />
                                         </DoubleAnimationUsingKeyFrames>
@@ -80,8 +87,14 @@
                                             <SplineDoubleKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="12" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="MouseOver">
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Fill" Value="{DynamicResource ToggleSwitchFillOnPointerOver}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Stroke" Value="{DynamicResource ToggleSwitchStrokeOnPointerOver}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOff.Fill" Value="{DynamicResource ToggleSwitchKnobFillOffPointerOver}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOn.Background" Value="{DynamicResource ToggleSwitchKnobFillOnPointerOver}" />
+                                    </ui:VisualStateEx.Setters>
                                     <Storyboard>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchStrokeOffPointerOverProxy}, Converter={StaticResource BrushToColorConverter}}" />
@@ -89,13 +102,7 @@
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchFillOffPointerOverProxy}, Converter={StaticResource BrushToColorConverter}}" />
                                         </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchKnobFillOffPointerOverProxy}, Converter={StaticResource BrushToColorConverter}}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchKnobFillOnPointerOverProxy}, Converter={StaticResource BrushToColorConverter}}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchAreaGrid" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchAreaGrid" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchContainerBackgroundPointerOverProxy}, Converter={StaticResource BrushToColorConverter}}" />
                                         </ColorAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Width">
@@ -111,8 +118,18 @@
                                             <SplineDoubleKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="14" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Pressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SwitchKnobOn.HorizontalAlignment" Value="Right" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOn.Margin" Value="0,0,3,0" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOff.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOff.Margin" Value="3,0,0,0" />
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Fill" Value="{DynamicResource ToggleSwitchFillOnPressed}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Stroke" Value="{DynamicResource ToggleSwitchStrokeOnPressed}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOff.Fill" Value="{DynamicResource ToggleSwitchKnobFillOffPressed}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOn.Background" Value="{DynamicResource ToggleSwitchKnobFillOnPressed}" />
+                                    </ui:VisualStateEx.Setters>
                                     <Storyboard>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchStrokeOffPressedProxy}, Converter={StaticResource BrushToColorConverter}}" />
@@ -120,13 +137,7 @@
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchFillOffPressedProxy}, Converter={StaticResource BrushToColorConverter}}" />
                                         </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchKnobFillOffPressedProxy}, Converter={StaticResource BrushToColorConverter}}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchKnobFillOnPressedProxy}, Converter={StaticResource BrushToColorConverter}}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchAreaGrid" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchAreaGrid" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchContainerBackgroundPressedProxy}, Converter={StaticResource BrushToColorConverter}}" />
                                         </ColorAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Width">
@@ -142,8 +153,17 @@
                                             <SplineDoubleKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="14" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Disabled">
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HeaderContentPresenter.Foreground" Value="{DynamicResource ToggleSwitchHeaderForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="OffContentPresenter.Foreground" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="OnContentPresenter.Foreground" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Fill" Value="{DynamicResource ToggleSwitchFillOnDisabled}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobBounds.Stroke" Value="{DynamicResource ToggleSwitchStrokeOnDisabled}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOff.Fill" Value="{DynamicResource ToggleSwitchKnobFillOffDisabled}" />
+                                        <ui:VisualStateSetter Target="SwitchKnobOn.Background" Value="{DynamicResource ToggleSwitchKnobFillOnDisabled}" />
+                                    </ui:VisualStateEx.Setters>
                                     <Storyboard>
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchStrokeOffDisabledProxy}, Converter={StaticResource BrushToColorConverter}}" />
@@ -151,19 +171,7 @@
                                         <ColorAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchFillOffDisabledProxy}, Converter={StaticResource BrushToColorConverter}}" />
                                         </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchFillOnDisabledProxy}, Converter={StaticResource BrushToColorConverter}}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds" Storyboard.TargetProperty="(Shape.Stroke).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchStrokeOnDisabledProxy}, Converter={StaticResource BrushToColorConverter}}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOff" Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="0:0:0.08" Value="{Binding Value, Source={StaticResource ToggleSwitchKnobFillOffDisabledProxy}, Converter={StaticResource BrushToColorConverter}}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
-                                            <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchKnobFillOnDisabledProxy}, Converter={StaticResource BrushToColorConverter}}" />
-                                        </ColorAnimationUsingKeyFrames>
-                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchAreaGrid" Storyboard.TargetProperty="(Panel.Background).(SolidColorBrush.Color)">
+                                        <ColorAnimationUsingKeyFrames Storyboard.TargetName="SwitchAreaGrid" Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)">
                                             <LinearColorKeyFrame KeyTime="{StaticResource ControlFasterAnimationDuration}" Value="{Binding Value, Source={StaticResource ToggleSwitchContainerBackgroundDisabledProxy}, Converter={StaticResource BrushToColorConverter}}" />
                                         </ColorAnimationUsingKeyFrames>
                                         <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobOn" Storyboard.TargetProperty="Width">
@@ -179,7 +187,7 @@
                                             <SplineDoubleKeyFrame KeyTime="{StaticResource ControlNormalAnimationDuration}" KeySpline="{StaticResource ControlFastOutSlowInKeySpline}" Value="12" />
                                         </DoubleAnimationUsingKeyFrames>
                                     </Storyboard>
-                                </VisualState>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ToggleStates">
                                 <VisualStateGroup.Transitions>
@@ -259,15 +267,7 @@
                                     </VisualTransition>
                                 </VisualStateGroup.Transitions>
                                 <VisualState x:Name="Dragging" />
-                                <VisualState x:Name="Off">
-                                    <Storyboard>
-                                        <DoubleAnimation
-                                            Storyboard.TargetName="KnobTranslateTransform"
-                                            Storyboard.TargetProperty="X"
-                                            To="0"
-                                            Duration="0" />
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="Off" />
                                 <VisualState x:Name="On">
                                     <Storyboard>
                                         <DoubleAnimation
@@ -318,160 +318,186 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
-                        <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <ui:BorderEx
+                            x:Name="TemplateRootChrome"
+                            Grid.RowSpan="2"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            IsHitTestVisible="False" />
+                        <ui:ContentPresenterEx
+                            x:Name="HeaderContentPresenter"
+                            Grid.Row="0"
+                            Content="{TemplateBinding Header}"
+                            ContentTemplate="{TemplateBinding HeaderTemplate}"
+                            Foreground="{DynamicResource ToggleSwitchHeaderForeground}"
+                            IsHitTestVisible="False"
+                            Margin="{DynamicResource ToggleSwitchTopHeaderMargin}"
+                            TextWrapping="Wrap"
+                            VerticalAlignment="Top"
+                            Visibility="Collapsed"
+                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        <Grid
+                            Grid.Row="1"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
+
                             <Grid.RowDefinitions>
+                                <RowDefinition ui:RowDefinitionHelper.PixelHeight="{DynamicResource ToggleSwitchPreContentMargin}" />
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition ui:RowDefinitionHelper.PixelHeight="{DynamicResource ToggleSwitchPostContentMargin}" />
                             </Grid.RowDefinitions>
 
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="12" MaxWidth="12" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Border
+                                x:Name="SwitchAreaGrid"
+                                Grid.RowSpan="3"
+                                Grid.ColumnSpan="3"
+                                Margin="0,5"
+                                CornerRadius="{TemplateBinding CornerRadius}"
+                                ui:FocusVisualHelper.IsTemplateFocusTarget="True"
+                                Background="{DynamicResource ToggleSwitchContainerBackground}" />
                             <ui:ContentPresenterEx
-                                x:Name="HeaderContentPresenter"
-                                Grid.Row="0"
-                                Content="{TemplateBinding Header}"
-                                ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                TextElement.Foreground="{DynamicResource ToggleSwitchHeaderForeground}"
+                                x:Name="OffContentPresenter"
+                                Grid.RowSpan="3"
+                                Grid.Column="2"
+                                Opacity="0"
+                                Foreground="{TemplateBinding Foreground}"
                                 IsHitTestVisible="False"
-                                Margin="{DynamicResource ToggleSwitchTopHeaderMargin}"
-                                TextWrapping="Wrap"
-                                VerticalAlignment="Top"
-                                Visibility="Collapsed"
+                                Content="{TemplateBinding OffContent}"
+                                ContentTemplate="{TemplateBinding OffContentTemplate}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            <ui:ContentPresenterEx
+                                x:Name="OnContentPresenter"
+                                Grid.RowSpan="3"
+                                Grid.Column="2"
+                                Opacity="0"
+                                Foreground="{TemplateBinding Foreground}"
+                                IsHitTestVisible="False"
+                                Content="{TemplateBinding OnContent}"
+                                ContentTemplate="{TemplateBinding OnContentTemplate}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            <Rectangle
+                                x:Name="OuterBorder"
+                                Grid.Row="1"
+                                Height="20"
+                                Width="40"
+                                RadiusX="10"
+                                RadiusY="10"
+                                Fill="{DynamicResource ToggleSwitchFillOff}"
+                                Stroke="{DynamicResource ToggleSwitchStrokeOff}"
+                                StrokeThickness="{DynamicResource ToggleSwitchOuterBorderStrokeThickness}">
+                                <!-- WinUI retains the On storyboard's composed opacity while dragging.
+                                     WPF clears it when entering the empty Dragging state, so keep equivalent
+                                     IsOn-dependent base values underneath the transition animations. -->
+                                <Rectangle.Style>
+                                    <Style TargetType="Rectangle">
+                                        <Setter Property="Opacity" Value="1" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsOn, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                <Setter Property="Opacity" Value="0" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Rectangle.Style>
+                            </Rectangle>
+                            <Rectangle
+                                x:Name="SwitchKnobBounds"
+                                Grid.Row="1"
+                                Height="20"
+                                Width="40"
+                                RadiusX="10"
+                                RadiusY="10"
+                                Fill="{DynamicResource ToggleSwitchFillOn}"
+                                Stroke="{DynamicResource ToggleSwitchStrokeOn}"
+                                StrokeThickness="{DynamicResource ToggleSwitchOnStrokeThickness}">
+                                <Rectangle.Style>
+                                    <Style TargetType="Rectangle">
+                                        <Setter Property="Opacity" Value="0" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsOn, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                <Setter Property="Opacity" Value="1" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Rectangle.Style>
+                            </Rectangle>
                             <Grid
+                                x:Name="SwitchKnob"
                                 Grid.Row="1"
                                 HorizontalAlignment="Left"
-                                VerticalAlignment="Top">
-
-                                <Grid.RowDefinitions>
-                                    <RowDefinition ui:RowDefinitionHelper.PixelHeight="{DynamicResource ToggleSwitchPreContentMargin}" />
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition ui:RowDefinitionHelper.PixelHeight="{DynamicResource ToggleSwitchPostContentMargin}" />
-                                </Grid.RowDefinitions>
-
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="12" MaxWidth="12" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Border
-                                    x:Name="SwitchAreaGrid"
-                                    Grid.RowSpan="3"
-                                    Grid.ColumnSpan="3"
-                                    Margin="0,5"
-                                    CornerRadius="{TemplateBinding CornerRadius}"
-                                    ui:FocusVisualHelper.IsTemplateFocusTarget="True"
-                                    Background="{DynamicResource ToggleSwitchContainerBackground}" />
-                                <ContentPresenter
-                                    x:Name="OffContentPresenter"
-                                    Grid.RowSpan="3"
-                                    Grid.Column="2"
-                                    Opacity="0"
-                                    TextElement.Foreground="{TemplateBinding Foreground}"
-                                    IsHitTestVisible="False"
-                                    Content="{TemplateBinding OffContent}"
-                                    ContentTemplate="{TemplateBinding OffContentTemplate}"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                <ContentPresenter
-                                    x:Name="OnContentPresenter"
-                                    Grid.RowSpan="3"
-                                    Grid.Column="2"
-                                    Opacity="0"
-                                    TextElement.Foreground="{TemplateBinding Foreground}"
-                                    IsHitTestVisible="False"
-                                    Content="{TemplateBinding OnContent}"
-                                    ContentTemplate="{TemplateBinding OnContentTemplate}"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                <Rectangle
-                                    x:Name="OuterBorder"
-                                    Grid.Row="1"
-                                    Height="20"
-                                    Width="40"
-                                    RadiusX="10"
-                                    RadiusY="10"
-                                    Fill="{DynamicResource ToggleSwitchFillOff}"
-                                    Stroke="{DynamicResource ToggleSwitchStrokeOff}"
-                                    StrokeThickness="{DynamicResource ToggleSwitchOuterBorderStrokeThickness}" />
-                                <Rectangle
-                                    x:Name="SwitchKnobBounds"
-                                    Grid.Row="1"
-                                    Height="20"
-                                    Width="40"
-                                    RadiusX="10"
-                                    RadiusY="10"
-                                    Fill="{DynamicResource ToggleSwitchFillOn}"
-                                    Stroke="{DynamicResource ToggleSwitchStrokeOn}"
-                                    StrokeThickness="{DynamicResource ToggleSwitchOnStrokeThickness}"
-                                    Opacity="0" />
-                                <Grid
-                                    x:Name="SwitchKnob"
-                                    Grid.Row="1"
-                                    HorizontalAlignment="Left"
-                                    Width="20"
-                                    Height="20">
-                                    <Border x:Name="SwitchKnobOn"
-                                        Background="{DynamicResource ToggleSwitchKnobFillOn}"
-                                        BorderBrush="{DynamicResource ToggleSwitchKnobStrokeOn}"
-                                        Width="12"
-                                        Height="12"
-                                        CornerRadius="7"
-                                        Opacity="0"
-                                        HorizontalAlignment="Center"
-                                        Margin="0,0,1,0"
-                                        RenderTransformOrigin="0.5, 0.5" />
-                                    <Rectangle x:Name="SwitchKnobOff"
-                                        Fill="{DynamicResource ToggleSwitchKnobFillOff}"
-                                        Width="12"
-                                        Height="12"
-                                        RadiusX="7"
-                                        RadiusY="7"
-                                        HorizontalAlignment="Center"
-                                        Margin="-1,0,0,0"
-                                        RenderTransformOrigin="0.5, 0.5" />
-                                    <Grid.RenderTransform>
-                                        <TranslateTransform x:Name="KnobTranslateTransform" />
-                                    </Grid.RenderTransform>
-                                </Grid>
-                                <Thumb
-                                    x:Name="SwitchThumb"
-                                    Grid.RowSpan="3"
-                                    Grid.ColumnSpan="3">
-                                    <Thumb.Template>
-                                        <ControlTemplate TargetType="Thumb">
-                                            <Rectangle Fill="Transparent" />
-                                        </ControlTemplate>
-                                    </Thumb.Template>
-                                </Thumb>
+                                Width="20"
+                                Height="20">
+                                <ui:BorderEx x:Name="SwitchKnobOn"
+                                    Background="{DynamicResource ToggleSwitchKnobFillOn}"
+                                    BorderBrush="{DynamicResource ToggleSwitchKnobStrokeOn}"
+                                    BackgroundSizing="OuterBorderEdge"
+                                     Width="12"
+                                     Height="12"
+                                     CornerRadius="7"
+                                     HorizontalAlignment="Center"
+                                     Margin="0,0,1,0"
+                                     RenderTransformOrigin="0.5, 0.5">
+                                    <ui:BorderEx.Style>
+                                        <Style TargetType="ui:BorderEx">
+                                            <Setter Property="Opacity" Value="0" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsOn, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                    <Setter Property="Opacity" Value="1" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ui:BorderEx.Style>
+                                </ui:BorderEx>
+                                <Rectangle x:Name="SwitchKnobOff"
+                                    Fill="{DynamicResource ToggleSwitchKnobFillOff}"
+                                    Width="12"
+                                    Height="12"
+                                    RadiusX="7"
+                                     RadiusY="7"
+                                     HorizontalAlignment="Center"
+                                     Margin="-1,0,0,0"
+                                     RenderTransformOrigin="0.5, 0.5">
+                                    <Rectangle.Style>
+                                        <Style TargetType="Rectangle">
+                                            <Setter Property="Opacity" Value="1" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsOn, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                                    <Setter Property="Opacity" Value="0" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Rectangle.Style>
+                                </Rectangle>
+                                <Grid.RenderTransform>
+                                    <TranslateTransform x:Name="KnobTranslateTransform" />
+                                </Grid.RenderTransform>
                             </Grid>
+                            <Thumb
+                                x:Name="SwitchThumb"
+                                Grid.RowSpan="3"
+                                Grid.ColumnSpan="3">
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="Thumb">
+                                        <Rectangle Fill="Transparent" />
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
                         </Grid>
-                    </Border>
-
-                    <ControlTemplate.Triggers>
-                        <!-- MouseOver -->
-                        <Trigger Property="IsMouseOver" Value="true">
-                            <Setter Property="Fill" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchFillOnPointerOver}" />
-                            <Setter Property="Stroke" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchStrokeOnPointerOver}" />
-                        </Trigger>
-                        <!-- Pressed -->
-                        <Trigger SourceName="SwitchThumb" Property="IsDragging" Value="true">
-                            <Setter TargetName="SwitchKnobOn" Property="HorizontalAlignment" Value="Right" />
-                            <Setter TargetName="SwitchKnobOn" Property="Margin" Value="0,0,3,0" />
-                            <Setter TargetName="SwitchKnobOff" Property="HorizontalAlignment" Value="Left" />
-                            <Setter TargetName="SwitchKnobOff" Property="Margin" Value="3,0,0,0" />
-                            <Setter Property="Fill" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchFillOnPressed}" />
-                            <Setter Property="Stroke" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchStrokeOnPressed}" />
-                        </Trigger>
-                        <!-- Disabled -->
-                        <Trigger Property="IsEnabled" Value="false">
-                            <Setter Property="Foreground" TargetName="HeaderContentPresenter" Value="{DynamicResource ToggleSwitchHeaderForegroundDisabled}" />
-                            <Setter Property="TextElement.Foreground" TargetName="OffContentPresenter" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
-                            <Setter Property="TextElement.Foreground" TargetName="OnContentPresenter" Value="{DynamicResource ToggleSwitchContentForegroundDisabled}" />
-                            <Setter Property="Fill" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchFillOnDisabled}" />
-                            <Setter Property="Stroke" TargetName="SwitchKnobBounds" Value="{DynamicResource ToggleSwitchStrokeOnDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

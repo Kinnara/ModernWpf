@@ -1,0 +1,36 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "Code": {
+        "type": "string",
+        "description": "Glyph code",
+        "uniqueItems": true
+      },
+      "Name": {
+        "type": "string",
+        "description": "Name of the glyph",
+        "uniqueItems": true
+      },
+      "Tags": {
+        "type": "array",
+        "description": "Array of tags related to this glyph",
+        "uniqueItems": true,
+        "items": {
+          "type": "string"
+        }
+      },
+      "IsSegoeFluentOnly": {
+        "type": "boolean",
+        "default": false,
+        "description": "Determines whether the icon is only available in Segoe Fluent Icons and not in Segoe MDL2 Assets."
+      }
+    },
+    "required": [
+      "Code",
+      "Name"
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-﻿using ModernWpf.Controls.Primitives;
+using ModernWpf.Controls.Primitives;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,7 +9,7 @@ namespace ModernWpf.Controls
     {
         #region CornerRadius
 
-        public static readonly DependencyProperty CornerRadiusProperty = ControlHelper.CornerRadiusProperty.AddOwner(typeof(TreeView));
+        public static readonly DependencyProperty CornerRadiusProperty = System.Windows.Controls.Border.CornerRadiusProperty.AddOwner(typeof(TreeView));
 
         public CornerRadius CornerRadius
         {

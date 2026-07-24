@@ -1,0 +1,15 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "RecyclePool"
+  },
+  "properties": [
+    { "name": "ReuseKey", "type": "string", "kind": "RegisterAttached", "default": "string.Empty", "fieldAccessibility": "internal", "generateWrapper": false },
+    { "name": "OriginTemplate", "type": "DataTemplate", "kind": "RegisterAttached", "metadata": "null", "fieldAccessibility": "internal", "generateWrapper": false }
+  ]
+}

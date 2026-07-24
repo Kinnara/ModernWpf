@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
@@ -28,20 +29,21 @@ namespace ModernWpf.Controls
     {
         None,
         Font,
-        Image,
-        Path
+        Image
     }
 
     public partial class RatingControl : Control
     {
-        const double c_horizontalScaleAnimationCenterPoint = 0.5;
-        const double c_verticalScaleAnimationCenterPoint = 0.8;
+        const double c_scaleAnimationCenterPointXValue = 16.0;
+        const double c_scaleAnimationCenterPointYValue = 16.0;
         static readonly Thickness c_focusVisualMargin = new Thickness(-8, -7, -8, 0);
-        const int c_defaultRatingFontSizeForRendering = 32; // (32 = 2 * [default fontsize] -- because of double size rendering), remove when MSFT #10030063 is done
-        const int c_defaultItemSpacing = 8;
-
-        // 22 = 20(compensate for the -20 margin on StackPanel) + 2(magic number makes the text and star center-aligned)
-        const double c_defaultCaptionTopMargin = 22;
+        const double c_captionSpacing = 12;
+        const double c_defaultFontSizeForRendering = 32; // (32 = 2 * [default fontsize] -- because of double size rendering), remove when MSFT #10030063 is done
+        const double c_defaultItemSpacing = 8.0;
+        const double c_defaultCaptionTopMargin = -6.0;
+        const string c_fontSizeForRenderingKey = "RatingControlFontSizeForRendering";
+        const string c_itemSpacingKey = "RatingControlItemSpacing";
+        const string c_captionTopMarginKey = "RatingControlCaptionTopMargin";
 
         const double c_noValueSetSentinel = -1.0;
 
@@ -55,24 +57,28 @@ namespace ModernWpf.Controls
         {
         }
 
-        double RenderingRatingFontSize => c_defaultRatingFontSizeForRendering;
+        double RenderingRatingFontSize
+        {
+            get
+            {
+                if (m_scaledFontSizeForRendering < 0)
+                {
+                    EnsureResourcesLoaded();
+                    return m_fontSizeForRendering;
+                }
+
+                return m_scaledFontSizeForRendering;
+            }
+        }
 
         double ActualRatingFontSize => RenderingRatingFontSize / 2;
 
-        double ItemSpacing => c_defaultItemSpacing;
-
-        void UpdateCaptionMargins()
+        double ItemSpacing
         {
-            // We manually set margins to caption text to make it center-aligned with the stars
-            // because star vertical center is 0.8 instead of the normal 0.5.
-            // When text scale changes we need to update top margin to make the text follow start center.
-            var captionTextBlock = m_captionTextBlock;
-            if (captionTextBlock != null)
+            get
             {
-                Thickness margin = captionTextBlock.Margin;
-                margin.Top = c_defaultCaptionTopMargin - (ActualRatingFontSize * c_verticalScaleAnimationCenterPoint);
-
-                captionTextBlock.Margin = margin;
+                EnsureResourcesLoaded();
+                return m_itemSpacing;
             }
         }
 
@@ -82,14 +88,18 @@ namespace ModernWpf.Controls
 
             RecycleEvents();
 
+            if (GetTemplateChild("CaptionStackPanel") is StackPanel captionStackPanel)
+            {
+                m_captionStackPanel = captionStackPanel;
+            }
+
             if (GetTemplateChild("Caption") is TextBlock captionTextBlock)
             {
                 m_captionTextBlock = captionTextBlock;
                 captionTextBlock.SizeChanged += OnCaptionSizeChanged;
-                UpdateCaptionMargins();
             }
 
-            if (GetTemplateChild("RatingBackgroundStackPanel") is StackPanel backgroundStackPanel)
+            if (GetTemplateChild("RatingBackgroundStackPanel") is StackPanelEx backgroundStackPanel)
             {
                 m_backgroundStackPanel = backgroundStackPanel;
                 backgroundStackPanel.LostMouseCapture += OnPointerCaptureLostBackgroundStackPanel;
@@ -100,7 +110,9 @@ namespace ModernWpf.Controls
                 backgroundStackPanel.MouseUp += OnPointerReleasedBackgroundStackPanel;
             }
 
-            m_foregroundStackPanel = GetTemplateChild("RatingForegroundStackPanel") as StackPanel;
+            m_foregroundStackPanel = GetTemplateChild("RatingForegroundStackPanel") as StackPanelEx;
+            m_backgroundStackPanelTranslateTransform = GetTemplateChild("RatingBackgroundStackPanelTranslateTransform") as TranslateTransform;
+            m_foregroundStackPanelTranslateTransform = GetTemplateChild("RatingForegroundStackPanelTranslateTransform") as TranslateTransform;
 
             // I've picked values so that these LOOK like the redlines, but these
             // values are not actually from the redlines because the redlines don't
@@ -132,6 +144,28 @@ namespace ModernWpf.Controls
             return value;
         }
 
+        double CoercePlaceholderValueBetweenMinAndMax(double value)
+        {
+            // MaxRating can be temporarily invalid while its property callback is
+            // normalizing the value. Clamp against an effective minimum of one so a
+            // valid placeholder is never forced through the unset sentinel path.
+            var effectiveMaxRating = Math.Max(1, MaxRating);
+
+            if (value < 0.0)
+            {
+                value = c_noValueSetSentinel;
+            }
+            else if (value > effectiveMaxRating)
+            {
+                value = effectiveMaxRating;
+            }
+
+            // PlaceholderValue is a display hint (for example, an average), so zero
+            // and fractional values below one remain valid. Value itself still uses
+            // the source minimum non-sentinel value of one.
+            return value;
+        }
+
         protected override AutomationPeer OnCreateAutomationPeer()
         {
             return new RatingControlAutomationPeer(this);
@@ -150,6 +184,30 @@ namespace ModernWpf.Controls
                 return;
             }
 
+            if (IsItemInfoPresentAndFontInfo())
+            {
+                EnsureResourcesLoaded();
+
+                var textBlock = new TextBlock
+                {
+                    FontFamily = FontFamily,
+                    Text = GetAppropriateGlyph(RatingControlStates.Set),
+                    FontSize = m_fontSizeForRendering
+                };
+                textBlock.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                m_scaledFontSizeForRendering = textBlock.DesiredSize.Width;
+            }
+            else if (IsItemInfoPresentAndImageInfo())
+            {
+                EnsureResourcesLoaded();
+                m_scaledFontSizeForRendering = m_fontSizeForRendering;
+            }
+            else
+            {
+                EnsureResourcesLoaded();
+                m_scaledFontSizeForRendering = m_fontSizeForRendering;
+            }
+
             // Background initialization:
 
             m_backgroundStackPanel.Children.Clear();
@@ -162,10 +220,6 @@ namespace ModernWpf.Controls
             {
                 PopulateStackPanelWithItems("BackgroundImageDefaultTemplate", m_backgroundStackPanel, RatingControlStates.Unset);
             }
-            else if (IsItemInfoPresentAndPathInfo())
-            {
-                PopulateStackPanelWithItems("BackgroundPathDefaultTemplate", m_backgroundStackPanel, RatingControlStates.Unset);
-            }
 
             // Foreground initialization:
             m_foregroundStackPanel.Children.Clear();
@@ -177,9 +231,44 @@ namespace ModernWpf.Controls
             {
                 PopulateStackPanelWithItems("ForegroundImageDefaultTemplate", m_foregroundStackPanel, RatingControlStates.Set);
             }
-            else if (IsItemInfoPresentAndPathInfo())
+
+            double controlHeight = ActualHeight;
+            if (double.IsNaN(controlHeight) || controlHeight <= 0)
             {
-                PopulateStackPanelWithItems("ForegroundPathDefaultTemplate", m_foregroundStackPanel, RatingControlStates.Set);
+                controlHeight = m_fontSizeForRendering;
+            }
+
+            double yTranslation = Math.Max(0, (controlHeight - m_fontSizeForRendering) / 2);
+            if (m_backgroundStackPanelTranslateTransform != null)
+            {
+                m_backgroundStackPanelTranslateTransform.Y = yTranslation;
+            }
+
+            if (m_foregroundStackPanelTranslateTransform != null)
+            {
+                m_foregroundStackPanelTranslateTransform.Y = yTranslation;
+            }
+
+            if (MaxRating >= 1 && m_foregroundStackPanel.Children.Count > 0)
+            {
+                var firstItem = m_foregroundStackPanel.Children[0];
+                firstItem.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+                double defaultItemSpacing = firstItem.DesiredSize.Width - ActualRatingFontSize;
+                double netItemSpacing = ItemSpacing - defaultItemSpacing;
+
+                if (m_captionTextBlock != null)
+                {
+                    Thickness margin = m_captionTextBlock.Margin;
+                    margin.Left = c_captionSpacing - defaultItemSpacing;
+                    margin.Top = m_captionTopMargin;
+                    m_captionTextBlock.Margin = margin;
+                }
+
+                if (MaxRating >= 2)
+                {
+                    m_backgroundStackPanel.Spacing = netItemSpacing;
+                    m_foregroundStackPanel.Spacing = netItemSpacing;
+                }
             }
 
             UpdateRatingItemsAppearance();
@@ -190,7 +279,7 @@ namespace ModernWpf.Controls
             var captionTextBlock = m_captionTextBlock;
             if (captionTextBlock != null)
             {
-                ResetControlWidth();
+                ResetControlSize();
             }
         }
 
@@ -274,7 +363,7 @@ namespace ModernWpf.Controls
                     i++;
                 }
 
-                ResetControlWidth();
+                ResetControlSize();
             }
         }
 
@@ -289,11 +378,11 @@ namespace ModernWpf.Controls
 
             transform.ScaleX = 0.5;
             transform.ScaleY = 0.5;
-            transform.CenterX = c_defaultRatingFontSizeForRendering * c_horizontalScaleAnimationCenterPoint;
-            transform.CenterY = c_defaultRatingFontSizeForRendering * c_verticalScaleAnimationCenterPoint;
+            transform.CenterX = c_scaleAnimationCenterPointXValue;
+            transform.CenterY = c_scaleAnimationCenterPointYValue;
         }
 
-        void PopulateStackPanelWithItems(string templateName, StackPanel stackPanel, RatingControlStates state)
+        void PopulateStackPanelWithItems(string templateName, Panel stackPanel, RatingControlStates state)
         {
             object lookup = Application.Current.FindResource(templateName);
             var dt = (DataTemplate)lookup;
@@ -328,13 +417,6 @@ namespace ModernWpf.Controls
                     image.Height = RenderingRatingFontSize; // MSFT #10030063 Replacing with Rating size DPs
                 }
             }
-            else if (IsItemInfoPresentAndPathInfo())
-            {
-                if (ui is FontIconFallback pathControl)
-                {
-                    pathControl.Data = GetAppropriatePathData(type);
-                }
-            }
             else
             {
                 Debug.Fail("Runtime error, ItemInfo property is null");
@@ -342,7 +424,7 @@ namespace ModernWpf.Controls
 
         }
 
-        void CustomizeStackPanel(StackPanel stackPanel, RatingControlStates state)
+        void CustomizeStackPanel(Panel stackPanel, RatingControlStates state)
         {
             foreach (UIElement child in stackPanel.Children)
             {
@@ -357,10 +439,6 @@ namespace ModernWpf.Controls
         bool IsItemInfoPresentAndImageInfo()
         {
             return m_infoType == RatingInfoType.Image;
-        }
-        bool IsItemInfoPresentAndPathInfo()
-        {
-            return m_infoType == RatingInfoType.Path;
         }
 
         string GetAppropriateGlyph(RatingControlStates type)
@@ -445,51 +523,38 @@ namespace ModernWpf.Controls
             return image;
         }
 
-        Geometry GetAppropriatePathData(RatingControlStates type)
+        void ResetControlSize()
         {
-            if (!IsItemInfoPresentAndPathInfo())
-            {
-                Debug.Assert(false, "Runtime error, tried to retrieve a geometry when the ItemInfo is not a RatingItemPathInfo");
-            }
-
-            RatingItemPathInfo pathInfo = (RatingItemPathInfo)ItemInfo;
-
-            switch (type)
-            {
-                case RatingControlStates.Disabled:
-                    return GetNextGeometryIfNull(pathInfo.DisabledData, RatingControlStates.Set);
-                case RatingControlStates.PointerOverSet:
-                    return GetNextGeometryIfNull(pathInfo.PointerOverData, RatingControlStates.Set);
-                case RatingControlStates.PointerOverPlaceholder:
-                    return GetNextGeometryIfNull(pathInfo.PointerOverPlaceholderData, RatingControlStates.Placeholder);
-                case RatingControlStates.Placeholder:
-                    return GetNextGeometryIfNull(pathInfo.PlaceholderData, RatingControlStates.Set);
-                case RatingControlStates.Unset:
-                    return GetNextGeometryIfNull(pathInfo.UnsetData, RatingControlStates.Set);
-                case RatingControlStates.Null:
-                    return null;
-                default:
-                    return pathInfo.Data; // "Set" state
-            }
+            Width = CalculateTotalRatingControlWidth();
+            EnsureResourcesLoaded();
+            Height = m_fontSizeForRendering;
         }
 
-        Geometry GetNextGeometryIfNull(Geometry geometry, RatingControlStates fallbackType)
+        void EnsureResourcesLoaded()
         {
-            if (geometry == null)
+            if (!m_resourcesLoaded)
             {
-                if (fallbackType == RatingControlStates.Null)
+                m_fontSizeForRendering = GetResourceDouble(c_fontSizeForRenderingKey, c_defaultFontSizeForRendering);
+                m_itemSpacing = GetResourceDouble(c_itemSpacingKey, c_defaultItemSpacing);
+                m_captionTopMargin = GetResourceDouble(c_captionTopMarginKey, c_defaultCaptionTopMargin);
+                m_resourcesLoaded = true;
+            }
+
+            double GetResourceDouble(string resourceKey, double fallbackValue)
+            {
+                object value = TryFindResource(resourceKey) ?? Application.Current?.TryFindResource(resourceKey);
+                if (value is double doubleValue)
                 {
-                    return null;
+                    return doubleValue;
                 }
-                return GetAppropriatePathData(fallbackType);
-            }
-            return geometry;
-        }
 
-        void ResetControlWidth()
-        {
-            double newWidth = CalculateTotalRatingControlWidth();
-            Width = newWidth;
+                if (value is IConvertible convertible)
+                {
+                    return convertible.ToDouble(CultureInfo.InvariantCulture);
+                }
+
+                return fallbackValue;
+            }
         }
 
         void ChangeRatingBy(double change, bool originatedFromMouse)
@@ -573,6 +638,14 @@ namespace ModernWpf.Controls
                 var value = (int)args.NewValue;
                 var coercedValue = Math.Max(1, value);
 
+                if (coercedValue != value)
+                {
+                    // Commit the corrected MaxRating before Value or PlaceholderValue
+                    // callbacks can run layout against the transient invalid value.
+                    SetValue(property, coercedValue);
+                    return;
+                }
+
                 if (Value > coercedValue)
                 {
                     Value = coercedValue;
@@ -583,16 +656,13 @@ namespace ModernWpf.Controls
                     PlaceholderValue = coercedValue;
                 }
 
-                if (coercedValue != value)
-                {
-                    SetValue(property, coercedValue);
-                    return;
-                }
             }
             else if (property == PlaceholderValueProperty || property == ValueProperty)
             {
                 var value = (double)args.NewValue;
-                var coercedValue = CoerceValueBetweenMinAndMax(value);
+                var coercedValue = property == PlaceholderValueProperty
+                    ? CoercePlaceholderValueBetweenMinAndMax(value)
+                    : CoerceValueBetweenMinAndMax(value);
                 if (value != coercedValue)
                 {
                     SetValue(property, coercedValue);
@@ -700,15 +770,6 @@ namespace ModernWpf.Controls
                     changedType = true;
                 }
             }
-            else if (ItemInfo is RatingItemPathInfo)
-            {
-                if (m_infoType != RatingInfoType.Path)
-                {
-                    m_infoType = RatingInfoType.Path;
-                    StampOutRatingItems();
-                    changedType = true;
-                }
-            }
             else
             {
                 if (m_infoType != RatingInfoType.Image)
@@ -763,7 +824,12 @@ namespace ModernWpf.Controls
 
         void OnCaptionSizeChanged(object sender, SizeChangedEventArgs args)
         {
-            ResetControlWidth();
+            // The caption's size changing means that the text scale factor has been updated and applied.
+            // As such, we should re-run sizing and layout when this occurs.
+            m_scaledFontSizeForRendering = -1;
+
+            StampOutRatingItems();
+            ResetControlSize();
         }
 
         void OnPointerCaptureLostBackgroundStackPanel(object sender, MouseEventArgs args)
@@ -773,6 +839,7 @@ namespace ModernWpf.Controls
             // when we simply click to set values - we get here, but we don't want
             // to reset the scaling on the stars underneath the pointer.
             PointerExitedImpl(args, false /* resetScaleAnimation */);
+            m_hasPointerCapture = false;
         }
 
         void OnPointerMovedOverBackgroundStackPanel(object sender, MouseEventArgs args)
@@ -782,7 +849,7 @@ namespace ModernWpf.Controls
                 var point = args.GetPosition(m_backgroundStackPanel);
                 double xPosition = point.X;
 
-                m_mousePercentage = xPosition / CalculateActualRatingWidth();
+                m_mousePercentage = (xPosition - m_firstItemOffset) / CalculateActualRatingWidth();
 
                 UpdateRatingItemsAppearance();
                 args.Handled = true;
@@ -794,6 +861,14 @@ namespace ModernWpf.Controls
             if (!IsReadOnly)
             {
                 m_isPointerOver = true;
+
+                if (m_backgroundStackPanel != null && MaxRating >= 1 && m_backgroundStackPanel.Children.Count > 0)
+                {
+                    var firstItem = m_backgroundStackPanel.Children[0];
+                    var firstItemOffsetPoint = firstItem.TransformToVisual(m_backgroundStackPanel).Transform(new Point(0, 0));
+                    m_firstItemOffset = firstItemOffsetPoint.X;
+                }
+
                 args.Handled = true;
             }
         }
@@ -805,8 +880,6 @@ namespace ModernWpf.Controls
 
         void PointerExitedImpl(MouseEventArgs args, bool resetScaleAnimation = true)
         {
-            var point = args.GetPosition(m_backgroundStackPanel);
-
             if (resetScaleAnimation)
             {
                 m_isPointerOver = false;
@@ -814,6 +887,12 @@ namespace ModernWpf.Controls
 
             if (!m_isPointerDown)
             {
+                if (m_hasPointerCapture)
+                {
+                    m_backgroundStackPanel.ReleaseMouseCapture();
+                    m_hasPointerCapture = false;
+                }
+
                 UpdateRatingItemsAppearance();
             }
 
@@ -828,7 +907,7 @@ namespace ModernWpf.Controls
 
                 // We capture the pointer on pointer down because we want to support
                 // the drag off the left side to clear the rating scenario.
-                m_backgroundStackPanel.CaptureMouse();
+                m_hasPointerCapture = m_backgroundStackPanel.CaptureMouse();
             }
         }
 
@@ -849,29 +928,41 @@ namespace ModernWpf.Controls
                 UpdateRatingItemsAppearance();
             }
 
-            m_backgroundStackPanel.ReleaseMouseCapture();
+            if (m_hasPointerCapture)
+            {
+                m_backgroundStackPanel.ReleaseMouseCapture();
+                m_hasPointerCapture = false;
+            }
             Focus();
         }
 
         double CalculateTotalRatingControlWidth()
         {
-            double ratingStarsWidth = CalculateActualRatingWidth();
-            var captionAsWinRT = (string)GetValue(CaptionProperty);
-            double textSpacing = 0.0;
-
-            if (captionAsWinRT.Length > 0)
-            {
-                textSpacing = ItemSpacing;
-            }
-
-            double captionWidth = 0.0;
+            double totalWidth = CalculateActualRatingWidth();
 
             if (m_captionTextBlock != null)
             {
-                captionWidth = m_captionTextBlock.ActualWidth;
+                var captionAsWinRT = (string)GetValue(CaptionProperty);
+
+                if (captionAsWinRT.Length > 0)
+                {
+                    // WinUI's XamlAutoFontFamily caption face measures one physical pixel
+                    // narrower than WPF's Segoe UI Variable Small fallback at 100% DPI.
+                    var dpiScale = VisualTreeHelper.GetDpi(m_captionTextBlock).DpiScaleX;
+                    var captionWidthAdjustment = 1.0 / dpiScale;
+                    totalWidth += c_captionSpacing + Math.Max(0, m_captionTextBlock.ActualWidth - captionWidthAdjustment);
+                }
             }
 
-            return ratingStarsWidth + textSpacing + captionWidth;
+            return totalWidth;
+        }
+
+        double CalculateStarCenter(int starIndex)
+        {
+            // TODO: replace hardcoding
+            // MSFT #10030063
+            // [real Rating Size * (starIndex + 0.5)] + (starIndex * itemSpacing)
+            return (ActualRatingFontSize * (starIndex + 0.5)) + (starIndex * ItemSpacing);
         }
 
         double CalculateActualRatingWidth()
@@ -964,15 +1055,27 @@ namespace ModernWpf.Controls
         }
 
         // Private members
+        StackPanel m_captionStackPanel;
         TextBlock m_captionTextBlock;
 
-        StackPanel m_backgroundStackPanel;
-        StackPanel m_foregroundStackPanel;
+        StackPanelEx m_backgroundStackPanel;
+        StackPanelEx m_foregroundStackPanel;
+
+        TranslateTransform m_backgroundStackPanelTranslateTransform;
+        TranslateTransform m_foregroundStackPanelTranslateTransform;
 
         bool m_isPointerOver = false;
         bool m_isPointerDown = false;
+        bool m_hasPointerCapture = false;
         double m_mousePercentage = 0.0;
+        double m_firstItemOffset = 0.0;
 
         RatingInfoType m_infoType = RatingInfoType.Font;
+
+        bool m_resourcesLoaded = false;
+        double m_fontSizeForRendering = c_defaultFontSizeForRendering;
+        double m_itemSpacing = c_defaultItemSpacing;
+        double m_captionTopMargin = c_defaultCaptionTopMargin;
+        double m_scaledFontSizeForRendering = -1.0;
     }
 }

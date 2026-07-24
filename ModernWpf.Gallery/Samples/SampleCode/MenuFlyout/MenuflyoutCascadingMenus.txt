@@ -1,0 +1,16 @@
+<Button Content="File Options">
+    <Button.Flyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Text="Open"/>
+            <MenuFlyoutSubItem Text="Send to">
+                <MenuFlyoutItem Text="Bluetooth" />
+                <MenuFlyoutItem Text="Desktop (shortcut)" />
+                <MenuFlyoutSubItem Text="Compressed file">
+                    <MenuFlyoutItem Text="Compress and email" />
+                    <MenuFlyoutItem Text="Compress to .7z" />
+                    <MenuFlyoutItem Text="Compress to .zip" />
+                </MenuFlyoutSubItem>
+            </MenuFlyoutSubItem>
+        </MenuFlyout>
+    </Button.Flyout>
+</Button>

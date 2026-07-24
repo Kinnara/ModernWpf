@@ -33,8 +33,8 @@
         UseAeroCaptionButtons="False" />
 
     <Style x:Key="BaseWindowStyle" TargetType="Window">
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlPageTextBaseHighBrush}" />
-        <Setter Property="Background" Value="{DynamicResource SystemControlPageBackgroundAltHighBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource WindowForeground}" />
+        <Setter Property="Background" Value="{DynamicResource WindowBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource WindowBorder}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
@@ -89,7 +89,7 @@
                                 <AdornerDecorator
                                     x:Name="AdornerDecorator"
                                     Grid.Row="1">
-                                    <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    <ContentPresenter x:Name="ContentPresenter" />
                                 </AdornerDecorator>
 
                                 <ResizeGrip

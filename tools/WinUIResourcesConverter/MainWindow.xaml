@@ -14,8 +14,8 @@
         <ui:SplitView x:Name="SplitView1" DisplayMode="CompactInline" IsPaneOpen="True"
                       PanePlacement="Left" CompactPaneLength="40">
             <Grid>
-                <ui:SimpleStackPanel x:Name="MainContentPanel" Spacing="20" Margin="10" VerticalAlignment="Center">
-                    <ui:SimpleStackPanel Spacing="5" Orientation="Vertical">
+                <ui:StackPanelEx x:Name="MainContentPanel" Spacing="20" Margin="10" VerticalAlignment="Center">
+                    <ui:StackPanelEx Spacing="5" Orientation="Vertical">
                         <TextBlock Style="{DynamicResource BaseTextBlockStyle}" Text="Source Directory" />
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -36,8 +36,8 @@
                             <Bold>local WinUI repo clone</Bold>
                             <Run>that you want to the convert the resources for</Run>
                         </TextBlock>
-                    </ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel Spacing="5" Orientation="Vertical">
+                    </ui:StackPanelEx>
+                    <ui:StackPanelEx Spacing="5" Orientation="Vertical">
                         <TextBlock Style="{DynamicResource BaseTextBlockStyle}" Text="Destination Directory" />
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -56,13 +56,13 @@
                             <Bold>Strings</Bold>
                             <Run>directory of the target control that you want to the convert the resources for</Run>
                         </TextBlock>
-                    </ui:SimpleStackPanel>
-                    <ui:SimpleStackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
+                    </ui:StackPanelEx>
+                    <ui:StackPanelEx Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20">
                         <Button x:Name="LoadButton" Click="LoadButton_Click" Content="Load resources"/>
                         <Button x:Name="ConvertButton" Click="ConvertButton_Click"
                                 Style="{DynamicResource AccentButtonStyle}" Content="Convert"/>
-                    </ui:SimpleStackPanel>
-                </ui:SimpleStackPanel>
+                    </ui:StackPanelEx>
+                </ui:StackPanelEx>
                 <ui:ProgressRing x:Name="ProgressRing1" Width="100" Height="100" />
                 <ui:ProgressBar x:Name="ProgressBar1" VerticalAlignment="Top" />
             </Grid>

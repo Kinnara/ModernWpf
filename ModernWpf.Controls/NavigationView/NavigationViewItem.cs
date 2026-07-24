@@ -38,6 +38,15 @@ namespace ModernWpf.Controls
         const string c_chevronHidden = "ChevronHidden";
         const string c_chevronVisibleOpen = "ChevronVisibleOpen";
         const string c_chevronVisibleClosed = "ChevronVisibleClosed";
+        const string c_normalChevronHidden = "NormalChevronHidden";
+        const string c_normalChevronVisibleOpen = "NormalChevronVisibleOpen";
+        const string c_normalChevronVisibleClosed = "NormalChevronVisibleClosed";
+        const string c_pointerOverChevronHidden = "PointerOverChevronHidden";
+        const string c_pointerOverChevronVisibleOpen = "PointerOverChevronVisibleOpen";
+        const string c_pointerOverChevronVisibleClosed = "PointerOverChevronVisibleClosed";
+        const string c_pressedChevronHidden = "PressedChevronHidden";
+        const string c_pressedChevronVisibleOpen = "PressedChevronVisibleOpen";
+        const string c_pressedChevronVisibleClosed = "PressedChevronVisibleClosed";
 
         static NavigationViewItem()
         {
@@ -119,6 +128,11 @@ namespace ModernWpf.Controls
                 if (GetTemplateChildT<ItemsRepeater>(c_repeater, controlProtected) is { } repeater)
                 {
                     m_repeater = repeater;
+
+                    if (repeater.Layout is StackLayout stackLayout)
+                    {
+                        stackLayout.DisableVirtualization = true;
+                    }
 
                     // Primary element setup happens in NavigationView
                     m_repeaterElementPreparedRevoker = new ItemsRepeaterElementPreparedRevoker(repeater, nvImpl.OnRepeaterElementPrepared);
@@ -297,6 +311,11 @@ namespace ModernWpf.Controls
             UpdateVisualStateNoTransition();
         }
 
+        void OnInfoBadgePropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            UpdateVisualStateForInfoBadge();
+        }
+
         void OnMenuItemsPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
             UpdateRepeaterItemsSource();
@@ -327,6 +346,15 @@ namespace ModernWpf.Controls
             if (m_navigationViewItemPresenter is { } presenter)
             {
                 var stateName = showIcon ? (showContent ? "IconOnLeft" : "IconOnly") : "ContentOnly";
+                VisualStateManager.GoToState(presenter, stateName, false /*useTransitions*/);
+            }
+        }
+
+        void UpdateVisualStateForInfoBadge()
+        {
+            if (m_navigationViewItemPresenter is { } presenter)
+            {
+                var stateName = ShouldShowInfoBadge() ? "InfoBadgeVisible" : "InfoBadgeCollapsed";
                 VisualStateManager.GoToState(presenter, stateName, false /*useTransitions*/);
             }
         }
@@ -476,8 +504,17 @@ namespace ModernWpf.Controls
             }
             else
             {
-                VisualStateManager.GoToState(this, enabledStateValue, true);
-                VisualStateManager.GoToState(this, selectedStateValue, true);
+                GoToStateOnItemTemplateRoot(enabledStateValue, true);
+                GoToStateOnItemTemplateRoot(selectedStateValue, true);
+            }
+        }
+
+        void GoToStateOnItemTemplateRoot(string stateName, bool useTransitions)
+        {
+            if (!VisualStateManager.GoToState(this, stateName, useTransitions) &&
+                this.GetTemplateRoot() is { } templateRoot)
+            {
+                VisualStateManager.GoToElementState(templateRoot, stateName, useTransitions);
             }
         }
 
@@ -508,6 +545,8 @@ namespace ModernWpf.Controls
 
             UpdateVisualStateForIconAndContent(shouldShowIcon, shouldShowContent);
 
+            UpdateVisualStateForInfoBadge();
+
             // visual state for focus state. top navigation use it to provide different visual for selected and selected+focused
             UpdateVisualStateForKeyboardFocusedState();
 
@@ -519,8 +558,52 @@ namespace ModernWpf.Controls
             if (m_navigationViewItemPresenter is { } presenter)
             {
                 var chevronState = HasChildren() && !(m_isClosedCompact && ShouldRepeaterShowInFlyout()) ? (IsExpanded ? c_chevronVisibleOpen : c_chevronVisibleClosed) : c_chevronHidden;
+                var pointerChevronState = GetPointerChevronState(chevronState);
+                VisualStateManager.GoToState(presenter, pointerChevronState, true);
                 VisualStateManager.GoToState(presenter, chevronState, true);
             }
+        }
+
+        string GetPointerChevronState(string chevronState)
+        {
+            bool isPressed = IsEnabled && m_isPressed;
+            bool isPointerOver = IsEnabled && m_isPointerOver;
+
+            if (chevronState == c_chevronVisibleOpen)
+            {
+                if (isPressed)
+                {
+                    return c_pressedChevronVisibleOpen;
+                }
+                if (isPointerOver)
+                {
+                    return c_pointerOverChevronVisibleOpen;
+                }
+                return c_normalChevronVisibleOpen;
+            }
+
+            if (chevronState == c_chevronVisibleClosed)
+            {
+                if (isPressed)
+                {
+                    return c_pressedChevronVisibleClosed;
+                }
+                if (isPointerOver)
+                {
+                    return c_pointerOverChevronVisibleClosed;
+                }
+                return c_normalChevronVisibleClosed;
+            }
+
+            if (isPressed)
+            {
+                return c_pressedChevronHidden;
+            }
+            if (isPointerOver)
+            {
+                return c_pointerOverChevronHidden;
+            }
+            return c_normalChevronHidden;
         }
 
         internal bool HasChildren()
@@ -533,6 +616,11 @@ namespace ModernWpf.Controls
         bool ShouldShowIcon()
         {
             return Icon != null;
+        }
+
+        bool ShouldShowInfoBadge()
+        {
+            return InfoBadge != null;
         }
 
         bool ShouldEnableToolTip()
@@ -588,6 +676,7 @@ namespace ModernWpf.Controls
                 bool shouldShowChildren = IsExpanded;
                 var visibility = shouldShowChildren ? Visibility.Visible : Visibility.Collapsed;
                 repeater.Visibility = visibility;
+                InvalidateMeasure();
 
                 if (ShouldRepeaterShowInFlyout())
                 {
@@ -604,7 +693,15 @@ namespace ModernWpf.Controls
                         SharedHelpers.QueueCallbackForCompositionRendering(
                             () =>
                             {
-                                FlyoutBase.ShowAttachedFlyout(m_rootGrid);
+                                // The item may have collapsed, left flyout mode, or been
+                                // recycled since this callback was queued.
+                                if (IsExpanded &&
+                                    ShouldRepeaterShowInFlyout() &&
+                                    m_rootGrid != null &&
+                                    FlyoutBase.GetAttachedFlyout(m_rootGrid) != null)
+                                {
+                                    FlyoutBase.ShowAttachedFlyout(m_rootGrid);
+                                }
                             });
                     }
                     else
@@ -910,9 +1007,6 @@ namespace ModernWpf.Controls
             UnhookInputEvents();
 
             m_flyoutClosingRevoker?.Revoke();
-            m_splitViewIsPaneOpenChangedRevoker?.Revoke();
-            m_splitViewDisplayModeChangedRevoker?.Revoke();
-            m_splitViewCompactPaneLengthChangedRevoker?.Revoke();
             m_repeaterElementPreparedRevoker?.Revoke();
             m_repeaterElementClearingRevoker?.Revoke();
             IsEnabledChanged -= OnIsEnabledChanged;
@@ -924,10 +1018,6 @@ namespace ModernWpf.Controls
             m_repeater = null;
             m_flyoutContentGrid = null;
         }
-
-        SplitViewIsPaneOpenChangedRevoker m_splitViewIsPaneOpenChangedRevoker;
-        SplitViewDisplayModeChangedRevoker m_splitViewDisplayModeChangedRevoker;
-        SplitViewCompactPaneLengthChangedRevoker m_splitViewCompactPaneLengthChangedRevoker;
 
         ItemsRepeaterElementPreparedRevoker m_repeaterElementPreparedRevoker;
         ItemsRepeaterElementClearingRevoker m_repeaterElementClearingRevoker;

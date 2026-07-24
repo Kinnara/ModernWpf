@@ -1,0 +1,51 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public partial class",
+    "name": "InfoBarPanel"
+  },
+  "properties": [
+    {
+      "name": "HorizontalOrientationPadding",
+      "type": "Thickness",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "default(Thickness)",
+      "options": [
+        "AffectsMeasure"
+      ]
+    },
+    {
+      "name": "VerticalOrientationPadding",
+      "type": "Thickness",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "default(Thickness)",
+      "options": [
+        "AffectsMeasure"
+      ]
+    },
+    {
+      "name": "HorizontalOrientationMargin",
+      "type": "Thickness",
+      "kind": "RegisterAttached",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "default(Thickness)",
+      "options": [
+        "AffectsParentMeasure"
+      ]
+    },
+    {
+      "name": "VerticalOrientationMargin",
+      "type": "Thickness",
+      "kind": "RegisterAttached",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "default(Thickness)",
+      "options": [
+        "AffectsParentMeasure"
+      ]
+    }
+  ]
+}

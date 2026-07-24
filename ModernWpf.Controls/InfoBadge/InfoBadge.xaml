@@ -1,0 +1,133 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:mux="clr-namespace:ModernWpf.Controls;assembly=ModernWpf">
+
+    <Style TargetType="local:InfoBadge" x:Key="DefaultInfoBadgeStyle">
+        <Setter Property="MinHeight" Value="{DynamicResource InfoBadgeMinHeight}" />
+        <Setter Property="MinWidth" Value="{DynamicResource InfoBadgeMinWidth}" />
+        <Setter Property="MaxHeight" Value="{DynamicResource InfoBadgeMaxHeight}" />
+        <Setter Property="Background" Value="{DynamicResource InfoBadgeBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource InfoBadgeForeground}" />
+        <Setter Property="Padding" Value="{DynamicResource InfoBadgePadding}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:InfoBadge">
+                    <ui:GridEx
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.InfoBadgeCornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="DisplayKindStates">
+                                <ui:VisualStateEx x:Name="Dot" />
+                                <ui:VisualStateEx x:Name="Icon">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="IconPresenter.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="IconPresenter.Margin" Value="{DynamicResource IconInfoBadgeIconMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="FontIcon">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="IconPresenter.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="IconPresenter.Margin" Value="{DynamicResource IconInfoBadgeFontIconMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Value">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ValueTextBlock.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="ValueTextBlock.Margin" Value="{DynamicResource ValueInfoBadgeTextMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <TextBlock
+                            x:Name="ValueTextBlock"
+                            Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Value, Mode=OneWay}"
+                            FontSize="{DynamicResource InfoBadgeValueFontSize}"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
+                        <Viewbox
+                            x:Name="IconPresenter"
+                            Visibility="Collapsed"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Stretch">
+                            <ui:ContentPresenterEx Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}" />
+                        </Viewbox>
+                    </ui:GridEx>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:InfoBadge" BasedOn="{StaticResource DefaultInfoBadgeStyle}" />
+
+    <Style TargetType="local:InfoBadge" x:Key="AttentionDotInfoBadgeStyle" BasedOn="{StaticResource DefaultInfoBadgeStyle}">
+        <Setter Property="Background" Value="{DynamicResource SystemFillColorAttentionBrush}" />
+    </Style>
+    <Style TargetType="local:InfoBadge" x:Key="AttentionValueInfoBadgeStyle" BasedOn="{StaticResource AttentionDotInfoBadgeStyle}" />
+    <Style TargetType="local:InfoBadge" x:Key="AttentionIconInfoBadgeStyle" BasedOn="{StaticResource AttentionDotInfoBadgeStyle}">
+        <Setter Property="Padding" Value="0,4,0,2" />
+        <Setter Property="IconSource">
+            <Setter.Value>
+                <mux:FontIconSource Glyph="&#xEA38;" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:InfoBadge" x:Key="InformationalDotInfoBadgeStyle" BasedOn="{StaticResource DefaultInfoBadgeStyle}">
+        <Setter Property="Background" Value="{DynamicResource SystemFillColorSolidNeutralBrush}" />
+    </Style>
+    <Style TargetType="local:InfoBadge" x:Key="InformationalValueInfoBadgeStyle" BasedOn="{StaticResource InformationalDotInfoBadgeStyle}" />
+    <Style TargetType="local:InfoBadge" x:Key="InformationalIconInfoBadgeStyle" BasedOn="{StaticResource InformationalDotInfoBadgeStyle}">
+        <Setter Property="Padding" Value="0,4,0,2" />
+        <Setter Property="IconSource">
+            <Setter.Value>
+                <mux:FontIconSource Glyph="&#xF13F;" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:InfoBadge" x:Key="SuccessDotInfoBadgeStyle" BasedOn="{StaticResource DefaultInfoBadgeStyle}">
+        <Setter Property="Background" Value="{DynamicResource SystemFillColorSuccessBrush}" />
+    </Style>
+    <Style TargetType="local:InfoBadge" x:Key="SuccessValueInfoBadgeStyle" BasedOn="{StaticResource SuccessDotInfoBadgeStyle}" />
+    <Style TargetType="local:InfoBadge" x:Key="SuccessIconInfoBadgeStyle" BasedOn="{StaticResource SuccessDotInfoBadgeStyle}">
+        <Setter Property="IconSource">
+            <Setter.Value>
+                <mux:SymbolIconSource Symbol="Accept" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:InfoBadge" x:Key="CautionDotInfoBadgeStyle" BasedOn="{StaticResource DefaultInfoBadgeStyle}">
+        <Setter Property="Background" Value="{DynamicResource SystemFillColorCautionBrush}" />
+    </Style>
+    <Style TargetType="local:InfoBadge" x:Key="CautionValueInfoBadgeStyle" BasedOn="{StaticResource CautionDotInfoBadgeStyle}" />
+    <Style TargetType="local:InfoBadge" x:Key="CautionIconInfoBadgeStyle" BasedOn="{StaticResource CautionDotInfoBadgeStyle}">
+        <Setter Property="IconSource">
+            <Setter.Value>
+                <mux:SymbolIconSource Symbol="Important" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:InfoBadge" x:Key="CriticalDotInfoBadgeStyle" BasedOn="{StaticResource DefaultInfoBadgeStyle}">
+        <Setter Property="Background" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+    </Style>
+    <Style TargetType="local:InfoBadge" x:Key="CriticalValueInfoBadgeStyle" BasedOn="{StaticResource CriticalDotInfoBadgeStyle}" />
+    <Style TargetType="local:InfoBadge" x:Key="CriticalIconInfoBadgeStyle" BasedOn="{StaticResource CriticalDotInfoBadgeStyle}">
+        <Setter Property="IconSource">
+            <Setter.Value>
+                <mux:SymbolIconSource Symbol="Cancel" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

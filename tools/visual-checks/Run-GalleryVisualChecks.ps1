@@ -1,0 +1,11450 @@
+param(
+    [string[]]$Controls = @("TeachingTip", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "WinUIProgressBar", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [ValidateSet("Light", "Dark", "Default")]
+    [string]$Theme = "Light",
+    [ValidateSet("None", "InstalledWinUI3Gallery")]
+    [string]$Reference = "InstalledWinUI3Gallery",
+    [string]$GalleryExe,
+    [string]$OutputRoot = "artifacts\visual-checks",
+    [int]$Width = 1180,
+    [int]$Height = 820,
+    [int]$TimeoutSeconds = 30,
+    [int]$ModernWpfRetries = 1,
+    [string]$WinUIReferenceRunDir,
+    [switch]$Build,
+    [switch]$IncludeInteractions,
+    [ValidateSet("MoreButton", "Alpha", "Ring")]
+    [string]$ColorPickerState = "MoreButton",
+    [switch]$FailOnDifference
+)
+
+Set-StrictMode -Version 2.0
+$ErrorActionPreference = "Stop"
+
+if ($ColorPickerState -eq "Alpha" -and $Controls -contains "ColorPicker") {
+    $Height = [Math]::Max($Height, 900)
+}
+
+$RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+if ([string]::IsNullOrWhiteSpace($GalleryExe)) {
+    $GalleryExe = Join-Path $RepoRoot "ModernWpf.Gallery\bin\Debug\net8.0-windows7.0\ModernWpf.Gallery.exe"
+}
+
+$WpfGalleryOnlyVisualAuditCases = @(
+    "Border",
+    "Button",
+    "Calendar",
+    "CheckBox",
+    "ComboBox",
+    "DataGrid",
+    "DatePicker",
+    "Expander",
+    "Frame",
+    "Grid",
+    "GridSplitter",
+    "GroupBox",
+    "Hyperlink",
+    "Label",
+    "ListBox",
+    "ListView",
+    "Menu",
+    "NavigationWindow",
+    "PasswordBox",
+    "ProgressBar",
+    "RadioButton",
+    "ResizeGrip",
+    "RichTextBox",
+    "Slider",
+    "StackPanel",
+    "TabControl",
+    "TextBlock",
+    "TextBox",
+    "ToolTip",
+    "TreeView"
+)
+
+$WinUIPortedControlExampleCounts = [ordered]@{
+    NavigationView = 8
+    InfoBar = 3
+    NumberBox = 3
+    AutoSuggestBox = 2
+    ContentDialog = 2
+    TeachingTip = 3
+    CommandBar = 1
+    CommandBarFlyout = 1
+    AppBarButton = 6
+    AppBarToggleButton = 4
+    AppBarSeparator = 1
+    DropDownButton = 2
+    SplitButton = 2
+    ToggleSplitButton = 1
+    RepeatButton = 1
+    ToggleButton = 1
+    MenuBar = 3
+    MenuFlyout = 7
+    ItemsRepeater = 6
+    RatingControl = 2
+    ToggleSwitch = 2
+    ColorPicker = 1
+    HyperlinkButton = 2
+    ProgressRing = 2
+    WinUIProgressBar = 2
+    InfoBadge = 4
+    Flyout = 1
+    Popup = 1
+    BreadcrumbBar = 2
+    SelectorBar = 3
+    SplitView = 1
+    AnnotatedScrollBar = 1
+    GridView = 3
+    PersonPicture = 1
+    IconElement = 6
+    ThemeShadow = 1
+    TitleBar = 2
+}
+
+if ($Reference -eq "InstalledWinUI3Gallery") {
+    $wrongReferenceControls = @($Controls | Where-Object { $WpfGalleryOnlyVisualAuditCases -contains $_ })
+    if ($wrongReferenceControls.Count -gt 0) {
+        throw "Run-GalleryVisualChecks.ps1 uses the WinUI Gallery reference. WPF Gallery pages ($($wrongReferenceControls -join ', ')) must use tools\visual-checks\Run-WpfGalleryVisualAudit.ps1 -Cases $($wrongReferenceControls -join ',') -Reference OfficialWpfGallery."
+    }
+}
+
+if ($Build) {
+    & dotnet build (Join-Path $RepoRoot "ModernWpf.Gallery\ModernWpf.Gallery.csproj") -f net8.0-windows7.0 -c Debug --no-restore
+    if ($LASTEXITCODE -ne 0) {
+        throw "ModernWpf.Gallery build failed."
+    }
+}
+
+if (!(Test-Path $GalleryExe)) {
+    throw "Gallery executable was not found at '$GalleryExe'. Build first or pass -GalleryExe."
+}
+
+Add-Type -AssemblyName UIAutomationClient
+Add-Type -AssemblyName UIAutomationTypes
+try {
+    Add-Type -AssemblyName System.Drawing.Common
+}
+catch {
+    Add-Type -AssemblyName System.Drawing
+}
+$galleryVisualSource = @"
+using System;
+using System.Runtime.InteropServices;
+
+public static class GalleryVisualNative
+{
+    [StructLayout(LayoutKind.Sequential)]
+    public struct RECT
+    {
+        public int Left;
+        public int Top;
+        public int Right;
+        public int Bottom;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct POINT
+    {
+        public int X;
+        public int Y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct INPUT
+    {
+        public uint type;
+        public MOUSEINPUT mi;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MOUSEINPUT
+    {
+        public int dx;
+        public int dy;
+        public uint mouseData;
+        public uint dwFlags;
+        public uint time;
+        public IntPtr dwExtraInfo;
+    }
+
+    [DllImport("user32.dll")]
+    private static extern bool GetWindowRect(IntPtr hWnd, out RECT rect);
+
+    [DllImport("user32.dll")]
+    private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int width, int height, bool repaint);
+
+    [DllImport("user32.dll")]
+    private static extern bool ShowWindow(IntPtr hWnd, int command);
+
+    [DllImport("user32.dll")]
+    public static extern bool PrintWindow(IntPtr hWnd, IntPtr hdcBlt, uint flags);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetWindowPos(IntPtr hWnd, IntPtr insertAfter, int x, int y, int cx, int cy, uint flags);
+
+    [DllImport("user32.dll")]
+    private static extern bool SetCursorPos(int x, int y);
+
+    [DllImport("user32.dll")]
+    private static extern int GetSystemMetrics(int index);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr WindowFromPoint(POINT point);
+
+    [DllImport("user32.dll")]
+    private static extern bool ScreenToClient(IntPtr hWnd, ref POINT point);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr SendMessage(IntPtr hWnd, uint message, UIntPtr wParam, IntPtr lParam);
+
+    [DllImport("user32.dll")]
+    private static extern bool PostMessage(IntPtr hWnd, uint message, UIntPtr wParam, IntPtr lParam);
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern uint SendInput(uint inputCount, INPUT[] inputs, int inputSize);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetWindowDC(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetDC(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    private static extern int ReleaseDC(IntPtr hWnd, IntPtr hdc);
+
+    [DllImport("gdi32.dll")]
+    private static extern bool BitBlt(IntPtr hdcDest, int xDest, int yDest, int width, int height, IntPtr hdcSrc, int xSrc, int ySrc, int rop);
+
+    [DllImport("user32.dll")]
+    private static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extraInfo);
+
+    [DllImport("user32.dll")]
+    private static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, UIntPtr extraInfo);
+
+    [DllImport("user32.dll")]
+    private static extern short VkKeyScan(char ch);
+
+    public static bool Move(IntPtr hWnd, int x, int y, int width, int height)
+    {
+        ShowWindow(hWnd, 9);
+        return MoveWindow(hWnd, x, y, width, height, true);
+    }
+
+    public static void Activate(IntPtr hWnd)
+    {
+        ShowWindow(hWnd, 9);
+        SetWindowPos(hWnd, new IntPtr(-1), 0, 0, 0, 0, 0x0043);
+        SetForegroundWindow(hWnd);
+        SetWindowPos(hWnd, new IntPtr(-2), 0, 0, 0, 0, 0x0043);
+    }
+
+    public static void SetTopMost(IntPtr hWnd, bool topMost)
+    {
+        ShowWindow(hWnd, 9);
+        SetWindowPos(hWnd, topMost ? new IntPtr(-1) : new IntPtr(-2), 0, 0, 0, 0, 0x0043);
+        SetForegroundWindow(hWnd);
+    }
+
+    public static void Click(int x, int y)
+    {
+        SetCursorPos(x, y);
+        System.Threading.Thread.Sleep(35);
+        mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
+        System.Threading.Thread.Sleep(80);
+        mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
+    }
+
+    public static void MouseDown(int x, int y)
+    {
+        SetCursorPos(x, y);
+        System.Threading.Thread.Sleep(35);
+        mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
+    }
+
+    public static void MouseUp()
+    {
+        mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
+    }
+
+    public static void MoveCursor(int x, int y)
+    {
+        int virtualLeft = GetSystemMetrics(76);
+        int virtualTop = GetSystemMetrics(77);
+        int virtualWidth = Math.Max(2, GetSystemMetrics(78));
+        int virtualHeight = Math.Max(2, GetSystemMetrics(79));
+        INPUT[] absoluteInputs = new INPUT[1];
+        absoluteInputs[0].type = 0;
+        absoluteInputs[0].mi.dx = (int)Math.Round((x - virtualLeft) * 65535.0 / (virtualWidth - 1));
+        absoluteInputs[0].mi.dy = (int)Math.Round((y - virtualTop) * 65535.0 / (virtualHeight - 1));
+        absoluteInputs[0].mi.dwFlags = 0x0001 | 0x4000 | 0x8000;
+        SendInput(1, absoluteInputs, Marshal.SizeOf(typeof(INPUT)));
+        SetCursorPos(x, y);
+        // SetCursorPos alone does not consistently produce a pointer update for
+        // WinUI island/popup windows.  Emit a zero-net physical move so both the
+        // WPF and WinUI reference surfaces enter their real pointer-over state.
+        SendMouseInput(0x0001);
+        mouse_event(0x0001, 1, 0, 0, UIntPtr.Zero);
+        mouse_event(0x0001, unchecked((uint)-1), 0, 0, UIntPtr.Zero);
+    }
+
+    public static void HoverCursorAtPoint(int x, int y)
+    {
+        MoveCursor(x, y);
+        POINT screenPoint = new POINT { X = x, Y = y };
+        IntPtr hWnd = WindowFromPoint(screenPoint);
+        if (hWnd == IntPtr.Zero)
+        {
+            return;
+        }
+
+        POINT clientPoint = screenPoint;
+        if (ScreenToClient(hWnd, ref clientPoint))
+        {
+            int packedPoint = unchecked((int)(((clientPoint.Y & 0xffff) << 16) | (clientPoint.X & 0xffff)));
+            IntPtr lParam = new IntPtr(packedPoint);
+            SendMessage(hWnd, 0x0200, UIntPtr.Zero, lParam);
+            PostMessage(hWnd, 0x0200, UIntPtr.Zero, lParam);
+            SendMessage(hWnd, 0x02A1, UIntPtr.Zero, lParam);
+            PostMessage(hWnd, 0x02A1, UIntPtr.Zero, lParam);
+        }
+    }
+
+    private static void SendMouseInput(uint flags)
+    {
+        INPUT[] inputs = new INPUT[1];
+        inputs[0].type = 0;
+        inputs[0].mi.dwFlags = flags;
+        SendInput(1, inputs, Marshal.SizeOf(typeof(INPUT)));
+    }
+
+    public static void PressSpace()
+    {
+        keybd_event(0x20, 0, 0, UIntPtr.Zero);
+        keybd_event(0x20, 0, 0x0002, UIntPtr.Zero);
+    }
+
+    public static void PressTab()
+    {
+        keybd_event(0x09, 0, 0, UIntPtr.Zero);
+        keybd_event(0x09, 0, 0x0002, UIntPtr.Zero);
+    }
+
+    public static void PressShiftTab()
+    {
+        keybd_event(0x10, 0, 0, UIntPtr.Zero);
+        keybd_event(0x09, 0, 0, UIntPtr.Zero);
+        keybd_event(0x09, 0, 0x0002, UIntPtr.Zero);
+        keybd_event(0x10, 0, 0x0002, UIntPtr.Zero);
+    }
+
+    public static void PressCtrlA()
+    {
+        keybd_event(0x11, 0, 0, UIntPtr.Zero);
+        keybd_event(0x41, 0, 0, UIntPtr.Zero);
+        keybd_event(0x41, 0, 0x0002, UIntPtr.Zero);
+        keybd_event(0x11, 0, 0x0002, UIntPtr.Zero);
+    }
+
+    public static void TypeText(string text)
+    {
+        foreach (char ch in text ?? string.Empty)
+        {
+            short key = VkKeyScan(ch);
+            if (key == -1)
+            {
+                continue;
+            }
+
+            byte virtualKey = (byte)(key & 0xff);
+            bool shift = (key & 0x0100) != 0;
+            if (shift)
+            {
+                keybd_event(0x10, 0, 0, UIntPtr.Zero);
+            }
+
+            keybd_event(virtualKey, 0, 0, UIntPtr.Zero);
+            keybd_event(virtualKey, 0, 0x0002, UIntPtr.Zero);
+
+            if (shift)
+            {
+                keybd_event(0x10, 0, 0x0002, UIntPtr.Zero);
+            }
+
+            System.Threading.Thread.Sleep(25);
+        }
+    }
+
+    public static RECT GetRect(IntPtr hWnd)
+    {
+        RECT rect;
+        if (!GetWindowRect(hWnd, out rect))
+        {
+            throw new InvalidOperationException("GetWindowRect failed.");
+        }
+
+        return rect;
+    }
+
+    public static bool CopyWindowSurface(IntPtr hWnd, IntPtr hdcDest, int width, int height)
+    {
+        IntPtr hdcSource = GetWindowDC(hWnd);
+        if (hdcSource == IntPtr.Zero)
+        {
+            return false;
+        }
+
+        try
+        {
+            return BitBlt(hdcDest, 0, 0, width, height, hdcSource, 0, 0, 0x00CC0020);
+        }
+        finally
+        {
+            ReleaseDC(hWnd, hdcSource);
+        }
+    }
+
+    public static bool CopyScreenSurface(IntPtr hdcDest, int sourceX, int sourceY, int width, int height)
+    {
+        IntPtr hdcSource = GetDC(IntPtr.Zero);
+        if (hdcSource == IntPtr.Zero)
+        {
+            return false;
+        }
+
+        try
+        {
+            return BitBlt(hdcDest, 0, 0, width, height, hdcSource, sourceX, sourceY, 0x00CC0020);
+        }
+        finally
+        {
+            ReleaseDC(IntPtr.Zero, hdcSource);
+        }
+    }
+}
+
+public static class GalleryImageMetrics
+{
+    public static double GetVisibleStdDev(string path, int step)
+    {
+        double mean;
+        double stdDev;
+        Analyze(path, step, out mean, out stdDev);
+        return Math.Round(stdDev, 2);
+    }
+
+    public static double GetMeanLuminance(string path, int step)
+    {
+        double mean;
+        double stdDev;
+        Analyze(path, step, out mean, out stdDev);
+        return double.IsNaN(mean) ? mean : Math.Round(mean, 2);
+    }
+
+    private static void Analyze(string path, int step, out double mean, out double stdDev)
+    {
+        step = Math.Max(1, step);
+        using (var source = new System.Drawing.Bitmap(path))
+        using (var bitmap = new System.Drawing.Bitmap(
+            source.Width,
+            source.Height,
+            System.Drawing.Imaging.PixelFormat.Format32bppArgb))
+        {
+            using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
+            {
+                graphics.DrawImageUnscaled(source, 0, 0);
+            }
+
+            var rectangle = new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height);
+            var data = bitmap.LockBits(
+                rectangle,
+                System.Drawing.Imaging.ImageLockMode.ReadOnly,
+                System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            try
+            {
+                int absoluteStride = Math.Abs(data.Stride);
+                var bytes = new byte[absoluteStride * bitmap.Height];
+                Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);
+                double sum = 0.0;
+                double sumSquared = 0.0;
+                long samples = 0;
+                for (int y = 0; y < bitmap.Height; y += step)
+                {
+                    int row = data.Stride >= 0
+                        ? y * absoluteStride
+                        : (bitmap.Height - 1 - y) * absoluteStride;
+                    for (int x = 0; x < bitmap.Width; x += step)
+                    {
+                        int pixel = row + (x * 4);
+                        byte alpha = bytes[pixel + 3];
+                        if (alpha <= 16)
+                        {
+                            continue;
+                        }
+
+                        double luminance =
+                            (0.2126 * bytes[pixel + 2]) +
+                            (0.7152 * bytes[pixel + 1]) +
+                            (0.0722 * bytes[pixel]);
+                        sum += luminance;
+                        sumSquared += luminance * luminance;
+                        samples++;
+                    }
+                }
+
+                if (samples == 0)
+                {
+                    mean = double.NaN;
+                    stdDev = 0.0;
+                    return;
+                }
+
+                mean = sum / samples;
+                double variance = (sumSquared / samples) - (mean * mean);
+                stdDev = Math.Sqrt(Math.Max(0.0, variance));
+            }
+            finally
+            {
+                bitmap.UnlockBits(data);
+            }
+        }
+    }
+}
+"@
+$imageMetricsMarker = "public static class GalleryImageMetrics"
+$imageMetricsIndex = $galleryVisualSource.IndexOf($imageMetricsMarker, [StringComparison]::Ordinal)
+if ($imageMetricsIndex -lt 0) {
+    throw "Gallery image metrics source marker was not found."
+}
+
+$galleryNativeSource = $galleryVisualSource.Substring(0, $imageMetricsIndex)
+$galleryImageMetricsSource = "using System;`r`nusing System.Runtime.InteropServices;`r`n" +
+    $galleryVisualSource.Substring($imageMetricsIndex)
+Add-Type -TypeDefinition $galleryNativeSource
+$powerShellRuntimeDirectory = Split-Path ([object].Assembly.Location)
+Add-Type -TypeDefinition $galleryImageMetricsSource -ReferencedAssemblies @(
+    [System.Drawing.Bitmap].Assembly.Location,
+    (Join-Path $powerShellRuntimeDirectory "System.Drawing.Primitives.dll"),
+    (Join-Path $powerShellRuntimeDirectory "System.Private.Windows.Core.dll"),
+    (Join-Path $powerShellRuntimeDirectory "System.Private.Windows.GdiPlus.dll"))
+
+function New-RunDirectory {
+    $timestamp = Get-Date -Format "yyyyMMdd-HHmmss-fff"
+    $root = Join-Path $RepoRoot $OutputRoot
+    $baseName = "$timestamp-$PID"
+    New-Item -ItemType Directory -Force -Path $root | Out-Null
+
+    for ($attempt = 0; $attempt -lt 100; $attempt++) {
+        $name = if ($attempt -eq 0) { $baseName } else { "$baseName-$attempt" }
+        $path = Join-Path $root $name
+        try {
+            New-Item -ItemType Directory -Path $path -ErrorAction Stop | Out-Null
+            return $path
+        }
+        catch {
+            if (Test-Path -LiteralPath $path) {
+                continue
+            }
+
+            throw
+        }
+    }
+
+    throw "Could not create a unique visual audit output directory under '$root'."
+}
+
+function ConvertTo-SafeName([string]$name) {
+    return ($name -replace '[^A-Za-z0-9_.-]', '_').Trim('_')
+}
+
+function Write-AuditTiming([string]$path, [string]$phase) {
+    Add-Content -LiteralPath $path -Value ("{0:o} {1}" -f [DateTimeOffset]::Now, $phase) -Encoding UTF8
+}
+
+function Get-RootElement {
+    return [System.Windows.Automation.AutomationElement]::RootElement
+}
+
+function Find-WindowByProcessId([int]$processId) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    $fallback = $null
+    foreach ($window in $windows) {
+        if ($null -eq $fallback) {
+            $fallback = $window
+        }
+
+        if ($window.Current.AutomationId -eq "ModernWpfGalleryMainWindow") {
+            return $window
+        }
+    }
+
+    return $fallback
+}
+
+function Find-WindowByTitle([string[]]$titleParts) {
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, [System.Windows.Automation.Condition]::TrueCondition)
+    foreach ($window in $windows) {
+        foreach ($title in $titleParts) {
+            if ($window.Current.Name -like "*$title*") {
+                return $window
+            }
+        }
+    }
+
+    return $null
+}
+
+function Find-DescendantByAutomationId($root, [string]$automationId) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::AutomationIdProperty,
+        $automationId)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function TryFind-DescendantByAutomationId($root, [string]$automationId) {
+    try {
+        return Find-DescendantByAutomationId $root $automationId
+    }
+    catch {
+        return $null
+    }
+}
+
+function Find-DescendantByName($root, [string]$name) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::NameProperty,
+        $name)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-DescendantButtonByName($root, [string]$name) {
+    $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::NameProperty,
+        $name)
+    $buttonCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        [System.Windows.Automation.ControlType]::Button)
+    $condition = New-Object System.Windows.Automation.AndCondition($nameCondition, $buttonCondition)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-DescendantByNameAndControlType($root, [string]$name, $controlType) {
+    $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::NameProperty,
+        $name)
+    $typeCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        $controlType)
+    $condition = New-Object System.Windows.Automation.AndCondition($nameCondition, $typeCondition)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-DescendantButtonByAnyName($root, [string[]]$names) {
+    foreach ($name in $names) {
+        $button = Find-DescendantButtonByName $root $name
+        if ($null -ne $button) {
+            return $button
+        }
+    }
+
+    return $null
+}
+
+function Find-DescendantByControlType($root, $controlType) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        $controlType)
+    return $root.FindFirst([System.Windows.Automation.TreeScope]::Descendants, $condition)
+}
+
+function Find-ReferencePrimaryByName($root, [string]$control, [string]$name) {
+    if ($control -eq "CheckBox") {
+        return Find-DescendantByNameAndControlType $root $name ([System.Windows.Automation.ControlType]::CheckBox)
+    }
+    if ($control -eq "CommandBarFlyout") {
+        return Find-DescendantByName $root $name
+    }
+
+    return Find-DescendantButtonByName $root $name
+}
+
+function Reset-WinUIReferenceSampleScroll($window, [string]$control) {
+}
+
+function Find-DescendantByAnyName($root, [string[]]$names) {
+    foreach ($name in $names) {
+        $element = Find-DescendantByName $root $name
+        if ($null -ne $element) {
+            return $element
+        }
+    }
+
+    return $null
+}
+
+function Test-ElementNameMatches($element, [string[]]$names) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        return $names -contains $element.Current.Name
+    }
+    catch {
+        return $false
+    }
+}
+
+function Find-ElementByNameInProcess([int]$processId, [string[]]$names) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        if (Test-ElementNameMatches $window $names) {
+            return $window
+        }
+
+        $match = Find-DescendantByAnyName $window $names
+        if ($null -ne $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
+function Find-ElementByNameInPopupWindows($window, [string[]]$names) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $window.Current.ProcessId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($candidateWindow in $windows) {
+        try {
+            if ($candidateWindow.Current.NativeWindowHandle -eq $window.Current.NativeWindowHandle) {
+                continue
+            }
+        }
+        catch {
+            continue
+        }
+
+        $match = Find-DescendantByAnyName $candidateWindow $names
+        if ($null -ne $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
+function Find-InteractiveElementByNameInProcess([int]$processId, [string[]]$names) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        foreach ($name in $names) {
+            $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+                [System.Windows.Automation.AutomationElement]::NameProperty,
+                $name)
+            $found = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, $nameCondition)
+            foreach ($element in $found) {
+                try {
+                    $controlType = $element.Current.ControlType
+                    if ($controlType -ne [System.Windows.Automation.ControlType]::Button -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::MenuItem -and
+                        $controlType -ne [System.Windows.Automation.ControlType]::ListItem) {
+                        continue
+                    }
+
+                    $rect = $element.Current.BoundingRectangle
+                    if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+                        return $element
+                    }
+                }
+                catch {
+                }
+            }
+        }
+    }
+
+    return $null
+}
+
+function Test-AutomationElementUsable($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        if ($element.Current.IsOffscreen) {
+            return $false
+        }
+
+        $rect = $element.Current.BoundingRectangle
+        return $rect.Width -gt 0 -and $rect.Height -gt 0
+    }
+    catch {
+        return $false
+    }
+}
+
+function Find-ElementsByNameInProcess([int]$processId, [string[]]$names) {
+    $matches = New-Object System.Collections.Generic.List[object]
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        if (Test-ElementNameMatches $window $names) {
+            $matches.Add($window)
+        }
+
+        foreach ($name in $names) {
+            $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+                [System.Windows.Automation.AutomationElement]::NameProperty,
+                $name)
+            $found = $window.FindAll([System.Windows.Automation.TreeScope]::Descendants, $nameCondition)
+            foreach ($element in $found) {
+                $matches.Add($element)
+            }
+        }
+    }
+
+    return $matches.ToArray()
+}
+
+function Find-ElementByAutomationIdInProcess([int]$processId, [string]$automationId) {
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($window in $windows) {
+        try {
+            if ($window.Current.AutomationId -eq $automationId) {
+                return $window
+            }
+        }
+        catch {
+        }
+
+        $match = Find-DescendantByAutomationId $window $automationId
+        if ($null -ne $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
+function Find-TopLevelElementByNativeWindowHandleInProcess([int]$processId, [int]$nativeWindowHandle) {
+    if ($nativeWindowHandle -eq 0) {
+        return $null
+    }
+
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $processId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($candidateWindow in $windows) {
+        try {
+            if ([int]$candidateWindow.Current.NativeWindowHandle -eq $nativeWindowHandle) {
+                return $candidateWindow
+            }
+        }
+        catch {
+        }
+    }
+
+    return $null
+}
+
+function Find-ElementByAutomationIdInPopupWindows($window, [string]$automationId) {
+    if ($null -eq $window) {
+        return $null
+    }
+
+    $mainHandle = [int]$window.Current.NativeWindowHandle
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ProcessIdProperty,
+        $window.Current.ProcessId)
+    $windows = (Get-RootElement).FindAll([System.Windows.Automation.TreeScope]::Children, $condition)
+    foreach ($candidateWindow in $windows) {
+        try {
+            if ([int]$candidateWindow.Current.NativeWindowHandle -eq $mainHandle) {
+                continue
+            }
+        }
+        catch {
+            continue
+        }
+
+        $match = Find-DescendantByAutomationId $candidateWindow $automationId
+        if (Test-AutomationElementUsable $match) {
+            return $match
+        }
+    }
+
+    return $null
+}
+
+function Find-CommandBarFlyoutMoreButton($window) {
+    $primaryCommand = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Share", "Save", "Delete")
+    if ($null -ne $primaryCommand) {
+        $popupHandle = Get-ElementNativeWindowHandle $primaryCommand
+        if ($popupHandle -ne [IntPtr]::Zero -and [int]$popupHandle -ne [int]$window.Current.NativeWindowHandle) {
+            $popupWindow = Find-TopLevelElementByNativeWindowHandleInProcess $window.Current.ProcessId ([int]$popupHandle)
+            if ($null -ne $popupWindow) {
+                $moreButton = Find-DescendantByAutomationId $popupWindow "MoreButton"
+                if (Test-AutomationElementUsable $moreButton) {
+                    return $moreButton
+                }
+            }
+        }
+    }
+
+    $moreButton = Find-ElementByAutomationIdInPopupWindows $window "MoreButton"
+    if (Test-AutomationElementUsable $moreButton) {
+        return $moreButton
+    }
+
+    return Find-ElementByAutomationIdInProcess $window.Current.ProcessId "MoreButton"
+}
+
+function Wait-ForCommandBarFlyoutPrimaryCommands($window, [int]$timeoutMilliseconds) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
+    do {
+        $shareButton = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Share")
+        $saveButton = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Save")
+        $deleteButton = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Delete")
+        $moreButton = Find-CommandBarFlyoutMoreButton $window
+        if ($null -ne $shareButton -and
+            $null -ne $saveButton -and
+            $null -ne $deleteButton -and
+            (Test-AutomationElementUsable $moreButton)) {
+            return $moreButton
+        }
+
+        Start-Sleep -Milliseconds 50
+    } while ((Get-Date) -lt $deadline)
+
+    return $null
+}
+
+function Wait-ForInteractiveElementByNameInProcess([int]$processId, [string[]]$names, [int]$timeoutMilliseconds) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
+    do {
+        $element = Find-InteractiveElementByNameInProcess $processId $names
+        if ($null -ne $element) {
+            return $element
+        }
+
+        Start-Sleep -Milliseconds 50
+    } while ((Get-Date) -lt $deadline)
+
+    return $null
+}
+
+function Wait-Until([scriptblock]$Probe, [int]$timeoutSeconds, [string]$description) {
+    $deadline = (Get-Date).AddSeconds($timeoutSeconds)
+    do {
+        $value = & $Probe
+        if ($null -ne $value -and $false -ne $value) {
+            return $value
+        }
+
+        Start-Sleep -Milliseconds 250
+    } while ((Get-Date) -lt $deadline)
+
+    throw "Timed out waiting for $description."
+}
+
+function Read-ModernWpfStatusFile([string]$artifactDir) {
+    $path = Join-Path $artifactDir "modernwpf-gallery-status.txt"
+    if (!(Test-Path $path)) {
+        return $null
+    }
+
+    try {
+        $lines = @(Get-Content -Path $path -ErrorAction Stop)
+        if ($lines.Count -lt 2) {
+            return $null
+        }
+
+        $lastException = ""
+        if ($lines.Count -ge 3 -and ![string]::IsNullOrEmpty($lines[2])) {
+            try {
+                $lastException = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($lines[2]))
+            }
+            catch {
+                $lastException = $lines[2]
+            }
+        }
+
+        return [ordered]@{
+            CurrentRoute = $lines[0]
+            ReadyState = $lines[1]
+            LastException = $lastException
+            Path = $path
+        }
+    }
+    catch {
+        return $null
+    }
+}
+
+function Get-ToggleStateName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return $pattern.Current.ToggleState.ToString()
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Toggle-Element($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Toggle()
+            Start-Sleep -Milliseconds 80
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return Invoke-ElementOnce $window $element
+}
+
+function Set-ToggleElementState($window, $element, [string]$desiredState) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    for ($attempt = 0; $attempt -lt 3; $attempt++) {
+        $state = Get-ToggleStateName $element
+        if ($state -eq $desiredState) {
+            return $true
+        }
+
+        if (!(Toggle-Element $window $element)) {
+            return $false
+        }
+    }
+
+    return (Get-ToggleStateName $element) -eq $desiredState
+}
+
+function Set-ProgressRingDeterminateValue($window, [string]$app, [double]$value) {
+    $automationId = if ($app -eq "ModernWpf") {
+        "GallerySample_ProgressRing_DeterminateProgressRing"
+    }
+    else {
+        "ProgressRing2"
+    }
+
+    $ring = TryFind-DescendantByAutomationId $window $automationId
+    if ($null -eq $ring) {
+        throw "$app determinate ProgressRing '$automationId' was not found."
+    }
+
+    $valueEditor = TryFind-DescendantByAutomationId $window "ProgressValue"
+    if ($null -eq $valueEditor) {
+        throw "$app ProgressRing value editor 'ProgressValue' was not found."
+    }
+
+    try {
+        $pattern = $valueEditor.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
+        if ($null -eq $pattern) {
+            throw "$app ProgressRing value editor 'ProgressValue' did not expose RangeValuePattern."
+        }
+
+        $pattern.SetValue($value)
+    }
+    catch {
+        throw "Could not set $app ProgressRing value editor 'ProgressValue' to $value. $($_.Exception.Message)"
+    }
+
+    Wait-Until -TimeoutSeconds 3 -Description "$app determinate ProgressRing '$automationId' to reach $value" -Probe {
+        $current = Get-ElementNumericValue $ring
+        if (Test-DoubleApproximatelyEqual $current $value) {
+            return $current
+        }
+
+        return $null
+    } | Out-Null
+    Start-Sleep -Milliseconds 100
+    return $true
+}
+
+function Set-ProgressBarDeterminateValue($window, [string]$app, [double]$value) {
+    $automationId = if ($app -eq "ModernWpf") {
+        "GallerySample_WinUIProgressBar_DeterminateProgressBar"
+    }
+    else {
+        "ProgressBar2"
+    }
+
+    $progressBar = TryFind-DescendantByAutomationId $window $automationId
+    if ($null -eq $progressBar) {
+        throw "$app determinate ProgressBar '$automationId' was not found."
+    }
+
+    $valueEditor = TryFind-DescendantByAutomationId $window "ProgressValue"
+    if ($null -eq $valueEditor) {
+        throw "$app ProgressBar value editor 'ProgressValue' was not found."
+    }
+
+    try {
+        $pattern = $valueEditor.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
+        if ($null -eq $pattern) {
+            throw "$app ProgressBar value editor 'ProgressValue' did not expose RangeValuePattern."
+        }
+
+        $pattern.SetValue($value)
+    }
+    catch {
+        throw "Could not set $app ProgressBar value editor 'ProgressValue' to $value. $($_.Exception.Message)"
+    }
+
+    Wait-Until -TimeoutSeconds 3 -Description "$app determinate ProgressBar '$automationId' to reach $value" -Probe {
+        $current = Get-ElementNumericValue $progressBar
+        if (Test-DoubleApproximatelyEqual $current $value) {
+            return $current
+        }
+
+        return $null
+    }
+}
+
+function Wait-ModernWpfReady($window, [string]$route, [string]$artifactDir) {
+    return Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf route '$route' to become ready" -Probe {
+        $status = Read-ModernWpfStatusFile $artifactDir
+        if ($null -ne $status -and $status.ReadyState -eq "Ready:$route") {
+            return $status
+        }
+
+        $readyElement = TryFind-DescendantByAutomationId $window "GalleryVisualTestReadyState"
+        if ($null -eq $readyElement) {
+            return $null
+        }
+
+        if ($readyElement.Current.Name -eq "Ready:$route") {
+            return $readyElement
+        }
+
+        return $null
+    }
+}
+
+function Wait-WinUIReferenceReady($window, [string]$control) {
+    Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "WinUI 3 Gallery test content for '$control' to load" -Probe {
+        $loadedElement = Find-DescendantByAutomationId $window "__TestContentLoadedCheckBox"
+        if ($null -eq $loadedElement) {
+            return $true
+        }
+
+        if ((Get-ToggleStateName $loadedElement) -eq "On") {
+            return $loadedElement
+        }
+
+        return $null
+    } | Out-Null
+
+    $idleInvoker = Find-DescendantByAutomationId $window "__WaitForIdleInvoker"
+    if ($null -eq $idleInvoker -or !(Invoke-ElementPatternOnce $window $idleInvoker)) {
+        return
+    }
+
+    Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "WinUI 3 Gallery idle state for '$control'" -Probe {
+        $idleElement = Find-DescendantByAutomationId $window "__IdleStateEnteredCheckBox"
+        if ($null -eq $idleElement) {
+            return $true
+        }
+
+        if ((Get-ToggleStateName $idleElement) -eq "On") {
+            return $idleElement
+        }
+
+        return $null
+    } | Out-Null
+}
+
+function Get-AutomationText($root, [string]$automationId) {
+    $element = TryFind-DescendantByAutomationId $root $automationId
+    if ($null -eq $element) {
+        return ""
+    }
+
+    return $element.Current.Name
+}
+
+function Get-RequiredSampleAutomationId([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return "GallerySample_TeachingTip_ShowButton" }
+        "Button" { return "GallerySample_Button_PrimaryButton" }
+        "CheckBox" { return "GallerySample_CheckBox_CheckBox" }
+        "ComboBox" { return "GallerySample_ComboBox_ComboBox" }
+        "ColorPicker" { return "GallerySample_ColorPicker_ColorPicker" }
+        "HyperlinkButton" { return "GallerySample_HyperlinkButton_HyperlinkButton" }
+        "RatingControl" { return "GallerySample_RatingControl_RatingControl" }
+        "RepeatButton" { return "GallerySample_RepeatButton_RepeatButton" }
+        "ToggleButton" { return "GallerySample_ToggleButton_ToggleButton" }
+        "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
+        "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
+        "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
+        "ToggleSwitch" { return "GallerySample_ToggleSwitch_ToggleSwitch" }
+        "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
+        "RadioButton" { return "GallerySample_RadioButton_RadioButton" }
+        "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
+        "Slider" { return "GallerySample_Slider_Slider" }
+        "SplitView" { return "GallerySample_SplitView_SplitView" }
+        "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
+        "IconElement" { return "GallerySample_IconElement_SlicesIcon" }
+        "ImageIcon" { return "GallerySample_IconElement_ImageExample1" }
+        "ThemeShadow" { return "GallerySample_ThemeShadow_ShadowRect" }
+        "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
+        "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
+        "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
+        "ProgressRing" { return "GallerySample_ProgressRing_DeterminateProgressRing" }
+        "WinUIProgressBar" { return "GallerySample_WinUIProgressBar_DeterminateProgressBar" }
+        "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" }
+        "GridView" { return "GallerySample_GridView_BasicGridView" }
+        "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
+        "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
+        "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
+        "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
+        "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
+        "Flyout" { return "GallerySample_Flyout_Button" }
+        "Popup" { return "GallerySample_Popup_Button" }
+        "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
+        "MenuFlyout" { return "GallerySample_MenuFlyout_AppBarButton" }
+        "AppBarButton" { return "GallerySample_AppBarButton_AppBarButton" }
+        "AppBarSeparator" { return "GallerySample_AppBarSeparator_CommandBar" }
+        "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }
+        "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
+        "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
+        default { return "GallerySample_${control}_Root" }
+    }
+}
+
+function Get-SampleRootAutomationId([string]$control) {
+    if ($control -eq "ImageIcon") {
+        return "GallerySample_IconElement_ImageExample1"
+    }
+
+    return "GallerySample_${control}_Root"
+}
+
+function Set-DeterministicControlFocus($window, [string]$control) {
+    if ($control -in @("ProgressRing", "WinUIProgressBar")) {
+        # Setting the determinate value through UI Automation focuses WinUI's
+        # NumberBox but not WPF's. Focus a shell button outside the review cards
+        # in both applications so the comparison is about the sample, not a
+        # provider-specific focus side effect. Navigation items are virtualized
+        # out of WinUI's control view, so they are not a reliable focus target.
+        $shellButton = Find-DescendantButtonByAnyName $window @("Toggle Navigation", "Back")
+        if ($null -ne $shellButton) {
+            try {
+                $shellButton.SetFocus()
+                Start-Sleep -Milliseconds 180
+                return $true
+            }
+            catch {
+                return $false
+            }
+        }
+
+        return $false
+    }
+
+    if ($control -ne "SelectorBar") {
+        return $true
+    }
+
+    # SelectorBar intentionally starts with SelectedItem=null and selects its
+    # first item when keyboard focus enters the control. WinUI Gallery's URI
+    # navigation focuses that first item while ModernWpf's diagnostic route
+    # does not, which made identical controls appear different in screenshots.
+    # Exercise the documented focused state explicitly in both applications.
+    $firstItem = Find-DescendantByName $window "Recent"
+    if ($null -eq $firstItem) {
+        return $false
+    }
+
+    try {
+        $firstItem.SetFocus()
+        Start-Sleep -Milliseconds 180
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
+
+function Get-PrimaryCropMinimumVisibleStdDev([string]$control) {
+    switch ($control) {
+        "InfoBadge" { return 8.0 }
+        "NavigationView" { return 45.0 }
+        "AutoSuggestBox" { return 1.0 }
+        "ThemeShadow" { return 4.0 }
+        default { return 6.0 }
+    }
+}
+
+function Test-ControlRequiresPrimaryCrop([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return $true }
+        "AppBarSeparator" { return $true }
+        "AppBarToggleButton" { return $true }
+        "CommandBar" { return $true }
+        "ColorPicker" { return $true }
+        "ContentDialog" { return $true }
+        "Flyout" { return $true }
+        "HyperlinkButton" { return $true }
+        "InfoBadge" { return $true }
+        "ItemsRepeater" { return $true }
+        "ImageIcon" { return $true }
+        "MenuBar" { return $true }
+        "MenuFlyout" { return $true }
+        "NavigationView" { return $true }
+        "PersonPicture" { return $true }
+        "Popup" { return $true }
+        "SplitView" { return $true }
+        "ThemeShadow" { return $true }
+        "TeachingTip" { return $true }
+        "ToggleButton" { return $true }
+        "WinUIProgressBar" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-RequiredReferencePrimaryCropSource([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return "Button1" }
+        "AppBarSeparator" { return "Control1" }
+        "AppBarToggleButton" { return "Button1" }
+        "CommandBar" { return "PrimaryCommandBar" }
+        "ColorPicker" { return "ColorPicker editor surface" }
+        "ContentDialog" { return "ShowDialog" }
+        "Flyout" { return "Control1" }
+        "InfoBadge" { return "InfoBadge value badge" }
+        "ItemsRepeater" { return "ItemsRepeater source bar rows" }
+        "ImageIcon" { return "ImageExample1" }
+        "MenuBar" { return "Example1" }
+        "MenuFlyout" { return "Sort" }
+        "NavigationView" { return "nvSample5" }
+        "Popup" { return "Show Popup (using Offset)" }
+        "SplitView" { return "SplitView pane and content" }
+        "TeachingTip" { return "TestButton1" }
+        "ToggleButton" { return "Toggle1" }
+        "WinUIProgressBar" { return "ProgressBar2" }
+        default { return "" }
+    }
+}
+
+function Get-ModernPrimaryCropAutomationId([string]$control) {
+    switch ($control) {
+        "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
+        "CheckBox" { return "GallerySample_CheckBox_CheckBox" }
+        "ColorPicker" { return "GallerySample_ColorPicker_ColorPicker" }
+        "HyperlinkButton" { return "GallerySample_HyperlinkButton_HyperlinkButton" }
+        "RatingControl" { return "GallerySample_RatingControl_RatingControl" }
+        "RepeatButton" { return "GallerySample_RepeatButton_RepeatButton" }
+        "ToggleButton" { return "GallerySample_ToggleButton_ToggleButton" }
+        "DropDownButton" { return "GallerySample_DropDownButton_DropDownButton" }
+        "SplitButton" { return "GallerySample_SplitButton_SplitButton" }
+        "ToggleSplitButton" { return "GallerySample_ToggleSplitButton_ToggleSplitButton" }
+        "ToggleSwitch" { return "GallerySample_ToggleSwitch_ToggleSwitch" }
+        "NumberBox" { return "GallerySample_NumberBox_SpinButtonNumberBox" }
+        "RadioButton" { return "GallerySample_RadioButton_RadioButton" }
+        "AutoSuggestBox" { return "GallerySample_AutoSuggestBox_AutoSuggestBox" }
+        "Slider" { return "GallerySample_Slider_Slider" }
+        "SplitView" { return "GallerySample_SplitView_SplitView" }
+        "PersonPicture" { return "GallerySample_PersonPicture_PersonPicture" }
+        "IconElement" { return "GallerySample_IconElement_SlicesIcon" }
+        "ImageIcon" { return "GallerySample_IconElement_ImageExample1" }
+        "ThemeShadow" { return "GallerySample_ThemeShadow_Root" }
+        "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
+        "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
+        "ProgressRing" { return "GallerySample_ProgressRing_DeterminateProgressRing" }
+        "WinUIProgressBar" { return "GallerySample_WinUIProgressBar_DeterminateProgressBar" }
+        "AnnotatedScrollBar" { return "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar" }
+        "GridView" { return "GallerySample_GridView_BasicGridView" }
+        "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
+        "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
+        "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
+        "Flyout" { return "GallerySample_Flyout_Button" }
+        "Popup" { return "GallerySample_Popup_Button" }
+        "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
+        "MenuFlyout" { return "GallerySample_MenuFlyout_AppBarButton" }
+        "AppBarButton" { return "GallerySample_AppBarButton_AppBarButton" }
+        "AppBarSeparator" { return "GallerySample_AppBarSeparator_CommandBar" }
+        "AppBarToggleButton" { return "GallerySample_AppBarToggleButton_AppBarToggleButton" }
+        "CommandBar" { return "GallerySample_CommandBar_CommandBar" }
+        "CommandBarFlyout" { return "GallerySample_CommandBarFlyout_ShowButton" }
+        default { return Get-RequiredSampleAutomationId $control }
+    }
+}
+
+function Get-ReferencePrimaryAutomationId([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return "TestButton1" }
+        "Button" { return "Button1" }
+        "ComboBox" { return "Combo1" }
+        "InfoBar" { return "TestInfoBar1" }
+        "NavigationView" { return "nvSample5" }
+        "ContentDialog" { return "ShowDialog" }
+        "Flyout" { return "Control1" }
+        "MenuBar" { return "Example1" }
+        "AppBarButton" { return "Button1" }
+        "AppBarSeparator" { return "Control1" }
+        "AppBarToggleButton" { return "Button1" }
+        "CommandBar" { return "PrimaryCommandBar" }
+        "CommandBarFlyout" { return "myImageButton" }
+        "HyperlinkButton" { return "Control1" }
+        "RatingControl" { return "RatingControl1" }
+        "Slider" { return "Slider1" }
+        "ColorPicker" { return "ColorSpectrum" }
+        "ToggleButton" { return "Toggle1" }
+        "SplitButton" { return "myColorButton" }
+        "ToggleSplitButton" { return "myListButton" }
+        "NumberBox" { return "NumberBoxSpinButtonPlacementExample" }
+        "AutoSuggestBox" { return "Control1" }
+        "SplitView" { return "PaneRoot" }
+        "PersonPicture" { return "" }
+        "IconElement" { return "svPanel" }
+        "ImageIcon" { return "ImageExample1" }
+        "ThemeShadow" { return "" }
+        "TitleBar" { return "TitleBarControl" }
+        "ProgressRing" { return "ProgressRing2" }
+        "WinUIProgressBar" { return "ProgressBar2" }
+        "AnnotatedScrollBar" { return "svPanel" }
+        "GridView" { return "BasicGridView" }
+        "BreadcrumbBar" { return "BreadcrumbBar1" }
+        "SelectorBar" { return "PART_ItemsView" }
+        default { return "" }
+    }
+}
+
+function Get-ReferencePrimaryName([string]$control) {
+    switch ($control) {
+        "CheckBox" { return "Two-state" }
+        "DropDownButton" { return "Email" }
+        "MenuFlyout" { return "Sort" }
+        "Popup" { return "Show Popup (using Offset)" }
+        "RepeatButton" { return "Click and hold" }
+        "ToggleSwitch" { return "simple ToggleSwitch" }
+        default { return "" }
+    }
+}
+
+function Get-ReferenceBaselineNote([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" {
+            return "The installed WinUI Gallery accepts typed text in its basic sample but does not expose the source-defined suggestions popup. Resting pixels are compared to that installed reference; ModernWpf's Aegean popup, invocation, and output remain mandatory and are verified independently."
+        }
+        "ItemsRepeater" {
+            return "The installed WinUI Gallery regenerates the recipe names, colors, ingredients, and ordering in Example 6 on every launch. That row is geometry-only evidence, not a pixel match. Stable source-bar pixels and the recipe layout, virtualization, filtering, and sorting contract are verified independently."
+        }
+        "ProgressRing" {
+            return "The indeterminate example is phase-dependent. Its complete sample card is geometry-only evidence; the fixed 65-percent determinate ring remains an exact-size pixel gate and the interaction recorder must prove animation plus the active-state transition."
+        }
+        "WinUIProgressBar" {
+            return "The indeterminate example is phase-dependent. Its complete sample card is geometry-only evidence; the fixed 65-percent determinate bar remains an exact-size pixel gate and the interaction recorder must prove animation plus a progress-state transition."
+        }
+        "RatingControl" {
+            return "Installed WinUI Gallery 2.9.3.0 / Windows App Runtime 2.2.3.0.0 renders PlaceholderValue=0 as one filled star. Current winui3/main preserves zero as a valid empty placeholder, so ModernWpf intentionally follows current source rather than that older installed-runtime pixel."
+        }
+        default { return "" }
+    }
+}
+
+function Test-ControlSupportsOpenInteraction([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return $true }
+        "ComboBox" { return $true }
+        "ContentDialog" { return $true }
+        "Flyout" { return $true }
+        "Popup" { return $true }
+        "MenuBar" { return $true }
+        "MenuFlyout" { return $true }
+        "DropDownButton" { return $true }
+        "SplitButton" { return $true }
+        "ToggleSplitButton" { return $true }
+        "CommandBar" { return $true }
+        "CommandBarFlyout" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-OpenInteractionNames([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return @("This is the title", "Try compact mode", "And this is the subtitle") }
+        "ComboBox" { return @("Blue", "Green", "Red", "Yellow") }
+        "ContentDialog" { return @("Save your work?", "Upload your content to the cloud.", "Save", "Don't Save", "Cancel") }
+        "Flyout" { return @("All items will be removed. Do you want to continue?", "Yes, empty my cart") }
+        # "Close" also names both Gallery title-bar buttons. Anchor the open
+        # proof to the popup's unique heading so the separate WPF popup HWND is
+        # selected instead of unrelated window chrome.
+        "Popup" { return @("Simple Popup") }
+        "MenuBar" { return @("New", "Open", "Save", "Exit") }
+        "MenuFlyout" { return @("By rating", "By match", "By distance") }
+        "DropDownButton" { return @("Send", "Reply", "Reply All") }
+        "SplitButton" { return @("Red", "Orange", "Yellow", "Green", "Blue", "Indigo", "Violet", "Gray") }
+        "ToggleSplitButton" { return @("Bulleted list", "Roman numerals list") }
+        "CommandBar" { return @("Settings") }
+        "CommandBarFlyout" { return @("Share", "Save", "Delete", "Resize", "Move") }
+        default { return @() }
+    }
+}
+
+function Get-OpenInteractionTriggerElement($window, [string]$control, $sampleElement) {
+    switch ($control) {
+        "CommandBar" {
+            $trigger = Find-DescendantButtonByName $window "Open command bar"
+            if ($null -ne $trigger) {
+                return $trigger
+            }
+        }
+        "MenuBar" {
+            $trigger = Find-DescendantByAnyName $sampleElement @("File")
+            if ($null -eq $trigger) {
+                $trigger = Find-ElementByNameInProcess $window.Current.ProcessId @("File")
+            }
+
+            if ($null -ne $trigger) {
+                $button = Find-DescendantButtonByAnyName $trigger @("File")
+                if ($null -ne $button) {
+                    return $button
+                }
+
+                return Find-OpenInteractionTriggerTarget $trigger
+            }
+        }
+    }
+
+    return $sampleElement
+}
+
+function Find-OpenInteractionTriggerTarget($element) {
+    $candidate = $element
+    for ($depth = 0; $depth -lt 8 -and $null -ne $candidate; $depth++) {
+        try {
+            if ($candidate.Current.ControlType -eq [System.Windows.Automation.ControlType]::MenuItem -or
+                $candidate.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button) {
+                return $candidate
+            }
+        }
+        catch {
+        }
+
+        try {
+            [void]$candidate.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+            return $candidate
+        }
+        catch {
+        }
+
+        try {
+            [void]$candidate.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+            return $candidate
+        }
+        catch {
+        }
+
+        try {
+            $candidate = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+        }
+        catch {
+            return $element
+        }
+    }
+
+    return $element
+}
+
+function Test-ControlSupportsStateInteraction([string]$control) {
+    switch ($control) {
+        "CheckBox" { return $true }
+        "ColorPicker" { return $true }
+        "ToggleButton" { return $true }
+        "ToggleSwitch" { return $true }
+        "AppBarToggleButton" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-ControlVisualStateMatrixKind([string]$control) {
+    switch ($control) {
+        "HyperlinkButton" { return "Button" }
+        "RepeatButton" { return "Button" }
+        "DropDownButton" { return "Button" }
+        "AppBarButton" { return "Button" }
+        "ToggleButton" { return "Toggle" }
+        "ToggleSwitch" { return "Toggle" }
+        "AppBarToggleButton" { return "Toggle" }
+        "SplitButton" { return "Split" }
+        "ToggleSplitButton" { return "ToggleSplit" }
+        default { return "" }
+    }
+}
+
+function Test-ControlSupportsVisualStateMatrix([string]$control) {
+    return ![string]::IsNullOrWhiteSpace((Get-ControlVisualStateMatrixKind $control))
+}
+
+function Get-ControlVisualStateDisableOptionAutomationId([string]$control) {
+    switch ($control) {
+        "HyperlinkButton" { return "DisableControl1" }
+        "RepeatButton" { return "DisableControl1" }
+        "ToggleButton" { return "DisableToggle1" }
+        default { return "" }
+    }
+}
+
+function Get-ControlVisualStateMatrixExpectedStates([string]$control) {
+    $kind = Get-ControlVisualStateMatrixKind $control
+    $states = switch ($kind) {
+        "Button" {
+            @("Rest", "PointerOver", "Pressed", "Focused")
+        }
+        "Toggle" {
+            @(
+                "OffRest",
+                "OffPointerOver",
+                "OffPressed",
+                "OffFocused",
+                "OnRest",
+                "OnPointerOver",
+                "OnPressed",
+                "OnFocused")
+        }
+        "Split" {
+            @(
+                "Rest",
+                "PrimaryPointerOver",
+                "PrimaryPressed",
+                "SecondaryPointerOver",
+                "SecondaryPressed",
+                "Focused")
+        }
+        "ToggleSplit" {
+            @(
+                "OffRest",
+                "OffPrimaryPointerOver",
+                "OffPrimaryPressed",
+                "OffSecondaryPointerOver",
+                "OffSecondaryPressed",
+                "OffFocused",
+                "OnRest",
+                "OnPrimaryPointerOver",
+                "OnPrimaryPressed",
+                "OnSecondaryPointerOver",
+                "OnSecondaryPressed",
+                "OnFocused")
+        }
+        default {
+            @()
+        }
+    }
+
+    $disableOptionAutomationId = Get-ControlVisualStateDisableOptionAutomationId $control
+    if (![string]::IsNullOrWhiteSpace($disableOptionAutomationId)) {
+        if ($kind -eq "Toggle") {
+            $states += @("DisabledOff", "DisabledOn")
+        }
+        else {
+            $states += "Disabled"
+        }
+    }
+
+    return @($states)
+}
+
+function Get-ControlVisualStateMatrixMeanDeltaThreshold([string]$control, [string]$state = "") {
+    switch ($control) {
+        "HyperlinkButton" { return $(if ($state -eq "Focused") { 4.0 } else { 3.0 }) }
+        "RepeatButton" { return $(if ($state -eq "Focused") { 5.0 } else { 3.0 }) }
+        "ToggleButton" {
+            if ($state -eq "OnFocused") { return 12.0 }
+            if ($state.StartsWith("On", [System.StringComparison]::Ordinal)) { return 10.0 }
+            if ($state -eq "OffFocused") { return 5.0 }
+            return 3.0
+        }
+        "DropDownButton" { return 5.0 }
+        "SplitButton" { return 4.0 }
+        "ToggleSplitButton" { return 5.0 }
+        "ToggleSwitch" { return 4.0 }
+        "AppBarButton" { return 7.0 }
+        "AppBarToggleButton" { return 8.0 }
+        default { return 8.0 }
+    }
+}
+
+function Get-ControlVisualStateMatrixCropSizeDeltaThreshold([string]$control) {
+    switch ($control) {
+        # WPF reports this button as 77 DIPs while its rounded border occupies
+        # the same 78 physical pixels as WinUI (also proven by the exact primary
+        # rendered-crop size). The resulting direct-screen state crop differs
+        # only by one trailing review-gutter pixel.
+        "DropDownButton" { return 1 }
+        default { return 0 }
+    }
+}
+
+function Get-StateInteractionOutputAutomationId([string]$app, [string]$control) {
+    if ($control -ne "ToggleButton") {
+        return ""
+    }
+
+    return $(if ($app -eq "ModernWpf") { "GallerySample_ToggleButton_Output" } else { "Control1Output" })
+}
+
+function Get-StateInteractionExpectedOutput([string]$control, [string]$state) {
+    if ($control -ne "ToggleButton") {
+        return ""
+    }
+
+    return $(if ($state -eq "On") { "On" } else { "Off" })
+}
+
+function Get-StateInteractionTarget($window, [string]$control, $element) {
+    if ($control -eq "ColorPicker") {
+        if ($ColorPickerState -eq "Ring") {
+            return Find-DescendantByName $window "Ring"
+        }
+
+        $automationId = if ($ColorPickerState -eq "Alpha") { "alpha" } else { "moreBtn" }
+        return Find-ElementByAutomationIdInProcess $window.Current.ProcessId $automationId
+    }
+
+    return $element
+}
+
+function Get-StateInteractionStateName([string]$control, $element) {
+    if ($control -eq "ColorPicker" -and $ColorPickerState -eq "Ring") {
+        if ($null -eq $element) {
+            return ""
+        }
+
+        try {
+            $pattern = $element.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+            return $(if ($pattern.Current.IsSelected) { "On" } else { "Off" })
+        }
+        catch {
+            return ""
+        }
+    }
+
+    return Get-ToggleStateName $element
+}
+
+function Set-StateInteractionElementState($window, [string]$control, $element, [string]$desiredState) {
+    if ($control -eq "ColorPicker" -and $ColorPickerState -eq "Ring") {
+        $target = if ($desiredState -eq "On") { $element } else { Find-DescendantByName $window "Box" }
+        if ($null -eq $target) {
+            return $false
+        }
+
+        try {
+            $pattern = $target.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+            $pattern.Select()
+            Start-Sleep -Milliseconds 80
+            return (Get-StateInteractionStateName $control $element) -eq $desiredState
+        }
+        catch {
+            return $false
+        }
+    }
+
+    return Set-ToggleElementState $window $element $desiredState
+}
+
+function Get-StateInteractionSettleDelayMs([string]$control) {
+    switch ($control) {
+        "ToggleSwitch" { return 220 }
+        default { return 180 }
+    }
+}
+
+function Test-StateInteractionVisual([string]$control, [string]$desiredState, [string]$cropPath) {
+    if ($control -ne "ToggleSwitch" -or $desiredState -ne "On") {
+        return [ordered]@{
+            Passed = $true
+            Notes = ""
+        }
+    }
+
+    if ([string]::IsNullOrEmpty($cropPath) -or !(Test-Path $cropPath)) {
+        return [ordered]@{
+            Passed = $false
+            Notes = "ToggleSwitch state crop was not available for thumb endpoint validation."
+        }
+    }
+
+    $bitmap = [System.Drawing.Bitmap]::FromFile($cropPath)
+    try {
+        $blueCount = 0
+        $blueMinX = $bitmap.Width
+        $blueMaxX = -1
+        $blueMinY = $bitmap.Height
+        $blueMaxY = -1
+        $blueR = 0.0
+        $blueG = 0.0
+        $blueB = 0.0
+
+        for ($y = 0; $y -lt $bitmap.Height; $y++) {
+            for ($x = 0; $x -lt $bitmap.Width; $x++) {
+                $pixel = $bitmap.GetPixel($x, $y)
+                if ($pixel.B -gt 100 -and
+                    ([int]$pixel.B - [int]$pixel.R) -gt 50 -and
+                    ([int]$pixel.B - [int]$pixel.G) -gt 20) {
+                    $blueCount++
+                    $blueMinX = [Math]::Min($blueMinX, $x)
+                    $blueMaxX = [Math]::Max($blueMaxX, $x)
+                    $blueMinY = [Math]::Min($blueMinY, $y)
+                    $blueMaxY = [Math]::Max($blueMaxY, $y)
+                    $blueR += $pixel.R
+                    $blueG += $pixel.G
+                    $blueB += $pixel.B
+                }
+            }
+        }
+
+        if ($blueCount -lt 20 -or $blueMaxX -le $blueMinX -or $blueMaxY -le $blueMinY) {
+            return [ordered]@{
+                Passed = $false
+                Notes = "ToggleSwitch On screenshot did not expose an accent-colored track."
+            }
+        }
+
+        $blueR /= $blueCount
+        $blueG /= $blueCount
+        $blueB /= $blueCount
+        $trackWidth = $blueMaxX - $blueMinX + 1
+        $trackCenterX = ($blueMinX + $blueMaxX) / 2.0
+        $centerY = [int][Math]::Round(($blueMinY + $blueMaxY) / 2.0)
+        $halfBand = [Math]::Max(2, [int][Math]::Round(($blueMaxY - $blueMinY + 1) * 0.25))
+        $candidateCount = 0
+        $candidateX = 0.0
+
+        for ($y = [Math]::Max(0, $centerY - $halfBand); $y -le [Math]::Min($bitmap.Height - 1, $centerY + $halfBand); $y++) {
+            for ($x = $blueMinX; $x -le $blueMaxX; $x++) {
+                $pixel = $bitmap.GetPixel($x, $y)
+                $distanceFromTrack = [Math]::Abs($pixel.R - $blueR) + [Math]::Abs($pixel.G - $blueG) + [Math]::Abs($pixel.B - $blueB)
+                $luminance = (0.2126 * $pixel.R) + (0.7152 * $pixel.G) + (0.0722 * $pixel.B)
+                if ($distanceFromTrack -gt 120 -and ($luminance -lt 90 -or $luminance -gt 180)) {
+                    $candidateCount++
+                    $candidateX += $x
+                }
+            }
+        }
+
+        if ($candidateCount -lt 8) {
+            return [ordered]@{
+                Passed = $false
+                Notes = "ToggleSwitch On screenshot did not expose a distinct thumb inside the accent track."
+            }
+        }
+
+        $thumbCenterX = $candidateX / $candidateCount
+        $requiredRightOfCenter = $trackCenterX + [Math]::Max(2.0, $trackWidth * 0.12)
+        if ($thumbCenterX -le $requiredRightOfCenter) {
+            return [ordered]@{
+                Passed = $false
+                Notes = "ToggleSwitch On screenshot left the thumb near x=$([Math]::Round($thumbCenterX, 1)); expected it right of x=$([Math]::Round($requiredRightOfCenter, 1))."
+            }
+        }
+
+        return [ordered]@{
+            Passed = $true
+            Notes = ""
+        }
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
+function Test-ControlSupportsSelectionInteraction([string]$control) {
+    switch ($control) {
+        "GridView" { return $true }
+        default { return $false }
+    }
+}
+
+function Test-ControlSupportsTextInteraction([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" { return $true }
+        default { return $false }
+    }
+}
+
+function Test-ControlSupportsValueInteraction([string]$control) {
+    switch ($control) {
+        "RatingControl" { return $true }
+        "Slider" { return $true }
+        "NumberBox" { return $true }
+        default { return $false }
+    }
+}
+
+function Test-ControlSupportsOutputInteraction([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return $true }
+        "CommandBar" { return $true }
+        "RepeatButton" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-OutputInteractionTriggerNames([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return @("SymbolIcon") }
+        "CommandBar" { return @("Add") }
+        "RepeatButton" { return @("Click and hold") }
+        default { return @() }
+    }
+}
+
+function Get-OutputInteractionCropAutomationId([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return "Control1Output" }
+        "CommandBar" { return "SelectedOptionText" }
+        "RepeatButton" { return "GallerySample_RepeatButton_Output" }
+        default { return "" }
+    }
+}
+
+function Get-OutputInteractionExpectedNames([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return @("You clicked: Button1") }
+        "CommandBar" { return @("You clicked: Add") }
+        default { return @() }
+    }
+}
+
+function Get-OutputInteractionMinimumDelta([string]$control) {
+    switch ($control) {
+        "RepeatButton" { return 0.5 }
+        default { return 0.5 }
+    }
+}
+
+function Test-OutputInteractionAllowsBlankBaseline([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return $true }
+        "CommandBar" { return $true }
+        "RepeatButton" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-ValueInteractionStep([string]$control) {
+    switch ($control) {
+        "RatingControl" { return 3.0 }
+        "Slider" { return 50.0 }
+        "NumberBox" { return 10.0 }
+        default { return 0.0 }
+    }
+}
+
+function Get-ValueInteractionTargetValue([string]$control, $baselineValue) {
+    switch ($control) {
+        "RatingControl" { return 3.0 }
+        "Slider" { return 50.0 }
+        default {
+            if ($null -eq $baselineValue) {
+                return $null
+            }
+
+            return [double]$baselineValue + [double](Get-ValueInteractionStep $control)
+        }
+    }
+}
+
+function Get-ValueInteractionCropAutomationId([string]$control) {
+    switch ($control) {
+        "Slider" { return "GallerySample_Slider_Root" }
+        default { return "" }
+    }
+}
+
+function Get-ValueInteractionIncreaseButtonNames([string]$control) {
+    switch ($control) {
+        "NumberBox" { return @("Increase", "Increase value", "Up") }
+        default { return @() }
+    }
+}
+
+function Get-TextInteractionInput([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" { return "ae" }
+        default { return "" }
+    }
+}
+
+function Get-TextInteractionSuggestionNames([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" { return @("Aegean") }
+        default { return @() }
+    }
+}
+
+function Get-TextInteractionExpectedOutputName([string]$control) {
+    switch ($control) {
+        "AutoSuggestBox" { return "Aegean" }
+        default { return "" }
+    }
+}
+
+function Get-SelectionInteractionTriggerName([string]$control) {
+    switch ($control) {
+        "GridView" { return "Item 1" }
+        default { return "" }
+    }
+}
+
+function Get-SelectionInteractionExpectedName([string]$control) {
+    switch ($control) {
+        "GridView" { return "You clicked Item 1." }
+        default { return "" }
+    }
+}
+
+function Get-SelectionInteractionCropAutomationId([string]$control) {
+    switch ($control) {
+        "GridView" { return "GallerySample_GridView_ClickOutput0" }
+        default { return "" }
+    }
+}
+
+function Find-ReferenceInteractionTrigger($window, [string]$control) {
+    if ($control -eq "TeachingTip") {
+        return Find-DescendantButtonByName $window "Show TeachingTip"
+    }
+
+    $automationId = Get-ReferencePrimaryAutomationId $control
+    if (![string]::IsNullOrEmpty($automationId)) {
+        return Find-DescendantByAutomationId $window $automationId
+    }
+
+    $name = Get-ReferencePrimaryName $control
+    if (![string]::IsNullOrEmpty($name)) {
+        return Find-ReferencePrimaryByName $window $control $name
+    }
+
+    return $null
+}
+
+function Get-WinUIReferencePageTitle([string]$control) {
+    switch ($control) {
+        "ImageIcon" { return "IconElement" }
+        "WinUIProgressBar" { return "ProgressBar" }
+        default { return $control }
+    }
+}
+
+function Get-ControlRouteId([string]$control, [string]$app) {
+    if ($control -eq "ImageIcon") {
+        return "IconElement"
+    }
+
+    if ($control -eq "WinUIProgressBar" -and $app -eq "WinUI3") {
+        return "ProgressBar"
+    }
+
+    return $control
+}
+
+function Write-UiaTree($element, [string]$path, [int]$maxDepth) {
+    $lines = New-Object System.Collections.Generic.List[string]
+    $walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
+
+    function Format-RectCoordinate($value) {
+        $number = [double]$value
+        if ([double]::IsInfinity($number) -or [double]::IsNaN($number)) {
+            return $number.ToString([System.Globalization.CultureInfo]::InvariantCulture)
+        }
+
+        return ([int][Math]::Round($number)).ToString([System.Globalization.CultureInfo]::InvariantCulture)
+    }
+
+    function Get-ControlTypeName($node) {
+        try {
+            $controlType = $node.Current.ControlType
+            if ($null -ne $controlType -and $null -ne $controlType.ProgrammaticName) {
+                return $controlType.ProgrammaticName
+            }
+        }
+        catch {
+        }
+
+        return ""
+    }
+
+    function Append-Element($node, [int]$depth) {
+        if ($null -eq $node -or $depth -gt $maxDepth) {
+            return
+        }
+
+        $indent = "  " * $depth
+        $rect = $node.Current.BoundingRectangle
+        $line = "{0}{1} name='{2}' id='{3}' rect='{4},{5},{6},{7}'" -f `
+            $indent,
+            (Get-ControlTypeName $node),
+            ($node.Current.Name -replace "'", "''"),
+            ($node.Current.AutomationId -replace "'", "''"),
+            (Format-RectCoordinate $rect.X),
+            (Format-RectCoordinate $rect.Y),
+            (Format-RectCoordinate $rect.Width),
+            (Format-RectCoordinate $rect.Height)
+        $lines.Add($line)
+
+        $child = $walker.GetFirstChild($node)
+        while ($null -ne $child) {
+            Append-Element $child ($depth + 1)
+            $child = $walker.GetNextSibling($child)
+        }
+    }
+
+    Append-Element $element 0
+    Set-Content -Path $path -Value $lines -Encoding UTF8
+}
+
+function Test-BitmapNotBlank([System.Drawing.Bitmap]$bitmap) {
+    $colors = New-Object "System.Collections.Generic.HashSet[int]"
+    $visibleSamples = 0
+    $nonBlackSamples = 0
+    $stepX = [Math]::Max(1, [int]($bitmap.Width / 32))
+    $stepY = [Math]::Max(1, [int]($bitmap.Height / 32))
+    for ($x = 0; $x -lt $bitmap.Width; $x += $stepX) {
+        for ($y = 0; $y -lt $bitmap.Height; $y += $stepY) {
+            $pixel = $bitmap.GetPixel($x, $y)
+            if ($pixel.A -gt 16) {
+                $visibleSamples++
+                [void]$colors.Add(($pixel.R -shl 16) -bor ($pixel.G -shl 8) -bor $pixel.B)
+                if (($pixel.R + $pixel.G + $pixel.B) -gt 36) {
+                    $nonBlackSamples++
+                }
+            }
+        }
+    }
+
+    return $colors.Count -gt 4 -and $visibleSamples -gt 0 -and $nonBlackSamples -gt 0
+}
+
+function Test-BitmapHasClientContent([System.Drawing.Bitmap]$bitmap) {
+    if (!(Test-BitmapNotBlank $bitmap)) {
+        return $false
+    }
+
+    $colors = New-Object "System.Collections.Generic.HashSet[int]"
+    $sampleCount = 0
+    $nonBlackCount = 0
+    $startY = [Math]::Min($bitmap.Height - 1, 48)
+    $endY = [Math]::Max($startY, $bitmap.Height - 12)
+    $stepX = [Math]::Max(1, [int]($bitmap.Width / 40))
+    $stepY = [Math]::Max(1, [int](($endY - $startY + 1) / 32))
+
+    for ($x = 8; $x -lt ($bitmap.Width - 8); $x += $stepX) {
+        for ($y = $startY; $y -lt $endY; $y += $stepY) {
+            $pixel = $bitmap.GetPixel($x, $y)
+            [void]$colors.Add($pixel.ToArgb())
+            $sampleCount++
+            if (($pixel.R + $pixel.G + $pixel.B) -gt 36) {
+                $nonBlackCount++
+            }
+        }
+    }
+
+    return $colors.Count -gt 8 -and $sampleCount -gt 0 -and ($nonBlackCount / [double]$sampleCount) -gt 0.015
+}
+
+function Test-ImageNotBlank([string]$path) {
+    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
+    try {
+        return Test-BitmapNotBlank $bitmap
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
+function Get-ImageSize([string]$path) {
+    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
+    try {
+        return [ordered]@{
+            Width = $bitmap.Width
+            Height = $bitmap.Height
+        }
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
+function Get-ImageVisibleStdDev([string]$path, [int]$step = 3) {
+    return [GalleryImageMetrics]::GetVisibleStdDev($path, $step)
+}
+
+function Get-ImageMeanLuminance([string]$path, [int]$step = 3) {
+    $mean = [GalleryImageMetrics]::GetMeanLuminance($path, $step)
+    return $(if ([double]::IsNaN($mean)) { $null } else { $mean })
+}
+
+function Capture-Window([IntPtr]$hwnd, [string]$path, [switch]$SkipActivate) {
+    if (!$SkipActivate) {
+        [GalleryVisualNative]::Activate($hwnd)
+        Start-Sleep -Milliseconds 300
+    }
+    $rect = [GalleryVisualNative]::GetRect($hwnd)
+    $width = [Math]::Max(1, $rect.Right - $rect.Left)
+    $height = [Math]::Max(1, $rect.Bottom - $rect.Top)
+    $bitmap = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+    try {
+        foreach ($attempt in 1..5) {
+            foreach ($flags in @(2, 0)) {
+                $graphics.Clear([System.Drawing.Color]::Transparent)
+                $hdc = $graphics.GetHdc()
+                $printed = $false
+                try {
+                    $printed = [GalleryVisualNative]::PrintWindow($hwnd, $hdc, [uint32]$flags)
+                }
+                finally {
+                    $graphics.ReleaseHdc($hdc)
+                }
+
+                if ($printed -and (Test-BitmapNotBlank $bitmap)) {
+                    $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+                    return
+                }
+            }
+
+            Start-Sleep -Milliseconds 250
+        }
+
+        try {
+            Capture-ScreenRect $hwnd $path
+            if (Test-ImageNotBlank $path) {
+                return
+            }
+        }
+        catch {
+        }
+
+        $graphics.Clear([System.Drawing.Color]::Transparent)
+        $hdc = $graphics.GetHdc()
+        $copied = $false
+        try {
+            $copied = [GalleryVisualNative]::CopyWindowSurface($hwnd, $hdc, $width, $height)
+        }
+        finally {
+            $graphics.ReleaseHdc($hdc)
+        }
+
+        if ($copied -and (Test-BitmapNotBlank $bitmap)) {
+            $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+            return
+        }
+
+        throw "PrintWindow did not produce a valid app-content capture for window handle $hwnd."
+    }
+    finally {
+        $graphics.Dispose()
+        $bitmap.Dispose()
+    }
+}
+
+function Capture-ScreenRect([IntPtr]$hwnd, [string]$path) {
+    $rect = [GalleryVisualNative]::GetRect($hwnd)
+    $width = [Math]::Max(1, $rect.Right - $rect.Left)
+    $height = [Math]::Max(1, $rect.Bottom - $rect.Top)
+    $bitmap = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+    try {
+        try {
+            $graphics.CopyFromScreen($rect.Left, $rect.Top, 0, 0, [System.Drawing.Size]::new($width, $height))
+        }
+        catch {
+            $copyFromScreenError = $_.Exception.Message
+            $graphics.Clear([System.Drawing.Color]::Transparent)
+            $hdc = $graphics.GetHdc()
+            $copied = $false
+            try {
+                $copied = [GalleryVisualNative]::CopyScreenSurface($hdc, $rect.Left, $rect.Top, $width, $height)
+            }
+            finally {
+                $graphics.ReleaseHdc($hdc)
+            }
+
+            if (!$copied) {
+                throw "CopyFromScreen failed and native screen capture fallback failed: $copyFromScreenError"
+            }
+        }
+        $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+    }
+    finally {
+        $graphics.Dispose()
+        $bitmap.Dispose()
+    }
+}
+
+function Capture-ScreenBounds([int]$left, [int]$top, [int]$width, [int]$height, [string]$path) {
+    $width = [Math]::Max(1, $width)
+    $height = [Math]::Max(1, $height)
+    $bitmap = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+    try {
+        try {
+            $graphics.CopyFromScreen($left, $top, 0, 0, [System.Drawing.Size]::new($width, $height))
+        }
+        catch {
+            $copyFromScreenError = $_.Exception.Message
+            $graphics.Clear([System.Drawing.Color]::Transparent)
+            $hdc = $graphics.GetHdc()
+            $copied = $false
+            try {
+                $copied = [GalleryVisualNative]::CopyScreenSurface($hdc, $left, $top, $width, $height)
+            }
+            finally {
+                $graphics.ReleaseHdc($hdc)
+            }
+
+            if (!$copied) {
+                throw "CopyFromScreen failed and native screen bounds capture fallback failed: $copyFromScreenError"
+            }
+        }
+
+        $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+    }
+    finally {
+        $graphics.Dispose()
+        $bitmap.Dispose()
+    }
+}
+
+function Find-DifferenceBounds([string]$beforePath, [string]$afterPath, [int]$threshold = 32, [int]$step = 2) {
+    $before = [System.Drawing.Bitmap]::FromFile($beforePath)
+    $after = [System.Drawing.Bitmap]::FromFile($afterPath)
+    try {
+        if ($before.Width -ne $after.Width -or $before.Height -ne $after.Height) {
+            return [ordered]@{
+                Found = $false
+                Reason = "Image dimensions differ."
+                X = 0
+                Y = 0
+                Width = 0
+                Height = 0
+                ChangedSamples = 0
+            }
+        }
+
+        $gridWidth = [int][Math]::Ceiling($before.Width / [double]$step)
+        $gridHeight = [int][Math]::Ceiling($before.Height / [double]$step)
+        $changed = New-Object 'bool[,]' $gridWidth, $gridHeight
+
+        for ($gridX = 0; $gridX -lt $gridWidth; $gridX++) {
+            for ($gridY = 0; $gridY -lt $gridHeight; $gridY++) {
+                $x = [Math]::Min($before.Width - 1, $gridX * $step)
+                $y = [Math]::Min($before.Height - 1, $gridY * $step)
+                $a = $before.GetPixel($x, $y)
+                $b = $after.GetPixel($x, $y)
+                $delta = [Math]::Abs($a.R - $b.R) + [Math]::Abs($a.G - $b.G) + [Math]::Abs($a.B - $b.B)
+                if ($delta -gt $threshold) {
+                    $changed[$gridX, $gridY] = $true
+                }
+            }
+        }
+
+        $visited = New-Object 'bool[,]' $gridWidth, $gridHeight
+        $components = New-Object System.Collections.Generic.List[object]
+        $queueX = New-Object System.Collections.Generic.Queue[int]
+        $queueY = New-Object System.Collections.Generic.Queue[int]
+
+        for ($startX = 0; $startX -lt $gridWidth; $startX++) {
+            for ($startY = 0; $startY -lt $gridHeight; $startY++) {
+                if (!$changed[$startX, $startY] -or $visited[$startX, $startY]) {
+                    continue
+                }
+
+                $visited[$startX, $startY] = $true
+                $queueX.Enqueue($startX)
+                $queueY.Enqueue($startY)
+                $minGridX = $startX
+                $maxGridX = $startX
+                $minGridY = $startY
+                $maxGridY = $startY
+                $componentSamples = 0
+
+                while ($queueX.Count -gt 0) {
+                    $currentX = $queueX.Dequeue()
+                    $currentY = $queueY.Dequeue()
+                    $componentSamples++
+                    if ($currentX -lt $minGridX) { $minGridX = $currentX }
+                    if ($currentX -gt $maxGridX) { $maxGridX = $currentX }
+                    if ($currentY -lt $minGridY) { $minGridY = $currentY }
+                    if ($currentY -gt $maxGridY) { $maxGridY = $currentY }
+
+                    for ($offsetX = -1; $offsetX -le 1; $offsetX++) {
+                        for ($offsetY = -1; $offsetY -le 1; $offsetY++) {
+                            if ($offsetX -eq 0 -and $offsetY -eq 0) {
+                                continue
+                            }
+
+                            $nextX = $currentX + $offsetX
+                            $nextY = $currentY + $offsetY
+                            if ($nextX -lt 0 -or $nextY -lt 0 -or $nextX -ge $gridWidth -or $nextY -ge $gridHeight) {
+                                continue
+                            }
+
+                            if ($changed[$nextX, $nextY] -and !$visited[$nextX, $nextY]) {
+                                $visited[$nextX, $nextY] = $true
+                                $queueX.Enqueue($nextX)
+                                $queueY.Enqueue($nextY)
+                            }
+                        }
+                    }
+                }
+
+                $componentX = $minGridX * $step
+                $componentY = $minGridY * $step
+                $componentRight = [Math]::Min($before.Width, ($maxGridX + 1) * $step)
+                $componentBottom = [Math]::Min($before.Height, ($maxGridY + 1) * $step)
+                $components.Add([pscustomobject]@{
+                    X = $componentX
+                    Y = $componentY
+                    Width = $componentRight - $componentX
+                    Height = $componentBottom - $componentY
+                    Right = $componentRight
+                    Bottom = $componentBottom
+                    Count = $componentSamples
+                    Merged = $false
+                })
+            }
+        }
+
+        if ($components.Count -eq 0) {
+            return [ordered]@{
+                Found = $false
+                Reason = "No changed pixels exceeded threshold $threshold."
+                X = 0
+                Y = 0
+                Width = 0
+                Height = 0
+                ChangedSamples = 0
+            }
+        }
+
+        $primary = $components | Sort-Object Count -Descending | Select-Object -First 1
+        $primary.Merged = $true
+        $clusterX = $primary.X
+        $clusterY = $primary.Y
+        $clusterRight = $primary.Right
+        $clusterBottom = $primary.Bottom
+        $changedSamples = $primary.Count
+        $mergeGap = 36
+        $mergedAny = $true
+
+        while ($mergedAny) {
+            $mergedAny = $false
+            foreach ($component in $components) {
+                if ($component.Merged) {
+                    continue
+                }
+
+                $horizontalGap = if ($component.X -gt $clusterRight) {
+                    $component.X - $clusterRight
+                }
+                elseif ($clusterX -gt $component.Right) {
+                    $clusterX - $component.Right
+                }
+                else {
+                    0
+                }
+
+                $verticalGap = if ($component.Y -gt $clusterBottom) {
+                    $component.Y - $clusterBottom
+                }
+                elseif ($clusterY -gt $component.Bottom) {
+                    $clusterY - $component.Bottom
+                }
+                else {
+                    0
+                }
+
+                if ($horizontalGap -le $mergeGap -and $verticalGap -le $mergeGap) {
+                    $component.Merged = $true
+                    $clusterX = [Math]::Min($clusterX, $component.X)
+                    $clusterY = [Math]::Min($clusterY, $component.Y)
+                    $clusterRight = [Math]::Max($clusterRight, $component.Right)
+                    $clusterBottom = [Math]::Max($clusterBottom, $component.Bottom)
+                    $changedSamples += $component.Count
+                    $mergedAny = $true
+                }
+            }
+        }
+
+        return [ordered]@{
+            Found = $true
+            Reason = ""
+            X = $clusterX
+            Y = $clusterY
+            Width = $clusterRight - $clusterX
+            Height = $clusterBottom - $clusterY
+            ChangedSamples = $changedSamples
+        }
+    }
+    finally {
+        $before.Dispose()
+        $after.Dispose()
+    }
+}
+
+function Expand-Bounds($bounds, [int]$imageWidth, [int]$imageHeight, [int]$padding) {
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return $bounds
+    }
+
+    $x = [Math]::Max(0, [Math]::Min($imageWidth, $bounds.X - $padding))
+    $y = [Math]::Max(0, [Math]::Min($imageHeight, $bounds.Y - $padding))
+    $right = [Math]::Min($imageWidth, $bounds.X + $bounds.Width + $padding)
+    $bottom = [Math]::Min($imageHeight, $bounds.Y + $bounds.Height + $padding)
+    if ($right -le $x -or $bottom -le $y) {
+        return [ordered]@{
+            Found = $false
+            Reason = "The requested crop did not intersect the captured window."
+            X = 0
+            Y = 0
+            Width = 0
+            Height = 0
+            ChangedSamples = $bounds.ChangedSamples
+        }
+    }
+    return [ordered]@{
+        Found = $true
+        Reason = ""
+        X = $x
+        Y = $y
+        Width = [Math]::Max(1, $right - $x)
+        Height = [Math]::Max(1, $bottom - $y)
+        ChangedSamples = $bounds.ChangedSamples
+    }
+}
+
+function Trim-DifferenceBoundsToContentRoot($bounds, $targetBounds, [int]$tailLength = 8) {
+    if ($null -eq $bounds -or !$bounds.Found -or $null -eq $targetBounds -or !$targetBounds.Found) {
+        return $bounds
+    }
+
+    $x = [int]$bounds.X
+    $y = [int]$bounds.Y
+    $width = [int]$bounds.Width
+    $height = [int]$bounds.Height
+    $centerX = $x + ($width / 2.0)
+    $centerY = $y + ($height / 2.0)
+    $targetCenterX = [int]$targetBounds.X + ([int]$targetBounds.Width / 2.0)
+    $targetCenterY = [int]$targetBounds.Y + ([int]$targetBounds.Height / 2.0)
+
+    if ([Math]::Abs($targetCenterY - $centerY) -ge [Math]::Abs($targetCenterX - $centerX)) {
+        if ($height -gt ($tailLength * 2) -and $targetCenterY -gt $centerY) {
+            $height -= $tailLength
+        }
+        elseif ($height -gt ($tailLength * 2) -and $targetCenterY -lt $centerY) {
+            $y += $tailLength
+            $height -= $tailLength
+        }
+    }
+    else {
+        if ($width -gt ($tailLength * 2) -and $targetCenterX -gt $centerX) {
+            $width -= $tailLength
+        }
+        elseif ($width -gt ($tailLength * 2) -and $targetCenterX -lt $centerX) {
+            $x += $tailLength
+            $width -= $tailLength
+        }
+    }
+
+    return [ordered]@{
+        Found = $true
+        Reason = ""
+        X = $x
+        Y = $y
+        Width = [Math]::Max(1, $width)
+        Height = [Math]::Max(1, $height)
+        ChangedSamples = $bounds.ChangedSamples
+    }
+}
+
+function Save-Crop([string]$sourcePath, $bounds, [string]$path, [int]$padding = 12) {
+    $source = [System.Drawing.Bitmap]::FromFile($sourcePath)
+    try {
+        $expandedBounds = Expand-Bounds $bounds $source.Width $source.Height $padding
+        if ($null -eq $expandedBounds -or !$expandedBounds.Found) {
+            return $expandedBounds
+        }
+        $rectangle = [System.Drawing.Rectangle]::new(
+            [int]$expandedBounds.X,
+            [int]$expandedBounds.Y,
+            [int]$expandedBounds.Width,
+            [int]$expandedBounds.Height)
+        $crop = $source.Clone($rectangle, $source.PixelFormat)
+        try {
+            $crop.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+        }
+        finally {
+            $crop.Dispose()
+        }
+
+        return $expandedBounds
+    }
+    finally {
+        $source.Dispose()
+    }
+}
+
+function Save-ElementCrop($window, [string]$screenshot, [string]$path, $element, [string]$source, [int]$padding = 8) {
+    $bounds = Get-ElementWindowBounds $window $element
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = $source
+            Screenshot = ""
+            Bounds = $bounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    $expandedBounds = Save-Crop $screenshot $bounds $path $padding
+    return [ordered]@{
+        Found = $true
+        Source = $source
+        Screenshot = $path
+        Bounds = $expandedBounds
+        Width = $expandedBounds.Width
+        Height = $expandedBounds.Height
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+    }
+}
+
+function Save-RepeatButtonOutputSurfaceCrop($window, [string]$screenshot, [string]$path, $triggerElement) {
+    $buttonBounds = Get-ElementWindowBounds $window $triggerElement
+    if ($null -eq $buttonBounds -or !$buttonBounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = "RepeatButtonOutputRow"
+            Screenshot = ""
+            Bounds = $buttonBounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    # The current WinUI Gallery sample is one horizontal row: a 112x32 stock
+    # RepeatButton, an 8-DIP output margin, and the natural-width click count.
+    # A common 240x32 viewport measures that source surface without UIA text
+    # bounds (which differ by a couple of pixels between WPF and WinUI).
+    $surfaceBounds = [ordered]@{
+        Found = $true
+        Reason = "Derived from the current WinUI Gallery RepeatButton output-row metrics."
+        X = [int]$buttonBounds.X
+        Y = [int]$buttonBounds.Y
+        Width = 240
+        Height = 32
+        ChangedSamples = 0
+    }
+    $savedBounds = Save-Crop $screenshot $surfaceBounds $path 0
+    return [ordered]@{
+        Found = $true
+        Source = "RepeatButtonOutputRow"
+        Screenshot = $path
+        Bounds = $savedBounds
+        Width = $savedBounds.Width
+        Height = $savedBounds.Height
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+        ButtonBounds = $buttonBounds
+    }
+}
+
+function Get-ElementScreenBounds($element, [int]$padding = 8, $referenceWindow = $null) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    $rect = $element.Current.BoundingRectangle
+    $x = [double]$rect.X
+    $y = [double]$rect.Y
+    $width = [double]$rect.Width
+    $height = [double]$rect.Height
+
+    if ([double]::IsInfinity($x) -or [double]::IsInfinity($y) -or
+        [double]::IsInfinity($width) -or [double]::IsInfinity($height) -or
+        [double]::IsNaN($x) -or [double]::IsNaN($y) -or
+        [double]::IsNaN($width) -or [double]::IsNaN($height) -or
+        $width -le 0 -or $height -le 0) {
+        return $null
+    }
+
+    $left = [int][Math]::Floor($x)
+    $top = [int][Math]::Floor($y)
+    $right = [int][Math]::Ceiling($x + $width)
+    $bottom = [int][Math]::Ceiling($y + $height)
+    if ($null -ne $referenceWindow) {
+        try {
+            $windowRect = [GalleryVisualNative]::GetRect($referenceWindow.Current.NativeWindowHandle)
+            $windowUiaRect = $referenceWindow.Current.BoundingRectangle
+            $nativeWidth = [Math]::Max(1, $windowRect.Right - $windowRect.Left)
+            $nativeHeight = [Math]::Max(1, $windowRect.Bottom - $windowRect.Top)
+            $windowUiaWidth = [double]$windowUiaRect.Width
+            $windowUiaHeight = [double]$windowUiaRect.Height
+            $scaleX = if ($windowUiaWidth -gt 0 -and ![double]::IsInfinity($windowUiaWidth) -and ![double]::IsNaN($windowUiaWidth)) {
+                $nativeWidth / $windowUiaWidth
+            }
+            else {
+                1.0
+            }
+            $scaleY = if ($windowUiaHeight -gt 0 -and ![double]::IsInfinity($windowUiaHeight) -and ![double]::IsNaN($windowUiaHeight)) {
+                $nativeHeight / $windowUiaHeight
+            }
+            else {
+                1.0
+            }
+
+            $left = [int][Math]::Round($windowRect.Left + (($x - $windowUiaRect.X) * $scaleX))
+            $top = [int][Math]::Round($windowRect.Top + (($y - $windowUiaRect.Y) * $scaleY))
+            $right = [int][Math]::Round($windowRect.Left + (($x + $width - $windowUiaRect.X) * $scaleX))
+            $bottom = [int][Math]::Round($windowRect.Top + (($y + $height - $windowUiaRect.Y) * $scaleY))
+        }
+        catch {
+        }
+    }
+
+    $left -= $padding
+    $top -= $padding
+    $right += $padding
+    $bottom += $padding
+    try {
+        Add-Type -AssemblyName System.Windows.Forms -ErrorAction SilentlyContinue
+        $virtualScreen = [System.Windows.Forms.SystemInformation]::VirtualScreen
+        $left = [Math]::Max($virtualScreen.Left, $left)
+        $top = [Math]::Max($virtualScreen.Top, $top)
+        $right = [Math]::Min($virtualScreen.Right, $right)
+        $bottom = [Math]::Min($virtualScreen.Bottom, $bottom)
+    }
+    catch {
+    }
+
+    if ($right -le $left -or $bottom -le $top) {
+        return $null
+    }
+
+    return [ordered]@{
+        Found = $true
+        Reason = ""
+        X = $left
+        Y = $top
+        Width = [Math]::Max(1, $right - $left)
+        Height = [Math]::Max(1, $bottom - $top)
+        ChangedSamples = 0
+    }
+}
+
+function Save-ScreenElementCrop($element, [string]$path, [string]$source = "ScreenElement", [int]$padding = 8, $referenceWindow = $null) {
+    $bounds = Get-ElementScreenBounds $element $padding $referenceWindow
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = $source
+            Screenshot = ""
+            Bounds = $bounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    try {
+        Capture-ScreenBounds $bounds.X $bounds.Y $bounds.Width $bounds.Height $path
+    }
+    catch {
+        return [ordered]@{
+            Found = $false
+            Source = $source
+            Screenshot = ""
+            Bounds = $bounds
+            Width = $bounds.Width
+            Height = $bounds.Height
+            NonBlank = $false
+            Error = $_.Exception.Message
+        }
+    }
+
+    return [ordered]@{
+        Found = $true
+        Source = $source
+        Screenshot = $path
+        Bounds = $bounds
+        Width = $bounds.Width
+        Height = $bounds.Height
+        ChangedSamples = 0
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+    }
+}
+
+function New-RenderedArtifactCrop([string]$path, [string]$source, $bounds) {
+    if (!(Test-Path $path)) {
+        return $null
+    }
+
+    $size = Get-ImageSize $path
+    return [ordered]@{
+        Found = $true
+        Source = $source
+        Screenshot = $path
+        Bounds = $bounds
+        Width = $size.Width
+        Height = $size.Height
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+    }
+}
+
+function Get-ModernRenderedElementArtifactPath([string]$caseDir, $element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $automationId = $element.Current.AutomationId
+        if ([string]::IsNullOrWhiteSpace($automationId)) {
+            return ""
+        }
+
+        $path = Join-Path $caseDir ("modernwpf-artifacts\{0}.png" -f $automationId)
+        if (Test-Path $path) {
+            return $path
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Copy-RenderedArtifactCrop([string]$sourcePath, [string]$destinationPath, [string]$source) {
+    if ([string]::IsNullOrWhiteSpace($sourcePath) -or !(Test-Path $sourcePath)) {
+        return $null
+    }
+
+    Copy-Item -LiteralPath $sourcePath -Destination $destinationPath -Force
+    return New-RenderedArtifactCrop $destinationPath $source $null
+}
+
+function Refresh-ModernWpfVisualArtifacts($window, [string]$artifactDir = "") {
+    $refreshButton = TryFind-DescendantByAutomationId $window "GalleryVisualTestRefreshArtifacts"
+    if ($null -eq $refreshButton) {
+        return $false
+    }
+
+    $statusPath = if ([string]::IsNullOrWhiteSpace($artifactDir)) {
+        ""
+    }
+    else {
+        Join-Path $artifactDir "modernwpf-gallery-status.txt"
+    }
+    $previousStatusWrite = if (![string]::IsNullOrWhiteSpace($statusPath) -and (Test-Path $statusPath)) {
+        (Get-Item -LiteralPath $statusPath).LastWriteTimeUtc.Ticks
+    }
+    else {
+        0L
+    }
+
+    if (Invoke-ElementPatternOnce $window $refreshButton) {
+        if (![string]::IsNullOrWhiteSpace($statusPath)) {
+            try {
+                Wait-Until -TimeoutSeconds 10 -Description "ModernWpf visual artifact refresh" -Probe {
+                    if (!(Test-Path $statusPath)) {
+                        return $null
+                    }
+
+                    $writeTicks = (Get-Item -LiteralPath $statusPath).LastWriteTimeUtc.Ticks
+                    return $(if ($writeTicks -gt $previousStatusWrite) { $writeTicks } else { $null })
+                } | Out-Null
+            }
+            catch {
+                Start-Sleep -Milliseconds 600
+            }
+        }
+        else {
+            Start-Sleep -Milliseconds 600
+        }
+        return $true
+    }
+
+    return $false
+}
+
+function New-RenderedArtifactSliceCrop([string]$sourcePath, [string]$path, [string]$source, [int]$width, [int]$height) {
+    if (!(Test-Path $sourcePath) -or $width -le 0 -or $height -le 0) {
+        return $null
+    }
+
+    $sourceSize = Get-ImageSize $sourcePath
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = ""
+        X = 0
+        Y = 0
+        Width = [Math]::Min($width, $sourceSize.Width)
+        Height = [Math]::Min($height, $sourceSize.Height)
+        ChangedSamples = 0
+    }
+    Save-Crop $sourcePath $bounds $path 0 | Out-Null
+    return New-RenderedArtifactCrop $path $source $bounds
+}
+
+function New-SplitViewReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
+    if ($null -eq $sampleElement) {
+        return $null
+    }
+
+    $paneRoot = Find-DescendantByAutomationId $sampleElement "PaneRoot"
+    $content = Find-DescendantByAutomationId $sampleElement "content"
+    $paneBounds = Get-ElementWindowBounds $window $paneRoot
+    $contentBounds = Get-ElementWindowBounds $window $content
+    if ($null -eq $paneBounds -or $null -eq $contentBounds) {
+        return $null
+    }
+
+    $right = [Math]::Max($paneBounds.X + $paneBounds.Width, $contentBounds.X + $contentBounds.Width)
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the WinUI SplitView pane and content columns to match the ModernWpf rendered SplitView artifact."
+        X = $paneBounds.X
+        Y = $paneBounds.Y
+        Width = [Math]::Max(1, $right - $paneBounds.X)
+        Height = $paneBounds.Height
+        ChangedSamples = $paneBounds.ChangedSamples
+    }
+
+    $path = Join-Path $caseDir "winui3-SplitView-primary-content-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "SplitView pane and content" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
+function New-TitleBarModernPrimaryCrop([string]$caseDir) {
+    $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $sampleArtifact = Join-Path $artifactDir "GallerySample_TitleBar_Root.png"
+    if (!(Test-Path $sampleArtifact)) {
+        return $null
+    }
+
+    $sampleSize = Get-ImageSize $sampleArtifact
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the ModernWpf TitleBarControl from the rendered sample root because the control-only VisualBrush crop is blank."
+        X = 0
+        Y = [Math]::Max(0, [int][Math]::Round(($sampleSize.Height - 48) / 2.0))
+        Width = [Math]::Min(470, $sampleSize.Width)
+        Height = [Math]::Min(48, $sampleSize.Height)
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $artifactDir "GallerySample_TitleBar_TitleBarControl_fromRoot.png"
+    $savedBounds = Save-Crop $sampleArtifact $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "GallerySample_TitleBar_TitleBarControl" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
+function New-AnnotatedScrollBarReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
+    $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $modernControlArtifact = Join-Path $modernArtifactDir "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar.png"
+    if (!(Test-Path $modernControlArtifact)) {
+        return $null
+    }
+
+    $modernSize = Get-ImageSize $modernControlArtifact
+    $scrollPresenter = Find-DescendantByAutomationId $window "PART_ScrollPresenter"
+    $scrollBounds = Get-ElementWindowBounds $window $scrollPresenter
+    if ($null -eq $scrollBounds) {
+        return $null
+    }
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the rendered WinUI AnnotatedScrollBar from its first Azure label."
+        X = [Math]::Max(0, $scrollBounds.X + $scrollBounds.Width + 5)
+        Y = [Math]::Max(0, $scrollBounds.Y)
+        Width = $modernSize.Width
+        Height = $modernSize.Height
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "winui3-AnnotatedScrollBar-primary-control-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "AnnotatedScrollBar" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
+function New-ItemsRepeaterModernPrimaryCrop([string]$caseDir, $window, [string]$screenshot) {
+    $repeater = Find-DescendantByAutomationId $window "GallerySample_ItemsRepeater_ItemsRepeater"
+    $repeaterBounds = Get-ElementWindowBounds $window $repeater
+    if ($null -eq $repeaterBounds -or !$repeaterBounds.Found) {
+        return $null
+    }
+
+    # The current Gallery sample contains three 425x24 HorizontalBarTemplate
+    # rows separated by the StackLayout's two 8px gaps. Crop that source-owned
+    # visual instead of the WPF VisualBrush artifact, whose parent offset can
+    # clip the right edge and leave a misleading mostly-blank viewbox.
+    $contentInsetX = [Math]::Max(0, [int][Math]::Round(($repeaterBounds.Width - 425) / 2.0))
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the three source ItemsRepeater bar rows from live ModernWpf element bounds."
+        X = $repeaterBounds.X + $contentInsetX
+        Y = $repeaterBounds.Y
+        Width = [Math]::Min(425, $repeaterBounds.Width)
+        Height = [Math]::Min(88, $repeaterBounds.Height)
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "modernwpf-ItemsRepeater-primary-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "ItemsRepeater source bar rows" $savedBounds
+    if ($null -ne $crop -and $crop.VisibleStdDev -ge (Get-PrimaryCropMinimumVisibleStdDev "ItemsRepeater")) {
+        $crop["NonBlank"] = $true
+        return $crop
+    }
+
+    return $null
+}
+
+function New-ItemsRepeaterReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
+    if ($null -eq $sampleElement) {
+        return $null
+    }
+
+    $addButton = Find-DescendantByAutomationId $sampleElement "AddBtn"
+    $addButtonBounds = Get-ElementWindowBounds $window $addButton
+    if ($null -eq $addButtonBounds -or !$addButtonBounds.Found) {
+        return $null
+    }
+
+    $paneCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        [System.Windows.Automation.ControlType]::Pane)
+    $panes = $sampleElement.FindAll([System.Windows.Automation.TreeScope]::Descendants, $paneCondition)
+    $barHostBounds = $null
+    foreach ($pane in $panes) {
+        try {
+            if (![string]::IsNullOrEmpty([string]$pane.Current.AutomationId)) {
+                continue
+            }
+
+            $candidateBounds = Get-ElementWindowBounds $window $pane
+            if ($null -ne $candidateBounds -and $candidateBounds.Found -and
+                $candidateBounds.Width -ge 420 -and $candidateBounds.Width -le 440 -and
+                $candidateBounds.Height -ge 88 -and
+                $candidateBounds.X -lt $addButtonBounds.X -and
+                $candidateBounds.Y -le $addButtonBounds.Y -and
+                ($candidateBounds.Y + $candidateBounds.Height) -gt $addButtonBounds.Y) {
+                $barHostBounds = $candidateBounds
+                break
+            }
+        }
+        catch {
+        }
+    }
+
+    if ($null -eq $barHostBounds) {
+        return $null
+    }
+
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the three source ItemsRepeater bar rows from the first WinUI ControlExample pane."
+        X = $barHostBounds.X
+        Y = $barHostBounds.Y
+        Width = [Math]::Min(425, $barHostBounds.Width)
+        Height = 88
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "winui3-ItemsRepeater-primary-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "ItemsRepeater source bar rows" $savedBounds
+    if ($null -ne $crop -and $crop.VisibleStdDev -ge (Get-PrimaryCropMinimumVisibleStdDev "ItemsRepeater")) {
+        $crop["NonBlank"] = $true
+        return $crop
+    }
+
+    return $null
+}
+
+function New-IconElementReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot) {
+    $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $modernIconArtifact = Join-Path $modernArtifactDir "GallerySample_IconElement_SlicesIcon.png"
+    if (!(Test-Path $modernIconArtifact)) {
+        return $null
+    }
+
+    $modernSize = Get-ImageSize $modernIconArtifact
+    $bodyText = Find-DescendantByName $window "The ShowAsMonochrome property (true by default) will result in a solid block of the foreground color if the property is set to true and the icon is more than one color. This behavior can be ignored by setting the ShowAsMonochrome property to false."
+    $bodyBounds = Get-ElementWindowBounds $window $bodyText
+    if ($null -eq $bodyBounds) {
+        return $null
+    }
+
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the rendered WinUI SlicesIcon below the first example body text."
+        X = $bodyBounds.X
+        Y = $bodyBounds.Y + $bodyBounds.Height + 12
+        Width = $modernSize.Width
+        Height = $modernSize.Height
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "winui3-IconElement-primary-icon-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "SlicesIcon" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
+function New-ThemeShadowModernPrimaryCrop([string]$caseDir) {
+    $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $modernSampleArtifact = Join-Path $modernArtifactDir "GallerySample_ThemeShadow_Root.png"
+    if (!(Test-Path $modernSampleArtifact)) {
+        return $null
+    }
+
+    $modernSize = Get-ImageSize $modernSampleArtifact
+    $demoBodySize = [Math]::Min($modernSize.Width, $modernSize.Height)
+    if ($demoBodySize -le 0) {
+        return $null
+    }
+
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the source 272px ThemeShadow example grid from the stretched ModernWpf sample root."
+        X = 0
+        Y = 0
+        Width = $demoBodySize
+        Height = $demoBodySize
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "modernwpf-ThemeShadow-primary-demo-body-crop.png"
+    $savedBounds = Save-Crop $modernSampleArtifact $bounds $path 0
+    return New-RenderedArtifactCrop $path "ThemeShadow demo body" $savedBounds
+}
+
+function New-ThemeShadowReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
+    $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $modernSampleArtifact = Join-Path $modernArtifactDir "GallerySample_ThemeShadow_Root.png"
+    if (!(Test-Path $modernSampleArtifact)) {
+        return $null
+    }
+
+    $modernSize = Get-ImageSize $modernSampleArtifact
+    $sampleBounds = Get-ElementWindowBounds $window $sampleElement
+    $headerText = Find-DescendantByName $window "ThemeShadow applied to a Border"
+    $headerBounds = Get-ElementWindowBounds $window $headerText
+    if ($null -eq $sampleBounds -or !$sampleBounds.Found -or $null -eq $headerBounds -or !$headerBounds.Found) {
+        return $null
+    }
+
+    # WinUI ControlExample contributes its own content-column inset outside the
+    # source Example3Grid. Remove it so both crops begin at the 36px-padded grid.
+    $controlExampleContentInsetX = 13
+    $controlExampleContentInsetY = 12
+    $contentY = $headerBounds.Y + $headerBounds.Height + 13
+    $demoBodySize = [Math]::Min($modernSize.Width, $modernSize.Height)
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the WinUI ThemeShadow source example grid to match the ModernWpf demo body."
+        X = $headerBounds.X + $controlExampleContentInsetX
+        Y = [Math]::Max($sampleBounds.Y, $contentY) + $controlExampleContentInsetY
+        Width = $demoBodySize
+        Height = $demoBodySize
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "winui3-ThemeShadow-primary-content-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "ThemeShadow demo body" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
+function New-PersonPictureReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
+    $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $modernPrimaryArtifact = Join-Path $modernArtifactDir "GallerySample_PersonPicture_PersonPicture.png"
+    if (!(Test-Path $modernPrimaryArtifact)) {
+        return $null
+    }
+
+    $modernSize = Get-ImageSize $modernPrimaryArtifact
+    $sampleBounds = Get-ElementWindowBounds $window $sampleElement
+    if ($null -eq $sampleBounds -or !$sampleBounds.Found) {
+        return $null
+    }
+
+    $profileImageRadio = Find-DescendantByAutomationId $window "ProfileImageRadio"
+    $profileImageRadioBounds = Get-ElementWindowBounds $window $profileImageRadio
+    $searchRight = if ($null -ne $profileImageRadioBounds -and $profileImageRadioBounds.Found) {
+        [Math]::Min($profileImageRadioBounds.X, $sampleBounds.X + 320)
+    } else {
+        $sampleBounds.X + 320
+    }
+    $searchBounds = [ordered]@{
+        Found = $true
+        Reason = "Searches the first example body for the rendered PersonPicture image."
+        X = $sampleBounds.X
+        Y = $sampleBounds.Y + 70
+        Width = [Math]::Max($modernSize.Width, $searchRight - $sampleBounds.X)
+        Height = 170
+        ChangedSamples = 0
+    }
+
+    $bounds = Find-ColorfulContentCropBounds $screenshot $searchBounds $modernSize.Width $modernSize.Height
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return $null
+    }
+
+    $bounds.Reason = "Cropped the WinUI PersonPicture avatar from the first example content."
+
+    $path = Join-Path $caseDir "winui3-PersonPicture-primary-content-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "PersonPicture avatar" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
+function Find-ColorfulContentCropBounds([string]$screenshot, $searchBounds, [int]$targetWidth, [int]$targetHeight) {
+    if ($null -eq $searchBounds -or !$searchBounds.Found -or !(Test-Path $screenshot)) {
+        return $null
+    }
+
+    $source = [System.Drawing.Bitmap]::FromFile($screenshot)
+    try {
+        $left = [Math]::Max(0, [int]$searchBounds.X)
+        $top = [Math]::Max(0, [int]$searchBounds.Y)
+        $right = [Math]::Min($source.Width, [int]($searchBounds.X + $searchBounds.Width))
+        $bottom = [Math]::Min($source.Height, [int]($searchBounds.Y + $searchBounds.Height))
+        if ($right -le $left -or $bottom -le $top) {
+            return $null
+        }
+
+        $minX = $source.Width
+        $minY = $source.Height
+        $maxX = -1
+        $maxY = -1
+        $pixelCount = 0
+        for ($x = $left; $x -lt $right; $x++) {
+            for ($y = $top; $y -lt $bottom; $y++) {
+                $color = $source.GetPixel($x, $y)
+                $maxChannel = [Math]::Max($color.R, [Math]::Max($color.G, $color.B))
+                $minChannel = [Math]::Min($color.R, [Math]::Min($color.G, $color.B))
+                $luminance = (0.2126 * $color.R) + (0.7152 * $color.G) + (0.0722 * $color.B)
+                if (($maxChannel - $minChannel) -gt 22 -and $luminance -gt 45) {
+                    $minX = [Math]::Min($minX, $x)
+                    $maxX = [Math]::Max($maxX, $x)
+                    $minY = [Math]::Min($minY, $y)
+                    $maxY = [Math]::Max($maxY, $y)
+                    $pixelCount++
+                }
+            }
+        }
+
+        if ($pixelCount -lt 200 -or $maxX -lt $minX -or $maxY -lt $minY) {
+            return $null
+        }
+
+        return [ordered]@{
+            Found = $true
+            Reason = "Cropped the colorful rendered content within the search bounds."
+            X = [Math]::Max(0, [Math]::Min($source.Width - $targetWidth, $minX))
+            Y = [Math]::Max(0, [Math]::Min($source.Height - $targetHeight, $minY))
+            Width = $targetWidth
+            Height = $targetHeight
+            ChangedSamples = 0
+        }
+    }
+    finally {
+        $source.Dispose()
+    }
+}
+
+function Find-AccentComponentBounds([string]$screenshot, $searchBounds) {
+    if ($null -eq $searchBounds -or !$searchBounds.Found -or !(Test-Path $screenshot)) {
+        return $null
+    }
+
+    $source = [System.Drawing.Bitmap]::FromFile($screenshot)
+    try {
+        $left = [Math]::Max(0, [int]$searchBounds.X)
+        $top = [Math]::Max(0, [int]$searchBounds.Y)
+        $right = [Math]::Min($source.Width, [int]($searchBounds.X + $searchBounds.Width))
+        $bottom = [Math]::Min($source.Height, [int]($searchBounds.Y + $searchBounds.Height))
+        $width = $right - $left
+        $height = $bottom - $top
+        if ($width -le 0 -or $height -le 0) {
+            return $null
+        }
+
+        $accentPixels = New-Object 'bool[,]' $width, $height
+        for ($x = 0; $x -lt $width; $x++) {
+            for ($y = 0; $y -lt $height; $y++) {
+                $color = $source.GetPixel($left + $x, $top + $y)
+                if ($color.B -gt 140 -and
+                    $color.G -gt 70 -and
+                    $color.R -lt 120 -and
+                    ($color.B - $color.R) -gt 70 -and
+                    ($color.B - $color.G) -gt 20) {
+                    $accentPixels[$x, $y] = $true
+                }
+            }
+        }
+
+        $visited = New-Object 'bool[,]' $width, $height
+        $components = New-Object System.Collections.Generic.List[object]
+        for ($startX = 0; $startX -lt $width; $startX++) {
+            for ($startY = 0; $startY -lt $height; $startY++) {
+                if (!$accentPixels[$startX, $startY] -or $visited[$startX, $startY]) {
+                    continue
+                }
+
+                $queueX = New-Object System.Collections.Generic.Queue[int]
+                $queueY = New-Object System.Collections.Generic.Queue[int]
+                $queueX.Enqueue($startX)
+                $queueY.Enqueue($startY)
+                $visited[$startX, $startY] = $true
+                $minX = $startX
+                $maxX = $startX
+                $minY = $startY
+                $maxY = $startY
+                $count = 0
+
+                while ($queueX.Count -gt 0) {
+                    $x = $queueX.Dequeue()
+                    $y = $queueY.Dequeue()
+                    $count++
+                    $minX = [Math]::Min($minX, $x)
+                    $maxX = [Math]::Max($maxX, $x)
+                    $minY = [Math]::Min($minY, $y)
+                    $maxY = [Math]::Max($maxY, $y)
+
+                    for ($dx = -1; $dx -le 1; $dx++) {
+                        for ($dy = -1; $dy -le 1; $dy++) {
+                            if ($dx -eq 0 -and $dy -eq 0) {
+                                continue
+                            }
+
+                            $nextX = $x + $dx
+                            $nextY = $y + $dy
+                            if ($nextX -lt 0 -or $nextY -lt 0 -or $nextX -ge $width -or $nextY -ge $height) {
+                                continue
+                            }
+
+                            if ($accentPixels[$nextX, $nextY] -and !$visited[$nextX, $nextY]) {
+                                $visited[$nextX, $nextY] = $true
+                                $queueX.Enqueue($nextX)
+                                $queueY.Enqueue($nextY)
+                            }
+                        }
+                    }
+                }
+
+                $componentWidth = $maxX - $minX + 1
+                $componentHeight = $maxY - $minY + 1
+                if ($count -ge 20 -and
+                    $componentWidth -ge 8 -and
+                    $componentWidth -le 24 -and
+                    $componentHeight -ge 8 -and
+                    $componentHeight -le 24 -and
+                    $minY -lt ($height * 0.65)) {
+                    $components.Add([ordered]@{
+                        Count = $count
+                        X = $minX
+                        Y = $minY
+                        Width = $componentWidth
+                        Height = $componentHeight
+                    })
+                }
+            }
+        }
+
+        $component = @($components.ToArray() | Sort-Object @{ Expression = "Y"; Ascending = $true }, @{ Expression = "X"; Ascending = $true } | Select-Object -First 1)
+        if ($component.Count -eq 0) {
+            return $null
+        }
+
+        $match = $component[0]
+        return [ordered]@{
+            Found = $true
+            Reason = "Found the first small badge-sized accent component inside the search bounds."
+            X = $left + $match.X
+            Y = $top + $match.Y
+            Width = $match.Width
+            Height = $match.Height
+            ChangedSamples = 0
+        }
+    }
+    finally {
+        $source.Dispose()
+    }
+}
+
+function New-ColorPickerModernPrimaryCrop([string]$caseDir) {
+    $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $sourcePath = Join-Path $artifactDir "GallerySample_ColorPicker_ColorPicker.png"
+    if (!(Test-Path $sourcePath)) {
+        return $null
+    }
+
+    $sourceSize = Get-ImageSize $sourcePath
+    $topPadding = 4
+    $bottomPaddingAndMargin = 16
+    if ($sourceSize.Width -le 0 -or $sourceSize.Height -le ($topPadding + $bottomPaddingAndMargin)) {
+        return $null
+    }
+
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the ModernWpf ColorPicker editor surface inside the source-equivalent root padding and bottom margin."
+        X = 0
+        Y = $topPadding
+        Width = $sourceSize.Width
+        Height = $sourceSize.Height - $topPadding - $bottomPaddingAndMargin
+        ChangedSamples = 0
+    }
+    $path = Join-Path $artifactDir "GallerySample_ColorPicker_ColorPicker_editor-surface.png"
+    $savedBounds = Save-Crop $sourcePath $bounds $path 0
+    return New-RenderedArtifactCrop $path "ColorPicker editor surface" $savedBounds
+}
+
+function New-ColorPickerReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot) {
+    $elementIds = @(
+        "ColorSpectrum",
+        "ThirdDimensionSlider",
+        "ColorRepresentationComboBox",
+        "HexTextBox",
+        "BlueTextBox",
+        "BlueLabel"
+    )
+    $boundsList = @()
+    $boundsById = @{}
+    foreach ($elementId in $elementIds) {
+        $element = Find-DescendantByAutomationId $window $elementId
+        $bounds = Get-ElementWindowBounds $window $element
+        if ($null -eq $bounds -or !$bounds.Found) {
+            return $null
+        }
+
+        $boundsList += $bounds
+        $boundsById[$elementId] = $bounds
+    }
+
+    # ComboBox UIA bounds include a four-pixel focus overhang. Anchor the
+    # horizontal crop to the spectrum/slider content so the reference surface
+    # matches the rendered ModernWpf editor rather than including that overhang.
+    $left = $boundsById["ColorSpectrum"].X
+    $top = $boundsById["ColorSpectrum"].Y
+    $right = $boundsById["ThirdDimensionSlider"].X + $boundsById["ThirdDimensionSlider"].Width
+    $bottom = @($boundsList | ForEach-Object { $_.Y + $_.Height } | Measure-Object -Maximum).Maximum
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the WinUI ColorPicker editor surface from stable child bounds."
+        X = $left
+        Y = $top
+        Width = $right - $left
+        Height = $bottom - $top
+        ChangedSamples = 0
+    }
+
+    $path = Join-Path $caseDir "winui3-ColorPicker-primary-content-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "ColorPicker editor surface" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
+function New-InfoBadgeReferencePrimaryCrop([string]$caseDir, $window, [string]$screenshot, $sampleElement) {
+    $modernArtifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    $modernPrimaryArtifact = Join-Path $modernArtifactDir "GallerySample_InfoBadge_InfoBadge.png"
+    if (!(Test-Path $modernPrimaryArtifact)) {
+        return $null
+    }
+
+    $modernSize = Get-ImageSize $modernPrimaryArtifact
+    $sampleBounds = Get-ElementWindowBounds $window $sampleElement
+    $navigationView = TryFind-DescendantByAutomationId $window "nvSample1"
+    $navigationViewBounds = Get-ElementWindowBounds $window $navigationView
+    $searchBounds = if ($null -ne $navigationViewBounds -and $navigationViewBounds.Found) {
+        $navigationViewBounds
+    }
+    else {
+        $sampleBounds
+    }
+    $referenceAccent = Find-AccentComponentBounds $screenshot $searchBounds
+    $bounds = $null
+    if ($null -ne $referenceAccent) {
+        $referenceCenterX = $referenceAccent.X + ($referenceAccent.Width / 2.0)
+        $referenceCenterY = $referenceAccent.Y + ($referenceAccent.Height / 2.0)
+        $bounds = [ordered]@{
+            Found = $true
+            Reason = "Cropped the first rendered WinUI InfoBadge value badge from the sample pixels."
+            X = [Math]::Max($searchBounds.X, [int][Math]::Round($referenceCenterX - ($modernSize.Width / 2.0)))
+            Y = [Math]::Max($searchBounds.Y, [int][Math]::Round($referenceCenterY - ($modernSize.Height / 2.0)))
+            Width = $modernSize.Width
+            Height = $modernSize.Height
+            ChangedSamples = 0
+        }
+    }
+    if ($null -eq $bounds) {
+        return $null
+    }
+
+    $path = Join-Path $caseDir "winui3-InfoBadge-primary-content-crop.png"
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    $crop = New-RenderedArtifactCrop $path "InfoBadge value badge" $savedBounds
+    if ($null -ne $crop -and $crop.NonBlank) {
+        return $crop
+    }
+
+    return $null
+}
+
+function Capture-StaticCrops([string]$app, [string]$control, [string]$caseDir, $window, [string]$screenshot) {
+    $primaryElement = $null
+    $primarySource = ""
+    $sampleElement = $null
+    $sampleSource = ""
+
+    if ($app -eq "ModernWpf") {
+        $primarySource = Get-ModernPrimaryCropAutomationId $control
+        $sampleSource = Get-SampleRootAutomationId $control
+
+        $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
+        $primaryArtifact = Join-Path $artifactDir ($primarySource + ".png")
+        $sampleArtifact = Join-Path $artifactDir ($sampleSource + ".png")
+        $primaryCrop = New-RenderedArtifactCrop $primaryArtifact $primarySource $null
+        $sampleCrop = New-RenderedArtifactCrop $sampleArtifact $sampleSource $null
+        $menuBarArtifactCrop = $null
+
+        if ($control -eq "ImageIcon") {
+            # A detached VisualBrush retains the nested Button's parent offset
+            # and clips the lower half of ImageExample1. Crop the visible UIA
+            # button from the real Gallery window instead.
+            $primaryCrop = $null
+            $sampleCrop = $null
+        }
+
+        if ($control -eq "WinUIProgressBar") {
+            # The source control is only three physical pixels high. WPF's
+            # detached VisualBrush loses its one-pixel track/indicator strokes,
+            # so crop the visible UIA element from the real Gallery window.
+            $primaryCrop = $null
+            $sampleCrop = $null
+        }
+
+        if ($control -eq "MenuBar") {
+            $menuBarArtifactCrop = $primaryCrop
+            $primaryCrop = $null
+        }
+
+        if ($control -eq "InfoBar" -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank) {
+            $rootSlicePath = Join-Path $artifactDir ($primarySource + "_fromRoot.png")
+            $rootSlice = New-RenderedArtifactSliceCrop $sampleArtifact $rootSlicePath $primarySource $primaryCrop.Width $primaryCrop.Height
+            if ($null -ne $rootSlice -and $rootSlice.NonBlank) {
+                $primaryCrop = $rootSlice
+            }
+            else {
+                $primaryCrop = $null
+            }
+        }
+
+        if ($control -eq "ColorPicker") {
+            $colorPickerPrimary = New-ColorPickerModernPrimaryCrop $caseDir
+            if ($null -ne $colorPickerPrimary -and $colorPickerPrimary.NonBlank) {
+                $primaryCrop = $colorPickerPrimary
+            }
+        }
+
+        if ($control -eq "ThemeShadow") {
+            $themeShadowPrimary = New-ThemeShadowModernPrimaryCrop $caseDir
+            if ($null -ne $themeShadowPrimary -and $themeShadowPrimary.NonBlank) {
+                $primaryCrop = $themeShadowPrimary
+            }
+        }
+
+        if ($control -eq "ItemsRepeater") {
+            $itemsRepeaterPrimary = New-ItemsRepeaterModernPrimaryCrop $caseDir $window $screenshot
+            if ($null -ne $itemsRepeaterPrimary -and $itemsRepeaterPrimary.NonBlank) {
+                $primaryCrop = $itemsRepeaterPrimary
+            }
+        }
+
+        if ($control -eq "BreadcrumbBar") {
+            if ($null -ne $primaryCrop -and !$primaryCrop.NonBlank) {
+                $primaryCrop = $null
+            }
+
+            if ($null -ne $sampleCrop -and !$sampleCrop.NonBlank) {
+                $sampleCrop = $null
+            }
+        }
+
+        if ($control -eq "TitleBar" -and $null -ne $primaryCrop -and !$primaryCrop.NonBlank) {
+            $titleBarPrimary = New-TitleBarModernPrimaryCrop $caseDir
+            if ($null -ne $titleBarPrimary) {
+                $primaryCrop = $titleBarPrimary
+            }
+            else {
+                $primaryCrop = $null
+            }
+        }
+
+        # Detached VisualBrush rendering is not reliable for every WPF visual.
+        # Image-backed controls and some templated input controls can produce a
+        # correctly-sized but empty artifact while the live window is correct.
+        # Reject that artifact here so the primary crop is taken from the live
+        # UIA bounds below instead of comparing blank pixels to the reference.
+        if ($null -ne $primaryCrop -and
+            (!$primaryCrop.NonBlank -or
+                ($primaryCrop.Contains("VisibleStdDev") -and
+                    $primaryCrop.VisibleStdDev -lt (Get-PrimaryCropMinimumVisibleStdDev $control)))) {
+            $primaryCrop = $null
+        }
+
+        if ($null -eq $primaryCrop) {
+            $primaryElement = TryFind-DescendantByAutomationId $window $primarySource
+        }
+
+        if ($null -eq $sampleCrop) {
+            $sampleElement = TryFind-DescendantByAutomationId $window $sampleSource
+        }
+    }
+    else {
+        $primarySource = Get-ReferencePrimaryAutomationId $control
+        if (![string]::IsNullOrEmpty($primarySource)) {
+            $primaryElement = Find-DescendantByAutomationId $window $primarySource
+        }
+        else {
+            $primarySource = Get-ReferencePrimaryName $control
+            if (![string]::IsNullOrEmpty($primarySource)) {
+                $primaryElement = Find-ReferencePrimaryByName $window $control $primarySource
+            }
+        }
+        $sampleSource = "svPanel"
+        $sampleElement = Find-DescendantByAutomationId $window $sampleSource
+    }
+
+    $primaryPath = Join-Path $caseDir ("{0}-{1}-primary-crop.png" -f $app.ToLowerInvariant(), $control)
+    $samplePath = Join-Path $caseDir ("{0}-{1}-sample-crop.png" -f $app.ToLowerInvariant(), $control)
+    $primaryBounds = Get-ElementWindowBounds $window $primaryElement
+    $sampleBounds = Get-ElementWindowBounds $window $sampleElement
+
+    if ($app -eq "ModernWpf") {
+        if ($null -ne $primaryCrop -and $null -ne $primaryBounds) {
+            $primaryCrop["Bounds"] = $primaryBounds
+        }
+
+        if ($null -ne $sampleCrop -and $null -ne $sampleBounds) {
+            $sampleCrop["Bounds"] = $sampleBounds
+        }
+
+        $primaryResult = if ($null -ne $primaryCrop) { $primaryCrop } else { Save-ElementCrop $window $screenshot $primaryPath $primaryElement $primarySource 0 }
+        if ($control -eq "MenuBar" -and $primaryResult.Found -and !$primaryResult.NonBlank -and $null -ne $menuBarArtifactCrop -and $menuBarArtifactCrop.NonBlank) {
+            $primaryResult = $menuBarArtifactCrop
+        }
+        if ($control -eq "InfoBar" -and $primaryResult.Found -and !$primaryResult.NonBlank -and $null -ne $primaryBounds -and (Test-Path $screenshot)) {
+            $fallbackBounds = [ordered]@{
+                Found = $true
+                Reason = "Adjusted below blank InfoBar automation bounds."
+                X = $primaryBounds.X
+                Y = $primaryBounds.Y + $primaryBounds.Height + 6
+                Width = $primaryBounds.Width
+                Height = $primaryBounds.Height
+                ChangedSamples = $primaryBounds.ChangedSamples
+            }
+            $fallbackPath = Join-Path $caseDir ("modernwpf-{0}-primary-visible-crop.png" -f $control)
+            $savedBounds = Save-Crop $screenshot $fallbackBounds $fallbackPath 0
+            $fallbackResult = [ordered]@{
+                Found = $true
+                Source = $primarySource
+                Screenshot = $fallbackPath
+                Bounds = $savedBounds
+                Width = $savedBounds.Width
+                Height = $savedBounds.Height
+                NonBlank = Test-ImageNotBlank $fallbackPath
+                VisibleStdDev = Get-ImageVisibleStdDev $fallbackPath
+            }
+            if ($fallbackResult.NonBlank) {
+                $primaryResult = $fallbackResult
+            }
+        }
+
+        if ($null -ne $primaryResult -and $primaryResult.Found -and
+            ![string]::IsNullOrWhiteSpace([string]$primaryResult.Screenshot) -and
+            (Test-Path -LiteralPath $primaryResult.Screenshot) -and
+            !([string]$primaryResult.Screenshot).Equals($primaryPath, [System.StringComparison]::OrdinalIgnoreCase)) {
+            Copy-Item -LiteralPath $primaryResult.Screenshot -Destination $primaryPath -Force
+            $primaryResult = New-RenderedArtifactCrop $primaryPath $primaryResult.Source $primaryResult.Bounds
+        }
+
+        $sampleResult = if ($null -ne $sampleCrop) { $sampleCrop } else { Save-ElementCrop $window $screenshot $samplePath $sampleElement $sampleSource 10 }
+        if ($null -ne $sampleResult -and $sampleResult.Found -and
+            ![string]::IsNullOrWhiteSpace([string]$sampleResult.Screenshot) -and
+            (Test-Path -LiteralPath $sampleResult.Screenshot) -and
+            !([string]$sampleResult.Screenshot).Equals($samplePath, [System.StringComparison]::OrdinalIgnoreCase)) {
+            Copy-Item -LiteralPath $sampleResult.Screenshot -Destination $samplePath -Force
+            $sampleResult = New-RenderedArtifactCrop $samplePath $sampleResult.Source $sampleResult.Bounds
+        }
+
+        return [ordered]@{
+            Primary = $primaryResult
+            Sample = $sampleResult
+        }
+    }
+
+    $primaryResult = Save-ElementCrop $window $screenshot $primaryPath $primaryElement $primarySource 0
+    if ($control -eq "SplitView") {
+        $splitViewPrimary = New-SplitViewReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
+        if ($null -ne $splitViewPrimary) {
+            $primaryResult = $splitViewPrimary
+        }
+    }
+    elseif ($control -eq "AnnotatedScrollBar") {
+        $annotatedScrollBarPrimary = New-AnnotatedScrollBarReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
+        if ($null -ne $annotatedScrollBarPrimary) {
+            $primaryResult = $annotatedScrollBarPrimary
+        }
+    }
+    elseif ($control -eq "IconElement") {
+        $iconElementPrimary = New-IconElementReferencePrimaryCrop $caseDir $window $screenshot
+        if ($null -ne $iconElementPrimary) {
+            $primaryResult = $iconElementPrimary
+        }
+    }
+    elseif ($control -eq "ThemeShadow") {
+        $themeShadowPrimary = New-ThemeShadowReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
+        if ($null -ne $themeShadowPrimary) {
+            $primaryResult = $themeShadowPrimary
+        }
+    }
+    elseif ($control -eq "PersonPicture") {
+        $personPicturePrimary = New-PersonPictureReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
+        if ($null -ne $personPicturePrimary) {
+            $primaryResult = $personPicturePrimary
+        }
+    }
+    elseif ($control -eq "ItemsRepeater") {
+        $itemsRepeaterPrimary = New-ItemsRepeaterReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
+        if ($null -ne $itemsRepeaterPrimary) {
+            $primaryResult = $itemsRepeaterPrimary
+        }
+    }
+    elseif ($control -eq "InfoBadge") {
+        $infoBadgePrimary = New-InfoBadgeReferencePrimaryCrop $caseDir $window $screenshot $sampleElement
+        if ($null -ne $infoBadgePrimary) {
+            $primaryResult = $infoBadgePrimary
+        }
+    }
+    elseif ($control -eq "ColorPicker") {
+        $colorPickerPrimary = New-ColorPickerReferencePrimaryCrop $caseDir $window $screenshot
+        if ($null -ne $colorPickerPrimary) {
+            $primaryResult = $colorPickerPrimary
+        }
+    }
+
+    return [ordered]@{
+        Primary = $primaryResult
+        Sample = Save-ElementCrop $window $screenshot $samplePath $sampleElement $sampleSource 10
+    }
+}
+
+function Get-ElementWindowBounds($window, $element) {
+    if ($null -eq $window -or $null -eq $element) {
+        return $null
+    }
+
+    $windowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+    $windowUiaRect = $window.Current.BoundingRectangle
+    $rect = $element.Current.BoundingRectangle
+    $x = [double]$rect.X
+    $y = [double]$rect.Y
+    $width = [double]$rect.Width
+    $height = [double]$rect.Height
+
+    if ([double]::IsInfinity($x) -or [double]::IsInfinity($y) -or
+        [double]::IsInfinity($width) -or [double]::IsInfinity($height) -or
+        [double]::IsNaN($x) -or [double]::IsNaN($y) -or
+        [double]::IsNaN($width) -or [double]::IsNaN($height) -or
+        $width -le 0 -or $height -le 0) {
+        return $null
+    }
+
+    $nativeWidth = [Math]::Max(1, $windowRect.Right - $windowRect.Left)
+    $nativeHeight = [Math]::Max(1, $windowRect.Bottom - $windowRect.Top)
+    $windowUiaWidth = [double]$windowUiaRect.Width
+    $windowUiaHeight = [double]$windowUiaRect.Height
+    $scaleX = if ($windowUiaWidth -gt 0 -and ![double]::IsInfinity($windowUiaWidth) -and ![double]::IsNaN($windowUiaWidth)) {
+        $nativeWidth / $windowUiaWidth
+    }
+    else {
+        1.0
+    }
+    $scaleY = if ($windowUiaHeight -gt 0 -and ![double]::IsInfinity($windowUiaHeight) -and ![double]::IsNaN($windowUiaHeight)) {
+        $nativeHeight / $windowUiaHeight
+    }
+    else {
+        1.0
+    }
+
+    return [ordered]@{
+        Found = $true
+        Reason = ""
+        X = [Math]::Max(0, [int][Math]::Round(($x - $windowUiaRect.X) * $scaleX))
+        Y = [Math]::Max(0, [int][Math]::Round(($y - $windowUiaRect.Y) * $scaleY))
+        Width = [Math]::Max(1, [int][Math]::Round($width * $scaleX))
+        Height = [Math]::Max(1, [int][Math]::Round($height * $scaleY))
+        ChangedSamples = 0
+    }
+}
+
+function Merge-WindowBounds($left, $right) {
+    if ($null -eq $left -or !$left.Found) {
+        return $right
+    }
+
+    if ($null -eq $right -or !$right.Found) {
+        return $left
+    }
+
+    $x = [Math]::Min([int]$left.X, [int]$right.X)
+    $y = [Math]::Min([int]$left.Y, [int]$right.Y)
+    $rightEdge = [Math]::Max([int]$left.X + [int]$left.Width, [int]$right.X + [int]$right.Width)
+    $bottomEdge = [Math]::Max([int]$left.Y + [int]$left.Height, [int]$right.Y + [int]$right.Height)
+    return [ordered]@{
+        Found = $true
+        Reason = ""
+        X = $x
+        Y = $y
+        Width = [Math]::Max(1, $rightEdge - $x)
+        Height = [Math]::Max(1, $bottomEdge - $y)
+        ChangedSamples = 0
+    }
+}
+
+function Get-ContentDialogOpenSurfaceElements($window) {
+    $processId = $window.Current.ProcessId
+    $anchor = $null
+    $anchorArea = [double]::MaxValue
+    foreach ($candidate in @(Find-ElementsByNameInProcess $processId @("Save your work?"))) {
+        if (!(Test-AutomationElementUsable $candidate)) {
+            continue
+        }
+
+        try {
+            $rect = $candidate.Current.BoundingRectangle
+            $area = [double]$rect.Width * [double]$rect.Height
+            if ($candidate.Current.ControlType -eq [System.Windows.Automation.ControlType]::Text -and $area -lt $anchorArea) {
+                $anchor = $candidate
+                $anchorArea = $area
+            }
+        }
+        catch {
+        }
+    }
+
+    if ($null -eq $anchor) {
+        return @()
+    }
+
+    $anchorRect = $anchor.Current.BoundingRectangle
+    $anchorCenterX = $anchorRect.X + ($anchorRect.Width / 2.0)
+    $anchorCenterY = $anchorRect.Y + ($anchorRect.Height / 2.0)
+    $elements = New-Object System.Collections.Generic.List[object]
+    $elements.Add($anchor)
+    foreach ($name in @(
+        "Lorem ipsum dolor sit amet, adipisicing elit.",
+        "Upload your content to the cloud.",
+        "Save",
+        "Don't Save",
+        "Cancel")) {
+        $best = $null
+        $bestDistance = [double]::MaxValue
+        foreach ($candidate in @(Find-ElementsByNameInProcess $processId @($name))) {
+            if (!(Test-AutomationElementUsable $candidate)) {
+                continue
+            }
+
+            try {
+                $rect = $candidate.Current.BoundingRectangle
+                $centerX = $rect.X + ($rect.Width / 2.0)
+                $centerY = $rect.Y + ($rect.Height / 2.0)
+                if ($centerX -lt ($anchorRect.X - 48) -or
+                    $centerX -gt ($anchorRect.Right + 320) -or
+                    $centerY -lt ($anchorRect.Y - 12) -or
+                    $centerY -gt ($anchorRect.Bottom + 240)) {
+                    continue
+                }
+
+                $distance = [Math]::Abs($centerX - $anchorCenterX) + [Math]::Abs($centerY - $anchorCenterY)
+                if ($distance -lt $bestDistance) {
+                    $best = $candidate
+                    $bestDistance = $distance
+                }
+            }
+            catch {
+            }
+        }
+
+        if ($null -ne $best) {
+            $elements.Add($best)
+        }
+    }
+
+    return $elements.ToArray()
+}
+
+function Find-ImageRowTransition([System.Drawing.Bitmap]$bitmap, [int]$left, [int]$width, [int]$minimumY, [int]$maximumY) {
+    $sampleLeft = [Math]::Max(0, $left + 20)
+    $sampleRight = [Math]::Min($bitmap.Width - 1, $left + $width - 21)
+    $minimumY = [Math]::Max(1, $minimumY)
+    $maximumY = [Math]::Min($bitmap.Height - 1, $maximumY)
+    $bestY = -1
+    $bestDelta = -1.0
+    foreach ($y in $minimumY..$maximumY) {
+        $delta = 0.0
+        $samples = 0
+        for ($x = $sampleLeft; $x -le $sampleRight; $x += 8) {
+            $above = $bitmap.GetPixel($x, $y - 1)
+            $below = $bitmap.GetPixel($x, $y)
+            $delta += [Math]::Abs([int]$above.R - [int]$below.R) +
+                [Math]::Abs([int]$above.G - [int]$below.G) +
+                [Math]::Abs([int]$above.B - [int]$below.B)
+            $samples++
+        }
+
+        if ($samples -gt 0) {
+            $delta /= (3.0 * $samples)
+        }
+        if ($delta -gt $bestDelta) {
+            $bestDelta = $delta
+            $bestY = $y
+        }
+    }
+
+    return [ordered]@{
+        Found = $bestY -ge 0
+        Y = $bestY
+        MeanDelta = [Math]::Round($bestDelta, 2)
+    }
+}
+
+function Find-TeachingTipMarginRowTransition(
+    [System.Drawing.Bitmap]$bitmap,
+    [int]$left,
+    [int]$width,
+    [int]$minimumY,
+    [int]$maximumY,
+    [bool]$preferLast) {
+    $minimumY = [Math]::Max(1, $minimumY)
+    $maximumY = [Math]::Min($bitmap.Height - 1, $maximumY)
+    $offsets = @(8, 16, 24, 32, ($width - 33), ($width - 25), ($width - 17), ($width - 9))
+    $candidateY = -1
+    $candidateDelta = 0.0
+    foreach ($y in $minimumY..$maximumY) {
+        $delta = 0.0
+        $samples = 0
+        foreach ($offset in $offsets) {
+            $x = $left + $offset
+            if ($x -lt 0 -or $x -ge $bitmap.Width) {
+                continue
+            }
+
+            $above = $bitmap.GetPixel($x, $y - 1)
+            $below = $bitmap.GetPixel($x, $y)
+            $delta += [Math]::Abs([int]$above.R - [int]$below.R) +
+                [Math]::Abs([int]$above.G - [int]$below.G) +
+                [Math]::Abs([int]$above.B - [int]$below.B)
+            $samples++
+        }
+
+        if ($samples -gt 0) {
+            $delta /= (3.0 * $samples)
+        }
+        if ($delta -ge 8.0 -and ($candidateY -lt 0 -or $preferLast)) {
+            $candidateY = $y
+            $candidateDelta = $delta
+        }
+    }
+
+    return [ordered]@{
+        Found = $candidateY -ge 0
+        Y = $candidateY
+        MeanDelta = [Math]::Round($candidateDelta, 2)
+    }
+}
+
+function Save-TeachingTipOpenSurfaceCrop(
+    $window,
+    $openElement,
+    $triggerElement,
+    [string]$baselineScreenshot,
+    [string]$openScreenshot,
+    [string]$path) {
+    $contentRoot = if ($null -ne $openElement) {
+        Find-DescendantByAutomationId $openElement "ContentRootGrid"
+    }
+    else {
+        $null
+    }
+    if ($null -eq $contentRoot -and $null -ne $openElement) {
+        try {
+            if ($openElement.Current.AutomationId -eq "ContentRootGrid") {
+                $contentRoot = $openElement
+            }
+        }
+        catch {
+        }
+    }
+
+    $contentBounds = Get-ElementWindowBounds $window $contentRoot
+    $geometrySource = "UIA"
+    $topTransition = $null
+    $bottomTransition = $null
+    $differenceBounds = $null
+    if ($null -eq $contentBounds -or !$contentBounds.Found) {
+        $geometrySource = "PixelTransition"
+        $differenceBounds = Find-DifferenceBounds $baselineScreenshot $openScreenshot
+        $targetBounds = Get-ElementWindowBounds $window $triggerElement
+        if ($null -eq $differenceBounds -or !$differenceBounds.Found -or
+            $null -eq $targetBounds -or !$targetBounds.Found) {
+            return [ordered]@{
+                Found = $false
+                Source = "TeachingTipSurface"
+                Screenshot = ""
+                Bounds = $differenceBounds
+                Width = 0
+                Height = 0
+                NonBlank = $false
+                GeometrySource = $geometrySource
+            }
+        }
+
+        $differenceCenterY = [int]$differenceBounds.Y + ([int]$differenceBounds.Height / 2.0)
+        $targetCenterY = [int]$targetBounds.Y + ([int]$targetBounds.Height / 2.0)
+        if ($targetCenterY -le $differenceCenterY) {
+            return [ordered]@{
+                Found = $false
+                Source = "TeachingTipSurface"
+                Screenshot = ""
+                Bounds = $differenceBounds
+                Width = 0
+                Height = 0
+                NonBlank = $false
+                GeometrySource = $geometrySource
+                Reason = "The audited TeachingTip sample was not placed above its target."
+            }
+        }
+
+        $bitmap = [System.Drawing.Bitmap]::FromFile($openScreenshot)
+        try {
+            $topTransition = Find-TeachingTipMarginRowTransition `
+                $bitmap `
+                ([int]$differenceBounds.X) `
+                ([int]$differenceBounds.Width) `
+                ([int]$differenceBounds.Y - 8) `
+                ([int]$differenceBounds.Y + 8) `
+                $false
+            $bottomTransition = Find-TeachingTipMarginRowTransition `
+                $bitmap `
+                ([int]$differenceBounds.X) `
+                ([int]$differenceBounds.Width) `
+                ([int]$targetBounds.Y - 24) `
+                ([int]$targetBounds.Y - 1) `
+                $true
+        }
+        finally {
+            $bitmap.Dispose()
+        }
+
+        if (!$topTransition.Found -or !$bottomTransition.Found -or
+            $bottomTransition.Y -lt $topTransition.Y) {
+            return [ordered]@{
+                Found = $false
+                Source = "TeachingTipSurface"
+                Screenshot = ""
+                Bounds = $differenceBounds
+                Width = 0
+                Height = 0
+                NonBlank = $false
+                GeometrySource = $geometrySource
+                TopTransition = $topTransition
+                BottomTransition = $bottomTransition
+            }
+        }
+
+        $contentBounds = [ordered]@{
+            Found = $true
+            Reason = ""
+            X = [int]$differenceBounds.X
+            Y = [int]$topTransition.Y
+            Width = [int]$differenceBounds.Width
+            Height = [int]$bottomTransition.Y - [int]$topTransition.Y + 1
+            ChangedSamples = [int]$differenceBounds.ChangedSamples
+        }
+    }
+
+    # Compare ContentRootGrid itself so that unrelated Gallery page pixels behind
+    # the source-defined 10-DIP tail and platform-specific shadow do not dominate
+    # the control delta. Tail geometry remains recorded by the source audit/tests.
+    $savedBounds = Save-Crop $openScreenshot $contentBounds $path 0
+    return [ordered]@{
+        Found = $true
+        Source = "TeachingTipSurface"
+        Screenshot = $path
+        Bounds = $savedBounds
+        Width = $savedBounds.Width
+        Height = $savedBounds.Height
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+        GeometrySource = $geometrySource
+        ContentBounds = $contentBounds
+        DifferenceBounds = $differenceBounds
+        TopTransition = $topTransition
+        BottomTransition = $bottomTransition
+    }
+}
+
+function Save-PopupOpenSurfaceCrop($window, $openElement, [string]$path) {
+    $titleBounds = Get-ElementScreenBounds $openElement 0 $window
+    if ($null -eq $titleBounds -or !$titleBounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = "PopupSurface"
+            Screenshot = ""
+            Bounds = $titleBounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    # Current WinUI Gallery source defines a 240-DIP minimum-width Border with
+    # 1-DIP stroke, 16-DIP padding, 8-DIP StackPanel spacing, and a 32-DIP
+    # standard Close button. The unique heading's UIA rectangle therefore gives
+    # stable screen-space bounds for the complete surface in both the in-window
+    # WinUI Popup and WPF's separate transparent popup HWND.
+    $edgeInset = 17
+    $surfaceBounds = [ordered]@{
+        Found = $true
+        Reason = "Derived from the current WinUI Gallery Popup surface metrics."
+        X = [int]$titleBounds.X - $edgeInset
+        Y = [int]$titleBounds.Y - $edgeInset
+        Width = 240
+        Height = $edgeInset + [int]$titleBounds.Height + 8 + 32 + $edgeInset
+        ChangedSamples = 0
+    }
+
+    try {
+        Capture-ScreenBounds `
+            $surfaceBounds.X `
+            $surfaceBounds.Y `
+            $surfaceBounds.Width `
+            $surfaceBounds.Height `
+            $path
+    }
+    catch {
+        return [ordered]@{
+            Found = $false
+            Source = "PopupSurface"
+            Screenshot = ""
+            Bounds = $surfaceBounds
+            Width = $surfaceBounds.Width
+            Height = $surfaceBounds.Height
+            NonBlank = $false
+            Error = $_.Exception.Message
+        }
+    }
+
+    return [ordered]@{
+        Found = $true
+        Source = "PopupSurface"
+        Screenshot = $path
+        Bounds = $surfaceBounds
+        Width = $surfaceBounds.Width
+        Height = $surfaceBounds.Height
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+        TitleBounds = $titleBounds
+    }
+}
+
+function Save-FlyoutOpenSurfaceCrop($window, $openElement, [string]$path) {
+    $surfaceElement = Get-PopupScreenCropElement $window $openElement
+    if ($null -eq $surfaceElement) {
+        return [ordered]@{
+            Found = $false
+            Source = "FlyoutOpenSurface"
+            Screenshot = ""
+            Bounds = $null
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    return Save-ScreenElementCrop $surfaceElement $path "FlyoutOpenSurface" 0 $window
+}
+
+function Save-ContentDialogOpenSurfaceCrop($window, [string]$screenshot, [string]$path) {
+    $elements = @(Get-ContentDialogOpenSurfaceElements $window)
+    $bounds = $null
+    $elementEvidence = New-Object System.Collections.Generic.List[object]
+    foreach ($element in $elements) {
+        $elementBounds = Get-ElementWindowBounds $window $element
+        if ($null -ne $elementBounds -and $elementBounds.Found) {
+            $bounds = Merge-WindowBounds $bounds $elementBounds
+            $elementEvidence.Add([ordered]@{
+                Name = [string]$element.Current.Name
+                AutomationId = [string]$element.Current.AutomationId
+                ControlType = [string]$element.Current.ControlType.ProgrammaticName
+                X = $elementBounds.X
+                Y = $elementBounds.Y
+                Width = $elementBounds.Width
+                Height = $elementBounds.Height
+            })
+        }
+    }
+
+    if ($elements.Count -lt 4 -or $null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = "ContentDialogSurface"
+            Screenshot = ""
+            Bounds = $bounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+            ElementCount = $elements.Count
+        }
+    }
+
+    # Current WinUI ContentDialog source uses 24-DIP horizontal/content padding and
+    # a 1-DIP border. UIA's vertical client origin differs between WPF and WinUI, so
+    # snap the source-derived top/bottom search windows to the two surface edges.
+    $surfaceX = [Math]::Max(0, [int]$bounds.X - 25)
+    $surfaceWidth = [Math]::Max(1, [int]$bounds.Width + 50)
+    $approximateTop = [int]$bounds.Y - 33
+    $approximateBottom = [int]$bounds.Y + [int]$bounds.Height + 25
+    $bitmap = [System.Drawing.Bitmap]::FromFile($screenshot)
+    try {
+        $topTransition = Find-ImageRowTransition $bitmap $surfaceX $surfaceWidth ($approximateTop - 4) ($approximateTop + 16)
+        $bottomTransition = Find-ImageRowTransition $bitmap $surfaceX $surfaceWidth ($approximateBottom - 4) ($approximateBottom + 16)
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+    if (!$topTransition.Found -or !$bottomTransition.Found -or $bottomTransition.Y -le $topTransition.Y) {
+        return [ordered]@{
+            Found = $false
+            Source = "ContentDialogSurface"
+            Screenshot = ""
+            Bounds = $bounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+            ElementCount = $elements.Count
+        }
+    }
+
+    $surfaceBounds = [ordered]@{
+        Found = $true
+        Reason = ""
+        X = $surfaceX
+        Y = [int]$topTransition.Y
+        Width = $surfaceWidth
+        Height = [Math]::Max(1, [int]$bottomTransition.Y - [int]$topTransition.Y)
+        ChangedSamples = 0
+    }
+    $savedBounds = Save-Crop $screenshot $surfaceBounds $path 0
+    return [ordered]@{
+        Found = $true
+        Source = "ContentDialogSurface"
+        Screenshot = $path
+        Bounds = $savedBounds
+        Width = $savedBounds.Width
+        Height = $savedBounds.Height
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+        ElementCount = $elements.Count
+        Elements = $elementEvidence.ToArray()
+        RawElementBounds = $bounds
+        TopTransition = $topTransition
+        BottomTransition = $bottomTransition
+    }
+}
+
+function Get-CommandBarFlyoutOpenSurfaceElements($window) {
+    $elements = New-Object System.Collections.Generic.List[object]
+    foreach ($name in @("Share", "Save", "Delete", "Resize", "Move")) {
+        $element = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
+        if (Test-AutomationElementUsable $element) {
+            $elements.Add($element)
+        }
+    }
+
+    $moreButton = Find-CommandBarFlyoutMoreButton $window
+    if (Test-AutomationElementUsable $moreButton) {
+        $elements.Add($moreButton)
+    }
+
+    return $elements.ToArray()
+}
+
+function Get-CommandBarFlyoutPrimarySurfaceElements($window) {
+    $elements = New-Object System.Collections.Generic.List[object]
+    foreach ($name in @("Share", "Save", "Delete")) {
+        $element = Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($name)
+        if (Test-AutomationElementUsable $element) {
+            $elements.Add($element)
+        }
+    }
+
+    $moreButton = Find-CommandBarFlyoutMoreButton $window
+    if (Test-AutomationElementUsable $moreButton) {
+        $elements.Add($moreButton)
+    }
+
+    return $elements.ToArray()
+}
+
+function Wait-ForCommandBarFlyoutSurfaceElements($window, [bool]$expanded, [int]$timeoutMilliseconds) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
+    do {
+        # Wrap the whole conditional. PowerShell otherwise unwraps a one-item
+        # result from either branch into a scalar while a popup is materializing,
+        # and the transient scalar has no Count property.
+        $elements = @(if ($expanded) {
+                Get-CommandBarFlyoutOpenSurfaceElements $window
+            }
+            else {
+                Get-CommandBarFlyoutPrimarySurfaceElements $window
+            })
+        $expectedCount = if ($expanded) { 6 } else { 4 }
+        if ($elements.Count -eq $expectedCount -and
+            (!$expanded -or $null -ne (Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move")))) {
+            return $elements
+        }
+
+        Start-Sleep -Milliseconds 50
+    } while ((Get-Date) -lt $deadline)
+
+    return @()
+}
+
+function Get-CommandBarFlyoutStateTarget($window, [string]$targetName) {
+    if ($targetName -eq "MoreButton") {
+        return Find-CommandBarFlyoutMoreButton $window
+    }
+
+    return Find-InteractiveElementByNameInProcess $window.Current.ProcessId @($targetName)
+}
+
+function Move-CursorToAutomationElement($element, [int]$offsetX = 0, [int]$offsetY = 0) {
+    if (!(Test-AutomationElementUsable $element)) {
+        return $false
+    }
+
+    try {
+        $rect = $element.Current.BoundingRectangle
+        $targetX = [int][Math]::Round($rect.Left + ($rect.Width / 2.0) + $offsetX)
+        $targetY = [int][Math]::Round($rect.Top + ($rect.Height / 2.0) + $offsetY)
+        $entryX = [int][Math]::Round($rect.Left - 18)
+        for ($step = 0; $step -le 6; $step++) {
+            $x = [int][Math]::Round($entryX + (($targetX - $entryX) * ($step / 6.0)))
+            [GalleryVisualNative]::MoveCursor($x, $targetY)
+            Start-Sleep -Milliseconds 35
+        }
+        [GalleryVisualNative]::HoverCursorAtPoint($targetX, $targetY)
+        Start-Sleep -Milliseconds 450
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
+
+function Get-ControlVisualStateMatrixTarget(
+    [string]$app,
+    [string]$control,
+    $window,
+    $candidate) {
+    if (Test-AutomationElementUsable $candidate) {
+        return $candidate
+    }
+
+    if ($app -eq "ModernWpf") {
+        $automationId = Get-RequiredSampleAutomationId $control
+        if (![string]::IsNullOrWhiteSpace($automationId)) {
+            return TryFind-DescendantByAutomationId $window $automationId
+        }
+
+        return $null
+    }
+
+    return Find-ReferenceInteractionTrigger $window $control
+}
+
+function Get-ControlVisualStateMatrixPoint($element, [ValidateSet("Center", "Primary", "Secondary")] [string]$segment) {
+    if (!(Test-AutomationElementUsable $element)) {
+        return $null
+    }
+
+    try {
+        $rect = $element.Current.BoundingRectangle
+        $fraction = switch ($segment) {
+            "Primary" { 0.28 }
+            "Secondary" { 0.78 }
+            default { 0.5 }
+        }
+        return [ordered]@{
+            X = [int][Math]::Round($rect.Left + ($rect.Width * $fraction))
+            Y = [int][Math]::Round($rect.Top + ($rect.Height / 2.0))
+        }
+    }
+    catch {
+        return $null
+    }
+}
+
+function Move-CursorToControlVisualStateMatrixPoint(
+    $element,
+    [ValidateSet("Center", "Primary", "Secondary")] [string]$segment) {
+    $point = Get-ControlVisualStateMatrixPoint $element $segment
+    if ($null -eq $point) {
+        return $false
+    }
+
+    try {
+        $rect = $element.Current.BoundingRectangle
+        $entryX = [int][Math]::Round($rect.Left - 18)
+        for ($step = 0; $step -le 6; $step++) {
+            $x = [int][Math]::Round($entryX + (($point.X - $entryX) * ($step / 6.0)))
+            [GalleryVisualNative]::MoveCursor($x, $point.Y)
+            Start-Sleep -Milliseconds 35
+        }
+        [GalleryVisualNative]::HoverCursorAtPoint($point.X, $point.Y)
+        Start-Sleep -Milliseconds 420
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
+
+function Get-ControlVisualStateMatrixTargetEvidence($target) {
+    if (!(Test-AutomationElementUsable $target)) {
+        return $null
+    }
+
+    try {
+        $rect = $target.Current.BoundingRectangle
+        return [ordered]@{
+            Name = [string]$target.Current.Name
+            AutomationId = [string]$target.Current.AutomationId
+            ControlType = [string]$target.Current.ControlType.ProgrammaticName
+            IsEnabled = [bool]$target.Current.IsEnabled
+            HasKeyboardFocus = [bool]$target.Current.HasKeyboardFocus
+            ToggleState = Get-ToggleStateName $target
+            X = [Math]::Round($rect.X, 2)
+            Y = [Math]::Round($rect.Y, 2)
+            Width = [Math]::Round($rect.Width, 2)
+            Height = [Math]::Round($rect.Height, 2)
+        }
+    }
+    catch {
+        return $null
+    }
+}
+
+function Save-ControlVisualStateMatrixCrop(
+    [string]$app,
+    [string]$control,
+    [string]$caseDir,
+    $window,
+    $target,
+    [string]$state,
+    [string]$segment = "Center") {
+    $path = Join-Path $caseDir ("{0}-{1}-visual-state-{2}.png" -f $app.ToLowerInvariant(), $control, $state.ToLowerInvariant())
+    # Focus visuals may intentionally extend outside UIA bounds. Keep a stable
+    # four-pixel review gutter for every state so those pixels are compared
+    # instead of clipped away only in the focused frame.
+    # UI Automation bounds are expressed in the provider's coordinate space.
+    # Translate through the native window before taking the physical-pixel crop;
+    # WPF can otherwise report a 77-DIP extent for a control whose rendered edge
+    # spans 78 screen pixels, clipping one side of an otherwise matching state.
+    $bounds = Get-ElementScreenBounds $target 4 $window
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            State = $state
+            Segment = $segment
+            Target = Get-ControlVisualStateMatrixTargetEvidence $target
+            Crop = $null
+            Error = "The state target did not expose finite screen bounds."
+        }
+    }
+
+    try {
+        Capture-ScreenBounds $bounds.X $bounds.Y $bounds.Width $bounds.Height $path
+        $crop = [ordered]@{
+            Found = $true
+            Source = "ControlVisualStateScreen"
+            Screenshot = $path
+            Bounds = $bounds
+            Width = $bounds.Width
+            Height = $bounds.Height
+            NonBlank = Test-ImageNotBlank $path
+            VisibleStdDev = Get-ImageVisibleStdDev $path
+        }
+        return [ordered]@{
+            State = $state
+            Segment = $segment
+            Target = Get-ControlVisualStateMatrixTargetEvidence $target
+            Crop = $crop
+            Error = ""
+        }
+    }
+    catch {
+        return [ordered]@{
+            State = $state
+            Segment = $segment
+            Target = Get-ControlVisualStateMatrixTargetEvidence $target
+            Crop = $null
+            Error = $_.Exception.Message
+        }
+    }
+}
+
+function Save-ControlVisualStateMatrixPointerCrop(
+    [string]$app,
+    [string]$control,
+    [string]$caseDir,
+    $window,
+    $target,
+    [string]$state,
+    [ValidateSet("Center", "Primary", "Secondary")] [string]$segment,
+    [bool]$pressed) {
+    if (!(Move-CursorToControlVisualStateMatrixPoint $target $segment)) {
+        return [ordered]@{
+            State = $state
+            Segment = $segment
+            Target = Get-ControlVisualStateMatrixTargetEvidence $target
+            Crop = $null
+            Error = "The pointer target was unavailable."
+        }
+    }
+
+    $point = Get-ControlVisualStateMatrixPoint $target $segment
+    $pointerElement = Get-AutomationElementAtScreenPointEvidence $point.X $point.Y
+    if (!$pressed) {
+        try {
+            $result = Save-ControlVisualStateMatrixCrop $app $control $caseDir $window $target $state $segment
+            $result["PointerElement"] = $pointerElement
+            return $result
+        }
+        finally {
+            Move-CursorAwayFromInteractionSurface $window
+        }
+    }
+
+    $mouseIsDown = $false
+    try {
+        [GalleryVisualNative]::MouseDown($point.X, $point.Y)
+        $mouseIsDown = $true
+        Start-Sleep -Milliseconds 120
+        $result = Save-ControlVisualStateMatrixCrop $app $control $caseDir $window $target $state $segment
+        $result["PointerElement"] = $pointerElement
+        return $result
+    }
+    finally {
+        if ($mouseIsDown) {
+            try {
+                # Cancel the click just outside the control while staying in the
+                # page content. Moving a held pointer into WPF's title bar can
+                # release capture and drag the window, invalidating later UIA
+                # screen coordinates and every subsequent state crop.
+                $targetRect = $target.Current.BoundingRectangle
+                $cancelX = [int][Math]::Round($targetRect.Left - 12)
+                $cancelY = [int][Math]::Round($targetRect.Top + ($targetRect.Height / 2.0))
+                [GalleryVisualNative]::MoveCursor($cancelX, $cancelY)
+                Start-Sleep -Milliseconds 80
+            }
+            catch {
+            }
+            [GalleryVisualNative]::MouseUp()
+            Start-Sleep -Milliseconds 160
+            Move-CursorAwayFromInteractionSurface $window
+        }
+    }
+}
+
+function Save-ControlVisualStateMatrixFocusedCrop(
+    [string]$app,
+    [string]$control,
+    [string]$caseDir,
+    $window,
+    $target,
+    [string]$state) {
+    Move-CursorAwayFromInteractionSurface $window
+    try {
+        [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+        $target.SetFocus()
+        Start-Sleep -Milliseconds 120
+        # UIA SetFocus is programmatic and intentionally does not show WinUI's
+        # keyboard focus visual. Walk away and back with real keyboard input so
+        # the captured state is the user-visible keyboard-focused state in both
+        # applications.
+        [GalleryVisualNative]::PressShiftTab()
+        Start-Sleep -Milliseconds 140
+        [GalleryVisualNative]::PressTab()
+        Start-Sleep -Milliseconds 320
+    }
+    catch {
+        return [ordered]@{
+            State = $state
+            Segment = "Focus"
+            Target = Get-ControlVisualStateMatrixTargetEvidence $target
+            Crop = $null
+            Error = "The state target could not receive keyboard focus. $($_.Exception.Message)"
+        }
+    }
+
+    return Save-ControlVisualStateMatrixCrop $app $control $caseDir $window $target $state "Focus"
+}
+
+function Set-ControlVisualStateMatrixNeutralFocus($window, $avoidElement = $null) {
+    if (Test-AutomationElementUsable $avoidElement) {
+        try {
+            # We already know this element and its provider are responsive.
+            # Put focus there, then use real keyboard navigation to move to the
+            # preceding focus stop. This clears its focus visual without a
+            # potentially blocking search through popup providers.
+            [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+            $avoidElement.SetFocus()
+            Start-Sleep -Milliseconds 80
+            [GalleryVisualNative]::PressShiftTab()
+            Start-Sleep -Milliseconds 220
+            if (!$avoidElement.Current.HasKeyboardFocus) {
+                return $true
+            }
+        }
+        catch {
+        }
+    }
+
+    # Stay inside the known main window. Enumerating every top-level window in
+    # the process can enter an inactive WPF popup provider that blocks UIA for
+    # about a minute (observed on ToggleSplitButton), even though the main
+    # Gallery window is responsive.
+    foreach ($automationId in @("SearchBox", "SettingsButton", "BackButton")) {
+        $neutralElement = TryFind-DescendantByAutomationId $window $automationId
+        if (!(Test-AutomationElementUsable $neutralElement)) {
+            continue
+        }
+
+        try {
+            $neutralElement.SetFocus()
+            Start-Sleep -Milliseconds 220
+            if ($neutralElement.Current.HasKeyboardFocus) {
+                return $true
+            }
+        }
+        catch {
+        }
+    }
+
+    foreach ($name in @("Search controls and samples...", "Back", "Settings", "Toggle Navigation", "Documentation")) {
+        try {
+            $neutralElement = Find-DescendantByName $window $name
+        }
+        catch {
+            $neutralElement = $null
+        }
+        if (!(Test-AutomationElementUsable $neutralElement)) {
+            continue
+        }
+
+        try {
+            $neutralElement.SetFocus()
+            Start-Sleep -Milliseconds 220
+            if ($neutralElement.Current.HasKeyboardFocus) {
+                return $true
+            }
+        }
+        catch {
+        }
+    }
+
+    return $false
+}
+
+function Set-ControlVisualStateMatrixDisableOption(
+    $window,
+    [string]$control,
+    [bool]$disabled) {
+    $automationId = Get-ControlVisualStateDisableOptionAutomationId $control
+    if ([string]::IsNullOrWhiteSpace($automationId)) {
+        return $false
+    }
+
+    $option = Find-ElementByAutomationIdInProcess $window.Current.ProcessId $automationId
+    if (!(Test-AutomationElementUsable $option)) {
+        return $false
+    }
+
+    $desiredState = if ($disabled) { "On" } else { "Off" }
+    if (!(Set-ToggleElementState $window $option $desiredState)) {
+        return $false
+    }
+
+    Start-Sleep -Milliseconds 220
+    return (Get-ToggleStateName $option) -eq $desiredState
+}
+
+function Add-ControlVisualStateMatrixEnabledSeries(
+    $states,
+    [string]$app,
+    [string]$control,
+    [string]$caseDir,
+    $window,
+    $target,
+    [string]$prefix,
+    [bool]$split) {
+    Move-CursorAwayFromInteractionSurface $window
+    [void](Set-ControlVisualStateMatrixNeutralFocus $window $target)
+    $states.Add((Save-ControlVisualStateMatrixCrop $app $control $caseDir $window $target ("{0}Rest" -f $prefix) "Center"))
+    if ($split) {
+        $states.Add((Save-ControlVisualStateMatrixPointerCrop $app $control $caseDir $window $target ("{0}PrimaryPointerOver" -f $prefix) "Primary" $false))
+        $states.Add((Save-ControlVisualStateMatrixPointerCrop $app $control $caseDir $window $target ("{0}PrimaryPressed" -f $prefix) "Primary" $true))
+        $states.Add((Save-ControlVisualStateMatrixPointerCrop $app $control $caseDir $window $target ("{0}SecondaryPointerOver" -f $prefix) "Secondary" $false))
+        $states.Add((Save-ControlVisualStateMatrixPointerCrop $app $control $caseDir $window $target ("{0}SecondaryPressed" -f $prefix) "Secondary" $true))
+    }
+    else {
+        $states.Add((Save-ControlVisualStateMatrixPointerCrop $app $control $caseDir $window $target ("{0}PointerOver" -f $prefix) "Center" $false))
+        $states.Add((Save-ControlVisualStateMatrixPointerCrop $app $control $caseDir $window $target ("{0}Pressed" -f $prefix) "Center" $true))
+    }
+    if ($prefix -eq "Off" -or $prefix -eq "On") {
+        if (!(Set-ToggleElementState $window $target $prefix)) {
+            throw "The $control state-matrix target could not be restored to $prefix after its pressed state."
+        }
+    }
+    $states.Add((Save-ControlVisualStateMatrixFocusedCrop $app $control $caseDir $window $target ("{0}Focused" -f $prefix)))
+}
+
+function Capture-ControlVisualStateMatrix(
+    [string]$app,
+    [string]$control,
+    [string]$caseDir,
+    $window,
+    $candidate) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsVisualStateMatrix $control)) {
+        return $null
+    }
+
+    $target = Get-ControlVisualStateMatrixTarget $app $control $window $candidate
+    $states = New-Object System.Collections.Generic.List[object]
+    $kind = Get-ControlVisualStateMatrixKind $control
+    $baselineToggleState = Get-ToggleStateName $target
+    $topMost = $false
+    try {
+        if (!(Test-AutomationElementUsable $target)) {
+            return [ordered]@{
+                Kind = $kind
+                Status = "Failed"
+                Target = $null
+                States = @()
+                Notes = "The primary state-matrix target was not found."
+            }
+        }
+
+        [GalleryVisualNative]::SetTopMost($window.Current.NativeWindowHandle, $true)
+        $topMost = $true
+        [void](Set-ControlVisualStateMatrixDisableOption $window $control $false)
+
+        switch ($kind) {
+            "Button" {
+                Add-ControlVisualStateMatrixEnabledSeries $states $app $control $caseDir $window $target "" $false
+            }
+            "Split" {
+                Add-ControlVisualStateMatrixEnabledSeries $states $app $control $caseDir $window $target "" $true
+            }
+            "Toggle" {
+                if (!(Set-ToggleElementState $window $target "Off")) {
+                    throw "The toggle state-matrix target could not be set to Off."
+                }
+                Add-ControlVisualStateMatrixEnabledSeries $states $app $control $caseDir $window $target "Off" $false
+                if (!(Set-ToggleElementState $window $target "On")) {
+                    throw "The toggle state-matrix target could not be set to On."
+                }
+                Add-ControlVisualStateMatrixEnabledSeries $states $app $control $caseDir $window $target "On" $false
+            }
+            "ToggleSplit" {
+                if (!(Set-ToggleElementState $window $target "Off")) {
+                    throw "The toggle split-button state-matrix target could not be set to Off."
+                }
+                Add-ControlVisualStateMatrixEnabledSeries $states $app $control $caseDir $window $target "Off" $true
+                if (!(Set-ToggleElementState $window $target "On")) {
+                    throw "The toggle split-button state-matrix target could not be set to On."
+                }
+                Add-ControlVisualStateMatrixEnabledSeries $states $app $control $caseDir $window $target "On" $true
+            }
+        }
+
+        $disableOptionAutomationId = Get-ControlVisualStateDisableOptionAutomationId $control
+        if (![string]::IsNullOrWhiteSpace($disableOptionAutomationId)) {
+            if ($kind -eq "Toggle") {
+                if (!(Set-ToggleElementState $window $target "Off") -or
+                    !(Set-ControlVisualStateMatrixDisableOption $window $control $true)) {
+                    throw "The disabled Off state could not be prepared."
+                }
+                $states.Add((Save-ControlVisualStateMatrixCrop $app $control $caseDir $window $target "DisabledOff" "Disabled"))
+                [void](Set-ControlVisualStateMatrixDisableOption $window $control $false)
+                if (!(Set-ToggleElementState $window $target "On") -or
+                    !(Set-ControlVisualStateMatrixDisableOption $window $control $true)) {
+                    throw "The disabled On state could not be prepared."
+                }
+                $states.Add((Save-ControlVisualStateMatrixCrop $app $control $caseDir $window $target "DisabledOn" "Disabled"))
+            }
+            else {
+                if (!(Set-ControlVisualStateMatrixDisableOption $window $control $true)) {
+                    throw "The disabled state could not be prepared."
+                }
+                $states.Add((Save-ControlVisualStateMatrixCrop $app $control $caseDir $window $target "Disabled" "Disabled"))
+            }
+        }
+
+        $expectedStates = @(Get-ControlVisualStateMatrixExpectedStates $control)
+        $validStates = @($states.ToArray() | Where-Object {
+                $null -ne $_.Crop -and $_.Crop.Found -and $_.Crop.NonBlank
+            })
+        return [ordered]@{
+            Kind = $kind
+            Status = $(if ($validStates.Count -eq $expectedStates.Count) { "Passed" } else { "Failed" })
+            Target = Get-ControlVisualStateMatrixTargetEvidence $target
+            ExpectedStates = $expectedStates
+            States = @($states.ToArray())
+            Notes = $(if ($validStates.Count -eq $expectedStates.Count) { "" } else { "Captured $($validStates.Count) of $($expectedStates.Count) required visual states." })
+        }
+    }
+    catch {
+        return [ordered]@{
+            Kind = $kind
+            Status = "Failed"
+            Target = Get-ControlVisualStateMatrixTargetEvidence $target
+            ExpectedStates = @(Get-ControlVisualStateMatrixExpectedStates $control)
+            States = @($states.ToArray())
+            Notes = $_.Exception.Message
+        }
+    }
+    finally {
+        [void](Set-ControlVisualStateMatrixDisableOption $window $control $false)
+        if ($baselineToggleState -in @("Off", "On")) {
+            [void](Set-ToggleElementState $window $target $baselineToggleState)
+        }
+        Move-CursorAwayFromInteractionSurface $window
+        [void](Set-ControlVisualStateMatrixNeutralFocus $window $target)
+        if ($topMost) {
+            [GalleryVisualNative]::SetTopMost($window.Current.NativeWindowHandle, $false)
+        }
+    }
+}
+
+function Save-CommandBarFlyoutStateCrop(
+    [string]$app,
+    [string]$caseDir,
+    $window,
+    [string]$state,
+    $elements,
+    [string]$targetName = "",
+    $capturePlan = $null,
+    $pointerElement = $null) {
+    $path = Join-Path $caseDir ("{0}-CommandBarFlyout-state-{1}.png" -f $app.ToLowerInvariant(), $state.ToLowerInvariant())
+    $screenOffsetX = 0
+    $screenOffsetY = 0
+    $crop = Save-CommandBarFlyoutOpenSurfaceScreenCrop $window $path $elements $screenOffsetX $screenOffsetY $capturePlan
+    $target = if ([string]::IsNullOrWhiteSpace($targetName)) { $null } else { Get-CommandBarFlyoutStateTarget $window $targetName }
+    $targetEvidence = if (Test-AutomationElementUsable $target) {
+        @(Get-CommandBarFlyoutOpenSurfaceElementEvidence $window @($target))[0]
+    }
+    else {
+        $null
+    }
+    $popupWindow = $null
+    $anchorElement = @($elements) | Select-Object -First 1
+    if (Test-AutomationElementUsable $anchorElement) {
+        try {
+            $popupHandle = Get-ElementNativeWindowHandle $anchorElement
+            if ($popupHandle -ne [IntPtr]::Zero) {
+                $popupRect = [GalleryVisualNative]::GetRect($popupHandle)
+                $popupWindow = [ordered]@{
+                    Handle = $popupHandle.ToInt64()
+                    Left = $popupRect.Left
+                    Top = $popupRect.Top
+                    Width = $popupRect.Right - $popupRect.Left
+                    Height = $popupRect.Bottom - $popupRect.Top
+                }
+            }
+        }
+        catch {
+        }
+    }
+
+    return [ordered]@{
+        State = $state
+        TargetName = $targetName
+        Target = $targetEvidence
+        PointerElement = $pointerElement
+        PopupWindow = $popupWindow
+        ScreenOffsetX = $screenOffsetX
+        ScreenOffsetY = $screenOffsetY
+        Crop = $crop
+    }
+}
+
+function Get-AutomationElementAtScreenPointEvidence([int]$x, [int]$y) {
+    try {
+        $element = [System.Windows.Automation.AutomationElement]::FromPoint(
+            [System.Windows.Point]::new([double]$x, [double]$y))
+        if (!(Test-AutomationElementUsable $element)) {
+            return $null
+        }
+
+        $rect = $element.Current.BoundingRectangle
+        return [ordered]@{
+            Name = [string]$element.Current.Name
+            AutomationId = [string]$element.Current.AutomationId
+            ControlType = [string]$element.Current.ControlType.ProgrammaticName
+            X = [Math]::Round($rect.X, 2)
+            Y = [Math]::Round($rect.Y, 2)
+            Width = [Math]::Round($rect.Width, 2)
+            Height = [Math]::Round($rect.Height, 2)
+        }
+    }
+    catch {
+        return $null
+    }
+}
+
+function Save-CommandBarFlyoutPointerStateCrop(
+    [string]$app,
+    [string]$caseDir,
+    $window,
+    [string]$state,
+    $elements,
+    [string]$targetName,
+    [bool]$pressed) {
+    $target = Get-CommandBarFlyoutStateTarget $window $targetName
+    $screenOffsetX = 0
+    $screenOffsetY = 0
+    if (!(Move-CursorToAutomationElement $target $screenOffsetX $screenOffsetY)) {
+        return [ordered]@{
+            State = $state
+            TargetName = $targetName
+            Target = $null
+            Crop = $null
+            Error = "The target element was unavailable."
+        }
+    }
+
+    if (!$pressed) {
+        try {
+            $rect = $target.Current.BoundingRectangle
+            $x = [int][Math]::Round($rect.Left + ($rect.Width / 2.0) + $screenOffsetX)
+            $y = [int][Math]::Round($rect.Top + ($rect.Height / 2.0) + $screenOffsetY)
+            $pointerElement = Get-AutomationElementAtScreenPointEvidence $x $y
+            return Save-CommandBarFlyoutStateCrop $app $caseDir $window $state $elements $targetName $null $pointerElement
+        }
+        finally {
+            Move-CursorAwayFromInteractionSurface $window
+        }
+    }
+
+    $mouseIsDown = $false
+    try {
+        $rect = $target.Current.BoundingRectangle
+        $x = [int][Math]::Round($rect.Left + ($rect.Width / 2.0) + $screenOffsetX)
+        $y = [int][Math]::Round($rect.Top + ($rect.Height / 2.0) + $screenOffsetY)
+        $capturePlan = New-CommandBarFlyoutSurfaceCapturePlan $window $elements
+        $pointerElement = Get-AutomationElementAtScreenPointEvidence $x $y
+        [GalleryVisualNative]::MouseDown(
+            $x,
+            $y)
+        $mouseIsDown = $true
+        Start-Sleep -Milliseconds 90
+        return Save-CommandBarFlyoutStateCrop $app $caseDir $window $state $elements $targetName $capturePlan $pointerElement
+    }
+    finally {
+        if ($mouseIsDown) {
+            [GalleryVisualNative]::MouseUp()
+            Start-Sleep -Milliseconds 140
+            Move-CursorAwayFromInteractionSurface $window
+        }
+    }
+}
+
+function Save-CommandBarFlyoutClickTransitionStateCrop(
+    [string]$app,
+    [string]$caseDir,
+    $window,
+    [string]$state,
+    [string]$targetName,
+    [bool]$expectedExpanded) {
+    $target = Get-CommandBarFlyoutStateTarget $window $targetName
+    if (!(Move-CursorToAutomationElement $target)) {
+        return [ordered]@{
+            State = $state
+            TargetName = $targetName
+            ExpectedExpanded = $expectedExpanded
+            Target = $null
+            Crop = $null
+            Error = "The transition target element was unavailable."
+        }
+    }
+
+    $mouseIsDown = $false
+    try {
+        $rect = $target.Current.BoundingRectangle
+        $x = [int][Math]::Round($rect.Left + ($rect.Width / 2.0))
+        $y = [int][Math]::Round($rect.Top + ($rect.Height / 2.0))
+        $pointerElement = Get-AutomationElementAtScreenPointEvidence $x $y
+        [GalleryVisualNative]::MouseDown($x, $y)
+        $mouseIsDown = $true
+        Start-Sleep -Milliseconds 90
+        [GalleryVisualNative]::MouseUp()
+        $mouseIsDown = $false
+        Start-Sleep -Milliseconds 140
+
+        # WPF and WinUI do not expose the More-button click at the same native
+        # mouse edge. Verify the common user-visible transition outcome after a
+        # complete click instead of sampling an implementation-specific edge.
+        $elements = @(Wait-ForCommandBarFlyoutSurfaceElements $window $expectedExpanded 1800)
+        $expectedCount = if ($expectedExpanded) { 6 } else { 4 }
+        if ($elements.Count -ne $expectedCount) {
+            return [ordered]@{
+                State = $state
+                TargetName = $targetName
+                ExpectedExpanded = $expectedExpanded
+                ObservedElementCount = $elements.Count
+                Target = $null
+                Crop = $null
+                Error = "The More-button click did not reach the expected destination surface."
+            }
+        }
+
+        # Cross a stable command before leaving. A leave sent while the popup is
+        # changing native windows can be lost, leaving the old More-button hot
+        # even though the cursor is already outside the settled surface.
+        $neutralTargetName = if ($expectedExpanded) { "Resize" } else { "Share" }
+        $neutralTarget = Get-CommandBarFlyoutStateTarget $window $neutralTargetName
+        if (Test-AutomationElementUsable $neutralTarget) {
+            [void](Move-CursorToAutomationElement $neutralTarget)
+        }
+        Move-CursorAwayFromInteractionSurface $window
+        Start-Sleep -Milliseconds 180
+        $result = Save-CommandBarFlyoutStateCrop $app $caseDir $window $state $elements $targetName $null $pointerElement
+        $result["ExpectedExpanded"] = $expectedExpanded
+        $result["ObservedElementCount"] = $elements.Count
+        return $result
+    }
+    finally {
+        if ($mouseIsDown) {
+            [GalleryVisualNative]::MouseUp()
+            Start-Sleep -Milliseconds 180
+            Move-CursorAwayFromInteractionSurface $window
+        }
+    }
+}
+
+function Get-CommandBarFlyoutOpenSurfaceElementEvidence($window, $elements = $null) {
+    $evidence = New-Object System.Collections.Generic.List[object]
+    if ($null -eq $elements) {
+        $elements = @(Get-CommandBarFlyoutOpenSurfaceElements $window)
+    }
+
+    foreach ($element in @($elements)) {
+        try {
+            $rect = $element.Current.BoundingRectangle
+            $evidence.Add([ordered]@{
+                Name = [string]$element.Current.Name
+                AutomationId = [string]$element.Current.AutomationId
+                ControlType = [string]$element.Current.ControlType.ProgrammaticName
+                X = [Math]::Round($rect.X, 2)
+                Y = [Math]::Round($rect.Y, 2)
+                Width = [Math]::Round($rect.Width, 2)
+                Height = [Math]::Round($rect.Height, 2)
+            })
+        }
+        catch {
+        }
+    }
+
+    return $evidence.ToArray()
+}
+
+function Get-CommandBarFlyoutOpenSurfaceBounds($window) {
+    $bounds = $null
+    foreach ($element in @(Get-CommandBarFlyoutOpenSurfaceElements $window)) {
+        $elementBounds = Get-ElementWindowBounds $window $element
+        if ($null -ne $elementBounds -and $elementBounds.Found) {
+            $bounds = Merge-WindowBounds $bounds $elementBounds
+        }
+    }
+
+    return $bounds
+}
+
+function Get-CommandBarFlyoutOpenSurfaceScreenBounds($window, $elements = $null) {
+    $bounds = $null
+    if ($null -eq $elements) {
+        $elements = @(Get-CommandBarFlyoutOpenSurfaceElements $window)
+    }
+
+    foreach ($element in @($elements)) {
+        $elementBounds = Get-ElementScreenBounds $element 0
+        if ($null -ne $elementBounds -and $elementBounds.Found) {
+            $bounds = Merge-WindowBounds $bounds $elementBounds
+        }
+    }
+
+    return $bounds
+}
+
+function Save-CommandBarFlyoutOpenSurfaceCrop($window, [string]$screenshot, [string]$path) {
+    $bounds = Get-CommandBarFlyoutOpenSurfaceBounds $window
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = "CommandBarFlyoutOpenSurface"
+            Screenshot = ""
+            Bounds = $bounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    $expandedBounds = Save-Crop $screenshot $bounds $path 6
+    return [ordered]@{
+        Found = $true
+        Source = "CommandBarFlyoutOpenSurface"
+        Screenshot = $path
+        Bounds = $expandedBounds
+        Width = $expandedBounds.Width
+        Height = $expandedBounds.Height
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+    }
+}
+
+function Save-CommandBarFlyoutOpenSurfaceWindowCompositeCrop($window, $bounds, [string]$path, [string]$screenCaptureError, $elements = $null) {
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = "CommandBarFlyoutOpenSurfaceScreen"
+            Screenshot = ""
+            Bounds = $bounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+            CaptureMethod = "WindowComposite"
+            Error = $screenCaptureError
+        }
+    }
+
+    if ($null -eq $elements) {
+        $elements = @(Get-CommandBarFlyoutOpenSurfaceElements $window)
+    }
+    else {
+        $elements = @($elements)
+    }
+    $handles = New-Object System.Collections.Generic.List[IntPtr]
+    $seenHandles = @{}
+    foreach ($element in $elements) {
+        $handle = Get-ElementNativeWindowHandle $element
+        if ($handle -eq [IntPtr]::Zero) {
+            continue
+        }
+
+        $key = $handle.ToInt64().ToString()
+        if (!$seenHandles.ContainsKey($key)) {
+            $seenHandles[$key] = $true
+            $handles.Add($handle)
+        }
+    }
+
+    if ($handles.Count -eq 0) {
+        return [ordered]@{
+            Found = $false
+            Source = "CommandBarFlyoutOpenSurfaceScreen"
+            Screenshot = ""
+            Bounds = $bounds
+            Width = $bounds.Width
+            Height = $bounds.Height
+            NonBlank = $false
+            CaptureMethod = "WindowComposite"
+            Error = if ([string]::IsNullOrWhiteSpace($screenCaptureError)) { "No popup window handles were found for the CommandBarFlyout open surface." } else { $screenCaptureError }
+        }
+    }
+
+    $bitmap = [System.Drawing.Bitmap]::new($bounds.Width, $bounds.Height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+    $tempPaths = New-Object System.Collections.Generic.List[string]
+    $drawn = $false
+    try {
+        $graphics.Clear([System.Drawing.Color]::Transparent)
+        for ($index = 0; $index -lt $handles.Count; $index++) {
+            $handle = $handles[$index]
+            $tempPath = Join-Path (Split-Path $path -Parent) ("{0}-window-{1}.png" -f [System.IO.Path]::GetFileNameWithoutExtension($path), $index)
+            $tempPaths.Add($tempPath)
+            try {
+                Capture-Window $handle $tempPath -SkipActivate
+                if (!(Test-Path $tempPath)) {
+                    continue
+                }
+
+                $windowRect = [GalleryVisualNative]::GetRect($handle)
+                $sourceLeft = [Math]::Max([int]$bounds.X, [int]$windowRect.Left)
+                $sourceTop = [Math]::Max([int]$bounds.Y, [int]$windowRect.Top)
+                $sourceRight = [Math]::Min([int]$bounds.X + [int]$bounds.Width, [int]$windowRect.Right)
+                $sourceBottom = [Math]::Min([int]$bounds.Y + [int]$bounds.Height, [int]$windowRect.Bottom)
+                if ($sourceRight -le $sourceLeft -or $sourceBottom -le $sourceTop) {
+                    continue
+                }
+
+                $windowBitmap = [System.Drawing.Bitmap]::FromFile($tempPath)
+                try {
+                    $sourceRect = [System.Drawing.Rectangle]::new(
+                        $sourceLeft - [int]$windowRect.Left,
+                        $sourceTop - [int]$windowRect.Top,
+                        $sourceRight - $sourceLeft,
+                        $sourceBottom - $sourceTop)
+                    $destinationRect = [System.Drawing.Rectangle]::new(
+                        $sourceLeft - [int]$bounds.X,
+                        $sourceTop - [int]$bounds.Y,
+                        $sourceRight - $sourceLeft,
+                        $sourceBottom - $sourceTop)
+                    $graphics.DrawImage($windowBitmap, $destinationRect, $sourceRect, [System.Drawing.GraphicsUnit]::Pixel)
+                    $drawn = $true
+                }
+                finally {
+                    $windowBitmap.Dispose()
+                }
+            }
+            catch {
+            }
+        }
+
+        if ($drawn) {
+            $bitmap.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+        }
+    }
+    finally {
+        $graphics.Dispose()
+        $bitmap.Dispose()
+        foreach ($tempPath in $tempPaths) {
+            try {
+                Remove-Item -LiteralPath $tempPath -Force -ErrorAction SilentlyContinue
+            }
+            catch {
+            }
+        }
+    }
+
+    if (!$drawn -or !(Test-Path $path)) {
+        return [ordered]@{
+            Found = $false
+            Source = "CommandBarFlyoutOpenSurfaceScreen"
+            Screenshot = ""
+            Bounds = $bounds
+            Width = $bounds.Width
+            Height = $bounds.Height
+            NonBlank = $false
+            CaptureMethod = "WindowComposite"
+            Error = if ([string]::IsNullOrWhiteSpace($screenCaptureError)) { "No popup window pixels intersected the CommandBarFlyout open surface bounds." } else { $screenCaptureError }
+        }
+    }
+
+    return [ordered]@{
+        Found = $true
+        Source = "CommandBarFlyoutOpenSurfaceScreen"
+        Screenshot = $path
+        Bounds = $bounds
+        Width = $bounds.Width
+        Height = $bounds.Height
+        ChangedSamples = 0
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+        CaptureMethod = "WindowComposite"
+        Error = $screenCaptureError
+    }
+}
+
+function New-CommandBarFlyoutSurfaceCapturePlan($window, $elements) {
+    $elements = @($elements)
+    $bounds = Get-CommandBarFlyoutOpenSurfaceScreenBounds $window $elements
+    $elementEvidence = @(Get-CommandBarFlyoutOpenSurfaceElementEvidence $window $elements)
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Bounds = $null
+            RawElementBounds = $bounds
+            Elements = $elementEvidence
+        }
+    }
+
+    $left = [int]$bounds.X - 6
+    $top = [int]$bounds.Y - 6
+    $right = [int]$bounds.X + [int]$bounds.Width + 6
+    $bottom = [int]$bounds.Y + [int]$bounds.Height + 6
+    try {
+        Add-Type -AssemblyName System.Windows.Forms -ErrorAction SilentlyContinue
+        $virtualScreen = [System.Windows.Forms.SystemInformation]::VirtualScreen
+        $left = [Math]::Max($virtualScreen.Left, $left)
+        $top = [Math]::Max($virtualScreen.Top, $top)
+        $right = [Math]::Min($virtualScreen.Right, $right)
+        $bottom = [Math]::Min($virtualScreen.Bottom, $bottom)
+    }
+    catch {
+    }
+
+    return [ordered]@{
+        Found = $true
+        Bounds = [ordered]@{
+            Found = $true
+            Reason = ""
+            X = $left
+            Y = $top
+            Width = [Math]::Max(1, $right - $left)
+            Height = [Math]::Max(1, $bottom - $top)
+            ChangedSamples = 0
+        }
+        RawElementBounds = $bounds
+        Elements = $elementEvidence
+    }
+}
+
+function Save-CommandBarFlyoutOpenSurfaceScreenCrop(
+    $window,
+    [string]$path,
+    $elements = $null,
+    [int]$screenOffsetX = 0,
+    [int]$screenOffsetY = 0,
+    $capturePlan = $null) {
+    if ($null -eq $elements) {
+        $elements = @(Get-CommandBarFlyoutOpenSurfaceElements $window)
+    }
+    else {
+        $elements = @($elements)
+    }
+    if ($null -eq $capturePlan) {
+        $capturePlan = New-CommandBarFlyoutSurfaceCapturePlan $window $elements
+    }
+    $bounds = $capturePlan.RawElementBounds
+    $elementEvidence = @($capturePlan.Elements)
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return [ordered]@{
+            Found = $false
+            Source = "CommandBarFlyoutOpenSurfaceScreen"
+            Screenshot = ""
+            Bounds = $bounds
+            Width = 0
+            Height = 0
+            NonBlank = $false
+        }
+    }
+
+    $expandedBounds = [ordered]@{
+        Found = $true
+        Reason = ""
+        X = [int]$capturePlan.Bounds.X + $screenOffsetX
+        Y = [int]$capturePlan.Bounds.Y + $screenOffsetY
+        Width = [int]$capturePlan.Bounds.Width
+        Height = [int]$capturePlan.Bounds.Height
+        ChangedSamples = 0
+    }
+
+    try {
+        Capture-ScreenBounds $expandedBounds.X $expandedBounds.Y $expandedBounds.Width $expandedBounds.Height $path
+    }
+    catch {
+        return Save-CommandBarFlyoutOpenSurfaceWindowCompositeCrop $window $expandedBounds $path $_.Exception.Message $elements
+    }
+
+    $result = [ordered]@{
+        Found = $true
+        Source = "CommandBarFlyoutOpenSurfaceScreen"
+        Screenshot = $path
+        Bounds = $expandedBounds
+        Width = $expandedBounds.Width
+        Height = $expandedBounds.Height
+        ChangedSamples = 0
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+        CaptureMethod = "ScreenBounds"
+        RawElementBounds = $bounds
+        Elements = $elementEvidence
+    }
+
+    if (Test-ScreenElementPopupCropHasContent $result) {
+        return $result
+    }
+
+    return Save-CommandBarFlyoutOpenSurfaceWindowCompositeCrop `
+        $window `
+        $expandedBounds `
+        $path `
+        "Screen bounds capture did not contain enough visible CommandBarFlyout content." `
+        $elements
+}
+
+function Compare-Images([string]$leftPath, [string]$rightPath) {
+    $left = [System.Drawing.Bitmap]::FromFile($leftPath)
+    $right = [System.Drawing.Bitmap]::FromFile($rightPath)
+    try {
+        if ($left.Width -ne $right.Width -or $left.Height -ne $right.Height) {
+            return [ordered]@{
+                Comparable = $false
+                Reason = "Image dimensions differ."
+                MeanDelta = $null
+            }
+        }
+
+        $samples = 0
+        $delta = 0.0
+        $stepX = [Math]::Max(1, [int]($left.Width / 80))
+        $stepY = [Math]::Max(1, [int]($left.Height / 80))
+        for ($x = 0; $x -lt $left.Width; $x += $stepX) {
+            for ($y = 0; $y -lt $left.Height; $y += $stepY) {
+                $a = $left.GetPixel($x, $y)
+                $b = $right.GetPixel($x, $y)
+                $delta += ([Math]::Abs($a.R - $b.R) + [Math]::Abs($a.G - $b.G) + [Math]::Abs($a.B - $b.B)) / 3.0
+                $samples++
+            }
+        }
+
+        return [ordered]@{
+            Comparable = $true
+            Reason = ""
+            MeanDelta = [Math]::Round($delta / [Math]::Max(1, $samples), 2)
+        }
+    }
+    finally {
+        $left.Dispose()
+        $right.Dispose()
+    }
+}
+
+function Compare-ImagesNormalized([string]$leftPath, [string]$rightPath) {
+    $left = [System.Drawing.Bitmap]::FromFile($leftPath)
+    $right = [System.Drawing.Bitmap]::FromFile($rightPath)
+    try {
+        $width = [Math]::Max(1, [Math]::Max($left.Width, $right.Width))
+        $height = [Math]::Max(1, [Math]::Max($left.Height, $right.Height))
+        $leftNormalized = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+        $rightNormalized = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+        $leftGraphics = [System.Drawing.Graphics]::FromImage($leftNormalized)
+        $rightGraphics = [System.Drawing.Graphics]::FromImage($rightNormalized)
+        try {
+            $leftGraphics.Clear([System.Drawing.Color]::Transparent)
+            $rightGraphics.Clear([System.Drawing.Color]::Transparent)
+            # Keep both artifacts at their native scale. Stretching each card to
+            # the larger dimensions made fixed-size controls appear aligned even
+            # when the Gallery viewports (or the cards themselves) had different
+            # sizes. The transparent remainder intentionally contributes to the
+            # delta so a size mismatch cannot silently pass.
+            $leftGraphics.DrawImageUnscaled($left, 0, 0)
+            $rightGraphics.DrawImageUnscaled($right, 0, 0)
+
+            $samples = 0
+            $delta = 0.0
+            $stepX = [Math]::Max(1, [int]($width / 80))
+            $stepY = [Math]::Max(1, [int]($height / 80))
+            for ($x = 0; $x -lt $width; $x += $stepX) {
+                for ($y = 0; $y -lt $height; $y += $stepY) {
+                    $a = $leftNormalized.GetPixel($x, $y)
+                    $b = $rightNormalized.GetPixel($x, $y)
+                    $delta += ([Math]::Abs($a.R - $b.R) + [Math]::Abs($a.G - $b.G) + [Math]::Abs($a.B - $b.B)) / 3.0
+                    $samples++
+                }
+            }
+
+            return [ordered]@{
+                Comparable = $true
+                Reason = ""
+                MeanDelta = [Math]::Round($delta / [Math]::Max(1, $samples), 2)
+                NormalizedWidth = $width
+                NormalizedHeight = $height
+            }
+        }
+        finally {
+            $leftGraphics.Dispose()
+            $rightGraphics.Dispose()
+            $leftNormalized.Dispose()
+            $rightNormalized.Dispose()
+        }
+    }
+    finally {
+        $left.Dispose()
+        $right.Dispose()
+    }
+}
+
+function Compare-ControlStateImagesNormalized([string]$leftPath, [string]$rightPath) {
+    $left = [System.Drawing.Bitmap]::FromFile($leftPath)
+    $right = [System.Drawing.Bitmap]::FromFile($rightPath)
+    try {
+        $width = [Math]::Max(1, [Math]::Max($left.Width, $right.Width))
+        $height = [Math]::Max(1, [Math]::Max($left.Height, $right.Height))
+        $leftNormalized = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+        $rightNormalized = [System.Drawing.Bitmap]::new($width, $height, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+        $leftGraphics = [System.Drawing.Graphics]::FromImage($leftNormalized)
+        $rightGraphics = [System.Drawing.Graphics]::FromImage($rightNormalized)
+        try {
+            # State captures carry an intentional four-pixel gutter. If UIA
+            # rounds one application's physical extent down by one, extend that
+            # gutter with its own corner color rather than comparing the absent
+            # review pixel as transparent black. Geometry remains a separate,
+            # explicit gate below.
+            $leftGraphics.Clear($left.GetPixel(0, 0))
+            $rightGraphics.Clear($right.GetPixel(0, 0))
+            $leftGraphics.DrawImageUnscaled($left, 0, 0)
+            $rightGraphics.DrawImageUnscaled($right, 0, 0)
+
+            $samples = 0
+            $delta = 0.0
+            $stepX = [Math]::Max(1, [int]($width / 80))
+            $stepY = [Math]::Max(1, [int]($height / 80))
+            for ($x = 0; $x -lt $width; $x += $stepX) {
+                for ($y = 0; $y -lt $height; $y += $stepY) {
+                    $a = $leftNormalized.GetPixel($x, $y)
+                    $b = $rightNormalized.GetPixel($x, $y)
+                    $delta += ([Math]::Abs($a.R - $b.R) + [Math]::Abs($a.G - $b.G) + [Math]::Abs($a.B - $b.B)) / 3.0
+                    $samples++
+                }
+            }
+
+            return [ordered]@{
+                Comparable = $true
+                Reason = ""
+                MeanDelta = [Math]::Round($delta / [Math]::Max(1, $samples), 2)
+                NormalizedWidth = $width
+                NormalizedHeight = $height
+            }
+        }
+        finally {
+            $leftGraphics.Dispose()
+            $rightGraphics.Dispose()
+            $leftNormalized.Dispose()
+            $rightNormalized.Dispose()
+        }
+    }
+    finally {
+        $left.Dispose()
+        $right.Dispose()
+    }
+}
+
+function Compare-CommandBarFlyoutStateEvidence($modernStates, $referenceStates) {
+    $expectedStates = @(
+        "PrimaryRest",
+        "PrimarySharePointerOver",
+        "PrimarySharePressed",
+        "PrimaryMorePointerOver",
+        "ExpandedAfterPrimaryMoreClick",
+        "ExpandedRest",
+        "ExpandedResizePointerOver",
+        "ExpandedMorePointerOver",
+        "ExpandedResizePressed",
+        "CollapsedAfterExpandedMoreClick"
+    )
+    $stateBaselines = @{
+        PrimaryRest = "PrimaryRest"
+        PrimarySharePointerOver = "PrimaryRest"
+        PrimarySharePressed = "PrimaryRest"
+        PrimaryMorePointerOver = "PrimaryRest"
+        ExpandedAfterPrimaryMoreClick = "ExpandedRest"
+        ExpandedRest = "ExpandedRest"
+        ExpandedResizePointerOver = "ExpandedRest"
+        ExpandedMorePointerOver = "ExpandedRest"
+        ExpandedResizePressed = "ExpandedRest"
+        CollapsedAfterExpandedMoreClick = "PrimaryRest"
+    }
+    $statesRequiredToDifferFromRest = @(
+        "PrimarySharePointerOver",
+        "PrimarySharePressed",
+        "PrimaryMorePointerOver",
+        "ExpandedResizePointerOver",
+        "ExpandedResizePressed"
+    )
+    $comparisons = New-Object System.Collections.Generic.List[object]
+    $failures = New-Object System.Collections.Generic.List[string]
+
+    foreach ($stateName in $expectedStates) {
+        $modernState = @($modernStates | Where-Object { $_.State -eq $stateName } | Select-Object -First 1)
+        $referenceState = @($referenceStates | Where-Object { $_.State -eq $stateName } | Select-Object -First 1)
+        $modernState = if ($modernState.Count -eq 1) { $modernState[0] } else { $null }
+        $referenceState = if ($referenceState.Count -eq 1) { $referenceState[0] } else { $null }
+        $modernValid = $null -ne $modernState -and $null -ne $modernState.Crop -and
+            $modernState.Crop.Found -and $modernState.Crop.NonBlank -and
+            ![string]::IsNullOrWhiteSpace([string]$modernState.Crop.Screenshot) -and
+            (Test-Path $modernState.Crop.Screenshot)
+        $referenceValid = $null -ne $referenceState -and $null -ne $referenceState.Crop -and
+            $referenceState.Crop.Found -and $referenceState.Crop.NonBlank -and
+            ![string]::IsNullOrWhiteSpace([string]$referenceState.Crop.Screenshot) -and
+            (Test-Path $referenceState.Crop.Screenshot)
+
+        $pixelComparison = $null
+        $sizeDelta = $null
+        $modernRestDelta = $null
+        $referenceRestDelta = $null
+        $baselineName = $stateBaselines[$stateName]
+        # The collapsed strip devotes roughly half as many pixels to content as
+        # the expanded surface, so the same WPF/WinUI glyph and shadow-edge
+        # rasterization contributes a larger mean. Its dominant fill and exact
+        # geometry are still enforced independently.
+        $meanDeltaThreshold = if ($baselineName -eq "PrimaryRest") { 10.0 } else { 9.0 }
+        $statePassed = $modernValid -and $referenceValid
+        $reason = ""
+        if (!$statePassed) {
+            $reason = "$stateName was not captured as a nonblank state in both applications."
+        }
+        else {
+            $pixelComparison = Compare-ImagesNormalized $modernState.Crop.Screenshot $referenceState.Crop.Screenshot
+            $sizeDelta = [Math]::Abs([int]$modernState.Crop.Width - [int]$referenceState.Crop.Width) +
+                [Math]::Abs([int]$modernState.Crop.Height - [int]$referenceState.Crop.Height)
+            if (!$pixelComparison.Comparable -or [double]$pixelComparison.MeanDelta -gt $meanDeltaThreshold) {
+                $statePassed = $false
+                $reason = "$stateName pixel delta $($pixelComparison.MeanDelta) exceeded $meanDeltaThreshold."
+            }
+            elseif ($sizeDelta -ne 0) {
+                $statePassed = $false
+                $reason = "$stateName crop size differed: ModernWpf $($modernState.Crop.Width)x$($modernState.Crop.Height), WinUI $($referenceState.Crop.Width)x$($referenceState.Crop.Height)."
+            }
+
+            $modernBaseline = @($modernStates | Where-Object { $_.State -eq $baselineName } | Select-Object -First 1)
+            $referenceBaseline = @($referenceStates | Where-Object { $_.State -eq $baselineName } | Select-Object -First 1)
+            if ($modernBaseline.Count -eq 1 -and $referenceBaseline.Count -eq 1 -and
+                $modernBaseline[0].Crop.Found -and $referenceBaseline[0].Crop.Found) {
+                if ([int]$modernState.Crop.Width -ne [int]$modernBaseline[0].Crop.Width -or
+                    [int]$modernState.Crop.Height -ne [int]$modernBaseline[0].Crop.Height -or
+                    [int]$referenceState.Crop.Width -ne [int]$referenceBaseline[0].Crop.Width -or
+                    [int]$referenceState.Crop.Height -ne [int]$referenceBaseline[0].Crop.Height) {
+                    $statePassed = $false
+                    $reason = "$stateName did not retain its destination surface geometry."
+                }
+
+                if ($statesRequiredToDifferFromRest -contains $stateName) {
+                    $modernRestDelta = Compare-ImagesNormalized $modernState.Crop.Screenshot $modernBaseline[0].Crop.Screenshot
+                    $referenceRestDelta = Compare-ImagesNormalized $referenceState.Crop.Screenshot $referenceBaseline[0].Crop.Screenshot
+                    if ([double]$modernRestDelta.MeanDelta -lt 0.25 -or [double]$referenceRestDelta.MeanDelta -lt 0.25) {
+                        $statePassed = $false
+                        $reason = "$stateName did not produce visible state pixels in both applications (ModernWpf $($modernRestDelta.MeanDelta), WinUI $($referenceRestDelta.MeanDelta))."
+                    }
+                }
+            }
+            else {
+                $statePassed = $false
+                $reason = "$stateName could not be checked against its $baselineName geometry."
+            }
+        }
+
+        if (!$statePassed) {
+            $failures.Add($reason)
+        }
+        $comparisons.Add([ordered]@{
+            State = $stateName
+            Passed = $statePassed
+            Reason = $reason
+            ModernWpfPath = $(if ($modernValid) { $modernState.Crop.Screenshot } else { "" })
+            WinUIPath = $(if ($referenceValid) { $referenceState.Crop.Screenshot } else { "" })
+            ModernWpfSize = $(if ($modernValid) { "$($modernState.Crop.Width)x$($modernState.Crop.Height)" } else { "" })
+            WinUISize = $(if ($referenceValid) { "$($referenceState.Crop.Width)x$($referenceState.Crop.Height)" } else { "" })
+            MeanDelta = $(if ($null -ne $pixelComparison) { $pixelComparison.MeanDelta } else { $null })
+            MeanDeltaThreshold = $meanDeltaThreshold
+            ModernWpfRestDelta = $(if ($null -ne $modernRestDelta) { $modernRestDelta.MeanDelta } else { $null })
+            WinUIRestDelta = $(if ($null -ne $referenceRestDelta) { $referenceRestDelta.MeanDelta } else { $null })
+        })
+    }
+
+    return [ordered]@{
+        Passed = $failures.Count -eq 0
+        ExpectedCount = $expectedStates.Count
+        ValidCount = $expectedStates.Count - $failures.Count
+        Comparisons = $comparisons.ToArray()
+        Reason = $failures -join " "
+    }
+}
+
+function Get-ControlVisualStateMatrixBaseline([string]$state) {
+    # Checked rest is the checked-state transition itself, so compare it with
+    # OffRest. The other checked interaction states use OnRest as their local
+    # baseline to isolate pointer, press, and focus changes from the toggle.
+    if ($state -eq "OnRest") {
+        return "OffRest"
+    }
+    if ($state.StartsWith("Off", [System.StringComparison]::Ordinal)) {
+        return "OffRest"
+    }
+    if ($state.StartsWith("On", [System.StringComparison]::Ordinal)) {
+        return "OnRest"
+    }
+    if ($state -eq "DisabledOff") {
+        return "OffRest"
+    }
+    if ($state -eq "DisabledOn") {
+        return "OnRest"
+    }
+    return "Rest"
+}
+
+function Test-ControlVisualStateMatrixStateMustDiffer([string]$state) {
+    return $state -match "PointerOver$" -or
+        $state -match "Pressed$" -or
+        $state -match "Focused$" -or
+        $state -eq "OnRest" -or
+        $state.StartsWith("Disabled", [System.StringComparison]::Ordinal)
+}
+
+function Compare-ControlVisualStateMatrixEvidence(
+    [string]$control,
+    $modernMatrix,
+    $referenceMatrix) {
+    $expectedStates = @(Get-ControlVisualStateMatrixExpectedStates $control)
+    $comparisons = New-Object System.Collections.Generic.List[object]
+    $failures = New-Object System.Collections.Generic.List[string]
+
+    foreach ($stateName in $expectedStates) {
+        # Calibrate per state where a filled rounded surface amplifies the
+        # unavoidable WPF-versus-WinUI edge rasterization delta. Keeping tight
+        # thresholds on the other states prevents that allowance from masking
+        # an unrelated regression.
+        $meanDeltaThreshold = Get-ControlVisualStateMatrixMeanDeltaThreshold $control $stateName
+        $modernState = @($modernMatrix.States | Where-Object { $_.State -eq $stateName } | Select-Object -First 1)
+        $referenceState = @($referenceMatrix.States | Where-Object { $_.State -eq $stateName } | Select-Object -First 1)
+        $modernState = if ($modernState.Count -eq 1) { $modernState[0] } else { $null }
+        $referenceState = if ($referenceState.Count -eq 1) { $referenceState[0] } else { $null }
+        $modernValid = $null -ne $modernState -and $null -ne $modernState.Crop -and
+            $modernState.Crop.Found -and $modernState.Crop.NonBlank -and
+            ![string]::IsNullOrWhiteSpace([string]$modernState.Crop.Screenshot) -and
+            (Test-Path $modernState.Crop.Screenshot)
+        $referenceValid = $null -ne $referenceState -and $null -ne $referenceState.Crop -and
+            $referenceState.Crop.Found -and $referenceState.Crop.NonBlank -and
+            ![string]::IsNullOrWhiteSpace([string]$referenceState.Crop.Screenshot) -and
+            (Test-Path $referenceState.Crop.Screenshot)
+
+        $pixelComparison = $null
+        $modernRestDelta = $null
+        $referenceRestDelta = $null
+        $sizeDelta = $null
+        $statePassed = $modernValid -and $referenceValid
+        $reason = ""
+        if (!$statePassed) {
+            $reason = "$stateName was not captured as a nonblank state in both applications."
+        }
+        else {
+            $pixelComparison = Compare-ControlStateImagesNormalized $modernState.Crop.Screenshot $referenceState.Crop.Screenshot
+            $sizeDelta = [Math]::Abs([int]$modernState.Crop.Width - [int]$referenceState.Crop.Width) +
+                [Math]::Abs([int]$modernState.Crop.Height - [int]$referenceState.Crop.Height)
+            if (!$pixelComparison.Comparable -or [double]$pixelComparison.MeanDelta -gt $meanDeltaThreshold) {
+                $statePassed = $false
+                $reason = "$stateName pixel delta $($pixelComparison.MeanDelta) exceeded $meanDeltaThreshold."
+            }
+            elseif ($sizeDelta -gt (Get-ControlVisualStateMatrixCropSizeDeltaThreshold $control)) {
+                $statePassed = $false
+                $reason = "$stateName crop size differed: ModernWpf $($modernState.Crop.Width)x$($modernState.Crop.Height), WinUI $($referenceState.Crop.Width)x$($referenceState.Crop.Height)."
+            }
+
+            if ($stateName.StartsWith("Disabled", [System.StringComparison]::Ordinal)) {
+                if ($null -eq $modernState.Target -or $null -eq $referenceState.Target -or
+                    $modernState.Target.IsEnabled -or $referenceState.Target.IsEnabled) {
+                    $statePassed = $false
+                    $reason = "$stateName did not expose a disabled target in both applications."
+                }
+            }
+            elseif ($null -eq $modernState.Target -or $null -eq $referenceState.Target -or
+                !$modernState.Target.IsEnabled -or !$referenceState.Target.IsEnabled) {
+                $statePassed = $false
+                $reason = "$stateName did not retain an enabled target in both applications."
+            }
+
+            if ($stateName.StartsWith("Off", [System.StringComparison]::Ordinal) -or $stateName -eq "DisabledOff") {
+                if ($modernState.Target.ToggleState -ne "Off" -or $referenceState.Target.ToggleState -ne "Off") {
+                    $statePassed = $false
+                    $reason = "$stateName did not retain ToggleState=Off in both applications."
+                }
+            }
+            elseif ($stateName.StartsWith("On", [System.StringComparison]::Ordinal) -or $stateName -eq "DisabledOn") {
+                if ($modernState.Target.ToggleState -ne "On" -or $referenceState.Target.ToggleState -ne "On") {
+                    $statePassed = $false
+                    $reason = "$stateName did not retain ToggleState=On in both applications."
+                }
+            }
+
+            $baselineName = Get-ControlVisualStateMatrixBaseline $stateName
+            $modernBaseline = @($modernMatrix.States | Where-Object { $_.State -eq $baselineName } | Select-Object -First 1)
+            $referenceBaseline = @($referenceMatrix.States | Where-Object { $_.State -eq $baselineName } | Select-Object -First 1)
+            if ($modernBaseline.Count -eq 1 -and $referenceBaseline.Count -eq 1 -and
+                $null -ne $modernBaseline[0].Crop -and $null -ne $referenceBaseline[0].Crop -and
+                $modernBaseline[0].Crop.Found -and $referenceBaseline[0].Crop.Found) {
+                if ([int]$modernState.Crop.Width -ne [int]$modernBaseline[0].Crop.Width -or
+                    [int]$modernState.Crop.Height -ne [int]$modernBaseline[0].Crop.Height -or
+                    [int]$referenceState.Crop.Width -ne [int]$referenceBaseline[0].Crop.Width -or
+                    [int]$referenceState.Crop.Height -ne [int]$referenceBaseline[0].Crop.Height) {
+                    $statePassed = $false
+                    $reason = "$stateName did not retain its $baselineName target geometry."
+                }
+
+                if (Test-ControlVisualStateMatrixStateMustDiffer $stateName) {
+                    $modernRestDelta = Compare-ImagesNormalized $modernState.Crop.Screenshot $modernBaseline[0].Crop.Screenshot
+                    $referenceRestDelta = Compare-ImagesNormalized $referenceState.Crop.Screenshot $referenceBaseline[0].Crop.Screenshot
+                    $minimumStateDelta = if ($stateName -match "Focused$") {
+                        0.08
+                    }
+                    elseif ($control -eq "SplitButton" -and $stateName -eq "PrimaryPointerOver") {
+                        # The current WinUI swatch sample changes only a few
+                        # antialiased edge pixels in this state (about 0.18).
+                        0.10
+                    }
+                    else {
+                        0.20
+                    }
+                    if ([double]$modernRestDelta.MeanDelta -lt $minimumStateDelta -or
+                        [double]$referenceRestDelta.MeanDelta -lt $minimumStateDelta) {
+                        $statePassed = $false
+                        $reason = "$stateName did not produce visible pixels in both applications (ModernWpf $($modernRestDelta.MeanDelta), WinUI $($referenceRestDelta.MeanDelta))."
+                    }
+                }
+            }
+            else {
+                $statePassed = $false
+                $reason = "$stateName could not be checked against its $baselineName geometry."
+            }
+        }
+
+        if (!$statePassed) {
+            $failures.Add($reason)
+        }
+        $comparisons.Add([ordered]@{
+            State = $stateName
+            Passed = $statePassed
+            Reason = $reason
+            ModernWpfPath = $(if ($modernValid) { $modernState.Crop.Screenshot } else { "" })
+            WinUIPath = $(if ($referenceValid) { $referenceState.Crop.Screenshot } else { "" })
+            ModernWpfSize = $(if ($modernValid) { "$($modernState.Crop.Width)x$($modernState.Crop.Height)" } else { "" })
+            WinUISize = $(if ($referenceValid) { "$($referenceState.Crop.Width)x$($referenceState.Crop.Height)" } else { "" })
+            MeanDelta = $(if ($null -ne $pixelComparison) { $pixelComparison.MeanDelta } else { $null })
+            MeanDeltaThreshold = $meanDeltaThreshold
+            ModernWpfRestDelta = $(if ($null -ne $modernRestDelta) { $modernRestDelta.MeanDelta } else { $null })
+            WinUIRestDelta = $(if ($null -ne $referenceRestDelta) { $referenceRestDelta.MeanDelta } else { $null })
+        })
+    }
+
+    return [ordered]@{
+        Passed = $failures.Count -eq 0
+        ExpectedCount = $expectedStates.Count
+        ValidCount = $expectedStates.Count - $failures.Count
+        Comparisons = $comparisons.ToArray()
+        Reason = $failures -join " "
+    }
+}
+
+function Get-NavigationViewSelectionIndicatorEvidence([string]$path, [string]$orientation = "Left") {
+    if ([string]::IsNullOrWhiteSpace($path) -or !(Test-Path $path)) {
+        return [ordered]@{
+            Found = $false
+            Reason = "NavigationView primary crop was not found."
+        }
+    }
+
+    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
+    try {
+        # Group exact solid pixels so the rounded indicator's antialiased edge
+        # cannot blur a position error. Left-mode indicators live in the first
+        # 24 columns; Top-mode indicators live in the 48-pixel navigation row.
+        $colors = @{}
+        $scanWidth = if ($orientation -eq "Top") { [Math]::Min(250, $bitmap.Width) } else { [Math]::Min(24, $bitmap.Width) }
+        $scanHeight = if ($orientation -eq "Top") { [Math]::Min(54, $bitmap.Height) } else { [Math]::Min(220, $bitmap.Height) }
+        for ($y = 0; $y -lt $scanHeight; $y++) {
+            for ($x = 0; $x -lt $scanWidth; $x++) {
+                $pixel = $bitmap.GetPixel($x, $y)
+                if ($pixel.A -lt 240) {
+                    continue
+                }
+
+                $maximumChannel = [Math]::Max($pixel.R, [Math]::Max($pixel.G, $pixel.B))
+                $minimumChannel = [Math]::Min($pixel.R, [Math]::Min($pixel.G, $pixel.B))
+                if (($maximumChannel - $minimumChannel) -lt 40) {
+                    continue
+                }
+
+                $key = $pixel.Name.ToUpperInvariant()
+                if (!$colors.ContainsKey($key)) {
+                    $colors[$key] = [pscustomobject]@{
+                        Color = $key
+                        Count = 0
+                        MinimumX = $x
+                        MaximumX = $x
+                        MinimumY = $y
+                        MaximumY = $y
+                    }
+                }
+
+                $entry = $colors[$key]
+                $entry.Count++
+                $entry.MinimumX = [Math]::Min($entry.MinimumX, $x)
+                $entry.MaximumX = [Math]::Max($entry.MaximumX, $x)
+                $entry.MinimumY = [Math]::Min($entry.MinimumY, $y)
+                $entry.MaximumY = [Math]::Max($entry.MaximumY, $y)
+            }
+        }
+
+        $candidate = $colors.Values |
+            Where-Object {
+                $width = $_.MaximumX - $_.MinimumX + 1
+                $height = $_.MaximumY - $_.MinimumY + 1
+                $_.Count -ge 20 -and $(if ($orientation -eq "Top") {
+                    $width -ge 8 -and $width -le 24 -and $height -le 6
+                }
+                else {
+                    $width -le 8 -and $height -ge 8 -and $height -le 24
+                })
+            } |
+            Sort-Object -Property Count -Descending |
+            Select-Object -First 1
+
+        if ($null -eq $candidate) {
+            return [ordered]@{
+                Found = $false
+                Reason = "No solid NavigationView selection-indicator pixels were found in the primary crop."
+            }
+        }
+
+        return [ordered]@{
+            Found = $true
+            Reason = ""
+            Color = $candidate.Color
+            Count = $candidate.Count
+            X = $candidate.MinimumX
+            Y = $candidate.MinimumY
+            Width = $candidate.MaximumX - $candidate.MinimumX + 1
+            Height = $candidate.MaximumY - $candidate.MinimumY + 1
+        }
+    }
+    finally {
+        $bitmap.Dispose()
+    }
+}
+
+function Get-NavigationViewSampleArtifactEvidence([string]$artifactDirectory) {
+    $expectations = @(
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_NavigationView"; Width = 745; Height = 460; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_TopNavigationView"; Width = 745; Height = 460; IndicatorOrientation = "Top" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_AdaptiveNavigationView"; Width = 745; Height = 460; IndicatorOrientation = "Top" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_TabsNavigationView"; Width = 745; Height = 460; IndicatorOrientation = "Top" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_DataBindingNavigationView"; Width = 745; Height = 460; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_FooterNavigationView"; Width = 592; Height = 460; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_HierarchicalNavigationView"; Width = 565; Height = 460; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_ApiNavigationView"; Width = 458; Height = 540; IndicatorOrientation = "" }
+    )
+    $artifacts = @()
+
+    foreach ($expectation in $expectations) {
+        $path = Join-Path $artifactDirectory ($expectation.AutomationId + ".png")
+        $found = Test-Path $path
+        $size = if ($found) { Get-ImageSize $path } else { [ordered]@{ Width = 0; Height = 0 } }
+        $nonBlank = $found -and (Test-ImageNotBlank $path)
+        $visibleStdDev = if ($found) { Get-ImageVisibleStdDev $path } else { 0.0 }
+        $indicator = if ($found -and ![string]::IsNullOrWhiteSpace($expectation.IndicatorOrientation)) {
+            Get-NavigationViewSelectionIndicatorEvidence $path $expectation.IndicatorOrientation
+        }
+        else {
+            $null
+        }
+        $valid = $found -and
+            $nonBlank -and
+            $size.Width -eq $expectation.Width -and
+            $size.Height -eq $expectation.Height -and
+            $visibleStdDev -ge 4.0 -and
+            ($null -eq $indicator -or $indicator.Found)
+
+        $artifacts += [ordered]@{
+            AutomationId = $expectation.AutomationId
+            Path = $path
+            Found = $found
+            NonBlank = $nonBlank
+            VisibleStdDev = $visibleStdDev
+            Width = $size.Width
+            Height = $size.Height
+            ExpectedWidth = $expectation.Width
+            ExpectedHeight = $expectation.Height
+            IndicatorOrientation = $expectation.IndicatorOrientation
+            Indicator = $indicator
+            Valid = $valid
+        }
+    }
+
+    $invalidArtifacts = @($artifacts | Where-Object { !$_.Valid })
+    $reason = if ($invalidArtifacts.Count -eq 0) {
+        ""
+    }
+    else {
+        "NavigationView sample artifacts failed validation: " + (($invalidArtifacts | ForEach-Object {
+            "$($_.AutomationId) found=$($_.Found) nonblank=$($_.NonBlank) size=$($_.Width)x$($_.Height) visibleStdDev=$($_.VisibleStdDev) indicatorFound=$(if ($null -eq $_.Indicator) { 'n/a' } else { $_.Indicator.Found })"
+        }) -join "; ")
+    }
+
+    return [ordered]@{
+        Passed = $invalidArtifacts.Count -eq 0
+        ExpectedCount = $expectations.Count
+        ValidCount = $expectations.Count - $invalidArtifacts.Count
+        Artifacts = @($artifacts)
+        Reason = $reason
+    }
+}
+
+function Capture-NavigationViewReferenceSampleArtifacts([string]$caseDirectory, $window) {
+    $expectations = @(
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_NavigationView"; ReferenceAutomationId = "nvSample5"; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_TopNavigationView"; ReferenceAutomationId = "nvSample6"; IndicatorOrientation = "Top" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_AdaptiveNavigationView"; ReferenceAutomationId = "nvSample2"; IndicatorOrientation = "Top" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_TabsNavigationView"; ReferenceAutomationId = "nvSample7"; IndicatorOrientation = "Top" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_DataBindingNavigationView"; ReferenceAutomationId = "nvSample4"; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_FooterNavigationView"; ReferenceAutomationId = "nvSample9"; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_HierarchicalNavigationView"; ReferenceAutomationId = "nvSample8"; IndicatorOrientation = "Left" },
+        [ordered]@{ AutomationId = "GallerySample_NavigationView_ApiNavigationView"; ReferenceAutomationId = "nvSample"; IndicatorOrientation = "" }
+    )
+    $artifactDirectory = Join-Path $caseDirectory "winui3-navigationview-samples"
+    New-Item -ItemType Directory -Force -Path $artifactDirectory | Out-Null
+    $artifacts = @()
+    $scrollPanel = TryFind-DescendantByAutomationId $window "svPanel"
+
+    foreach ($expectation in $expectations) {
+        $element = TryFind-DescendantByAutomationId $window $expectation.ReferenceAutomationId
+        $scrollRequested = $false
+        if ($null -ne $element) {
+            try {
+                $scrollItem = $element.GetCurrentPattern([System.Windows.Automation.ScrollItemPattern]::Pattern)
+                $scrollItem.ScrollIntoView()
+                $scrollRequested = $true
+            }
+            catch {
+                try {
+                    $focusTarget = TryFind-DescendantByAutomationId $element "TogglePaneButton"
+                    if ($null -ne $focusTarget) {
+                        $focusTarget.SetFocus()
+                        $scrollRequested = $true
+                    }
+                }
+                catch {
+                }
+            }
+        }
+
+        $elementBounds = $null
+        $fullyVisible = $false
+        foreach ($attempt in 1..12) {
+            Start-Sleep -Milliseconds 100
+            if ($null -ne $element) {
+                $elementBounds = Get-ElementScreenBounds $element 0 $window
+            }
+            $scrollBounds = if ($null -ne $scrollPanel) { Get-ElementScreenBounds $scrollPanel 0 $window } else { $null }
+            $fullyVisible = $null -ne $elementBounds -and $elementBounds.Found -and
+                ($null -eq $scrollBounds -or
+                    ($elementBounds.X -ge $scrollBounds.X -and
+                        $elementBounds.Y -ge $scrollBounds.Y -and
+                        ($elementBounds.X + $elementBounds.Width) -le ($scrollBounds.X + $scrollBounds.Width) -and
+                        ($elementBounds.Y + $elementBounds.Height) -le ($scrollBounds.Y + $scrollBounds.Height)))
+            if ($fullyVisible) {
+                break
+            }
+        }
+
+        $path = Join-Path $artifactDirectory ($expectation.AutomationId + ".png")
+        $crop = if ($fullyVisible) {
+            Save-ScreenElementCrop $element $path $expectation.ReferenceAutomationId 0 $window
+        }
+        else {
+            [ordered]@{
+                Found = $false
+                Screenshot = ""
+                Width = if ($null -ne $elementBounds) { $elementBounds.Width } else { 0 }
+                Height = if ($null -ne $elementBounds) { $elementBounds.Height } else { 0 }
+                NonBlank = $false
+                VisibleStdDev = 0.0
+            }
+        }
+        $indicator = if ($crop.Found -and ![string]::IsNullOrWhiteSpace($expectation.IndicatorOrientation)) {
+            Get-NavigationViewSelectionIndicatorEvidence $crop.Screenshot $expectation.IndicatorOrientation
+        }
+        else {
+            $null
+        }
+        $valid = $crop.Found -and
+            $crop.NonBlank -and
+            $crop.VisibleStdDev -ge 4.0 -and
+            ($null -eq $indicator -or $indicator.Found)
+        $artifacts += [ordered]@{
+            AutomationId = $expectation.AutomationId
+            ReferenceAutomationId = $expectation.ReferenceAutomationId
+            Path = $crop.Screenshot
+            Found = $crop.Found
+            FullyVisible = $fullyVisible
+            ScrollRequested = $scrollRequested
+            NonBlank = $crop.NonBlank
+            VisibleStdDev = if ($crop.Contains("VisibleStdDev")) { $crop.VisibleStdDev } else { 0.0 }
+            Width = $crop.Width
+            Height = $crop.Height
+            IndicatorOrientation = $expectation.IndicatorOrientation
+            Indicator = $indicator
+            Valid = $valid
+        }
+    }
+
+    $firstSample = TryFind-DescendantByAutomationId $window "nvSample5"
+    if ($null -ne $firstSample) {
+        try {
+            $firstSampleScrollItem = $firstSample.GetCurrentPattern([System.Windows.Automation.ScrollItemPattern]::Pattern)
+            $firstSampleScrollItem.ScrollIntoView()
+        }
+        catch {
+        }
+    }
+
+    $invalidArtifacts = @($artifacts | Where-Object { !$_.Valid })
+    $reason = if ($invalidArtifacts.Count -eq 0) {
+        ""
+    }
+    else {
+        "WinUI NavigationView reference sample artifacts failed validation: " + (($invalidArtifacts | ForEach-Object {
+            "$($_.ReferenceAutomationId) found=$($_.Found) fullyVisible=$($_.FullyVisible) nonblank=$($_.NonBlank) size=$($_.Width)x$($_.Height) visibleStdDev=$($_.VisibleStdDev) indicatorFound=$(if ($null -eq $_.Indicator) { 'n/a' } else { $_.Indicator.Found })"
+        }) -join "; ")
+    }
+
+    return [ordered]@{
+        Passed = $invalidArtifacts.Count -eq 0
+        ExpectedCount = $expectations.Count
+        ValidCount = $expectations.Count - $invalidArtifacts.Count
+        Artifacts = @($artifacts)
+        Reason = $reason
+    }
+}
+
+function Get-NavigationViewSampleMeanDeltaThreshold([string]$automationId) {
+    switch ($automationId) {
+        "GallerySample_NavigationView_NavigationView" { return 1.5 }
+        "GallerySample_NavigationView_AdaptiveNavigationView" { return 4.25 }
+        "GallerySample_NavigationView_TabsNavigationView" { return 4.25 }
+        "GallerySample_NavigationView_DataBindingNavigationView" { return 1.5 }
+        "GallerySample_NavigationView_FooterNavigationView" { return 2.0 }
+        "GallerySample_NavigationView_HierarchicalNavigationView" { return 1.5 }
+        "GallerySample_NavigationView_ApiNavigationView" { return 2.5 }
+        default { return 1.2 }
+    }
+}
+
+function Compare-NavigationViewSampleArtifactEvidence($modernEvidence, $referenceEvidence) {
+    $comparisons = @()
+    foreach ($modernArtifact in $modernEvidence.Artifacts) {
+        $referenceArtifact = $referenceEvidence.Artifacts |
+            Where-Object { $_.AutomationId -eq $modernArtifact.AutomationId } |
+            Select-Object -First 1
+        $threshold = Get-NavigationViewSampleMeanDeltaThreshold $modernArtifact.AutomationId
+        $comparison = if ($null -ne $referenceArtifact -and
+            $modernArtifact.Found -and
+            $referenceArtifact.Found -and
+            (Test-Path $modernArtifact.Path) -and
+            (Test-Path $referenceArtifact.Path)) {
+            Compare-ImagesNormalized $modernArtifact.Path $referenceArtifact.Path
+        }
+        else {
+            [ordered]@{
+                Comparable = $false
+                Reason = "The ModernWpf or WinUI sample artifact was unavailable."
+                MeanDelta = $null
+            }
+        }
+        $sizeDelta = if ($null -ne $referenceArtifact) {
+            [Math]::Abs([int]$modernArtifact.Width - [int]$referenceArtifact.Width) +
+                [Math]::Abs([int]$modernArtifact.Height - [int]$referenceArtifact.Height)
+        }
+        else {
+            [int]::MaxValue
+        }
+        $indicatorExpected = ![string]::IsNullOrWhiteSpace($modernArtifact.IndicatorOrientation)
+        $indicatorComparable = !$indicatorExpected -or
+            ($null -ne $referenceArtifact -and
+                $null -ne $modernArtifact.Indicator -and
+                $null -ne $referenceArtifact.Indicator -and
+                $modernArtifact.Indicator.Found -and
+                $referenceArtifact.Indicator.Found)
+        $indicatorMatches = !$indicatorExpected -or
+            ($indicatorComparable -and
+                $modernArtifact.IndicatorOrientation -eq $referenceArtifact.IndicatorOrientation -and
+                $modernArtifact.Indicator.Color -eq $referenceArtifact.Indicator.Color -and
+                $modernArtifact.Indicator.Count -eq $referenceArtifact.Indicator.Count -and
+                [Math]::Abs([int]$modernArtifact.Indicator.X - [int]$referenceArtifact.Indicator.X) -le 1 -and
+                [Math]::Abs([int]$modernArtifact.Indicator.Y - [int]$referenceArtifact.Indicator.Y) -le 1 -and
+                $modernArtifact.Indicator.Width -eq $referenceArtifact.Indicator.Width -and
+                $modernArtifact.Indicator.Height -eq $referenceArtifact.Indicator.Height)
+        $passed = $comparison.Comparable -and
+            $sizeDelta -eq 0 -and
+            [double]$comparison.MeanDelta -le $threshold -and
+            $indicatorMatches
+
+        $comparisons += [ordered]@{
+            AutomationId = $modernArtifact.AutomationId
+            ModernWpfPath = $modernArtifact.Path
+            ReferencePath = if ($null -ne $referenceArtifact) { $referenceArtifact.Path } else { "" }
+            ModernWpfWidth = $modernArtifact.Width
+            ModernWpfHeight = $modernArtifact.Height
+            ReferenceWidth = if ($null -ne $referenceArtifact) { $referenceArtifact.Width } else { 0 }
+            ReferenceHeight = if ($null -ne $referenceArtifact) { $referenceArtifact.Height } else { 0 }
+            SizeDelta = $sizeDelta
+            Comparable = $comparison.Comparable
+            MeanDelta = $comparison.MeanDelta
+            MeanDeltaThreshold = $threshold
+            IndicatorExpected = $indicatorExpected
+            IndicatorComparable = $indicatorComparable
+            IndicatorMatches = $indicatorMatches
+            ModernWpfIndicator = $modernArtifact.Indicator
+            ReferenceIndicator = if ($null -ne $referenceArtifact) { $referenceArtifact.Indicator } else { $null }
+            Passed = $passed
+            Reason = $comparison.Reason
+        }
+    }
+
+    $failedComparisons = @($comparisons | Where-Object { !$_.Passed })
+    $reason = if ($failedComparisons.Count -eq 0) {
+        ""
+    }
+    else {
+        "NavigationView sample artifact parity failed: " + (($failedComparisons | ForEach-Object {
+            "$($_.AutomationId) delta=$($_.MeanDelta)/$($_.MeanDeltaThreshold) sizeDelta=$($_.SizeDelta) indicatorMatch=$($_.IndicatorMatches)"
+        }) -join "; ")
+    }
+
+    return [ordered]@{
+        Passed = $failedComparisons.Count -eq 0
+        ExpectedCount = $modernEvidence.ExpectedCount
+        ValidCount = $modernEvidence.ExpectedCount - $failedComparisons.Count
+        Comparisons = @($comparisons)
+        Reason = $reason
+    }
+}
+
+function Get-ControlExampleMeanDeltaThreshold([string]$control, [string]$automationId) {
+    # These compare the complete ControlExample (header, display, Options/Output,
+    # and source expander), not a tightly cropped primitive. Image-backed and
+    # randomized collection samples naturally carry more cross-framework noise.
+    switch ($control) {
+        "GridView" { return 34.0 }
+        "ItemsRepeater" { return 34.0 }
+        "NavigationView" { return 22.0 }
+        "SelectorBar" { return 22.0 }
+        "PersonPicture" { return 20.0 }
+        default { return 18.0 }
+    }
+}
+
+function Get-ControlExampleComparisonMode([string]$control, [string]$automationId) {
+    if ($control -eq "ItemsRepeater" -and
+        $automationId -eq "GallerySample_ItemsRepeater_Example6") {
+        return "VolatileDataGeometry"
+    }
+
+    if ($control -in @("ProgressRing", "WinUIProgressBar") -and
+        $automationId.EndsWith("_Example1", [System.StringComparison]::Ordinal)) {
+        return "AnimatedTemporal"
+    }
+
+    return "Pixel"
+}
+
+function Get-ControlExampleGeometryHeightTolerance([string]$comparisonMode) {
+    switch ($comparisonMode) {
+        "VolatileDataGeometry" { return 6 }
+        "AnimatedTemporal" { return 2 }
+        default { return 0 }
+    }
+}
+
+function Get-ControlExampleEvidenceRequirement([string]$comparisonMode) {
+    switch ($comparisonMode) {
+        "VolatileDataGeometry" {
+            return "Randomized recipe pixels are informational. Require exact card width, no more than 6 px card-height drift, the exact 425x88 source-row pixel gate, and the ItemsRepeater recipe layout/filter/sort runtime contract."
+        }
+        "AnimatedTemporal" {
+            return "The single-frame pixel delta is informational. Require exact card width, no more than 2 px card-height drift, the fixed determinate primitive pixel gate, and recorder animation/state-transition evidence."
+        }
+        default { return "Complete ControlExample pixels must stay within the stated threshold." }
+    }
+}
+
+function New-ControlExampleReviewSheet([string]$control, $comparisons, [string]$caseDir) {
+    $pairs = @(
+        $comparisons |
+            Where-Object {
+                $_.Comparable -and
+                (Test-Path $_.ModernWpfPath) -and
+                (Test-Path $_.ReferencePath)
+            }
+    )
+    if ($pairs.Count -eq 0) {
+        return ""
+    }
+
+    $cellWidth = 560
+    $gutter = 16
+    $labelHeight = 28
+    $rowGap = 16
+    $rowInfo = New-Object System.Collections.Generic.List[object]
+    $sheetHeight = $rowGap
+    foreach ($pair in $pairs) {
+        $modernImage = [System.Drawing.Image]::FromFile($pair.ModernWpfPath)
+        $referenceImage = [System.Drawing.Image]::FromFile($pair.ReferencePath)
+        try {
+            # Use one scale for the pair. Independent scaling hid card-width
+            # differences and distorted every fixed-size child in the review
+            # sheet, which could both invent and conceal layout regressions.
+            $pairScale = [Math]::Min(
+                1.0,
+                $cellWidth / [double][Math]::Max(1, [Math]::Max($modernImage.Width, $referenceImage.Width)))
+            $modernHeight = [int][Math]::Round($modernImage.Height * $pairScale)
+            $referenceHeight = [int][Math]::Round($referenceImage.Height * $pairScale)
+            $rowHeight = $labelHeight + [Math]::Max($modernHeight, $referenceHeight)
+            $rowInfo.Add([pscustomobject]@{
+                Pair = $pair
+                ModernWidth = [int][Math]::Round($modernImage.Width * $pairScale)
+                ModernHeight = $modernHeight
+                ReferenceWidth = [int][Math]::Round($referenceImage.Width * $pairScale)
+                ReferenceHeight = $referenceHeight
+                RowHeight = $rowHeight
+            })
+            $sheetHeight += $rowHeight + $rowGap
+        }
+        finally {
+            $modernImage.Dispose()
+            $referenceImage.Dispose()
+        }
+    }
+
+    $sheetWidth = ($cellWidth * 2) + ($gutter * 3)
+    $sheet = [System.Drawing.Bitmap]::new($sheetWidth, $sheetHeight, [System.Drawing.Imaging.PixelFormat]::Format32bppArgb)
+    $graphics = [System.Drawing.Graphics]::FromImage($sheet)
+    $font = [System.Drawing.Font]::new("Segoe UI", 10.0)
+    $labelBrush = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(255, 32, 32, 32))
+    $borderPen = [System.Drawing.Pen]::new([System.Drawing.Color]::FromArgb(255, 150, 150, 150), 1.0)
+    try {
+        $graphics.Clear([System.Drawing.Color]::FromArgb(255, 224, 224, 224))
+        $graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+        $graphics.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
+        $y = $rowGap
+        foreach ($info in $rowInfo) {
+            $pair = $info.Pair
+            $modernImage = [System.Drawing.Image]::FromFile($pair.ModernWpfPath)
+            $referenceImage = [System.Drawing.Image]::FromFile($pair.ReferencePath)
+            try {
+                $leftX = $gutter
+                $rightX = ($gutter * 2) + $cellWidth
+                $label = "$($pair.AutomationId)  mode=$($pair.ComparisonMode)  delta=$($pair.MeanDelta) / $($pair.MeanDeltaThreshold)  size=$($pair.ModernWpfWidth)x$($pair.ModernWpfHeight) vs $($pair.ReferenceWidth)x$($pair.ReferenceHeight)"
+                $graphics.DrawString("ModernWpf — $label", $font, $labelBrush, $leftX, $y)
+                $graphics.DrawString("WinUI — $label", $font, $labelBrush, $rightX, $y)
+                $imageY = $y + $labelHeight
+                $graphics.FillRectangle([System.Drawing.Brushes]::White, $leftX, $imageY, $cellWidth, $info.RowHeight - $labelHeight)
+                $graphics.FillRectangle([System.Drawing.Brushes]::White, $rightX, $imageY, $cellWidth, $info.RowHeight - $labelHeight)
+                $graphics.DrawImage($modernImage, $leftX, $imageY, $info.ModernWidth, $info.ModernHeight)
+                $graphics.DrawImage($referenceImage, $rightX, $imageY, $info.ReferenceWidth, $info.ReferenceHeight)
+                $graphics.DrawRectangle($borderPen, $leftX, $imageY, $cellWidth, $info.RowHeight - $labelHeight)
+                $graphics.DrawRectangle($borderPen, $rightX, $imageY, $cellWidth, $info.RowHeight - $labelHeight)
+                $y += $info.RowHeight + $rowGap
+            }
+            finally {
+                $modernImage.Dispose()
+                $referenceImage.Dispose()
+            }
+        }
+
+        $path = Join-Path $caseDir "control-example-review.png"
+        $sheet.Save($path, [System.Drawing.Imaging.ImageFormat]::Png)
+        return $path
+    }
+    finally {
+        $borderPen.Dispose()
+        $labelBrush.Dispose()
+        $font.Dispose()
+        $graphics.Dispose()
+        $sheet.Dispose()
+    }
+}
+
+function Compare-ControlExampleScreenArtifactEvidence([string]$control, $modernEvidence, $referenceEvidence, [string]$caseDir) {
+    $comparisons = @()
+    foreach ($modernArtifact in $modernEvidence.Artifacts) {
+        $referenceArtifact = $referenceEvidence.Artifacts |
+            Where-Object { $_.AutomationId -eq $modernArtifact.AutomationId } |
+            Select-Object -First 1
+        $referenceIsolated = $null -ne $referenceArtifact -and
+            $referenceArtifact.Contains("Isolated") -and
+            $referenceArtifact.Isolated
+        $threshold = Get-ControlExampleMeanDeltaThreshold $control $modernArtifact.AutomationId
+        $comparisonMode = Get-ControlExampleComparisonMode $control $modernArtifact.AutomationId
+        $pixelGateApplied = $comparisonMode -eq "Pixel"
+        $geometryHeightTolerance = Get-ControlExampleGeometryHeightTolerance $comparisonMode
+        $evidenceRequirement = Get-ControlExampleEvidenceRequirement $comparisonMode
+        $comparison = if ($referenceIsolated -and
+            $modernArtifact.Valid -and
+            $referenceArtifact.Valid -and
+            (Test-Path $modernArtifact.Path) -and
+            (Test-Path $referenceArtifact.Path)) {
+            Compare-ImagesNormalized $modernArtifact.Path $referenceArtifact.Path
+        }
+        else {
+            [ordered]@{
+                Comparable = $false
+                Reason = "The ModernWpf sample or isolated WinUI ControlExample was unavailable."
+                MeanDelta = $null
+            }
+        }
+        $referenceWidth = if ($null -ne $referenceArtifact) { [int]$referenceArtifact.Width } else { 0 }
+        $referenceHeight = if ($null -ne $referenceArtifact) { [int]$referenceArtifact.Height } else { 0 }
+        $widthDelta = [Math]::Abs([int]$modernArtifact.Width - $referenceWidth)
+        $heightDelta = [Math]::Abs([int]$modernArtifact.Height - $referenceHeight)
+        $geometryPassed = $comparison.Comparable -and
+            $widthDelta -eq 0 -and
+            $heightDelta -le $geometryHeightTolerance
+        $passed = if ($pixelGateApplied) {
+            $comparison.Comparable -and [double]$comparison.MeanDelta -le $threshold
+        }
+        else {
+            $geometryPassed
+        }
+
+        $comparisons += [ordered]@{
+            AutomationId = $modernArtifact.AutomationId
+            ModernWpfPath = $modernArtifact.Path
+            ReferencePath = if ($null -ne $referenceArtifact) { $referenceArtifact.Path } else { "" }
+            ModernWpfWidth = $modernArtifact.Width
+            ModernWpfHeight = $modernArtifact.Height
+            ReferenceWidth = $referenceWidth
+            ReferenceHeight = $referenceHeight
+            WidthDelta = $widthDelta
+            HeightDelta = $heightDelta
+            GeometryHeightTolerance = $geometryHeightTolerance
+            GeometryPassed = $geometryPassed
+            Comparable = $comparison.Comparable
+            MeanDelta = $comparison.MeanDelta
+            MeanDeltaThreshold = $threshold
+            ComparisonMode = $comparisonMode
+            PixelGateApplied = $pixelGateApplied
+            EvidenceRequirement = $evidenceRequirement
+            Passed = $passed
+            Reason = $comparison.Reason
+        }
+    }
+
+    $failedComparisons = @($comparisons | Where-Object { !$_.Passed })
+    $reviewSheet = New-ControlExampleReviewSheet $control $comparisons $caseDir
+    $reason = if ($failedComparisons.Count -eq 0) {
+        ""
+    }
+    else {
+        "ControlExample parity failed: " + (($failedComparisons | ForEach-Object {
+            "$($_.AutomationId) mode=$($_.ComparisonMode) delta=$($_.MeanDelta)/$($_.MeanDeltaThreshold) geometry=$($_.WidthDelta),$($_.HeightDelta)/$($_.GeometryHeightTolerance) comparable=$($_.Comparable)"
+        }) -join "; ")
+    }
+
+    return [ordered]@{
+        Passed = $failedComparisons.Count -eq 0
+        ExpectedCount = $modernEvidence.ExpectedCount
+        ValidCount = $modernEvidence.ExpectedCount - $failedComparisons.Count
+        Comparisons = @($comparisons)
+        ReviewSheet = $reviewSheet
+        Reason = $reason
+    }
+}
+
+function Invoke-Element($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    $invoked = $false
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $rect = $element.Current.BoundingRectangle
+    if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+        [GalleryVisualNative]::Click(
+            [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+            [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+        $invoked = $true
+        Start-Sleep -Milliseconds 50
+    }
+
+    try {
+        $element.SetFocus()
+        [GalleryVisualNative]::PressSpace()
+        $invoked = $true
+        Start-Sleep -Milliseconds 50
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            $invoked = $true
+        }
+    }
+    catch {
+    }
+
+    return $invoked
+}
+
+function Invoke-ElementOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $rect = $element.Current.BoundingRectangle
+    if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+        $keptTopMost = $false
+        try {
+            [GalleryVisualNative]::SetTopMost($window.Current.NativeWindowHandle, $true)
+            $keptTopMost = $true
+            [GalleryVisualNative]::Click(
+                [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+                [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+            Start-Sleep -Milliseconds 50
+            return $true
+        }
+        finally {
+            if ($keptTopMost) {
+                [GalleryVisualNative]::SetTopMost($window.Current.NativeWindowHandle, $false)
+            }
+        }
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            Start-Sleep -Milliseconds 50
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Invoke-ElementPatternOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            Start-Sleep -Milliseconds 50
+            return $true
+        }
+    }
+    catch {
+    }
+
+    $rect = $element.Current.BoundingRectangle
+    if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+        [GalleryVisualNative]::Click(
+            [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+            [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+        Start-Sleep -Milliseconds 50
+        return $true
+    }
+
+    return $false
+}
+
+function Invoke-PopupElementFocusOnce($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $element.SetFocus()
+        Start-Sleep -Milliseconds 50
+        [GalleryVisualNative]::PressSpace()
+        Start-Sleep -Milliseconds 120
+        return $true
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Invoke-PopupElementClickOnce($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $rect = $element.Current.BoundingRectangle
+        if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+            [GalleryVisualNative]::Click(
+                [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+                [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+            Start-Sleep -Milliseconds 120
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            Start-Sleep -Milliseconds 120
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Test-ElementSupportsPattern($element, $pattern) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        return $null -ne $element.GetCurrentPattern($pattern)
+    }
+    catch {
+        return $false
+    }
+}
+
+function Find-SelectionInvokeTarget($element) {
+    $candidate = $element
+    for ($depth = 0; $depth -lt 8 -and $null -ne $candidate; $depth++) {
+        if ((Test-ElementSupportsPattern $candidate ([System.Windows.Automation.SelectionItemPattern]::Pattern)) -or
+            (Test-ElementSupportsPattern $candidate ([System.Windows.Automation.InvokePattern]::Pattern))) {
+            return $candidate
+        }
+
+        try {
+            $candidate = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+        }
+        catch {
+            return $null
+        }
+    }
+
+    return $element
+}
+
+function Invoke-SelectionElementOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $target = Find-SelectionInvokeTarget $element
+
+    try {
+        $pattern = $target.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Select()
+            Start-Sleep -Milliseconds 80
+            [void](Invoke-ElementOnce $window $target)
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $target.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            Start-Sleep -Milliseconds 80
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return Invoke-ElementOnce $window $target
+}
+
+function Invoke-GridViewItemClickOnce([string]$app, $window) {
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+
+    $item = Find-ElementByNameInProcess $window.Current.ProcessId @("Item 1")
+    if ($null -eq $item) {
+        return $false
+    }
+
+    $target = Find-SelectionInvokeTarget $item
+    if ($null -eq $target) {
+        return $false
+    }
+
+    $invoked = $false
+    try {
+        $pattern = $target.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Select()
+            $invoked = $true
+            Start-Sleep -Milliseconds 80
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $target.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Invoke()
+            $invoked = $true
+            Start-Sleep -Milliseconds 80
+        }
+    }
+    catch {
+    }
+
+    return $invoked
+}
+
+function Expand-ElementPatternOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Expand()
+            Start-Sleep -Milliseconds 50
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Scroll-ModernWpfVisualArtifactIntoView($window, [string]$artifactDir, [string]$automationId) {
+    $requestPath = Join-Path $artifactDir "modernwpf-gallery-scroll-request.txt"
+    $resultPath = Join-Path $artifactDir "modernwpf-gallery-scroll-result.txt"
+    Set-Content -LiteralPath $resultPath -Value "" -Encoding UTF8
+    Set-Content -LiteralPath $requestPath -Value $automationId -Encoding UTF8
+
+    foreach ($attempt in 1..20) {
+        Start-Sleep -Milliseconds 75
+        if (!(Test-Path -LiteralPath $resultPath)) {
+            continue
+        }
+
+        $result = (Get-Content -Raw -LiteralPath $resultPath).Trim()
+        if ($result -eq "$automationId|NotFound") {
+            return [ordered]@{ Found = $false; AutomationId = $automationId; Reason = "The Gallery did not find the requested artifact." }
+        }
+
+        $parts = $result.Split('|')
+        if ($parts.Count -eq 6 -and $parts[0] -eq $automationId -and $parts[1] -eq "Found") {
+            $culture = [System.Globalization.CultureInfo]::InvariantCulture
+            return [ordered]@{
+                Found = $true
+                AutomationId = $automationId
+                X = [double]::Parse($parts[2], $culture)
+                Y = [double]::Parse($parts[3], $culture)
+                Width = [double]::Parse($parts[4], $culture)
+                Height = [double]::Parse($parts[5], $culture)
+                Reason = ""
+            }
+        }
+    }
+
+    return [ordered]@{ Found = $false; AutomationId = $automationId; Reason = "Timed out waiting for the Gallery scroll result." }
+}
+
+function Compare-ImagesOnCommonCanvas([string]$leftPath, [string]$rightPath) {
+    $left = [System.Drawing.Bitmap]::FromFile($leftPath)
+    $right = [System.Drawing.Bitmap]::FromFile($rightPath)
+    try {
+        $leftBackground = $left.GetPixel(0, 0)
+        $rightBackground = $right.GetPixel(0, 0)
+        $best = $null
+        foreach ($offsetX in -1..1) {
+            foreach ($offsetY in -1..1) {
+                $leftX = [Math]::Max(0, -$offsetX)
+                $leftY = [Math]::Max(0, -$offsetY)
+                $rightX = [Math]::Max(0, $offsetX)
+                $rightY = [Math]::Max(0, $offsetY)
+                $width = [Math]::Max(1, [Math]::Max($leftX + $left.Width, $rightX + $right.Width))
+                $height = [Math]::Max(1, [Math]::Max($leftY + $left.Height, $rightY + $right.Height))
+                $samples = 0
+                $delta = 0.0
+                $stepX = [Math]::Max(1, [int]($width / 80))
+                $stepY = [Math]::Max(1, [int]($height / 80))
+                for ($x = 0; $x -lt $width; $x += $stepX) {
+                    for ($y = 0; $y -lt $height; $y += $stepY) {
+                        $leftPixelX = $x - $leftX
+                        $leftPixelY = $y - $leftY
+                        $rightPixelX = $x - $rightX
+                        $rightPixelY = $y - $rightY
+                        $a = if ($leftPixelX -ge 0 -and $leftPixelY -ge 0 -and $leftPixelX -lt $left.Width -and $leftPixelY -lt $left.Height) {
+                            $left.GetPixel($leftPixelX, $leftPixelY)
+                        }
+                        else {
+                            $leftBackground
+                        }
+                        $b = if ($rightPixelX -ge 0 -and $rightPixelY -ge 0 -and $rightPixelX -lt $right.Width -and $rightPixelY -lt $right.Height) {
+                            $right.GetPixel($rightPixelX, $rightPixelY)
+                        }
+                        else {
+                            $rightBackground
+                        }
+                        $delta += ([Math]::Abs($a.R - $b.R) + [Math]::Abs($a.G - $b.G) + [Math]::Abs($a.B - $b.B)) / 3.0
+                        $samples++
+                    }
+                }
+
+                $meanDelta = $delta / [Math]::Max(1, $samples)
+                if ($null -eq $best -or $meanDelta -lt $best.MeanDelta) {
+                    $best = [ordered]@{
+                        MeanDelta = $meanDelta
+                        Width = $width
+                        Height = $height
+                        OffsetX = $offsetX
+                        OffsetY = $offsetY
+                    }
+                }
+            }
+        }
+
+        return [ordered]@{
+            Comparable = $true
+            Reason = ""
+            MeanDelta = [Math]::Round($best.MeanDelta, 2)
+            NormalizedWidth = $best.Width
+            NormalizedHeight = $best.Height
+            AlignmentX = $best.OffsetX
+            AlignmentY = $best.OffsetY
+        }
+    }
+    finally {
+        $left.Dispose()
+        $right.Dispose()
+    }
+}
+
+function Toggle-ElementPatternOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.TogglePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Toggle()
+            Start-Sleep -Milliseconds 50
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Get-ExpandCollapseStateName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return $pattern.Current.ExpandCollapseState.ToString()
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Find-ComboBoxOpenElement($window, $element, [string[]]$openNames) {
+    if ($null -eq $element -or (Get-ExpandCollapseStateName $element) -ne "Expanded") {
+        return $null
+    }
+
+    $comboRect = $element.Current.BoundingRectangle
+    if ($comboRect.Width -le 0 -or $comboRect.Height -le 0) {
+        return $null
+    }
+
+    $matches = Find-ElementsByNameInProcess $window.Current.ProcessId $openNames
+    foreach ($match in $matches) {
+        try {
+            if ($match.Current.ControlType -ne [System.Windows.Automation.ControlType]::ListItem) {
+                continue
+            }
+
+            $rect = $match.Current.BoundingRectangle
+            if ($rect.Width -le 0 -or $rect.Height -le 0) {
+                continue
+            }
+
+            $overlapsHorizontally = $rect.Right -gt $comboRect.X -and $rect.X -lt $comboRect.Right
+            $outsideClosedCombo = $rect.Y -ge ($comboRect.Bottom - 1) -or $rect.Bottom -le ($comboRect.Y + 1)
+            if ($overlapsHorizontally -and $outsideClosedCombo) {
+                return $match
+            }
+        }
+        catch {
+        }
+    }
+
+    return $null
+}
+
+function Find-SplitButtonOpenElementAtPoint($element, [string[]]$openNames) {
+    if (!(Test-AutomationElementUsable $element)) {
+        return $null
+    }
+
+    try {
+        $anchor = $element.Current.BoundingRectangle
+        $xFractions = @(0.18, 0.42, 0.68, 0.86)
+        $yOffsets = @(14, 28, 42, 58, -14, -28, -42, -58)
+        foreach ($yOffset in $yOffsets) {
+            foreach ($xFraction in $xFractions) {
+                $point = New-Object System.Windows.Point -ArgumentList @(
+                    ($anchor.Left + ($anchor.Width * $xFraction)),
+                    $(if ($yOffset -gt 0) { $anchor.Bottom + $yOffset } else { $anchor.Top + $yOffset }))
+                $candidate = [System.Windows.Automation.AutomationElement]::FromPoint($point)
+                for ($depth = 0; $depth -lt 8 -and $null -ne $candidate; $depth++) {
+                    if (Test-ElementNameMatches $candidate $openNames) {
+                        return $candidate
+                    }
+
+                    try {
+                        $candidate = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+                    }
+                    catch {
+                        $candidate = $null
+                    }
+                }
+            }
+        }
+    }
+    catch {
+    }
+
+    return $null
+}
+
+function Find-OpenInteractionElement($window, $element, [string[]]$openNames, [string]$control) {
+    if ($control -eq "ComboBox") {
+        return Find-ComboBoxOpenElement $window $element $openNames
+    }
+
+    if ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") {
+        if ($null -eq $element -or (Get-ExpandCollapseStateName $element) -ne "Expanded") {
+            return $null
+        }
+
+        # The split-button flyout is a separate top-level HWND. Searching every
+        # UIA window in the process can block on WPF's inactive popup provider.
+        # Hit-test the visible popup surface directly and climb to its named
+        # button; this is also stronger proof that the pixels are on screen.
+        return Find-SplitButtonOpenElementAtPoint $element $openNames
+    }
+
+    if ($control -eq "CommandBar") {
+        foreach ($match in @(Find-ElementsByNameInProcess $window.Current.ProcessId $openNames)) {
+            try {
+                $automationId = [string]$match.Current.AutomationId
+                if ($match.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button -and
+                    ($automationId -eq "GallerySample_CommandBar_SettingsButton" -or
+                     $automationId -eq "settingsButton")) {
+                    return $match
+                }
+            }
+            catch {
+            }
+        }
+
+        return $null
+    }
+
+    return Find-ElementByNameInProcess $window.Current.ProcessId $openNames
+}
+
+function Test-ControlPrefersScreenOpenCapture([string]$control) {
+    switch ($control) {
+        "TeachingTip" { return $true }
+        "CommandBar" { return $true }
+        "CommandBarFlyout" { return $true }
+        "MenuBar" { return $true }
+        "MenuFlyout" { return $true }
+        default { return $false }
+    }
+}
+
+function Test-ControlRequiresPopupWindowOpenProof([string]$control) {
+    switch ($control) {
+        "CommandBarFlyout" { return $true }
+        "CommandBar" { return $true }
+        "Flyout" { return $true }
+        "MenuFlyout" { return $true }
+        "Popup" { return $true }
+        "DropDownButton" { return $true }
+        "SplitButton" { return $true }
+        "ToggleSplitButton" { return $true }
+        default { return $false }
+    }
+}
+
+function Test-ControlRequiresReferenceInteractionCropParity([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return $true }
+        "AppBarToggleButton" { return $true }
+        "ColorPicker" { return $true }
+        "CommandBar" { return $true }
+        "CommandBarFlyout" { return $true }
+        "ContentDialog" { return $true }
+        "Flyout" { return $true }
+        "GridView" { return $true }
+        "MenuBar" { return $true }
+        "MenuFlyout" { return $true }
+        "Popup" { return $true }
+        "RepeatButton" { return $true }
+        "TeachingTip" { return $true }
+        "ToggleButton" { return $true }
+        default { return $false }
+    }
+}
+
+function Get-ReferencePrimaryCropMeanDeltaThreshold([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return 5.0 }
+        "AppBarSeparator" { return 1.0 }
+        "AppBarToggleButton" { return 5.0 }
+        "AnnotatedScrollBar" { return 1.5 }
+        "AutoSuggestBox" { return 0.1 }
+        "BreadcrumbBar" { return 3.0 }
+        "CommandBar" { return 2.5 }
+        "CommandBarFlyout" { return 6.0 }
+        "ColorPicker" { return 4.0 }
+        "ContentDialog" { return 4.0 }
+        "Flyout" { return 3.0 }
+        "DropDownButton" { return 4.0 }
+        "GridView" { return 2.0 }
+        "HyperlinkButton" { return 1.6 }
+        "InfoBadge" { return 5.0 }
+        "InfoBar" { return 2.0 }
+        "IconElement" { return 0.1 }
+        "ImageIcon" { return 2.0 }
+        "ItemsRepeater" { return 1.0 }
+        "MenuBar" { return 3.0 }
+        "MenuFlyout" { return 1.0 }
+        "NavigationView" { return 1.5 }
+        "NumberBox" { return 2.5 }
+        "PersonPicture" { return 0.5 }
+        "Popup" { return 4.0 }
+        "ProgressRing" { return 1.0 }
+        "WinUIProgressBar" { return 2.0 }
+        "RatingControl" { return 7.0 }
+        "RepeatButton" { return 4.0 }
+        "SelectorBar" { return 3.0 }
+        "SplitButton" { return 1.0 }
+        "SplitView" { return 4.0 }
+        "ThemeShadow" { return 0.3 }
+        "TeachingTip" { return 4.0 }
+        "ToggleButton" { return 3.0 }
+        "ToggleSplitButton" { return 2.0 }
+        "ToggleSwitch" { return 1.5 }
+        "TitleBar" { return 1.0 }
+        default { return 24.0 }
+    }
+}
+
+function Get-ReferencePrimaryCropSizeDeltaThreshold([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return 0 }
+        "AppBarSeparator" { return 0 }
+        "AppBarToggleButton" { return 0 }
+        "AnnotatedScrollBar" { return 0 }
+        "AutoSuggestBox" { return 0 }
+        "CommandBar" { return 0 }
+        "CommandBarFlyout" { return 2 }
+        "ColorPicker" { return 0 }
+        "ContentDialog" { return 0 }
+        "Flyout" { return 0 }
+        "GridView" { return 0 }
+        "HyperlinkButton" { return 0 }
+        "InfoBadge" { return 0 }
+        "InfoBar" { return 0 }
+        "ImageIcon" { return 0 }
+        "ItemsRepeater" { return 0 }
+        "MenuBar" { return 0 }
+        "MenuFlyout" { return 0 }
+        "NavigationView" { return 0 }
+        "NumberBox" { return 0 }
+        "PersonPicture" { return 0 }
+        "Popup" { return 0 }
+        "ProgressRing" { return 0 }
+        "RatingControl" { return 0 }
+        "RepeatButton" { return 0 }
+        "SplitButton" { return 0 }
+        "SplitView" { return 0 }
+        "ThemeShadow" { return 0 }
+        "TeachingTip" { return 0 }
+        "TitleBar" { return 0 }
+        "ToggleButton" { return 0 }
+        "ToggleSplitButton" { return 0 }
+        "ToggleSwitch" { return 0 }
+        "WinUIProgressBar" { return 0 }
+        default { return 24 }
+    }
+}
+
+function Get-ReferenceInteractionCropMeanDeltaThreshold([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return 7.0 }
+        "AppBarToggleButton" { return 3.0 }
+        "ColorPicker" { return 4.0 }
+        "CommandBar" { return 2.5 }
+        "CommandBarFlyout" { return 9.0 }
+        "ContentDialog" { return 7.0 }
+        "Flyout" { return 11.0 }
+        "GridView" { return 8.0 }
+        "MenuBar" { return 9.0 }
+        "MenuFlyout" { return 8.0 }
+        "NumberBox" { return 2.0 }
+        "Popup" { return 3.0 }
+        "RatingControl" { return 5.0 }
+        "RepeatButton" { return 11.0 }
+        "TeachingTip" { return 10.0 }
+        "ToggleButton" { return 7.0 }
+        default { return 24.0 }
+    }
+}
+
+function Get-ReferenceInteractionCropSizeDeltaThreshold([string]$control) {
+    switch ($control) {
+        "AppBarButton" { return 2 }
+        "AppBarToggleButton" { return 0 }
+        "ColorPicker" { return 0 }
+        "CommandBar" { return 0 }
+        "CommandBarFlyout" { return 0 }
+        "ContentDialog" { return 2 }
+        "Flyout" { return 1 }
+        "GridView" { return 4 }
+        "MenuBar" { return 2 }
+        "MenuFlyout" { return 0 }
+        "NumberBox" { return 0 }
+        "Popup" { return 0 }
+        "RatingControl" { return 0 }
+        "RepeatButton" { return 0 }
+        "TeachingTip" { return 0 }
+        "ToggleButton" { return 0 }
+        default { return 24 }
+    }
+}
+
+function Set-VisualCheckReferenceFailure($result, [string]$message) {
+    $result["Status"] = "Failed"
+    if ($result.Contains("LastException") -and ![string]::IsNullOrWhiteSpace([string]$result.LastException)) {
+        $result["LastException"] = "$($result.LastException); $message"
+    }
+    else {
+        $result["LastException"] = $message
+    }
+}
+
+function Close-PreparedOpenInteractionState($window, [string]$control) {
+    if ($control -ne "TeachingTip") {
+        return
+    }
+
+    $tip = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GallerySample_TeachingTip_TeachingTip"
+    if ($null -eq $tip) {
+        return
+    }
+
+    try {
+        $pattern = $tip.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Close()
+            Start-Sleep -Milliseconds 250
+        }
+    }
+    catch {
+    }
+}
+
+function Open-CommandBarFlyoutSecondaryCommands($window) {
+    $deadline = (Get-Date).AddMilliseconds(2500)
+    do {
+        $moreButton = Wait-ForCommandBarFlyoutPrimaryCommands $window 1200
+        if ($null -eq $moreButton) {
+            $moreButton = Find-CommandBarFlyoutMoreButton $window
+        }
+
+        if ($null -ne $moreButton) {
+            if ((Invoke-ElementPatternOnce $window $moreButton) -and
+                ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 600))) {
+                return $true
+            }
+
+            if ((Expand-ElementPatternOnce $window $moreButton) -and
+                ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 600))) {
+                return $true
+            }
+
+            if ((Toggle-ElementPatternOnce $window $moreButton) -and
+                ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 600))) {
+                return $true
+            }
+
+            if ((Invoke-PopupElementFocusOnce $moreButton) -and
+                ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 600))) {
+                return $true
+            }
+
+            if ((Invoke-PopupElementClickOnce $moreButton) -and
+                ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 1200))) {
+                return $true
+            }
+
+            if ((Invoke-ElementOnce $window $moreButton) -and
+                ($null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 1200))) {
+                return $true
+            }
+        }
+
+        Start-Sleep -Milliseconds 100
+    } while ((Get-Date) -lt $deadline)
+
+    return $false
+}
+
+function Move-CursorAwayFromInteractionSurface($window) {
+    try {
+        $rect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+        $awayX = [int]($rect.Left + 20)
+        $awayY = [int]($rect.Top + 20)
+        [GalleryVisualNative]::MoveCursor($awayX + 12, $awayY + 8)
+        Start-Sleep -Milliseconds 60
+        [GalleryVisualNative]::HoverCursorAtPoint($awayX, $awayY)
+        Start-Sleep -Milliseconds 260
+    }
+    catch {
+    }
+}
+
+function Get-ElementNativeWindowHandle($element) {
+    $candidate = $element
+    for ($depth = 0; $depth -lt 16 -and $null -ne $candidate; $depth++) {
+        try {
+            $handle = [int]$candidate.Current.NativeWindowHandle
+            if ($handle -ne 0) {
+                return [IntPtr]$handle
+            }
+
+            $candidate = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+        }
+        catch {
+            return [IntPtr]::Zero
+        }
+    }
+
+    return [IntPtr]::Zero
+}
+
+function Test-PopupScreenCropCandidate($window, $element) {
+    $bounds = Get-ElementScreenBounds $element 0
+    if ($null -eq $bounds -or !$bounds.Found) {
+        return $false
+    }
+
+    $windowBounds = Get-ElementScreenBounds $window 0
+    if ($null -ne $windowBounds -and $windowBounds.Found) {
+        if ($bounds.Width -ge ($windowBounds.Width * 0.85) -or
+            $bounds.Height -ge ($windowBounds.Height * 0.85)) {
+            return $false
+        }
+    }
+
+    return $true
+}
+
+function Get-PopupScreenCropElement($window, $openElement) {
+    if ($null -eq $openElement) {
+        return $null
+    }
+
+    $best = $openElement
+    $candidate = $openElement
+    for ($depth = 0; $depth -lt 10 -and $null -ne $candidate; $depth++) {
+        try {
+            $parent = [System.Windows.Automation.TreeWalker]::ControlViewWalker.GetParent($candidate)
+            if ($null -eq $parent -or !(Test-PopupScreenCropCandidate $window $parent)) {
+                break
+            }
+
+            $best = $parent
+            $candidate = $parent
+        }
+        catch {
+            break
+        }
+    }
+
+    return $best
+}
+
+function Test-ScreenElementPopupCropHasContent($crop) {
+    return $null -ne $crop -and
+        $crop.Found -and
+        $crop.NonBlank -and
+        $crop.Contains("VisibleStdDev") -and
+        $crop.VisibleStdDev -ge 8.0
+}
+
+function Capture-OpenElementPopupCrop($window, $openElement, [IntPtr]$popupHandle, [string]$popupWindowPath, [string]$screenElementPath) {
+    $mainHandle = $window.Current.NativeWindowHandle
+    if ($popupHandle -ne [IntPtr]::Zero -and $popupHandle -ne $mainHandle) {
+        try {
+            Capture-Window $popupHandle $popupWindowPath -SkipActivate
+            $popupNonBlank = Test-ImageNotBlank $popupWindowPath
+            if (!$popupNonBlank) {
+                Capture-ScreenRect $popupHandle $popupWindowPath
+                $popupNonBlank = Test-ImageNotBlank $popupWindowPath
+            }
+
+            if ($popupNonBlank) {
+                $popupSize = Get-ImageSize $popupWindowPath
+                return [ordered]@{
+                    Found = $true
+                    Source = "PopupWindow"
+                    Screenshot = $popupWindowPath
+                    Bounds = [ordered]@{
+                        Found = $true
+                        Reason = ""
+                        X = 0
+                        Y = 0
+                        Width = $popupSize.Width
+                        Height = $popupSize.Height
+                        ChangedSamples = 0
+                    }
+                    Width = $popupSize.Width
+                    Height = $popupSize.Height
+                    ChangedSamples = 0
+                    NonBlank = $true
+                    VisibleStdDev = Get-ImageVisibleStdDev $popupWindowPath
+                }
+            }
+        }
+        catch {
+        }
+    }
+
+    $screenElement = Get-PopupScreenCropElement $window $openElement
+    $screenElementCrop = Save-ScreenElementCrop $screenElement $screenElementPath "ScreenElement" 10 $window
+    if (Test-ScreenElementPopupCropHasContent $screenElementCrop) {
+        return $screenElementCrop
+    }
+
+    return $null
+}
+
+function Save-MenuBarOpenSurfaceCrop($window, $openElement, $popupCrop, [string]$path) {
+    $surfaceElement = Get-PopupScreenCropElement $window $openElement
+    return Save-ScreenElementCrop $surfaceElement $path "MenuBarOpenSurface" 0 $window
+}
+
+function Save-CommandBarOpenSurfaceCrop($window, $openElement, [string]$path) {
+    return Save-ScreenElementCrop $openElement $path "CommandBarOpenSurface" 0 $window
+}
+
+function Save-MenuFlyoutOpenSurfaceCrop($window, $openElement, [string]$path) {
+    $surfaceElement = Get-PopupScreenCropElement $window $openElement
+    $rawPath = [System.IO.Path]::ChangeExtension($path, ".raw.png")
+    $rawCrop = Save-ScreenElementCrop $surfaceElement $rawPath "MenuFlyoutOpenSurface" 0 $window
+    if ($null -eq $rawCrop -or !$rawCrop.Found) {
+        return $rawCrop
+    }
+
+    $itemBounds = Get-ElementScreenBounds $openElement 0 $window
+    $horizontalInset = 0
+    if ($null -ne $itemBounds -and $itemBounds.Found) {
+        # WinUI's popup UIA root includes three transparent theme-shadow pixels
+        # on each horizontal edge. WPF's ContextMenu HWND bounds expose the
+        # equivalent content surface directly. Preserve the full vertical
+        # surface while removing only that reference-only shadow reservation.
+        $horizontalOverhang = [int]$rawCrop.Width - [int]$itemBounds.Width
+        if ($horizontalOverhang -ge 8) {
+            $horizontalInset = [int][Math]::Floor(($horizontalOverhang - 4) / 2)
+        }
+    }
+
+    if ($horizontalInset -le 0) {
+        Copy-Item -LiteralPath $rawCrop.Screenshot -Destination $path -Force
+        $rawCrop.Screenshot = $path
+        return $rawCrop
+    }
+
+    $relativeBounds = [ordered]@{
+        Found = $true
+        Reason = ""
+        X = $horizontalInset
+        Y = 0
+        Width = [int]$rawCrop.Width - (2 * $horizontalInset)
+        Height = [int]$rawCrop.Height
+        ChangedSamples = 0
+    }
+    Save-Crop $rawCrop.Screenshot $relativeBounds $path 0 | Out-Null
+    $screenBounds = [ordered]@{
+        Found = $true
+        Reason = ""
+        X = [int]$rawCrop.Bounds.X + $horizontalInset
+        Y = [int]$rawCrop.Bounds.Y
+        Width = $relativeBounds.Width
+        Height = $relativeBounds.Height
+        ChangedSamples = 0
+    }
+    return [ordered]@{
+        Found = $true
+        Source = "MenuFlyoutOpenSurface"
+        Screenshot = $path
+        Bounds = $screenBounds
+        Width = $screenBounds.Width
+        Height = $screenBounds.Height
+        ChangedSamples = 0
+        NonBlank = Test-ImageNotBlank $path
+        VisibleStdDev = Get-ImageVisibleStdDev $path
+    }
+}
+
+function Find-EditableDescendant($element) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    try {
+        if ($element.Current.ControlType -eq [System.Windows.Automation.ControlType]::Edit) {
+            return $element
+        }
+    }
+    catch {
+    }
+
+    return Find-DescendantByControlType $element ([System.Windows.Automation.ControlType]::Edit)
+}
+
+function Set-EditableElementText($window, $element, [string]$text) {
+    $edit = Find-EditableDescendant $element
+    if ($null -eq $edit) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    try {
+        $edit.SetFocus()
+        Start-Sleep -Milliseconds 50
+    }
+    catch {
+    }
+
+    try {
+        $rect = $edit.Current.BoundingRectangle
+        if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+            [GalleryVisualNative]::Click(
+                [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+                [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+            Start-Sleep -Milliseconds 50
+            [GalleryVisualNative]::PressCtrlA()
+            Start-Sleep -Milliseconds 50
+            [GalleryVisualNative]::TypeText($text)
+            Start-Sleep -Milliseconds 250
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $pattern = $edit.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.SetValue("")
+            Start-Sleep -Milliseconds 50
+            $pattern.SetValue($text)
+            Start-Sleep -Milliseconds 250
+            return $true
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Try-ParseDouble([string]$text) {
+    $value = 0.0
+    if ([double]::TryParse(
+            $text,
+            [System.Globalization.NumberStyles]::Float,
+            [System.Globalization.CultureInfo]::InvariantCulture,
+            [ref]$value)) {
+        return $value
+    }
+
+    if ([double]::TryParse(
+            $text,
+            [System.Globalization.NumberStyles]::Float,
+            [System.Globalization.CultureInfo]::CurrentCulture,
+            [ref]$value)) {
+        return $value
+    }
+
+    return $null
+}
+
+function Get-ElementNumericValue($element) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return [double]$pattern.Current.Value
+        }
+    }
+    catch {
+    }
+
+    $edit = Find-EditableDescendant $element
+    if ($null -eq $edit) {
+        return $null
+    }
+
+    try {
+        $pattern = $edit.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+        if ($null -ne $pattern) {
+            return Try-ParseDouble $pattern.Current.Value
+        }
+    }
+    catch {
+    }
+
+    try {
+        return Try-ParseDouble $edit.Current.Name
+    }
+    catch {
+        return $null
+    }
+}
+
+function Test-DoubleApproximatelyEqual($actual, $expected) {
+    if ($null -eq $actual -or $null -eq $expected) {
+        return $false
+    }
+
+    return [Math]::Abs(([double]$actual) - ([double]$expected)) -lt 0.001
+}
+
+function Get-ElementCenterHitSummary($element) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    try {
+        $rect = $element.Current.BoundingRectangle
+        if ($rect.Width -le 0 -or $rect.Height -le 0) {
+            return $null
+        }
+
+        $x = [double]($rect.X + ($rect.Width / 2.0))
+        $y = [double]($rect.Y + ($rect.Height / 2.0))
+        $point = New-Object System.Windows.Point -ArgumentList $x, $y
+        $hit = [System.Windows.Automation.AutomationElement]::FromPoint($point)
+        if ($null -eq $hit) {
+            return [ordered]@{
+                X = $x
+                Y = $y
+                Found = $false
+                Name = ""
+                AutomationId = ""
+                ControlType = ""
+            }
+        }
+
+        return [ordered]@{
+            X = $x
+            Y = $y
+            Found = $true
+            Name = $hit.Current.Name
+            AutomationId = $hit.Current.AutomationId
+            ControlType = $hit.Current.ControlType.ProgrammaticName
+        }
+    }
+    catch {
+        return [ordered]@{
+            X = 0
+            Y = 0
+            Found = $false
+            Name = ""
+            AutomationId = ""
+            ControlType = ""
+            Error = $_.Exception.Message
+        }
+    }
+}
+
+function Invoke-ValueIncreaseOnce($window, [string]$control, $element, $expectedValue) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    if ($control -eq "RatingControl" -or $control -eq "Slider") {
+        try {
+            $rangePattern = $element.GetCurrentPattern([System.Windows.Automation.RangeValuePattern]::Pattern)
+            if ($null -ne $rangePattern) {
+                $rangePattern.SetValue([double]$expectedValue)
+                Start-Sleep -Milliseconds 50
+                return $true
+            }
+        }
+        catch {
+        }
+
+        try {
+            $valuePattern = $element.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+            if ($null -ne $valuePattern) {
+                $valuePattern.SetValue(([double]$expectedValue).ToString([System.Globalization.CultureInfo]::InvariantCulture))
+                Start-Sleep -Milliseconds 50
+                return $true
+            }
+        }
+        catch {
+        }
+    }
+
+    $buttonNames = Get-ValueInteractionIncreaseButtonNames $control
+    $button = Find-DescendantButtonByAnyName $element $buttonNames
+    if ($null -eq $button -and $buttonNames.Count -gt 0) {
+        $candidate = Find-ElementByNameInProcess $window.Current.ProcessId $buttonNames
+        try {
+            if ($null -ne $candidate -and $candidate.Current.ControlType -eq [System.Windows.Automation.ControlType]::Button) {
+                $button = $candidate
+            }
+        }
+        catch {
+        }
+    }
+
+    if ($null -ne $button) {
+        return Invoke-ElementPatternOnce $window $button
+    }
+
+    if ($control -eq "NumberBox") {
+        [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+        $rect = $element.Current.BoundingRectangle
+        if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+            $edit = Find-EditableDescendant $element
+            $editRect = if ($null -ne $edit) { $edit.Current.BoundingRectangle } else { $rect }
+            $x = [int][Math]::Round($rect.Right - [Math]::Min(46.0, [Math]::Max(18.0, $rect.Width * 0.35)))
+            $y = [int][Math]::Round($editRect.Y + ($editRect.Height / 2.0))
+            [GalleryVisualNative]::Click($x, $y)
+            Start-Sleep -Milliseconds 50
+            return $true
+        }
+    }
+
+    return $false
+}
+
+function Find-ListItemOutsideElementBounds($window, $element, [string[]]$names) {
+    if ($null -eq $element) {
+        return $null
+    }
+
+    $anchorRect = $element.Current.BoundingRectangle
+    if ($anchorRect.Width -le 0 -or $anchorRect.Height -le 0) {
+        return $null
+    }
+
+    $matches = Find-ElementsByNameInProcess $window.Current.ProcessId $names
+    foreach ($match in $matches) {
+        try {
+            if ($match.Current.ControlType -ne [System.Windows.Automation.ControlType]::ListItem) {
+                continue
+            }
+
+            $rect = $match.Current.BoundingRectangle
+            if ($rect.Width -le 0 -or $rect.Height -le 0) {
+                continue
+            }
+
+            $overlapsHorizontally = $rect.Right -gt $anchorRect.X -and $rect.X -lt $anchorRect.Right
+            $outsideAnchor = $rect.Y -ge ($anchorRect.Bottom - 1) -or $rect.Bottom -le ($anchorRect.Y + 1)
+            if ($overlapsHorizontally -and $outsideAnchor) {
+                return $match
+            }
+        }
+        catch {
+        }
+    }
+
+    return $null
+}
+
+function Wait-ForListItemOutsideElementBounds($window, $element, [string[]]$names, [int]$timeoutMs = 2500) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMs)
+    do {
+        $match = Find-ListItemOutsideElementBounds $window $element $names
+        if ($null -ne $match) {
+            return $match
+        }
+
+        Start-Sleep -Milliseconds 100
+    } while ((Get-Date) -lt $deadline)
+
+    return $null
+}
+
+function Find-OutputTextOutsideElementBounds($window, $element, [string]$name) {
+    if ($null -eq $element -or [string]::IsNullOrEmpty($name)) {
+        return $null
+    }
+
+    $anchorRect = $element.Current.BoundingRectangle
+    $matches = Find-ElementsByNameInProcess $window.Current.ProcessId @($name)
+    foreach ($match in $matches) {
+        try {
+            if ($match.Current.ControlType -ne [System.Windows.Automation.ControlType]::Text) {
+                continue
+            }
+
+            $rect = $match.Current.BoundingRectangle
+            if ($rect.Width -le 0 -or $rect.Height -le 0) {
+                continue
+            }
+
+            if ($rect.X -ge ($anchorRect.Right - 2) -or $rect.Y -gt ($anchorRect.Bottom + 2)) {
+                return $match
+            }
+        }
+        catch {
+        }
+    }
+
+    return $null
+}
+
+function Wait-ForOutputTextOutsideElementBounds($window, $element, [string]$name, [int]$timeoutMs = 2500) {
+    $deadline = (Get-Date).AddMilliseconds($timeoutMs)
+    do {
+        $match = Find-OutputTextOutsideElementBounds $window $element $name
+        if ($null -ne $match) {
+            return $match
+        }
+
+        Start-Sleep -Milliseconds 100
+    } while ((Get-Date) -lt $deadline)
+
+    return $null
+}
+
+function Capture-OpenInteractionFrame($window, [string]$path, [bool]$preferScreenCapture, [switch]$SkipActivate) {
+    if (!$SkipActivate) {
+        [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+        Start-Sleep -Milliseconds 100
+    }
+
+    if ($preferScreenCapture) {
+        try {
+            Capture-ScreenRect $window.Current.NativeWindowHandle $path
+            return ""
+        }
+        catch {
+            $screenError = $_.Exception.Message
+            try {
+                Capture-Window $window.Current.NativeWindowHandle $path -SkipActivate:$SkipActivate
+                return ""
+            }
+            catch {
+                return $screenError + "; fallback Capture-Window failed: " + $_.Exception.Message
+            }
+        }
+    }
+
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $path -SkipActivate:$SkipActivate
+        return ""
+    }
+    catch {
+        $windowError = $_.Exception.Message
+        try {
+            Capture-ScreenRect $window.Current.NativeWindowHandle $path
+            return ""
+        }
+        catch {
+            return $windowError + "; fallback Capture-ScreenRect failed: " + $_.Exception.Message
+        }
+    }
+}
+
+function Invoke-SplitButtonSecondaryOnce($window, $element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $rect = $element.Current.BoundingRectangle
+    if ($rect.Width -le 0 -or $rect.Height -le 0) {
+        return $false
+    }
+
+    $x = [int][Math]::Round($rect.Right - [Math]::Min(12.0, [Math]::Max(6.0, $rect.Width * 0.18)))
+    $y = [int][Math]::Round($rect.Y + ($rect.Height / 2.0))
+    [GalleryVisualNative]::Click($x, $y)
+    Start-Sleep -Milliseconds 80
+    return $true
+}
+
+function Invoke-ElementUntilOpen($window, $element, [string[]]$openNames, [string]$control = "") {
+    if ($control -eq "CommandBar") {
+        $invoked = Invoke-ElementPatternOnce $window $element
+        Start-Sleep -Milliseconds 200
+        return $invoked
+    }
+
+    if ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") {
+        $invoked = Invoke-SplitButtonSecondaryOnce $window $element
+        Start-Sleep -Milliseconds 150
+        if ((Get-ExpandCollapseStateName $element) -ne "Expanded") {
+            $invoked = (Expand-ElementPatternOnce $window $element) -or $invoked
+            Start-Sleep -Milliseconds 150
+        }
+        return $invoked
+    }
+
+    if ($control -eq "MenuBar") {
+        $invoked = Invoke-MenuBarTriggerOnce $window $element $openNames
+        Start-Sleep -Milliseconds 200
+        if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
+            return $invoked
+        }
+
+        try {
+            $element.SetFocus()
+            [GalleryVisualNative]::PressSpace()
+            $invoked = $true
+            Start-Sleep -Milliseconds 200
+        }
+        catch {
+        }
+
+        return $invoked
+    }
+
+    if ($control -eq "ComboBox") {
+        $invoked = Expand-ElementPatternOnce $window $element
+        Start-Sleep -Milliseconds 150
+        if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
+            return $invoked
+        }
+
+        try {
+            $element.SetFocus()
+            [GalleryVisualNative]::PressSpace()
+            $invoked = $true
+            Start-Sleep -Milliseconds 150
+            if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
+                return $invoked
+            }
+        }
+        catch {
+        }
+
+        $invoked = (Invoke-ElementPatternOnce $window $element) -or $invoked
+        Start-Sleep -Milliseconds 150
+        return $invoked
+    }
+
+    $invoked = Invoke-ElementOnce $window $element
+    Start-Sleep -Milliseconds 150
+    if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
+        return $invoked
+    }
+
+    $invoked = (Expand-ElementPatternOnce $window $element) -or $invoked
+    Start-Sleep -Milliseconds 150
+    if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
+        return $invoked
+    }
+
+    $invoked = (Invoke-ElementPatternOnce $window $element) -or $invoked
+    Start-Sleep -Milliseconds 150
+    if ($null -ne (Find-OpenInteractionElement $window $element $openNames $control)) {
+        return $invoked
+    }
+
+    try {
+        $element.SetFocus()
+        [GalleryVisualNative]::PressSpace()
+        $invoked = $true
+        Start-Sleep -Milliseconds 150
+    }
+    catch {
+    }
+
+    return $invoked
+}
+
+function Invoke-MenuBarTriggerOnce($window, $element, [string[]]$openNames) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    $clicked = $false
+    try {
+        $rect = $element.Current.BoundingRectangle
+        if ($rect.Width -gt 0 -and $rect.Height -gt 0) {
+            [GalleryVisualNative]::Click(
+                [int][Math]::Round($rect.X + ($rect.Width / 2.0)),
+                [int][Math]::Round($rect.Y + ($rect.Height / 2.0)))
+            Start-Sleep -Milliseconds 100
+            $clicked = $true
+        }
+    }
+    catch {
+    }
+
+    if ($clicked -and $null -ne (Find-OpenInteractionElement $window $element $openNames "MenuBar")) {
+        return $true
+    }
+
+    if (Invoke-ElementPatternOnce $window $element) {
+        return $true
+    }
+
+    return $clicked
+}
+
+function Capture-OpenInteraction([string]$app, [string]$control, [string]$caseDir, $window, $showButton, [string[]]$openNames) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsOpenInteraction $control)) {
+        return $null
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 250
+    $baselinePath = Join-Path $caseDir ("{0}-{1}-closed.png" -f $app.ToLowerInvariant(), $control)
+    $preferScreenOpenCapture = Test-ControlPrefersScreenOpenCapture $control
+    if ($preferScreenOpenCapture) {
+        [GalleryVisualNative]::SetTopMost($window.Current.NativeWindowHandle, $true)
+        Start-Sleep -Milliseconds 100
+    }
+    $triggerElement = Get-OpenInteractionTriggerElement $window $control $showButton
+    $triggerTreePath = Join-Path $caseDir ("{0}-{1}-open-trigger.uia.txt" -f $app.ToLowerInvariant(), $control)
+    try {
+        Write-UiaTree $triggerElement $triggerTreePath 5
+    }
+    catch {
+        Set-Content -Path $triggerTreePath -Value ("Open trigger UIA tree capture failed: " + $_.Exception.Message) -Encoding UTF8
+    }
+    Close-PreparedOpenInteractionState $window $control
+    $screenCaptureTrustReference = ""
+    $screenCaptureTrustDelta = $null
+    $screenCaptureTrusted = $true
+    if ($preferScreenOpenCapture) {
+        $screenCaptureTrustReference = Join-Path $caseDir ("{0}-{1}-screen-trust-reference.png" -f $app.ToLowerInvariant(), $control)
+        try {
+            Capture-Window $window.Current.NativeWindowHandle $screenCaptureTrustReference
+        }
+        catch {
+            $screenCaptureTrustReference = ""
+        }
+    }
+    [void](Capture-OpenInteractionFrame $window $baselinePath $preferScreenOpenCapture)
+    $baselineNonBlank = if (Test-Path $baselinePath) { Test-ImageNotBlank $baselinePath } else { $false }
+    $baselineControlCropPath = Join-Path $caseDir ("{0}-{1}-closed-control-crop.png" -f $app.ToLowerInvariant(), $control)
+    $baselineControlCrop = if (Test-Path $baselinePath) {
+        Save-ElementCrop $window $baselinePath $baselineControlCropPath $showButton "UIA" 10
+    }
+    else {
+        $null
+    }
+    $baselineControlNonBlank = $null -ne $baselineControlCrop -and $baselineControlCrop.Contains("NonBlank") -and $baselineControlCrop.NonBlank
+    if (!$baselineNonBlank -or !$baselineControlNonBlank) {
+        Start-Sleep -Milliseconds 300
+        [void](Capture-OpenInteractionFrame $window $baselinePath $preferScreenOpenCapture)
+        $baselineNonBlank = if (Test-Path $baselinePath) { Test-ImageNotBlank $baselinePath } else { $false }
+        $baselineControlCrop = if (Test-Path $baselinePath) {
+            Save-ElementCrop $window $baselinePath $baselineControlCropPath $showButton "UIA" 10
+        }
+        else {
+            $null
+        }
+        $baselineControlNonBlank = $null -ne $baselineControlCrop -and $baselineControlCrop.Contains("NonBlank") -and $baselineControlCrop.NonBlank
+    }
+    if (!$baselineControlNonBlank) {
+        $existingBaselinePath = Join-Path $caseDir ("{0}-{1}.png" -f $app.ToLowerInvariant(), $control)
+        if (Test-Path $existingBaselinePath) {
+            try {
+                Copy-Item -LiteralPath $existingBaselinePath -Destination $baselinePath -Force
+                $baselineNonBlank = if (Test-Path $baselinePath) { Test-ImageNotBlank $baselinePath } else { $false }
+                $baselineControlCrop = Save-ElementCrop $window $baselinePath $baselineControlCropPath $showButton "UIA" 10
+                $baselineControlNonBlank = $null -ne $baselineControlCrop -and $baselineControlCrop.Contains("NonBlank") -and $baselineControlCrop.NonBlank
+            }
+            catch {
+            }
+        }
+    }
+    if (!$baselineControlNonBlank -and $app -eq "ModernWpf" -and $null -ne $showButton) {
+        try {
+            $artifactId = $showButton.Current.AutomationId
+            if (![string]::IsNullOrWhiteSpace($artifactId)) {
+                $artifactCropPath = Join-Path $caseDir ("modernwpf-artifacts\{0}.png" -f $artifactId)
+                $artifactCrop = New-RenderedArtifactCrop $artifactCropPath $artifactId ([ordered]@{
+                    Found = $true
+                    Reason = ""
+                    X = 0
+                    Y = 0
+                    Width = 0
+                    Height = 0
+                    ChangedSamples = 0
+                })
+                if ($null -ne $artifactCrop -and $artifactCrop.NonBlank) {
+                    $baselineControlCrop = $artifactCrop
+                    $baselineControlNonBlank = $true
+                }
+            }
+        }
+        catch {
+        }
+    }
+    if (!$baselineControlNonBlank -and $app -eq "ModernWpf" -and $control -eq "CommandBar") {
+        $commandBarArtifactPath = Join-Path $caseDir "modernwpf-artifacts\GallerySample_CommandBar_CommandBar.png"
+        if (Test-Path $commandBarArtifactPath) {
+            $commandBarArtifactSize = Get-ImageSize $commandBarArtifactPath
+            $baselineControlCrop = [ordered]@{
+                Found = $true
+                Source = "GallerySample_CommandBar_CommandBar"
+                Screenshot = $commandBarArtifactPath
+                Bounds = $null
+                Width = $commandBarArtifactSize.Width
+                Height = $commandBarArtifactSize.Height
+                NonBlank = Test-ImageNotBlank $commandBarArtifactPath
+                VisibleStdDev = Get-ImageVisibleStdDev $commandBarArtifactPath
+            }
+            $baselineControlNonBlank = $baselineControlCrop.NonBlank
+        }
+    }
+    if ($preferScreenOpenCapture -and
+        ![string]::IsNullOrEmpty($screenCaptureTrustReference) -and
+        (Test-Path $screenCaptureTrustReference) -and
+        (Test-Path $baselinePath)) {
+        $screenCaptureTrustDelta = Compare-Images $screenCaptureTrustReference $baselinePath
+        $screenCaptureTrusted = $screenCaptureTrustDelta.Comparable -and $screenCaptureTrustDelta.MeanDelta -lt 25.0
+    }
+    $invoked = Invoke-ElementUntilOpen $window $triggerElement $openNames $control
+    if ($invoked) {
+        # A click can leave the pointer over a newly opened surface (notably
+        # CommandBar overflow), turning an intended resting-state comparison
+        # into an application-specific PointerOver capture.
+        Move-CursorAwayFromInteractionSurface $window
+        Start-Sleep -Milliseconds 80
+    }
+    $commandBarFlyoutSecondaryExpanded = $false
+    $commandBarFlyoutSurfaceCrop = $null
+    $commandBarFlyoutSurfaceVisualTrusted = $false
+    $commandBarFlyoutStateCrops = New-Object System.Collections.Generic.List[object]
+    if ($control -eq "CommandBarFlyout" -and $invoked) {
+        $moreButton = Wait-ForCommandBarFlyoutPrimaryCommands $window 1800
+        if (Test-AutomationElementUsable $moreButton) {
+            Move-CursorAwayFromInteractionSurface $window
+            $primaryElements = @(Wait-ForCommandBarFlyoutSurfaceElements $window $false 1200)
+            if ($primaryElements.Count -eq 4) {
+                $commandBarFlyoutStateCrops.Add((Save-CommandBarFlyoutStateCrop $app $caseDir $window "PrimaryRest" $primaryElements))
+                $commandBarFlyoutStateCrops.Add((Save-CommandBarFlyoutPointerStateCrop $app $caseDir $window "PrimarySharePointerOver" $primaryElements "Share" $false))
+                $commandBarFlyoutStateCrops.Add((Save-CommandBarFlyoutPointerStateCrop $app $caseDir $window "PrimarySharePressed" $primaryElements "Share" $true))
+                $commandBarFlyoutStateCrops.Add((Save-CommandBarFlyoutPointerStateCrop $app $caseDir $window "PrimaryMorePointerOver" $primaryElements "MoreButton" $false))
+
+                if (!(Test-AutomationElementUsable (Find-CommandBarFlyoutMoreButton $window))) {
+                    [void](Invoke-ElementUntilOpen $window $triggerElement $openNames $control)
+                    $moreButton = Wait-ForCommandBarFlyoutPrimaryCommands $window 1800
+                    $primaryElements = @(Wait-ForCommandBarFlyoutSurfaceElements $window $false 1200)
+                }
+
+                $commandBarFlyoutStateCrops.Add((Save-CommandBarFlyoutClickTransitionStateCrop $app $caseDir $window "ExpandedAfterPrimaryMoreClick" "MoreButton" $true))
+            }
+        }
+
+        $commandBarFlyoutSecondaryExpanded = $null -ne (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 400)
+        if (!$commandBarFlyoutSecondaryExpanded) {
+            if (!(Test-AutomationElementUsable (Find-CommandBarFlyoutMoreButton $window))) {
+                [void](Invoke-ElementUntilOpen $window $triggerElement $openNames $control)
+            }
+            $commandBarFlyoutSecondaryExpanded = Open-CommandBarFlyoutSecondaryCommands $window
+        }
+        if ($commandBarFlyoutSecondaryExpanded) {
+            Move-CursorAwayFromInteractionSurface $window
+            $expandedElements = @(Wait-ForCommandBarFlyoutSurfaceElements $window $true 1200)
+            if ($expandedElements.Count -eq 6) {
+                $commandBarFlyoutStateCrops.Add((Save-CommandBarFlyoutStateCrop $app $caseDir $window "ExpandedRest" $expandedElements))
+                $commandBarFlyoutStateCrops.Add((Save-CommandBarFlyoutPointerStateCrop $app $caseDir $window "ExpandedResizePointerOver" $expandedElements "Resize" $false))
+                $commandBarFlyoutStateCrops.Add((Save-CommandBarFlyoutPointerStateCrop $app $caseDir $window "ExpandedMorePointerOver" $expandedElements "MoreButton" $false))
+                $commandBarFlyoutStateCrops.Add((Save-CommandBarFlyoutPointerStateCrop $app $caseDir $window "ExpandedResizePressed" $expandedElements "Resize" $true))
+
+                # A secondary command invokes and closes the outer flyout on
+                # release. Reopen a fresh expanded instance before testing the
+                # More-button collapse transition.
+                Start-Sleep -Milliseconds 220
+                if (!(Test-AutomationElementUsable (Find-CommandBarFlyoutMoreButton $window))) {
+                    [void](Invoke-ElementUntilOpen $window $triggerElement $openNames $control)
+                }
+                if ($null -eq (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 300)) {
+                    [void](Open-CommandBarFlyoutSecondaryCommands $window)
+                }
+                $expandedElements = @(Wait-ForCommandBarFlyoutSurfaceElements $window $true 1200)
+                if ($expandedElements.Count -eq 6) {
+                    $commandBarFlyoutStateCrops.Add((Save-CommandBarFlyoutClickTransitionStateCrop $app $caseDir $window "CollapsedAfterExpandedMoreClick" "MoreButton" $false))
+                }
+            }
+        }
+
+        # Leave both applications in the same clean expanded-rest state for the
+        # legacy open-surface frame/crop below. It remains useful as a broad
+        # surface check, but no longer depends on whichever transition ran last.
+        if (!(Test-AutomationElementUsable (Find-CommandBarFlyoutMoreButton $window))) {
+            [void](Invoke-ElementUntilOpen $window $triggerElement $openNames $control)
+        }
+        if ($null -eq (Wait-ForInteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move") 300)) {
+            [void](Open-CommandBarFlyoutSecondaryCommands $window)
+        }
+        $commandBarFlyoutSecondaryExpanded = @(Wait-ForCommandBarFlyoutSurfaceElements $window $true 1200).Count -eq 6
+        Move-CursorAwayFromInteractionSurface $window
+    }
+
+    $frames = New-Object System.Collections.Generic.List[object]
+    $frameDelays = @(0, 150, 300, 450)
+    $previousDelay = 0
+
+    foreach ($delay in $frameDelays) {
+        if ($delay -gt $previousDelay) {
+            Start-Sleep -Milliseconds ($delay - $previousDelay)
+        }
+        $previousDelay = $delay
+
+        $framePath = Join-Path $caseDir ("{0}-{1}-open-{2:D3}ms.png" -f $app.ToLowerInvariant(), $control, $delay)
+        $frameError = Capture-OpenInteractionFrame $window $framePath $preferScreenOpenCapture -SkipActivate
+        $frames.Add([ordered]@{
+            DelayMs = $delay
+            Screenshot = $(if (Test-Path $framePath) { $framePath } else { "" })
+            NonBlank = $(if (Test-Path $framePath) { Test-ImageNotBlank $framePath } else { $false })
+            Error = $frameError
+        })
+    }
+
+    $openDelta = $null
+    $visualOpened = $false
+    $crop = $null
+    $selectedFrame = $null
+    $comboBoxOpenVisualDelta = $null
+    $comboBoxOpenBaselineCrop = ""
+    $comboBoxPopupScreenshot = ""
+    $comboBoxPopupNonBlank = $false
+    $comboBoxPopupSize = $null
+    $comboBoxPopupCrop = $null
+    $menuBarPopupNonBlank = $false
+    $menuBarPopupScreenshot = ""
+    $menuBarPopupSize = $null
+    $menuBarPopupCrop = $null
+    $openPopupNonBlank = $false
+    $openPopupScreenshot = ""
+    $openPopupSize = $null
+    $openPopupCrop = $null
+    $splitButtonExpandedProof = ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") -and
+        (Get-ExpandCollapseStateName $showButton) -eq "Expanded"
+    $splitButtonDifferenceVisualTrusted = $false
+    $openElement = if ($control -eq "CommandBarFlyout") {
+        Find-InteractiveElementByNameInProcess $window.Current.ProcessId @("Resize", "Move")
+    }
+    else {
+        Find-OpenInteractionElement $window $showButton $openNames $control
+    }
+    if ($null -eq $openElement) {
+        $openElement = Find-OpenInteractionElement $window $showButton $openNames $control
+    }
+    if ($null -ne $openElement) {
+        $treePath = Join-Path $caseDir ("{0}-{1}-open.uia.txt" -f $app.ToLowerInvariant(), $control)
+        Write-UiaTree $openElement $treePath 3
+        if ($control -eq "ComboBox") {
+            $popupHandle = Get-ElementNativeWindowHandle $openElement
+            $comboBoxPopupCrop = Capture-OpenElementPopupCrop `
+                $window `
+                $openElement `
+                $popupHandle `
+                (Join-Path $caseDir ("{0}-{1}-popup-window.png" -f $app.ToLowerInvariant(), $control)) `
+                (Join-Path $caseDir ("{0}-{1}-popup-screen-element.png" -f $app.ToLowerInvariant(), $control))
+            if ($null -ne $comboBoxPopupCrop -and $comboBoxPopupCrop.NonBlank) {
+                $comboBoxPopupScreenshot = $comboBoxPopupCrop.Screenshot
+                $comboBoxPopupNonBlank = $true
+                $comboBoxPopupSize = [ordered]@{
+                    Width = $comboBoxPopupCrop.Width
+                    Height = $comboBoxPopupCrop.Height
+                }
+            }
+        }
+        elseif ($control -eq "MenuBar") {
+            $popupHandle = Get-ElementNativeWindowHandle $openElement
+            $menuBarPopupCrop = Capture-OpenElementPopupCrop `
+                $window `
+                $openElement `
+                $popupHandle `
+                (Join-Path $caseDir ("{0}-{1}-popup-window.png" -f $app.ToLowerInvariant(), $control)) `
+                (Join-Path $caseDir ("{0}-{1}-popup-screen-element.png" -f $app.ToLowerInvariant(), $control))
+            if ($null -ne $menuBarPopupCrop -and $menuBarPopupCrop.NonBlank) {
+                $menuBarPopupScreenshot = $menuBarPopupCrop.Screenshot
+                $menuBarPopupNonBlank = $true
+                $menuBarPopupSize = [ordered]@{
+                    Width = $menuBarPopupCrop.Width
+                    Height = $menuBarPopupCrop.Height
+                }
+            }
+        }
+        elseif (Test-ControlRequiresPopupWindowOpenProof $control) {
+            $popupHandle = Get-ElementNativeWindowHandle $openElement
+            $openPopupCrop = Capture-OpenElementPopupCrop `
+                $window `
+                $openElement `
+                $popupHandle `
+                (Join-Path $caseDir ("{0}-{1}-popup-window.png" -f $app.ToLowerInvariant(), $control)) `
+                (Join-Path $caseDir ("{0}-{1}-popup-screen-element.png" -f $app.ToLowerInvariant(), $control))
+            if ($null -ne $openPopupCrop -and $openPopupCrop.NonBlank) {
+                $openPopupScreenshot = $openPopupCrop.Screenshot
+                $openPopupNonBlank = $true
+                $openPopupSize = [ordered]@{
+                    Width = $openPopupCrop.Width
+                    Height = $openPopupCrop.Height
+                }
+            }
+        }
+        $cropElement = Find-DescendantByAutomationId $openElement "GalleryItemPageRoot"
+        if ($null -eq $cropElement) {
+            $cropElement = Find-DescendantByAutomationId $openElement "ContentRootGrid"
+        }
+        if ($null -eq $cropElement) {
+            $cropElement = $openElement
+        }
+    }
+    else {
+        $treePath = ""
+        if (Test-ControlRequiresPopupWindowOpenProof $control) {
+            $cropElement = $null
+        }
+        else {
+            $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "GalleryItemPageRoot"
+            if ($null -eq $cropElement) {
+                $cropElement = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "ContentRootGrid"
+            }
+        }
+    }
+
+    $usableFrames = @($frames.ToArray() | Where-Object { $_.NonBlank -and ![string]::IsNullOrEmpty($_.Screenshot) })
+    if ($usableFrames.Count -gt 0) {
+        $selectedFrame = $usableFrames[$usableFrames.Count - 1]
+        foreach ($frame in $usableFrames) {
+            $frameDelta = Compare-Images $baselinePath $frame.Screenshot
+            if ($frameDelta.Comparable -and ($null -eq $openDelta -or $frameDelta.MeanDelta -gt $openDelta.MeanDelta)) {
+                $openDelta = $frameDelta
+                $selectedFrame = $frame
+            }
+        }
+
+        $elementBounds = Get-ElementWindowBounds $window $cropElement
+        $windowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+        $windowWidth = [Math]::Max(1, $windowRect.Right - $windowRect.Left)
+        $windowHeight = [Math]::Max(1, $windowRect.Bottom - $windowRect.Top)
+        $elementBoundsUsable = $null -ne $elementBounds -and
+            $elementBounds.Found -and
+            $elementBounds.Width -lt ($windowWidth * 0.75) -and
+            $elementBounds.Height -lt ($windowHeight * 0.75)
+        if ($elementBoundsUsable) {
+            $cropPath = Join-Path $caseDir ("{0}-{1}-open-crop.png" -f $app.ToLowerInvariant(), $control)
+            $expandedBounds = Save-Crop $selectedFrame.Screenshot $elementBounds $cropPath
+            if ($control -eq "ComboBox") {
+                $comboBoxOpenBaselineCrop = Join-Path $caseDir ("{0}-{1}-open-baseline-crop.png" -f $app.ToLowerInvariant(), $control)
+                [void](Save-Crop $baselinePath $elementBounds $comboBoxOpenBaselineCrop)
+                $comboBoxOpenVisualDelta = Compare-ImagesNormalized $comboBoxOpenBaselineCrop $cropPath
+            }
+            $crop = [ordered]@{
+                Found = $true
+                Screenshot = $cropPath
+                Bounds = $expandedBounds
+                Width = $expandedBounds.Width
+                Height = $expandedBounds.Height
+                ChangedSamples = 0
+                Source = "UIA"
+            }
+        }
+        else {
+            $differenceBounds = Find-DifferenceBounds $baselinePath $selectedFrame.Screenshot
+            if ($differenceBounds.Found) {
+                $targetBounds = Get-ElementWindowBounds $window $showButton
+                $differenceBounds = Trim-DifferenceBoundsToContentRoot $differenceBounds $targetBounds
+                $cropPath = Join-Path $caseDir ("{0}-{1}-open-crop.png" -f $app.ToLowerInvariant(), $control)
+                $expandedBounds = Save-Crop $selectedFrame.Screenshot $differenceBounds $cropPath
+                $crop = [ordered]@{
+                    Found = $true
+                    Screenshot = $cropPath
+                    Bounds = $expandedBounds
+                    Width = $expandedBounds.Width
+                    Height = $expandedBounds.Height
+                    ChangedSamples = $differenceBounds.ChangedSamples
+                    Source = "Difference"
+                }
+            }
+            else {
+                $crop = [ordered]@{
+                    Found = $false
+                    Screenshot = ""
+                    Bounds = $differenceBounds
+                    Width = 0
+                    Height = 0
+                    ChangedSamples = 0
+                    Source = "None"
+                }
+            }
+        }
+
+        $deltaOpened = $null -ne $openDelta -and $openDelta.Comparable -and $openDelta.MeanDelta -gt 1.0
+        $visualOpened = $deltaOpened -or
+            ($null -ne $crop -and $crop.Found -and $crop.Source -eq "Difference" -and $crop.ChangedSamples -gt 0)
+        if ($control -eq "ComboBox") {
+            $comboBoxPopupTrusted = $comboBoxPopupNonBlank -and
+                ($null -ne $comboBoxPopupCrop) -and
+                ($comboBoxPopupCrop.Source -ne "ScreenElement" -or $screenCaptureTrusted)
+            $visualOpened = $comboBoxPopupTrusted -or
+                ($screenCaptureTrusted -and
+                    $null -ne $comboBoxOpenVisualDelta -and
+                    $comboBoxOpenVisualDelta.Comparable -and
+                    $comboBoxOpenVisualDelta.MeanDelta -gt 5.0)
+            if ($comboBoxPopupTrusted) {
+                $crop = $comboBoxPopupCrop
+            }
+        }
+        elseif ($control -eq "MenuBar") {
+            $menuBarPopupTrusted = $menuBarPopupNonBlank -and
+                ($null -ne $menuBarPopupCrop) -and
+                ($menuBarPopupCrop.Source -ne "ScreenElement" -or $screenCaptureTrusted)
+            $visualOpened = $menuBarPopupTrusted
+            if ($menuBarPopupTrusted) {
+                $crop = $menuBarPopupCrop
+            }
+        }
+        elseif ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") {
+            $openPopupTrusted = $openPopupNonBlank -and
+                ($null -ne $openPopupCrop) -and
+                ($openPopupCrop.Source -ne "ScreenElement" -or $screenCaptureTrusted)
+            $splitButtonDifferenceVisualTrusted = $splitButtonExpandedProof -and
+                ($null -ne $crop) -and
+                $crop.Found -and
+                $crop.Source -eq "Difference" -and
+                $crop.ChangedSamples -gt 0 -and
+                ![string]::IsNullOrWhiteSpace($crop.Screenshot) -and
+                (Test-Path $crop.Screenshot) -and
+                (Test-ImageNotBlank $crop.Screenshot)
+            $visualOpened = $openPopupTrusted -or $splitButtonDifferenceVisualTrusted
+            if ($openPopupTrusted) {
+                $crop = $openPopupCrop
+            }
+        }
+        elseif (Test-ControlRequiresPopupWindowOpenProof $control) {
+            $openPopupTrusted = $openPopupNonBlank -and
+                ($null -ne $openPopupCrop) -and
+                ($openPopupCrop.Source -ne "ScreenElement" -or $screenCaptureTrusted)
+            $visualOpened = $openPopupTrusted
+            if ($openPopupTrusted) {
+                $crop = $openPopupCrop
+            }
+        }
+
+        if ($control -eq "ContentDialog") {
+            $surfaceCropPath = Join-Path $caseDir ("{0}-{1}-open-surface-crop.png" -f $app.ToLowerInvariant(), $control)
+            $contentDialogSurfaceCrop = Save-ContentDialogOpenSurfaceCrop $window $selectedFrame.Screenshot $surfaceCropPath
+            if ($contentDialogSurfaceCrop.Found -and $contentDialogSurfaceCrop.NonBlank) {
+                $crop = $contentDialogSurfaceCrop
+                $visualOpened = $true
+            }
+        }
+
+        if ($control -eq "TeachingTip") {
+            $surfaceCropPath = Join-Path $caseDir ("{0}-{1}-open-surface-crop.png" -f $app.ToLowerInvariant(), $control)
+            $teachingTipSurfaceCrop = Save-TeachingTipOpenSurfaceCrop `
+                $window `
+                $openElement `
+                $triggerElement `
+                $baselinePath `
+                $selectedFrame.Screenshot `
+                $surfaceCropPath
+            if ($teachingTipSurfaceCrop.Found -and $teachingTipSurfaceCrop.NonBlank) {
+                $crop = $teachingTipSurfaceCrop
+                $visualOpened = $true
+            }
+        }
+
+        if ($control -eq "Popup") {
+            $surfaceCropPath = Join-Path $caseDir ("{0}-{1}-open-surface-crop.png" -f $app.ToLowerInvariant(), $control)
+            $popupSurfaceCrop = Save-PopupOpenSurfaceCrop $window $openElement $surfaceCropPath
+            if ($popupSurfaceCrop.Found -and $popupSurfaceCrop.NonBlank) {
+                $crop = $popupSurfaceCrop
+                $visualOpened = $true
+            }
+        }
+
+        if ($control -eq "Flyout") {
+            $surfaceCropPath = Join-Path $caseDir ("{0}-{1}-open-surface-crop.png" -f $app.ToLowerInvariant(), $control)
+            $flyoutSurfaceCrop = Save-FlyoutOpenSurfaceCrop $window $openElement $surfaceCropPath
+            if (Test-ScreenElementPopupCropHasContent $flyoutSurfaceCrop) {
+                $crop = $flyoutSurfaceCrop
+                $visualOpened = $true
+            }
+            else {
+                $crop = $flyoutSurfaceCrop
+                $visualOpened = $false
+            }
+        }
+
+        if ($control -eq "MenuBar") {
+            $surfaceCropPath = Join-Path $caseDir ("{0}-{1}-open-surface-crop.png" -f $app.ToLowerInvariant(), $control)
+            $menuBarSurfaceCrop = Save-MenuBarOpenSurfaceCrop $window $openElement $menuBarPopupCrop $surfaceCropPath
+            if (Test-ScreenElementPopupCropHasContent $menuBarSurfaceCrop) {
+                $crop = $menuBarSurfaceCrop
+                $visualOpened = $true
+            }
+            else {
+                $crop = $menuBarSurfaceCrop
+                $visualOpened = $false
+            }
+        }
+
+        if ($control -eq "MenuFlyout") {
+            $surfaceCropPath = Join-Path $caseDir ("{0}-{1}-open-surface-crop.png" -f $app.ToLowerInvariant(), $control)
+            $menuFlyoutSurfaceCrop = Save-MenuFlyoutOpenSurfaceCrop $window $openElement $surfaceCropPath
+            if (Test-ScreenElementPopupCropHasContent $menuFlyoutSurfaceCrop) {
+                $crop = $menuFlyoutSurfaceCrop
+                $visualOpened = $true
+            }
+            else {
+                $crop = $menuFlyoutSurfaceCrop
+                $visualOpened = $false
+            }
+        }
+
+        if ($control -eq "CommandBar") {
+            $surfaceCropPath = Join-Path $caseDir ("{0}-{1}-open-surface-crop.png" -f $app.ToLowerInvariant(), $control)
+            $commandBarSurfaceCrop = Save-CommandBarOpenSurfaceCrop $window $openElement $surfaceCropPath
+            if (Test-ScreenElementPopupCropHasContent $commandBarSurfaceCrop) {
+                $crop = $commandBarSurfaceCrop
+                $visualOpened = $true
+                $openPopupCrop = $commandBarSurfaceCrop
+                $openPopupScreenshot = $commandBarSurfaceCrop.Screenshot
+                $openPopupNonBlank = $true
+                $openPopupSize = [ordered]@{
+                    Width = $commandBarSurfaceCrop.Width
+                    Height = $commandBarSurfaceCrop.Height
+                }
+            }
+            else {
+                $crop = $commandBarSurfaceCrop
+                $visualOpened = $false
+            }
+        }
+
+        if ($control -eq "CommandBarFlyout" -and $commandBarFlyoutSecondaryExpanded) {
+            $expandedRestState = @(
+                $commandBarFlyoutStateCrops.ToArray() |
+                    Where-Object { $_.State -eq "ExpandedRest" -and $null -ne $_.Crop -and $_.Crop.Found -and $_.Crop.NonBlank } |
+                    Select-Object -First 1
+            )
+            if ($expandedRestState.Count -eq 1) {
+                # Reuse the named, cursor-free state that was already frozen
+                # before any commands were invoked. This makes the broad legacy
+                # crop deterministic and prevents focus/transition residue.
+                $commandBarFlyoutSurfaceCrop = $expandedRestState[0].Crop
+            }
+            else {
+                $surfaceCropPath = Join-Path $caseDir ("{0}-{1}-open-surface-crop.png" -f $app.ToLowerInvariant(), $control)
+                $commandBarFlyoutSurfaceCrop = Save-CommandBarFlyoutOpenSurfaceScreenCrop $window $surfaceCropPath
+            }
+            if (Test-ScreenElementPopupCropHasContent $commandBarFlyoutSurfaceCrop) {
+                $crop = $commandBarFlyoutSurfaceCrop
+                $visualOpened = $true
+            }
+            else {
+                $crop = $commandBarFlyoutSurfaceCrop
+                $visualOpened = $false
+            }
+            $commandBarFlyoutSurfaceVisualTrusted = $visualOpened
+        }
+    }
+
+    if ($app -eq "ModernWpf" -and $null -eq $crop) {
+        $artifactCropSource = "GalleryItemPageRoot"
+        $artifactCropPath = Join-Path $caseDir "modernwpf-artifacts\GalleryItemPageRoot.png"
+        if (!(Test-Path $artifactCropPath)) {
+            $artifactCropSource = "ContentRootGrid"
+            $artifactCropPath = Join-Path $caseDir "modernwpf-artifacts\ContentRootGrid.png"
+        }
+        $artifactCrop = New-RenderedArtifactCrop $artifactCropPath $artifactCropSource ([ordered]@{
+            Found = $true
+            Reason = ""
+            X = 0
+            Y = 0
+            Width = 0
+            Height = 0
+            ChangedSamples = 0
+        })
+        if ($null -ne $artifactCrop -and $artifactCrop.NonBlank) {
+            $crop = $artifactCrop
+            $visualOpened = $true
+        }
+    }
+
+    if ($control -eq "ComboBox") {
+        $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
+        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose an expanded dropdown item." } elseif (!$screenCaptureTrusted -and !$comboBoxPopupNonBlank) { "$control screen capture did not match the Gallery window, and the popup window could not be captured." } elseif (!$visualOpened) { "$control exposed dropdown UIA but no changed dropdown pixels were captured." } else { "" }
+    }
+    elseif ($control -eq "MenuBar") {
+        $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
+        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose an opened menu item." } elseif (!$visualOpened) { "$control exposed opened menu UIA but no nonblank popup item pixels were captured." } else { "" }
+    }
+    elseif ($control -eq "CommandBarFlyout") {
+        $status = if (!$baselineNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif (!$commandBarFlyoutSecondaryExpanded) { "Failed" } elseif ($null -ne $openElement -and $commandBarFlyoutSurfaceVisualTrusted) { "Passed" } else { "Failed" }
+        $notes = if (!$baselineNonBlank) { "$control open interaction baseline screenshot was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif (!$commandBarFlyoutSecondaryExpanded) { "$control primary flyout opened, but the MoreButton did not expose Resize/Move secondary commands." } elseif ($null -eq $openElement) { "$control did not expose secondary command UIA after opening MoreButton." } elseif (!$commandBarFlyoutSurfaceVisualTrusted) { "$control exposed secondary command UIA but no trusted combined primary/secondary screen crop was captured." } else { "" }
+    }
+    elseif ($control -eq "SplitButton" -or $control -eq "ToggleSplitButton") {
+        $splitButtonSemanticProof = $null -ne $openElement -or $splitButtonExpandedProof
+        $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($splitButtonSemanticProof -and $visualOpened) { "Passed" } else { "Failed" }
+        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control secondary button." } elseif (!$splitButtonSemanticProof) { "$control did not report Expanded or expose opened popup content." } elseif (!$visualOpened) { "$control reported Expanded, but no trusted popup pixels were captured." } else { "" }
+    }
+    elseif (Test-ControlRequiresPopupWindowOpenProof $control) {
+        $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -and $visualOpened) { "Passed" } else { "Failed" }
+        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement) { "$control did not expose opened popup content." } elseif (!$visualOpened) { "$control exposed opened popup UIA but no nonblank popup pixels were captured." } else { "" }
+    }
+    else {
+        $status = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "Failed" } elseif (!$invoked) { "Failed" } elseif ($null -ne $openElement -or $visualOpened) { "Passed" } else { "Failed" }
+        $notes = if (!$baselineNonBlank -or !$baselineControlNonBlank) { "$control open interaction baseline screenshot or control crop was blank." } elseif (!$invoked) { "Could not invoke the $control sample button." } elseif ($null -eq $openElement -and !$visualOpened) { "$control did not produce UIA or visual evidence of opening." } elseif ($null -eq $openElement -and $null -ne $crop -and ($crop.Source -eq "GalleryItemPageRoot" -or $crop.Source -eq "ContentRootGrid")) { "$control open content was verified from the in-app rendered artifact." } elseif ($null -eq $openElement) { "$control open content was not found in UIA; visual delta verified." } else { "" }
+    }
+
+    if ($preferScreenOpenCapture) {
+        [GalleryVisualNative]::SetTopMost($window.Current.NativeWindowHandle, $false)
+    }
+
+    return [ordered]@{
+        Status = $status
+        Invoked = $invoked
+        TriggerName = $(if ($null -ne $triggerElement) { $triggerElement.Current.Name } else { "" })
+        TriggerAutomationId = $(if ($null -ne $triggerElement) { $triggerElement.Current.AutomationId } else { "" })
+        TriggerUiaTree = $triggerTreePath
+        BaselineScreenshot = $baselinePath
+        BaselineNonBlank = $baselineNonBlank
+        BaselineControlCrop = $baselineControlCrop
+        BaselineControlNonBlank = $baselineControlNonBlank
+        OpenElementFound = $null -ne $openElement
+        OpenElementName = $(if ($null -ne $openElement) { $openElement.Current.Name } else { "" })
+        SplitButtonExpandedProof = $splitButtonExpandedProof
+        SplitButtonDifferenceVisualTrusted = $splitButtonDifferenceVisualTrusted
+        UiaTree = $treePath
+        Frames = $frames.ToArray()
+        OpenDelta = $openDelta
+        Crop = $crop
+        ScreenCaptureTrustReference = $screenCaptureTrustReference
+        ScreenCaptureTrustDelta = $screenCaptureTrustDelta
+        ScreenCaptureTrusted = $screenCaptureTrusted
+        ComboBoxOpenBaselineCrop = $comboBoxOpenBaselineCrop
+        ComboBoxOpenVisualDelta = $comboBoxOpenVisualDelta
+        ComboBoxPopupScreenshot = $comboBoxPopupScreenshot
+        ComboBoxPopupNonBlank = $comboBoxPopupNonBlank
+        ComboBoxPopupSize = $comboBoxPopupSize
+        ComboBoxPopupCrop = $comboBoxPopupCrop
+        MenuBarPopupScreenshot = $menuBarPopupScreenshot
+        MenuBarPopupNonBlank = $menuBarPopupNonBlank
+        MenuBarPopupSize = $menuBarPopupSize
+        MenuBarPopupCrop = $menuBarPopupCrop
+        OpenPopupScreenshot = $openPopupScreenshot
+        OpenPopupNonBlank = $openPopupNonBlank
+        OpenPopupSize = $openPopupSize
+        OpenPopupCrop = $openPopupCrop
+        CommandBarFlyoutSecondaryExpanded = $commandBarFlyoutSecondaryExpanded
+        CommandBarFlyoutSurfaceCrop = $commandBarFlyoutSurfaceCrop
+        CommandBarFlyoutSurfaceVisualTrusted = $commandBarFlyoutSurfaceVisualTrusted
+        CommandBarFlyoutStateCrops = $commandBarFlyoutStateCrops.ToArray()
+        SelectedFrameDelayMs = $(if ($null -ne $selectedFrame) { $selectedFrame.DelayMs } else { $null })
+        SelectedFrameScreenshot = $(if ($null -ne $selectedFrame) { $selectedFrame.Screenshot } else { "" })
+        Notes = $notes
+    }
+}
+
+function New-ColorPickerStateInteractionCrop(
+    [string]$app,
+    [string]$caseDir,
+    $window,
+    [string]$screenshot,
+    [string]$phase,
+    [bool]$stateEnabled) {
+    $source = if ($ColorPickerState -eq "Alpha") {
+        "ColorPicker alpha surface"
+    }
+    elseif ($ColorPickerState -eq "Ring") {
+        "ColorPicker ring surface"
+    }
+    else {
+        "ColorPicker More-button surface"
+    }
+    $path = Join-Path $caseDir ("{0}-ColorPicker-state-{1}-crop.png" -f $app.ToLowerInvariant(), $phase)
+
+    # WPF TextBlock labels are not represented in its UIA control view, so the
+    # expanded baseline cannot be reconstructed from the same stable child set.
+    # Its rendered artifact is exact and already used for the default parity
+    # crop; keep live UIA-bound cropping for the toggled More-button state.
+    if ($app -eq "ModernWpf" -and !$stateEnabled) {
+        $artifactPath = Join-Path (Join-Path $caseDir "modernwpf-artifacts") "GallerySample_ColorPicker_ColorPicker.png"
+        if (!(Test-Path $artifactPath)) {
+            return $null
+        }
+
+        $sourceSize = Get-ImageSize $artifactPath
+        $topPadding = 4
+        $bottomPaddingAndMargin = 16
+        $bounds = [ordered]@{
+            Found = $true
+            Reason = "Cropped the expanded ModernWpf ColorPicker state from its rendered artifact."
+            X = 0
+            Y = $topPadding
+            Width = $sourceSize.Width
+            Height = $sourceSize.Height - $topPadding - $bottomPaddingAndMargin
+            ChangedSamples = 0
+        }
+        $savedBounds = Save-Crop $artifactPath $bounds $path 0
+        return New-RenderedArtifactCrop $path $source $savedBounds
+    }
+
+    if ([string]::IsNullOrWhiteSpace($screenshot) -or !(Test-Path $screenshot)) {
+        return $null
+    }
+
+    $elementIds = if ($ColorPickerState -eq "Alpha" -and $stateEnabled) {
+        @("ColorSpectrum", "ThirdDimensionSlider", "AlphaSlider", "ColorRepresentationComboBox", "HexTextBox", "BlueTextBox", "AlphaTextBox")
+    }
+    elseif ($ColorPickerState -eq "Ring") {
+        @("ColorSpectrum", "ThirdDimensionSlider", "ColorRepresentationComboBox", "HexTextBox", "BlueTextBox")
+    }
+    elseif ($ColorPickerState -eq "MoreButton" -and $stateEnabled) {
+        @("ColorSpectrum", "ThirdDimensionSlider", "MoreButton")
+    }
+    else {
+        @("ColorSpectrum", "ThirdDimensionSlider", "ColorRepresentationComboBox", "HexTextBox", "BlueTextBox", "BlueLabel")
+    }
+    $boundsById = @{}
+    foreach ($elementId in $elementIds) {
+        $child = Find-DescendantByAutomationId $window $elementId
+        $childBounds = Get-ElementWindowBounds $window $child
+        if ($null -eq $childBounds -or !$childBounds.Found) {
+            return $null
+        }
+
+        $boundsById[$elementId] = $childBounds
+    }
+
+    $left = $boundsById["ColorSpectrum"].X
+    $top = $boundsById["ColorSpectrum"].Y
+    $right = $boundsById["ThirdDimensionSlider"].X + $boundsById["ThirdDimensionSlider"].Width
+    $bottom = @($boundsById.Values | ForEach-Object { $_.Y + $_.Height } | Measure-Object -Maximum).Maximum
+    $bounds = [ordered]@{
+        Found = $true
+        Reason = "Cropped the live ColorPicker state from stable child bounds."
+        X = $left
+        Y = $top
+        Width = $right - $left
+        Height = $bottom - $top
+        ChangedSamples = 0
+    }
+    $savedBounds = Save-Crop $screenshot $bounds $path 0
+    return New-RenderedArtifactCrop $path $source $savedBounds
+}
+
+function Capture-StateInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsStateInteraction $control)) {
+        return $null
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 250
+
+    $toggleElement = Get-StateInteractionTarget $window $control $element
+    $baselineState = Get-StateInteractionStateName $control $toggleElement
+    $desiredState = if ($baselineState -eq "On") { "Off" } else { "On" }
+    $renderedArtifactPath = if ($app -eq "ModernWpf") { Get-ModernRenderedElementArtifactPath $caseDir $element } else { "" }
+    $renderedArtifactSource = if ($app -eq "ModernWpf" -and $null -ne $element) { $element.Current.AutomationId } else { "" }
+    $baselinePath = Join-Path $caseDir ("{0}-{1}-state-before.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $baselinePath
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    }
+
+    $baselineCropPath = Join-Path $caseDir ("{0}-{1}-state-before-crop.png" -f $app.ToLowerInvariant(), $control)
+    $baselineCrop = if ($control -eq "ColorPicker") {
+        New-ColorPickerStateInteractionCrop $app $caseDir $window $baselinePath "before" ($baselineState -eq "On")
+    }
+    elseif (Test-Path $baselinePath) {
+        Save-ElementCrop $window $baselinePath $baselineCropPath $element "UIA" 10
+    }
+    else {
+        $null
+    }
+    if ($null -eq $baselineCrop) {
+        $baselineCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $baselineCropPath $renderedArtifactSource
+    }
+
+    $invoked = $false
+    if (![string]::IsNullOrEmpty($baselineState)) {
+        $invoked = Set-StateInteractionElementState $window $control $toggleElement $desiredState
+    }
+    $settleDelayMs = Get-StateInteractionSettleDelayMs $control
+    Start-Sleep -Milliseconds $settleDelayMs
+
+    $afterState = Get-StateInteractionStateName $control $toggleElement
+    $stateOutputAutomationId = Get-StateInteractionOutputAutomationId $app $control
+    $expectedStateOutput = Get-StateInteractionExpectedOutput $control $desiredState
+    $stateOutputElement = if (![string]::IsNullOrWhiteSpace($stateOutputAutomationId)) {
+        TryFind-DescendantByAutomationId $window $stateOutputAutomationId
+    }
+    else {
+        $null
+    }
+    $stateOutput = if ($null -ne $stateOutputElement) { [string]$stateOutputElement.Current.Name } else { "" }
+    $stateOutputMatched = [string]::IsNullOrEmpty($expectedStateOutput) -or $stateOutput -eq $expectedStateOutput
+    if ($app -eq "ModernWpf" -and ![string]::IsNullOrWhiteSpace($renderedArtifactPath)) {
+        [void](Refresh-ModernWpfVisualArtifacts $window (Join-Path $caseDir "modernwpf-artifacts"))
+    }
+    $afterPath = Join-Path $caseDir ("{0}-{1}-state-after.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $afterPath
+    }
+
+    $afterCropPath = Join-Path $caseDir ("{0}-{1}-state-after-crop.png" -f $app.ToLowerInvariant(), $control)
+    $afterCrop = if ($control -eq "ColorPicker") {
+        New-ColorPickerStateInteractionCrop $app $caseDir $window $afterPath "after" ($afterState -eq "On")
+    }
+    elseif (Test-Path $afterPath) {
+        Save-ElementCrop $window $afterPath $afterCropPath $element "UIA" 10
+    }
+    else {
+        $null
+    }
+    if ($null -eq $afterCrop) {
+        $afterCrop = Copy-RenderedArtifactCrop $renderedArtifactPath $afterCropPath $renderedArtifactSource
+    }
+
+    $stateDelta = $null
+    if ($null -ne $baselineCrop -and $null -ne $afterCrop -and
+        $baselineCrop.Found -and $afterCrop.Found -and
+        ![string]::IsNullOrEmpty($baselineCrop.Screenshot) -and
+        ![string]::IsNullOrEmpty($afterCrop.Screenshot)) {
+        $stateDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot
+    }
+
+    $afterCropScreenshot = if ($null -ne $afterCrop -and $afterCrop.Found) { $afterCrop.Screenshot } else { "" }
+    $stateVisual = Test-StateInteractionVisual $control $desiredState $afterCropScreenshot
+    $stateChanged = ![string]::IsNullOrEmpty($baselineState) -and
+        ![string]::IsNullOrEmpty($afterState) -and
+        $baselineState -ne $afterState -and
+        $afterState -eq $desiredState
+    $visualChanged = $null -ne $stateDelta -and $stateDelta.Comparable -and $stateDelta.MeanDelta -gt 0.5
+    $status = if (!$invoked) { "Failed" } elseif (!$stateChanged) { "Failed" } elseif (!$stateOutputMatched) { "Failed" } elseif (!$visualChanged) { "Failed" } elseif (!$stateVisual.Passed) { "Failed" } else { "Passed" }
+    $notes = if ([string]::IsNullOrEmpty($baselineState)) {
+        "$control did not expose its configured UIA state pattern."
+    }
+    elseif (!$invoked) {
+        "Could not toggle the $control sample from $baselineState to $desiredState."
+    }
+    elseif (!$stateChanged) {
+        "$control state did not change from $baselineState to $desiredState; observed '$afterState'."
+    }
+    elseif (!$stateOutputMatched) {
+        "$control output did not change to '$expectedStateOutput'; observed '$stateOutput'."
+    }
+    elseif (!$visualChanged) {
+        "$control state changed, but the cropped control image did not visibly change."
+    }
+    elseif (!$stateVisual.Passed) {
+        $stateVisual.Notes
+    }
+    else {
+        ""
+    }
+
+    if ($control -eq "ColorPicker" -and ![string]::IsNullOrEmpty($baselineState)) {
+        [void](Set-StateInteractionElementState $window $control $toggleElement $baselineState)
+        Start-Sleep -Milliseconds $settleDelayMs
+        if ($app -eq "ModernWpf") {
+            [void](Refresh-ModernWpfVisualArtifacts $window (Join-Path $caseDir "modernwpf-artifacts"))
+        }
+    }
+
+    return [ordered]@{
+        Status = $status
+        Kind = "State"
+        Invoked = $invoked
+        BaselineState = $baselineState
+        DesiredState = $desiredState
+        StateAfter = $afterState
+        OutputAutomationId = $stateOutputAutomationId
+        ExpectedOutput = $expectedStateOutput
+        OutputAfter = $stateOutput
+        OutputMatched = $stateOutputMatched
+        BaselineScreenshot = $baselinePath
+        Frames = @(
+            [ordered]@{
+                DelayMs = $settleDelayMs
+                Screenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+                NonBlank = $(if (Test-Path $afterPath) { Test-ImageNotBlank $afterPath } else { $false })
+                Error = ""
+            }
+        )
+        StateDelta = $stateDelta
+        StateVisualCheck = $stateVisual
+        Crop = $afterCrop
+        BaselineCrop = $baselineCrop
+        SelectedFrameDelayMs = $settleDelayMs
+        SelectedFrameScreenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+        Notes = $notes
+    }
+}
+
+function Capture-SelectionInteraction([string]$app, [string]$control, [string]$caseDir, $window, $sampleElement) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsSelectionInteraction $control)) {
+        return $null
+    }
+
+    $triggerName = Get-SelectionInteractionTriggerName $control
+    if ([string]::IsNullOrWhiteSpace($triggerName)) {
+        return [ordered]@{
+            Status = "Failed"
+            Kind = "Selection"
+            Invoked = $false
+            BaselineScreenshot = ""
+            Frames = @()
+            Crop = $null
+            Notes = "$control does not have a configured selection interaction trigger."
+        }
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 250
+
+    $cropAutomationId = if ($app -eq "WinUI3" -and $control -eq "GridView") {
+        "ClickOutput0"
+    }
+    else {
+        Get-SelectionInteractionCropAutomationId $control
+    }
+    $cropElement = if (![string]::IsNullOrWhiteSpace($cropAutomationId)) {
+        TryFind-DescendantByAutomationId $window $cropAutomationId
+    }
+    else {
+        $null
+    }
+    if ($null -eq $cropElement) {
+        $cropElement = $sampleElement
+    }
+
+    $baselinePath = Join-Path $caseDir ("{0}-{1}-selection-before.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $baselinePath
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    }
+
+    $baselineCropPath = Join-Path $caseDir ("{0}-{1}-selection-before-crop.png" -f $app.ToLowerInvariant(), $control)
+    $baselineCrop = if (Test-Path $baselinePath) {
+        Save-ElementCrop $window $baselinePath $baselineCropPath $cropElement "UIA" 10
+    }
+    else {
+        $null
+    }
+
+    $trigger = if ($null -ne $cropElement) { Find-DescendantByName $cropElement $triggerName } else { $null }
+    if ($null -eq $trigger) {
+        $trigger = Find-DescendantByName $window $triggerName
+    }
+    if ($null -eq $trigger) {
+        $trigger = Find-ElementByNameInProcess $window.Current.ProcessId @($triggerName)
+    }
+    $invoked = if ($control -eq "GridView") {
+        Invoke-GridViewItemClickOnce $app $window
+    }
+    else {
+        Invoke-SelectionElementOnce $window $trigger
+    }
+    Start-Sleep -Milliseconds 250
+
+    $afterPath = Join-Path $caseDir ("{0}-{1}-selection-after.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $afterPath
+    }
+
+    $afterCropPath = Join-Path $caseDir ("{0}-{1}-selection-after-crop.png" -f $app.ToLowerInvariant(), $control)
+    $afterCrop = if (Test-Path $afterPath) {
+        Save-ElementCrop $window $afterPath $afterCropPath $cropElement "UIA" 10
+    }
+    else {
+        $null
+    }
+    if (($null -eq $baselineCrop -or !$baselineCrop.Found) -and
+        $null -ne $afterCrop -and $afterCrop.Found -and
+        $null -ne $afterCrop.Bounds -and $afterCrop.Bounds.Found -and
+        (Test-Path $baselinePath)) {
+        $savedBounds = Save-Crop $baselinePath $afterCrop.Bounds $baselineCropPath 0
+        $baselineCrop = New-RenderedArtifactCrop $baselineCropPath "UIA" $savedBounds
+    }
+
+    if ($control -eq "GridView" -and
+        $null -ne $baselineCrop -and $null -ne $afterCrop -and
+        $baselineCrop.Found -and $afterCrop.Found -and
+        ![string]::IsNullOrEmpty($baselineCrop.Screenshot) -and
+        ![string]::IsNullOrEmpty($afterCrop.Screenshot)) {
+        # The two galleries give the output TextBlock the remaining sample width, which is
+        # intentionally different. Compare only the pixels written by the ItemClick result.
+        $outputDifferenceBounds = Find-DifferenceBounds $baselineCrop.Screenshot $afterCrop.Screenshot 32 1
+        if ($null -ne $outputDifferenceBounds -and
+            $outputDifferenceBounds.Found -and
+            $outputDifferenceBounds.ChangedSamples -gt 0) {
+            $tightBaselineCropPath = Join-Path $caseDir ("{0}-{1}-selection-before-content-crop.png" -f $app.ToLowerInvariant(), $control)
+            $tightAfterCropPath = Join-Path $caseDir ("{0}-{1}-selection-after-content-crop.png" -f $app.ToLowerInvariant(), $control)
+            $tightBaselineBounds = Save-Crop $baselineCrop.Screenshot $outputDifferenceBounds $tightBaselineCropPath 4
+            $tightAfterBounds = Save-Crop $afterCrop.Screenshot $outputDifferenceBounds $tightAfterCropPath 4
+            $baselineCrop = New-RenderedArtifactCrop $tightBaselineCropPath "UIA" $tightBaselineBounds
+            $afterCrop = New-RenderedArtifactCrop $tightAfterCropPath "UIA" $tightAfterBounds
+        }
+    }
+
+    $selectionDelta = $null
+    if ($null -ne $baselineCrop -and $null -ne $afterCrop -and
+        $baselineCrop.Found -and $afterCrop.Found -and
+        ![string]::IsNullOrEmpty($baselineCrop.Screenshot) -and
+        ![string]::IsNullOrEmpty($afterCrop.Screenshot)) {
+        $selectionDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot
+    }
+
+    $expectedName = Get-SelectionInteractionExpectedName $control
+    $expectedFound = [string]::IsNullOrWhiteSpace($expectedName) -or
+        $null -ne (Find-ElementByNameInProcess $window.Current.ProcessId @($expectedName))
+    $visualChanged = $null -ne $selectionDelta -and $selectionDelta.Comparable -and $selectionDelta.MeanDelta -gt 0.5
+    $status = if (!$invoked) { "Failed" } elseif (!$expectedFound) { "Failed" } elseif (!$visualChanged) { "Failed" } else { "Passed" }
+    $notes = if ($null -eq $trigger) {
+        "$control selection trigger '$triggerName' was not found."
+    }
+    elseif (!$invoked) {
+        "Could not invoke the $control selection trigger '$triggerName'."
+    }
+    elseif (!$expectedFound) {
+        "$control selection did not expose expected content '$expectedName'."
+    }
+    elseif (!$visualChanged) {
+        "$control selection click did not visibly change the cropped sample image."
+    }
+    else {
+        ""
+    }
+
+    return [ordered]@{
+        Status = $status
+        Kind = "Selection"
+        Invoked = $invoked
+        TriggerName = $triggerName
+        ExpectedName = $expectedName
+        ExpectedFound = $expectedFound
+        BaselineScreenshot = $baselinePath
+        Frames = @(
+            [ordered]@{
+                DelayMs = 250
+                Screenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+                NonBlank = $(if (Test-Path $afterPath) { Test-ImageNotBlank $afterPath } else { $false })
+                Error = ""
+            }
+        )
+        SelectionDelta = $selectionDelta
+        Crop = $afterCrop
+        BaselineCrop = $baselineCrop
+        SelectedFrameDelayMs = 250
+        SelectedFrameScreenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+        Notes = $notes
+    }
+}
+
+function Capture-ValueInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsValueInteraction $control)) {
+        return $null
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 250
+
+    $baselineValue = Get-ElementNumericValue $element
+    $step = Get-ValueInteractionStep $control
+    $expectedValue = Get-ValueInteractionTargetValue $control $baselineValue
+    $cropAutomationId = Get-ValueInteractionCropAutomationId $control
+    $cropElement = if (![string]::IsNullOrWhiteSpace($cropAutomationId)) {
+        TryFind-DescendantByAutomationId $window $cropAutomationId
+    }
+    else {
+        $null
+    }
+    if ($null -eq $cropElement) {
+        $cropElement = $element
+    }
+    $treePath = Join-Path $caseDir ("{0}-{1}-value.uia.txt" -f $app.ToLowerInvariant(), $control)
+    try {
+        Write-UiaTree $element $treePath 5
+    }
+    catch {
+        Set-Content -Path $treePath -Value ("UIA tree capture failed: " + $_.Exception.Message) -Encoding UTF8
+    }
+    $increaseButtonNames = Get-ValueInteractionIncreaseButtonNames $control
+    $increaseButton = Find-DescendantButtonByAnyName $element $increaseButtonNames
+    $baselinePath = Join-Path $caseDir ("{0}-{1}-value-before.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $baselinePath
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    }
+
+    $baselineCropPath = Join-Path $caseDir ("{0}-{1}-value-before-crop.png" -f $app.ToLowerInvariant(), $control)
+    $baselineCrop = if (Test-Path $baselinePath) {
+        Save-ElementCrop $window $baselinePath $baselineCropPath $cropElement "UIA" 10
+    }
+    else {
+        $null
+    }
+    if ($null -ne $baselineCrop -and $baselineCrop.Contains("NonBlank") -and !$baselineCrop.NonBlank) {
+        Start-Sleep -Milliseconds 300
+        try {
+            Capture-Window $window.Current.NativeWindowHandle $baselinePath
+            $baselineCrop = Save-ElementCrop $window $baselinePath $baselineCropPath $cropElement "UIA" 10
+        }
+        catch {
+        }
+    }
+
+    $invoked = Invoke-ValueIncreaseOnce $window $control $element $expectedValue
+    Start-Sleep -Milliseconds 250
+
+    $afterValue = Get-ElementNumericValue $element
+    $afterPath = Join-Path $caseDir ("{0}-{1}-value-after.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $afterPath
+    }
+
+    $afterCropPath = Join-Path $caseDir ("{0}-{1}-value-after-crop.png" -f $app.ToLowerInvariant(), $control)
+    $afterCrop = if (Test-Path $afterPath) {
+        Save-ElementCrop $window $afterPath $afterCropPath $cropElement "UIA" 10
+    }
+    else {
+        $null
+    }
+    if ($null -ne $afterCrop -and $afterCrop.Contains("NonBlank") -and !$afterCrop.NonBlank) {
+        Start-Sleep -Milliseconds 300
+        try {
+            Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
+            $afterCrop = Save-ElementCrop $window $afterPath $afterCropPath $cropElement "UIA" 10
+        }
+        catch {
+        }
+    }
+
+    $valueDelta = $null
+    if ($null -ne $baselineCrop -and $null -ne $afterCrop -and
+        $baselineCrop.Found -and $afterCrop.Found -and
+        ![string]::IsNullOrEmpty($baselineCrop.Screenshot) -and
+        ![string]::IsNullOrEmpty($afterCrop.Screenshot)) {
+        $valueDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot
+    }
+
+    $valueChanged = (Test-DoubleApproximatelyEqual $afterValue $expectedValue)
+    $visualChanged = $null -ne $valueDelta -and $valueDelta.Comparable -and $valueDelta.MeanDelta -gt 0.1
+    $baselineNonBlank = $null -ne $baselineCrop -and $baselineCrop.Contains("NonBlank") -and $baselineCrop.NonBlank
+    $afterNonBlank = $null -ne $afterCrop -and $afterCrop.Contains("NonBlank") -and $afterCrop.NonBlank
+    $status = if ($null -eq $baselineValue) { "Failed" } elseif (!$invoked) { "Failed" } elseif (!$valueChanged) { "Failed" } elseif (!$baselineNonBlank -or !$afterNonBlank) { "Failed" } else { "Passed" }
+    $notes = if ($null -eq $baselineValue) {
+        "$control did not expose a readable numeric value."
+    }
+    elseif (!$invoked) {
+        "Could not invoke the $control increase button."
+    }
+    elseif (!$valueChanged) {
+        "$control value did not change from $baselineValue to expected $expectedValue; observed '$afterValue'."
+    }
+    elseif (!$baselineNonBlank -or !$afterNonBlank) {
+        "$control value interaction crop was blank before or after activation."
+    }
+    else {
+        ""
+    }
+
+    return [ordered]@{
+        Status = $status
+        Kind = "Value"
+        Invoked = $invoked
+        BaselineValue = $baselineValue
+        Step = $step
+        ExpectedValue = $expectedValue
+        ValueAfter = $afterValue
+        CropAutomationId = $cropAutomationId
+        BaselineScreenshot = $baselinePath
+        UiaTree = $treePath
+        IncreaseButtonFound = $null -ne $increaseButton
+        IncreaseButtonName = $(if ($null -ne $increaseButton) { $increaseButton.Current.Name } else { "" })
+        IncreaseButtonAutomationId = $(if ($null -ne $increaseButton) { $increaseButton.Current.AutomationId } else { "" })
+        IncreaseButtonCenterHit = Get-ElementCenterHitSummary $increaseButton
+        Frames = @(
+            [ordered]@{
+                DelayMs = 250
+                Screenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+                NonBlank = $(if (Test-Path $afterPath) { Test-ImageNotBlank $afterPath } else { $false })
+                Error = ""
+            }
+        )
+        ValueDelta = $valueDelta
+        VisualChanged = $visualChanged
+        Crop = $afterCrop
+        BaselineCrop = $baselineCrop
+        SelectedFrameDelayMs = 250
+        SelectedFrameScreenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+        Notes = $notes
+    }
+}
+
+function Capture-OutputInteraction([string]$app, [string]$control, [string]$caseDir, $window, $sampleElement) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsOutputInteraction $control)) {
+        return $null
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 250
+
+    $triggerNames = Get-OutputInteractionTriggerNames $control
+    $cropAutomationId = Get-OutputInteractionCropAutomationId $control
+    if ($app -eq "ModernWpf" -and $control -eq "AppBarButton") {
+        $cropAutomationId = "GallerySample_AppBarButton_Output"
+    }
+    elseif ($app -eq "ModernWpf" -and $control -eq "CommandBar") {
+        $cropAutomationId = "GallerySample_CommandBar_Output"
+    }
+    elseif ($app -eq "WinUI3" -and $control -eq "RepeatButton") {
+        # The upstream page exposes x:Name="Control1Output" as its UIA id; the
+        # WPF port uses its stable GallerySample_* harness id for the same node.
+        $cropAutomationId = "Control1Output"
+    }
+    $cropElement = if (![string]::IsNullOrWhiteSpace($cropAutomationId)) {
+        TryFind-DescendantByAutomationId $window $cropAutomationId
+    }
+    else {
+        $null
+    }
+    if ($null -eq $cropElement) {
+        $cropElement = $sampleElement
+    }
+
+    $trigger = if (Test-ElementNameMatches $sampleElement $triggerNames) { $sampleElement } else { $null }
+    if ($null -eq $trigger -and $null -ne $sampleElement) {
+        $trigger = Find-DescendantByAnyName $sampleElement $triggerNames
+    }
+    if ($null -eq $trigger) {
+        $trigger = Find-DescendantByAnyName $window $triggerNames
+    }
+    if ($null -eq $trigger -and $triggerNames.Count -gt 0) {
+        $trigger = Find-ElementByNameInProcess $window.Current.ProcessId $triggerNames
+    }
+
+    $baselinePath = Join-Path $caseDir ("{0}-{1}-output-before.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $baselinePath
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $baselinePath
+    }
+
+    $baselineCropPath = Join-Path $caseDir ("{0}-{1}-output-before-crop.png" -f $app.ToLowerInvariant(), $control)
+    $baselineCrop = if ((Test-Path $baselinePath) -and $control -eq "RepeatButton") {
+        Save-RepeatButtonOutputSurfaceCrop $window $baselinePath $baselineCropPath $trigger
+    }
+    elseif (Test-Path $baselinePath) {
+        Save-ElementCrop $window $baselinePath $baselineCropPath $cropElement "UIA" 20
+    }
+    else {
+        $null
+    }
+    if ($null -ne $baselineCrop -and $baselineCrop.Contains("NonBlank") -and !$baselineCrop.NonBlank) {
+        Start-Sleep -Milliseconds 300
+        try {
+            Capture-Window $window.Current.NativeWindowHandle $baselinePath
+            $baselineCrop = Save-ElementCrop $window $baselinePath $baselineCropPath $cropElement "UIA" 20
+        }
+        catch {
+        }
+    }
+
+    $invoked = Invoke-ElementPatternOnce $window $trigger
+    Start-Sleep -Milliseconds 250
+    $outputFocusNeutralized = $true
+    if (Test-ControlSupportsVisualStateMatrix $control) {
+        # Output parity has its own crop. Normalize keyboard focus after Invoke
+        # so a focus ring captured by the preceding state matrix (or by an
+        # automation-provider implementation detail) cannot contaminate the
+        # output-text comparison.
+        $outputFocusNeutralized = Set-ControlVisualStateMatrixNeutralFocus $window $trigger
+    }
+
+    $afterCropElement = $cropElement
+    if (![string]::IsNullOrWhiteSpace($cropAutomationId)) {
+        $resolvedAfterCropElement = TryFind-DescendantByAutomationId $window $cropAutomationId
+        if ($null -ne $resolvedAfterCropElement) {
+            $afterCropElement = $resolvedAfterCropElement
+        }
+    }
+    $expectedOutputNames = @(Get-OutputInteractionExpectedNames $control)
+    if ($expectedOutputNames.Count -gt 0) {
+        $namedAfterCropElement = Find-ElementByNameInProcess $window.Current.ProcessId $expectedOutputNames
+        if ($null -ne $namedAfterCropElement) {
+            $afterCropElement = $namedAfterCropElement
+        }
+    }
+
+    $afterPath = Join-Path $caseDir ("{0}-{1}-output-after.png" -f $app.ToLowerInvariant(), $control)
+    try {
+        Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
+    }
+    catch {
+        Capture-ScreenRect $window.Current.NativeWindowHandle $afterPath
+    }
+
+    $afterCropPath = Join-Path $caseDir ("{0}-{1}-output-after-crop.png" -f $app.ToLowerInvariant(), $control)
+    $afterCrop = if ((Test-Path $afterPath) -and $control -eq "RepeatButton") {
+        Save-RepeatButtonOutputSurfaceCrop $window $afterPath $afterCropPath $trigger
+    }
+    elseif (Test-Path $afterPath) {
+        Save-ElementCrop $window $afterPath $afterCropPath $afterCropElement "UIA" 20
+    }
+    else {
+        $null
+    }
+    if ($null -ne $afterCrop -and $afterCrop.Contains("NonBlank") -and !$afterCrop.NonBlank) {
+        Start-Sleep -Milliseconds 300
+        try {
+            Capture-Window $window.Current.NativeWindowHandle $afterPath -SkipActivate
+            $afterCrop = Save-ElementCrop $window $afterPath $afterCropPath $afterCropElement "UIA" 20
+        }
+        catch {
+        }
+    }
+
+    $outputDelta = $null
+    if ($null -ne $baselineCrop -and $null -ne $afterCrop -and
+        $baselineCrop.Found -and $afterCrop.Found -and
+        ![string]::IsNullOrEmpty($baselineCrop.Screenshot) -and
+        ![string]::IsNullOrEmpty($afterCrop.Screenshot)) {
+        $outputDelta = Compare-ImagesNormalized $baselineCrop.Screenshot $afterCrop.Screenshot
+    }
+
+    $minimumDelta = Get-OutputInteractionMinimumDelta $control
+    $allowsBlankBaseline = Test-OutputInteractionAllowsBlankBaseline $control
+    $baselineNonBlank = $null -ne $baselineCrop -and $baselineCrop.Contains("NonBlank") -and $baselineCrop.NonBlank
+    $afterNonBlank = $null -ne $afterCrop -and $afterCrop.Contains("NonBlank") -and $afterCrop.NonBlank
+    # Compare-ImagesNormalized reports a value rounded to two decimals. A
+    # one-character RepeatButton counter update lands exactly on the calibrated
+    # 0.5 threshold, and is a real visible change, so the boundary is inclusive.
+    $visualChanged = ($null -ne $outputDelta -and $outputDelta.Comparable -and $outputDelta.MeanDelta -ge $minimumDelta) -or
+        ($allowsBlankBaseline -and !$baselineNonBlank -and $afterNonBlank)
+    $status = if ($null -eq $trigger) { "Failed" } elseif (!$invoked) { "Failed" } elseif ((!$baselineNonBlank -and !$allowsBlankBaseline) -or !$afterNonBlank) { "Failed" } elseif (!$visualChanged) { "Failed" } else { "Passed" }
+    $notes = if ($null -eq $trigger) {
+        "$control output trigger '$($triggerNames -join "', '")' was not found."
+    }
+    elseif (!$invoked) {
+        "Could not invoke the $control output trigger '$($triggerNames[0])'."
+    }
+    elseif ((!$baselineNonBlank -and !$allowsBlankBaseline) -or !$afterNonBlank) {
+        "$control output interaction crop was blank before or after activation."
+    }
+    elseif (!$visualChanged) {
+        "$control output interaction did not visibly change the cropped sample image."
+    }
+    else {
+        ""
+    }
+
+    return [ordered]@{
+        Status = $status
+        Kind = "Output"
+        Invoked = $invoked
+        TriggerFound = $null -ne $trigger
+        TriggerName = $(if ($null -ne $trigger) { $trigger.Current.Name } else { "" })
+        TriggerAutomationId = $(if ($null -ne $trigger) { $trigger.Current.AutomationId } else { "" })
+        CropAutomationId = $cropAutomationId
+        BaselineScreenshot = $baselinePath
+        Frames = @(
+            [ordered]@{
+                DelayMs = 250
+                Screenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+                NonBlank = $(if (Test-Path $afterPath) { Test-ImageNotBlank $afterPath } else { $false })
+                Error = ""
+            }
+        )
+        OutputDelta = $outputDelta
+        MinimumDelta = $minimumDelta
+        VisualChanged = $visualChanged
+        FocusNeutralized = $outputFocusNeutralized
+        Crop = $afterCrop
+        BaselineCrop = $baselineCrop
+        SelectedFrameDelayMs = 250
+        SelectedFrameScreenshot = $(if (Test-Path $afterPath) { $afterPath } else { "" })
+        Notes = $notes
+    }
+}
+
+function Capture-TextInteraction([string]$app, [string]$control, [string]$caseDir, $window, $element) {
+    if (!$IncludeInteractions -or !(Test-ControlSupportsTextInteraction $control)) {
+        return $null
+    }
+
+    [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+    Start-Sleep -Milliseconds 250
+
+    $inputText = Get-TextInteractionInput $control
+    $suggestionNames = Get-TextInteractionSuggestionNames $control
+    $expectedOutputName = Get-TextInteractionExpectedOutputName $control
+
+    $baselinePath = Join-Path $caseDir ("{0}-{1}-text-before.png" -f $app.ToLowerInvariant(), $control)
+    [void](Capture-OpenInteractionFrame $window $baselinePath $false)
+
+    $typed = Set-EditableElementText $window $element $inputText
+    Start-Sleep -Milliseconds 400
+
+    $suggestionElement = if ($typed) {
+        Wait-ForListItemOutsideElementBounds $window $element $suggestionNames 3000
+    }
+    else {
+        $null
+    }
+
+    $popupScreenshot = ""
+    $popupNonBlank = $false
+    $popupSize = $null
+    $treePath = ""
+    if ($null -ne $suggestionElement) {
+        $treePath = Join-Path $caseDir ("{0}-{1}-text-suggestions.uia.txt" -f $app.ToLowerInvariant(), $control)
+        Write-UiaTree $suggestionElement $treePath 3
+
+        $popupHandle = Get-ElementNativeWindowHandle $suggestionElement
+        if ($popupHandle -ne [IntPtr]::Zero -and $popupHandle -ne $window.Current.NativeWindowHandle) {
+            $popupScreenshot = Join-Path $caseDir ("{0}-{1}-text-popup-window.png" -f $app.ToLowerInvariant(), $control)
+            try {
+                Capture-Window $popupHandle $popupScreenshot -SkipActivate
+                $popupNonBlank = Test-ImageNotBlank $popupScreenshot
+                if ($popupNonBlank) {
+                    $popupSize = Get-ImageSize $popupScreenshot
+                }
+            }
+            catch {
+                $popupScreenshot = ""
+                $popupNonBlank = $false
+                $popupSize = $null
+            }
+        }
+    }
+
+    $suggestionInvoked = $false
+    if ($null -ne $suggestionElement) {
+        $suggestionInvoked = Invoke-ElementOnce $window $suggestionElement
+        Start-Sleep -Milliseconds 500
+    }
+
+    $outputElement = if ($suggestionInvoked) {
+        Wait-ForOutputTextOutsideElementBounds $window $element $expectedOutputName 3000
+    }
+    else {
+        $null
+    }
+
+    $afterPath = Join-Path $caseDir ("{0}-{1}-text-after.png" -f $app.ToLowerInvariant(), $control)
+    [void](Capture-OpenInteractionFrame $window $afterPath $false -SkipActivate)
+
+    $crop = if ($popupNonBlank) {
+        [ordered]@{
+            Found = $true
+            Screenshot = $popupScreenshot
+            Bounds = [ordered]@{
+                Found = $true
+                Reason = ""
+                X = 0
+                Y = 0
+                Width = $popupSize.Width
+                Height = $popupSize.Height
+                ChangedSamples = 0
+            }
+            Width = $popupSize.Width
+            Height = $popupSize.Height
+            ChangedSamples = 0
+            Source = "PopupWindow"
+        }
+    }
+    else {
+        [ordered]@{
+            Found = $false
+            Screenshot = ""
+            Bounds = [ordered]@{
+                Found = $false
+                Reason = "Suggestion popup window was not captured."
+                X = 0
+                Y = 0
+                Width = 0
+                Height = 0
+                ChangedSamples = 0
+            }
+            Width = 0
+            Height = 0
+            ChangedSamples = 0
+            Source = "None"
+        }
+    }
+
+    $installedReferenceUnavailable =
+        $app -eq "WinUI3" -and
+        $control -eq "AutoSuggestBox" -and
+        $typed -and
+        $null -eq $suggestionElement
+    $status = if ($installedReferenceUnavailable) { "Unavailable" } elseif (!$typed) { "Failed" } elseif ($null -eq $suggestionElement) { "Failed" } elseif (!$popupNonBlank) { "Failed" } elseif (!$suggestionInvoked) { "Failed" } elseif ($null -eq $outputElement) { "Failed" } else { "Passed" }
+    $notes = if ($installedReferenceUnavailable) { "The installed WinUI Gallery accepted '$inputText' but did not expose its source-defined suggestion popup; this reference interaction is unavailable, while the ModernWpf interaction remains required." } elseif (!$typed) { "Could not type '$inputText' into the $control sample." } elseif ($null -eq $suggestionElement) { "$control did not expose expected suggestions for '$inputText'." } elseif (!$popupNonBlank) { "$control exposed suggestions in UIA but the popup window was not captured." } elseif (!$suggestionInvoked) { "Could not invoke the $control suggestion '$($suggestionNames[0])'." } elseif ($null -eq $outputElement) { "$control suggestion '$expectedOutputName' did not update the sample output." } else { "" }
+
+    return [ordered]@{
+        Status = $status
+        ReferenceInteractionUnavailable = $installedReferenceUnavailable
+        Typed = $typed
+        InputText = $inputText
+        SuggestionElementFound = $null -ne $suggestionElement
+        SuggestionElementName = $(if ($null -ne $suggestionElement) { $suggestionElement.Current.Name } else { "" })
+        SuggestionInvoked = $suggestionInvoked
+        OutputElementFound = $null -ne $outputElement
+        OutputElementName = $(if ($null -ne $outputElement) { $outputElement.Current.Name } else { "" })
+        BaselineScreenshot = $baselinePath
+        UiaTree = $treePath
+        Frames = @([ordered]@{
+            DelayMs = 0
+            Screenshot = $(if (![string]::IsNullOrEmpty($popupScreenshot)) { $popupScreenshot } else { $afterPath })
+            NonBlank = $(if (![string]::IsNullOrEmpty($popupScreenshot) -and (Test-Path $popupScreenshot)) { Test-ImageNotBlank $popupScreenshot } elseif (Test-Path $afterPath) { Test-ImageNotBlank $afterPath } else { $false })
+            Error = ""
+        })
+        Crop = $crop
+        PopupScreenshot = $popupScreenshot
+        PopupNonBlank = $popupNonBlank
+        PopupSize = $popupSize
+        SelectedFrameDelayMs = 0
+        SelectedFrameScreenshot = $(if (![string]::IsNullOrEmpty($popupScreenshot)) { $popupScreenshot } else { $afterPath })
+        Notes = $notes
+    }
+}
+
+function Close-AutomationWindow($window) {
+    try {
+        $pattern = $window.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
+        if ($null -ne $pattern) {
+            $pattern.Close()
+        }
+    }
+    catch {
+    }
+}
+
+function Stop-WinUIReferenceProcesses {
+    try {
+        Get-Process -Name "WinUIGallery" -ErrorAction SilentlyContinue | Stop-Process -Force
+        Start-Sleep -Milliseconds 300
+    }
+    catch {
+    }
+}
+
+function Get-ControlExampleArtifactEvidence([string]$control, [string]$artifactDir) {
+    if (!$WinUIPortedControlExampleCounts.Contains($control)) {
+        return $null
+    }
+
+    $expectedCount = [int]$WinUIPortedControlExampleCounts[$control]
+    $artifacts = @()
+    foreach ($index in 1..$expectedCount) {
+        $automationId = "GallerySample_${control}_Example${index}"
+        $path = Join-Path $artifactDir ($automationId + ".png")
+        $found = Test-Path $path
+        $width = 0
+        $height = 0
+        $nonBlank = $false
+        $visibleStdDev = 0.0
+        if ($found) {
+            $size = Get-ImageSize $path
+            $width = $size.Width
+            $height = $size.Height
+            $nonBlank = Test-ImageNotBlank $path
+            $visibleStdDev = Get-ImageVisibleStdDev $path
+        }
+
+        $valid = $found -and $width -gt 0 -and $height -gt 0 -and $nonBlank -and $visibleStdDev -ge 1.0
+        $artifacts += [ordered]@{
+            AutomationId = $automationId
+            Path = $(if ($found) { $path } else { "" })
+            Found = $found
+            Width = $width
+            Height = $height
+            NonBlank = $nonBlank
+            VisibleStdDev = $visibleStdDev
+            Valid = $valid
+        }
+    }
+
+    $validCount = @($artifacts | Where-Object { $_.Valid }).Count
+    return [ordered]@{
+        Passed = $validCount -eq $expectedCount
+        ExpectedCount = $expectedCount
+        ValidCount = $validCount
+        Artifacts = $artifacts
+        Reason = $(if ($validCount -eq $expectedCount) {
+            ""
+        }
+        else {
+            "$control rendered only $validCount of $expectedCount required ControlExample artifacts."
+        })
+    }
+}
+
+function Get-DescendantsByAutomationId($root, [string]$automationId) {
+    if ($null -eq $root) {
+        return @()
+    }
+
+    $condition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::AutomationIdProperty,
+        $automationId)
+    return @($root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $condition) | ForEach-Object { $_ })
+}
+
+function Get-DescendantsByNameAndControlType($root, [string]$name, $controlType) {
+    if ($null -eq $root) {
+        return @()
+    }
+
+    $nameCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::NameProperty,
+        $name)
+    $typeCondition = New-Object System.Windows.Automation.PropertyCondition(
+        [System.Windows.Automation.AutomationElement]::ControlTypeProperty,
+        $controlType)
+    $condition = New-Object System.Windows.Automation.AndCondition($nameCondition, $typeCondition)
+    return @($root.FindAll([System.Windows.Automation.TreeScope]::Descendants, $condition) | ForEach-Object { $_ })
+}
+
+function Find-WinUIControlExampleSourceButton($header, $sourceButtons, $window) {
+    $headerBounds = Get-ElementScreenBounds $header 0 $window
+    if ($null -eq $headerBounds) {
+        return $null
+    }
+
+    $candidates = New-Object System.Collections.Generic.List[object]
+    foreach ($button in $sourceButtons) {
+        $buttonBounds = Get-ElementScreenBounds $button 0 $window
+        if ($null -eq $buttonBounds -or
+            $buttonBounds.Y -lt ($headerBounds.Y + $headerBounds.Height) -or
+            [Math]::Abs([int]$buttonBounds.X - [int]$headerBounds.X) -gt 4 -or
+            [Math]::Abs([int]$buttonBounds.Width - [int]$headerBounds.Width) -gt 4) {
+            continue
+        }
+
+        $candidates.Add([pscustomobject]@{
+            Element = $button
+            Bounds = $buttonBounds
+            Distance = [int]$buttonBounds.Y - ([int]$headerBounds.Y + [int]$headerBounds.Height)
+        })
+    }
+
+    return $candidates |
+        Sort-Object Distance |
+        Select-Object -First 1
+}
+
+function Request-AutomationElementScrollIntoView($element) {
+    if ($null -eq $element) {
+        return $false
+    }
+
+    try {
+        $scrollItem = $element.GetCurrentPattern([System.Windows.Automation.ScrollItemPattern]::Pattern)
+        if ($null -ne $scrollItem) {
+            $scrollItem.ScrollIntoView()
+            return $true
+        }
+    }
+    catch {
+    }
+
+    try {
+        $element.SetFocus()
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
+
+function Reveal-AutomationRangeInContainer($startElement, $endElement, $container, $window) {
+    if ($null -eq $startElement -or $null -eq $endElement -or $null -eq $container) {
+        return $false
+    }
+
+    if ((Test-AutomationElementVisibleIn $startElement $container $window) -and
+        (Test-AutomationElementVisibleIn $endElement $container $window 47)) {
+        return $true
+    }
+
+    try {
+        $scroll = $container.GetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern)
+        if ($null -eq $scroll -or !$scroll.Current.VerticallyScrollable) {
+            return $false
+        }
+
+        # WinUI's ScrollItemPattern can either align a ControlExample's display
+        # border (clipping its header) or report success without moving an
+        # off-screen header. First compensate for the former, then search down
+        # the real ScrollPattern until the complete header-to-source range fits.
+        foreach ($attempt in 1..4) {
+            $scroll.Scroll(
+                [System.Windows.Automation.ScrollAmount]::NoAmount,
+                [System.Windows.Automation.ScrollAmount]::SmallDecrement)
+            Start-Sleep -Milliseconds 50
+            if ((Test-AutomationElementVisibleIn $startElement $container $window) -and
+                (Test-AutomationElementVisibleIn $endElement $container $window 47)) {
+                return $true
+            }
+        }
+
+        foreach ($attempt in 1..40) {
+            $scroll.Scroll(
+                [System.Windows.Automation.ScrollAmount]::NoAmount,
+                [System.Windows.Automation.ScrollAmount]::SmallIncrement)
+            Start-Sleep -Milliseconds 50
+            if ((Test-AutomationElementVisibleIn $startElement $container $window) -and
+                (Test-AutomationElementVisibleIn $endElement $container $window 47)) {
+                return $true
+            }
+        }
+    }
+    catch {
+    }
+
+    return $false
+}
+
+function Test-AutomationElementVisibleIn($element, $container, $window, [double]$minimumHeight = 0) {
+    $elementBounds = Get-ElementScreenBounds $element 0 $window
+    $containerBounds = Get-ElementScreenBounds $container 0 $window
+    if ($null -eq $elementBounds -or $null -eq $containerBounds) {
+        return $false
+    }
+
+    return $elementBounds.Height -ge $minimumHeight -and
+        $elementBounds.X -ge $containerBounds.X -and
+        $elementBounds.Y -ge $containerBounds.Y -and
+        ($elementBounds.X + $elementBounds.Width) -le ($containerBounds.X + $containerBounds.Width) -and
+        ($elementBounds.Y + [Math]::Min($elementBounds.Height, $containerBounds.Height)) -le ($containerBounds.Y + $containerBounds.Height)
+}
+
+function Capture-ModernControlExampleScreenArtifacts([string]$control, [string]$caseDir, $window) {
+    if (!$WinUIPortedControlExampleCounts.Contains($control)) {
+        return $null
+    }
+
+    $expectedCount = [int]$WinUIPortedControlExampleCounts[$control]
+    $artifactDirectory = Join-Path $caseDir "modernwpf-control-example-screen"
+    New-Item -ItemType Directory -Force -Path $artifactDirectory | Out-Null
+    $artifacts = @()
+    $originalWindowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+    $originalWindowWidth = [Math]::Max(1, $originalWindowRect.Right - $originalWindowRect.Left)
+    $originalWindowHeight = [Math]::Max(1, $originalWindowRect.Bottom - $originalWindowRect.Top)
+    $captureWindowHeight = [Math]::Max($originalWindowHeight, 1800)
+    try {
+        if ($captureWindowHeight -ne $originalWindowHeight) {
+            [void][GalleryVisualNative]::Move(
+                $window.Current.NativeWindowHandle,
+                $originalWindowRect.Left,
+                $originalWindowRect.Top,
+                $originalWindowWidth,
+                $captureWindowHeight)
+            Start-Sleep -Milliseconds 250
+        }
+
+        foreach ($index in 1..$expectedCount) {
+        $automationId = "GallerySample_${control}_Example${index}"
+        $scrollEvidence = Scroll-ModernWpfVisualArtifactIntoView $window (Join-Path $caseDir "modernwpf-artifacts") $automationId
+        $path = Join-Path $artifactDirectory ($automationId + ".png")
+        $windowPath = Join-Path $artifactDirectory ($automationId + "-window.png")
+        Capture-Window $window.Current.NativeWindowHandle $windowPath
+        $windowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+        $bounds = if ($scrollEvidence.Found) {
+            [ordered]@{
+                Found = $true
+                Reason = "Reported by the in-process Gallery visual-test command."
+                X = [int][Math]::Round($scrollEvidence.X - $windowRect.Left)
+                Y = [int][Math]::Round($scrollEvidence.Y - $windowRect.Top)
+                Width = [int][Math]::Round($scrollEvidence.Width)
+                Height = [int][Math]::Round($scrollEvidence.Height)
+                ChangedSamples = 0
+            }
+        }
+        else {
+            $null
+        }
+        $crop = if ($null -ne $bounds) {
+            $savedBounds = Save-Crop $windowPath $bounds $path 0
+            $renderedCrop = New-RenderedArtifactCrop $path $automationId $savedBounds
+            if ($null -ne $renderedCrop) {
+                $renderedCrop
+            }
+            else {
+                [ordered]@{ Found = $false; Screenshot = ""; Width = 0; Height = 0; NonBlank = $false; VisibleStdDev = 0.0 }
+            }
+        }
+        else {
+            [ordered]@{ Found = $false; Screenshot = ""; Width = 0; Height = 0; NonBlank = $false }
+        }
+        $windowWidth = [Math]::Max(1, $windowRect.Right - $windowRect.Left)
+        $windowHeight = [Math]::Max(1, $windowRect.Bottom - $windowRect.Top)
+        $visible = $null -ne $bounds -and
+            $bounds.X -ge 0 -and $bounds.Y -ge 0 -and
+            ($bounds.X + $bounds.Width) -le $windowWidth -and
+            ($bounds.Y + $bounds.Height) -le $windowHeight
+        $valid = $visible -and $crop.Found -and $crop.NonBlank -and $crop.VisibleStdDev -ge 1.0
+        $artifacts += [ordered]@{
+            AutomationId = $automationId
+            Path = $crop.Screenshot
+            Found = $crop.Found
+            Visible = $visible
+            ScrollRequested = $scrollEvidence.Found
+            ScrollReason = $scrollEvidence.Reason
+            Width = $crop.Width
+            Height = $crop.Height
+            NonBlank = $crop.NonBlank
+            VisibleStdDev = if ($crop.Contains("VisibleStdDev")) { $crop.VisibleStdDev } else { 0.0 }
+            Valid = $valid
+        }
+        }
+    }
+    finally {
+        if ($captureWindowHeight -ne $originalWindowHeight) {
+            [void][GalleryVisualNative]::Move(
+                $window.Current.NativeWindowHandle,
+                $originalWindowRect.Left,
+                $originalWindowRect.Top,
+                $originalWindowWidth,
+                $originalWindowHeight)
+            Start-Sleep -Milliseconds 180
+        }
+        [void](Scroll-ModernWpfVisualArtifactIntoView $window (Join-Path $caseDir "modernwpf-artifacts") "GallerySample_${control}_Example1")
+    }
+
+    $validCount = @($artifacts | Where-Object { $_.Valid }).Count
+    return [ordered]@{
+        Passed = $validCount -eq $expectedCount
+        ExpectedCount = $expectedCount
+        ValidCount = $validCount
+        Artifacts = @($artifacts)
+        Reason = $(if ($validCount -eq $expectedCount) { "" } else { "$control exposed only $validCount of $expectedCount visible ModernWpf example screen artifacts." })
+    }
+}
+
+function Capture-WinUIControlExampleScreenArtifacts([string]$control, [string]$caseDir, $window) {
+    if (!$WinUIPortedControlExampleCounts.Contains($control)) {
+        return $null
+    }
+
+    $expectedCount = [int]$WinUIPortedControlExampleCounts[$control]
+    $artifactDirectory = Join-Path $caseDir "winui3-control-example-screen"
+    New-Item -ItemType Directory -Force -Path $artifactDirectory | Out-Null
+    $artifacts = @()
+    $headers = @()
+    $originalWindowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+    $originalWindowWidth = [Math]::Max(1, $originalWindowRect.Right - $originalWindowRect.Left)
+    $originalWindowHeight = [Math]::Max(1, $originalWindowRect.Bottom - $originalWindowRect.Top)
+    $captureWindowHeight = [Math]::Max($originalWindowHeight, 1800)
+    $captureWindowTop = 0
+    try {
+        if ($captureWindowHeight -ne $originalWindowHeight -or $originalWindowRect.Top -ne $captureWindowTop) {
+            [void][GalleryVisualNative]::Move(
+                $window.Current.NativeWindowHandle,
+                $originalWindowRect.Left,
+                $captureWindowTop,
+                $originalWindowWidth,
+                $captureWindowHeight)
+            Start-Sleep -Milliseconds 350
+        }
+
+        $scrollPanel = TryFind-DescendantByAutomationId $window "svPanel"
+        $headers = @(Get-DescendantsByAutomationId $window "HeaderTextPresenter")
+        # Restrict this list to the scrolling sample panel. The window also has
+        # a toolbar Source button that must never be paired with a card header.
+        $sourceButtons = @(Get-DescendantsByNameAndControlType $scrollPanel "Source code" ([System.Windows.Automation.ControlType]::Button))
+        $captureCount = [Math]::Min($expectedCount, $headers.Count)
+        if ($captureCount -gt 0 -and $null -ne $scrollPanel) {
+        foreach ($offset in 0..($captureCount - 1)) {
+            $index = $offset + 1
+            $header = $headers[$offset]
+            $pairedSourceButton = if ($offset -lt $sourceButtons.Count) { $sourceButtons[$offset] } else { $null }
+            $scrollRequested = Request-AutomationElementScrollIntoView $header
+            $sourceScrollRequested = Request-AutomationElementScrollIntoView $pairedSourceButton
+            Start-Sleep -Milliseconds 120
+            $revealed = Reveal-AutomationRangeInContainer $header $pairedSourceButton $scrollPanel $window
+            # Crops use the elements' native screen bounds, so exact viewport
+            # placement is unnecessary. Re-aligning here can overshoot a header
+            # that WinUI has just revealed and clip it again.
+            $aligned = $revealed
+            $path = Join-Path $artifactDirectory ("GallerySample_${control}_Example${index}.png")
+            $windowPath = Join-Path $artifactDirectory ("GallerySample_${control}_Example${index}-window.png")
+            Capture-Window $window.Current.NativeWindowHandle $windowPath
+            $headerBounds = Get-ElementScreenBounds $header 0 $window
+            $sourceButtonMatch = $null
+            if ($null -ne $pairedSourceButton) {
+                $pairedSourceBounds = Get-ElementScreenBounds $pairedSourceButton 0 $window
+                if ($null -ne $pairedSourceBounds) {
+                    $sourceButtonMatch = [pscustomobject]@{
+                        Element = $pairedSourceButton
+                        Bounds = $pairedSourceBounds
+                    }
+                }
+            }
+            if ($null -eq $sourceButtonMatch) {
+                $sourceButtonMatch = Find-WinUIControlExampleSourceButton $header $sourceButtons $window
+            }
+            $sourceButton = if ($null -ne $sourceButtonMatch) { $sourceButtonMatch.Element } else { $null }
+            $sourceButtonBounds = if ($null -ne $sourceButtonMatch) { $sourceButtonMatch.Bounds } else { $null }
+            $headerVisible = Test-AutomationElementVisibleIn $header $scrollPanel $window
+            $sourceButtonVisible = Test-AutomationElementVisibleIn $sourceButton $scrollPanel $window 47
+            $isolatedBounds = $null
+            if ($null -ne $headerBounds -and $null -ne $sourceButtonBounds) {
+                $windowRect = [GalleryVisualNative]::GetRect($window.Current.NativeWindowHandle)
+                $isolatedBounds = [ordered]@{
+                    Found = $true
+                    Reason = "Derived from the matching WinUI ControlExample header and Source code expander."
+                    X = [int]$headerBounds.X - $windowRect.Left
+                    Y = [int]$headerBounds.Y - $windowRect.Top
+                    Width = [int]$headerBounds.Width
+                    Height = ([int]$sourceButtonBounds.Y + [int]$sourceButtonBounds.Height) - [int]$headerBounds.Y
+                    ChangedSamples = 0
+                }
+            }
+            $crop = if ($null -ne $isolatedBounds -and $isolatedBounds.Height -gt 0) {
+                $savedBounds = Save-Crop $windowPath $isolatedBounds $path 0
+                New-RenderedArtifactCrop $path "WinUI $control example $index" $savedBounds
+            }
+            else {
+                [ordered]@{
+                    Found = $false
+                    Screenshot = ""
+                    Width = 0
+                    Height = 0
+                    NonBlank = $false
+                    VisibleStdDev = 0.0
+                }
+            }
+            $isolated = $null -ne $isolatedBounds -and $null -ne $sourceButton
+            $valid = $isolated -and $headerVisible -and $sourceButtonVisible -and $crop.Found -and $crop.NonBlank -and $crop.VisibleStdDev -ge 1.0
+            $artifacts += [ordered]@{
+                AutomationId = "GallerySample_${control}_Example${index}"
+                Header = $header.Current.Name
+                Path = $crop.Screenshot
+                Found = $crop.Found
+                Isolated = $isolated
+                HeaderVisible = $headerVisible
+                SourceButtonVisible = $sourceButtonVisible
+                ScrollRequested = $scrollRequested
+                SourceScrollRequested = $sourceScrollRequested
+                HeaderRevealed = $revealed
+                AlignedToTop = $aligned
+                Width = $crop.Width
+                Height = $crop.Height
+                NonBlank = $crop.NonBlank
+                VisibleStdDev = if ($crop.Contains("VisibleStdDev")) { $crop.VisibleStdDev } else { 0.0 }
+                Valid = $valid
+            }
+        }
+
+            [void](Request-AutomationElementScrollIntoView $headers[0])
+            Start-Sleep -Milliseconds 120
+        }
+    }
+    finally {
+        if ($captureWindowHeight -ne $originalWindowHeight -or $originalWindowRect.Top -ne $captureWindowTop) {
+            [void][GalleryVisualNative]::Move(
+                $window.Current.NativeWindowHandle,
+                $originalWindowRect.Left,
+                $originalWindowRect.Top,
+                $originalWindowWidth,
+                $originalWindowHeight)
+            Start-Sleep -Milliseconds 180
+        }
+    }
+
+    $validCount = @($artifacts | Where-Object { $_.Valid }).Count
+    return [ordered]@{
+        Passed = $validCount -eq $expectedCount
+        ExpectedCount = $expectedCount
+        FoundHeaderCount = $headers.Count
+        ValidCount = $validCount
+        Artifacts = @($artifacts)
+        Reason = $(if ($validCount -eq $expectedCount) { "" } else { "$control exposed only $validCount of $expectedCount isolated WinUI reference examples ($($headers.Count) headers found)." })
+    }
+}
+
+function Capture-ModernWpf([string]$control, [string]$caseDir) {
+    $route = "item/$(Get-ControlRouteId $control "ModernWpf")"
+    $artifactDir = Join-Path $caseDir "modernwpf-artifacts"
+    New-Item -ItemType Directory -Force -Path $artifactDir | Out-Null
+    $timingPath = Join-Path $caseDir "modernwpf-$control-timing.log"
+    Set-Content -LiteralPath $timingPath -Value "" -Encoding UTF8
+    Write-AuditTiming $timingPath "start"
+
+    $args = @("--visual-test", "--route", $route, "--theme", $Theme, "--visual-artifact-dir", $artifactDir)
+    if ($IncludeInteractions) {
+        $args += "--open-interactions"
+    }
+    $process = Start-Process -FilePath $GalleryExe -ArgumentList $args -PassThru
+    try {
+        $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "Gallery window" -Probe {
+            $process.Refresh()
+            Find-WindowByProcessId $process.Id
+        }
+        Write-AuditTiming $timingPath "window-found"
+
+        # The WPF Gallery shell leaves 73 more physical pixels for a ported
+        # ControlExample than the installed WinUI Gallery at the same outer
+        # width (53 from shell chrome plus the WinUI card's lack of the legacy
+        # WPF Gallery 10-DIP side margins). Match native card viewports so the
+        # comparison never rescales either application.
+        $modernWpfWindowWidth = [Math]::Max(640, $Width - 73)
+        [void][GalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $modernWpfWindowWidth, $Height)
+        Wait-ModernWpfReady $window $route $artifactDir | Out-Null
+        Write-AuditTiming $timingPath "route-ready"
+        Start-Sleep -Milliseconds 600
+        if ($control -eq "ProgressRing") {
+            Set-ProgressRingDeterminateValue $window "ModernWpf" 65 | Out-Null
+            Refresh-ModernWpfVisualArtifacts $window $artifactDir | Out-Null
+        }
+        elseif ($control -eq "WinUIProgressBar") {
+            Set-ProgressBarDeterminateValue $window "ModernWpf" 65 | Out-Null
+            Refresh-ModernWpfVisualArtifacts $window $artifactDir | Out-Null
+        }
+
+        $focusSet = Set-DeterministicControlFocus $window $control
+        if ($control -eq "SelectorBar" -and $focusSet) {
+            # The first item is selected only when focus enters SelectorBar.
+            # Refresh in-process artifacts after that transition so the primary
+            # crop and the live ControlExample capture describe the same state.
+            Refresh-ModernWpfVisualArtifacts $window $artifactDir | Out-Null
+        }
+
+        $statusFile = Read-ModernWpfStatusFile $artifactDir
+        $lastException = if ($null -ne $statusFile) { $statusFile.LastException } else { Get-AutomationText $window "GalleryVisualTestLastException" }
+        $title = $control
+        $requiredSampleAutomationId = Get-RequiredSampleAutomationId $control
+        $requiredSampleArtifact = Join-Path $artifactDir ($requiredSampleAutomationId + ".png")
+        $requiredSampleArtifactFound = Test-Path $requiredSampleArtifact
+        $navigationViewSampleArtifacts = if ($control -eq "NavigationView") {
+            Get-NavigationViewSampleArtifactEvidence $artifactDir
+        }
+        else {
+            $null
+        }
+        $controlExampleArtifacts = Get-ControlExampleArtifactEvidence $control $artifactDir
+        $requiredSampleArtifactFound = Test-Path $requiredSampleArtifact
+        Write-AuditTiming $timingPath "rendered-example-evidence-complete"
+        $needsSampleElement = $IncludeInteractions -and (
+            (Test-ControlSupportsOpenInteraction $control) -or
+            (Test-ControlSupportsStateInteraction $control) -or
+            (Test-ControlSupportsSelectionInteraction $control) -or
+            (Test-ControlSupportsValueInteraction $control) -or
+            (Test-ControlSupportsOutputInteraction $control) -or
+            (Test-ControlSupportsTextInteraction $control) -or
+            (Test-ControlSupportsVisualStateMatrix $control))
+        $sample = if ($requiredSampleArtifactFound -and !$needsSampleElement) { $null } else { TryFind-DescendantByAutomationId $window $requiredSampleAutomationId }
+        $screenshot = Join-Path $caseDir "modernwpf-$control.png"
+        $treePath = Join-Path $caseDir "modernwpf-$control.uia.txt"
+
+        if ($requiredSampleArtifactFound) {
+            Set-Content -Path $treePath -Value "UIA tree skipped because rendered sample artifacts are available." -Encoding UTF8
+        }
+        else {
+            try {
+                Write-UiaTree $window $treePath 6
+            }
+            catch {
+                Set-Content -Path $treePath -Value ("UIA tree capture failed: " + $_.Exception.Message) -Encoding UTF8
+            }
+        }
+        Write-AuditTiming $timingPath "uia-tree-complete"
+        $windowCaptureError = ""
+        try {
+            Capture-Window $window.Current.NativeWindowHandle $screenshot
+        }
+        catch {
+            $windowCaptureError = $_.Exception.Message
+        }
+        Write-AuditTiming $timingPath "window-capture-complete"
+        $staticCrops = Capture-StaticCrops "ModernWpf" $control $caseDir $window $screenshot
+        $controlExampleScreenArtifacts = Capture-ModernControlExampleScreenArtifacts $control $caseDir $window
+        Write-AuditTiming $timingPath "live-example-captures-complete"
+        $visualStateMatrix = Capture-ControlVisualStateMatrix "ModernWpf" $control $caseDir $window $sample
+        $openNames = Get-OpenInteractionNames $control
+        $openInteraction = Capture-OpenInteraction "ModernWpf" $control $caseDir $window $sample $openNames
+        $stateInteraction = Capture-StateInteraction "ModernWpf" $control $caseDir $window $sample
+        $selectionInteraction = Capture-SelectionInteraction "ModernWpf" $control $caseDir $window $sample
+        $valueInteraction = Capture-ValueInteraction "ModernWpf" $control $caseDir $window $sample
+        $outputInteraction = Capture-OutputInteraction "ModernWpf" $control $caseDir $window $sample
+        $textInteraction = Capture-TextInteraction "ModernWpf" $control $caseDir $window $sample
+        if ($control -eq "CommandBar" -and $null -ne $openInteraction -and $null -ne $outputInteraction) {
+            $openInteraction["OutputInteraction"] = $outputInteraction
+            if ($outputInteraction.Status -ne "Passed") {
+                $openInteraction["Status"] = "Failed"
+                $openInteraction["Notes"] = $outputInteraction.Notes
+            }
+        }
+        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } elseif ($null -ne $outputInteraction) { $outputInteraction } else { $textInteraction }
+        $latestStatusFile = Read-ModernWpfStatusFile $artifactDir
+        if ($null -ne $latestStatusFile -and ![string]::IsNullOrWhiteSpace($latestStatusFile.LastException)) {
+            $lastException = $latestStatusFile.LastException
+        }
+        elseif ([string]::IsNullOrWhiteSpace($lastException)) {
+            $lastException = Get-AutomationText $window "GalleryVisualTestLastException"
+        }
+        $hasRenderedCrops = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and $staticCrops.Primary.NonBlank
+        $windowScreenshotNonBlank = if (Test-Path $screenshot) { Test-ImageNotBlank $screenshot } else { $false }
+        $notBlank = $windowScreenshotNonBlank -or $hasRenderedCrops
+        $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
+        $primaryCropMinimumVisibleStdDev = Get-PrimaryCropMinimumVisibleStdDev $control
+        $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt $primaryCropMinimumVisibleStdDev
+        $primaryCropMissing = (Test-ControlRequiresPrimaryCrop $control) -and !$staticCrops.Primary.Found
+        $requiredSampleFound = $requiredSampleArtifactFound -or $null -ne $sample -or $hasRenderedCrops
+        $navigationViewSampleArtifactsFailed = $null -ne $navigationViewSampleArtifacts -and !$navigationViewSampleArtifacts.Passed
+        $controlExampleArtifactsFailed = $null -ne $controlExampleArtifacts -and !$controlExampleArtifacts.Passed
+        $controlExampleScreenArtifactsFailed = $null -ne $controlExampleScreenArtifacts -and !$controlExampleScreenArtifacts.Passed
+        $status = if ($lastException) { "Failed" } elseif (!$notBlank) { "Failed" } elseif ($primaryCropMissing) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif (!$requiredSampleFound) { "Failed" } elseif ($controlExampleArtifactsFailed) { "Failed" } elseif ($controlExampleScreenArtifactsFailed) { "Failed" } elseif ($navigationViewSampleArtifactsFailed) { "Failed" } elseif ($null -ne $visualStateMatrix -and $visualStateMatrix.Status -ne "Passed") { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -ne "Passed") { "Failed" } else { "Passed" }
+        if ($primaryCropMissing -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = "Primary crop was required for $control but was not found."
+        }
+        if ($primaryCropBlank -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = "Primary crop '$($staticCrops.Primary.Source)' was blank."
+        }
+        if ($primaryCropLowVariation -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)."
+        }
+        if (!$notBlank -and ![string]::IsNullOrEmpty($windowCaptureError) -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = $windowCaptureError
+        }
+        if ($navigationViewSampleArtifactsFailed -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = $navigationViewSampleArtifacts.Reason
+        }
+        if ($controlExampleArtifactsFailed -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = $controlExampleArtifacts.Reason
+        }
+        if ($controlExampleScreenArtifactsFailed -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = $controlExampleScreenArtifacts.Reason
+        }
+        if ($null -ne $visualStateMatrix -and $visualStateMatrix.Status -ne "Passed" -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = $visualStateMatrix.Notes
+        }
+        if ($null -ne $interaction -and $interaction.Status -ne "Passed" -and [string]::IsNullOrEmpty($lastException)) {
+            $lastException = $interaction.Notes
+        }
+        $screenshotResult = if (Test-Path $screenshot) { $screenshot } else { "" }
+
+        return [ordered]@{
+            App = "ModernWpf"
+            Control = $control
+            Route = $route
+            Status = $status
+            Title = $title
+            Screenshot = $screenshotResult
+            UiaTree = $treePath
+            LastException = $lastException
+            NonBlank = $notBlank
+            RequiredSampleAutomationId = $requiredSampleAutomationId
+            RequiredSampleElementFound = $requiredSampleFound
+            StaticCrops = $staticCrops
+            VisualStateMatrix = $visualStateMatrix
+            Interaction = $interaction
+            WindowCaptureError = $windowCaptureError
+            ControlExampleArtifacts = $controlExampleArtifacts
+            ControlExampleScreenArtifacts = $controlExampleScreenArtifacts
+            NavigationViewSampleArtifacts = $navigationViewSampleArtifacts
+        }
+    }
+    finally {
+        try {
+            $process.Refresh()
+            if (!$process.HasExited) {
+                $process.CloseMainWindow() | Out-Null
+                if (!$process.WaitForExit(3000)) {
+                    $process.Kill()
+                }
+            }
+        }
+        catch {
+        }
+    }
+}
+
+function Stabilize-WinUIReferenceResponsiveLayout([string]$control, $window) {
+    if ($control -ne "TitleBar") {
+        return [ordered]@{
+            Applied = $false
+            Verified = $true
+            Reason = "The reference control has no capture-time responsive-layout normalization."
+        }
+    }
+
+    # WinUI TitleBar enters Compact when its content's desired width no longer
+    # fits the content area. The installed Gallery can miss that first
+    # SizeChanged transition after protocol navigation, leaving Title and
+    # Subtitle visible for one transient expanded frame. Grow and restore the
+    # host so the control receives a deterministic final SizeChanged at the
+    # requested capture width. Current WinUI source then keeps the 470-DIP
+    # Gallery preview in Compact, in both Light and Dark themes.
+    $windowRect = $window.Current.BoundingRectangle
+    $handle = $window.Current.NativeWindowHandle
+    $x = [int][Math]::Round($windowRect.X)
+    $y = [int][Math]::Round($windowRect.Y)
+    $width = [int][Math]::Round($windowRect.Width)
+    $height = [int][Math]::Round($windowRect.Height)
+    [void][GalleryVisualNative]::Move($handle, $x, $y, $width + 64, $height)
+    Start-Sleep -Milliseconds 300
+    [void][GalleryVisualNative]::Move($handle, $x, $y, $width, $height)
+
+    Wait-Until -TimeoutSeconds 5 -Description "WinUI 3 Gallery TitleBar compact responsive layout" -Probe {
+        $titleBar = TryFind-DescendantByAutomationId $window "TitleBarControl"
+        if ($null -eq $titleBar) {
+            return $null
+        }
+
+        $title = TryFind-DescendantByAutomationId $titleBar "PART_TitleText"
+        $subtitle = TryFind-DescendantByAutomationId $titleBar "PART_SubtitleText"
+        if (!(Test-AutomationElementUsable $title) -and !(Test-AutomationElementUsable $subtitle)) {
+            return $true
+        }
+
+        return $null
+    } | Out-Null
+
+    return [ordered]@{
+        Applied = $true
+        Verified = $true
+        Reason = "The installed reference was settled into the current-source compact TitleBar layout at the capture width."
+    }
+}
+
+function Capture-WinUIReference([string]$control, [string]$caseDir) {
+    $route = "winui3gallery://item/$(Get-ControlRouteId $control "WinUI3")"
+    $pageTitle = Get-WinUIReferencePageTitle $control
+    Stop-WinUIReferenceProcesses
+    Start-Process $route
+
+    $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "installed WinUI 3 Gallery window for $control" -Probe {
+        Find-WindowByTitle @("WinUI 3 Gallery", "WinUI Gallery")
+    }
+
+    try {
+        [void][GalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)
+        Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "WinUI 3 Gallery page title '$pageTitle'" -Probe {
+            Find-DescendantByName $window $pageTitle
+        } | Out-Null
+        Wait-WinUIReferenceReady $window $control
+        Start-Sleep -Milliseconds 1200
+        $rootThemeProbe = Ensure-WinUIReferenceRootTheme $control $caseDir $window
+        Wait-WinUIReferenceReady $window $control
+        Reset-WinUIReferenceSampleScroll $window $control
+        if ($control -eq "ProgressRing") {
+            Set-ProgressRingDeterminateValue $window "WinUI3" 65 | Out-Null
+        }
+        elseif ($control -eq "WinUIProgressBar") {
+            Set-ProgressBarDeterminateValue $window "WinUI3" 65 | Out-Null
+        }
+        $themeProbe = Ensure-WinUIReferenceTheme $control $caseDir $window
+        $themeProbe["RootTheme"] = $rootThemeProbe
+        Reset-WinUIReferenceSampleScroll $window $control
+        if ($control -eq "ProgressRing") {
+            Set-ProgressRingDeterminateValue $window "WinUI3" 65 | Out-Null
+        }
+        elseif ($control -eq "WinUIProgressBar") {
+            Set-ProgressBarDeterminateValue $window "WinUI3" 65 | Out-Null
+        }
+
+        $responsiveLayoutProbe = Stabilize-WinUIReferenceResponsiveLayout $control $window
+
+        [void](Set-DeterministicControlFocus $window $control)
+
+        Move-CursorAwayFromInteractionSurface $window
+        $screenshot = Join-Path $caseDir "winui3-$control.png"
+        $treePath = Join-Path $caseDir "winui3-$control.uia.txt"
+        Write-UiaTree $window $treePath 6
+        $staticCrops = $null
+        $notBlank = $false
+        $primaryCropBlank = $false
+        $primaryCropLowVariation = $false
+        $primaryCropMinimumVisibleStdDev = Get-PrimaryCropMinimumVisibleStdDev $control
+        $primaryCropWrongSource = $false
+        $requiredPrimaryCropSource = Get-RequiredReferencePrimaryCropSource $control
+        foreach ($captureAttempt in 1..3) {
+            if ($captureAttempt -gt 1) {
+                [GalleryVisualNative]::Activate($window.Current.NativeWindowHandle)
+                Start-Sleep -Milliseconds (400 * $captureAttempt)
+            }
+
+            Capture-Window $window.Current.NativeWindowHandle $screenshot
+            $staticCrops = Capture-StaticCrops "WinUI3" $control $caseDir $window $screenshot
+            $notBlank = Test-ImageNotBlank $screenshot
+            $primaryCropMissing = (Test-ControlRequiresPrimaryCrop $control) -and !$staticCrops.Primary.Found
+            $primaryCropBlank = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("NonBlank") -and !$staticCrops.Primary.NonBlank
+            $primaryCropLowVariation = $staticCrops.Primary.Found -and $staticCrops.Primary.Contains("VisibleStdDev") -and $staticCrops.Primary.VisibleStdDev -lt $primaryCropMinimumVisibleStdDev
+            $primaryCropWrongSource = $staticCrops.Primary.Found -and ![string]::IsNullOrEmpty($requiredPrimaryCropSource) -and $staticCrops.Primary.Source -ne $requiredPrimaryCropSource
+            if ($notBlank -and !$primaryCropMissing -and !$primaryCropBlank -and !$primaryCropLowVariation -and !$primaryCropWrongSource) {
+                break
+            }
+        }
+
+        $navigationViewSampleArtifacts = if ($control -eq "NavigationView") {
+            Capture-NavigationViewReferenceSampleArtifacts $caseDir $window
+        }
+        else {
+            $null
+        }
+        $navigationViewSampleArtifactsFailed = $null -ne $navigationViewSampleArtifacts -and !$navigationViewSampleArtifacts.Passed
+
+        $controlExampleScreenArtifacts = Capture-WinUIControlExampleScreenArtifacts $control $caseDir $window
+
+        $showButton = Find-ReferenceInteractionTrigger $window $control
+        $visualStateMatrix = Capture-ControlVisualStateMatrix "WinUI3" $control $caseDir $window $showButton
+        $openNames = Get-OpenInteractionNames $control
+        $openInteraction = Capture-OpenInteraction "WinUI3" $control $caseDir $window $showButton $openNames
+        $stateInteraction = Capture-StateInteraction "WinUI3" $control $caseDir $window $showButton
+        $selectionInteraction = Capture-SelectionInteraction "WinUI3" $control $caseDir $window $showButton
+        $valueInteraction = Capture-ValueInteraction "WinUI3" $control $caseDir $window $showButton
+        $outputInteraction = Capture-OutputInteraction "WinUI3" $control $caseDir $window $showButton
+        $textInteraction = Capture-TextInteraction "WinUI3" $control $caseDir $window $showButton
+        if ($control -eq "CommandBar" -and $null -ne $openInteraction -and $null -ne $outputInteraction) {
+            $openInteraction["OutputInteraction"] = $outputInteraction
+            if ($outputInteraction.Status -ne "Passed") {
+                $openInteraction["Status"] = "Failed"
+                $openInteraction["Notes"] = $outputInteraction.Notes
+            }
+        }
+        $interaction = if ($null -ne $openInteraction) { $openInteraction } elseif ($null -ne $stateInteraction) { $stateInteraction } elseif ($null -ne $selectionInteraction) { $selectionInteraction } elseif ($null -ne $valueInteraction) { $valueInteraction } elseif ($null -ne $outputInteraction) { $outputInteraction } else { $textInteraction }
+
+        $themeProbeFailed = -not (Test-WinUIReferenceThemeProbeSucceeded $themeProbe)
+
+        return [ordered]@{
+            App = "WinUI3Gallery"
+            Control = $control
+            Route = $route
+            Status = $(if (!$notBlank) { "Failed" } elseif ($primaryCropMissing) { "Failed" } elseif ($primaryCropBlank) { "Failed" } elseif ($primaryCropLowVariation) { "Failed" } elseif ($primaryCropWrongSource) { "Failed" } elseif ($themeProbeFailed) { "Failed" } elseif ($navigationViewSampleArtifactsFailed) { "Failed" } elseif ($null -ne $visualStateMatrix -and $visualStateMatrix.Status -ne "Passed") { "Failed" } elseif ($null -ne $interaction -and $interaction.Status -eq "Failed") { "Failed" } else { "Passed" })
+            Title = $pageTitle
+            Screenshot = $screenshot
+            UiaTree = $treePath
+            LastException = $(if ($primaryCropMissing) { "Primary crop was required for $control but was not found." } elseif ($primaryCropBlank) { "Primary crop '$($staticCrops.Primary.Source)' was blank." } elseif ($primaryCropLowVariation) { "Primary crop '$($staticCrops.Primary.Source)' had low visible variation ($($staticCrops.Primary.VisibleStdDev), expected at least $primaryCropMinimumVisibleStdDev)." } elseif ($primaryCropWrongSource) { "Primary crop for $control used '$($staticCrops.Primary.Source)' but expected '$requiredPrimaryCropSource'." } elseif ($themeProbeFailed) { "Reference theme probe did not prove $Theme theme: $($themeProbe.Reason)" } elseif ($navigationViewSampleArtifactsFailed) { $navigationViewSampleArtifacts.Reason } elseif ($null -ne $visualStateMatrix -and $visualStateMatrix.Status -ne "Passed") { $visualStateMatrix.Notes } elseif ($null -ne $interaction -and $interaction.Status -eq "Failed") { $interaction.Notes } else { "" })
+            NonBlank = $notBlank
+            RequiredSampleAutomationId = ""
+            RequiredSampleElementFound = $true
+            StaticCrops = $staticCrops
+            VisualStateMatrix = $visualStateMatrix
+            Interaction = $interaction
+            ThemeProbe = $themeProbe
+            ResponsiveLayoutProbe = $responsiveLayoutProbe
+            ControlExampleScreenArtifacts = $controlExampleScreenArtifacts
+            NavigationViewSampleArtifacts = $navigationViewSampleArtifacts
+        }
+    }
+    finally {
+        Close-AutomationWindow $window
+    }
+}
+
+function Get-WinUIReferenceSelectedItemName($element) {
+    if ($null -eq $element) {
+        return ""
+    }
+
+    try {
+        $pattern = $element.GetCurrentPattern([System.Windows.Automation.SelectionPattern]::Pattern)
+        $selection = @($pattern.Current.GetSelection())
+        if ($selection.Count -gt 0) {
+            return [string]$selection[0].Current.Name
+        }
+    }
+    catch {
+    }
+
+    return ""
+}
+
+function Ensure-WinUIReferenceRootTheme([string]$control, [string]$caseDir, $window) {
+    if ($Theme -eq "Default") {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            SelectedTheme = ""
+            Verified = $true
+            Reason = "Default reference root theme requested."
+        }
+    }
+
+    $initialProbePath = Join-Path $caseDir ("winui3-$control-root-theme-probe.png")
+    Capture-Window $window.Current.NativeWindowHandle $initialProbePath
+    $initialMean = Get-ImageMeanLuminance $initialProbePath
+    $wantsDark = $Theme -eq "Dark"
+    if ($null -ne $initialMean -and (([double]$initialMean -lt 128.0) -eq $wantsDark)) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            SelectedTheme = $Theme
+            MeanLuminance = $initialMean
+            Verified = $true
+            Reason = "WinUI 3 Gallery root pixels already matched the requested theme."
+        }
+    }
+
+    $settings = Find-ElementByNameInProcess $window.Current.ProcessId @("Settings")
+    $settingsInvoked = Invoke-SelectionElementOnce $window $settings
+    if (!$settingsInvoked) {
+        try {
+            $windowRect = $window.Current.BoundingRectangle
+            [GalleryVisualNative]::Click(
+                [int][Math]::Round($windowRect.X + 100),
+                [int][Math]::Round($windowRect.Y + $windowRect.Height - 30))
+            $settingsInvoked = $true
+        }
+        catch {
+        }
+    }
+
+    $themeMode = $null
+    if ($settingsInvoked) {
+        try {
+            $themeMode = Wait-Until -TimeoutSeconds 5 -Description "WinUI 3 Gallery app theme selector" -Probe {
+                Find-ElementByAutomationIdInProcess $window.Current.ProcessId "themeModeComboBox"
+            }
+        }
+        catch {
+        }
+    }
+    if ($null -eq $themeMode) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            SelectedTheme = ""
+            Verified = $false
+            Reason = "Could not navigate to the WinUI 3 Gallery app theme selector."
+        }
+    }
+
+    $selectedTheme = Get-WinUIReferenceSelectedItemName $themeMode
+    if ($selectedTheme -ne $Theme) {
+        try {
+            $expandPattern = $themeMode.GetCurrentPattern([System.Windows.Automation.ExpandCollapsePattern]::Pattern)
+            $expandPattern.Expand()
+            Start-Sleep -Milliseconds 150
+        }
+        catch {
+        }
+
+        $themeItem = Find-DescendantByName $themeMode $Theme
+        if ($null -eq $themeItem) {
+            $themeItem = Find-ElementByNameInProcess $window.Current.ProcessId @($Theme)
+        }
+        if ($null -ne $themeItem) {
+            try {
+                $selectionPattern = $themeItem.GetCurrentPattern([System.Windows.Automation.SelectionItemPattern]::Pattern)
+                $selectionPattern.Select()
+                Start-Sleep -Milliseconds 700
+            }
+            catch {
+                [void](Invoke-ElementOnce $window $themeItem)
+                Start-Sleep -Milliseconds 700
+            }
+        }
+        $selectedTheme = Get-WinUIReferenceSelectedItemName $themeMode
+    }
+
+    $backInvoker = Find-ElementByAutomationIdInProcess $window.Current.ProcessId "__GoBackInvoker"
+    $backInvoked = Invoke-ElementPatternOnce $window $backInvoker
+    if ($backInvoked) {
+        try {
+            Wait-Until -TimeoutSeconds 5 -Description "WinUI 3 Gallery return to $control" -Probe {
+                Find-DescendantByName $window $control
+            } | Out-Null
+        }
+        catch {
+            $backInvoked = $false
+        }
+    }
+
+    $postMean = $null
+    if ($backInvoked) {
+        $postProbePath = Join-Path $caseDir ("winui3-$control-root-theme-probe-after.png")
+        Capture-Window $window.Current.NativeWindowHandle $postProbePath
+        $postMean = Get-ImageMeanLuminance $postProbePath
+    }
+    $rootPixelsVerified = $null -ne $postMean -and (([double]$postMean -lt 128.0) -eq $wantsDark)
+    $verified = $selectedTheme -eq $Theme -and $backInvoked -and $rootPixelsVerified
+    return [ordered]@{
+        RequestedTheme = $Theme
+        SelectedTheme = $selectedTheme
+        InitialMeanLuminance = $initialMean
+        MeanLuminance = $postMean
+        SettingsInvoked = $settingsInvoked
+        BackInvoked = $backInvoked
+        Verified = $verified
+        Reason = $(if ($verified) { "WinUI 3 Gallery root theme and pixels matched the requested theme." } else { "WinUI 3 Gallery root theme, pixels, or return navigation was not verified." })
+    }
+}
+
+function Ensure-WinUIReferenceTheme([string]$control, [string]$caseDir, $window) {
+    if ($Theme -eq "Default") {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $null
+            Toggled = $false
+            Verified = $true
+            Reason = "Default theme requested."
+        }
+    }
+
+    $primarySource = Get-ReferencePrimaryAutomationId $control
+    $primaryName = Get-ReferencePrimaryName $control
+    if ($control -eq "CommandBarFlyout") {
+        # Its primary control is a dark mountain photo in both themes. Probe the
+        # instruction row inside the themed example instead of image content or
+        # the description row outside the example's requested-theme boundary.
+        $primarySource = ""
+        $primaryName = "Click or right click the image to open a CommandBarFlyout"
+    }
+    elseif ($control -eq "ColorPicker") {
+        # The hue spectrum has nearly identical luminance in both themes.
+        # Probe a theme-sensitive text input so a persisted Gallery theme is
+        # not mistaken for the requested theme.
+        $primarySource = "HexTextBox"
+        $primaryName = ""
+    }
+    if ([string]::IsNullOrEmpty($primarySource) -and [string]::IsNullOrEmpty($primaryName)) {
+        $probeScreenshot = Join-Path $caseDir ("winui3-$control-theme-probe.png")
+        Capture-Window $window.Current.NativeWindowHandle $probeScreenshot
+        $mean = Get-ImageMeanLuminance $probeScreenshot
+        if ($null -eq $mean) {
+            return [ordered]@{
+                RequestedTheme = $Theme
+                MeanLuminance = $null
+                Toggled = $false
+                Reason = "No reference primary element is configured, and the reference screenshot had no visible pixels."
+            }
+        }
+
+        $isDark = [double]$mean -lt 128.0
+        $wantsDark = $Theme -eq "Dark"
+        if ($isDark -eq $wantsDark) {
+            return [ordered]@{
+                RequestedTheme = $Theme
+                MeanLuminance = $mean
+                Toggled = $false
+                Reason = "Reference window theme already matched without a configured primary element."
+            }
+        }
+
+        $themeButton = Find-DescendantByAutomationId $window "ThemeButton"
+        if ($null -eq $themeButton) {
+            return [ordered]@{
+                RequestedTheme = $Theme
+                MeanLuminance = $mean
+                Toggled = $false
+                Reason = "No reference primary element is configured, and ThemeButton was not found."
+            }
+        }
+
+        $toggled = Invoke-ElementPatternOnce $window $themeButton
+        if ($toggled) {
+            Start-Sleep -Milliseconds 700
+        }
+
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $mean
+            Toggled = $toggled
+            Reason = "Reference window theme inferred from full screenshot because no primary element is configured."
+        }
+    }
+
+    $primaryElement = if (![string]::IsNullOrEmpty($primarySource)) {
+        Find-DescendantByAutomationId $window $primarySource
+    }
+    else {
+        $primarySource = $primaryName
+        Find-ReferencePrimaryByName $window $control $primaryName
+    }
+    if ($null -eq $primaryElement) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $null
+            Toggled = $false
+            Reason = "Reference primary element '$primarySource' was not found."
+        }
+    }
+
+    $probeScreenshot = Join-Path $caseDir ("winui3-$control-theme-probe.png")
+    $probeCropPath = Join-Path $caseDir ("winui3-$control-theme-probe-crop.png")
+    Capture-Window $window.Current.NativeWindowHandle $probeScreenshot
+    $probeCrop = Save-ElementCrop $window $probeScreenshot $probeCropPath $primaryElement $primarySource 0
+    if (!$probeCrop.Found -or !$probeCrop.NonBlank) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $null
+            Toggled = $false
+            Reason = "Reference theme probe crop was unavailable or blank."
+        }
+    }
+
+    $mean = Get-ImageMeanLuminance $probeCropPath
+    if ($null -eq $mean) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $null
+            Toggled = $false
+            Reason = "Reference theme probe screenshot had no visible pixels."
+        }
+    }
+
+    $isDark = [double]$mean -lt 128.0
+    $wantsDark = $Theme -eq "Dark"
+    if ($isDark -eq $wantsDark) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $mean
+            Toggled = $false
+            Verified = $true
+            Reason = "Reference sample theme already matched."
+        }
+    }
+
+    $themeButton = Find-DescendantByAutomationId $window "ThemeButton"
+    if ($null -eq $themeButton) {
+        return [ordered]@{
+            RequestedTheme = $Theme
+            MeanLuminance = $mean
+            Toggled = $false
+            Reason = "ThemeButton was not found."
+        }
+    }
+
+    $toggled = Invoke-ElementPatternOnce $window $themeButton
+    if ($toggled) {
+        Start-Sleep -Milliseconds 700
+    }
+
+    $postMean = $null
+    $verified = $false
+    if ($toggled) {
+        $postProbeScreenshot = Join-Path $caseDir ("winui3-$control-theme-probe-after.png")
+        $postProbeCropPath = Join-Path $caseDir ("winui3-$control-theme-probe-after-crop.png")
+        Capture-Window $window.Current.NativeWindowHandle $postProbeScreenshot
+        $postProbeCrop = Save-ElementCrop $window $postProbeScreenshot $postProbeCropPath $primaryElement $primarySource 0
+        if ($postProbeCrop.Found -and $postProbeCrop.NonBlank) {
+            $postMean = Get-ImageMeanLuminance $postProbeCropPath
+            if ($null -ne $postMean) {
+                $verified = (([double]$postMean -lt 128.0) -eq $wantsDark)
+            }
+        }
+    }
+
+    return [ordered]@{
+        RequestedTheme = $Theme
+        MeanLuminance = $postMean
+        InitialMeanLuminance = $mean
+        Toggled = $toggled
+        Verified = $verified
+        Reason = $(if ($verified) { "Reference sample theme toggled and the post-toggle crop matched the requested theme." } elseif ($toggled) { "Reference sample theme toggled, but the post-toggle crop did not match the requested theme." } else { "ThemeButton did not invoke." })
+    }
+}
+
+function Test-WinUIReferenceThemeProbeSucceeded($themeProbe) {
+    if ($Theme -eq "Default") {
+        return $true
+    }
+
+    if ($null -eq $themeProbe) {
+        return $false
+    }
+
+    if ($themeProbe.Contains("RootTheme") -and !$themeProbe.RootTheme.Verified) {
+        return $false
+    }
+
+    if ($themeProbe.Contains("Verified")) {
+        return $themeProbe.Verified -eq $true
+    }
+
+    if ($themeProbe.Toggled -eq $true) {
+        return $true
+    }
+
+    $reason = [string]$themeProbe.Reason
+    return $reason.Contains("already matched")
+}
+
+function ConvertTo-OrderedDictionaryFromJsonValue($value) {
+    if ($null -eq $value) {
+        return $null
+    }
+
+    if ($value -is [System.Management.Automation.PSCustomObject]) {
+        $map = [ordered]@{}
+        foreach ($property in $value.PSObject.Properties) {
+            $map[$property.Name] = ConvertTo-OrderedDictionaryFromJsonValue $property.Value
+        }
+        return $map
+    }
+
+    if ($value -is [System.Array]) {
+        $items = New-Object System.Collections.Generic.List[object]
+        foreach ($item in $value) {
+            $items.Add((ConvertTo-OrderedDictionaryFromJsonValue $item))
+        }
+        return $items.ToArray()
+    }
+
+    return $value
+}
+
+function Assert-CachedReferenceFileExists([string]$path, [string]$description) {
+    if ([string]::IsNullOrWhiteSpace($path) -or !(Test-Path $path)) {
+        throw "Cached WinUI reference $description was missing: '$path'. Refresh the WinUI reference run."
+    }
+}
+
+function Get-CachedWinUIReferenceResult([string]$control) {
+    if ([string]::IsNullOrWhiteSpace($WinUIReferenceRunDir)) {
+        return $null
+    }
+
+    $resolvedRunDir = (Resolve-Path $WinUIReferenceRunDir).Path
+    $cachedReport = Join-Path $resolvedRunDir "report.json"
+    if (!(Test-Path $cachedReport)) {
+        throw "Cached WinUI reference report was not found at '$cachedReport'."
+    }
+
+    $cachedResults = @(Get-Content -Path $cachedReport -Raw | ConvertFrom-Json)
+    $match = @($cachedResults | Where-Object { $_.App -eq "WinUI3Gallery" -and $_.Control -eq $control } | Select-Object -Last 1)
+    if ($match.Count -eq 0) {
+        throw "Cached WinUI reference report '$cachedReport' does not contain control '$control'."
+    }
+
+    $result = ConvertTo-OrderedDictionaryFromJsonValue $match[0]
+    Assert-CachedReferenceFileExists ([string]$result.Screenshot) "$control screenshot"
+    if ($result.Contains("StaticCrops") -and $result.StaticCrops.Primary.Found) {
+        Assert-CachedReferenceFileExists ([string]$result.StaticCrops.Primary.Screenshot) "$control primary crop"
+    }
+    if ($result.Contains("Interaction") -and $null -ne $result.Interaction -and
+        $result.Interaction.Crop.Found) {
+        Assert-CachedReferenceFileExists ([string]$result.Interaction.Crop.Screenshot) "$control interaction crop"
+    }
+    if ($result.Contains("Interaction") -and $null -ne $result.Interaction -and
+        $result.Interaction.Contains("CommandBarFlyoutStateCrops")) {
+        foreach ($state in @($result.Interaction.CommandBarFlyoutStateCrops)) {
+            if ($null -ne $state.Crop -and $state.Crop.Found) {
+                Assert-CachedReferenceFileExists ([string]$state.Crop.Screenshot) "$control $($state.State) state crop"
+            }
+        }
+    }
+
+    $result["ReferenceCacheReused"] = $true
+    $result["ReferenceSourceRunDir"] = $resolvedRunDir
+    return $result
+}
+
+$runDir = New-RunDirectory
+$results = New-Object System.Collections.Generic.List[object]
+
+foreach ($control in $Controls) {
+    $safeControl = ConvertTo-SafeName $control
+    $caseDir = Join-Path $runDir $safeControl
+    New-Item -ItemType Directory -Force -Path $caseDir | Out-Null
+
+    $modernResult = $null
+    $lastModernError = $null
+    for ($attempt = 0; $attempt -le $ModernWpfRetries; $attempt++) {
+        try {
+            $modernResult = Capture-ModernWpf $control $caseDir
+            if (!$modernResult.Contains("Attempt")) {
+                $modernResult.Add("Attempt", $attempt + 1)
+            }
+            if ($modernResult.Status -eq "Passed") {
+                break
+            }
+        }
+        catch {
+            $lastModernError = "$($_.Exception.Message) Script stack: $($_.ScriptStackTrace)"
+            $modernResult = $null
+        }
+    }
+
+    if ($null -eq $modernResult) {
+        $modernResult = [ordered]@{
+            App = "ModernWpf"
+            Control = $control
+            Route = "item/$control"
+            Status = "Failed"
+            Title = ""
+            Screenshot = ""
+            UiaTree = ""
+            LastException = $lastModernError
+            NonBlank = $false
+            RequiredSampleAutomationId = Get-RequiredSampleAutomationId $control
+            RequiredSampleElementFound = $false
+            Attempt = $ModernWpfRetries + 1
+        }
+    }
+    $results.Add($modernResult)
+
+    if ($Reference -eq "InstalledWinUI3Gallery") {
+        $referenceResult = $null
+        $lastReferenceError = ""
+        if (![string]::IsNullOrWhiteSpace($WinUIReferenceRunDir)) {
+            try {
+                $referenceResult = Get-CachedWinUIReferenceResult $control
+            }
+            catch {
+                $lastReferenceError = $_.Exception.Message
+            }
+        }
+        else {
+            foreach ($referenceAttempt in 1..3) {
+                try {
+                    $referenceResult = Capture-WinUIReference $control $caseDir
+                    if (!$referenceResult.Contains("Attempt")) {
+                        $referenceResult.Add("Attempt", $referenceAttempt)
+                    }
+                    if ($referenceResult.Status -eq "Passed") {
+                        break
+                    }
+
+                    $lastReferenceError = $referenceResult.LastException
+                    Start-Sleep -Milliseconds (500 * $referenceAttempt)
+                }
+                catch {
+                    $lastReferenceError = $_.Exception.Message
+                    $referenceResult = $null
+                    Start-Sleep -Milliseconds (500 * $referenceAttempt)
+                }
+            }
+        }
+
+        if ($null -ne $referenceResult) {
+            $results.Add($referenceResult)
+        }
+        else {
+            $results.Add([ordered]@{
+                App = "WinUI3Gallery"
+                Control = $control
+                Route = "winui3gallery://item/$control"
+                Status = "Failed"
+                Title = ""
+                Screenshot = ""
+                UiaTree = ""
+                LastException = $lastReferenceError
+                NonBlank = $false
+                RequiredSampleAutomationId = ""
+                RequiredSampleElementFound = $false
+            })
+        }
+    }
+
+    $modern = $results | Where-Object { $_.Control -eq $control -and $_.App -eq "ModernWpf" } | Select-Object -Last 1
+    $referenceCapture = $results | Where-Object { $_.Control -eq $control -and $_.App -eq "WinUI3Gallery" } | Select-Object -Last 1
+    $referenceBaselineNote = Get-ReferenceBaselineNote $control
+    if (![string]::IsNullOrWhiteSpace($referenceBaselineNote)) {
+        if ($null -ne $modern) {
+            $modern["ReferenceBaselineNote"] = $referenceBaselineNote
+        }
+        if ($null -ne $referenceCapture) {
+            $referenceCapture["ReferenceBaselineNote"] = $referenceBaselineNote
+        }
+    }
+    if ($control -eq "NavigationView" -and $null -ne $modern -and $null -ne $referenceCapture) {
+        $hasNavigationViewSampleEvidence =
+            $modern.Contains("NavigationViewSampleArtifacts") -and
+            $referenceCapture.Contains("NavigationViewSampleArtifacts") -and
+            $null -ne $modern.NavigationViewSampleArtifacts -and
+            $null -ne $referenceCapture.NavigationViewSampleArtifacts
+        if ($hasNavigationViewSampleEvidence) {
+            $navigationViewSampleComparisons = Compare-NavigationViewSampleArtifactEvidence `
+                $modern.NavigationViewSampleArtifacts `
+                $referenceCapture.NavigationViewSampleArtifacts
+            $modern["NavigationViewSampleComparisons"] = $navigationViewSampleComparisons
+            if ($FailOnDifference -and !$navigationViewSampleComparisons.Passed) {
+                Set-VisualCheckReferenceFailure $modern $navigationViewSampleComparisons.Reason
+            }
+        }
+        elseif ($FailOnDifference) {
+            Set-VisualCheckReferenceFailure $modern "NavigationView all-sample reference evidence was unavailable; refresh the installed WinUI Gallery capture."
+        }
+    }
+    $hasControlExampleEvidence = $null -ne $modern -and $null -ne $referenceCapture -and
+        $modern.Contains("ControlExampleScreenArtifacts") -and
+        $referenceCapture.Contains("ControlExampleScreenArtifacts") -and
+        $null -ne $modern.ControlExampleScreenArtifacts -and
+        $null -ne $referenceCapture.ControlExampleScreenArtifacts
+    if ($hasControlExampleEvidence) {
+        $controlExampleComparisons = Compare-ControlExampleScreenArtifactEvidence `
+            $control `
+            $modern.ControlExampleScreenArtifacts `
+            $referenceCapture.ControlExampleScreenArtifacts `
+            $caseDir
+        $modern["ControlExampleComparisons"] = $controlExampleComparisons
+        if ($FailOnDifference -and !$controlExampleComparisons.Passed) {
+            Set-VisualCheckReferenceFailure $modern $controlExampleComparisons.Reason
+        }
+    }
+    elseif ($FailOnDifference -and $WinUIPortedControlExampleCounts.Contains($control)) {
+        Set-VisualCheckReferenceFailure $modern "$control all-sample ControlExample reference evidence was unavailable."
+    }
+    if ((Test-ControlSupportsVisualStateMatrix $control) -and $IncludeInteractions -and
+        $null -ne $modern -and $null -ne $referenceCapture -and
+        $modern.Contains("VisualStateMatrix") -and $referenceCapture.Contains("VisualStateMatrix") -and
+        $null -ne $modern.VisualStateMatrix -and $null -ne $referenceCapture.VisualStateMatrix) {
+        $visualStateComparisons = Compare-ControlVisualStateMatrixEvidence `
+            $control `
+            $modern.VisualStateMatrix `
+            $referenceCapture.VisualStateMatrix
+        $modern["VisualStateComparisons"] = $visualStateComparisons
+        if (!$visualStateComparisons.Passed) {
+            Set-VisualCheckReferenceFailure $modern $visualStateComparisons.Reason
+        }
+    }
+    elseif ((Test-ControlSupportsVisualStateMatrix $control) -and $IncludeInteractions -and $null -ne $modern) {
+        Set-VisualCheckReferenceFailure $modern "$control paired visual-state evidence was unavailable."
+    }
+    if ($control -eq "CommandBarFlyout" -and $IncludeInteractions -and
+        $null -ne $modern -and $null -ne $referenceCapture -and
+        $modern.Contains("Interaction") -and $referenceCapture.Contains("Interaction") -and
+        $null -ne $modern.Interaction -and $null -ne $referenceCapture.Interaction -and
+        $modern.Interaction.Contains("CommandBarFlyoutStateCrops") -and
+        $referenceCapture.Interaction.Contains("CommandBarFlyoutStateCrops")) {
+        $stateComparisons = Compare-CommandBarFlyoutStateEvidence `
+            @($modern.Interaction.CommandBarFlyoutStateCrops) `
+            @($referenceCapture.Interaction.CommandBarFlyoutStateCrops)
+        $modern["CommandBarFlyoutStateComparisons"] = $stateComparisons
+        if (!$stateComparisons.Passed) {
+            Set-VisualCheckReferenceFailure $modern $stateComparisons.Reason
+        }
+    }
+    elseif ($control -eq "CommandBarFlyout" -and $IncludeInteractions -and $null -ne $modern) {
+        Set-VisualCheckReferenceFailure $modern "CommandBarFlyout per-state reference evidence was unavailable."
+    }
+    $hasPrimaryCropPair = $null -ne $modern -and $null -ne $referenceCapture -and
+        $modern.Contains("StaticCrops") -and $referenceCapture.Contains("StaticCrops") -and
+        $null -ne $modern.StaticCrops -and $null -ne $referenceCapture.StaticCrops -and
+        $modern.StaticCrops.Primary.Found -and $referenceCapture.StaticCrops.Primary.Found
+    if ($null -ne $modern -and $null -ne $referenceCapture -and $modern.Screenshot -and $referenceCapture.Screenshot) {
+        $comparison = Compare-Images $modern.Screenshot $referenceCapture.Screenshot
+        $modern["ReferenceComparison"] = $comparison
+        if ($FailOnDifference -and !$hasPrimaryCropPair -and $comparison.Comparable -and $comparison.MeanDelta -gt 24) {
+            Set-VisualCheckReferenceFailure $modern "Mean pixel delta $($comparison.MeanDelta) exceeded visual threshold 24."
+        }
+    }
+    if ($hasPrimaryCropPair) {
+        $modern["PrimaryCropReferenceComparison"] = Compare-ImagesNormalized $modern.StaticCrops.Primary.Screenshot $referenceCapture.StaticCrops.Primary.Screenshot
+        $modern["PrimaryCropSize"] = [ordered]@{
+            ModernWpfWidth = $modern.StaticCrops.Primary.Width
+            ModernWpfHeight = $modern.StaticCrops.Primary.Height
+            ReferenceWidth = $referenceCapture.StaticCrops.Primary.Width
+            ReferenceHeight = $referenceCapture.StaticCrops.Primary.Height
+        }
+
+        $primaryThreshold = Get-ReferencePrimaryCropMeanDeltaThreshold $control
+        $liveStateMatrixAuthoritative =
+            (Test-ControlSupportsVisualStateMatrix $control) -and
+            $IncludeInteractions -and
+            $modern.Contains("VisualStateComparisons") -and
+            $null -ne $modern.VisualStateComparisons -and
+            $modern.VisualStateComparisons.Passed
+        $modern["PrimaryCropReferenceComparisonMode"] = if ($liveStateMatrixAuthoritative) {
+            "AdvisoryDetachedArtifact;DirectScreenStateMatrixAuthoritative"
+        }
+        else {
+            "Required"
+        }
+        if ($FailOnDifference -and
+            !$liveStateMatrixAuthoritative -and
+            $modern.PrimaryCropReferenceComparison.Comparable -and
+            [double]$modern.PrimaryCropReferenceComparison.MeanDelta -gt $primaryThreshold) {
+            Set-VisualCheckReferenceFailure $modern "Primary crop delta $($modern.PrimaryCropReferenceComparison.MeanDelta) exceeded visual threshold $primaryThreshold."
+        }
+        if ($FailOnDifference) {
+            $primarySizeDelta = [Math]::Abs([int]$modern.PrimaryCropSize.ModernWpfWidth - [int]$modern.PrimaryCropSize.ReferenceWidth) +
+                [Math]::Abs([int]$modern.PrimaryCropSize.ModernWpfHeight - [int]$modern.PrimaryCropSize.ReferenceHeight)
+            $primarySizeThreshold = Get-ReferencePrimaryCropSizeDeltaThreshold $control
+            if ($primarySizeDelta -gt $primarySizeThreshold) {
+                Set-VisualCheckReferenceFailure $modern "$control primary crop size delta $primarySizeDelta exceeded visual threshold $primarySizeThreshold."
+            }
+        }
+
+        if ($control -eq "NavigationView") {
+            $modernIndicator = Get-NavigationViewSelectionIndicatorEvidence $modern.StaticCrops.Primary.Screenshot
+            $referenceIndicator = Get-NavigationViewSelectionIndicatorEvidence $referenceCapture.StaticCrops.Primary.Screenshot
+            $indicatorComparable = $modernIndicator.Found -and $referenceIndicator.Found
+            $indicatorMatches = $indicatorComparable -and
+                $modernIndicator.Color -eq $referenceIndicator.Color -and
+                $modernIndicator.Count -eq $referenceIndicator.Count -and
+                $modernIndicator.X -eq $referenceIndicator.X -and
+                $modernIndicator.Y -eq $referenceIndicator.Y -and
+                $modernIndicator.Width -eq $referenceIndicator.Width -and
+                $modernIndicator.Height -eq $referenceIndicator.Height
+            $modern["NavigationViewSelectionIndicatorComparison"] = [ordered]@{
+                Comparable = $indicatorComparable
+                Matches = $indicatorMatches
+                ModernWpf = $modernIndicator
+                Reference = $referenceIndicator
+            }
+
+            if ($FailOnDifference -and !$indicatorMatches) {
+                if (!$indicatorComparable) {
+                    Set-VisualCheckReferenceFailure $modern "NavigationView selection-indicator pixels were unavailable. ModernWpf: $($modernIndicator.Reason) Reference: $($referenceIndicator.Reason)"
+                }
+                else {
+                    Set-VisualCheckReferenceFailure $modern "NavigationView selection-indicator pixels differed. ModernWpf: $($modernIndicator.Color) count=$($modernIndicator.Count) bounds=$($modernIndicator.X),$($modernIndicator.Y),$($modernIndicator.Width)x$($modernIndicator.Height). Reference: $($referenceIndicator.Color) count=$($referenceIndicator.Count) bounds=$($referenceIndicator.X),$($referenceIndicator.Y),$($referenceIndicator.Width)x$($referenceIndicator.Height)."
+                }
+            }
+        }
+    }
+    $modernInteractionFrames = @()
+    if ($null -ne $modern -and
+        $modern.Contains("Interaction") -and
+        $null -ne $modern.Interaction) {
+        $modernInteractionFrames = @($modern.Interaction.Frames)
+    }
+    $referenceInteractionFrames = @()
+    if ($null -ne $referenceCapture -and
+        $referenceCapture.Contains("Interaction") -and
+        $null -ne $referenceCapture.Interaction) {
+        $referenceInteractionFrames = @($referenceCapture.Interaction.Frames)
+    }
+    if ($null -ne $modern -and $null -ne $referenceCapture -and
+        $modern.Contains("Interaction") -and $referenceCapture.Contains("Interaction") -and
+        $null -ne $modern.Interaction -and $null -ne $referenceCapture.Interaction -and
+        $modernInteractionFrames.Count -gt 0 -and $referenceInteractionFrames.Count -gt 0) {
+        $modernFrame = $modernInteractionFrames[$modernInteractionFrames.Count - 1]
+        $referenceFrame = $referenceInteractionFrames[$referenceInteractionFrames.Count - 1]
+        $modernFrameScreenshot = $modernFrame.Screenshot
+        $referenceFrameScreenshot = $referenceFrame.Screenshot
+        if ($modern.Interaction.Contains("SelectedFrameScreenshot") -and $modern.Interaction.SelectedFrameScreenshot) {
+            $modernFrameScreenshot = $modern.Interaction.SelectedFrameScreenshot
+        }
+        if ($referenceCapture.Interaction.Contains("SelectedFrameScreenshot") -and $referenceCapture.Interaction.SelectedFrameScreenshot) {
+            $referenceFrameScreenshot = $referenceCapture.Interaction.SelectedFrameScreenshot
+        }
+        if ($modernFrameScreenshot -and $referenceFrameScreenshot) {
+            $modern["InteractionReferenceComparison"] = Compare-Images $modernFrameScreenshot $referenceFrameScreenshot
+        }
+
+        if ($null -ne $modern.Interaction.Crop -and $null -ne $referenceCapture.Interaction.Crop -and
+            $modern.Interaction.Crop.Found -and $referenceCapture.Interaction.Crop.Found -and
+            $modern.Interaction.Crop.Source -eq $referenceCapture.Interaction.Crop.Source) {
+            $modern["InteractionCropReferenceComparison"] = if ($control -eq "GridView") {
+                Compare-ImagesOnCommonCanvas $modern.Interaction.Crop.Screenshot $referenceCapture.Interaction.Crop.Screenshot
+            }
+            else {
+                Compare-ImagesNormalized $modern.Interaction.Crop.Screenshot $referenceCapture.Interaction.Crop.Screenshot
+            }
+            $modern["InteractionCropSize"] = [ordered]@{
+                ModernWpfWidth = $modern.Interaction.Crop.Width
+                ModernWpfHeight = $modern.Interaction.Crop.Height
+                ReferenceWidth = $referenceCapture.Interaction.Crop.Width
+                ReferenceHeight = $referenceCapture.Interaction.Crop.Height
+            }
+        }
+
+        $requiresInteractionCropParity = Test-ControlRequiresReferenceInteractionCropParity $control
+        if ($requiresInteractionCropParity) {
+            if ($null -eq $modern.Interaction.Crop -or
+                $null -eq $referenceCapture.Interaction.Crop -or
+                !$modern.Interaction.Crop.Found -or
+                !$referenceCapture.Interaction.Crop.Found) {
+                Set-VisualCheckReferenceFailure $modern "$control interaction reference crop was required but unavailable."
+            }
+            elseif ($modern.Interaction.Crop.Source -ne $referenceCapture.Interaction.Crop.Source) {
+                Set-VisualCheckReferenceFailure $modern "$control interaction crop sources differed: ModernWpf '$($modern.Interaction.Crop.Source)' vs reference '$($referenceCapture.Interaction.Crop.Source)'."
+            }
+            elseif (!$modern.Contains("InteractionCropReferenceComparison") -or !$modern.InteractionCropReferenceComparison.Comparable) {
+                Set-VisualCheckReferenceFailure $modern "$control interaction crop comparison was not comparable."
+            }
+            else {
+                $interactionCropThreshold = Get-ReferenceInteractionCropMeanDeltaThreshold $control
+                if ([double]$modern.InteractionCropReferenceComparison.MeanDelta -gt $interactionCropThreshold) {
+                    Set-VisualCheckReferenceFailure $modern "$control interaction crop delta $($modern.InteractionCropReferenceComparison.MeanDelta) exceeded visual threshold $interactionCropThreshold."
+                }
+
+                if ($modern.Contains("InteractionCropSize")) {
+                    $interactionSizeDelta = [Math]::Abs([int]$modern.InteractionCropSize.ModernWpfWidth - [int]$modern.InteractionCropSize.ReferenceWidth) +
+                        [Math]::Abs([int]$modern.InteractionCropSize.ModernWpfHeight - [int]$modern.InteractionCropSize.ReferenceHeight)
+                    $interactionSizeThreshold = Get-ReferenceInteractionCropSizeDeltaThreshold $control
+                    if ($interactionSizeDelta -gt $interactionSizeThreshold) {
+                        Set-VisualCheckReferenceFailure $modern "$control interaction crop size delta $interactionSizeDelta exceeded visual threshold $interactionSizeThreshold."
+                    }
+                }
+            }
+        }
+        elseif ($FailOnDifference -and
+            $modern.Contains("InteractionCropReferenceComparison") -and
+            $modern.InteractionCropReferenceComparison.Comparable) {
+            $interactionCropThreshold = Get-ReferenceInteractionCropMeanDeltaThreshold $control
+            if ([double]$modern.InteractionCropReferenceComparison.MeanDelta -gt $interactionCropThreshold) {
+                Set-VisualCheckReferenceFailure $modern "$control interaction crop delta $($modern.InteractionCropReferenceComparison.MeanDelta) exceeded visual threshold $interactionCropThreshold."
+            }
+        }
+    }
+}
+
+$reportJson = Join-Path $runDir "report.json"
+$reportMarkdown = Join-Path $runDir "report.md"
+$results.ToArray() | ConvertTo-Json -Depth 8 | Set-Content -Path $reportJson -Encoding UTF8
+
+$markdown = New-Object System.Collections.Generic.List[string]
+$markdown.Add("# Gallery Visual Check Report")
+$markdown.Add("")
+$markdown.Add("- Theme: $Theme")
+$markdown.Add("- Size: ${Width}x${Height}")
+$markdown.Add("- Reference: $Reference")
+if (![string]::IsNullOrWhiteSpace($WinUIReferenceRunDir)) {
+    $markdown.Add("- WinUI reference run: $((Resolve-Path $WinUIReferenceRunDir).Path)")
+}
+$markdown.Add("")
+
+$referenceBaselineNotes = @(
+    $Controls |
+        Sort-Object -Unique |
+        ForEach-Object {
+            $note = Get-ReferenceBaselineNote $_
+            if (![string]::IsNullOrWhiteSpace($note)) {
+                [pscustomobject]@{ Control = $_; Note = $note }
+            }
+        }
+)
+if ($Reference -eq "InstalledWinUI3Gallery" -and $referenceBaselineNotes.Count -gt 0) {
+    $markdown.Add("## Reference Baseline Notes")
+    $markdown.Add("")
+    $markdown.Add("| Control | Note |")
+    $markdown.Add("| --- | --- |")
+    foreach ($referenceBaselineNote in $referenceBaselineNotes) {
+        $markdown.Add("| $($referenceBaselineNote.Control) | $($referenceBaselineNote.Note) |")
+    }
+    $markdown.Add("")
+}
+
+$controlScores = @{}
+foreach ($result in $results) {
+    if ($result.App -ne "ModernWpf") {
+        continue
+    }
+
+    $score = 0.0
+    if ($result.Contains("PrimaryCropReferenceComparison") -and $result.PrimaryCropReferenceComparison.Comparable) {
+        $score = [Math]::Max($score, [double]$result.PrimaryCropReferenceComparison.MeanDelta)
+    }
+    if ($result.Contains("PrimaryCropSize")) {
+        $sizeDelta = [Math]::Abs([int]$result.PrimaryCropSize.ModernWpfWidth - [int]$result.PrimaryCropSize.ReferenceWidth) +
+            [Math]::Abs([int]$result.PrimaryCropSize.ModernWpfHeight - [int]$result.PrimaryCropSize.ReferenceHeight)
+        $score += ($sizeDelta / 10.0)
+    }
+    if ($result.Contains("InteractionCropReferenceComparison") -and $result.InteractionCropReferenceComparison.Comparable) {
+        $score = [Math]::Max($score, [double]$result.InteractionCropReferenceComparison.MeanDelta)
+    }
+    if ($result.Contains("ControlExampleComparisons") -and $null -ne $result.ControlExampleComparisons) {
+        $exampleDeltas = @(
+            $result.ControlExampleComparisons.Comparisons |
+                Where-Object { $_.PixelGateApplied -and $_.Comparable -and $null -ne $_.MeanDelta } |
+                ForEach-Object { [double]$_.MeanDelta }
+        )
+        if ($exampleDeltas.Count -gt 0) {
+            $score = [Math]::Max($score, [double](($exampleDeltas | Measure-Object -Maximum).Maximum))
+        }
+    }
+    if ($result.Contains("CommandBarFlyoutStateComparisons") -and $null -ne $result.CommandBarFlyoutStateComparisons) {
+        $stateDeltas = @(
+            $result.CommandBarFlyoutStateComparisons.Comparisons |
+                Where-Object { $null -ne $_.MeanDelta } |
+                ForEach-Object { [double]$_.MeanDelta }
+        )
+        if ($stateDeltas.Count -gt 0) {
+            $score = [Math]::Max($score, [double](($stateDeltas | Measure-Object -Maximum).Maximum))
+        }
+    }
+    if ($result.Contains("VisualStateComparisons") -and $null -ne $result.VisualStateComparisons) {
+        $visualStateDeltas = @(
+            $result.VisualStateComparisons.Comparisons |
+                Where-Object { $null -ne $_.MeanDelta } |
+                ForEach-Object { [double]$_.MeanDelta }
+        )
+        if ($visualStateDeltas.Count -gt 0) {
+            $score = [Math]::Max($score, [double](($visualStateDeltas | Measure-Object -Maximum).Maximum))
+        }
+    }
+
+    $controlScores[$result.Control] = [Math]::Round($score, 2)
+}
+
+$rankedModernResults = @(
+    $results |
+        Where-Object { $_.App -eq "ModernWpf" } |
+        Sort-Object -Property @{ Expression = { if ($controlScores.ContainsKey($_.Control)) { -1.0 * [double]$controlScores[$_.Control] } else { 0 } } }, Control
+)
+
+$markdown.Add("## Crop Ranking")
+$markdown.Add("")
+$markdown.Add("| Control | Score | Primary crop delta | Primary crop sizes | Interaction crop delta | State max delta |")
+$markdown.Add("| --- | ---: | ---: | --- | ---: | ---: |")
+foreach ($result in $rankedModernResults) {
+    $score = if ($controlScores.ContainsKey($result.Control)) { $controlScores[$result.Control] } else { "" }
+    $primaryDelta = if ($result.Contains("PrimaryCropReferenceComparison")) { $result.PrimaryCropReferenceComparison.MeanDelta } else { "" }
+    $primarySize = if ($result.Contains("PrimaryCropSize")) { "$($result.PrimaryCropSize.ModernWpfWidth)x$($result.PrimaryCropSize.ModernWpfHeight) vs $($result.PrimaryCropSize.ReferenceWidth)x$($result.PrimaryCropSize.ReferenceHeight)" } else { "" }
+    $interactionDelta = if ($result.Contains("InteractionCropReferenceComparison")) { $result.InteractionCropReferenceComparison.MeanDelta } else { "" }
+    $stateDeltas = @()
+    if ($result.Contains("CommandBarFlyoutStateComparisons")) {
+        $stateDeltas += @(
+            $result.CommandBarFlyoutStateComparisons.Comparisons |
+                Where-Object { $null -ne $_.MeanDelta } |
+                ForEach-Object { [double]$_.MeanDelta }
+        )
+    }
+    if ($result.Contains("VisualStateComparisons")) {
+        $stateDeltas += @(
+            $result.VisualStateComparisons.Comparisons |
+                Where-Object { $null -ne $_.MeanDelta } |
+                ForEach-Object { [double]$_.MeanDelta }
+        )
+    }
+    $stateMaxDelta = if ($stateDeltas.Count -gt 0) { ($stateDeltas | Measure-Object -Maximum).Maximum } else { "" }
+    $markdown.Add("| $($result.Control) | $score | $primaryDelta | $primarySize | $interactionDelta | $stateMaxDelta |")
+}
+$markdown.Add("")
+
+$exampleArtifactResults = @(
+    $rankedModernResults |
+        Where-Object { $_.Contains("ControlExampleArtifacts") -and $null -ne $_.ControlExampleArtifacts }
+)
+if ($exampleArtifactResults.Count -gt 0) {
+    $markdown.Add("## Control Example Artifact Coverage")
+    $markdown.Add("")
+    $markdown.Add("| Control | Valid examples | Expected examples | Status |")
+    $markdown.Add("| --- | ---: | ---: | --- |")
+    foreach ($result in ($exampleArtifactResults | Sort-Object Control)) {
+        $evidence = $result.ControlExampleArtifacts
+        $status = if ($evidence.Passed) { "Passed" } else { "Failed" }
+        $markdown.Add("| $($result.Control) | $($evidence.ValidCount) | $($evidence.ExpectedCount) | $status |")
+    }
+    $markdown.Add("")
+}
+
+$liveExampleResults = @(
+    $results |
+        Where-Object { $_.Contains("ControlExampleScreenArtifacts") -and $null -ne $_.ControlExampleScreenArtifacts }
+)
+if ($liveExampleResults.Count -gt 0) {
+    $markdown.Add("## Live Control Example Coverage")
+    $markdown.Add("")
+    $markdown.Add("| App | Control | Valid examples | Expected examples | Reference headers | Status |")
+    $markdown.Add("| --- | --- | ---: | ---: | ---: | --- |")
+    foreach ($result in ($liveExampleResults | Sort-Object Control, App)) {
+        $evidence = $result.ControlExampleScreenArtifacts
+        $headerCount = if ($evidence.Contains("FoundHeaderCount")) { $evidence.FoundHeaderCount } else { "" }
+        $status = if ($evidence.Passed) { "Passed" } else { "Failed" }
+        $markdown.Add("| $($result.App) | $($result.Control) | $($evidence.ValidCount) | $($evidence.ExpectedCount) | $headerCount | $status |")
+    }
+    $markdown.Add("")
+}
+
+$controlExampleComparisonResults = @(
+    $rankedModernResults |
+        Where-Object { $_.Contains("ControlExampleComparisons") -and $null -ne $_.ControlExampleComparisons }
+)
+if ($controlExampleComparisonResults.Count -gt 0) {
+    $markdown.Add("## Control Example Parity")
+    $markdown.Add("")
+    $markdown.Add("| Control | Example | Mode | Pixel delta | Threshold | ModernWpf size | WinUI size | Status | Evidence contract |")
+    $markdown.Add("| --- | --- | --- | ---: | ---: | --- | --- | --- | --- |")
+    foreach ($result in ($controlExampleComparisonResults | Sort-Object Control)) {
+        foreach ($comparison in $result.ControlExampleComparisons.Comparisons) {
+            $status = if (!$comparison.Passed) {
+                $(if (!$comparison.Comparable) { "Unavailable" } else { "Failed" })
+            }
+            elseif ($comparison.PixelGateApplied) {
+                "Pixel passed"
+            }
+            else {
+                "Geometry passed; external proof required"
+            }
+            $threshold = if ($comparison.PixelGateApplied) { $comparison.MeanDeltaThreshold } else { "informational" }
+            $markdown.Add("| $($result.Control) | $($comparison.AutomationId) | $($comparison.ComparisonMode) | $($comparison.MeanDelta) | $threshold | $($comparison.ModernWpfWidth)x$($comparison.ModernWpfHeight) | $($comparison.ReferenceWidth)x$($comparison.ReferenceHeight) | $status | $($comparison.EvidenceRequirement) |")
+        }
+    }
+    $markdown.Add("")
+    $markdown.Add("Per-control side-by-side review sheets are stored as `control-example-review.png` in each control artifact directory.")
+    $markdown.Add("")
+}
+
+$commandBarFlyoutStateResult = $rankedModernResults |
+    Where-Object { $_.Control -eq "CommandBarFlyout" -and $_.Contains("CommandBarFlyoutStateComparisons") } |
+    Select-Object -First 1
+if ($null -ne $commandBarFlyoutStateResult) {
+    $markdown.Add("## CommandBarFlyout State Matrix")
+    $markdown.Add("")
+    $markdown.Add("| State | Pixel delta | Threshold | ModernWpf rest delta | WinUI rest delta | ModernWpf size | WinUI size | Status |")
+    $markdown.Add("| --- | ---: | ---: | ---: | ---: | --- | --- | --- |")
+    foreach ($comparison in $commandBarFlyoutStateResult.CommandBarFlyoutStateComparisons.Comparisons) {
+        $status = if ($comparison.Passed) { "Passed" } else { "Failed" }
+        $markdown.Add("| $($comparison.State) | $($comparison.MeanDelta) | $($comparison.MeanDeltaThreshold) | $($comparison.ModernWpfRestDelta) | $($comparison.WinUIRestDelta) | $($comparison.ModernWpfSize) | $($comparison.WinUISize) | $status |")
+    }
+    $markdown.Add("")
+}
+
+$visualStateResults = @(
+    $rankedModernResults |
+        Where-Object { $_.Contains("VisualStateComparisons") -and $null -ne $_.VisualStateComparisons }
+)
+if ($visualStateResults.Count -gt 0) {
+    $markdown.Add("## Interactive Control State Matrices")
+    $markdown.Add("")
+    $markdown.Add("| Control | State | Pixel delta | Threshold | ModernWpf rest delta | WinUI rest delta | ModernWpf size | WinUI size | Status |")
+    $markdown.Add("| --- | --- | ---: | ---: | ---: | ---: | --- | --- | --- |")
+    foreach ($result in ($visualStateResults | Sort-Object Control)) {
+        foreach ($comparison in $result.VisualStateComparisons.Comparisons) {
+            $status = if ($comparison.Passed) { "Passed" } else { "Failed" }
+            $markdown.Add("| $($result.Control) | $($comparison.State) | $($comparison.MeanDelta) | $($comparison.MeanDeltaThreshold) | $($comparison.ModernWpfRestDelta) | $($comparison.WinUIRestDelta) | $($comparison.ModernWpfSize) | $($comparison.WinUISize) | $status |")
+        }
+    }
+    $markdown.Add("")
+}
+
+$navigationViewResult = $rankedModernResults |
+    Where-Object { $_.Control -eq "NavigationView" -and $_.Contains("NavigationViewSampleComparisons") } |
+    Select-Object -First 1
+if ($null -ne $navigationViewResult) {
+    $markdown.Add("## NavigationView Sample Matrix")
+    $markdown.Add("")
+    $markdown.Add("| Sample artifact | Pixel delta | Threshold | ModernWpf size | WinUI size | Indicator | Status |")
+    $markdown.Add("| --- | ---: | ---: | --- | --- | --- | --- |")
+    foreach ($comparison in $navigationViewResult.NavigationViewSampleComparisons.Comparisons) {
+        $status = if ($comparison.Passed) { "Passed" } else { "Failed" }
+        $indicatorStatus = if (!$comparison.IndicatorExpected) { "n/a" } elseif ($comparison.IndicatorMatches) { "Matched" } else { "Failed" }
+        $markdown.Add("| $($comparison.AutomationId) | $($comparison.MeanDelta) | $($comparison.MeanDeltaThreshold) | $($comparison.ModernWpfWidth)x$($comparison.ModernWpfHeight) | $($comparison.ReferenceWidth)x$($comparison.ReferenceHeight) | $indicatorStatus | $status |")
+    }
+    $markdown.Add("")
+}
+
+$markdown.Add("| App | Control | Status | Nonblank | Required sample element | Notes |")
+$markdown.Add("| --- | --- | --- | --- | --- | --- |")
+foreach ($result in ($results | Sort-Object -Property @{ Expression = { if ($controlScores.ContainsKey($_.Control)) { -1.0 * [double]$controlScores[$_.Control] } else { 0 } } }, Control, @{ Expression = { if ($_.App -eq "ModernWpf") { 0 } else { 1 } } })) {
+    $notes = $result.LastException
+    if ($result.Contains("ReferenceComparison")) {
+        $notes = "Mean delta: " + $result.ReferenceComparison.MeanDelta
+    }
+    if ($result.Contains("PrimaryCropReferenceComparison")) {
+        $notes = "$notes; primary crop delta: " + $result.PrimaryCropReferenceComparison.MeanDelta
+    }
+    if ($result.Contains("PrimaryCropSize")) {
+        $notes = "$notes; primary crop sizes: $($result.PrimaryCropSize.ModernWpfWidth)x$($result.PrimaryCropSize.ModernWpfHeight) vs $($result.PrimaryCropSize.ReferenceWidth)x$($result.PrimaryCropSize.ReferenceHeight)"
+    }
+    if ($result.Contains("NavigationViewSelectionIndicatorComparison")) {
+        $indicator = $result.NavigationViewSelectionIndicatorComparison
+        if ($indicator.Comparable) {
+            $notes = "$notes; selection indicator: $($indicator.ModernWpf.Color) count=$($indicator.ModernWpf.Count) bounds=$($indicator.ModernWpf.X),$($indicator.ModernWpf.Y),$($indicator.ModernWpf.Width)x$($indicator.ModernWpf.Height) vs $($indicator.Reference.X),$($indicator.Reference.Y),$($indicator.Reference.Width)x$($indicator.Reference.Height)"
+        }
+        else {
+            $notes = "$notes; selection indicator comparison unavailable"
+        }
+    }
+    if ($result.Contains("NavigationViewSampleArtifacts") -and $null -ne $result.NavigationViewSampleArtifacts) {
+        $sampleArtifacts = $result.NavigationViewSampleArtifacts
+        $notes = "$notes; NavigationView sample artifacts: $($sampleArtifacts.ValidCount)/$($sampleArtifacts.ExpectedCount) valid"
+    }
+    if ($result.Contains("ControlExampleArtifacts") -and $null -ne $result.ControlExampleArtifacts) {
+        $exampleArtifacts = $result.ControlExampleArtifacts
+        $notes = "$notes; ControlExample artifacts: $($exampleArtifacts.ValidCount)/$($exampleArtifacts.ExpectedCount) valid"
+    }
+    if ($result.Contains("ControlExampleScreenArtifacts") -and $null -ne $result.ControlExampleScreenArtifacts) {
+        $screenArtifacts = $result.ControlExampleScreenArtifacts
+        $notes = "$notes; live example captures: $($screenArtifacts.ValidCount)/$($screenArtifacts.ExpectedCount) valid"
+    }
+    if ($result.Contains("NavigationViewSampleComparisons") -and $null -ne $result.NavigationViewSampleComparisons) {
+        $sampleComparisons = $result.NavigationViewSampleComparisons
+        $notes = "$notes; NavigationView sample parity: $($sampleComparisons.ValidCount)/$($sampleComparisons.ExpectedCount) passed"
+    }
+    if ($result.Contains("ControlExampleComparisons") -and $null -ne $result.ControlExampleComparisons) {
+        $exampleComparisons = $result.ControlExampleComparisons
+        $notes = "$notes; ControlExample parity: $($exampleComparisons.ValidCount)/$($exampleComparisons.ExpectedCount) passed"
+    }
+    if ($result.Contains("CommandBarFlyoutStateComparisons") -and $null -ne $result.CommandBarFlyoutStateComparisons) {
+        $stateComparisons = $result.CommandBarFlyoutStateComparisons
+        $notes = "$notes; CommandBarFlyout state parity: $($stateComparisons.ValidCount)/$($stateComparisons.ExpectedCount) passed"
+    }
+    if ($result.Contains("VisualStateComparisons") -and $null -ne $result.VisualStateComparisons) {
+        $visualStateComparisons = $result.VisualStateComparisons
+        $notes = "$notes; interactive visual-state parity: $($visualStateComparisons.ValidCount)/$($visualStateComparisons.ExpectedCount) passed"
+    }
+    if ($result.Contains("InteractionReferenceComparison")) {
+        $notes = "$notes; interaction delta: " + $result.InteractionReferenceComparison.MeanDelta
+    }
+    if ($result.Contains("InteractionCropReferenceComparison")) {
+        $notes = "$notes; crop delta: " + $result.InteractionCropReferenceComparison.MeanDelta
+    }
+    if ($result.Contains("InteractionCropSize")) {
+        $notes = "$notes; crop sizes: $($result.InteractionCropSize.ModernWpfWidth)x$($result.InteractionCropSize.ModernWpfHeight) vs $($result.InteractionCropSize.ReferenceWidth)x$($result.InteractionCropSize.ReferenceHeight)"
+    }
+    if ($result.Contains("Interaction") -and $null -ne $result.Interaction -and $result.Interaction.Status -ne "Passed") {
+        $notes = "$notes; interaction: " + $result.Interaction.Notes
+    }
+    if ($result.Contains("ReferenceBaselineNote")) {
+        $notes = "$notes; reference baseline: " + $result.ReferenceBaselineNote
+    }
+
+    $markdown.Add("| $($result.App) | $($result.Control) | $($result.Status) | $($result.NonBlank) | $($result.RequiredSampleElementFound) | $notes |")
+}
+$markdown | Set-Content -Path $reportMarkdown -Encoding UTF8
+
+$failed = @($results | Where-Object { $_.Status -eq "Failed" })
+Write-Host "Visual check artifacts: $runDir"
+Write-Host "Report: $reportMarkdown"
+if ($failed.Count -gt 0) {
+    $failed |
+        ForEach-Object {
+            [pscustomobject]@{
+                App = $_.App
+                Control = $_.Control
+                Status = $_.Status
+                LastException = $_.LastException
+            }
+        } |
+        Format-Table App, Control, Status, LastException -AutoSize
+    exit 1
+}

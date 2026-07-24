@@ -52,8 +52,20 @@
             return -1;
         }
 
+        public static void SetKeyboardModifiersOverride(System.Windows.Input.ModifierKeys? modifiers)
+        {
+            s_keyboardModifiersOverride = modifiers;
+        }
+
+        internal static System.Windows.Input.ModifierKeys GetKeyboardModifiers(System.Windows.Input.KeyboardDevice keyboardDevice)
+        {
+            return s_keyboardModifiersOverride ?? keyboardDevice.Modifiers;
+        }
+
         public static TypedEventHandler<RadioButtons, object> LayoutChanged;
 
         static RadioButtonsTestHooks s_testHooks;
+
+        static System.Windows.Input.ModifierKeys? s_keyboardModifiersOverride;
     }
 }

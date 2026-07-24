@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace ModernWpf.Controls
 {
-    public class ContentDialogButtonClickEventArgs : EventArgs
+    public sealed class ContentDialogButtonClickEventArgs : EventArgs
     {
         private ContentDialogButtonClickDeferral _deferral;
         private int _deferralCount;

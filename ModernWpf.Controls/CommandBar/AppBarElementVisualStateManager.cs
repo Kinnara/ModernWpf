@@ -2,7 +2,7 @@
 
 namespace ModernWpf.Controls
 {
-    internal class AppBarElementVisualStateManager : VisualStateManager
+    internal class AppBarElementVisualStateManager : ModernWpf.VisualStateManagerEx
     {
         internal bool CanChangeCommonState { get; set; }
 

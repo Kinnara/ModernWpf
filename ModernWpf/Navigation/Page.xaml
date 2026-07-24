@@ -9,7 +9,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Page">
                     <Border Background="{TemplateBinding Background}">
-                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                        <local:ContentPresenterEx
+                            Content="{TemplateBinding Content}"
+                            Foreground="{TemplateBinding Foreground}" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

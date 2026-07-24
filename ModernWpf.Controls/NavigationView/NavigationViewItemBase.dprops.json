@@ -1,0 +1,15 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "NavigationViewItemBase"
+  },
+  "properties": [
+    { "name": "IsSelected", "type": "bool", "default": "false", "changed": "OnIsSelectedPropertyChanged" },
+    { "name": "UseSystemFocusVisuals", "type": "bool", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty" }
+  ]
+}

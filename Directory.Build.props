@@ -1,8 +1,20 @@
 ﻿<Project>
   <PropertyGroup>
-    <Version>0.9.7-preview.2</Version>
+    <Version>1.0.0-preview.1</Version>
     <Authors>Yimeng Wu</Authors>
+    <Copyright>Copyright © 2019–2026 Yimeng Wu</Copyright>
     <Product>ModernWPF UI Library</Product>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>12.0</LangVersion>
+    <RepositoryUrl>https://github.com/Kinnara/ModernWpf</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>moderate</NuGetAuditLevel>
+    <WarningsAsErrors>$(WarningsAsErrors);NU1902;NU1903;NU1904</WarningsAsErrors>
   </PropertyGroup>
 </Project>

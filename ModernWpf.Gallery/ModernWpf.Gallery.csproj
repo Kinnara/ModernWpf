@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net462;net8.0-windows7.0;net10.0-windows7.0</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+    <GalleryDisplayName>ModernWPF Gallery</GalleryDisplayName>
+    <AssemblyTitle>$(GalleryDisplayName)</AssemblyTitle>
+    <Description>Control gallery for the ModernWPF UI Library.</Description>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Assets\**" />
+    <Compile Remove="Navigation\**" />
+    <Compile Remove="Samples\**" />
+    <Page Remove="Navigation\**" />
+    <Page Remove="Samples\**" />
+    <None Remove="Assets\**" />
+    <None Remove="Samples\Data\**" />
+    <None Remove="Samples\SampleCode\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
+    <ProjectReference Include="..\ModernWpf\ModernWpf.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\**" />
+    <Content Include="Samples\Data\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Samples\SampleCode\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

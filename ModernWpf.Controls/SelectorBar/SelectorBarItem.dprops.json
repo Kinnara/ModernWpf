@@ -1,0 +1,67 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "SelectorBarItem"
+  },
+  "properties": [
+    {
+      "name": "BackgroundSizing",
+      "type": "BackgroundSizing",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.BackgroundSizingProperty",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "BackgroundSizing.OuterBorderEdge"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty"
+    },
+    {
+      "name": "FocusVisualMargin",
+      "type": "Thickness",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty"
+    },
+    {
+      "name": "UseSystemFocusVisuals",
+      "type": "bool",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty"
+    },
+    {
+      "name": "Text",
+      "type": "string",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "string.Empty",
+      "changed": "OnVisualPropertyChanged"
+    },
+    {
+      "name": "Icon",
+      "type": "IconElement",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnVisualPropertyChanged"
+    },
+    {
+      "name": "Child",
+      "type": "UIElement",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnVisualPropertyChanged"
+    },
+    {
+      "name": "IsSelected",
+      "type": "bool",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "false",
+      "changed": "OnIsSelectedPropertyChanged"
+    }
+  ]
+}

@@ -546,7 +546,7 @@ namespace ModernWpf.Controls
                     }
                 }
 
-                IElementFactoryShim initElementFactory()
+                IElementFactory initElementFactory()
                 {
                     if (providedElementFactory == null)
                     {

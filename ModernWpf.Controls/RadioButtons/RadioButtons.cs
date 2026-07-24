@@ -1,23 +1,25 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
     [ContentProperty(nameof(Items))]
     [TemplatePart(Name = s_repeaterName, Type = typeof(ItemsRepeater))]
-    public class RadioButtons : Control
+    public partial class RadioButtons : Control
     {
         static RadioButtons()
         {
@@ -40,168 +42,6 @@ namespace ModernWpf.Controls
             IsEnabledChanged += OnIsEnabledChanged;
         }
 
-        #region ItemsSource
-
-        public static readonly DependencyProperty ItemsSourceProperty =
-            DependencyProperty.Register(
-                nameof(ItemsSource),
-                typeof(IEnumerable),
-                typeof(RadioButtons),
-                new FrameworkPropertyMetadata(OnItemsSourcePropertyChanged));
-
-        public IEnumerable ItemsSource
-        {
-            get => (IEnumerable)GetValue(ItemsSourceProperty);
-            set => SetValue(ItemsSourceProperty, value);
-        }
-
-        private static void OnItemsSourcePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((RadioButtons)d).UpdateItemsSource();
-        }
-
-        #endregion
-
-        #region Items
-
-        public static readonly DependencyProperty ItemsProperty =
-            DependencyProperty.Register(
-                nameof(Items),
-                typeof(IList),
-                typeof(RadioButtons),
-                new FrameworkPropertyMetadata(OnItemsPropertyChanged));
-
-        public IList Items
-        {
-            get => (IList)GetValue(ItemsProperty);
-        }
-
-        private static void OnItemsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((RadioButtons)d).UpdateItemsSource();
-        }
-
-        #endregion
-
-        #region ItemTemplate
-
-        public static readonly DependencyProperty ItemTemplateProperty =
-            DependencyProperty.Register(
-                nameof(ItemTemplate),
-                typeof(object),
-                typeof(RadioButtons),
-                new FrameworkPropertyMetadata(OnItemTemplateChanged));
-
-        public object ItemTemplate
-        {
-            get => GetValue(ItemTemplateProperty);
-            set => SetValue(ItemTemplateProperty, value);
-        }
-
-        private static void OnItemTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((RadioButtons)d).UpdateItemTemplate();
-        }
-
-        #endregion
-
-        #region SelectedIndex
-
-        public static readonly DependencyProperty SelectedIndexProperty =
-            DependencyProperty.Register(
-                nameof(SelectedIndex),
-                typeof(int),
-                typeof(RadioButtons),
-                new FrameworkPropertyMetadata(
-                    -1,
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Journal,
-                    OnSelectedIndexPropertyChanged));
-
-        public int SelectedIndex
-        {
-            get => (int)GetValue(SelectedIndexProperty);
-            set => SetValue(SelectedIndexProperty, value);
-        }
-
-        private static void OnSelectedIndexPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((RadioButtons)d).UpdateSelectedIndex();
-        }
-
-        #endregion
-
-        #region SelectedItem
-
-        public static readonly DependencyProperty SelectedItemProperty =
-            DependencyProperty.Register(
-                nameof(SelectedItem),
-                typeof(object),
-                typeof(RadioButtons),
-                new FrameworkPropertyMetadata(
-                    null,
-                    FrameworkPropertyMetadataOptions.BindsTwoWayByDefault,
-                    OnSelectedItemPropertyChanged));
-
-        public object SelectedItem
-        {
-            get => GetValue(SelectedItemProperty);
-            set => SetValue(SelectedItemProperty, value);
-        }
-
-        private static void OnSelectedItemPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((RadioButtons)d).UpdateSelectedItem();
-        }
-
-        #endregion
-
-        #region MaxColumns
-
-        public static readonly DependencyProperty MaxColumnsProperty =
-            DependencyProperty.Register(
-                nameof(MaxColumns),
-                typeof(int),
-                typeof(RadioButtons),
-                new FrameworkPropertyMetadata(1));
-
-        public int MaxColumns
-        {
-            get => (int)GetValue(MaxColumnsProperty);
-            set => SetValue(MaxColumnsProperty, value);
-        }
-
-        #endregion
-
-        #region Header
-
-        public static readonly DependencyProperty HeaderProperty =
-            ControlHelper.HeaderProperty.AddOwner(typeof(RadioButtons));
-
-        public object Header
-        {
-            get => GetValue(HeaderProperty);
-            set => SetValue(HeaderProperty, value);
-        }
-
-        #endregion
-
-        #region HeaderTemplate
-
-        public static readonly DependencyProperty HeaderTemplateProperty =
-            DependencyProperty.Register(
-                nameof(HeaderTemplate),
-                typeof(DataTemplate),
-                typeof(RadioButtons),
-                null);
-
-        public DataTemplate HeaderTemplate
-        {
-            get => (DataTemplate)GetValue(HeaderTemplateProperty);
-            set => SetValue(HeaderTemplateProperty, value);
-        }
-
-        #endregion
-
         public static readonly RoutedEvent SelectionChangedEvent =
             EventManager.RegisterRoutedEvent(
                 nameof(SelectionChanged),
@@ -215,6 +55,11 @@ namespace ModernWpf.Controls
             remove { RemoveHandler(SelectionChangedEvent, value); }
         }
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new RadioButtonsAutomationPeer(this);
+        }
+
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -225,11 +70,6 @@ namespace ModernWpf.Controls
                 m_repeater.ElementClearing -= OnRepeaterElementClearing;
                 m_repeater.ElementIndexChanged -= OnRepeaterElementIndexChanged;
                 m_repeater.Loaded -= OnRepeaterLoaded;
-
-                if (m_repeater.Layout is ColumnMajorUniformToLargestGridLayout layout)
-                {
-                    layout.ClearValue(ColumnMajorUniformToLargestGridLayout.MaxColumnsProperty);
-                }
             }
 
             m_repeater = GetTemplateChild(s_repeaterName) as ItemsRepeater;
@@ -242,17 +82,15 @@ namespace ModernWpf.Controls
                 m_repeater.ElementClearing += OnRepeaterElementClearing;
                 m_repeater.ElementIndexChanged += OnRepeaterElementIndexChanged;
                 m_repeater.Loaded += OnRepeaterLoaded;
-
-                if (m_repeater.Layout is ColumnMajorUniformToLargestGridLayout layout)
-                {
-                    BindingOperations.SetBinding(layout,
-                        ColumnMajorUniformToLargestGridLayout.MaxColumnsProperty,
-                        new Binding { Path = new PropertyPath(MaxColumnsProperty), Source = this });
-                }
             }
 
             UpdateItemsSource();
             UpdateVisualStateForIsEnabledChange();
+        }
+
+        private static bool ValidateMaxColumns(object value)
+        {
+            return (int)value > 0;
         }
 
         // When focus comes from outside the RadioButtons control we will put focus on the selected radio button.
@@ -292,7 +130,7 @@ namespace ModernWpf.Controls
                             }
 
                             // On RS3+ Selection follows focus unless control is held down.
-                            else if ((args.KeyboardDevice.Modifiers & ModifierKeys.Control) != ModifierKeys.Control)
+                            else if ((RadioButtonsTestHooks.GetKeyboardModifiers(args.KeyboardDevice) & ModifierKeys.Control) != ModifierKeys.Control)
                             {
                                 if (args.NewFocus is UIElement newFocusedElementAsUIE)
                                 {
@@ -333,6 +171,8 @@ namespace ModernWpf.Controls
 
         void OnChildPreviewKeyDown(object sender, KeyEventArgs args)
         {
+            var modifiers = RadioButtonsTestHooks.GetKeyboardModifiers(args.KeyboardDevice);
+
             switch (args.Key)
             {
                 case Key.Down:
@@ -353,26 +193,28 @@ namespace ModernWpf.Controls
                     break;
                 case Key.Right:
                     {
-                        if (args.OriginalSource is UIElement sourceElement)
+                        if (MoveFocusHorizontally(1, modifiers))
                         {
-                            if (sourceElement.MoveFocus(new TraversalRequest(FocusNavigationDirection.Right)))
-                            {
-                                args.Handled = true;
-                                return;
-                            }
+                            args.Handled = true;
+                            return;
+                        }
+
+                        if (args.OriginalSource is UIElement)
+                        {
                             args.Handled = HandleEdgeCaseFocus(false, args.OriginalSource);
                         }
                     }
                     break;
                 case Key.Left:
                     {
-                        if (args.OriginalSource is UIElement sourceElement)
+                        if (MoveFocusHorizontally(-1, modifiers))
                         {
-                            if (sourceElement.MoveFocus(new TraversalRequest(FocusNavigationDirection.Left)))
-                            {
-                                args.Handled = true;
-                                return;
-                            }
+                            args.Handled = true;
+                            return;
+                        }
+
+                        if (args.OriginalSource is UIElement)
+                        {
                             args.Handled = HandleEdgeCaseFocus(true, args.OriginalSource);
                         }
                     }
@@ -530,7 +372,16 @@ namespace ModernWpf.Controls
 
                     SetCurrentValue(SelectedIndexProperty, m_selectedIndex);
                     SetCurrentValue(SelectedItemProperty, newSelectedItem);
-                    RaiseEvent(new SelectionChangedEventArgs(SelectionChangedEvent, new[] { previousSelectedItem }, new[] { newSelectedItem }));
+
+                    // A missing selection is represented by an empty collection,
+                    // not by a collection containing a null item.
+                    var removedItems = previousSelectedItem != null
+                        ? new[] { previousSelectedItem }
+                        : Array.Empty<object>();
+                    var addedItems = newSelectedItem != null
+                        ? new[] { newSelectedItem }
+                        : Array.Empty<object>();
+                    RaiseEvent(new SelectionChangedEventArgs(SelectionChangedEvent, removedItems, addedItems));
                 }
                 finally
                 {
@@ -642,6 +493,91 @@ namespace ModernWpf.Controls
                 }
             }
             return false;
+        }
+
+        bool MoveFocusHorizontally(int direction, ModifierKeys modifiers)
+        {
+            var repeater = m_repeater;
+            if (repeater != null &&
+                Keyboard.FocusedElement is UIElement focusedElement)
+            {
+                var focusedIndex = repeater.GetElementIndex(focusedElement);
+                if (focusedIndex < 0)
+                {
+                    return false;
+                }
+
+                var focusedCenter = GetElementCenter(focusedElement);
+                Control bestControl = null;
+                double bestVerticalDistance = double.PositiveInfinity;
+                double bestHorizontalDistance = double.PositiveInfinity;
+
+                var itemCount = repeater.ItemsSourceView.Count;
+                for (int index = 0; index < itemCount; index++)
+                {
+                    if (index == focusedIndex)
+                    {
+                        continue;
+                    }
+
+                    if (repeater.TryGetElement(index) is not Control candidate ||
+                        !CanFocusCandidate(candidate))
+                    {
+                        continue;
+                    }
+
+                    var candidateCenter = GetElementCenter(candidate);
+                    var horizontalDelta = candidateCenter.X - focusedCenter.X;
+                    if ((direction > 0 && horizontalDelta <= 0) ||
+                        (direction < 0 && horizontalDelta >= 0))
+                    {
+                        continue;
+                    }
+
+                    var verticalDistance = Math.Abs(candidateCenter.Y - focusedCenter.Y);
+                    var horizontalDistance = Math.Abs(horizontalDelta);
+
+                    if (verticalDistance < bestVerticalDistance ||
+                        (Math.Abs(verticalDistance - bestVerticalDistance) < 0.5 &&
+                         horizontalDistance < bestHorizontalDistance))
+                    {
+                        bestControl = candidate;
+                        bestVerticalDistance = verticalDistance;
+                        bestHorizontalDistance = horizontalDistance;
+                    }
+                }
+
+                if (bestControl != null)
+                {
+                    if (bestControl.Focus())
+                    {
+                        if ((modifiers & ModifierKeys.Control) != ModifierKeys.Control &&
+                            bestControl is ToggleButton toggleButton)
+                        {
+                            toggleButton.SetCurrentValue(ToggleButton.IsCheckedProperty, true);
+                        }
+
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private Point GetElementCenter(UIElement element)
+        {
+            var elementAsFrameworkElement = element as FrameworkElement;
+            var width = elementAsFrameworkElement?.ActualWidth ?? 0;
+            var height = elementAsFrameworkElement?.ActualHeight ?? 0;
+            return element.TranslatePoint(new Point(width / 2, height / 2), this);
+        }
+
+        private bool CanFocusCandidate(Control control)
+        {
+            return control.IsEnabled &&
+                control.IsVisible &&
+                control.Focusable;
         }
 
         private void OnIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)

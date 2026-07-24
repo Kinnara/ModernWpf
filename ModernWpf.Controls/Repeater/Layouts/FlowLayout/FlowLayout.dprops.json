@@ -1,0 +1,19 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "FlowLayout"
+  },
+  "properties": [
+    { "name": "LineAlignment", "type": "FlowLayoutLineAlignment", "default": "FlowLayoutLineAlignment.Start", "changed": "OnPropertyChanged" },
+    { "name": "LineSpacing", "type": "double", "default": "0.0", "changed": "OnPropertyChanged" },
+    { "name": "MinItemSpacing", "type": "double", "default": "0.0", "changed": "OnPropertyChanged" },
+    { "name": "MinColumnSpacing", "type": "double", "default": "0.0", "changed": "OnPropertyChanged" },
+    { "name": "MinRowSpacing", "type": "double", "default": "0.0", "changed": "OnPropertyChanged" },
+    { "name": "Orientation", "type": "Orientation", "default": "Orientation.Horizontal", "changed": "OnPropertyChanged" }
+  ]
+}

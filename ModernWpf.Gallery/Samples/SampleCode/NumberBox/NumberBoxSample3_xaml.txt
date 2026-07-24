@@ -1,0 +1,1 @@
+﻿<NumberBox x:Name="FormattedNumberBox" Header="Enter an dollar amount:" PlaceholderText="0.00" />

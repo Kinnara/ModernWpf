@@ -1,0 +1,14 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public partial class",
+    "name": "NavigationViewItemPresenterTemplateSettings"
+  },
+  "properties": [
+    { "name": "IconWidth", "type": "double", "kind": "RegisterReadOnly", "metadata": "null" },
+    { "name": "SmallerIconWidth", "type": "double", "kind": "RegisterReadOnly", "metadata": "null" }
+  ]
+}

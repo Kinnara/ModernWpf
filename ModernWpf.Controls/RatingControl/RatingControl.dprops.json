@@ -1,0 +1,74 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "RatingControl"
+  },
+  "properties": [
+    {
+      "name": "Caption",
+      "type": "string",
+      "default": "string.Empty",
+      "changed": "OnCaptionPropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "InitialSetValue",
+      "type": "int",
+      "default": "1",
+      "changed": "OnInitialSetValuePropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "IsClearEnabled",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnIsClearEnabledPropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "IsReadOnly",
+      "type": "bool",
+      "default": "false",
+      "changed": "OnIsReadOnlyPropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "ItemInfo",
+      "type": "RatingItemInfo",
+      "changed": "OnItemInfoPropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "MaxRating",
+      "type": "int",
+      "default": "5",
+      "changed": "OnMaxRatingPropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "PlaceholderValue",
+      "type": "double",
+      "default": "-1d",
+      "changed": "OnPlaceholderValuePropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "Value",
+      "type": "double",
+      "default": "-1d",
+      "changed": "OnValuePropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "UseSystemFocusVisuals",
+      "type": "bool",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty"
+    }
+  ]
+}

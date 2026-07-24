@@ -4,15 +4,8 @@ using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public static class FlyoutService
+    public static partial class FlyoutService
     {
-        public static readonly DependencyProperty FlyoutProperty =
-            DependencyProperty.RegisterAttached(
-                "Flyout",
-                typeof(FlyoutBase),
-                typeof(FlyoutService),
-                new PropertyMetadata(OnFlyoutChanged));
-
         public static FlyoutBase GetFlyout(Button button)
         {
             return (FlyoutBase)button.GetValue(FlyoutProperty);

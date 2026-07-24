@@ -35,7 +35,6 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
     public partial class LayoutPanelTests : ApiTestBase
     {
         [ClassInitialize]
-        [TestProperty("Classification", "Integration")]
         public static void ClassInitialize(TestContext context) { }
 
         [TestMethod]

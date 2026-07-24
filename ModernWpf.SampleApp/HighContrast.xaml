@@ -1,9 +1,0 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:ui="http://schemas.modernwpf.com/2019">
-    <SolidColorBrush x:Key="AppBackgroundBrush" Color="{ui:ThemeResource SystemColorWindowColor}" />
-    <SolidColorBrush x:Key="AppContentBackgroundBrush" Color="{ui:ThemeResource SystemColorWindowColor}" />
-    <SolidColorBrush x:Key="RegionBrush" Color="Transparent" />
-    <SolidColorBrush x:Key="CustomThemeBrush" Color="Blue" />
-</ResourceDictionary>

@@ -11,10 +11,10 @@ namespace ModernWpf.Controls
     {
         public void UserElementFactory(object newValue)
         {
-            m_itemTemplateWrapper = newValue as IElementFactoryShim;
+            m_itemTemplateWrapper = newValue as IElementFactory;
             if (m_itemTemplateWrapper == null)
             {
-                // ItemTemplate set does not implement IElementFactoryShim. We also 
+                // ItemTemplate set does not implement IElementFactory. We also
                 // want to support DataTemplate and DataTemplateSelectors automagically.
                 if (newValue is DataTemplate dataTemplate)
                 {
@@ -160,7 +160,7 @@ namespace ModernWpf.Controls
             }
         }
 
-        IElementFactoryShim m_itemTemplateWrapper;
+        IElementFactory m_itemTemplateWrapper;
         NavigationViewItemBase m_settingsItem;
         List<NavigationViewItem> navigationViewItemPool = new List<NavigationViewItem>();
     }

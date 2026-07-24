@@ -9,13 +9,13 @@
         Title="MainWindow" Height="400" Width="300"
         ui:WindowHelper.UseModernWindowStyle="True">
     <Grid>
-        <ui:SimpleStackPanel Spacing="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <ui:StackPanelEx Spacing="20" HorizontalAlignment="Center" VerticalAlignment="Center">
             <ui:ProgressRing Width="60" Height="60" IsActive="{Binding IsActive, RelativeSource={RelativeSource AncestorType=Window}}" />
-            <ui:SimpleStackPanel HorizontalAlignment="Center" Spacing="12">
+            <ui:StackPanelEx HorizontalAlignment="Center" Spacing="12">
                 <Button Content="Toggle App Theme" HorizontalAlignment="Stretch" Click="ToggleAppThemeHandler" />
                 <Button Content="Toggle Window Theme" HorizontalAlignment="Stretch" Click="ToggleWindowThemeHandler" />
                 <Button Content="New Window" HorizontalAlignment="Stretch" Click="NewWindowHandler" />
-            </ui:SimpleStackPanel>
-        </ui:SimpleStackPanel>
+            </ui:StackPanelEx>
+        </ui:StackPanelEx>
     </Grid>
 </Window>

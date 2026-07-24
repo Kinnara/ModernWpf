@@ -5,11 +5,11 @@ using System;
 
 namespace ModernWpf.Controls
 {
-    public class SplitButtonClickEventArgs : EventArgs
+    public sealed class SplitButtonClickEventArgs : EventArgs
     {
     }
 
-    public class ToggleSplitButtonIsCheckedChangedEventArgs : EventArgs
+    public sealed class ToggleSplitButtonIsCheckedChangedEventArgs : EventArgs
     {
     }
 }

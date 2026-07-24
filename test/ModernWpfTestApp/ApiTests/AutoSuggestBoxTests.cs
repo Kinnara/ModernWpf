@@ -26,6 +26,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
     public class AutoSuggestBoxTests : ApiTestBase
     {
         [TestMethod]
+        [Ignore("Retired for 1.x: covered by ModernWpf.WinUI.Tests.AutoSuggestBoxApiTests.VerifyAutoSuggestBoxCornerRadius.")]
         public void VerifyAutoSuggestBoxCornerRadius()
         {
             /*

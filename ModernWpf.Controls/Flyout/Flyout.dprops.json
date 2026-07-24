@@ -1,0 +1,21 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "Flyout"
+  },
+  "properties": [
+    {
+      "name": "Content",
+      "type": "UIElement"
+    },
+    {
+      "name": "FlyoutPresenterStyle",
+      "type": "Style"
+    }
+  ]
+}

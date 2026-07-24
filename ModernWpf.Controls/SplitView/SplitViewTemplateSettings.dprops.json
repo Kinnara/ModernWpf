@@ -1,0 +1,18 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public sealed partial class",
+    "name": "SplitViewTemplateSettings"
+  },
+  "properties": [
+    { "name": "CompactPaneGridLength", "type": "GridLength", "kind": "RegisterReadOnly", "metadata": "null" },
+    { "name": "NegativeOpenPaneLength", "type": "double", "kind": "RegisterReadOnly", "metadata": "null" },
+    { "name": "NegativeOpenPaneLengthMinusCompactLength", "type": "double", "kind": "RegisterReadOnly", "metadata": "null" },
+    { "name": "OpenPaneGridLength", "type": "GridLength", "kind": "RegisterReadOnly", "metadata": "null" },
+    { "name": "OpenPaneLength", "type": "double", "kind": "RegisterReadOnly", "metadata": "null" },
+    { "name": "OpenPaneLengthMinusCompactLength", "type": "double", "kind": "RegisterReadOnly", "metadata": "null" }
+  ]
+}

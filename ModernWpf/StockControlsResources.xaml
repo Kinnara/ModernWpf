@@ -1,0 +1,54 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="Styles/Common.xaml" />
+        <ResourceDictionary Source="Styles/ContentControl.xaml" />
+        <ResourceDictionary Source="Styles/HeaderedContentControl.xaml" />
+        <ResourceDictionary Source="Styles/ItemsControl.xaml" />
+        <ResourceDictionary Source="Styles/UserControl.xaml" />
+        <ResourceDictionary Source="Styles/Calendar.xaml" />
+        <ResourceDictionary Source="Styles/CheckBox.xaml" />
+        <ResourceDictionary Source="Styles/ComboBox.xaml" />
+        <ResourceDictionary Source="Styles/ContextMenu.xaml" />
+        <ResourceDictionary Source="Styles/DataGrid.xaml" />
+        <ResourceDictionary Source="Styles/DatePicker.xaml" />
+        <ResourceDictionary Source="Styles/Expander.xaml" />
+        <ResourceDictionary Source="Styles/GridSplitter.xaml" />
+        <ResourceDictionary Source="Styles/GroupBox.xaml" />
+        <ResourceDictionary Source="Styles/GroupItem.xaml" />
+        <ResourceDictionary Source="Styles/Hyperlink.xaml" />
+        <ResourceDictionary Source="Styles/Label.xaml" />
+        <ResourceDictionary Source="Styles/ListBoxItem.xaml" />
+        <ResourceDictionary Source="Styles/ListBox.xaml" />
+        <ResourceDictionary Source="Styles/ListView.xaml" />
+        <ResourceDictionary Source="Styles/Menu.xaml" />
+        <ResourceDictionary Source="Styles/MenuItem.xaml" />
+        <ResourceDictionary Source="Styles/PasswordBox.xaml" />
+        <ResourceDictionary Source="Styles/ProgressBar.xaml" />
+        <ResourceDictionary Source="Styles/RadioButton.xaml" />
+        <ResourceDictionary Source="Styles/RepeatButton.xaml" />
+        <ResourceDictionary Source="Styles/ResizeGrip.xaml" />
+        <ResourceDictionary Source="Styles/RichTextBox.xaml" />
+        <ResourceDictionary Source="Styles/ScrollBar.xaml" />
+        <ResourceDictionary Source="Styles/ScrollViewer.xaml" />
+        <ResourceDictionary Source="Styles/Separator.xaml" />
+        <ResourceDictionary Source="Styles/Slider.xaml" />
+        <ResourceDictionary Source="Styles/StatusBar.xaml" />
+        <ResourceDictionary Source="Styles/TabControl.xaml" />
+        <ResourceDictionary Source="Styles/TextBox.xaml" />
+        <ResourceDictionary Source="Styles/TextStyles.xaml" />
+        <ResourceDictionary Source="Styles/Thumb.xaml" />
+        <ResourceDictionary Source="Styles/ToolTip.xaml" />
+        <ResourceDictionary Source="Styles/ToggleButton.xaml" />
+        <ResourceDictionary Source="Styles/ToolBar.xaml" />
+        <ResourceDictionary Source="Styles/TreeViewItem.xaml" />
+        <ResourceDictionary Source="Styles/TreeView.xaml" />
+        <ResourceDictionary Source="Styles/Page.xaml" />
+        <ResourceDictionary Source="Styles/Frame.xaml" />
+        <ResourceDictionary Source="Styles/NavigationWindow.xaml" />
+        <ResourceDictionary Source="Styles/Window.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

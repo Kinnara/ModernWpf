@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -15,7 +16,7 @@ namespace ModernWpf.Controls.Primitives
 
         internal bool SuppressFadeAnimation { get; set; }
 
-        internal event EventHandler Closing;
+        internal event EventHandler<CancelEventArgs> Closing;
 
         internal event EventHandler IsOpenChanged;
 
@@ -76,8 +77,6 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnIsOpenChanged()
         {
-            IsOpenChanged?.Invoke(this, EventArgs.Empty);
-
             if (!IsOpen)
             {
                 if (PopupAnimation == PopupAnimation.Fade && SuppressFadeAnimation)
@@ -85,8 +84,17 @@ namespace ModernWpf.Controls.Primitives
                     StopAnimation();
                 }
 
-                Closing?.Invoke(this, EventArgs.Empty);
+                var args = new CancelEventArgs();
+                Closing?.Invoke(this, args);
+
+                if (args.Cancel)
+                {
+                    SetCurrentValue(IsOpenProperty, true);
+                    return;
+                }
             }
+
+            IsOpenChanged?.Invoke(this, EventArgs.Empty);
         }
 
         private void StopAnimation()

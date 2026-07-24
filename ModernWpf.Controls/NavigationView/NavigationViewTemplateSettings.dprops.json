@@ -1,0 +1,22 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "NavigationViewTemplateSettings"
+  },
+  "properties": [
+    { "name": "TopPadding", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "OverflowButtonVisibility", "type": "Visibility", "kind": "RegisterReadOnly", "default": "Visibility.Collapsed" },
+    { "name": "PaneToggleButtonVisibility", "type": "Visibility", "kind": "RegisterReadOnly", "default": "Visibility.Visible" },
+    { "name": "BackButtonVisibility", "type": "Visibility", "kind": "RegisterReadOnly", "default": "Visibility.Collapsed" },
+    { "name": "TopPaneVisibility", "type": "Visibility", "kind": "RegisterReadOnly", "default": "Visibility.Collapsed" },
+    { "name": "LeftPaneVisibility", "type": "Visibility", "kind": "RegisterReadOnly", "default": "Visibility.Visible" },
+    { "name": "SingleSelectionFollowsFocus", "type": "bool", "kind": "RegisterReadOnly", "metadata": "null" },
+    { "name": "SmallerPaneToggleButtonWidth", "type": "double", "kind": "RegisterReadOnly", "metadata": "null" },
+    { "name": "PaneToggleButtonWidth", "type": "double", "kind": "RegisterReadOnly", "metadata": "null" },
+    { "name": "OpenPaneLength", "type": "double", "kind": "RegisterReadOnly", "default": "320.0" }
+  ]
+}

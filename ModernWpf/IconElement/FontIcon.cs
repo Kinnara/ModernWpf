@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
+using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
@@ -26,7 +28,7 @@ namespace ModernWpf.Controls
                 typeof(FontFamily),
                 typeof(FontIcon),
                 new FrameworkPropertyMetadata(
-                    new FontFamily("Segoe MDL2 Assets"),
+                    new FontFamily("Segoe Fluent Icons,Segoe MDL2 Assets"),
                     OnFontFamilyChanged));
 
         /// <summary>
@@ -86,11 +88,12 @@ namespace ModernWpf.Controls
         /// The identifier for the FontStyle dependency property.
         /// </summary>
         public static readonly DependencyProperty FontStyleProperty =
-            DependencyProperty.Register(
-                nameof(FontStyle),
-                typeof(FontStyle),
+            TextElement.FontStyleProperty.AddOwner(
                 typeof(FontIcon),
-                new FrameworkPropertyMetadata(FontStyles.Normal, OnFontStyleChanged));
+                new FrameworkPropertyMetadata(
+                    FontStyles.Normal,
+                    FrameworkPropertyMetadataOptions.Inherits,
+                    OnFontStyleChanged));
 
         /// <summary>
         /// Gets or sets the font style for the icon glyph.
@@ -119,11 +122,12 @@ namespace ModernWpf.Controls
         /// The identifier for the FontWeight dependency property.
         /// </summary>
         public static readonly DependencyProperty FontWeightProperty =
-            DependencyProperty.Register(
-                nameof(FontWeight),
-                typeof(FontWeight),
+            TextElement.FontWeightProperty.AddOwner(
                 typeof(FontIcon),
-                new FrameworkPropertyMetadata(FontWeights.Normal, OnFontWeightChanged));
+                new FrameworkPropertyMetadata(
+                    FontWeights.Normal,
+                    FrameworkPropertyMetadataOptions.Inherits,
+                    OnFontWeightChanged));
 
         /// <summary>
         /// Gets or sets the thickness of the icon glyph.
@@ -176,6 +180,50 @@ namespace ModernWpf.Controls
             }
         }
 
+        /// <summary>
+        /// Identifies the IsTextScaleFactorEnabled dependency property.
+        /// </summary>
+        public static readonly DependencyProperty IsTextScaleFactorEnabledProperty =
+            ControlHelper.IsTextScaleFactorEnabledProperty.AddOwner(typeof(FontIcon));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether automatic text enlargement reflects the system text size setting.
+        /// </summary>
+        /// <returns><see langword="true"/> if text scale factor is enabled; otherwise, <see langword="false"/>. The default is <see langword="true"/>.</returns>
+        public bool IsTextScaleFactorEnabled
+        {
+            get => (bool)GetValue(IsTextScaleFactorEnabledProperty);
+            set => SetValue(IsTextScaleFactorEnabledProperty, value);
+        }
+
+        /// <summary>
+        /// Identifies the MirroredWhenRightToLeft dependency property.
+        /// </summary>
+        public static readonly DependencyProperty MirroredWhenRightToLeftProperty =
+            DependencyProperty.Register(
+                nameof(MirroredWhenRightToLeft),
+                typeof(bool),
+                typeof(FontIcon),
+                new FrameworkPropertyMetadata(
+                    false,
+                    FrameworkPropertyMetadataOptions.AffectsRender,
+                    OnMirroredWhenRightToLeftChanged));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether the glyph is mirrored when the flow direction is right-to-left.
+        /// </summary>
+        /// <returns><see langword="true"/> to mirror the glyph in right-to-left flow; otherwise, <see langword="false"/>. The default is <see langword="false"/>.</returns>
+        public bool MirroredWhenRightToLeft
+        {
+            get => (bool)GetValue(MirroredWhenRightToLeftProperty);
+            set => SetValue(MirroredWhenRightToLeftProperty, value);
+        }
+
+        private static void OnMirroredWhenRightToLeftChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            ((FontIcon)d).ApplyMirroredWhenRightToLeft();
+        }
+
         private protected override void InitializeChildren()
         {
             _textBlock = new TextBlock
@@ -196,7 +244,19 @@ namespace ModernWpf.Controls
                 _textBlock.Foreground = VisualParentForeground;
             }
 
+            ApplyMirroredWhenRightToLeft();
+
             Children.Add(_textBlock);
+        }
+
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property == FlowDirectionProperty)
+            {
+                ApplyMirroredWhenRightToLeft();
+            }
         }
 
         private protected override void OnShouldInheritForegroundFromVisualParentChanged()
@@ -222,6 +282,26 @@ namespace ModernWpf.Controls
             }
         }
 
+        private void ApplyMirroredWhenRightToLeft()
+        {
+            if (_mirroringTransform == null && MirroredWhenRightToLeft && FlowDirection == FlowDirection.RightToLeft)
+            {
+                _mirroringTransform = new ScaleTransform();
+                RenderTransformOrigin = new Point(0.5, 0.5);
+                RenderTransform = _mirroringTransform;
+            }
+
+            // WinUI retains the source-created transform after RTL mirroring has
+            // first been activated and changes only its X scale thereafter.
+            if (_mirroringTransform != null)
+            {
+                _mirroringTransform.ScaleX = MirroredWhenRightToLeft && FlowDirection == FlowDirection.RightToLeft
+                    ? -1
+                    : 1;
+            }
+        }
+
         private TextBlock _textBlock;
+        private ScaleTransform _mirroringTransform;
     }
 }

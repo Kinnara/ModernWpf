@@ -4,7 +4,7 @@ using System.Windows.Data;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class OrConverter : IMultiValueConverter
+    internal class OrConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {

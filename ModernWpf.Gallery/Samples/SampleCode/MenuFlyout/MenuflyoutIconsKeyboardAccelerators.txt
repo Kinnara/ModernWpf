@@ -1,0 +1,27 @@
+<Button Content="Edit Options">
+    <Button.Flyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Text="Share">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xE72D;"/>
+                </MenuFlyoutItem.Icon>
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="S" Modifiers="Control"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem Text="Copy" Icon="Copy">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="C" Modifiers="Control"/>
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem Text="Delete" Icon="Delete">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="Delete" />
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutSeparator/>
+            <MenuFlyoutItem Text="Rename"/>
+            <MenuFlyoutItem Text="Select"/>
+        </MenuFlyout>
+    </Button.Flyout>
+</Button>

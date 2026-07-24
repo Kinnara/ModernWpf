@@ -1,0 +1,12 @@
+﻿<Button
+    Click="TestButton2Click"
+    Content="Show TeachingTip" />
+<TeachingTip
+    x:Name="TestButton2TeachingTip"
+    Title="This is the title"
+    ActionButtonContent="Action button"
+    CloseButtonContent="Close button"
+    IsLightDismissEnabled="True"
+    PlacementMargin="20"
+    PreferredPlacement="Auto"
+    Subtitle="And this is the subtitle" />

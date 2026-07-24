@@ -156,6 +156,26 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
+        #region TrackHeight
+
+        private static readonly DependencyPropertyKey TrackHeightPropertyKey =
+            DependencyProperty.RegisterReadOnly(
+                nameof(TrackHeight),
+                typeof(double),
+                typeof(ProgressBarTemplateSettings),
+                new PropertyMetadata(1.0));
+
+        public static readonly DependencyProperty TrackHeightProperty =
+            TrackHeightPropertyKey.DependencyProperty;
+
+        public double TrackHeight
+        {
+            get => (double)GetValue(TrackHeightProperty);
+            internal set => SetValue(TrackHeightPropertyKey, value);
+        }
+
+        #endregion
+
         #region EllipseAnimationEndPosition
 
         private static readonly DependencyPropertyKey EllipseAnimationEndPositionPropertyKey =

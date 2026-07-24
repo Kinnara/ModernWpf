@@ -9,66 +9,15 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls
 {
-    public class FlowLayout : VirtualizingLayout, IFlowLayoutAlgorithmDelegates
+    public partial class FlowLayout : VirtualizingLayout, IFlowLayoutAlgorithmDelegates
     {
         public FlowLayout()
         {
             LayoutId = "FlowLayout";
+            UpdateIndexBasedLayoutOrientation(Orientation.Horizontal);
         }
 
         #region Properties
-
-        public static readonly DependencyProperty LineAlignmentProperty =
-            DependencyProperty.Register(
-                nameof(LineAlignment),
-                typeof(FlowLayoutLineAlignment),
-                typeof(FlowLayout),
-                new PropertyMetadata(FlowLayoutLineAlignment.Start, OnPropertyChanged));
-
-        public FlowLayoutLineAlignment LineAlignment
-        {
-            get => (FlowLayoutLineAlignment)GetValue(LineAlignmentProperty);
-            set => SetValue(LineAlignmentProperty, value);
-        }
-
-        public static readonly DependencyProperty MinColumnSpacingProperty =
-            DependencyProperty.Register(
-                nameof(MinColumnSpacing),
-                typeof(double),
-                typeof(FlowLayout),
-                new PropertyMetadata(0.0, OnPropertyChanged));
-
-        public double MinColumnSpacing
-        {
-            get => (double)GetValue(MinColumnSpacingProperty);
-            set => SetValue(MinColumnSpacingProperty, value);
-        }
-
-        public static readonly DependencyProperty MinRowSpacingProperty =
-            DependencyProperty.Register(
-                nameof(MinRowSpacing),
-                typeof(double),
-                typeof(FlowLayout),
-                new PropertyMetadata(0.0, OnPropertyChanged));
-
-        public double MinRowSpacing
-        {
-            get => (double)GetValue(MinRowSpacingProperty);
-            set => SetValue(MinRowSpacingProperty, value);
-        }
-
-        public static readonly DependencyProperty OrientationProperty =
-            DependencyProperty.Register(
-                nameof(Orientation),
-                typeof(Orientation),
-                typeof(FlowLayout),
-                new PropertyMetadata(Orientation.Horizontal, OnPropertyChanged));
-
-        public Orientation Orientation
-        {
-            get => (Orientation)GetValue(OrientationProperty);
-            set => SetValue(OrientationProperty, value);
-        }
 
         private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
@@ -117,8 +66,8 @@ namespace ModernWpf.Controls
                 availableSize,
                 context,
                 true, /* isWrapping*/
-                MinItemSpacing,
-                LineSpacing,
+                EffectiveMinItemSpacing,
+                EffectiveLineSpacing,
                 uint.MaxValue /* maxItemsPerLine */,
                 OM.ScrollOrientation,
                 false /* disableVirtualization */,
@@ -144,7 +93,14 @@ namespace ModernWpf.Controls
             object source,
             NotifyCollectionChangedEventArgs args)
         {
-            GetFlowAlgorithm(context).OnItemsSourceChanged(source, args, context);
+            // Current WinUI permits a stray collection notification after the
+            // layout context has been uninitialized. Mirror its null-state guard
+            // instead of dereferencing a FlowLayoutState that no longer exists.
+            if (context.LayoutState is FlowLayoutState flowState)
+            {
+                flowState.FlowAlgorithm.OnItemsSourceChanged(source, args, context);
+            }
+
             // Always invalidate layout to keep the view accurate.
             InvalidateLayout();
         }
@@ -192,7 +148,7 @@ namespace ModernWpf.Controls
                 var lastExtent = flowState.FlowAlgorithm.LastExtent;
 
                 double averageItemsPerLine = 0;
-                double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + LineSpacing;
+                double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + EffectiveLineSpacing;
                 Debug.Assert(averageItemsPerLine != 0);
 
                 double extentMajorSize = OM.MajorSize(lastExtent) == 0 ? (itemsCount / averageItemsPerLine) * averageLineSize : OM.MajorSize(lastExtent);
@@ -228,7 +184,7 @@ namespace ModernWpf.Controls
                 var state = context.LayoutState;
                 var flowState = GetAsFlowState(state);
                 double averageItemsPerLine = 0;
-                double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + LineSpacing;
+                double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + EffectiveLineSpacing;
                 int lineIndex = (int)(targetIndex / averageItemsPerLine);
                 offset = lineIndex * averageLineSize + OM.MajorStart(flowState.FlowAlgorithm.LastExtent);
             }
@@ -258,7 +214,7 @@ namespace ModernWpf.Controls
                 var state = context.LayoutState;
                 var flowState = GetAsFlowState(state);
                 double averageItemsPerLine = 0;
-                double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + LineSpacing;
+                double averageLineSize = GetAverageLineInfo(availableSize, context, flowState, ref averageItemsPerLine) + EffectiveLineSpacing;
 
                 Debug.Assert(averageItemsPerLine != 0);
                 if (firstRealized != null)
@@ -282,8 +238,8 @@ namespace ModernWpf.Controls
                 }
                 else
                 {
-                    var lineSpacing = LineSpacing;
-                    var minItemSpacing = MinItemSpacing;
+                    var lineSpacing = EffectiveLineSpacing;
+                    var minItemSpacing = EffectiveMinItemSpacing;
                     // We dont have anything realized. make an educated guess.
                     int numLines = (int)Math.Ceiling(itemsCount / averageItemsPerLine);
                     extent =
@@ -426,6 +382,8 @@ namespace ModernWpf.Controls
                 //i.e. the properties are the inverse of each other.
                 ScrollOrientation scrollOrientation = (orientation == Orientation.Horizontal) ? ScrollOrientation.Vertical : ScrollOrientation.Horizontal;
                 OM.ScrollOrientation = scrollOrientation;
+
+                UpdateIndexBasedLayoutOrientation(orientation);
             }
             else if (property == MinColumnSpacingProperty)
             {
@@ -491,9 +449,27 @@ namespace ModernWpf.Controls
             return OM.MajorEnd(realizationWindow) >= OM.MajorStart(extent) && OM.MajorStart(realizationWindow) <= OM.MajorEnd(extent);
         }
 
-        private double LineSpacing => OM.ScrollOrientation == ScrollOrientation.Vertical ? m_minRowSpacing : m_minColumnSpacing;
+        private double EffectiveLineSpacing =>
+            HasNonDefaultValue(LineSpacingProperty) ?
+                LineSpacing :
+                OM.ScrollOrientation == ScrollOrientation.Vertical ? m_minRowSpacing : m_minColumnSpacing;
 
-        private double MinItemSpacing => OM.ScrollOrientation == ScrollOrientation.Vertical ? m_minColumnSpacing : m_minRowSpacing;
+        private double EffectiveMinItemSpacing =>
+            HasNonDefaultValue(MinItemSpacingProperty) ?
+                MinItemSpacing :
+                OM.ScrollOrientation == ScrollOrientation.Vertical ? m_minColumnSpacing : m_minRowSpacing;
+
+        private bool HasNonDefaultValue(DependencyProperty property)
+        {
+            return DependencyPropertyHelper.GetValueSource(this, property).BaseValueSource != BaseValueSource.Default;
+        }
+
+        private void UpdateIndexBasedLayoutOrientation(Orientation orientation)
+        {
+            SetIndexBasedLayoutOrientation(orientation == Orientation.Horizontal ?
+                IndexBasedLayoutOrientation.LeftToRight :
+                IndexBasedLayoutOrientation.TopToBottom);
+        }
 
         // Fields
         private double m_minRowSpacing;

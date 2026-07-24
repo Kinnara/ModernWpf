@@ -1,0 +1,24 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "InfoBadgeTemplateSettings"
+  },
+  "properties": [
+    {
+      "name": "InfoBadgeCornerRadius",
+      "type": "CornerRadius",
+      "metadata": "null",
+      "setterAccessibility": "internal"
+    },
+    {
+      "name": "IconElement",
+      "type": "IconElement",
+      "metadata": "null",
+      "setterAccessibility": "internal"
+    }
+  ]
+}

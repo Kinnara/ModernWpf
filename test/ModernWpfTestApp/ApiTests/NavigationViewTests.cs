@@ -732,6 +732,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         }
 
         [TestMethod]
+        [Ignore("Retired for 1.x: covered by ModernWpf.WinUI.Tests.NavigationViewApiTests.VerifyNavigationItemUIAType.")]
         public void VerifyNavigationItemUIAType()
         {
             RunOnUIThread.Execute(() =>

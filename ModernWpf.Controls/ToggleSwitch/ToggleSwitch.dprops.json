@@ -1,0 +1,26 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ToggleSwitch"
+  },
+  "properties": [
+    { "name": "Header", "type": "object", "kind": "AddOwner", "sourceProperty": "ControlHelper.HeaderProperty", "metadataType": "FrameworkPropertyMetadata", "default": "null", "options": [ "AffectsMeasure" ], "changed": "OnHeaderChanged" },
+    { "name": "HeaderTemplate", "type": "DataTemplate", "kind": "AddOwner", "sourceProperty": "ControlHelper.HeaderTemplateProperty", "metadataType": "FrameworkPropertyMetadata", "default": "null", "options": [ "AffectsMeasure" ], "changed": "OnHeaderTemplateChanged" },
+    { "name": "HeaderPlacement", "type": "ControlHeaderPlacement", "metadataType": "FrameworkPropertyMetadata", "default": "ControlHeaderPlacement.Top", "changed": "OnHeaderPlacementChanged" },
+    { "name": "IsOn", "type": "bool", "metadataType": "FrameworkPropertyMetadata", "default": "false", "options": [ "AffectsMeasure", "BindsTwoWayByDefault", "Journal" ], "changed": "OnIsOnChanged" },
+    { "name": "OffContent", "type": "object", "metadataType": "FrameworkPropertyMetadata", "default": "Strings.ToggleSwitchOff", "options": [ "AffectsMeasure" ], "changed": "OnOffContentChanged" },
+    { "name": "OffContentTemplate", "type": "DataTemplate", "metadataType": "FrameworkPropertyMetadata", "default": "null", "options": [ "AffectsMeasure" ] },
+    { "name": "OnContent", "type": "object", "metadataType": "FrameworkPropertyMetadata", "default": "Strings.ToggleSwitchOn", "changed": "OnOnContentChanged" },
+    { "name": "OnContentTemplate", "type": "DataTemplate", "metadataType": "FrameworkPropertyMetadata", "default": "null", "options": [ "AffectsMeasure" ] },
+    { "name": "UseSystemFocusVisuals", "type": "bool", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty" },
+    { "name": "FocusVisualMargin", "type": "Thickness", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty" },
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty" },
+    { "name": "TemplateSettings", "type": "ToggleSwitchTemplateSettings", "kind": "RegisterReadOnly", "metadata": "new PropertyMetadata(null)", "setterAccessibility": "none" }
+  ]
+}

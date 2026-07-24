@@ -2,13 +2,11 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using Dragablz;
-using ModernWpf.Controls.Primitives;
 using System;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 
 namespace DragablzSample
 {
@@ -88,27 +86,6 @@ namespace DragablzSample
             }
 
             return desiredSize;
-        }
-
-        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
-        {
-            base.PrepareContainerForItemOverride(element, item);
-
-            if (element is DragablzItem dragablzItem && item is TabItem tabItem)
-            {
-                dragablzItem.SetBinding(DragablzItemHelper.IconProperty,
-                    new Binding { Path = new PropertyPath(TabItemHelper.IconProperty), Source = tabItem });
-            }
-        }
-
-        protected override void ClearContainerForItemOverride(DependencyObject element, object item)
-        {
-            base.ClearContainerForItemOverride(element, item);
-
-            if (element is DragablzItem dragablzItem && item is TabItem)
-            {
-                dragablzItem.ClearValue(DragablzItemHelper.IconProperty);
-            }
         }
 
         protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)

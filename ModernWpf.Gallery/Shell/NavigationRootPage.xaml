@@ -1,0 +1,61 @@
+<UserControl
+    x:Class="ModernWpf.Gallery.Shell.NavigationRootPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    d:DesignHeight="820"
+    d:DesignWidth="1180"
+    mc:Ignorable="d">
+    <Grid>
+        <StackPanel
+            Width="1"
+            Height="1"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Focusable="False"
+            IsHitTestVisible="False"
+            Opacity="0">
+            <TextBlock
+                AutomationProperties.AutomationId="GalleryVisualTestCurrentRoute"
+                Text="home" />
+            <TextBlock
+                AutomationProperties.AutomationId="GalleryVisualTestReadyState"
+                Text="Starting" />
+            <TextBlock
+                AutomationProperties.AutomationId="GalleryVisualTestLastException" />
+            <Button
+                AutomationProperties.AutomationId="GalleryVisualTestRefreshArtifacts"
+                Click="OnVisualTestRefreshArtifactsClick"
+                Content="Refresh artifacts" />
+        </StackPanel>
+
+        <ui:NavigationView
+            AutomationProperties.Name="Navigation Pane"
+            IsBackButtonVisible="Collapsed"
+            IsPaneToggleButtonVisible="False"
+            IsSettingsVisible="True"
+            IsTabStop="False"
+            IsTitleBarAutoPaddingEnabled="False"
+            ItemInvoked="OnNavigationItemInvoked"
+            PaneDisplayMode="Auto">
+            <ui:NavigationView.Resources>
+                <Thickness x:Key="NavigationViewContentGridBorderThickness">0</Thickness>
+                <!-- WinUI uses -1,3; this port's client origin needs the existing +1,+1 WPF adapter. -->
+                <Thickness x:Key="NavigationViewPaneContentGridMargin">0,4</Thickness>
+                <CornerRadius x:Key="NavigationViewContentGridCornerRadius">0</CornerRadius>
+                <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+            </ui:NavigationView.Resources>
+            <Border
+                Margin="4,0,0,0"
+                Padding="24,16,24,0"
+                Background="{DynamicResource LayerFillColorDefaultBrush}"
+                BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8,0,0,0">
+                <Frame NavigationUIVisibility="Hidden" />
+            </Border>
+        </ui:NavigationView>
+    </Grid>
+</UserControl>

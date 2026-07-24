@@ -28,6 +28,12 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+            UpdateVisualState(false);
+        }
+
         #region IsActive
 
         public static readonly DependencyProperty IsActiveProperty =
@@ -258,6 +264,42 @@ namespace ModernWpf.Controls.Primitives
             {
                 UpdateIsReallyPressed();
             }
+            else if (e.Property == IsEnabledProperty ||
+                e.Property == IsMouseReallyOverProperty ||
+                e.Property == IsReallyPressedProperty)
+            {
+                UpdateVisualState(true);
+            }
+        }
+
+        private void UpdateVisualState(bool useTransitions)
+        {
+            string stateName = GetCommonStateName();
+            if (!VisualStateManager.GoToState(this, stateName, useTransitions) &&
+                this.GetTemplateRoot() is { } templateRoot)
+            {
+                VisualStateManager.GoToElementState(templateRoot, stateName, useTransitions);
+            }
+        }
+
+        private string GetCommonStateName()
+        {
+            if (!IsEnabled)
+            {
+                return "Disabled";
+            }
+
+            if (IsReallyPressed)
+            {
+                return "Pressed";
+            }
+
+            if (IsMouseReallyOver)
+            {
+                return "PointerOver";
+            }
+
+            return "Normal";
         }
 
         internal void DoClick()
