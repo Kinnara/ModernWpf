@@ -9,7 +9,7 @@
       Foreground="{DynamicResource TextFillColorPrimaryBrush}"
       d:DesignHeight="900"
       d:DesignWidth="800"
-      Title="What's New in ModernWpf">
+      Title="{StaticResource GalleryWhatsNewPageTitle}">
     <Page.Resources>
         <Style x:Key="UpdateCardStyle" TargetType="Border">
             <Setter Property="Padding" Value="16" />
@@ -69,7 +69,7 @@
                         </StackPanel>
                         <TextBlock
                             Margin="0,12,0,0"
-                            Text="ModernWpf is restarting active maintenance on a new 1.x line. The package name remains ModernWpfUI, so existing apps can move forward without changing package identity."
+                            Text="ModernWPF is restarting active maintenance on a new 1.x line. The package name remains ModernWpfUI, so existing apps can move forward without changing package identity."
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>
@@ -100,7 +100,7 @@
                             <TextBlock
                                 Margin="0,8,0,0"
                                 Opacity="0.7"
-                                Text="ModernWpf Fluent backport for existing .NET Framework WPF apps."
+                                Text="ModernWPF Fluent backport for existing .NET Framework WPF apps."
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
@@ -120,7 +120,7 @@
                             <TextBlock
                                 Margin="0,8,0,0"
                                 Opacity="0.7"
-                                Text="ModernWpf Fluent backport for the current LTS WPF target."
+                                Text="ModernWPF Fluent backport for the current LTS WPF target."
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
@@ -140,7 +140,7 @@
                             <TextBlock
                                 Margin="0,8,0,0"
                                 Opacity="0.7"
-                                Text="Official WPF platform Fluent resources for stock controls, plus ModernWpf controls."
+                                Text="Platform WPF Fluent resources for stock controls, plus ModernWPF controls."
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
@@ -152,7 +152,7 @@
                     pages:GalleryAutomation.HeadingLevel="Level2" />
                 <TextBlock
                     Margin="0,0,0,12"
-                    Text="Use the same application resource entry on every supported target. FluentControlsResources selects the ModernWpf backport or the official WPF Fluent theme as appropriate."
+                    Text="Use the same application resource entry on every supported target. FluentControlsResources selects the ModernWPF backport or the platform WPF Fluent theme as appropriate."
                     TextWrapping="Wrap" />
 
                 <controls:ControlExample
@@ -167,7 +167,7 @@
                         <TextBlock
                             Margin="0,4,0,0"
                             Opacity="0.7"
-                            Text="Theme-aware colors, typography, and ModernWpf resources."
+                            Text="Theme-aware colors, typography, and ModernWPF resources."
                             TextWrapping="Wrap" />
                         <Separator Margin="0,12" />
                         <TextBlock
@@ -200,13 +200,13 @@
                         <StackPanel>
                             <TextBlock
                                 Style="{StaticResource BodyStrongTextBlockStyle}"
-                                Text="WinUI-style shell"
+                                Text="ModernWPF shell"
                                 TextWrapping="Wrap"
                                 pages:GalleryAutomation.HeadingLevel="Level3" />
                             <TextBlock
                                 Margin="0,8,0,0"
                                 Opacity="0.7"
-                                Text="NavigationView-based left navigation, title bar, and search follow the WinUI Gallery structure."
+                                Text="NavigationView-based left navigation, title bar, and search form a cohesive ModernWPF sample shell."
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
@@ -225,7 +225,7 @@
                             <TextBlock
                                 Margin="0,8,0,0"
                                 Opacity="0.7"
-                                Text="Navigation focuses on controls and guidance that map cleanly to ModernWpf."
+                                Text="Navigation focuses on controls and guidance that map cleanly to ModernWPF."
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
@@ -244,7 +244,7 @@
                             <TextBlock
                                 Margin="0,8,0,0"
                                 Opacity="0.7"
-                                Text="Guidance distinguishes ModernWpf backport behavior from .NET 10 platform Fluent behavior."
+                                Text="Guidance distinguishes ModernWPF backport behavior from .NET 10 platform Fluent behavior."
                                 TextWrapping="Wrap" />
                         </StackPanel>
                     </Border>
@@ -261,7 +261,7 @@
                 <ItemsControl
                     x:Name="NewOrUpdatedSamples"
                     Margin="-10,-7,0,16"
-                    AutomationProperties.Name="New and updated ModernWpf samples"
+                    AutomationProperties.Name="{StaticResource GalleryNewSamplesAutomationName}"
                     ItemTemplate="{StaticResource NavigationCardTemplate}"
                     ItemsPanel="{StaticResource WrapPanelTemplate}"
                     ItemsSource="{Binding ViewModel.NewOrUpdatedItems}" />

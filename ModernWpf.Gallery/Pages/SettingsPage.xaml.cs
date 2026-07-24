@@ -31,34 +31,29 @@ namespace ModernWpf.Gallery.Pages
             _canApplyThemeSelection = true;
         }
 
-        private void Services_Click(object sender, RoutedEventArgs e)
+        private void Open_Repository(object sender, RoutedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://go.microsoft.com/fwlink/?LinkId=822631") { UseShellExecute = true });
+            OpenUrl(GalleryBranding.RepositoryUrl);
         }
 
-        private void Privacy_Click(object sender, RoutedEventArgs e)
+        private void Open_License(object sender, RoutedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://go.microsoft.com/fwlink/?LinkId=521839") { UseShellExecute = true });
+            OpenUrl(GalleryBranding.LicenseUrl);
         }
 
         private void Open_Issues(object sender, RoutedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://github.com/microsoft/WPF-Samples/issues/new") { UseShellExecute = true });
+            OpenUrl(GalleryBranding.NewIssueUrl);
         }
 
-        private void Open_ToolkitInformation(object sender, RoutedEventArgs e)
+        private void Open_BehaviorsInformation(object sender, RoutedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/CommunityToolkit.Mvvm/") { UseShellExecute = true });
+            OpenUrl(GalleryBranding.BehaviorsPackageUrl);
         }
 
-        private void Open_DIInformation(object sender, RoutedEventArgs e)
+        private static void OpenUrl(string url)
         {
-            Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/") { UseShellExecute = true });
-        }
-
-        private void Open_HostingInformation(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/Microsoft.Extensions.Hosting") { UseShellExecute = true });
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
 
         private void ThemeMode_SelectionChanged(object sender, SelectionChangedEventArgs e)

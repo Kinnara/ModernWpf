@@ -118,7 +118,7 @@ namespace ModernWpf.Gallery.Models
             { "Date and Calendar", "DateAndCalendar" },
             { "Status & Info", "StatusAndInfo" },
             { "Status and Info", "StatusAndInfo" },
-            { "ModernWpf controls", "ModernWpfControls" },
+            { GalleryBranding.ControlsGroupTitle, "ModernWpfControls" },
             { "Colors", "Color" },
             { "Icons", "Iconography" },
             { "RichTextEdit", "RichTextBox" }
@@ -786,9 +786,9 @@ namespace ModernWpf.Gallery.Models
                     "Controls for displaying and editing text"),
                 CreateGroup(
                     "ModernWpfControls",
-                    "ModernWpf controls",
+                    GalleryBranding.ControlsGroupTitle,
                     "WinUI-style controls and patterns implemented or adapted for WPF.",
-                    "pack://application:,,,/Assets/HomeHeaderTiles/Header-WinUI.png",
+                    "pack://application:,,,/Assets/ControlImages/NavigationView.png",
                     ModernWpfExtensionItemIds),
             };
         }

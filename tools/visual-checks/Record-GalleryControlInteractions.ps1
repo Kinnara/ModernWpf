@@ -39,7 +39,7 @@ if ($Build) {
 }
 
 if (!(Test-Path $GalleryExe)) {
-    throw "ModernWpf Gallery executable was not found at '$GalleryExe'. Build first or pass -GalleryExe."
+    throw "Gallery executable was not found at '$GalleryExe'. Build first or pass -GalleryExe."
 }
 
 $RecordWindowRenderedScript = Join-Path $PSScriptRoot "Record-WindowRendered.ps1"
@@ -539,7 +539,7 @@ function Find-WindowByProcessId([int]$processId) {
             }
 
             $score = [int64]($width * $height)
-            if ($window.Current.Name -eq "WPF Gallery") {
+            if ($window.Current.AutomationId -eq "ModernWpfGalleryMainWindow") {
                 $score += 1000000000
             }
 
@@ -7735,10 +7735,10 @@ foreach ($control in $Controls) {
         }
 
         $process = Start-Process -FilePath $GalleryExe -ArgumentList $args -PassThru
-        $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf Gallery window for $control" -Probe {
+        $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "Gallery window for $control" -Probe {
             $process.Refresh()
             if ($process.HasExited) {
-                throw "ModernWpf Gallery exited while loading $control."
+                throw "Gallery exited while loading $control."
             }
 
             Find-WindowByProcessId $process.Id
@@ -7783,7 +7783,7 @@ foreach ($control in $Controls) {
         $interactionResult = Invoke-RecordedInteraction $window $control $sampleElement $artifactDir
         $process.Refresh()
         if ($process.HasExited) {
-            throw "ModernWpf Gallery exited during $control interaction."
+            throw "Gallery exited during $control interaction."
         }
 
         Start-Sleep -Milliseconds 350

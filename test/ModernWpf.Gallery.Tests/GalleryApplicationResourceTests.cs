@@ -55,6 +55,26 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryBrandingResourcesUseTheAssemblyDisplayName()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var app = Application.Current;
+                Assert.IsNotNull(app);
+
+                Assert.AreEqual("ModernWPF Gallery", GalleryBranding.DisplayName);
+                Assert.AreEqual(GalleryBranding.DisplayName, app.FindResource("GalleryDisplayName"));
+                Assert.AreEqual(GalleryBranding.PreviewDisplayName, app.FindResource("GalleryPreviewDisplayName"));
+                Assert.AreEqual(GalleryBranding.VersionDisplay, app.FindResource("GalleryVersionDisplay"));
+                Assert.AreEqual(GalleryBranding.CopyrightNotice, app.FindResource("GalleryCopyrightNotice"));
+                Assert.AreEqual(GalleryBranding.CloneCommand, app.FindResource("GalleryCloneCommand"));
+                Assert.AreEqual(GalleryBranding.WhatsNewPageTitle, app.FindResource("GalleryWhatsNewPageTitle"));
+                Assert.AreEqual(GalleryBranding.NewSamplesAutomationName, app.FindResource("GalleryNewSamplesAutomationName"));
+                Assert.IsInstanceOfType(app.FindResource("ModernWpfLogoImage"), typeof(DrawingImage));
+            });
+        }
+
+        [TestMethod]
         public void GalleryMergesWpfGalleryPageStylesResourceDictionary()
         {
             WpfTestHost.Run(() =>
@@ -327,7 +347,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void HomeHeaderTilesMatchWpfGalleryReferenceSlotGeometry()
+        public void HomeHeaderTilesKeepReferenceGeometryAndExposeModernWpfDestinations()
         {
             WpfTestHost.Run(() =>
             {
@@ -357,8 +377,28 @@ namespace ModernWpf.Gallery.Tests
                     }
 
                     CollectionAssert.AreEqual(
-                        new[] { "Getting started", "Windows design", "WPF GitHub", "Code samples", "Partner Center" },
+                        new[] { "Getting started", "Controls reference", "GitHub repository", "NuGet package", "Report an issue" },
                         tiles.Select(GetHeaderTileAutomationName).ToArray());
+                    CollectionAssert.AreEqual(
+                        new[]
+                        {
+                            "Install ModernWpfUI and add the recommended resources.",
+                            "Browse styled and additional controls.",
+                            "Explore source code and project development.",
+                            "Install ModernWpfUI or review available versions.",
+                            "Report bugs, request features, and review known issues."
+                        },
+                        tiles.Select(tile => tile.Description).ToArray());
+                    CollectionAssert.AreEqual(
+                        new[]
+                        {
+                            "https://github.com/Kinnara/ModernWpf#quick-start",
+                            "https://github.com/Kinnara/ModernWpf/wiki/Controls",
+                            "https://github.com/Kinnara/ModernWpf",
+                            "https://www.nuget.org/packages/ModernWpfUI/",
+                            "https://github.com/Kinnara/ModernWpf/issues"
+                        },
+                        tiles.Select(tile => tile.Link).ToArray());
 
                     Assert.AreEqual("Scroll left", AutomationProperties.GetName((Button)tileGallery.FindName("ScrollBackButton")));
                     Assert.AreEqual("Scroll right", AutomationProperties.GetName((Button)tileGallery.FindName("ScrollForwardButton")));
@@ -421,7 +461,7 @@ namespace ModernWpf.Gallery.Tests
                 var tile = new HeaderTile
                 {
                     Title = "Getting started",
-                    Description = "An overview of app development options, tools, and samples."
+                    Description = "Install ModernWpfUI and add the recommended resources."
                 };
 
                 RenderElement(tile, () =>

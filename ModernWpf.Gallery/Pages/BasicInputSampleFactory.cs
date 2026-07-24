@@ -249,8 +249,8 @@ namespace ModernWpf.Gallery.Pages
             button = new Mux.HyperlinkButton
             {
                 Name = "Control1",
-                Content = "Microsoft home page",
-                NavigateUri = new Uri("https://www.microsoft.com")
+                Content = "ModernWPF repository",
+                NavigateUri = new Uri(GalleryBranding.RepositoryUrl)
             };
             GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("HyperlinkButton", "HyperlinkButton"));
             panel.Children.Add(button);

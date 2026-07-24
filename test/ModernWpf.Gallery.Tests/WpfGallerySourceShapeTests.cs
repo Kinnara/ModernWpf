@@ -703,6 +703,13 @@ namespace ModernWpf.Gallery.Tests
                 return true;
             }
 
+            if (relativePath.EndsWith("SettingsPage.xaml", StringComparison.OrdinalIgnoreCase))
+            {
+                // Settings is intentionally project-owned: branding, dependencies, legal
+                // links, and accessibility text must describe ModernWPF rather than Microsoft.
+                return true;
+            }
+
             if (relativePath.EndsWith(@"DesignGuidance\IconsPage.xaml", StringComparison.OrdinalIgnoreCase))
             {
                 return token == "Click=\"Open_IconDesignGuidelinesPage\"" ||
@@ -1105,8 +1112,8 @@ namespace ModernWpf.Gallery.Tests
                 "private string _recommendedResourcesXamlCode = _recommendedResourcesXamlUsage;",
                 "private readonly Action<object> _navigate;",
                 "public WhatsNewPageViewModel(Action<object> navigate)",
-                "\"What's new in ModernWpf\"",
-                "\"See the current ModernWpf direction, supported targets, and gallery improvements.\"",
+                "GalleryBranding.WhatsNewTitle",
+                "GalleryBranding.WhatsNewDescription",
                 "_navigate = navigate;",
                 "NavigateCommand = new GalleryCommand(Navigate);",
                 "public IReadOnlyList<GalleryItem> NewOrUpdatedItems",
@@ -2465,18 +2472,57 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void GalleryProjectKeepsWpfGalleryApplicationIconShape()
+        public void GalleryUsesModernWpfOwnedWindowIdentity()
         {
             var project = ReadRepoFile(
                 "ModernWpf.Gallery",
                 "ModernWpf.Gallery.csproj");
+            var appXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "App.xaml");
+            var mainWindowXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "MainWindow.xaml");
 
-            StringAssert.Contains(
+            AssertContainsInOrder(
                 project,
-                "<ApplicationIcon>Assets\\AppIcons\\WPFGallery.ico</ApplicationIcon>");
+                "<GalleryDisplayName>ModernWPF Gallery</GalleryDisplayName>",
+                "<AssemblyTitle>$(GalleryDisplayName)</AssemblyTitle>");
             Assert.IsFalse(
-                project.Contains("<ApplicationIcon>Assets\\Tiles\\GalleryIcon.ico</ApplicationIcon>", StringComparison.Ordinal),
-                "The Gallery executable icon should use the official WPF Gallery AppIcons asset instead of the legacy tile icon.");
+                project.Contains("WPFGallery", StringComparison.OrdinalIgnoreCase),
+                "The Gallery project must not use the official WPF Gallery icon.");
+            StringAssert.Contains(appXaml, "<DrawingImage x:Key=\"ModernWpfLogoImage\">");
+            StringAssert.Contains(mainWindowXaml, "Icon=\"{StaticResource ModernWpfLogoImage}\"");
+            Assert.IsFalse(
+                mainWindowXaml.Contains("Assets/AppIcons", StringComparison.OrdinalIgnoreCase),
+                "The Gallery title bar must use the shared ModernWPF-owned mark.");
+        }
+
+        [TestMethod]
+        public void GalleryBrandingUsesAssemblyTitleAndSharedApplicationResources()
+        {
+            var source = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "GalleryBranding.cs");
+            var appXaml = ReadRepoFile(
+                "ModernWpf.Gallery",
+                "App.xaml");
+
+            AssertContainsInOrder(
+                source,
+                "public static string DisplayName { get; } = GetAssemblyTitle();",
+                "public static string BrandName { get; } = GetBrandName(DisplayName);",
+                "public static string PreviewDisplayName { get; } = DisplayName + \" Preview\";",
+                "public static string ControlsGroupTitle { get; } = BrandName + \" controls\";");
+            AssertContainsInOrder(
+                appXaml,
+                "<x:Static x:Key=\"GalleryDisplayName\" Member=\"local:GalleryBranding.DisplayName\" />",
+                "<x:Static x:Key=\"GalleryPreviewDisplayName\" Member=\"local:GalleryBranding.PreviewDisplayName\" />",
+                "<x:Static x:Key=\"GalleryVersionDisplay\" Member=\"local:GalleryBranding.VersionDisplay\" />",
+                "<x:Static x:Key=\"GalleryCopyrightNotice\" Member=\"local:GalleryBranding.CopyrightNotice\" />",
+                "<x:Static x:Key=\"GalleryCloneCommand\" Member=\"local:GalleryBranding.CloneCommand\" />",
+                "<x:Static x:Key=\"GalleryWhatsNewPageTitle\" Member=\"local:GalleryBranding.WhatsNewPageTitle\" />",
+                "<x:Static x:Key=\"GalleryNewSamplesAutomationName\" Member=\"local:GalleryBranding.NewSamplesAutomationName\" />");
         }
 
         [TestMethod]
@@ -2489,7 +2535,7 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 source,
-                "private string _applicationTitle = \"WPF Gallery\";",
+                "private string _applicationTitle = GalleryBranding.DisplayName;",
                 "private readonly Action _backAction;",
                 "private readonly Action _settingsAction;",
                 "private readonly Action _forwardAction;",
@@ -5683,7 +5729,7 @@ namespace ModernWpf.Gallery.Tests
                 "$width = $rect.Right - $rect.Left",
                 "$height = $rect.Bottom - $rect.Top",
                 "if ($width -lt 400 -or $height -lt 300)",
-                "if ($window.Current.Name -eq \"WPF Gallery\")",
+                "if ($window.Current.AutomationId -eq \"ModernWpfGalleryMainWindow\")",
                 "if ($window.Current.ClassName -eq \"Window\")",
                 "if ($null -eq $bestWindow)",
                 "[System.Diagnostics.Process]::GetProcessById($processId)",
@@ -7459,7 +7505,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void SharedTileGalleryKeepsOfficialDeclarationSourceShape()
+        public void SharedTileGalleryKeepsReferenceLayoutAndModernWpfDestinations()
         {
             var xaml = ReadRepoFile(
                 "ModernWpf.Gallery",
@@ -7472,6 +7518,7 @@ namespace ModernWpf.Gallery.Tests
                 "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"",
                 "xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"",
                 "xmlns:local=\"clr-namespace:ModernWpf.Gallery.Controls\"",
+                "xmlns:gallery=\"clr-namespace:ModernWpf.Gallery\"",
                 "mc:Ignorable=\"d\"",
                 "d:DesignHeight=\"450\" d:DesignWidth=\"800\">",
                 "<Style x:Key=\"TileGalleryScrollButtonStyle\" BasedOn=\"{StaticResource DefaultButtonStyle}\" TargetType=\"Button\">");
@@ -7487,32 +7534,34 @@ namespace ModernWpf.Gallery.Tests
                 xaml,
                 "<local:HeaderTile",
                 "Title=\"Getting started\"",
-                "Description=\"An overview of app development options, tools, and samples.\"",
-                "Link=\"https://learn.microsoft.com/windows/apps/get-started/\"",
+                "Description=\"Install ModernWpfUI and add the recommended resources.\"",
+                "Link=\"{x:Static gallery:GalleryBranding.QuickStartUrl}\"",
                 "Margin=\"24 0 6 0\">",
-                "Source=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/AppIcons/WPFGallery_48px.png\"");
+                "<Image Source=\"{StaticResource ModernWpfLogoImage}\" />");
             AssertContainsInOrder(
                 xaml,
-                "Title=\"Windows design\"",
-                "Description=\"Design guidelines and toolkits for creating native app experiences.\"",
-                "Link=\"https://learn.microsoft.com/windows/apps/design/\">",
-                "Source=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/HomeHeaderTiles/Header-WindowsDesign.png\"");
+                "Title=\"Controls reference\"",
+                "Description=\"Browse styled and additional controls.\"",
+                "Link=\"{x:Static gallery:GalleryBranding.ControlsReferenceUrl}\">",
+                "<Viewbox Width=\"48\" Height=\"48\">",
+                "Text=\"&#xE8F1;\" />");
             AssertContainsInOrder(
                 xaml,
-                "Title=\"WPF GitHub\"",
-                "Description=\"A robust UI framework for your desktop applications.\"",
-                "Link=\"https://github.com/dotnet/wpf\">",
+                "Title=\"GitHub repository\"",
+                "Description=\"Explore source code and project development.\"",
+                "Link=\"{x:Static gallery:GalleryBranding.RepositoryUrl}\">",
                 "<Viewbox Height=\"52\" Margin=\"-20 0 0 0\">",
                 "<Path Data=\"{StaticResource GitHubIconGeometry}\" Fill=\"{DynamicResource TextFillColorPrimaryBrush}\"/>",
-                "Title=\"Code samples\"",
-                "Description=\"Find WPF samples that demonstrate specific tasks, features, and APIs.\"",
-                "Link=\"https://github.com/microsoft/WPF-Samples\">",
-                "<Viewbox Height=\"52\" Margin=\"-20 0 0 0\">",
-                "<Path Data=\"{StaticResource GitHubIconGeometry}\" Fill=\"{DynamicResource TextFillColorPrimaryBrush}\"/>",
-                "Title=\"Partner Center\"",
-                "Description=\"Upload your app to the Store.\"",
-                "Link=\"https://developer.microsoft.com/windows/\">",
-                "Source=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/HomeHeaderTiles/Header-Store.dark.png\"");
+                "Title=\"NuGet package\"",
+                "Description=\"Install ModernWpfUI or review available versions.\"",
+                "Link=\"{x:Static gallery:GalleryBranding.NuGetPackageUrl}\">",
+                "<Viewbox Width=\"48\" Height=\"48\">",
+                "Text=\"&#xE7B8;\" />",
+                "Title=\"Report an issue\"",
+                "Description=\"Report bugs, request features, and review known issues.\"",
+                "Link=\"{x:Static gallery:GalleryBranding.IssuesUrl}\">",
+                "<Viewbox Width=\"48\" Height=\"48\">",
+                "Text=\"&#xEBE8;\" />");
             AssertContainsInOrder(
                 xaml,
                 "<Button x:Name=\"ScrollBackButton\"",
@@ -7762,20 +7811,20 @@ namespace ModernWpf.Gallery.Tests
                 "<ScrollViewer >\n\n        <Grid Style=\"{StaticResource DashboardPageRootStyle}\">");
             StringAssert.Contains(
                 normalizedXaml,
-                "<Border CornerRadius=\"8,0,0,0\"\n                    Grid.RowSpan=\"2\">\n                <Border.Background>\n                    <ImageBrush ImageSource=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.light.png\" Stretch=\"UniformToFill\" />");
+                "<Border CornerRadius=\"8,0,0,0\"\n                    Grid.RowSpan=\"2\">\n                <Border.Background>\n                    <LinearGradientBrush StartPoint=\"0,0\" EndPoint=\"1,1\">");
             AssertContainsInOrder(
                 xaml,
                 "<Border CornerRadius=\"8,0,0,0\"",
                 "Grid.RowSpan=\"2\"",
                 "<StackPanel Margin=\"36,48,0,0\" VerticalAlignment=\"Top\" TextElement.Foreground=\"Black\">",
-                "<TextBlock Style=\"{StaticResource SubtitleTextBlockStyle}\" Text=\".NET 10\" Margin=\"0,0,0,2\" pages:GalleryAutomation.HeadingLevel=\"Level1\" />",
-                "<TextBlock Style=\"{StaticResource TitleLargeTextBlockStyle}\" Text=\"WPF Gallery\" Margin=\"0,0,0,8\" pages:GalleryAutomation.HeadingLevel=\"Level1\" />",
+                "<TextBlock Style=\"{StaticResource SubtitleTextBlockStyle}\" Text=\"{StaticResource GalleryVersionDisplay}\" Margin=\"0,0,0,2\" pages:GalleryAutomation.HeadingLevel=\"Level1\" />",
+                "<TextBlock Style=\"{StaticResource TitleLargeTextBlockStyle}\" Text=\"{StaticResource GalleryDisplayName}\" Margin=\"0,0,0,8\" pages:GalleryAutomation.HeadingLevel=\"Level1\" />",
                 "<Border Background=\"Transparent\" CornerRadius=\"8,8,8,8\" MaxWidth=\"300\" HorizontalAlignment=\"Left\">",
                 "<TextBlock",
                 "MaxWidth=\"300\"",
                 "Margin=\"0,0,0,0\"",
                 "Style=\"{StaticResource BodyStrongTextBlockStyle}\"",
-                "Text=\"A collection of controls, guidelines and samples to build great WPF applications\"",
+                "Text=\"Explore ModernWPF controls, themes, guidance, and samples for WPF applications\"",
                 "TextAlignment=\"Left\"",
                 "HorizontalAlignment=\"Left\"",
                 "Padding=\"0,8,12,8\"/>");
@@ -7838,7 +7887,7 @@ namespace ModernWpf.Gallery.Tests
                 "Foreground=\"{DynamicResource TextFillColorPrimaryBrush}\"",
                 "d:DesignHeight=\"900\"",
                 "d:DesignWidth=\"800\"",
-                "Title=\"What's New in ModernWpf\">");
+                "Title=\"{StaticResource GalleryWhatsNewPageTitle}\">");
             StringAssert.Contains(
                 xaml,
                 "<Style x:Key=\"UpdateCardStyle\" TargetType=\"Border\">");
@@ -7877,7 +7926,7 @@ namespace ModernWpf.Gallery.Tests
                 "XamlCode=\"{Binding ViewModel.RecommendedResourcesXamlCode}\"",
                 "Text=\"Gallery updates\"",
                 "x:Name=\"WinUiShellUpdateCard\"",
-                "Text=\"WinUI-style shell\"",
+                "Text=\"ModernWPF shell\"",
                 "x:Name=\"CuratedSamplesUpdateCard\"",
                 "Text=\"Curated sample set\"",
                 "x:Name=\"TargetAwareUpdateCard\"",
@@ -7995,10 +8044,13 @@ namespace ModernWpf.Gallery.Tests
                 "<TextBlock Text=\"About\" FontWeight=\"SemiBold\" Margin=\"10\" FontSize=\"14\"/>");
             StringAssert.Contains(
                 xaml,
-                "<TextBlock Opacity=\"0.7\" Style=\"{StaticResource CaptionTextBlockStyle}\">&#xA9; 2025 Microsoft. All rights reserved.</TextBlock>");
+                "<TextBlock Opacity=\"0.7\" Style=\"{StaticResource CaptionTextBlockStyle}\" Text=\"{StaticResource GalleryVersionDisplay}\" />");
             StringAssert.Contains(
                 xaml,
-                "<TextBox Grid.Column=\"2\" Style=\"{StaticResource SelectionTextBox}\" Text=\"git clone https://github.com/microsoft/WPF-Samples.git\" Focusable=\"False\"/>");
+                "<TextBlock Opacity=\"0.7\" Style=\"{StaticResource CaptionTextBlockStyle}\" Text=\"{StaticResource GalleryCopyrightNotice}\" />");
+            StringAssert.Contains(
+                xaml,
+                "<TextBox Grid.Column=\"2\" Style=\"{StaticResource SelectionTextBox}\" Text=\"{StaticResource GalleryCloneCommand}\" Focusable=\"False\"/>");
             StringAssert.Contains(
                 xaml,
                 "<Button AutomationProperties.Name=\"Open Issues\" Grid.Column=\"2\" Padding=\"8\" FocusManager.IsFocusScope=\"True\" Click=\"Open_Issues\">");
@@ -8007,16 +8059,16 @@ namespace ModernWpf.Gallery.Tests
                 "<TextBlock FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xe8a7;\" />");
             StringAssert.Contains(
                 xaml,
-                "<GroupBox Grid.Row=\"2\" AutomationProperties.Name=\"Dependencies and References\" BorderThickness=\"0\">");
+                "<GroupBox Grid.Row=\"2\" AutomationProperties.Name=\"Components and dependency\" BorderThickness=\"0\">");
             StringAssert.Contains(
                 xaml,
-                "<Hyperlink Click=\"Open_DIInformation\" AutomationProperties.Name=\"Link to Dependency Injection NuGet Package\">Microsoft.Extensions.DependencyInjection</Hyperlink>");
+                "<Hyperlink Click=\"Open_Repository\">ModernWPF UI Library</Hyperlink>");
             StringAssert.Contains(
                 xaml,
-                "<Hyperlink Click=\"Open_HostingInformation\" AutomationProperties.Name=\"Link to .NET Generic Host Package\">Microsoft.Extensions.Hosting</Hyperlink>");
+                "<Hyperlink Click=\"Open_BehaviorsInformation\" AutomationProperties.Name=\"Link to Microsoft XAML Behaviors WPF NuGet package\">Microsoft.Xaml.Behaviors.Wpf</Hyperlink>");
             StringAssert.Contains(
                 xaml,
-                "<GroupBox Grid.Row=\"3\" AutomationProperties.Name=\"THIS CODE AND INFORMATION IS PROVIDED &#x2018;AS IS&#x2019; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.\" BorderThickness=\"0\">");
+                "<GroupBox Grid.Row=\"3\" AutomationProperties.Name=\"ModernWPF license and project information\" BorderThickness=\"0\">");
         }
 
         [TestMethod]
@@ -10326,12 +10378,12 @@ namespace ModernWpf.Gallery.Tests
                 "<controls:ControlExample",
                 "Margin=\"10\"",
                 "HeaderText=\"A Hyperlink with in-app navigation handling\"",
-                "XamlCode=\"&lt;TextBlock Margin=&quot;20&quot;&gt;&#10;    &lt;Hyperlink NavigateUri=&quot;https://www.microsoft.com&quot; RequestNavigate=&quot;Hyperlink_RequestNavigate&quot;&gt;&#10;        Hyperlink&#10;    &lt;/Hyperlink&gt;&#10;&lt;/TextBlock&gt;\"",
+                "XamlCode=\"&lt;TextBlock Margin=&quot;20&quot;&gt;&#10;    &lt;Hyperlink NavigateUri=&quot;https://github.com/Kinnara/ModernWpf&quot; RequestNavigate=&quot;Hyperlink_RequestNavigate&quot;&gt;&#10;        ModernWPF repository&#10;    &lt;/Hyperlink&gt;&#10;&lt;/TextBlock&gt;\"",
                 "CSharpCode=\"private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)",
                 "<StackPanel>",
                 "<TextBlock Margin=\"20\">",
-                "<Hyperlink NavigateUri=\"https://www.microsoft.com\" RequestNavigate=\"Hyperlink_RequestNavigate\">",
-                "Hyperlink",
+                "<Hyperlink NavigateUri=\"https://github.com/Kinnara/ModernWpf\" RequestNavigate=\"Hyperlink_RequestNavigate\">",
+                "ModernWPF repository",
                 "</Hyperlink>",
                 "x:Name=\"NavigationStatusText\"",
                 "AutomationProperties.Name=\"Hyperlink navigation status\"",
@@ -10592,7 +10644,7 @@ namespace ModernWpf.Gallery.Tests
                 "<Image",
                 "Height=\"200\"",
                 "HorizontalAlignment=\"Left\"",
-                "Source=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.png\" />");
+                "Source=\"pack://application:,,,/ModernWpf.Gallery;component/Assets/SampleMedia/rainier.jpg\" />");
         }
 
         [TestMethod]

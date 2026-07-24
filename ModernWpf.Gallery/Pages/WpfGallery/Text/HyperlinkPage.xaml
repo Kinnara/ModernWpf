@@ -22,12 +22,12 @@
                     <controls:ControlExample
                         Margin="10"
                         HeaderText="A Hyperlink with in-app navigation handling"
-                        XamlCode="&lt;TextBlock Margin=&quot;20&quot;&gt;&#10;    &lt;Hyperlink NavigateUri=&quot;https://www.microsoft.com&quot; RequestNavigate=&quot;Hyperlink_RequestNavigate&quot;&gt;&#10;        Hyperlink&#10;    &lt;/Hyperlink&gt;&#10;&lt;/TextBlock&gt;"
+                        XamlCode="&lt;TextBlock Margin=&quot;20&quot;&gt;&#10;    &lt;Hyperlink NavigateUri=&quot;https://github.com/Kinnara/ModernWpf&quot; RequestNavigate=&quot;Hyperlink_RequestNavigate&quot;&gt;&#10;        ModernWPF repository&#10;    &lt;/Hyperlink&gt;&#10;&lt;/TextBlock&gt;"
                         CSharpCode="private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)&#10;{&#10;    NavigationStatusText.Text = $&quot;Navigation request: {e.Uri.AbsoluteUri}&quot;;&#10;    NavigationStatusText.Visibility = Visibility.Visible;&#10;    e.Handled = true;&#10;}">
                         <StackPanel>
                             <TextBlock Margin="20">
-                                <Hyperlink NavigateUri="https://www.microsoft.com" RequestNavigate="Hyperlink_RequestNavigate">
-                                    Hyperlink
+                                <Hyperlink NavigateUri="https://github.com/Kinnara/ModernWpf" RequestNavigate="Hyperlink_RequestNavigate">
+                                    ModernWPF repository
                                 </Hyperlink>
                             </TextBlock>
                             <TextBlock

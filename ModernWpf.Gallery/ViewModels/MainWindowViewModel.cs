@@ -6,7 +6,7 @@ namespace ModernWpf.Gallery.ViewModels
 {
     public sealed class MainWindowViewModel : INotifyPropertyChanged
     {
-        private string _applicationTitle = "WPF Gallery";
+        private string _applicationTitle = GalleryBranding.DisplayName;
         private readonly Action _backAction;
         private readonly Action _settingsAction;
         private readonly Action _forwardAction;

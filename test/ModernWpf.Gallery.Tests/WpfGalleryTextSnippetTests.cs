@@ -24,8 +24,8 @@ namespace ModernWpf.Gallery.Tests
                         "A Hyperlink with in-app navigation handling",
                         Lines(
                             "<TextBlock Margin=\"20\">",
-                            "<Hyperlink NavigateUri=\"https://www.microsoft.com\" RequestNavigate=\"Hyperlink_RequestNavigate\">",
-                            "Hyperlink",
+                            "<Hyperlink NavigateUri=\"https://github.com/Kinnara/ModernWpf\" RequestNavigate=\"Hyperlink_RequestNavigate\">",
+                            "ModernWPF repository",
                             "</Hyperlink>",
                             "</TextBlock>"),
                         Lines(

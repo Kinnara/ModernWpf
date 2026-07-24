@@ -5,14 +5,15 @@
     CommandBarFlyout1.ShowAt(Image1, myOption);
 }
 
-private void MyImageButton_ContextRequested(Microsoft.UI.Xaml.UIElement sender, ContextRequestedEventArgs args)
+private void MyImageButton_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
 {
     // Show a context menu in standard mode
     // Focus will move to the menu
     ShowMenu(false);
+    e.Handled = true;
 }
 
-private void MyImageButton_Click(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+private void MyImageButton_Click(object sender, RoutedEventArgs e)
 {
     // Show a context menu in transient mode
     // Focus will not move to the menu

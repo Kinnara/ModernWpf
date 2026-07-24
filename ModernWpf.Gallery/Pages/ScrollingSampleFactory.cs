@@ -31,7 +31,7 @@ namespace ModernWpf.Gallery.Pages
     DetailLabelRequested=""AnnotatedScrollBar_DetailLabelRequested""/>";
 
         private const string AnnotatedScrollBarCSharp =
-@"private void AnnotatedScrollBarPage_Loaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+@"private void AnnotatedScrollBarPage_Loaded(object sender, RoutedEventArgs e)
 {
     scrollView.ScrollPresenter.VerticalScrollController = annotatedScrollBar.ScrollController;
 }";

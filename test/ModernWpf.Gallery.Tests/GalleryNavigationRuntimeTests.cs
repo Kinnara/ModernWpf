@@ -177,7 +177,7 @@ namespace ModernWpf.Gallery.Tests
                     new[] { "Home", "What's New", "Design Guidance", "All Controls", "Basic Input" },
                     topLevelItems.Take(5).Select(GetNavigationItemText).ToArray());
                 CollectionAssert.AreEqual(
-                    new[] { "Collections", "Date & Calendar", "Layout", "Navigation", "Status & Info", "Text", "ModernWpf controls" },
+                    new[] { "Collections", "Date & Calendar", "Layout", "Navigation", "Status & Info", "Text", GalleryBranding.ControlsGroupTitle },
                     topLevelItems.Skip(5).Select(GetNavigationItemText).ToArray());
                 Assert.AreEqual(12, topLevelItems.Count, "Retired navigation groups should not remain in the shell menu.");
 
@@ -204,7 +204,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsInstanceOfType(basicInputItems[0].Content, typeof(string));
 
                 var modernWpfItem = topLevelItems[11];
-                Assert.AreEqual("ModernWpf controls", GetNavigationItemText(modernWpfItem));
+                Assert.AreEqual(GalleryBranding.ControlsGroupTitle, GetNavigationItemText(modernWpfItem));
                 AssertFontIconGlyph(modernWpfItem, "\uEA37");
                 var modernWpfItems = modernWpfItem.MenuItems.OfType<NavigationViewItem>().ToList();
                 Assert.IsTrue(modernWpfItems.Count > 0);
@@ -516,7 +516,7 @@ namespace ModernWpf.Gallery.Tests
                 {
                     var navigation = GetNavigationView(page);
                     var modernWpfItem = navigation.MenuItems.OfType<NavigationViewItem>()
-                        .Single(item => string.Equals(GetNavigationItemText(item), "ModernWpf controls", StringComparison.Ordinal));
+                        .Single(item => string.Equals(GetNavigationItemText(item), GalleryBranding.ControlsGroupTitle, StringComparison.Ordinal));
                     var navigationViewItem = modernWpfItem.MenuItems.OfType<NavigationViewItem>()
                         .Single(item => string.Equals(GetNavigationItemText(item), "NavigationView", StringComparison.Ordinal));
 
@@ -526,7 +526,7 @@ namespace ModernWpf.Gallery.Tests
                     page.UpdateLayout();
                     WpfTestHost.DoEvents();
 
-                    Assert.AreEqual("ModernWpf controls", modernWpfItem.Content);
+                    Assert.AreEqual(GalleryBranding.ControlsGroupTitle, modernWpfItem.Content);
                     Assert.AreEqual("NavigationView", navigationViewItem.Content);
                     AssertFontIconGlyph(modernWpfItem, "\uEA37");
                     AssertFontIconGlyph(navigationViewItem, "\uE729");
@@ -627,8 +627,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreSame(Application.Current.FindResource("WindowBackground"), window.Background);
                     Assert.AreSame(window, window.DataContext);
                     Assert.AreEqual(string.Empty, AutomationProperties.GetAutomationId(window));
-                    Assert.AreEqual("WPF Gallery", window.ViewModel.ApplicationTitle);
-                    Assert.AreEqual("WPF Gallery", window.Title);
+                    Assert.AreEqual(GalleryBranding.DisplayName, window.ViewModel.ApplicationTitle);
+                    Assert.AreEqual(GalleryBranding.DisplayName, window.Title);
                     Assert.AreEqual(780d, window.MinWidth);
                     Assert.AreEqual(470d, window.MinHeight);
                     Assert.AreEqual("ViewModel.ApplicationTitle",
@@ -690,8 +690,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(0, 0, 16, 0), appIcon.Margin);
 
                     var titleText = titleHeader.Children.OfType<TextBlock>()
-                        .Single(text => string.Equals(text.Text, "WPF Gallery", StringComparison.Ordinal));
-                    Assert.AreEqual("WPF Gallery", titleText.Text);
+                        .Single(text => string.Equals(text.Text, GalleryBranding.DisplayName, StringComparison.Ordinal));
+                    Assert.AreEqual(GalleryBranding.DisplayName, titleText.Text);
                     Assert.AreEqual("ViewModel.ApplicationTitle",
                         BindingOperations.GetBindingExpression(titleText, TextBlock.TextProperty)?.ParentBinding.Path.Path);
                     Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleText));
@@ -1009,9 +1009,9 @@ namespace ModernWpf.Gallery.Tests
                 var whatsNewPage = new WhatsNewPage();
                 Assert.IsInstanceOfType(whatsNewPage, typeof(System.Windows.Controls.Page));
                 Assert.IsInstanceOfType(whatsNewPage.ViewModel, typeof(WhatsNewPageViewModel));
-                Assert.AreEqual("What's new in ModernWpf", whatsNewPage.ViewModel.PageTitle);
+                Assert.AreEqual(GalleryBranding.WhatsNewTitle, whatsNewPage.ViewModel.PageTitle);
                 Assert.AreEqual(
-                    "See the current ModernWpf direction, supported targets, and gallery improvements.",
+                    GalleryBranding.WhatsNewDescription,
                     whatsNewPage.ViewModel.PageDescription);
                 AssertNavigationCardIds(
                     GalleryCatalog.NewOrUpdatedItems,
@@ -1158,9 +1158,9 @@ namespace ModernWpf.Gallery.Tests
                     var homeScrollViewer = (ScrollViewer)homePage.Content;
                     var homeContentGrid = (Grid)homeScrollViewer.Content;
                     var heroVersionText = FindVisualChildren<TextBlock>(homeContentGrid)
-                        .Single(textBlock => string.Equals(textBlock.Text, ".NET 10", StringComparison.Ordinal));
+                        .Single(textBlock => string.Equals(textBlock.Text, GalleryBranding.VersionDisplay, StringComparison.Ordinal));
                     var heroTitleText = FindVisualChildren<TextBlock>(homeContentGrid)
-                        .Single(textBlock => string.Equals(textBlock.Text, "WPF Gallery", StringComparison.Ordinal));
+                        .Single(textBlock => string.Equals(textBlock.Text, GalleryBranding.DisplayName, StringComparison.Ordinal));
                     var overviewHeaderText = FindVisualChildren<TextBlock>(homeContentGrid)
                         .Single(textBlock => string.Equals(textBlock.Text, "Overview", StringComparison.Ordinal));
                     var recentlyAddedHeaderText = FindVisualChildren<TextBlock>(homeContentGrid)
@@ -1236,7 +1236,7 @@ namespace ModernWpf.Gallery.Tests
                     AssertNavigationItemsControl(itemsControl, "Items in group");
                     AssertBindingPath(itemsControl, ItemsControl.ItemsSourceProperty, "ViewModel.NavigationCards");
                     AssertRenderedNavigationCard(itemsControl, modernWpfGroup.Items.First().Title, modernWpfGroup.Items.First().Description, modernWpfSectionPage.ViewModel.NavigateCommand);
-                    Assert.IsTrue(scrollViewer.ExtentHeight > scrollViewer.ViewportHeight, "The retained ModernWpf controls section should scroll because it contains many cards.");
+                    Assert.IsTrue(scrollViewer.ExtentHeight > scrollViewer.ViewportHeight, "The retained ModernWPF controls section should scroll because it contains many cards.");
                     scrollViewer.ScrollToEnd();
                     WpfTestHost.DoEvents();
                     Assert.IsTrue(scrollViewer.VerticalOffset > 0);

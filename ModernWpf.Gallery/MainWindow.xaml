@@ -8,6 +8,7 @@
     xmlns:pages="clr-namespace:ModernWpf.Gallery.Pages"
     xmlns:ui="http://schemas.modernwpf.com/2019"
     Title="{Binding ViewModel.ApplicationTitle}"
+    Icon="{StaticResource ModernWpfLogoImage}"
     Width="1180"
     Height="820"
     MinWidth="780"
@@ -215,7 +216,7 @@
                         Height="16"
                         Margin="0,0,16,0"
                         VerticalAlignment="Center"
-                        Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/AppIcons/WPFGallery_48px.png" />
+                        Source="{StaticResource ModernWpfLogoImage}" />
                     <TextBlock
                         VerticalAlignment="Center"
                         Style="{StaticResource CaptionTextBlockStyle}"

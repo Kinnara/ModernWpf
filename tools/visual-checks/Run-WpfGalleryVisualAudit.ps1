@@ -305,7 +305,7 @@ if (($Theme -eq "Light" -or $Theme -eq "Dark") -and $osHighContrastEnabled) {
 }
 
 if (!(Test-Path $ModernGalleryExe)) {
-    throw "ModernWpf Gallery executable was not found at '$ModernGalleryExe'. Build first or pass -ModernGalleryExe."
+    throw "Local Gallery executable was not found at '$ModernGalleryExe'. Build first or pass -ModernGalleryExe."
 }
 
 if ($Reference -eq "OfficialWpfGallery" -and !(Test-Path $WpfGalleryExe)) {
@@ -1187,7 +1187,7 @@ function Navigate-ModernWpfGalleryByClicks($window, $case) {
     $lastItem = $null
     for ($clickIndex = 0; $clickIndex -lt $case.ModernClickPath.Count; $clickIndex++) {
         $name = $case.ModernClickPath[$clickIndex]
-        $item = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf Gallery navigation item '$name'" -Probe {
+        $item = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "local Gallery navigation item '$name'" -Probe {
             Find-ModernNavigationItemByName $window $name
         }
 
@@ -1204,7 +1204,7 @@ function Navigate-ModernWpfGalleryByClicks($window, $case) {
         }
 
         if (!$clicked) {
-            throw "Could not click ModernWpf Gallery navigation item '$name'."
+            throw "Could not click local Gallery navigation item '$name'."
         }
 
         Start-Sleep -Milliseconds 500
@@ -1892,7 +1892,7 @@ function Capture-ModernWpf($case, [string]$caseDir) {
     $process = Start-AppProcess $ModernGalleryExe $modernArgs
 
     try {
-        $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf Gallery window for $($case.Id)" -Probe {
+        $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "local Gallery window for $($case.Id)" -Probe {
             Find-WindowByProcessId $process.Id
         }
         [void][WpfGalleryVisualNative]::Move($window.Current.NativeWindowHandle, 60, 60, $Width, $Height)

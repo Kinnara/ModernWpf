@@ -7,19 +7,20 @@ namespace ModernWpf.Gallery.Tests
     public class WpfGallerySettingsSnippetTests
     {
         [TestMethod]
-        public void SettingsLinkHandlersUseOfficialProcessStartShape()
+        public void SettingsLinkHandlersUseCentralModernWpfDestinations()
         {
             var source = ReadRepoFile("ModernWpf.Gallery", "Pages", "SettingsPage.xaml.cs");
 
-            Assert.IsFalse(source.Contains("OpenUri("), "Copied Settings link handlers should keep the official direct Process.Start source shape.");
             AssertContainsInOrder(
                 source,
-                "Process.Start(new ProcessStartInfo(\"https://go.microsoft.com/fwlink/?LinkId=822631\") { UseShellExecute = true });",
-                "Process.Start(new ProcessStartInfo(\"https://go.microsoft.com/fwlink/?LinkId=521839\") { UseShellExecute = true });",
-                "Process.Start(new ProcessStartInfo(\"https://github.com/microsoft/WPF-Samples/issues/new\") { UseShellExecute = true });",
-                "Process.Start(new ProcessStartInfo(\"https://www.nuget.org/packages/CommunityToolkit.Mvvm/\") { UseShellExecute = true });",
-                "Process.Start(new ProcessStartInfo(\"https://www.nuget.org/packages/Microsoft.Extensions.DependencyInjection/\") { UseShellExecute = true });",
-                "Process.Start(new ProcessStartInfo(\"https://www.nuget.org/packages/Microsoft.Extensions.Hosting\") { UseShellExecute = true });");
+                "OpenUrl(GalleryBranding.RepositoryUrl);",
+                "OpenUrl(GalleryBranding.LicenseUrl);",
+                "OpenUrl(GalleryBranding.NewIssueUrl);",
+                "OpenUrl(GalleryBranding.BehaviorsPackageUrl);",
+                "private static void OpenUrl(string url)",
+                "Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });");
+            Assert.IsFalse(source.Contains("microsoft/WPF-Samples", System.StringComparison.OrdinalIgnoreCase));
+            Assert.IsFalse(source.Contains("go.microsoft.com/fwlink", System.StringComparison.OrdinalIgnoreCase));
         }
 
         [TestMethod]

@@ -11,6 +11,6 @@
 </Page.Resources>
 
 <Button x:Name="myImageButton" AutomationProperties.Name="mountain" Padding="0"
-    Click="MyImageButton_Click" ContextRequested="MyImageButton_ContextRequested" >
+    Click="MyImageButton_Click" MouseRightButtonUp="MyImageButton_MouseRightButtonUp">
     <Image x:Name="Image1" Height="300" Source="/Assets/SampleMedia/rainier.jpg"/>
 </Button>

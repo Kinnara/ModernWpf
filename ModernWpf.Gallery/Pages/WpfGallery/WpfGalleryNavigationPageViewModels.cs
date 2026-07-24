@@ -56,8 +56,8 @@ namespace ModernWpf.Gallery.Pages.WpfGallery
 
         public WhatsNewPageViewModel(Action<object> navigate)
             : base(
-                "What's new in ModernWpf",
-                "See the current ModernWpf direction, supported targets, and gallery improvements.")
+                GalleryBranding.WhatsNewTitle,
+                GalleryBranding.WhatsNewDescription)
         {
             _navigate = navigate;
             NavigateCommand = new GalleryCommand(Navigate);

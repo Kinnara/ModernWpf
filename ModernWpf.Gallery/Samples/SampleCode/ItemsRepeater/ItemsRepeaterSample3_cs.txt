@@ -2,8 +2,7 @@
 
 // Initialization code
 
-private double AnimatedBtnHeight;
-private Microsoft.UI.Xaml.Thickness AnimatedBtnMargin;
+private readonly List<FrameworkElement> preparedElements = new List<FrameworkElement>();
 
 private void InitializeData()
 {
@@ -34,6 +33,8 @@ private void InitializeData()
 
     animatedScrollRepeater.ItemsSource = colors;
     animatedScrollRepeater.ElementPrepared += OnElementPrepared;
+    animatedScrollRepeater.ElementClearing += OnElementClearing;
+    animatedScrollRepeater.LayoutUpdated += AnimatedRepeater_LayoutUpdated;
 }
 
 // Animation code
@@ -45,12 +46,8 @@ private void Animated_GotItem(object sender, RoutedEventArgs e)
         return;
     }
 
-    // When the clicked item has been recieved, bring it to the middle of the viewport.
-    senderBtn.StartBringIntoView(new BringIntoViewOptions()
-    {
-        VerticalAlignmentRatio = 0.5,
-        AnimationDesired = true,
-    });
+    // Bring the selected item into view using WPF scrolling.
+    senderBtn.BringIntoView();
 
     // Update corresponding rectangle with selected color
     colorRectangle.Fill = senderBtn.Background;
@@ -58,65 +55,63 @@ private void Animated_GotItem(object sender, RoutedEventArgs e)
 
 /* This function occurs each time an element is made ready for use.
 * This is necessary for virtualization. */
-private void OnElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender,
-                               Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+private void OnElementPrepared(ModernWpf.Controls.ItemsRepeater sender,
+                               ModernWpf.Controls.ItemsRepeaterElementPreparedEventArgs args)
 {
-    var item = ElementCompositionPreview.GetElementVisual(args.Element);
-    var svVisual = ElementCompositionPreview.GetElementVisual(Animated_ScrollViewer);
-    var scrollProperties = ElementCompositionPreview.GetScrollViewerManipulationPropertySet(Animated_ScrollViewer);
-
-    var scaleExpresion = scrollProperties.Compositor.CreateExpressionAnimation();
-    scaleExpresion.SetReferenceParameter("svVisual", svVisual);
-    scaleExpresion.SetReferenceParameter("scrollProperties", scrollProperties);
-    scaleExpresion.SetReferenceParameter("item", item);
-
-    // Scale the item based on the distance of the item relative to the center of the viewport.
-    scaleExpresion.Expression = "1 - abs((svVisual.Size.Y/2 - scrollProperties.Translation.Y)
-                                   - (item.Offset.Y + item.Size.Y/2))*(.25/(svVisual.Size.Y/2))";
-
-    // Animate the item based on its distance to the center of the viewport.
-    item.StartAnimation("Scale.X", scaleExpresion);
-    item.StartAnimation("Scale.Y", scaleExpresion);
-    var centerPointExpression = scrollProperties.Compositor.CreateExpressionAnimation();
-    centerPointExpression.SetReferenceParameter("item", item);
-    centerPointExpression.Expression = "Vector3(item.Size.X/2, item.Size.Y/2, 0)";
-    item.StartAnimation("CenterPoint", centerPointExpression);
+    if (args.Element is FrameworkElement element)
+    {
+        element.RenderTransformOrigin = new Point(0.5, 0.5);
+        element.RenderTransform = new ScaleTransform(1, 1);
+        if (!preparedElements.Contains(element))
+        {
+            preparedElements.Add(element);
+        }
+    }
 }
 
-/* This function identifies the item that's currently in the middle of the viewport,
-and sets the rectangle to match its color. */
-private void Animated_ScrollViewer_ViewChanging(object sender, ScrollViewerViewChangingEventArgs e)
+private void OnElementClearing(ModernWpf.Controls.ItemsRepeater sender,
+                               ModernWpf.Controls.ItemsRepeaterElementClearingEventArgs args)
 {
-     if (GetSelectedItemFromViewport() is not Button selectedItem)
-     {
-         return;
-     }
-
-     // Update corresponding rectangle with selected color
-     colorRectangle.Fill = selectedItem.Background;
+    if (args.Element is FrameworkElement element)
+    {
+        preparedElements.Remove(element);
+    }
 }
 
-// The remainder of these functions are helper functions for the ViewChanging function:
-
-// Find centerpoint of ScrollViewer
-private double CenterPointOfViewportInExtent()
+private void Animated_ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
 {
-    return Animated_ScrollViewer.VerticalOffset + Animated_ScrollViewer.ViewportHeight / 2;
+    UpdateElementScales();
 }
 
-// Find index of the item that's at the center of the viewport
-private int GetSelectedIndexFromViewport()
+private void AnimatedRepeater_LayoutUpdated(object sender, EventArgs e)
 {
-    int selectedItemIndex = (int)Math.Floor(CenterPointOfViewportInExtent()
-                              / ((double)AnimatedBtnMargin.Top + AnimatedBtnHeight));
-    selectedItemIndex %= animatedScrollRepeater.ItemsSourceView.Count;
-    return selectedItemIndex;
+    UpdateElementScales();
 }
 
-// Return item that's at the center of the viewport.
-private object? GetSelectedItemFromViewport()
+private void UpdateElementScales()
 {
-    var selectedIndex = GetSelectedIndexFromViewport();
-    var selectedElement = animatedScrollRepeater.TryGetElement(selectedIndex) as Button;
-    return selectedElement;
+    if (Animated_ScrollViewer.ViewportHeight <= 0)
+    {
+        return;
+    }
+
+    var viewportCenter =
+        Animated_ScrollViewer.VerticalOffset + (Animated_ScrollViewer.ViewportHeight / 2);
+    var scalePerPixel = 0.25 / (Animated_ScrollViewer.ViewportHeight / 2);
+
+    foreach (var element in preparedElements)
+    {
+        var elementTop = element.TransformToAncestor(animatedScrollRepeater)
+            .Transform(new Point()).Y;
+        var elementCenter = elementTop + (element.ActualHeight / 2);
+        var scale = Math.Max(
+            0,
+            1 - (Math.Abs(viewportCenter - elementCenter) * scalePerPixel));
+
+        if (element.RenderTransform is ScaleTransform scaleTransform)
+        {
+            scaleTransform.ScaleX = scale;
+            scaleTransform.ScaleY = scale;
+        }
+    }
 }

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:ModernWpf.Gallery.Controls"
+             xmlns:gallery="clr-namespace:ModernWpf.Gallery"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -23,25 +24,30 @@
                     Orientation="Horizontal">
                 <local:HeaderTile
                             Title="Getting started"
-                            Description="An overview of app development options, tools, and samples."
-                            Link="https://learn.microsoft.com/windows/apps/get-started/"
+                            Description="Install ModernWpfUI and add the recommended resources."
+                            Link="{x:Static gallery:GalleryBranding.QuickStartUrl}"
                             Margin="24 0 6 0">
                     <local:HeaderTile.Source>
-                        <Image Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/AppIcons/WPFGallery_48px.png" />
+                        <Image Source="{StaticResource ModernWpfLogoImage}" />
                     </local:HeaderTile.Source>
                 </local:HeaderTile>
                 <local:HeaderTile
-                                Title="Windows design"
-                                Description="Design guidelines and toolkits for creating native app experiences."
-                                Link="https://learn.microsoft.com/windows/apps/design/">
+                                Title="Controls reference"
+                                Description="Browse styled and additional controls."
+                                Link="{x:Static gallery:GalleryBranding.ControlsReferenceUrl}">
                     <local:HeaderTile.Source>
-                        <Image Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/HomeHeaderTiles/Header-WindowsDesign.png" />
+                        <Viewbox Width="48" Height="48">
+                            <TextBlock
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                Text="&#xE8F1;" />
+                        </Viewbox>
                     </local:HeaderTile.Source>
                 </local:HeaderTile>
                 <local:HeaderTile
-                                Title="WPF GitHub"
-                                Description="A robust UI framework for your desktop applications."
-                                Link="https://github.com/dotnet/wpf">
+                                Title="GitHub repository"
+                                Description="Explore source code and project development."
+                                Link="{x:Static gallery:GalleryBranding.RepositoryUrl}">
                     <local:HeaderTile.Source>
                         <Viewbox Height="52" Margin="-20 0 0 0">
                             <Path Data="{StaticResource GitHubIconGeometry}" Fill="{DynamicResource TextFillColorPrimaryBrush}"/>
@@ -49,21 +55,29 @@
                     </local:HeaderTile.Source>
                 </local:HeaderTile>
                 <local:HeaderTile
-                                Title="Code samples"
-                                Description="Find WPF samples that demonstrate specific tasks, features, and APIs."
-                                Link="https://github.com/microsoft/WPF-Samples">
+                                Title="NuGet package"
+                                Description="Install ModernWpfUI or review available versions."
+                                Link="{x:Static gallery:GalleryBranding.NuGetPackageUrl}">
                     <local:HeaderTile.Source>
-                        <Viewbox Height="52" Margin="-20 0 0 0">
-                            <Path Data="{StaticResource GitHubIconGeometry}" Fill="{DynamicResource TextFillColorPrimaryBrush}"/>
+                        <Viewbox Width="48" Height="48">
+                            <TextBlock
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                Text="&#xE7B8;" />
                         </Viewbox>
                     </local:HeaderTile.Source>
                 </local:HeaderTile>
                 <local:HeaderTile
-                                Title="Partner Center"
-                                Description="Upload your app to the Store."
-                                Link="https://developer.microsoft.com/windows/">
+                                Title="Report an issue"
+                                Description="Report bugs, request features, and review known issues."
+                                Link="{x:Static gallery:GalleryBranding.IssuesUrl}">
                     <local:HeaderTile.Source>
-                        <Image Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/HomeHeaderTiles/Header-Store.dark.png" />
+                        <Viewbox Width="48" Height="48">
+                            <TextBlock
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                Text="&#xEBE8;" />
+                        </Viewbox>
                     </local:HeaderTile.Source>
                 </local:HeaderTile>
             </StackPanel>

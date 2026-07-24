@@ -86,7 +86,7 @@
 
                 <TextBlock Text="About" FontWeight="SemiBold" Margin="10" FontSize="14"/>
 
-                <Expander AutomationProperties.Name="WPF Gallery Preview">
+                <Expander AutomationProperties.Name="{StaticResource GalleryPreviewDisplayName}">
                     <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -101,14 +101,15 @@
                                 Height="20"
                                 Margin="10,5,10,5"
                                 VerticalAlignment="Center"
-                                Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/AppIcons/WPFGallery_48px.png" />
+                                Source="{StaticResource ModernWpfLogoImage}" />
 
                             <StackPanel
                                 Grid.Column="1"
                                 Margin="12"
                                 Orientation="Vertical">
-                                <TextBlock Text="WPF Gallery" />
-                                <TextBlock Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}">&#xA9; 2025 Microsoft. All rights reserved.</TextBlock>
+                                <TextBlock Text="{StaticResource GalleryDisplayName}" />
+                                <TextBlock Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}" Text="{StaticResource GalleryVersionDisplay}" />
+                                <TextBlock Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}" Text="{StaticResource GalleryCopyrightNotice}" />
                             </StackPanel>
                         </Grid>
                     </Expander.Header>
@@ -129,7 +130,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="To clone this repository" />
-                                    <TextBox Grid.Column="2" Style="{StaticResource SelectionTextBox}" Text="git clone https://github.com/microsoft/WPF-Samples.git" Focusable="False"/>
+                                    <TextBox Grid.Column="2" Style="{StaticResource SelectionTextBox}" Text="{StaticResource GalleryCloneCommand}" Focusable="False"/>
                                 </Grid>
                             </Border>
 
@@ -147,35 +148,35 @@
                                 </Grid>
                             </Border>
 
-                            <GroupBox Grid.Row="2" AutomationProperties.Name="Dependencies and References" BorderThickness="0">
+                            <GroupBox Grid.Row="2" AutomationProperties.Name="Components and dependency" BorderThickness="0">
                                 <Border Style="{StaticResource SettingsCardStyle}">
                                     <StackPanel Margin="48,0,16,0" Orientation="Vertical">
-                                        <TextBlock Margin="0,0,0,12" Text="Dependencies and References" />
+                                        <TextBlock Margin="0,0,0,12" Text="Components and dependency" />
                                         <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink Click="Open_ToolkitInformation">CommunityToolkit.Mvvm</Hyperlink>
+                                            <Hyperlink Click="Open_Repository">ModernWPF UI Library</Hyperlink>
                                         </TextBlock>
                                         <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink Click="Open_DIInformation" AutomationProperties.Name="Link to Dependency Injection NuGet Package">Microsoft.Extensions.DependencyInjection</Hyperlink>
+                                            <Hyperlink Click="Open_Repository">ModernWPF Controls</Hyperlink>
                                         </TextBlock>
                                         <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink Click="Open_HostingInformation" AutomationProperties.Name="Link to .NET Generic Host Package">Microsoft.Extensions.Hosting</Hyperlink>
+                                            <Hyperlink Click="Open_BehaviorsInformation" AutomationProperties.Name="Link to Microsoft XAML Behaviors WPF NuGet package">Microsoft.Xaml.Behaviors.Wpf</Hyperlink>
                                         </TextBlock>
                                     </StackPanel>
                                 </Border>
                             </GroupBox>
 
-                            <GroupBox Grid.Row="3" AutomationProperties.Name="THIS CODE AND INFORMATION IS PROVIDED &#x2018;AS IS&#x2019; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE." BorderThickness="0">
+                            <GroupBox Grid.Row="3" AutomationProperties.Name="ModernWPF license and project information" BorderThickness="0">
                                 <Border Style="{StaticResource BottomSettingsCardStyle}">
                                     <StackPanel Margin="48,0,16,0" Orientation="Vertical">
                                         <TextBlock
                                             Margin="0,0,0,12"
-                                            Text="THIS CODE AND INFORMATION IS PROVIDED &#x2018;AS IS&#x2019; WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
+                                            Text="ModernWPF is open-source software provided under the MIT License."
                                             TextWrapping="Wrap" />
                                         <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink Click="Services_Click">Microsoft Services Agreement</Hyperlink>
+                                            <Hyperlink Click="Open_License">MIT License</Hyperlink>
                                         </TextBlock>
                                         <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink Click="Privacy_Click">Microsoft Privacy Statement</Hyperlink>
+                                            <Hyperlink Click="Open_Repository">Project repository</Hyperlink>
                                         </TextBlock>
                                     </StackPanel>
                                 </Border>

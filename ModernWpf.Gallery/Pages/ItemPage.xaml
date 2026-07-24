@@ -117,7 +117,13 @@
 
                 <TextBlock
                     Style="{StaticResource GallerySectionHeaderTextBlockStyle}"
-                    Text="Documentation"
+                    Text="Upstream design references"
+                    Visibility="{Binding ShowDocs, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBlock
+                    Margin="0,0,0,12"
+                    Opacity="0.7"
+                    Text="These Windows design and WinUI API links describe the upstream model that ModernWPF adapts for WPF. Use the namespace shown above in application code."
+                    TextWrapping="Wrap"
                     Visibility="{Binding ShowDocs, Converter={StaticResource BooleanToVisibilityConverter}}" />
                 <ItemsControl
                     ItemsSource="{Binding Docs}"

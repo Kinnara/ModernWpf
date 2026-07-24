@@ -1362,8 +1362,8 @@ namespace ModernWpf.Gallery.Tests
                     actionButtonComboBox.SelectedIndex = 2;
                     WpfTestHost.DoEvents();
                     Assert.IsInstanceOfType(longMessageInfoBar.ActionButton, typeof(ModernWpf.Controls.HyperlinkButton));
-                    Assert.AreEqual("Informational link", longMessageInfoBar.ActionButton.Content);
-                    Assert.AreEqual(new Uri("http://www.microsoft.com/"), ((ModernWpf.Controls.HyperlinkButton)longMessageInfoBar.ActionButton).NavigateUri);
+                    Assert.AreEqual("Project information", longMessageInfoBar.ActionButton.Content);
+                    Assert.AreEqual(new Uri(GalleryBranding.RepositoryUrl), ((ModernWpf.Controls.HyperlinkButton)longMessageInfoBar.ActionButton).NavigateUri);
 
                     actionButtonComboBox.SelectedIndex = 0;
                     WpfTestHost.DoEvents();
@@ -1679,7 +1679,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsNotNull(stockItem);
                 Assert.IsNotNull(item);
                 Assert.AreEqual("System.Windows.Controls.ProgressBar", stockItem.ApiNamespace);
-                Assert.AreEqual("ProgressBar (WinUI)", item.Title);
+                Assert.AreEqual("ProgressBar (ModernWPF)", item.Title);
                 Assert.AreEqual("ModernWpf.Controls", item.ApiNamespace);
 
                 var page = new ItemPage(item);
@@ -2193,15 +2193,17 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "ItemsSource=\"{x:Bind BarItems}\"");
                     StringAssert.Contains(page.Examples[0].CSharpCode, "public class Bar");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "ItemsSource=\"{x:Bind NumberedItems}\"");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "ItemsSource=\"{Binding NumberedItems}\"");
                     StringAssert.Contains(page.Examples[1].CSharpCode, "public class MyDataTemplateSelector");
                     StringAssert.Contains(page.Examples[2].XamlCode, "x:Name=\"MixedTypeRepeater\"");
                     StringAssert.Contains(page.Examples[2].CSharpCode, "StringOrIntTemplateSelector");
                     StringAssert.Contains(page.Examples[3].XamlCode, "x:Name=\"outerRepeater\"");
                     StringAssert.Contains(page.Examples[4].XamlCode, "x:Name=\"animatedScrollRepeater\"");
                     StringAssert.Contains(page.Examples[4].CSharpCode, "OnElementPrepared");
+                    StringAssert.Contains(page.Examples[4].CSharpCode, "ModernWpf.Controls.ItemsRepeater");
                     StringAssert.Contains(page.Examples[5].XamlCode, "x:Name=\"VariedImageSizeRepeater\"");
                     StringAssert.Contains(page.Examples[5].CSharpCode, "public class Recipe");
+                    Assert.IsFalse(page.Examples[5].CSharpCode.Contains("Microsoft.UI.Xaml", StringComparison.Ordinal));
 
                     var repeater = (Mux.ItemsRepeater)FindByAutomationId(page, "GallerySample_ItemsRepeater_ItemsRepeater");
                     var namedRepeater = FindNamedDescendant<Mux.ItemsRepeater>(page, "repeater");
@@ -3095,7 +3097,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("A hyperlink button that handles a Click event.", page.Examples[1].HeaderText);
                     Assert.AreEqual(new Thickness(0, 16, 0, 0), page.Examples[1].Margin);
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
-                    Assert.AreEqual("<HyperlinkButton Content=\"Microsoft home page\" NavigateUri=\"https://www.microsoft.com\" $(IsEnabled)/>", page.Examples[0].XamlCode);
+                    Assert.AreEqual("<HyperlinkButton Content=\"ModernWPF repository\" NavigateUri=\"https://github.com/Kinnara/ModernWpf\" $(IsEnabled)/>", page.Examples[0].XamlCode);
                     Assert.AreEqual("<HyperlinkButton Content=\"ToggleButton\" Click=\"HyperlinkButton_Click\"/>", page.Examples[1].XamlCode);
                     Assert.IsNull(page.Examples[0].CSharpCode);
                     Assert.IsNull(page.Examples[1].CSharpCode);
@@ -3108,8 +3110,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsNotNull(clickButton);
 
                     Assert.AreEqual("Control1", uriButton.Name);
-                    Assert.AreEqual("Microsoft home page", uriButton.Content);
-                    Assert.AreEqual("https://www.microsoft.com/", uriButton.NavigateUri.ToString());
+                    Assert.AreEqual("ModernWPF repository", uriButton.Content);
+                    Assert.AreEqual(GalleryBranding.RepositoryUrl, uriButton.NavigateUri.ToString());
                     Assert.AreEqual("Control2", clickButton.Name);
                     Assert.AreEqual("Go to ToggleButton", clickButton.Content);
                     Assert.IsNull(clickButton.NavigateUri);
@@ -3120,7 +3122,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(AutomationControlType.Hyperlink, clickPeer.GetAutomationControlType());
                     Assert.AreEqual("Hyperlink", uriPeer.GetClassName());
                     Assert.AreEqual("Hyperlink", clickPeer.GetClassName());
-                    Assert.AreEqual("Microsoft home page", uriPeer.GetName());
+                    Assert.AreEqual("ModernWPF repository", uriPeer.GetName());
                     Assert.AreEqual("Go to ToggleButton", clickPeer.GetName());
                     Assert.IsInstanceOfType(uriPeer.GetPattern(PatternInterface.Invoke), typeof(IInvokeProvider));
                     Assert.IsInstanceOfType(clickPeer.GetPattern(PatternInterface.Invoke), typeof(IInvokeProvider));
@@ -4306,7 +4308,7 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(0, 12, 0, 0), intro.Margin);
                     Assert.AreEqual(TextWrapping.Wrap, intro.TextWrapping);
                     Assert.AreEqual(
-                        "For full title bar customization without using the TitleBar control, see the AppWindowTitleBar sample",
+                        "Use the examples below to configure a ModernWPF TitleBar or integrate one with NavigationView.",
                         new TextRange(intro.ContentStart, intro.ContentEnd).Text.Trim());
 
                     Assert.AreEqual(2, page.Examples.Count);
@@ -4322,7 +4324,7 @@ namespace ModernWpf.Gallery.Tests
                     StringAssert.Contains(page.Examples[0].XamlCode, "Subtitle=\"$(Subtitle)\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "IsBackButtonVisible=\"$(BackButtonVisibility)\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "IsPaneToggleButtonVisible=\"$(PaneToggleVisibility)\"");
-                    StringAssert.Contains(page.Examples[0].XamlCode, "<ImageIconSource ImageSource=\"/Assets/Tiles/GalleryIcon.ico\" />");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "<SymbolIconSource Symbol=\"Library\" />");
                     Assert.IsFalse(page.Examples[0].XamlCode.Contains("TitleBarContentHorizontalAlignment"));
                     StringAssert.Contains(page.Examples[0].XamlCode, "Width=\"360\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "PlaceholderText=\"Search..\"");
@@ -4357,11 +4359,12 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(new Thickness(-1), titleBarSurface.Margin);
                     Assert.AreEqual(new Thickness(1), titleBarSurface.BorderThickness);
                     Assert.AreEqual(new CornerRadius(4), titleBarSurface.CornerRadius);
-                    var titleBarIcon = FindNamedDescendant<Image>(titleBarControl, "TitleBarIcon");
+                    var titleBarIcon = FindNamedDescendant<Mux.SymbolIcon>(titleBarControl, "TitleBarIcon");
                     Assert.IsNotNull(titleBarIcon);
                     Assert.AreEqual(16d, titleBarIcon.Width);
                     Assert.AreEqual(16d, titleBarIcon.Height);
                     Assert.AreEqual(new Thickness(14, 0, 16, 0), titleBarIcon.Margin);
+                    Assert.AreEqual(Mux.Symbol.Library, titleBarIcon.Symbol);
                     var titleBarSearchBox = (Mux.AutoSuggestBox)FindByAutomationId(page, "GallerySample_TitleBar_SearchBox");
                     Assert.IsNotNull(titleBarSearchBox);
                     Assert.AreEqual(186d, titleBarSearchBox.Width);
@@ -4376,7 +4379,7 @@ namespace ModernWpf.Gallery.Tests
                     var titleBox = FindNamedDescendant<TextBox>(page, "TitleBox");
                     Assert.IsNotNull(titleBox);
                     Assert.AreEqual("Title", ModernWpf.Controls.Primitives.ControlHelper.GetHeader(titleBox));
-                    Assert.AreEqual("WinUI Gallery", titleBox.Text);
+                    Assert.AreEqual(GalleryBranding.DisplayName, titleBox.Text);
                     var titleHeader = FindNamedDescendant<TextBlock>(page, "TitleHeader");
                     Assert.IsNotNull(titleHeader);
                     Assert.AreEqual("Title", titleHeader.Text);
@@ -4414,7 +4417,7 @@ namespace ModernWpf.Gallery.Tests
                     var subtitleText = FindNamedDescendant<TextBlock>(page, "SubtitleText");
                     Assert.IsNotNull(titleText);
                     Assert.IsNotNull(subtitleText);
-                    Assert.AreEqual("WinUI Gallery", titleText.Text);
+                    Assert.AreEqual(GalleryBranding.DisplayName, titleText.Text);
                     Assert.AreEqual("Preview", subtitleText.Text);
                     backButtonToggle.IsOn = true;
                     WpfTestHost.DoEvents();

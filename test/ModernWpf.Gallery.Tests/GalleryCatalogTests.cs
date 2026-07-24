@@ -108,7 +108,7 @@ namespace ModernWpf.Gallery.Tests
                 "Navigation",
                 "Status & Info",
                 "Text",
-                "ModernWpf controls"
+                GalleryBranding.ControlsGroupTitle
             };
 
             var actual = GalleryCatalog.Groups.Select(group => group.Title).ToArray();
@@ -121,7 +121,7 @@ namespace ModernWpf.Gallery.Tests
         [DataRow("Basic Input", "BasicInput")]
         [DataRow("Date & Calendar", "DateAndCalendar")]
         [DataRow("Status & Info", "StatusAndInfo")]
-        [DataRow("ModernWpf controls", "ModernWpfControls")]
+        [DataRow("ModernWPF controls", "ModernWpfControls")]
         public void FindGroupAcceptsOfficialAndDisplayedUniqueIds(string lookupId, string expectedUniqueId)
         {
             var group = GalleryCatalog.FindGroup(lookupId);
@@ -805,21 +805,13 @@ namespace ModernWpf.Gallery.Tests
         {
             var expectedAssets = new[]
             {
-                Tuple.Create("assets/win11-dashboard.png", "DF35A419D9827E88E1719588843CDB574980A6D7BFDF5DFF3DDEC6117CDC6E99"),
-                Tuple.Create("assets/win11-dashboard.light.png", "0DF877D2E7967D05B8CE05261B408C6E551CDB1FBD507ACDCCE02C3A5478679B"),
-                Tuple.Create("assets/win11-dashboard.dark.png", "FBA3B611A11D0EDE81545B08CEE7576A517B5B94F29DAE4182B9952805676D5E"),
-                Tuple.Create("assets/appicons/wpfgallery_48px.png", "95D5ABF87383212AC803F92650D5211881D5F5AEB0766DCB5314D54D1D926CA1"),
-                Tuple.Create("assets/appicons/wpfgallery_512px.png", "169BEF1B31DBC5938ACD504AE461909494B7751A1BF10D5B176D7FDFDE80DA27"),
-                Tuple.Create("assets/appicons/wpfgallery.ico", "A58A690D437F60C052331340718413BF751419EC49C904640DD73797FF33B780"),
-                Tuple.Create("assets/appicons/wpfgallery.svg", "5F889DAEFF8B62BFF9E3E18DA20257A68A1619E322E3C050C588FECA601480A9"),
+                Tuple.Create("assets/samplemedia/rainier.jpg", "E592C58F29A7CEA37E338C364A15D0801E490511C5239A1F99DA84F632CC2503"),
                 Tuple.Create("assets/design/cards.dark.png", "ACB4D2761297334FF2876440C3BF240A960C7A4FD91EFC97AB804DA461B43E63"),
                 Tuple.Create("assets/design/cards.light.png", "C0471913EEF2E019DEEB14EEC7B4B23E2AED9E851A85636026D10F1E65677545"),
                 Tuple.Create("assets/design/dialog.dark.png", "DB68563DA1196BFE88F844C30E24F3A96EA6CCF9CED9080BEE90630B1FCFC75F"),
                 Tuple.Create("assets/design/dialog.light.png", "00AAC573496C01498B9493AFEB2D303E20EFC255715F4376569EA464996B926F"),
                 Tuple.Create("assets/design/geometry.dark.png", "1AB58C4478FB25A9C9E32C5218C0FFF1DB807BC9910166AA13BF97D940416D41"),
                 Tuple.Create("assets/design/geometry.light.png", "1B14DAAD987EEF58D8F5D942D0038A7E26EF1D72F0B4FE3F5FFCCC563E5F3933"),
-                Tuple.Create("assets/homeheadertiles/header-store.dark.png", "192228FB9504B8CEC5EE5762A6AD582992291FC96FE5600C5FEE4E7DBB487F32"),
-                Tuple.Create("assets/homeheadertiles/header-windowsdesign.png", "EF286FC0AEA37C98FFEAD7A8CB0DB3229B6C834383F2D0A594D9DD3ADD48AEA7"),
                 Tuple.Create("assets/userdashboard/64-100x100.jpg", "7343E974F503581DE2A89AB49B240F8FA5CB54C7908FC6908363E1341B45C43F"),
                 Tuple.Create("assets/userdashboard/65-100x100.jpg", "C5257B2DCAF32304C3D95FCAB526BB736D947C7EE5EF479EFEDB76730639AB43"),
                 Tuple.Create("assets/userdashboard/91-100x100.jpg", "6DA12F78B0A32C27A805E778B641C9E067B1185454E7973306D1428B40F5FA77"),

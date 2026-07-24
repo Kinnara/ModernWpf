@@ -237,11 +237,11 @@ namespace ModernWpf.Gallery.Tests
                 RenderPage(page);
                 var pageHeader = FindDescendant<PageHeader>(page);
 
-                Assert.AreEqual("What's New in ModernWpf", page.Title);
+                Assert.AreEqual(GalleryBranding.WhatsNewPageTitle, page.Title);
                 Assert.AreEqual(new Thickness(0, 0, 0, 32), pageHeader.Margin);
-                Assert.AreEqual("What's new in ModernWpf", pageHeader.Title);
+                Assert.AreEqual(GalleryBranding.WhatsNewTitle, pageHeader.Title);
                 Assert.AreEqual(
-                    "See the current ModernWpf direction, supported targets, and gallery improvements.",
+                    GalleryBranding.WhatsNewDescription,
                     pageHeader.Description);
                 Assert.IsTrue(pageHeader.ShowDescription);
                 AssertBindingPath(pageHeader, PageHeader.TitleProperty, "ViewModel.PageTitle");
@@ -250,7 +250,7 @@ namespace ModernWpf.Gallery.Tests
                 pageHeader.ApplyTemplate();
                 var titleLabel = (Label)pageHeader.Template.FindName("TitleTextBlock", pageHeader);
                 Assert.IsNotNull(titleLabel);
-                Assert.AreEqual("What's new in ModernWpf Page", AutomationProperties.GetName(titleLabel));
+                Assert.AreEqual(GalleryBranding.WhatsNewTitle + " Page", AutomationProperties.GetName(titleLabel));
                 Assert.AreEqual(AutomationHeadingLevel.Level1, AutomationProperties.GetHeadingLevel(titleLabel));
                 Assert.AreEqual(0, KeyboardNavigation.GetTabIndex(titleLabel));
 
@@ -261,9 +261,9 @@ namespace ModernWpf.Gallery.Tests
 
                 var title = (TextBlock)titleLabel.Content;
                 var description = (TextBlock)pageHeader.Template.FindName("DescriptionTextBlock", pageHeader);
-                Assert.AreEqual("What's new in ModernWpf", title.Text);
+                Assert.AreEqual(GalleryBranding.WhatsNewTitle, title.Text);
                 Assert.AreEqual(
-                    "See the current ModernWpf direction, supported targets, and gallery improvements.",
+                    GalleryBranding.WhatsNewDescription,
                     description.Text);
 
                 var root = (Grid)page.FindName("ContentPagePane");
@@ -276,7 +276,7 @@ namespace ModernWpf.Gallery.Tests
 
                 var samples = (ItemsControl)page.FindName("NewOrUpdatedSamples");
                 Assert.AreEqual(
-                    "New and updated ModernWpf samples",
+                    GalleryBranding.NewSamplesAutomationName,
                     AutomationProperties.GetName(samples));
                 CollectionAssert.AreEqual(
                     GalleryCatalog.NewOrUpdatedItems.Select(item => item.UniqueId).ToArray(),
@@ -294,7 +294,7 @@ namespace ModernWpf.Gallery.Tests
                 CollectionAssert.Contains(visibleText, ".NET Framework 4.6.2");
                 CollectionAssert.Contains(visibleText, ".NET 8 for Windows");
                 CollectionAssert.Contains(visibleText, ".NET 10 for Windows");
-                CollectionAssert.Contains(visibleText, "WinUI-style shell");
+                CollectionAssert.Contains(visibleText, "ModernWPF shell");
             });
         }
 
@@ -434,18 +434,19 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("Use system setting", ((ComboBoxItem)themeMode.SelectedItem).Content);
 
                     var aboutExpander = FindDescendants<Expander>(root)
-                        .Single(expander => AutomationProperties.GetName(expander) == "WPF Gallery Preview");
-                    Assert.AreEqual("WPF Gallery Preview", AutomationProperties.GetName(aboutExpander));
+                        .Single(expander => AutomationProperties.GetName(expander) == GalleryBranding.PreviewDisplayName);
+                    Assert.AreEqual(GalleryBranding.PreviewDisplayName, AutomationProperties.GetName(aboutExpander));
                     var expanderHeader = (Grid)aboutExpander.Header;
                     Assert.AreEqual(3, expanderHeader.ColumnDefinitions.Count);
                     var aboutHeaderText = (StackPanel)expanderHeader.Children[1];
-                    Assert.AreEqual("WPF Gallery", ((TextBlock)aboutHeaderText.Children[0]).Text);
-                    Assert.AreEqual("\u00A9 2025 Microsoft. All rights reserved.", ((TextBlock)aboutHeaderText.Children[1]).Text);
+                    Assert.AreEqual(GalleryBranding.DisplayName, ((TextBlock)aboutHeaderText.Children[0]).Text);
+                    Assert.AreEqual(GalleryBranding.VersionDisplay, ((TextBlock)aboutHeaderText.Children[1]).Text);
+                    Assert.AreEqual(GalleryBranding.CopyrightNotice, ((TextBlock)aboutHeaderText.Children[2]).Text);
 
                     var cloneCommand = FindDescendants<TextBox>(root)
-                        .Single(textBox => textBox.Text == "git clone https://github.com/microsoft/WPF-Samples.git");
+                        .Single(textBox => textBox.Text == GalleryBranding.CloneCommand);
                     Assert.IsFalse(cloneCommand.Focusable);
-                    Assert.AreEqual("git clone https://github.com/microsoft/WPF-Samples.git", cloneCommand.Text);
+                    Assert.AreEqual(GalleryBranding.CloneCommand, cloneCommand.Text);
 
                     var openIssues = FindDescendants<Button>(root)
                         .Single(button => AutomationProperties.GetName(button) == "Open Issues");
@@ -454,22 +455,26 @@ namespace ModernWpf.Gallery.Tests
                     Assert.IsTrue(FocusManager.GetIsFocusScope(openIssues));
 
                     var groupBoxes = FindDescendants<GroupBox>(root).ToArray();
-                    var dependencies = groupBoxes.Single(groupBox => AutomationProperties.GetName(groupBox) == "Dependencies and References");
-                    var warranty = groupBoxes.Single(groupBox => AutomationProperties.GetName(groupBox).StartsWith("THIS CODE AND INFORMATION IS PROVIDED", StringComparison.Ordinal));
-                    Assert.AreEqual("Dependencies and References", AutomationProperties.GetName(dependencies));
-                    Assert.AreEqual("THIS CODE AND INFORMATION IS PROVIDED \u2018AS IS\u2019 WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.", AutomationProperties.GetName(warranty));
-                    Assert.AreEqual(new Thickness(0), dependencies.BorderThickness);
-                    Assert.AreEqual(new Thickness(0), warranty.BorderThickness);
+                    var components = groupBoxes.Single(groupBox => AutomationProperties.GetName(groupBox) == "Components and dependency");
+                    var license = groupBoxes.Single(groupBox => AutomationProperties.GetName(groupBox) == "ModernWPF license and project information");
+                    Assert.AreEqual(new Thickness(0), components.BorderThickness);
+                    Assert.AreEqual(new Thickness(0), license.BorderThickness);
 
                     var hyperlinks = FindDescendants<Hyperlink>(root).ToArray();
-                    var toolkitInformationLink = hyperlinks.Single(hyperlink => GetHyperlinkText(hyperlink) == "CommunityToolkit.Mvvm");
-                    var dependencyInjectionInformationLink = hyperlinks.Single(hyperlink => GetHyperlinkText(hyperlink) == "Microsoft.Extensions.DependencyInjection");
-                    var hostingInformationLink = hyperlinks.Single(hyperlink => GetHyperlinkText(hyperlink) == "Microsoft.Extensions.Hosting");
-                    Assert.AreEqual("CommunityToolkit.Mvvm", GetHyperlinkText(toolkitInformationLink));
-                    Assert.AreEqual("Microsoft.Extensions.DependencyInjection", GetHyperlinkText(dependencyInjectionInformationLink));
-                    Assert.AreEqual("Microsoft.Extensions.Hosting", GetHyperlinkText(hostingInformationLink));
-                    Assert.AreEqual("Link to Dependency Injection NuGet Package", AutomationProperties.GetName(dependencyInjectionInformationLink));
-                    Assert.AreEqual("Link to .NET Generic Host Package", AutomationProperties.GetName(hostingInformationLink));
+                    CollectionAssert.IsSubsetOf(
+                        new[]
+                        {
+                            "ModernWPF UI Library",
+                            "ModernWPF Controls",
+                            "Microsoft.Xaml.Behaviors.Wpf",
+                            "MIT License",
+                            "Project repository"
+                        },
+                        hyperlinks.Select(GetHyperlinkText).ToArray());
+                    var behaviorsLink = hyperlinks.Single(hyperlink => GetHyperlinkText(hyperlink) == "Microsoft.Xaml.Behaviors.Wpf");
+                    Assert.AreEqual(
+                        "Link to Microsoft XAML Behaviors WPF NuGet package",
+                        AutomationProperties.GetName(behaviorsLink));
                 }
                 finally
                 {
@@ -2060,8 +2065,8 @@ namespace ModernWpf.Gallery.Tests
                 var hyperlinkTextBlock = (TextBlock)hyperlinkStack.Children[0];
                 Assert.AreEqual(new Thickness(20), hyperlinkTextBlock.Margin);
                 var hyperlink = hyperlinkTextBlock.Inlines.OfType<Hyperlink>().Single();
-                Assert.AreEqual(new System.Uri("https://www.microsoft.com"), hyperlink.NavigateUri);
-                Assert.AreEqual("Hyperlink", hyperlink.Inlines.OfType<Run>().Single().Text);
+                Assert.AreEqual(new System.Uri(GalleryBranding.RepositoryUrl), hyperlink.NavigateUri);
+                Assert.AreEqual("ModernWPF repository", hyperlink.Inlines.OfType<Run>().Single().Text);
 
                 var navigationStatus = (TextBlock)hyperlinkStack.Children[1];
                 Assert.AreEqual(Visibility.Collapsed, navigationStatus.Visibility);
@@ -2072,7 +2077,7 @@ namespace ModernWpf.Gallery.Tests
                 hyperlink.RaiseEvent(requestNavigateArgs);
                 Assert.IsTrue(requestNavigateArgs.Handled);
                 Assert.AreEqual(Visibility.Visible, navigationStatus.Visibility);
-                Assert.AreEqual("Navigation request: https://www.microsoft.com/", navigationStatus.Text);
+                Assert.AreEqual("Navigation request: " + GalleryBranding.RepositoryUrl, navigationStatus.Text);
             });
         }
 
@@ -2163,7 +2168,7 @@ namespace ModernWpf.Gallery.Tests
                 Assert.IsTrue(typographyPage.HasDirectPageContent);
                 AssertNoContentPagePaneHook(typographyPage);
                 var typographyBody = GetDirectPageBodyStack(typographyPage);
-                Assert.AreEqual("Type helps provide structure and hierarchy to UI. Use ModernWpf's text styles so the appropriate Segoe family is selected for the current Windows version.", ((TextBlock)typographyBody.Children[0]).Text);
+                Assert.AreEqual("Type helps provide structure and hierarchy to UI. Use ModernWPF's text styles so the appropriate Segoe family is selected for the current Windows version.", ((TextBlock)typographyBody.Children[0]).Text);
                 Assert.AreEqual("Best practice is to use Regular weight for most text, use Semibold for titles.", ((TextBlock)typographyBody.Children[1]).Text);
                 var typographyMinimum = (TextBlock)typographyBody.Children[2];
                 Assert.AreEqual("The minimum values should be 12px Regular, 14px Semibold.", typographyMinimum.Text);

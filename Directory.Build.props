@@ -2,6 +2,7 @@
   <PropertyGroup>
     <Version>1.0.0-preview.1</Version>
     <Authors>Yimeng Wu</Authors>
+    <Copyright>Copyright © 2019–2026 Yimeng Wu</Copyright>
     <Product>ModernWPF UI Library</Product>
     <LangVersion>12.0</LangVersion>
     <RepositoryUrl>https://github.com/Kinnara/ModernWpf</RepositoryUrl>

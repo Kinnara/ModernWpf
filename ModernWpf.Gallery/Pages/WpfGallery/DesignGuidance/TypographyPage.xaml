@@ -22,7 +22,7 @@
                 <TextBlock
                     HorizontalAlignment="Left"
                     TextWrapping="Wrap">
-                    Type helps provide structure and hierarchy to UI. Use ModernWpf's text styles so the appropriate Segoe family is selected for the current Windows version.
+                    Type helps provide structure and hierarchy to UI. Use ModernWPF's text styles so the appropriate Segoe family is selected for the current Windows version.
                 </TextBlock>
                 <TextBlock
                     HorizontalAlignment="Left"

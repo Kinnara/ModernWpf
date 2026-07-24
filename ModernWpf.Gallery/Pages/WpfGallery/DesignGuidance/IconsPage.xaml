@@ -165,7 +165,7 @@
             </Run>
             <LineBreak />
             <Span>
-                Use {StaticResource SymbolThemeFontFamily} instead of hard-coding a font family. ModernWpf resolves that resource to a symbol font available on the current Windows version, keeping icon XAML compatible across the library's supported targets.
+                Use {StaticResource SymbolThemeFontFamily} instead of hard-coding a font family. ModernWPF resolves that resource to a symbol font available on the current Windows version, keeping icon XAML compatible across the library's supported targets.
             </Span>
             <LineBreak/>
             <LineBreak/>

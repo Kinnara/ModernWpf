@@ -2,6 +2,7 @@
     x:Class="ModernWpf.Gallery.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Gallery"
     xmlns:ui="http://schemas.modernwpf.com/2019">
     <Application.Resources>
         <ResourceDictionary>
@@ -16,6 +17,33 @@
                 <ResourceDictionary Source="Controls/ColorTile.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
+            <x:Static x:Key="GalleryDisplayName" Member="local:GalleryBranding.DisplayName" />
+            <x:Static x:Key="GalleryPreviewDisplayName" Member="local:GalleryBranding.PreviewDisplayName" />
+            <x:Static x:Key="GalleryVersionDisplay" Member="local:GalleryBranding.VersionDisplay" />
+            <x:Static x:Key="GalleryCopyrightNotice" Member="local:GalleryBranding.CopyrightNotice" />
+            <x:Static x:Key="GalleryCloneCommand" Member="local:GalleryBranding.CloneCommand" />
+            <x:Static x:Key="GalleryWhatsNewPageTitle" Member="local:GalleryBranding.WhatsNewPageTitle" />
+            <x:Static x:Key="GalleryNewSamplesAutomationName" Member="local:GalleryBranding.NewSamplesAutomationName" />
+            <DrawingImage x:Key="ModernWpfLogoImage">
+                <DrawingImage.Drawing>
+                    <DrawingGroup>
+                        <GeometryDrawing>
+                            <GeometryDrawing.Brush>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#0F766E" Offset="0" />
+                                    <GradientStop Color="#0EA5A4" Offset="1" />
+                                </LinearGradientBrush>
+                            </GeometryDrawing.Brush>
+                            <GeometryDrawing.Geometry>
+                                <RectangleGeometry Rect="0,0,64,64" RadiusX="14" RadiusY="14" />
+                            </GeometryDrawing.Geometry>
+                        </GeometryDrawing>
+                        <GeometryDrawing
+                            Brush="White"
+                            Geometry="M 15,46 L 15,18 L 23,18 L 32,33 L 41,18 L 49,18 L 49,46 L 42,46 L 42,30 L 33,44 L 31,44 L 22,30 L 22,46 Z" />
+                    </DrawingGroup>
+                </DrawingImage.Drawing>
+            </DrawingImage>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </Application.Resources>

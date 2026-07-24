@@ -54,7 +54,8 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(sample, "\"DisableControl1\"");
             StringAssert.Contains(sample, "\"Disable hyperlink button\"");
             StringAssert.Contains(sample, "uriButton.IsEnabled = !isChecked");
-            StringAssert.Contains(navigateSnippet, "Content=\"Microsoft home page\"");
+            StringAssert.Contains(navigateSnippet, "Content=\"ModernWPF repository\"");
+            StringAssert.Contains(navigateSnippet, "NavigateUri=\"https://github.com/Kinnara/ModernWpf\"");
             StringAssert.Contains(clickSnippet, "Content=\"ToggleButton\"");
 
             StringAssert.Contains(sampleTests, "new HyperlinkButtonAutomationPeer(uriButton)");

@@ -68,7 +68,7 @@ namespace ModernWpf.Gallery.Pages
     SpinButtonPlacementMode=""Inline"" ValueChanged=""ValueNumberBox_ValueChanged"" />";
 
         private const string InfoBadgeDynamicValueCSharp =
-@"private void ValueNumberBox_ValueChanged(Microsoft.UI.Xaml.Controls.NumberBox sender, Microsoft.UI.Xaml.Controls.NumberBoxValueChangedEventArgs args)
+@"private void ValueNumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
 {
     if((int)args.NewValue >= -1)
     {
@@ -602,8 +602,8 @@ namespace ModernWpf.Gallery.Pages
                 {
                     infoBar.ActionButton = new Mux.HyperlinkButton
                     {
-                        Content = "Informational link",
-                        NavigateUri = new Uri("http://www.microsoft.com/")
+                        Content = "Project information",
+                        NavigateUri = new Uri(GalleryBranding.RepositoryUrl)
                     };
                 }
                 else

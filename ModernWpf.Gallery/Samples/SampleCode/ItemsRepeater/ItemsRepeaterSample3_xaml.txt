@@ -13,16 +13,16 @@ color-changing rectangle besides it. -->
                     Grid.Column="0"
                     Height="175"
                     Width="250"
-                    ViewChanging="Animated_ScrollViewer_ViewChanging">
+                    ScrollChanged="Animated_ScrollViewer_ScrollChanged">
         <ItemsRepeater x:Name="animatedScrollRepeater" >
             <ItemsRepeater.ItemTemplate>
-                <DataTemplate x:DataType="x:String">
-                    <Button Content="{x:Bind}"
-                            Background="{x:Bind}"
+                <DataTemplate>
+                    <Button Content="{Binding}"
+                            Background="{Binding}"
                             Click="Animated_GotItem"
                             GotFocus="Animated_GotItem"
                             HorizontalAlignment="Stretch"
-                            Foreground="{ThemeResource ButtonForeground}"/>
+                            Foreground="{DynamicResource ButtonForeground}"/>
                 </DataTemplate>
             </ItemsRepeater.ItemTemplate>
         </ItemsRepeater>

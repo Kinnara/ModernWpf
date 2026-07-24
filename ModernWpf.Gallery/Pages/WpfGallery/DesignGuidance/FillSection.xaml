@@ -290,7 +290,7 @@
             Description="Used for controls living on top of imagery.">
             <Border CornerRadius="{StaticResource ControlCornerRadius}">
               <Grid>
-                <Image MaxHeight="150" Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.png" />
+                <Image MaxHeight="150" Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/SampleMedia/rainier.jpg" />
                   <Border
                     Width="20"
                     Height="20"

@@ -36,7 +36,7 @@
                     <Image
                         Height="200"
                         HorizontalAlignment="Left"
-                        Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/win11-dashboard.png" />
+                        Source="pack://application:,,,/ModernWpf.Gallery;component/Assets/SampleMedia/rainier.jpg" />
                 </controls:ControlExample>
             </StackPanel>
         </ScrollViewer>

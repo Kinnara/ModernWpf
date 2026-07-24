@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Models;
@@ -21,7 +20,7 @@ namespace ModernWpf.Gallery.Pages
     IsBackButtonVisible=""$(BackButtonVisibility)""
     IsPaneToggleButtonVisible=""$(PaneToggleVisibility)"">
     <TitleBar.IconSource>
-        <ImageIconSource ImageSource=""/Assets/Tiles/GalleryIcon.ico"" />
+        <SymbolIconSource Symbol=""Library"" />
     </TitleBar.IconSource>
     <TitleBar.Content>
         <AutoSuggestBox
@@ -39,9 +38,9 @@ namespace ModernWpf.Gallery.Pages
 </TitleBar>";
 
         private const string TitleBarDragRegionsXaml =
-@"<!-- Starting with WindowsAppSDK 2.1, TitleBar walks TitleBar.Content,
-     auto-excludes interactive controls from the drag region, and lets
-     non-interactive visuals (and empty space) remain draggable.
+@"<!-- ModernWPF TitleBar walks TitleBar.Content, excludes interactive
+     controls from the drag region, and keeps non-interactive visuals
+     and empty space draggable.
 
      Use TitleBar.IsDragRegion to override the framework decision:
        True   -> always draggable
@@ -171,7 +170,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             {
                 Margin = new Thickness(0, 12, 0, 0),
                 TextWrapping = TextWrapping.Wrap,
-                Text = "For full title bar customization without using the TitleBar control, see the AppWindowTitleBar sample"
+                Text = "Use the examples below to configure a ModernWPF TitleBar or integrate one with NavigationView."
             };
             return textBlock;
         }
@@ -216,7 +215,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             var titleText = new TextBlock
             {
                 Name = "TitleText",
-                Text = "WinUI Gallery",
+                Text = GalleryBranding.DisplayName,
                 FontWeight = FontWeights.SemiBold,
                 VerticalAlignment = VerticalAlignment.Bottom
             };
@@ -268,14 +267,13 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             titleBarGrid.Children.Add(backButton);
             titleBarGrid.Children.Add(paneButton);
 
-            var icon = new Image
+            var icon = new Mux.SymbolIcon(Mux.Symbol.Library)
             {
                 Name = "TitleBarIcon",
                 Width = 16,
                 Height = 16,
                 Margin = new Thickness(14, 0, 16, 0),
-                VerticalAlignment = VerticalAlignment.Center,
-                Source = CreateBitmap(ResourceUri("Assets/Tiles/GalleryIcon.ico"))
+                VerticalAlignment = VerticalAlignment.Center
             };
             Grid.SetColumn(icon, 2);
             titleBarGrid.Children.Add(icon);
@@ -320,7 +318,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             var titleBox = new TextBox
             {
                 Name = "TitleBox",
-                Text = "WinUI Gallery"
+                Text = GalleryBranding.DisplayName
             };
             ControlHelper.SetHeader(titleBox, "Title");
 
@@ -458,13 +456,12 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
             titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-            var icon = new Image
+            var icon = new Mux.SymbolIcon(Mux.Symbol.Library)
             {
                 Width = 16,
                 Height = 16,
                 Margin = new Thickness(0, 0, 16, 0),
-                VerticalAlignment = VerticalAlignment.Center,
-                Source = CreateBitmap(ResourceUri("Assets/Tiles/GalleryIcon.ico"))
+                VerticalAlignment = VerticalAlignment.Center
             };
             titleBar.Children.Add(icon);
 
@@ -540,7 +537,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             body.Children.Add(new TextBlock
             {
                 Margin = new Thickness(0, 16, 0, 0),
-                Text = "Try dragging the window from different parts of the title bar. Interactive controls (like the search box) are automatically excluded from the drag region by the new default behavior in Windows App SDK 2.1.",
+                Text = "Try dragging the window from different parts of the title bar. ModernWPF keeps interactive controls, such as the search box, clickable while non-interactive title-bar space remains draggable.",
                 TextWrapping = TextWrapping.Wrap
             });
             body.Children.Add(new TextBlock
@@ -883,7 +880,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             };
             var title = new TextBlock
             {
-                Text = "ModernWpf Gallery",
+                Text = GalleryBranding.DisplayName,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontWeight = FontWeights.SemiBold,
                 Margin = new Thickness(0, 0, 16, 0)
@@ -913,7 +910,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 Padding = new Thickness(20),
                 Child = new TextBlock
                 {
-                    Text = "The preview represents a ModernWpf title bar with drag region controls and optional interactive content.",
+                    Text = "The preview represents a " + GalleryBranding.BrandName + " title bar with drag region controls and optional interactive content.",
                     TextWrapping = TextWrapping.Wrap,
                     Opacity = 0.72
                 }
@@ -1077,14 +1074,5 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             return (SolidColorBrush)new BrushConverter().ConvertFromString(color);
         }
 
-        private static Uri ResourceUri(string relativePath)
-        {
-            return new Uri("pack://application:,,,/ModernWpf.Gallery;component/" + relativePath, UriKind.Absolute);
-        }
-
-        private static BitmapImage CreateBitmap(Uri uri)
-        {
-            return new BitmapImage(uri);
-        }
     }
 }

@@ -118,7 +118,7 @@ if ($Build) {
 }
 
 if (!(Test-Path $GalleryExe)) {
-    throw "ModernWpf Gallery executable was not found at '$GalleryExe'. Build first or pass -GalleryExe."
+    throw "Gallery executable was not found at '$GalleryExe'. Build first or pass -GalleryExe."
 }
 
 Add-Type -AssemblyName UIAutomationClient
@@ -580,8 +580,7 @@ function Find-WindowByProcessId([int]$processId) {
             $fallback = $window
         }
 
-        if ($window.Current.AutomationId -eq "ModernWpfGalleryMainWindow" -or
-            $window.Current.Name -eq "ModernWPF Gallery") {
+        if ($window.Current.AutomationId -eq "ModernWpfGalleryMainWindow") {
             return $window
         }
     }
@@ -10032,7 +10031,7 @@ function Capture-ModernWpf([string]$control, [string]$caseDir) {
     }
     $process = Start-Process -FilePath $GalleryExe -ArgumentList $args -PassThru
     try {
-        $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "ModernWpf Gallery window" -Probe {
+        $window = Wait-Until -TimeoutSeconds $TimeoutSeconds -Description "Gallery window" -Probe {
             $process.Refresh()
             Find-WindowByProcessId $process.Id
         }

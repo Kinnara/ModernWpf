@@ -48,12 +48,11 @@ public class Recipe
 // ==========================  Data source class ==========================
 /* To hold the recipe items, a data source class was created called MyItemsSource. The class
    inherits from IList and IKeyIndexMapping interfaces, basically creating a collection class
-   that can easily filter and sort its items. Important methods are shown below, but full source
-   code can be found in WinUI Gallery repo. See the linked ItemsRepeater guidance documentation as
-   well for a full tutorial on how to implement this type of class. */
+   that can easily filter and sort its items. ModernWpf.Controls provides IKeyIndexMapping;
+   the important stable-key methods are shown below. */
 
 public class MyItemsSource : IList,
-                             Microsoft.UI.Xaml.Controls.IKeyIndexMapping,
+                             ModernWpf.Controls.IKeyIndexMapping,
                              INotifyCollectionChanged
 {
     private List<Recipe> inner = new List<Recipe>();
