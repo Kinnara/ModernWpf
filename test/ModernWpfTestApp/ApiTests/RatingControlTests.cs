@@ -110,8 +110,17 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 
                 ratingControl.PlaceholderValue = 0.1;
                 ratingControl.Value = 0.1;
-                Verify.AreEqual(ratingControl.PlaceholderValue, 1.0, "Should coerce small PlaceholderValue values to 1.0");
+                Verify.AreEqual(ratingControl.PlaceholderValue, 0.1, "PlaceholderValue is a display hint, so fractional values should be preserved");
                 Verify.AreEqual(ratingControl.Value, 1.0, "Should coerce small Value values to 1.0");
+
+                ratingControl.PlaceholderValue = 0.5;
+                Verify.AreEqual(ratingControl.PlaceholderValue, 0.5);
+
+                ratingControl.PlaceholderValue = 0.0;
+                Verify.AreEqual(ratingControl.PlaceholderValue, 0.0);
+
+                ratingControl.PlaceholderValue = -0.5;
+                Verify.AreEqual(ratingControl.PlaceholderValue, -1.0, "Negative PlaceholderValue should use the unset sentinel");
 
                 ratingControl.PlaceholderValue = 6.0;
                 ratingControl.Value = 6.0;

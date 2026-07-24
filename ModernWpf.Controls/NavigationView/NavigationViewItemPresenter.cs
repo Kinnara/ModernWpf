@@ -3,6 +3,7 @@
 
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using ModernWpf.Input;
@@ -11,7 +12,7 @@ using static ModernWpf.Controls.NavigationViewItemHelper;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class NavigationViewItemPresenter : ContentControl, IControlProtected
+    public partial class NavigationViewItemPresenter : ContentControl, IControlProtected
     {
         const string c_contentGrid = "PresenterContentRootGrid";
         const string c_expandCollapseChevron = "ExpandCollapseChevron";
@@ -42,72 +43,16 @@ namespace ModernWpf.Controls.Primitives
             InputHelper.SetIsTapEnabled(this, true);
         }
 
-        #region Icon
-
-        public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register(
-                nameof(Icon),
-                typeof(IconElement),
-                typeof(NavigationViewItemPresenter),
-                null);
-
-        public IconElement Icon
-        {
-            get => (IconElement)GetValue(IconProperty);
-            set => SetValue(IconProperty, value);
-        }
-
-        #endregion
-
-        #region TemplateSettings
-
-        private static readonly DependencyPropertyKey TemplateSettingsPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(TemplateSettings),
-                typeof(NavigationViewItemPresenterTemplateSettings),
-                typeof(NavigationViewItemPresenter),
-                null);
-
-        public static readonly DependencyProperty TemplateSettingsProperty =
-            TemplateSettingsPropertyKey.DependencyProperty;
-
-        public NavigationViewItemPresenterTemplateSettings TemplateSettings
-        {
-            get => (NavigationViewItemPresenterTemplateSettings)GetValue(TemplateSettingsProperty);
-            private set => SetValue(TemplateSettingsPropertyKey, value);
-        }
-
-        #endregion
-
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(NavigationViewItemPresenter));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(NavigationViewItemPresenter));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
         public override void OnApplyTemplate()
         {
             IControlProtected controlProtected = this;
+
+            if (m_expandCollapseChevron != null)
+            {
+                UnhookExpandCollapseChevronEvents(m_expandCollapseChevron, m_expandCollapseChevronNavigationViewItem);
+                m_expandCollapseChevron = null;
+                m_expandCollapseChevronNavigationViewItem = null;
+            }
 
             // Retrieve pointers to stable controls 
             m_helper.Init(this);
@@ -122,8 +67,8 @@ namespace ModernWpf.Controls.Primitives
                 if (GetTemplateChildT<Grid>(c_expandCollapseChevron, this) is { } expandCollapseChevron)
                 {
                     m_expandCollapseChevron = expandCollapseChevron;
-                    InputHelper.SetIsTapEnabled(expandCollapseChevron, true);
-                    InputHelper.AddTappedHandler(expandCollapseChevron, navigationViewItem.OnExpandCollapseChevronTapped);
+                    m_expandCollapseChevronNavigationViewItem = navigationViewItem;
+                    HookExpandCollapseChevronEvents(expandCollapseChevron, navigationViewItem);
                 }
                 navigationViewItem.UpdateVisualStateNoTransition();
                 navigationViewItem.UpdateIsClosedCompact();
@@ -177,6 +122,67 @@ namespace ModernWpf.Controls.Primitives
                     m_expandCollapseRotateTransform.Angle = 0;
                 }
             }
+        }
+
+        void OnExpandCollapseChevronMouseLeftButtonDown(object sender, MouseButtonEventArgs args)
+        {
+            if (sender is UIElement chevron)
+            {
+                m_isExpandCollapseChevronPressed = true;
+                m_isExpandCollapseChevronMouseCaptured = chevron.CaptureMouse();
+            }
+
+            args.Handled = true;
+        }
+
+        void OnExpandCollapseChevronMouseLeftButtonUp(object sender, MouseButtonEventArgs args)
+        {
+            var wasPressed = m_isExpandCollapseChevronPressed;
+            ReleaseExpandCollapseChevronMouseCapture(sender as UIElement);
+
+            if (wasPressed && sender is UIElement chevron)
+            {
+                InputHelper.RaiseTapped(chevron, args.Timestamp);
+            }
+
+            args.Handled = true;
+        }
+
+        void OnExpandCollapseChevronLostMouseCapture(object sender, MouseEventArgs args)
+        {
+            m_isExpandCollapseChevronPressed = false;
+            m_isExpandCollapseChevronMouseCaptured = false;
+        }
+
+        void HookExpandCollapseChevronEvents(UIElement chevron, NavigationViewItem navigationViewItem)
+        {
+            chevron.AddHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(OnExpandCollapseChevronMouseLeftButtonDown), true /*handledEventsToo*/);
+            chevron.AddHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnExpandCollapseChevronMouseLeftButtonUp), true /*handledEventsToo*/);
+            chevron.AddHandler(LostMouseCaptureEvent, new MouseEventHandler(OnExpandCollapseChevronLostMouseCapture), true /*handledEventsToo*/);
+            InputHelper.AddTappedHandler(chevron, navigationViewItem.OnExpandCollapseChevronTapped);
+        }
+
+        void UnhookExpandCollapseChevronEvents(UIElement chevron, NavigationViewItem navigationViewItem)
+        {
+            chevron.RemoveHandler(MouseLeftButtonDownEvent, new MouseButtonEventHandler(OnExpandCollapseChevronMouseLeftButtonDown));
+            chevron.RemoveHandler(MouseLeftButtonUpEvent, new MouseButtonEventHandler(OnExpandCollapseChevronMouseLeftButtonUp));
+            chevron.RemoveHandler(LostMouseCaptureEvent, new MouseEventHandler(OnExpandCollapseChevronLostMouseCapture));
+            if (navigationViewItem != null)
+            {
+                InputHelper.RemoveTappedHandler(chevron, navigationViewItem.OnExpandCollapseChevronTapped);
+            }
+        }
+
+        void ReleaseExpandCollapseChevronMouseCapture(UIElement chevron)
+        {
+            m_isExpandCollapseChevronPressed = false;
+
+            if (m_isExpandCollapseChevronMouseCaptured && chevron != null)
+            {
+                chevron.ReleaseMouseCapture();
+            }
+
+            m_isExpandCollapseChevronMouseCaptured = false;
         }
 
         internal UIElement GetSelectionIndicator()
@@ -277,5 +283,8 @@ namespace ModernWpf.Controls.Primitives
         Storyboard m_chevronCollapsedStoryboard;
 
         RotateTransform m_expandCollapseRotateTransform;
+        NavigationViewItem m_expandCollapseChevronNavigationViewItem;
+        bool m_isExpandCollapseChevronPressed;
+        bool m_isExpandCollapseChevronMouseCaptured;
     }
 }

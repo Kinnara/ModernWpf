@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class CommandBarOverflowPresenter : ContentControl
+    public partial class CommandBarOverflowPresenter : ContentControl
     {
         static CommandBarOverflowPresenter()
         {
@@ -16,19 +16,6 @@ namespace ModernWpf.Controls.Primitives
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
         }
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(CommandBarOverflowPresenter));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
 
         public override void OnApplyTemplate()
         {
@@ -50,15 +37,15 @@ namespace ModernWpf.Controls.Primitives
             UpdateVisualState(false);
         }
 
-        private void UpdateVisualState(bool useTransitions)
+        internal void UpdateVisualState(bool useTransitions)
         {
             string stateName;
 
-            //if (IsLoaded && IsVisible)
-            //{
-            //    stateName = IsPopupOpenDown() ? "FullWidthOpenDown" : "FullWidthOpenUp";
-            //}
-            //else
+            if (IsLoaded && IsVisible)
+            {
+                stateName = IsPopupOpenDown() ? "FullWidthOpenDown" : "FullWidthOpenUp";
+            }
+            else
             {
                 stateName = "DisplayModeDefault";
             }
@@ -68,12 +55,15 @@ namespace ModernWpf.Controls.Primitives
 
         private bool IsPopupOpenDown()
         {
-            if (TemplatedParent is CommandBarToolBar toolBar)
+            if (TemplatedParent is CommandBar commandBar)
             {
-                var popupTop = TranslatePoint(new Point(0, 0), toolBar);
-                var verticalOffset = popupTop.Y;
-                return verticalOffset > 0;
+                return commandBar.IsOverflowPopupOpenDown();
             }
+            else if (TemplatedParent is CommandBarFlyoutCommandBar commandBarFlyoutCommandBar)
+            {
+                return commandBarFlyoutCommandBar.IsOverflowPopupOpenDown();
+            }
+
             return true;
         }
     }

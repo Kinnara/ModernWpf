@@ -1,0 +1,15 @@
+private async void ShowDialogNoDefault_Click(object sender, RoutedEventArgs e)
+{
+    ContentDialog dialog = new ContentDialog();
+
+    // XamlRoot must be set in the case of a ContentDialog running in a Desktop app
+    dialog.XamlRoot = this.XamlRoot;
+    dialog.Title = "Replace file?";
+    dialog.PrimaryButtonText = "Replace";
+    dialog.SecondaryButtonText = "Keep";
+    dialog.CloseButtonText = "Cancel";
+    dialog.DefaultButton = ContentDialogButton.None;
+    dialog.Content = new ContentDialogContent();
+
+    var result = await dialog.ShowAsync();
+}

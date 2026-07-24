@@ -20,6 +20,7 @@ namespace ModernWpf.Controls
         internal static readonly Point ClearedElementsArrangePosition = new Point(-10000.0, -10000.0);
         // A convention we use in the ItemsRepeater codebase for an invalid Rect value.
         internal static readonly Rect InvalidRect = Rect.Empty;
+        private const int MaxStackLayoutIterations = 60;
 
         static ItemsRepeater()
         {
@@ -35,6 +36,7 @@ namespace ModernWpf.Controls
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
+            LayoutUpdated += OnLayoutUpdated;
 
             SetCurrentValue(LayoutProperty, new StackLayout());
 
@@ -67,6 +69,15 @@ namespace ModernWpf.Controls
                 throw new InvalidOperationException("Cannot run layout in the middle of a collection change.");
             }
 
+            var layout = Layout;
+            if (layout is StackLayout && ++m_stackLayoutMeasureCounter >= MaxStackLayoutIterations)
+            {
+                var layoutExtent = m_viewportManager.GetLayoutExtent();
+                return new Size(
+                    Math.Max(0.0, layoutExtent.Width - layoutExtent.X),
+                    Math.Max(0.0, layoutExtent.Height - layoutExtent.Y));
+            }
+
             m_viewportManager.OnOwnerMeasuring();
 
             m_isLayoutInProgress = true;
@@ -76,7 +87,7 @@ namespace ModernWpf.Controls
                 Rect extent = default;
                 Size desiredSize = default;
 
-                if (Layout is Layout layout)
+                if (layout != null)
                 {
                     var layoutContext = GetLayoutContext();
 
@@ -191,85 +202,7 @@ namespace ModernWpf.Controls
 
         #region Properties
 
-        public static readonly DependencyProperty ItemsSourceProperty =
-            DependencyProperty.Register(
-                nameof(ItemsSource),
-                typeof(object),
-                typeof(ItemsRepeater),
-                new PropertyMetadata(OnPropertyChanged));
-
-        public object ItemsSource
-        {
-            get => GetValue(ItemsSourceProperty);
-            set => SetValue(ItemsSourceProperty, value);
-        }
-
         public ItemsSourceView ItemsSourceView { get; private set; }
-
-        public static readonly DependencyProperty ItemTemplateProperty =
-            DependencyProperty.Register(
-                nameof(ItemTemplate),
-                typeof(object),
-                typeof(ItemsRepeater),
-                new PropertyMetadata(OnPropertyChanged));
-
-        public object ItemTemplate
-        {
-            get => GetValue(ItemTemplateProperty);
-            set => SetValue(ItemTemplateProperty, value);
-        }
-
-        public static readonly DependencyProperty LayoutProperty =
-            DependencyProperty.Register(
-                nameof(Layout),
-                typeof(Layout),
-                typeof(ItemsRepeater),
-                new PropertyMetadata(OnPropertyChanged));
-
-        public Layout Layout
-        {
-            get => (Layout)GetValue(LayoutProperty);
-            set => SetValue(LayoutProperty, value);
-        }
-
-        public static readonly DependencyProperty AnimatorProperty =
-            DependencyProperty.Register(
-                nameof(Animator),
-                typeof(ElementAnimator),
-                typeof(ItemsRepeater),
-                new PropertyMetadata(OnPropertyChanged));
-
-        internal ElementAnimator Animator
-        {
-            get => (ElementAnimator)GetValue(AnimatorProperty);
-            set => SetValue(AnimatorProperty, value);
-        }
-
-        public static readonly DependencyProperty HorizontalCacheLengthProperty =
-            DependencyProperty.Register(
-                nameof(HorizontalCacheLength),
-                typeof(double),
-                typeof(ItemsRepeater),
-                new PropertyMetadata(2.0, OnPropertyChanged));
-
-        public double HorizontalCacheLength
-        {
-            get => (double)GetValue(HorizontalCacheLengthProperty);
-            set => SetValue(HorizontalCacheLengthProperty, value);
-        }
-
-        public static readonly DependencyProperty VerticalCacheLengthProperty =
-            DependencyProperty.Register(
-                nameof(VerticalCacheLength),
-                typeof(double),
-                typeof(ItemsRepeater),
-                new PropertyMetadata(2.0, OnPropertyChanged));
-
-        public double VerticalCacheLength
-        {
-            get => (double)GetValue(VerticalCacheLengthProperty);
-            set => SetValue(VerticalCacheLengthProperty, value);
-        }
 
         #endregion
 
@@ -302,7 +235,7 @@ namespace ModernWpf.Controls
         public event TypedEventHandler<ItemsRepeater, ItemsRepeaterElementIndexChangedEventArgs> ElementIndexChanged;
         public event TypedEventHandler<ItemsRepeater, ItemsRepeaterElementPreparedEventArgs> ElementPrepared;
 
-        internal IElementFactoryShim ItemTemplateShim => m_itemTemplateWrapper;
+        internal IElementFactory ItemTemplateShim => m_itemTemplateWrapper;
 
         internal ViewManager ViewManager { get; }
 
@@ -366,9 +299,9 @@ namespace ModernWpf.Controls
                 throw new InvalidOperationException("ItemSource doesn't have a value");
             }
 
-            if (index >= 0 && index >= ItemsSourceView.Count)
+            if (index < 0 || index >= ItemsSourceView.Count)
             {
-                throw new ArgumentException(nameof(index), "Argument index is invalid.");
+                throw new ArgumentException("Argument index is invalid.", nameof(index));
             }
 
             if (m_isLayoutInProgress)
@@ -535,13 +468,6 @@ namespace ModernWpf.Controls
             }
         }
 
-        internal static readonly DependencyProperty VirtualizationInfoProperty =
-            DependencyProperty.RegisterAttached(
-                "VirtualizationInfo",
-                typeof(VirtualizationInfo),
-                typeof(ItemsRepeater),
-                null);
-
         private void OnLoaded(object sender, RoutedEventArgs args)
         {
             // If we skipped an unload event, reset the scrollers now and invalidate measure so that we get a new
@@ -557,12 +483,20 @@ namespace ModernWpf.Controls
 
         private void OnUnloaded(object sender, RoutedEventArgs args)
         {
+            m_stackLayoutMeasureCounter = 0;
+
             ++_unloadedCounter;
             // Only reset the scrollers if this unload event is in-sync.
             if (_unloadedCounter == _loadedCounter)
             {
                 m_viewportManager.ResetScrollers();
             }
+        }
+
+        private void OnLayoutUpdated(object sender, EventArgs args)
+        {
+            // Now that layout has settled, start detecting a fresh StackLayout layout cycle.
+            m_stackLayoutMeasureCounter = 0;
         }
 
         private void OnDataSourcePropertyChanged(ItemsSourceView oldValue, ItemsSourceView newValue)
@@ -677,10 +611,10 @@ namespace ModernWpf.Controls
                 }
                 // Clear flag for bug #776
                 m_isItemTemplateEmpty = false;
-                m_itemTemplateWrapper = newValue as IElementFactoryShim;
+                m_itemTemplateWrapper = newValue as IElementFactory;
                 if (m_itemTemplateWrapper == null)
                 {
-                    // ItemTemplate set does not implement IElementFactoryShim. We also 
+                    // ItemTemplate set does not implement IElementFactory. We also
                     // want to support DataTemplate and DataTemplateSelectors automagically.
                     if (newValue is DataTemplate dataTemplate)
                     {
@@ -724,6 +658,8 @@ namespace ModernWpf.Controls
 
             if (oldValue != null)
             {
+                m_stackLayoutMeasureCounter = 0;
+
                 oldValue.UninitializeForContext(GetLayoutContext());
                 oldValue.MeasureInvalidated -= InvalidateMeasureForLayout;
                 oldValue.ArrangeInvalidated -= InvalidateArrangeForLayout;
@@ -833,7 +769,7 @@ namespace ModernWpf.Controls
 
         private readonly ViewportManager m_viewportManager;
 
-        private IElementFactoryShim m_itemTemplateWrapper;
+        private IElementFactory m_itemTemplateWrapper;
 
         private VirtualizingLayoutContext m_layoutContext;
         // Value is different from null only while we are on the OnItemsSourceChanged call stack.
@@ -841,6 +777,7 @@ namespace ModernWpf.Controls
 
         private Size m_lastAvailableSize;
         private bool m_isLayoutInProgress = false;
+        private int m_stackLayoutMeasureCounter;
         // The value of _layoutOrigin is expected to be set by the layout
         // when it gets measured. It should not be used outside of measure.
         private Point m_layoutOrigin;

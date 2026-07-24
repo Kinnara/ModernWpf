@@ -36,8 +36,6 @@ namespace SamplesCommon
         {
             SystemFonts.MessageFontFamilyKey,
             "ContentControlThemeFontFamily",
-            "PivotHeaderItemFontFamily",
-            "PivotTitleFontFamily"
         };
 
         private FontFamily _fontFamily;

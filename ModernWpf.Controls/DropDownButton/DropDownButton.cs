@@ -7,10 +7,11 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Media.Animation;
 
 namespace ModernWpf.Controls
 {
-    public class DropDownButton : Button
+    public partial class DropDownButton : Button
     {
         static DropDownButton()
         {
@@ -21,79 +22,26 @@ namespace ModernWpf.Controls
         {
         }
 
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(DropDownButton));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(DropDownButton));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualMargin
-
-        public static readonly DependencyProperty FocusVisualMarginProperty =
-            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(DropDownButton));
-
-        public Thickness FocusVisualMargin
-        {
-            get => (Thickness)GetValue(FocusVisualMarginProperty);
-            set => SetValue(FocusVisualMarginProperty, value);
-        }
-
-        #endregion
-
         #region Flyout
-
-        public static readonly DependencyProperty FlyoutProperty =
-            FlyoutService.FlyoutProperty.AddOwner(
-                typeof(DropDownButton),
-                new FrameworkPropertyMetadata(OnFlyoutPropertyChanged));
-
-        public FlyoutBase Flyout
-        {
-            get => (FlyoutBase)GetValue(FlyoutProperty);
-            set => SetValue(FlyoutProperty, value);
-        }
 
         private static void OnFlyoutPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((DropDownButton)d).OnFlyoutPropertyChanged(e);
+            ((DropDownButton)d).OnFlyoutPropertyChanged();
         }
 
-        private void OnFlyoutPropertyChanged(DependencyPropertyChangedEventArgs e)
+        private void OnFlyoutPropertyChanged()
         {
-            if (e.OldValue is FlyoutBase oldFlyout)
-            {
-                oldFlyout.Opened -= OnFlyoutOpened;
-                oldFlyout.Closed -= OnFlyoutClosed;
-            }
-
-            if (e.NewValue is FlyoutBase newFlyout)
-            {
-                newFlyout.Opened += OnFlyoutOpened;
-                newFlyout.Closed += OnFlyoutClosed;
-            }
+            RegisterFlyoutEvents();
         }
 
         #endregion
+
+        public override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            RegisterFlyoutEvents();
+        }
 
         internal bool IsFlyoutOpen => m_isFlyoutOpen;
 
@@ -105,6 +53,24 @@ namespace ModernWpf.Controls
         internal void CloseFlyout()
         {
             Flyout?.Hide();
+        }
+
+        private void RegisterFlyoutEvents()
+        {
+            if (m_registeredFlyout != null)
+            {
+                m_registeredFlyout.Opened -= OnFlyoutOpened;
+                m_registeredFlyout.Closed -= OnFlyoutClosed;
+                m_registeredFlyout = null;
+            }
+
+            var flyout = Flyout;
+            if (flyout != null)
+            {
+                flyout.Opened += OnFlyoutOpened;
+                flyout.Closed += OnFlyoutClosed;
+                m_registeredFlyout = flyout;
+            }
         }
 
         private void OnFlyoutOpened(object sender, object e)
@@ -125,5 +91,6 @@ namespace ModernWpf.Controls
         }
 
         private bool m_isFlyoutOpen;
+        private FlyoutBase m_registeredFlyout;
     }
 }

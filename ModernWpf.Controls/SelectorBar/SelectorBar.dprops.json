@@ -1,0 +1,34 @@
+{
+  "usings": [
+    "System.Collections.ObjectModel",
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "SelectorBar"
+  },
+  "properties": [
+    {
+      "name": "Items",
+      "type": "ObservableCollection<SelectorBarItem>",
+      "kind": "RegisterReadOnly",
+      "default": "null",
+      "setterAccessibility": "none"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty"
+    },
+    {
+      "name": "SelectedItem",
+      "type": "SelectorBarItem",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "changed": "OnSelectedItemPropertyChanged"
+    }
+  ]
+}

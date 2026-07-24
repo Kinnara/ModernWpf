@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
@@ -485,7 +485,7 @@ namespace ModernWpf.Controls.Primitives
                         TransferValue(focusedElement, focusVisual, FocusVisualPrimaryThicknessProperty);
                         TransferValue(focusedElement, focusVisual, FocusVisualSecondaryBrushProperty);
                         TransferValue(focusedElement, focusVisual, FocusVisualSecondaryThicknessProperty);
-                        TransferValue(focusedElement, focusVisual, ControlHelper.CornerRadiusProperty);
+                        TransferValue(focusedElement, focusVisual, System.Windows.Controls.Border.CornerRadiusProperty);
                         focusVisual.Margin = GetFocusVisualMargin(focusedElement);
                     }
 
@@ -502,7 +502,7 @@ namespace ModernWpf.Controls.Primitives
                     focusVisual.ClearValue(FocusVisualPrimaryThicknessProperty);
                     focusVisual.ClearValue(FocusVisualSecondaryBrushProperty);
                     focusVisual.ClearValue(FocusVisualSecondaryThicknessProperty);
-                    focusVisual.ClearValue(ControlHelper.CornerRadiusProperty);
+                    focusVisual.ClearValue(System.Windows.Controls.Border.CornerRadiusProperty);
                     focusVisual.ClearValue(FrameworkElement.MarginProperty);
                     focusVisual.ClearValue(Control.TemplateProperty);
                     focusVisual.ClearValue(FocusedElementProperty);
@@ -536,9 +536,15 @@ namespace ModernWpf.Controls.Primitives
                 TransferValue(focusedElement, control, FocusVisualPrimaryThicknessProperty);
                 TransferValue(focusedElement, control, FocusVisualSecondaryBrushProperty);
                 TransferValue(focusedElement, control, FocusVisualSecondaryThicknessProperty);
-                TransferValue(focusedElement, control, ControlHelper.CornerRadiusProperty);
+                TransferValue(focusedElement, control, System.Windows.Controls.Border.CornerRadiusProperty);
                 _adorderChild = control;
-                IsClipEnabled = true;
+                // FocusVisualMargin is negative for the WinUI controls whose
+                // focus ring intentionally extends beyond the template focus
+                // target. Clipping the adorner to that inner target removes
+                // its top and left strokes (and can square the remaining
+                // corners), producing only an L-shaped ring. Let the adorner
+                // render the complete margin-expanded focus visual.
+                IsClipEnabled = false;
                 IsHitTestVisible = false;
                 IsEnabled = false;
                 AddVisualChild(_adorderChild);

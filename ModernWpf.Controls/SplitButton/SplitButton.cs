@@ -1,20 +1,21 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-using System;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Media.Animation;
 using static ModernWpf.ResourceAccessor;
 
 namespace ModernWpf.Controls
 {
-    public class SplitButton : ContentControl, ICommandSource
+    public partial class SplitButton : ContentControl, ICommandSource
     {
         private static readonly ResourceAccessor ResourceAccessor = new ResourceAccessor(typeof(SplitButton));
 
@@ -27,142 +28,17 @@ namespace ModernWpf.Controls
         {
             KeyDown += OnSplitButtonKeyDown;
             KeyUp += OnSplitButtonKeyUp;
-
-            InputBindings.Add(new KeyBinding(new OpenFlyoutCommand(this), Key.Down, ModifierKeys.Alt));
+            IsEnabledChanged += OnSplitButtonIsEnabledChanged;
         }
-
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(SplitButton));
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(SplitButton));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
-
-        #region FocusVisualMargin
-
-        public static readonly DependencyProperty FocusVisualMarginProperty =
-            FocusVisualHelper.FocusVisualMarginProperty.AddOwner(typeof(SplitButton));
-
-        public Thickness FocusVisualMargin
-        {
-            get => (Thickness)GetValue(FocusVisualMarginProperty);
-            set => SetValue(FocusVisualMarginProperty, value);
-        }
-
-        #endregion
-
-        #region Command
-
-        public static readonly DependencyProperty CommandProperty =
-            ButtonBase.CommandProperty.AddOwner(typeof(SplitButton));
-
-        public ICommand Command
-        {
-            get => (ICommand)GetValue(CommandProperty);
-            set => SetValue(CommandProperty, value);
-        }
-
-        #endregion
-
-        #region CommandParameter
-
-        public static readonly DependencyProperty CommandParameterProperty =
-            ButtonBase.CommandParameterProperty.AddOwner(typeof(SplitButton));
-
-        public object CommandParameter
-        {
-            get => GetValue(CommandParameterProperty);
-            set => SetValue(CommandParameterProperty, value);
-        }
-
-        #endregion
-
-        #region CommandTarget
-
-        public static readonly DependencyProperty CommandTargetProperty =
-            ButtonBase.CommandTargetProperty.AddOwner(typeof(SplitButton));
-
-        public IInputElement CommandTarget
-        {
-            get => (IInputElement)GetValue(CommandTargetProperty);
-            set => SetValue(CommandTargetProperty, value);
-        }
-
-        #endregion
 
         #region Flyout
 
-        public static readonly DependencyProperty FlyoutProperty =
-            DependencyProperty.Register(
-                nameof(Flyout),
-                typeof(FlyoutBase),
-                typeof(SplitButton),
-                new PropertyMetadata(OnFlyoutChanged));
-
-        public FlyoutBase Flyout
-        {
-            get => (FlyoutBase)GetValue(FlyoutProperty);
-            set => SetValue(FlyoutProperty, value);
-        }
-
         private static void OnFlyoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((SplitButton)d).OnFlyoutChanged((FlyoutBase)e.OldValue, (FlyoutBase)e.NewValue);
+            ((SplitButton)d).OnFlyoutChanged();
         }
 
         #endregion
-
-        private static readonly DependencyProperty PrimaryButtonIsPressedProperty =
-            DependencyProperty.Register(
-                "PrimaryButtonIsPressed",
-                typeof(bool),
-                typeof(SplitButton),
-                new FrameworkPropertyMetadata(OnVisualPropertyChanged));
-
-        private static readonly DependencyProperty PrimaryButtonIsMouseOverProperty =
-            DependencyProperty.Register(
-                "PrimaryButtonIsMouseOver",
-                typeof(bool),
-                typeof(SplitButton),
-                new FrameworkPropertyMetadata(OnVisualPropertyChanged));
-
-        private static readonly DependencyProperty SecondaryButtonIsPressedProperty =
-            DependencyProperty.Register(
-                "SecondaryButtonIsPressed",
-                typeof(bool),
-                typeof(SplitButton),
-                new FrameworkPropertyMetadata(OnVisualPropertyChanged));
-
-        private static readonly DependencyProperty SecondaryButtonIsMouseOverProperty =
-            DependencyProperty.Register(
-                "SecondaryButtonIsMouseOver",
-                typeof(bool),
-                typeof(SplitButton),
-                new FrameworkPropertyMetadata(OnVisualPropertyChanged));
-
-        private static readonly DependencyProperty FlyoutPlacementProperty =
-            FlyoutBase.PlacementProperty.AddOwner(
-                typeof(SplitButton),
-                new FrameworkPropertyMetadata(OnFlyoutPlacementChanged));
 
         public event TypedEventHandler<SplitButton, SplitButtonClickEventArgs> Click;
 
@@ -181,6 +57,7 @@ namespace ModernWpf.Controls
 
                 this.SetBinding(PrimaryButtonIsPressedProperty, ButtonBase.IsPressedProperty, m_primaryButton);
                 this.SetBinding(PrimaryButtonIsMouseOverProperty, IsMouseOverProperty, m_primaryButton);
+                RegisterPointerEvents(m_primaryButton);
             }
 
             if (m_secondaryButton != null)
@@ -192,7 +69,10 @@ namespace ModernWpf.Controls
 
                 this.SetBinding(SecondaryButtonIsPressedProperty, ButtonBase.IsPressedProperty, m_secondaryButton);
                 this.SetBinding(SecondaryButtonIsMouseOverProperty, IsMouseOverProperty, m_secondaryButton);
+                RegisterPointerEvents(m_secondaryButton);
             }
+
+            RegisterFlyoutEvents();
 
             UpdateVisualStates();
 
@@ -204,29 +84,32 @@ namespace ModernWpf.Controls
             return new SplitButtonAutomationPeer(this);
         }
 
-        private void OnFlyoutChanged(FlyoutBase oldFlyout, FlyoutBase newFlyout)
+        private void OnFlyoutChanged()
         {
-            RegisterFlyoutEvents(oldFlyout, newFlyout);
+            RegisterFlyoutEvents();
 
             UpdateVisualStates();
         }
 
-        private void RegisterFlyoutEvents(FlyoutBase oldFlyout, FlyoutBase newFlyout)
+        private void RegisterFlyoutEvents()
         {
-            if (oldFlyout != null)
+            if (m_registeredFlyout != null)
             {
-                oldFlyout.Opened -= OnFlyoutOpened;
-                oldFlyout.Closed -= OnFlyoutClosed;
+                m_registeredFlyout.Opened -= OnFlyoutOpened;
+                m_registeredFlyout.Closed -= OnFlyoutClosed;
                 ClearValue(FlyoutPlacementProperty);
+                m_registeredFlyout = null;
             }
 
-            if (newFlyout != null)
+            var flyout = Flyout;
+            if (flyout != null)
             {
-                newFlyout.Opened += OnFlyoutOpened;
+                flyout.Opened += OnFlyoutOpened;
 
-                newFlyout.Closed += OnFlyoutClosed;
+                flyout.Closed += OnFlyoutClosed;
 
-                this.SetBinding(FlyoutPlacementProperty, FlyoutBase.PlacementProperty, newFlyout);
+                this.SetBinding(FlyoutPlacementProperty, FlyoutBase.PlacementProperty, flyout);
+                m_registeredFlyout = flyout;
             }
         }
 
@@ -248,6 +131,12 @@ namespace ModernWpf.Controls
             }
 
             // change visual state
+            if (!IsEnabled)
+            {
+                VisualStateManager.GoToState(this, "Disabled", useTransitions);
+                return;
+            }
+
             var primaryButton = m_primaryButton;
             var secondaryButton = m_secondaryButton;
             if (primaryButton != null && m_secondaryButton != null)
@@ -266,7 +155,7 @@ namespace ModernWpf.Controls
                 // SplitButton and ToggleSplitButton share a template -- this section is driving the checked states for ToggleSplitButton.
                 else if (InternalIsChecked)
                 {
-                    if (m_isKeyDown)
+                    if (m_lastPointerDeviceType == PointerDeviceType.Touch || m_isKeyDown)
                     {
                         if (primaryButton.IsPressed || secondaryButton.IsPressed || m_isKeyDown)
                         {
@@ -300,7 +189,7 @@ namespace ModernWpf.Controls
                 }
                 else
                 {
-                    if (m_isKeyDown)
+                    if (m_lastPointerDeviceType == PointerDeviceType.Touch || m_isKeyDown)
                     {
                         if (primaryButton.IsPressed || secondaryButton.IsPressed || m_isKeyDown)
                         {
@@ -342,7 +231,11 @@ namespace ModernWpf.Controls
             var flyout = Flyout;
             if (flyout != null)
             {
-                flyout.ShowAt(this);
+                var options = new FlyoutShowOptions
+                {
+                    Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft
+                };
+                flyout.ShowAt(this, options);
             }
         }
 
@@ -366,6 +259,25 @@ namespace ModernWpf.Controls
         }
 
         internal virtual bool InternalIsChecked => false;
+
+        internal void Invoke()
+        {
+            bool invoked = false;
+
+            var primaryButton = m_primaryButton;
+            if (primaryButton != null &&
+                FrameworkElementAutomationPeer.FromElement(primaryButton) is AutomationPeer peer &&
+                peer.GetPattern(PatternInterface.Invoke) is IInvokeProvider invokeProvider)
+            {
+                invokeProvider.Invoke();
+                invoked = true;
+            }
+
+            if (!invoked)
+            {
+                OnClickPrimary(null, null);
+            }
+        }
 
         private void OnFlyoutOpened(object sender, object e)
         {
@@ -391,6 +303,29 @@ namespace ModernWpf.Controls
             OpenFlyout();
         }
 
+        private void ExecuteCommand()
+        {
+            var command = Command;
+            if (command == null)
+            {
+                return;
+            }
+
+            var commandParameter = CommandParameter;
+            if (command is RoutedCommand routedCommand)
+            {
+                var commandTarget = CommandTarget ?? this;
+                if (routedCommand.CanExecute(commandParameter, commandTarget))
+                {
+                    routedCommand.Execute(commandParameter, commandTarget);
+                }
+            }
+            else if (command.CanExecute(commandParameter))
+            {
+                command.Execute(commandParameter);
+            }
+        }
+
         private void OnSplitButtonKeyDown(object sender, KeyEventArgs args)
         {
             Key key = args.Key;
@@ -413,20 +348,21 @@ namespace ModernWpf.Controls
                 if (IsEnabled)
                 {
                     OnClickPrimary(null, null);
+                    ExecuteCommand();
                     args.Handled = true;
                 }
             }
-            //else if (key == Key.Down)
-            //{
-            //    bool menuKeyDown = Keyboard.Modifiers.HasFlag(ModifierKeys.Alt);
+            else if (key == Key.Down)
+            {
+                bool menuKeyDown = Keyboard.Modifiers.HasFlag(ModifierKeys.Alt);
 
-            //    if (IsEnabled && menuKeyDown)
-            //    {
-            //        // Open the menu on alt-down
-            //        OpenFlyout();
-            //        args.Handled = true;
-            //    }
-            //}
+                if (IsEnabled && menuKeyDown)
+                {
+                    // Open the menu on alt-down
+                    OpenFlyout();
+                    args.Handled = true;
+                }
+            }
             else if (key == Key.F4 && IsEnabled)
             {
                 // Open the menu on F4
@@ -435,11 +371,17 @@ namespace ModernWpf.Controls
             }
         }
 
+        private void OnSplitButtonIsEnabledChanged(object sender, DependencyPropertyChangedEventArgs args)
+        {
+            UpdateVisualStates();
+        }
+
         private void UnregisterEvents()
         {
             if (m_primaryButton != null)
             {
                 m_primaryButton.Click -= OnClickPrimary;
+                UnregisterPointerEvents(m_primaryButton);
 
                 ClearValue(PrimaryButtonIsPressedProperty);
                 ClearValue(PrimaryButtonIsMouseOverProperty);
@@ -448,9 +390,54 @@ namespace ModernWpf.Controls
             if (m_secondaryButton != null)
             {
                 m_secondaryButton.Click -= OnClickSecondary;
+                UnregisterPointerEvents(m_secondaryButton);
 
                 ClearValue(SecondaryButtonIsPressedProperty);
                 ClearValue(SecondaryButtonIsMouseOverProperty);
+            }
+        }
+
+        private void RegisterPointerEvents(Button button)
+        {
+            button.MouseEnter += OnMousePointerEvent;
+            button.MouseLeave += OnMousePointerEvent;
+            button.PreviewMouseDown += OnMouseButtonPointerEvent;
+            button.PreviewMouseUp += OnMouseButtonPointerEvent;
+            button.TouchDown += OnTouchPointerEvent;
+            button.TouchUp += OnTouchPointerEvent;
+        }
+
+        private void UnregisterPointerEvents(Button button)
+        {
+            button.MouseEnter -= OnMousePointerEvent;
+            button.MouseLeave -= OnMousePointerEvent;
+            button.PreviewMouseDown -= OnMouseButtonPointerEvent;
+            button.PreviewMouseUp -= OnMouseButtonPointerEvent;
+            button.TouchDown -= OnTouchPointerEvent;
+            button.TouchUp -= OnTouchPointerEvent;
+        }
+
+        private void OnMousePointerEvent(object sender, MouseEventArgs args)
+        {
+            SetLastPointerDeviceType(PointerDeviceType.Mouse);
+        }
+
+        private void OnMouseButtonPointerEvent(object sender, MouseButtonEventArgs args)
+        {
+            SetLastPointerDeviceType(PointerDeviceType.Mouse);
+        }
+
+        private void OnTouchPointerEvent(object sender, TouchEventArgs args)
+        {
+            SetLastPointerDeviceType(PointerDeviceType.Touch);
+        }
+
+        private void SetLastPointerDeviceType(PointerDeviceType pointerDeviceType)
+        {
+            if (m_lastPointerDeviceType != pointerDeviceType)
+            {
+                m_lastPointerDeviceType = pointerDeviceType;
+                UpdateVisualStates();
             }
         }
 
@@ -458,32 +445,16 @@ namespace ModernWpf.Controls
 
         private Button m_primaryButton;
         private Button m_secondaryButton;
+        private FlyoutBase m_registeredFlyout;
 
         private bool m_isFlyoutOpen;
         private bool m_isKeyDown;
+        private PointerDeviceType m_lastPointerDeviceType = PointerDeviceType.Mouse;
 
-        private readonly CornerRadiusFilterConverter m_cornerRadiusFilterConverter = new CornerRadiusFilterConverter();
-
-        private class OpenFlyoutCommand : ICommand
+        private enum PointerDeviceType
         {
-            public OpenFlyoutCommand(SplitButton owner)
-            {
-                m_owner = owner;
-            }
-
-            public event EventHandler CanExecuteChanged;
-
-            public bool CanExecute(object parameter)
-            {
-                return true;
-            }
-
-            public void Execute(object parameter)
-            {
-                m_owner.OpenFlyout();
-            }
-
-            private readonly SplitButton m_owner;
+            Mouse,
+            Touch,
         }
     }
 }

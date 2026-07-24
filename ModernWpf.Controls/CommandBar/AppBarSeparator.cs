@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls
 {
-    public class AppBarSeparator : Control, ICommandBarElement, IAppBarElement
+    public partial class AppBarSeparator : Control, ICommandBarElement, IAppBarElement
     {
         static AppBarSeparator()
         {
@@ -13,81 +13,30 @@ namespace ModernWpf.Controls
             FocusableProperty.OverrideMetadata(typeof(AppBarSeparator),
                 new FrameworkPropertyMetadata(false));
 
-            ToolBar.OverflowModeProperty.OverrideMetadata(typeof(AppBarSeparator),
-                new FrameworkPropertyMetadata(OnOverflowModePropertyChanged));
+            VisibilityProperty.OverrideMetadata(typeof(AppBarSeparator),
+                new FrameworkPropertyMetadata(Visibility.Visible, OnVisibilityChanged));
         }
 
-        public AppBarSeparator()
+        private string GetApplicationViewState()
         {
-            IsVisibleChanged += OnIsVisibleChanged;
-        }
-
-        #region IsCompact
-
-        public static readonly DependencyProperty IsCompactProperty =
-            AppBarElementProperties.IsCompactProperty.AddOwner(typeof(AppBarSeparator));
-
-        public bool IsCompact
-        {
-            get => (bool)GetValue(IsCompactProperty);
-            set => SetValue(IsCompactProperty, value);
-        }
-
-        #endregion
-
-        #region IsInOverflow
-
-        public static readonly DependencyProperty IsInOverflowProperty =
-            AppBarElementProperties.IsInOverflowProperty.AddOwner(typeof(AppBarSeparator));
-
-        public bool IsInOverflow
-        {
-            get => (bool)GetValue(IsInOverflowProperty);
-        }
-
-        #endregion
-
-        #region ApplicationViewState
-
-        private static readonly DependencyProperty ApplicationViewStateProperty =
-            AppBarElementProperties.ApplicationViewStateProperty.AddOwner(typeof(AppBarSeparator));
-
-        private AppBarElementApplicationViewState ApplicationViewState
-        {
-            get => (AppBarElementApplicationViewState)GetValue(ApplicationViewStateProperty);
-        }
-
-        private void UpdateApplicationViewState()
-        {
-            AppBarElementApplicationViewState value;
-
-            if (IsInOverflow && IsVisible)
+            if (AppBarElementProperties.GetUseOverflowStyle(this))
             {
-                value = AppBarElementApplicationViewState.Overflow;
+                return nameof(AppBarElementApplicationViewState.Overflow);
             }
             else if (IsCompact)
             {
-                value = AppBarElementApplicationViewState.Compact;
+                return nameof(AppBarElementApplicationViewState.Compact);
             }
             else
             {
-                value = AppBarElementApplicationViewState.FullSize;
+                return nameof(AppBarElementApplicationViewState.FullSize);
             }
-
-            SetValue(AppBarElementProperties.ApplicationViewStatePropertyKey, value);
         }
 
         void IAppBarElement.UpdateApplicationViewState()
         {
-            UpdateApplicationViewState();
-        }
-
-        void IAppBarElement.ApplyApplicationViewState()
-        {
             UpdateVisualState();
         }
-
-        #endregion
 
         public override void OnApplyTemplate()
         {
@@ -95,29 +44,20 @@ namespace ModernWpf.Controls
             UpdateVisualState(false);
         }
 
-        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        private static void OnVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            base.OnPropertyChanged(e);
-
-            if (e.Property == ToolBar.IsOverflowItemProperty)
-            {
-                AppBarElementProperties.UpdateIsInOverflow(this);
-            }
+            ((AppBarSeparator)d).OnVisibilityChanged();
         }
 
-        private static void OnOverflowModePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private void OnVisibilityChanged()
         {
-            AppBarElementProperties.UpdateIsInOverflow(d);
-        }
-
-        private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            UpdateApplicationViewState();
+            UpdateVisualState();
+            CommandBar.OnCommandBarElementVisibilityChanged(this);
         }
 
         private void UpdateVisualState(bool useTransitions = true)
         {
-            VisualStateManager.GoToState(this, ApplicationViewState.ToString(), useTransitions);
+            VisualStateManager.GoToState(this, GetApplicationViewState(), useTransitions);
         }
     }
 }

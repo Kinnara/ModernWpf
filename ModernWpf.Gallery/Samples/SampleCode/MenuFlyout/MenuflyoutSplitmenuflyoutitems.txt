@@ -1,0 +1,18 @@
+<Button Content="File Options">
+    <Button.Flyout>
+        <MenuFlyout>
+            <SplitMenuFlyoutItem Text="Save" Click="SplitMenuFlyoutItem_Click">
+                <SplitMenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xE74E;"/>
+                </SplitMenuFlyoutItem.Icon>
+                <MenuFlyoutItem Text="Save as .docx" Click="SplitMenuFlyoutItem_Click"/>
+                <MenuFlyoutItem Text="Save as .pdf" Click="SplitMenuFlyoutItem_Click"/>
+                <MenuFlyoutItem Text="Save as .txt" Click="SplitMenuFlyoutItem_Click"/>
+            </SplitMenuFlyoutItem>
+            <SplitMenuFlyoutItem Text="Share" Icon="Share" Click="SplitMenuFlyoutItem_Click">
+                <MenuFlyoutItem Text="Share via email" Click="SplitMenuFlyoutItem_Click"/>
+                <MenuFlyoutItem Text="Share via link" Click="SplitMenuFlyoutItem_Click"/>
+            </SplitMenuFlyoutItem>
+        </MenuFlyout>
+    </Button.Flyout>
+</Button>

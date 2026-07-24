@@ -61,6 +61,7 @@ namespace ModernWpf
             _colors[AccentLight1Key] = uiSettings.GetColorValue(UIColorType.AccentLight1).ToColor();
             _colors[AccentLight2Key] = uiSettings.GetColorValue(UIColorType.AccentLight2).ToColor();
             _colors[AccentLight3Key] = uiSettings.GetColorValue(UIColorType.AccentLight3).ToColor();
+            UpdateSystemAccentResources();
         }
 
         public void SetAccent(Color accent)
@@ -68,6 +69,7 @@ namespace ModernWpf
             Color color = accent;
             _colors[AccentKey] = color;
             UpdateShades(_colors, color);
+            UpdateSystemAccentResources();
         }
 
         public static void UpdateShades(ResourceDictionary colors, Color accent)
@@ -95,6 +97,38 @@ namespace ModernWpf
         {
             UpdateBrushes(themeDictionary, _colors);
         }
+
+        private void UpdateSystemAccentResources()
+        {
+#if NET10_0_OR_GREATER
+            UpdateSystemAccentResource(SystemColors.AccentColorKey, SystemColors.AccentColorBrushKey, AccentKey);
+            UpdateSystemAccentResource(SystemColors.AccentColorDark1Key, SystemColors.AccentColorDark1BrushKey, AccentDark1Key);
+            UpdateSystemAccentResource(SystemColors.AccentColorDark2Key, SystemColors.AccentColorDark2BrushKey, AccentDark2Key);
+            UpdateSystemAccentResource(SystemColors.AccentColorDark3Key, SystemColors.AccentColorDark3BrushKey, AccentDark3Key);
+            UpdateSystemAccentResource(SystemColors.AccentColorLight1Key, SystemColors.AccentColorLight1BrushKey, AccentLight1Key);
+            UpdateSystemAccentResource(SystemColors.AccentColorLight2Key, SystemColors.AccentColorLight2BrushKey, AccentLight2Key);
+            UpdateSystemAccentResource(SystemColors.AccentColorLight3Key, SystemColors.AccentColorLight3BrushKey, AccentLight3Key);
+#endif
+        }
+
+#if NET10_0_OR_GREATER
+        private void UpdateSystemAccentResource(ResourceKey colorKey, ResourceKey brushKey, string modernWpfColorKey)
+        {
+            if (_colors[modernWpfColorKey] is Color color)
+            {
+                _colors[colorKey] = color;
+
+                if (_colors[brushKey] is SolidColorBrush brush && !brush.IsFrozen)
+                {
+                    brush.SetCurrentValue(SolidColorBrush.ColorProperty, color);
+                }
+                else
+                {
+                    _colors[brushKey] = new SolidColorBrush(color);
+                }
+            }
+        }
+#endif
 
         public static void UpdateBrushes(ResourceDictionary themeDictionary, ResourceDictionary colors)
         {

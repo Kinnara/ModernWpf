@@ -8,7 +8,7 @@ using System.ComponentModel;                 // EditorBrowsableAttribute, Browsa
 
 namespace System.Windows.Threading
 {
-    public static class DispatcherExtensions
+    internal static class DispatcherExtensions
     {
         /// <summary>
         ///     Executes the specified delegate asynchronously 

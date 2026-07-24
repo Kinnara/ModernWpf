@@ -2,6 +2,7 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
     xmlns:local="clr-namespace:ModernWpf.Controls"
     xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives">
 
@@ -13,31 +14,39 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:RadioButtons">
                     <StackPanel SnapsToDevicePixels="True">
+                        <StackPanel.Resources>
+                            <ui:BindingProxy
+                                x:Key="RadioButtonsMaxColumnsProxy"
+                                Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=MaxColumns}" />
+                        </StackPanel.Resources>
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
-                                <VisualState x:Name="Disabled" />
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="HeaderContentPresenter.Foreground" Value="{DynamicResource RadioButtonsHeaderForegroundDisabled}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter x:Name="HeaderContentPresenter"
+                        <ui:ContentPresenterEx x:Name="HeaderContentPresenter"
                             Content="{TemplateBinding Header}"
                             ContentTemplate="{TemplateBinding HeaderTemplate}"
-                            TextElement.Foreground="{DynamicResource RadioButtonsHeaderForeground}"
+                            Foreground="{DynamicResource RadioButtonsHeaderForeground}"
                             Margin="{DynamicResource RadioButtonsTopHeaderMargin}"
                             SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         <local:ItemsRepeater x:Name="InnerRepeater">
                             <local:ItemsRepeater.Layout>
                                 <primitives:ColumnMajorUniformToLargestGridLayout
+                                    MaxColumns="{Binding Value, Source={StaticResource RadioButtonsMaxColumnsProxy}}"
                                     ColumnSpacing="{DynamicResource RadioButtonsColumnSpacing}"
                                     RowSpacing="{DynamicResource RadioButtonsRowSpacing}" />
                             </local:ItemsRepeater.Layout>
                         </local:ItemsRepeater>
                     </StackPanel>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="HeaderContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RadioButtonsHeaderForegroundDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

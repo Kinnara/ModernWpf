@@ -1,0 +1,104 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "internal static partial class",
+    "name": "AppBarElementProperties"
+  },
+  "properties": [
+    {
+      "name": "Icon",
+      "type": "IconElement",
+      "kind": "RegisterAttached",
+      "changed": "OnIconChanged",
+      "generateWrapper": false
+    },
+    {
+      "name": "Label",
+      "type": "string",
+      "kind": "RegisterAttached",
+      "default": "string.Empty",
+      "changed": "OnLabelChanged",
+      "coerce": "CoerceLabel",
+      "generateWrapper": false
+    },
+    {
+      "name": "DefaultLabelPosition",
+      "type": "CommandBarDefaultLabelPosition",
+      "kind": "RegisterAttached",
+      "default": "CommandBarDefaultLabelPosition.Bottom",
+      "changed": "OnDefaultLabelPositionChanged",
+      "fieldAccessibility": "internal",
+      "generateWrapper": false
+    },
+    {
+      "name": "LabelPosition",
+      "type": "CommandBarLabelPosition",
+      "kind": "RegisterAttached",
+      "default": "CommandBarLabelPosition.Default",
+      "changed": "OnLabelPositionChanged",
+      "generateWrapper": false
+    },
+    {
+      "name": "IsCompact",
+      "type": "bool",
+      "kind": "RegisterAttached",
+      "default": "false",
+      "changed": "OnIsCompactChanged",
+      "generateWrapper": false
+    },
+    {
+      "name": "DynamicOverflowOrder",
+      "type": "int",
+      "kind": "RegisterAttached",
+      "default": "0",
+      "changed": "OnDynamicOverflowOrderChanged",
+      "generateWrapper": false
+    },
+    {
+      "name": "UseOverflowStyle",
+      "type": "bool",
+      "kind": "RegisterAttached",
+      "default": "false",
+      "changed": "OnUseOverflowStyleChanged",
+      "fieldAccessibility": "internal",
+      "generateWrapper": false
+    },
+    {
+      "name": "IsInOverflow",
+      "type": "bool",
+      "kind": "RegisterAttachedReadOnly",
+      "default": "false",
+      "changed": "OnIsInOverflowChanged",
+      "keyAccessibility": "internal",
+      "generateWrapper": false
+    },
+    {
+      "name": "KeyboardAcceleratorTextOverride",
+      "type": "string",
+      "kind": "RegisterAttached",
+      "default": "string.Empty",
+      "changed": "OnInputGestureTextChanged",
+      "coerce": "CoerceInputGestureText",
+      "generateWrapper": false
+    },
+    {
+      "name": "HasInputGestureText",
+      "type": "bool",
+      "kind": "RegisterAttachedReadOnly",
+      "default": "false",
+      "changed": "OnHasInputGestureTextChanged",
+      "keyAccessibility": "private",
+      "generateWrapper": false
+    },
+    {
+      "name": "ShowKeyboardAcceleratorText",
+      "type": "bool",
+      "kind": "RegisterAttached",
+      "fieldAccessibility": "internal",
+      "generateWrapper": false
+    }
+  ]
+}

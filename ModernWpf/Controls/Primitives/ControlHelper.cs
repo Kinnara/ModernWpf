@@ -6,40 +6,119 @@ namespace ModernWpf.Controls.Primitives
 {
     public static class ControlHelper
     {
+        #region BackgroundSizing
+
+        public static BackgroundSizing GetBackgroundSizing(Control control)
+        {
+            return (BackgroundSizing)control.GetValue(BackgroundSizingProperty);
+        }
+
+        public static void SetBackgroundSizing(Control control, BackgroundSizing value)
+        {
+            control.SetValue(BackgroundSizingProperty, value);
+        }
+
+        public static readonly DependencyProperty BackgroundSizingProperty =
+            DependencyProperty.RegisterAttached(
+                "BackgroundSizing",
+                typeof(BackgroundSizing),
+                typeof(ControlHelper),
+                new FrameworkPropertyMetadata(BackgroundSizing.InnerBorderEdge));
+
+        #endregion
+
+        #region CharacterSpacing
+
+        public static int GetCharacterSpacing(Control control)
+        {
+            return (int)control.GetValue(CharacterSpacingProperty);
+        }
+
+        public static void SetCharacterSpacing(Control control, int value)
+        {
+            control.SetValue(CharacterSpacingProperty, value);
+        }
+
+        public static readonly DependencyProperty CharacterSpacingProperty =
+            DependencyProperty.RegisterAttached(
+                "CharacterSpacing",
+                typeof(int),
+                typeof(ControlHelper),
+                new FrameworkPropertyMetadata(
+                    0,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure |
+                    FrameworkPropertyMetadataOptions.AffectsRender |
+                    FrameworkPropertyMetadataOptions.Inherits));
+
+        #endregion
+
+        #region ContentTransitions
+
+        public static ModernWpf.Media.Animation.TransitionCollection GetContentTransitions(Control control)
+        {
+            return (ModernWpf.Media.Animation.TransitionCollection)control.GetValue(ContentTransitionsProperty);
+        }
+
+        public static void SetContentTransitions(Control control, ModernWpf.Media.Animation.TransitionCollection value)
+        {
+            control.SetValue(ContentTransitionsProperty, value);
+        }
+
+        public static readonly DependencyProperty ContentTransitionsProperty =
+            DependencyProperty.RegisterAttached(
+                "ContentTransitions",
+                typeof(ModernWpf.Media.Animation.TransitionCollection),
+                typeof(ControlHelper),
+                new PropertyMetadata(null));
+
+        #endregion
+
         #region CornerRadius
 
-        /// <summary>
-        /// Gets the radius for the corners of the control's border.
-        /// </summary>
-        /// <param name="control">The element from which to read the property value.</param>
-        /// <returns>
-        /// The degree to which the corners are rounded, expressed as values of the CornerRadius
-        /// structure.
-        /// </returns>
-        public static CornerRadius GetCornerRadius(Control control)
+        public static CornerRadius GetCornerRadius(DependencyObject element)
         {
-            return (CornerRadius)control.GetValue(CornerRadiusProperty);
+            return (CornerRadius)element.GetValue(CornerRadiusProperty);
         }
 
-        /// <summary>
-        /// Sets the radius for the corners of the control's border.
-        /// </summary>
-        /// <param name="control">The element on which to set the attached property.</param>
-        /// <param name="value">The property value to set.</param>
-        public static void SetCornerRadius(Control control, CornerRadius value)
+        public static void SetCornerRadius(DependencyObject element, CornerRadius value)
         {
-            control.SetValue(CornerRadiusProperty, value);
+            element.SetValue(CornerRadiusProperty, value);
         }
 
-        /// <summary>
-        /// Identifies the CornerRadius dependency property.
-        /// </summary>
         public static readonly DependencyProperty CornerRadiusProperty =
             DependencyProperty.RegisterAttached(
                 "CornerRadius",
                 typeof(CornerRadius),
                 typeof(ControlHelper),
-                null);
+                new FrameworkPropertyMetadata(
+                    new CornerRadius(),
+                    FrameworkPropertyMetadataOptions.AffectsMeasure |
+                    FrameworkPropertyMetadataOptions.AffectsRender));
+
+        #endregion
+
+        #region IsTextScaleFactorEnabled
+
+        public static bool GetIsTextScaleFactorEnabled(Control control)
+        {
+            return (bool)control.GetValue(IsTextScaleFactorEnabledProperty);
+        }
+
+        public static void SetIsTextScaleFactorEnabled(Control control, bool value)
+        {
+            control.SetValue(IsTextScaleFactorEnabledProperty, value);
+        }
+
+        public static readonly DependencyProperty IsTextScaleFactorEnabledProperty =
+            DependencyProperty.RegisterAttached(
+                "IsTextScaleFactorEnabled",
+                typeof(bool),
+                typeof(ControlHelper),
+                new FrameworkPropertyMetadata(
+                    true,
+                    FrameworkPropertyMetadataOptions.AffectsMeasure |
+                    FrameworkPropertyMetadataOptions.AffectsRender |
+                    FrameworkPropertyMetadataOptions.Inherits));
 
         #endregion
 

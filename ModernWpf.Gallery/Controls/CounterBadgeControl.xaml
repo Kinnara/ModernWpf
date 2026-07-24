@@ -1,0 +1,27 @@
+<UserControl
+    x:Class="ModernWpf.Gallery.Controls.CounterBadgeControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Gallery.Controls">
+    <Border
+        Padding="18"
+        Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+        BorderThickness="1"
+        CornerRadius="8">
+        <StackPanel>
+            <TextBlock
+                Style="{StaticResource BodyStrongTextBlockStyle}"
+                Text="{Binding Title, RelativeSource={RelativeSource AncestorType=local:CounterBadgeControl}}" />
+            <TextBlock
+                Margin="0,6,0,16"
+                Opacity="0.7"
+                Style="{StaticResource BodyTextBlockStyle}"
+                Text="A reusable WPF UserControl with dependency properties and internal interaction." />
+            <Button
+                HorizontalAlignment="Left"
+                Click="OnIncrementClick"
+                Content="{Binding CountLabel, RelativeSource={RelativeSource AncestorType=local:CounterBadgeControl}}" />
+        </StackPanel>
+    </Border>
+</UserControl>

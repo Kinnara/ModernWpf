@@ -6,42 +6,71 @@
     xmlns:local="clr-namespace:ModernWpf.Controls">
 
     <Style TargetType="local:RatingControl">
-        <Setter Property="Height" Value="32" />
+        <Setter Property="MinHeight" Value="32" />
         <!-- 9794813: retire these two properties as customisation points once all resource keys available -->
         <Setter Property="Foreground" Value="{DynamicResource RatingControlCaptionForeground}" />
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
-        <Setter Property="ItemInfo" Value="{DynamicResource RatingControlDefaultPathInfo}" />
+        <Setter Property="ItemInfo" Value="{DynamicResource MUX_RatingControlDefaultFontInfo}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:RatingControl">
-                    <Grid x:Name="LayoutRoot">
+                    <Grid x:Name="LayoutRoot" Background="{TemplateBinding Background}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <ui:VisualStateGroupListener.Listener>
-                                    <ui:VisualStateGroupListener x:Name="CommonStatesListener" />
-                                </ui:VisualStateGroupListener.Listener>
-                                <VisualState x:Name="Disabled" />
-                                <VisualState x:Name="Placeholder" />
-                                <VisualState x:Name="PointerOverPlaceholder" />
-                                <VisualState x:Name="PointerOverUnselected" />
-                                <VisualState x:Name="Set" />
-                                <VisualState x:Name="PointerOverSet" />
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ForegroundContentPresenter.Foreground" Value="{DynamicResource RatingControlDisabledSelectedForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Placeholder">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ForegroundContentPresenter.Foreground" Value="{DynamicResource RatingControlPlaceholderForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverPlaceholder">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ForegroundContentPresenter.Foreground" Value="{DynamicResource RatingControlPointerOverPlaceholderForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverUnselected">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ForegroundContentPresenter.Foreground" Value="{DynamicResource RatingControlPointerOverUnselectedForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Set">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ForegroundContentPresenter.Foreground" Value="{DynamicResource RatingControlSelectedForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PointerOverSet">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="ForegroundContentPresenter.Foreground" Value="{DynamicResource RatingControlSelectedForeground}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
                         <StackPanel
+                            x:Name="CaptionStackPanel"
                             Orientation="Horizontal"
                             Grid.Row="0"
                             Margin="-20,-20,-20,-20">
-                            <StackPanel
+                            <ui:StackPanelEx
                                 x:Name="RatingBackgroundStackPanel"
                                 Orientation="Horizontal"
                                 Background="Transparent"
-                                Margin="20,20,0,20" />
-                            <TextBlock x:Name="Caption" Height="32" Margin="4,9,20,0" Style="{DynamicResource CaptionTextBlockStyle}"
-                                Foreground="{DynamicResource RatingControlCaptionForeground}" VerticalAlignment="Center" IsHitTestVisible="False"
+                                Margin="20,20,0,20">
+                                <ui:StackPanelEx.RenderTransform>
+                                    <TranslateTransform x:Name="RatingBackgroundStackPanelTranslateTransform" />
+                                </ui:StackPanelEx.RenderTransform>
+                            </ui:StackPanelEx>
+                            <TextBlock x:Name="Caption" Margin="4,0,20,0" Style="{DynamicResource CaptionTextBlockStyle}"
+                                FontFamily="{DynamicResource CaptionControlThemeFontFamily}" FontSize="12" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" IsHitTestVisible="False"
                                 AutomationProperties.Name="RatingCaption" Text="{TemplateBinding Caption}"/>
                             <!-- 4 = 8 item spacing +4 of magic redline spacing -8 to compensate for scale of the last RatingItem -->
                             <!--
@@ -52,51 +81,28 @@
                             <!-- TODO MSFT: 9925444 Fix vertical alignment in all text scenarios -->
                         </StackPanel>
 
-                        <ContentPresenter
+                        <ui:ContentPresenterEx
                             x:Name="ForegroundContentPresenter"
                             IsHitTestVisible="False"
                             Grid.Row="0">
                             <!-- Margin is on the StackPanel because ContentPresenter clips differently such that moving the reverse margin up won't work -->
-                            <ContentPresenter.Content>
+                            <ui:ContentPresenterEx.Content>
                                 <StackPanel
                                     Orientation="Horizontal"
                                     Margin="-40,-40,-40,-40">
-                                    <StackPanel
+                                    <ui:StackPanelEx
                                         x:Name="RatingForegroundStackPanel"
                                         Orientation="Horizontal"
                                         IsHitTestVisible="False"
-                                        Margin="40,40,40,40" />
+                                        Margin="40,40,40,40">
+                                        <ui:StackPanelEx.RenderTransform>
+                                            <TranslateTransform x:Name="RatingForegroundStackPanelTranslateTransform" />
+                                        </ui:StackPanelEx.RenderTransform>
+                                    </ui:StackPanelEx>
                                 </StackPanel>
-                            </ContentPresenter.Content>
-                        </ContentPresenter>
+                            </ui:ContentPresenterEx.Content>
+                        </ui:ContentPresenterEx>
                     </Grid>
-
-                    <ControlTemplate.Triggers>
-                        <!-- Disabled -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Disabled">
-                            <Setter TargetName="ForegroundContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RatingControlDisabledSelectedForeground}" />
-                        </Trigger>
-                        <!-- Placeholder -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Placeholder">
-                            <Setter TargetName="ForegroundContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RatingControlPlaceholderForeground}" />
-                        </Trigger>
-                        <!-- PointerOverPlaceholder -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOverPlaceholder">
-                            <Setter TargetName="ForegroundContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RatingControlPointerOverPlaceholderForeground}" />
-                        </Trigger>
-                        <!-- PointerOverUnselected -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOverUnselected">
-                            <Setter TargetName="ForegroundContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RatingControlPointerOverUnselectedForeground}" />
-                        </Trigger>
-                        <!-- Set -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="Set">
-                            <Setter TargetName="ForegroundContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RatingControlSelectedForeground}" />
-                        </Trigger>
-                        <!-- PointerOverSet -->
-                        <Trigger SourceName="CommonStatesListener" Property="CurrentStateName" Value="PointerOverSet">
-                            <Setter TargetName="ForegroundContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource RatingControlSelectedForeground}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

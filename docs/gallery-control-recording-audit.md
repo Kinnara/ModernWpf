@@ -1,0 +1,2672 @@
+# Gallery Control Recording Audit
+
+This document tracks the recording-first Gallery audit. A control is not counted
+as verified here unless there is a live recording for the relevant interaction
+path and the recording has been reviewed or decoded into nonblank poster frames.
+
+## Active Goal
+
+Find and fix obvious ModernWpf Gallery visual and interaction defects across
+the control inventory, with recordings as blocking evidence. The audit is not
+only proving that a route opens or UIA state changes; it must catch the
+user-visible failure classes shown in recordings, including open/close flicker,
+misaligned or clipped popups and menus, missing expanded content, blank or
+stale expanded regions, and repeat-open crashes.
+
+If a user-provided video or manual review exposes a visible defect that an
+automated run accepted, the next audit round treats that as a recorder/parity
+harness defect as well as a control defect. The harness must be tightened so
+the same failure class is reviewable or rejected before the affected control is
+marked verified again.
+
+User-provided recordings are authoritative regression evidence. When a supplied
+clip shows multiple visible problems, each problem must be enumerated in the
+round notes before implementation starts, then closed by product code,
+recorder/parity detection, or an explicit still-open defect. A green recording
+report that did not sample or analyze the visible failure window is a false
+pass, not verification.
+
+The effective goal is therefore stricter than "record and pass": every obvious
+issue visible during real interaction must either be fixed in the product or
+kept as an open tracked defect. A recording pass, parity pass, or UIA pass is
+not accepted when it misses visible flicker, wrong placement, missing content,
+blank/stale regions, broken navigation expansion, or a crash that can be seen
+in the source clip.
+
+No control can move from `NeedsReview` to verified while a source clip for the
+same interaction contains an unmapped visible defect. Each visible defect must
+be linked to a product fix, a recorder/parity guard that fails on that class of
+issue, or an explicit remaining follow-up item in the audit.
+
+## Acceptance Bar
+
+- Launch the Gallery route for each control in visual-test mode.
+- Record the live window while driving the primary interaction for interactive
+  controls.
+- Use still screenshots instead of recordings for static layout and final-state
+  visual checks when no transition, animation, popup lifetime, flicker, or crash
+  behavior is under review.
+- When the user provides a recording, review it as source evidence and add the
+  visible defects to the active control audit before accepting any automated
+  pass.
+- For every user-video defect, record the detection plan: which frame sheet,
+  geometry check, crash check, or parity assertion would catch it on a rerun.
+  Unmapped defects block verification.
+- For popup and flyout controls, record open, close, and second open in the same
+  clip so flicker, stale visual state, and repeat-open crashes are visible.
+- Extract poster frames from each recording and reject blank recordings.
+- For popup, flyout, menu, and navigation-pane interactions, dense frames around
+  open and close transitions must be reviewed or analyzed. A pass must reject
+  obvious transient defects such as clipped command strips, missing menu items,
+  bad popup/menu alignment, stale pixels, blank expanded regions, app crashes,
+  and open or close flicker.
+- A recording pass is invalid if its sampled poster frames, UIA state, or
+  parity checks would miss an obvious defect visible in the source clip. Add
+  dense transition evidence or a control-specific frame/geometry assertion
+  before accepting that control again.
+- Low-delta interactive recordings must include local rendered evidence inside
+  the recorded interaction bounds. UIA state changes can no longer make
+  state/value/selection/option/text/output/scroll/navigation interactions pass
+  when the cropped control region shows no pixel change.
+- A fix round is incomplete until the defect inventory says how each visible
+  issue would now be caught: automated fail-fast check, dense frame sheet,
+  still screenshot, geometry/parity assertion, crash detection, or explicit
+  still-open follow-up.
+- UIA success alone is not accepted as visual proof for popup/flyout/menu
+  interactions. The recording report must include either automated geometry or
+  frame evidence, or the control remains `NeedsReview`.
+- Require a control-specific exposed automation anchor before accepting a route
+  capture as proof.
+- Fix issues in substantial rounds and record the post-fix interaction before
+  committing.
+
+## Scope
+
+Scope now includes the current ModernWpf visual-check inventory from
+`tools/visual-checks/Run-GalleryVisualChecks.ps1`, the Gallery shell
+NavigationView pane because earlier user-reported failures were in the shell,
+and the active official WPF Gallery All Controls catalog pages. Official WPF
+catalog pages without page-specific `GallerySample_*` anchors are accepted for
+static route proof only when the recorder captures a nonblank rendered
+`ContentPagePane` or `GalleryItemPageRoot` artifact.
+
+Static screenshot parity must use the correct reference family. WPF Gallery
+controls use `Run-WpfGalleryVisualAudit.ps1` with `OfficialWpfGallery`; only
+ported WinUI controls use `Run-GalleryVisualChecks.ps1` with
+`InstalledWinUI3Gallery`. A WinUI reference screenshot is not accepted as
+evidence for WPF controls such as Button, CheckBox, Slider, TextBox,
+PasswordBox, or RichTextEdit.
+
+For ported WinUI controls where animation, popup lifetime, or transition
+geometry is under review, source XAML parity is not enough. Record a ModernWpf
+clip and a WinUI Gallery reference clip for the same interaction path, then
+compare the dense frame sheets or MP4s before accepting the fix.
+
+## Recorder
+
+Use the per-control recorder:
+
+```powershell
+.\tools\visual-checks\Record-GalleryControlInteractions.ps1 -Controls CommandBarFlyout -Theme Dark -DurationSeconds 8 -FrameRate 10 -Build
+```
+
+For broad sweeps, run in batches and review `report.md` plus the MP4 clips under
+`artifacts/gallery-recordings/<stamp>/`.
+
+The default recorder is rendered `PrintWindow` composition for the Gallery
+process plus popup HWNDs. Popup HWND captures strip edge-connected near-black
+pixels because layered-window transparency can otherwise show up as black
+backplates in rendered recordings. `-CaptureMode Screen` is available for
+diagnostics but is not accepted as proof in the current Codex desktop session
+because it can record the Windows background instead of the Gallery window.
+Controls that require motion proof can opt into preserved animations and record
+`AnimationEvidence` in the manifest while the normal visual-test artifact path
+keeps indeterminate visuals stabilized.
+
+Rendered recordings can capture slower than real time when popup composition is
+expensive. The recorder now records the scale from wall-clock interaction time
+to encoded MP4 time and normalizes open-repeat evidence timestamps before
+selecting poster frames. WinUI reference video for CommandBarFlyout uses
+`Record-WinUIReferenceCommandBarFlyout.ps1`, which records the installed WinUI
+Gallery with ffmpeg `gdigrab` so the reference MP4 keeps real elapsed time.
+
+Rendered MP4 output supports `-VideoEncoder Auto|libx264|h264_nvenc|h264_qsv|h264_amf`
+and `-BenchmarkEncoders`. The current machine benchmark for a 6.6s Menu clip
+showed `libx264` faster than NVENC (`0.329s` versus `0.954s`), with QSV/AMF
+unavailable, so `Auto` prefers `libx264` unless a benchmark or explicit encoder
+request says otherwise.
+
+## Current Focused Fix Round
+
+Round 141 updates CommandBarFlyout animation parity to current WinUI source:
+
+- Source finding: the local WinUI checkout
+  `D:\repos\microsoft-ui-xaml` (`winui3/release/1.8.1-223-gc70471c51`)
+  now prefers `OpeningOpacityStoryboard` / `ClosingOpacityStoryboard` in
+  `CommandBarFlyoutCommandBar.cpp` and only falls back to the older
+  `OpeningStoryboard` / `ClosingStoryboard` clip path when the opacity
+  resources are absent. Tag checks show `OpeningOpacityStoryboard` is present
+  by `winui3/release/1.6-experimental1` and `winui3/release/1.6-preview1`,
+  but absent from `winui3/release/1.5-preview1` and
+  `winui3/release/1.5.9`. This is a WinUI 1.6-era change, not a new 1.8-only
+  change.
+- Product fix: ModernWpf now uses opacity-only outer open/close storyboards
+  for `CommandBarFlyout`, fading the visible WPF equivalents of WinUI's
+  `LayoutRoot` and popup surface. Because `WindowedPopup` rehosts its child in
+  a separate `HwndSource`, the popup fade targets
+  `OuterOverflowContentRootShadowChrome` rather than the placeholder
+  `WindowedPopup` element. The secondary-menu expand/collapse storyboards stay
+  intact; current WinUI still carries `CollapsedToExpandedUp/Down` and
+  `ExpandedUp/DownToCollapsed` transitions for that path.
+- Robustness fix: stopping an active hold-end close storyboard now restores
+  opacity, so an interrupted close or callback-order difference cannot leave
+  the command bar transparent on the next open. The focused tests now wait for
+  the short fade to complete before sampling layout opacity.
+- Verification:
+  - `dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj -f net8.0-windows7.0 -c Debug --no-restore -v minimal /nodeReuse:false` passed.
+  - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --framework net8.0-windows7.0 --filter "FullyQualifiedName~CommandBarFlyoutApiTests" -v minimal /nodeReuse:false` passed 26/26.
+  - `dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj -f net8.0-windows7.0 -c Debug --no-restore -v minimal /nodeReuse:false` passed.
+  - Cached WinUI static parity:
+    `artifacts/visual-checks/20260607-201010-303-80700/report.md` passed
+    using WinUI reference run `artifacts/visual-checks/20260607-121845-471-226920`;
+    primary crop delta remained `4.99` with `454x302` vs `453x302`.
+  - ModernWpf interaction visual check:
+    `artifacts/visual-checks/20260607-201033-613-84848/report.md` passed,
+    with open-surface crop
+    `artifacts/visual-checks/20260607-201033-613-84848/CommandBarFlyout/modernwpf-CommandBarFlyout-open-surface-crop.png`.
+  - ModernWpf rendered MP4 recording:
+    `artifacts/gallery-recordings/20260607-201107-062/report.md` passed
+    `OpenRepeat` in 4.0s actual recording time with dense transition review
+    `artifacts/gallery-recordings/20260607-201107-062/CommandBarFlyout/analysis/dense-transition-review.jpg`.
+
+Round 140 restores CommandBarFlyout WinUI parity after user review found that
+the previous repeat-open work made the control worse:
+
+- Root cause: the earlier CommandBarFlyout flicker/repeat-open fixes optimized
+  for recorder stability and encoded the wrong contract. `3cec48aa` replaced
+  WinUI-style clip/position storyboards with instant opacity changes, and
+  `17dffbec` forced popup animation to `None` and tied internal command-bar
+  transitions to the owning flyout's disabled outer open/close animation flag.
+  The test `FlyoutAnimationsDoNotClipVisibleCommandSurfaces` then asserted the
+  broken behavior by requiring the source clip transforms to be absent.
+- Product fix: `CommandBarFlyout.xaml` again animates
+  `OuterContentRootClipTransform`, `OuterOverflowContentRootClipTransform`,
+  `MoreButtonTransform`, `ContentRootClipTransform`, and
+  `OverflowContentRootClipTransform` with the WinUI source timing resources.
+  CommandBar and CommandBarFlyout overflow popups again use
+  `SystemParameters.MenuPopupAnimationKey`. The flyout command bar now keeps
+  its internal transitions governed by `SharedHelpers.IsAnimationsEnabled`
+  rather than the outer flyout fade flag, while preserving the repeat-open
+  state synchronization. Opening and closing also reapply overflow style params
+  so secondary commands get the captured input-mode state.
+- Guard fix: the CommandBarFlyout API test now requires the WinUI storyboard
+  targets instead of rejecting them, and `TemplateParityTests` source-guards the
+  restored storyboard shape plus popup animation resource.
+- Recorder/reference fix: `CommandBarFlyout` now opts into preserved animated
+  visual proof and at least 30fps recording. The rendered recorder normalizes
+  event timestamps when encoded MP4 time is shorter than wall-clock capture
+  time. A focused WinUI reference recorder was added for CommandBarFlyout and
+  records the installed WinUI Gallery at the same top-left capture rect.
+- Screenshot harness fix: the earlier visual comparison missed the secondary
+  menu edge drift because CommandBarFlyout did not require a comparable
+  open-surface interaction crop, and the old interaction crop could compare
+  `PopupWindow` against `ScreenElement` or fall back to broad window pixels.
+  `Run-GalleryVisualChecks.ps1` now supports a cached WinUI reference run,
+  crops the union of the primary commands, ellipsis, and expanded secondary
+  commands as `CommandBarFlyoutOpenSurface`, and fails CommandBarFlyout when
+  that crop source, mean delta, or crop size diverges from the reference.
+- Alignment fix: the WPF popup shadow chrome reserves layout padding that WinUI
+  `OuterOverflowContentRootV2` does not. `CommandBarFlyoutCommandBar` now
+  compensates both horizontal and vertical popup offsets for the reserved
+  shadow inset, border, and ellipsis inner margin. The primary command geometry
+  is tuned to the local WinUI source shape as rendered by WPF, producing the
+  same `229x136` open-surface crop as the cached WinUI Gallery reference.
+- Verification:
+  - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --framework net8.0-windows7.0 --filter "FullyQualifiedName~CommandBarFlyoutApiTests"` passed 26/26.
+  - `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --framework net8.0-windows7.0 --filter "FullyQualifiedName~TemplateParityTests.CommandBarFlyoutTemplateKeepsWinUISourceAnimationShape"` passed.
+  - ModernWpf Dark recording
+    `artifacts/gallery-recordings/20260607-115923-940/report.md` passed with
+    `AnimationEvidence=true`, `OpenRepeatEvidence=true`,
+    `FirstCommandBarFlyoutSecondaryExpanded=true`, and
+    `SecondCommandBarFlyoutSecondaryExpanded=true`.
+  - WinUI Gallery Dark reference recording
+    `artifacts/winui-reference-recordings/20260607-120202-437/winui-commandbarflyout-reference.json`
+    passed first open, secondary expansion, close, second open, and second
+    secondary expansion; the reference MP4 is 8.0s at
+    `artifacts/winui-reference-recordings/20260607-120202-437/CommandBarFlyout/winui3-dark-commandbarflyout.mp4`.
+  - Static/interaction WinUI comparison
+    `artifacts/visual-checks/20260607-120249-908-51540/report.md` passed for
+    CommandBarFlyout with primary crop `454x302` vs `453x302`, primary crop
+    delta `4.99`, and interaction delta `19.95`.
+  - Follow-up cached WinUI comparison
+    `artifacts/visual-checks/20260607-125158-141-166312/report.md` passed after
+    the final alignment adjustment, with the focused open-surface crop exactly
+    `229x136` vs `229x136` and interaction crop delta `11.54`.
+
+Round 139 moves recorder proof windows to the top-left screen origin:
+
+- User review pointed out that popups sometimes wrongly appear at the screen
+  origin, and the previous `220,180` Gallery placement made origin-placement
+  bugs easier to miss or misread in rendered recordings. The recorder now
+  defaults to `WindowLeft = 0` and `WindowTop = 0`, so a popup at `(0,0)` is
+  visible inside the same recorded frame as the Gallery.
+- Source guard: `GalleryInteractionRecorderSelectsRealGalleryWindowOverInputOverlays`
+  now asserts the `0,0` defaults and the pre-recording `Move(...)` call that
+  applies them.
+- Final proof:
+  `artifacts/gallery-recordings/20260607-113342-069/report.md` passed with
+  rendered capture rect `0,0,1400,1040`, first-open/closed/second-open frames
+  `t2500` / `t4500` / `t8000`, `OpenRepeatEvidence=true`, and
+  `FirstCommandBarFlyoutSecondaryExpanded=true` /
+  `SecondCommandBarFlyoutSecondaryExpanded=true`. Reviewed frames show the
+  Gallery flush at the frame origin, a clean closed frame, and aligned
+  CommandBarFlyout menus on both opens.
+
+Round 138 hardens CommandBarFlyout startup recording proof after a current-tree
+rerun exposed a harness lookup failure:
+
+- A focused Dark CommandBarFlyout run
+  `artifacts/gallery-recordings/20260607-105249-061/report.md` failed before
+  recording with `Timed out waiting for ModernWpf Gallery window`, even though
+  the Gallery had already rendered `Ready:item/CommandBarFlyout` and wrote
+  nonblank page artifacts. The artifact window bounds were still on the far
+  right desktop before the recorder moved the window, so this was a UIA
+  top-level window discovery miss, not the repeat-open product crash.
+- Recorder fix: `Find-WindowByProcessId` now falls back to the process
+  `MainWindowHandle` and `AutomationElement.FromHandle` when UIA root-child
+  enumeration returns no suitably sized Gallery window. The existing scoring
+  path still chooses the real Gallery window over input overlays when UIA does
+  enumerate top-level windows.
+- Final proof:
+  `artifacts/gallery-recordings/20260607-110343-332/report.md` passed with a
+  9.9s rendered MP4, `OpenRepeatEvidence=true`,
+  `FirstCommandBarFlyoutSecondaryExpanded=true`,
+  `SecondCommandBarFlyoutSecondaryExpanded=true`, close proof through
+  `SecondaryCommand`, and baseline-delta frames `t2500` / `t4500` / `t8000`.
+  Reviewed full-size frames show the first-open and second-open command bar
+  plus secondary menu aligned, and the closed frame contains no stale popup.
+
+Round 137 corrects the ThemeShadow depth-change evidence after user review:
+
+- User review again flagged the ThemeShadow result as wrong because the visible
+  shape still appears to move when depth changes. The product layout still
+  matches the local official WinUI Gallery source at
+  `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ThemeShadowPage.xaml`:
+  `Example3Grid` uses `Padding="36"` around `ShadowCastGrid` and `ShadowRect`,
+  and the slider changes only `ShadowRect.Translation.Z`.
+- The missing verifier distinction was between layout motion and shadow-envelope
+  growth. The previous report only said that card/layout bounds were stable, so
+  it was too easy to read the expected asymmetric shadow growth as an ignored
+  layout shift.
+- Recorder fix: `Record-GalleryControlInteractions.ps1` now measures the
+  rendered ThemeShadow shadow envelope in before/after artifact snapshots,
+  stores `BeforeShadowEnvelopeBounds`, `AfterShadowEnvelopeBounds`,
+  `ShadowEnvelopeDelta`, and `ShadowEnvelopeChanged`, and requires the artifact
+  visual evidence to include envelope change when that metric is available.
+  Dense video proof remains focused on the layout contract: the rendered card
+  edge must stay fixed across frames.
+- Final proof:
+  `artifacts/gallery-recordings/20260607-104048-093/report.md` passed with
+  `LayoutStable=true`, unchanged layout bounds for the sample root, example
+  grid, receiver, chrome, card, and slider, unchanged caster/card bounds
+  `570.0,428.0,200.0,200.0`, unchanged artifact card edges
+  `36,36,200,200`, and explicit source-like envelope growth
+  `27,39,218,214 -> 16,30,240,242` with `ShadowEnvelopeDelta=28`.
+  Dense video card stability still reports `MaxCardEdgeShift=0` and
+  `MaxCardMeanDelta=0.096`.
+
+Round 136 fixes the ThemeShadow recording false pass found after user review:
+
+- User review rejected the Round 135 conclusion because the layout still looked
+  shifted after changing depth. The measured product bounds were stable, but the
+  accepted MP4 was not valid motion proof: the rendered recorder warm-up scanned
+  every full-size live frame with `Get-ImageStats`, which could consume the
+  entire 4s clip before the ThemeShadow interaction started. That produced a
+  static video with artifact-only evidence.
+- Product/sample fix: the ThemeShadow Gallery sample now matches the official
+  WinUI sample shape by putting the fixed 36px source padding on
+  `Example3Grid` and removing the compensating margins from `ShadowCastGrid`
+  and `ThemeShadowChrome`. The caster/card slot stays fixed at the padded
+  position while the visible shadow envelope changes with depth.
+- Product guard added:
+  `LayoutCompatibilityApiTests.ThemeShadowChromeDepthChangeDoesNotMoveGalleryPaddedCardEdges`
+  renders the same padded 272x272 host shape as the Gallery sample and asserts
+  the painted 200x200 card edge stays at `36,36,200,200` when depth changes
+  from `32` to `64`.
+- Recorder fix: ThemeShadow now uses `RangeValuePatternAnimated` so the depth
+  transition happens inside the captured clip. The warm-up wait now counts live
+  frames and validates only the latest nonblank frame, avoiding the slow
+  all-frame scan that delayed the interaction past the recording window.
+  ThemeShadow visual acceptance now requires MP4-local sample-root delta;
+  before/after artifacts alone can no longer pass the control.
+- Failed proof before the fix:
+  `artifacts/gallery-recordings/20260607-064041-678/report.md` failed with
+  `ThemeShadowVideoVisualEvidence=false`, `MaxFrameDelta=0`,
+  `MaxLocalFrameDelta=0`, and artifact `rootDelta=1.192`. The product bounds
+  were stable, but the video was still static, so the run was correctly
+  rejected.
+- Passing proof after the fix:
+  `artifacts/gallery-recordings/20260607-064517-766/report.md` passes with
+  `BeforeValue=32`, `AfterValue=64`, `ValueInputMethod=RangeValuePatternAnimated`,
+  `ThemeShadowVideoVisualEvidence=true`, `ThemeShadowArtifactVisualEvidence=true`,
+  `ThemeShadowArtifactCardStabilityEvidence=true`, and
+  `ThemeShadowDenseFrameStabilityEvidence=true`. The card/caster bounds remain
+  `570.0,428.0,200.0,200.0` before and after; artifact card edges remain
+  `36,36,200,200`; dense video analysis reports `MaxCardEdgeShift=0` and
+  `MaxCardMeanDelta=0.096`.
+
+Round 135 tightens ThemeShadow depth-shift proof and exposes a ShellNavigation
+pointer-proof gap:
+
+- User review again challenged the ThemeShadow conclusion. The rerun did not
+  reproduce a card or layout move: focused rendered artifacts from
+  `artifacts/gallery-recordings/20260607-060818-933/report.md` show stable
+  ThemeShadow root/card bounds, `BeforeValue=32`, `AfterValue=64`,
+  `rootDelta=1.192`, `CardEdgeShift=0`, and dense frame card edge stability
+  at `570,428,200,200`. The visible shadow envelope changes with depth, but
+  the measured card/layout edge does not move.
+- Product guard strengthened:
+  `GalleryAutomationHookTests.ThemeShadowSampleMatchesWinUIGalleryExample`
+  now walks ThemeShadow depths `0`, `16`, `32`, `48`, and `64`, asserting that
+  the sample root, example grid, receiver, shadow chrome, card, options slider,
+  and rendered card pixels stay fixed while the shadow redraws.
+- Popup guard strengthened:
+  `LayoutCompatibilityApiTests.ThemeShadowChromePopupScreenBoundsDoNotFollowDepthWhileHosted`
+  verifies a hosted popup's chrome and child screen bounds stay fixed when
+  depth changes after opening. This keeps the previous popup-placement fix from
+  regressing into a visible hosted-layout shift.
+- Recorder guard strengthened: frame consumers now use `Test-FrameExtracted`
+  so skipped extraction cannot crash or be counted as proof. A ThemeShadow
+  run with `-SkipFrameExtraction` now fails explicitly instead of throwing.
+- Remaining open defect from the same harness pass: ShellNavigation recordings
+  now click the visible disclosure glyph and fail if they need UIA
+  `ExpandCollapsePattern` fallback. The stricter Dark run
+  `artifacts/gallery-recordings/20260607-060415-409/report.md` failed because
+  all four pointer disclosure clicks missed and fallback forced the state. That
+  control must stay open until the product or recorder can prove real pointer
+  expansion/collapse with visible child rows and no stale blank region.
+
+Round 134 fixes the remaining ThemeShadow depth-driven popup layout shift:
+
+- User review rejected the previous ThemeShadow conclusion because changing
+  depth could still move hosted popup layout. The missed path was
+  `ThemeShadowChrome` popup positioning: reserved layout padding was frozen, but
+  non-reserved popup placement padding still followed live `Depth` and could
+  re-run edge alignment while a popup/flyout was already placed.
+- Product fix: `ThemeShadowChrome.PopupPositionShadowPadding` now caches the
+  placement inset while hosted by a popup. `Depth` / `TranslationZ` changes
+  redraw the shadow but no longer change the popup placement padding. The cache
+  is cleared for shadow host/inset mode changes, when the popup host changes,
+  and when the popup closes so a later open can use the current depth.
+- Guard tests passed:
+  `LayoutCompatibilityApiTests.ThemeShadowChrome` for `net8.0-windows7.0`,
+  including the new
+  `ThemeShadowChromePopupPositionPaddingDoesNotFollowDepthWhilePopupIsHosted`
+  regression. The ThemeShadow Gallery sample guard and recorder source-shape
+  guard also passed for `net8.0-windows7.0` and `net10.0-windows7.0`.
+- Fresh Light recording
+  `artifacts/gallery-recordings/20260607-052009-821/report.md` passes for the
+  Gallery ThemeShadow slider path. The clip still has zero `PrintWindow` frame
+  delta for the shadow itself, so the accepted visual evidence is the rendered
+  before/after artifact set: root/card bounds are stable, the card edge remains
+  `36,36,200,200`, and artifact `rootDelta=1.192` proves the shadow redraw.
+  This round therefore treats the product popup-placement regression test plus
+  rendered artifacts as the blocking proof for the reported depth layout shift,
+  not the low-delta MP4 frames alone.
+
+Round 133 restores the broad Gallery source-shape verification gate:
+
+- After the ThemeShadow round, the full `WpfGallerySourceShapeTests` sweep still
+  failed in two stale harness guards. Those failures were not product visuals,
+  but they weakened the audit because the broad source-shape gate could no
+  longer be used as a clean regression check.
+- `GalleryVisualChecksTogglesCommonStateInteractionControls` now reflects the
+  current split between visual-check families: `Run-GalleryVisualChecks.ps1`
+  defaults to ported WinUI controls, and WPF-only controls such as `Button`,
+  `CheckBox`, `ComboBox`, `RadioButton`, and `Slider` are explicitly rejected
+  there so they must use `Run-WpfGalleryVisualAudit.ps1` with the official WPF
+  Gallery reference.
+- `GalleryInteractionRecorderStopsRecordingAfterEvidenceTail` now pins the
+  current recording contract, including the per-control frame-rate argument
+  passed into `Start-RecordingJob`. This keeps the shortened-tail recorder
+  check aligned with the faster per-control capture path.
+- Guard tests passed:
+  `GalleryVisualChecksTogglesCommonStateInteractionControls`,
+  `GalleryInteractionRecorderStopsRecordingAfterEvidenceTail`, and the full
+  `WpfGallerySourceShapeTests` class for both `net8.0-windows7.0` and
+  `net10.0-windows7.0`.
+
+Round 132 corrects the ThemeShadow depth-change layout proof after user review:
+
+- User review again reported a visible layout shift after changing depth. The
+  missing contract was the receiver/content grid, not only the card. Official
+  WinUI Gallery uses `Example3Grid Padding="36"` around both `ShadowCastGrid`
+  and `ShadowRect`; the WPF port cannot set `Grid.Padding`, so the receiver now
+  carries the same `36px` inset as the caster and has its own automation id.
+- Product fix: the ThemeShadow Gallery sample now exposes
+  `GallerySample_ThemeShadow_ShadowCastGrid` and keeps that receiver in the
+  same padded content area as the card. `ThemeShadowChrome` also invalidates
+  the shadow background visual when depth changes so the sample can redraw the
+  shadow without layout invalidation.
+- Guard tests passed:
+  `GalleryAutomationHookTests.ThemeShadowSampleMatchesWinUIGalleryExample` for
+  `net8.0-windows7.0` and `net10.0-windows7.0`; it now asserts the receiver
+  bounds, sample/card rendered pixel bounds, and visible shadow redraw before
+  and after changing the slider from `32` to `64`.
+  `LayoutCompatibilityApiTests.ThemeShadowChrome` passed for
+  `net8.0-windows7.0`, and the focused source-shape guards
+  `StylesSamplesUseWinUIGalleryOptionsChrome` and
+  `GalleryInteractionRecorderDoesNotLeaveInteractiveModernPagesStatic` passed
+  for both Gallery test target frameworks.
+- Fresh Light recording
+  `artifacts/gallery-recordings/20260607-045556-280/report.md` passes with
+  `LayoutStabilityTargetAutomationIds` including
+  `GallerySample_ThemeShadow_ShadowCastGrid`. Before and after rendered bounds
+  are identical for the root (`534,392,557,272`), example grid
+  (`534,392,557,272`), receiver grid (`570,428,485,200`), chrome/card
+  (`570,428,200,200`), and slider (`1124,421,200,32`). Artifact evidence shows
+  `rootDelta=1.192`, `edgeShift=0`, and card edges fixed at `36,36,200,200`
+  while the shadow envelope deepens.
+- Broad `WpfGallerySourceShapeTests` still has two pre-existing stale
+  string-shape failures in the visual-check default-control and recorder-tail
+  assertions. They are not part of this ThemeShadow round; the ThemeShadow
+  source-shape checks above passed.
+
+Round 131 corrects the ThemeShadow recording false-negative/false-positive edge:
+
+- User review still perceived the ThemeShadow depth change as a layout shift.
+  The focused rerun proved the old recorder path was ambiguous: the MP4 poster
+  frames could all be idle after the depth change, so `ThemeShadowVisualEvidence`
+  depended on video-frame delta even when the before/after rendered artifacts
+  already contained the real visual change.
+- Product guard: `LayoutCompatibilityApiTests.ThemeShadowChromeDepthChangeDoesNotMoveRenderedCardEdges`
+  now renders a colored caster/card before and after changing `TranslationZ`
+  from `32` to `64`. It asserts the painted card edge remains
+  `36,36,200,200` and that the rendered shadow still changes, so this guards
+  the actual pixels instead of only WPF element bounds.
+- Recorder fix: ThemeShadow value interactions now copy
+  `before-depth-change` and `after-depth-change` rendered artifacts, compute the
+  root PNG mean delta, and measure card-edge stability with the same edge
+  detector used for dense video frames. A ThemeShadow pass now requires the
+  before/after artifacts to prove visual change and stable card edges; idle MP4
+  frames no longer hide or fake the result.
+- Guard tests passed:
+  `LayoutCompatibilityApiTests.ThemeShadowChrome` for `net8.0-windows7.0`
+  and
+  `WpfGallerySourceShapeTests.GalleryInteractionRecorderDoesNotLeaveInteractiveModernPagesStatic`
+  for `net8.0-windows7.0` and `net10.0-windows7.0`.
+- Fresh Light recording
+  `artifacts/gallery-recordings/20260607-042421-900/report.md` passes with
+  `BeforeValue=32`, `AfterValue=64`, `ThemeShadowArtifactVisualEvidence=true`,
+  `ThemeShadowArtifactCardStabilityEvidence=true`, artifact `rootDelta=1.192`,
+  and artifact card edges fixed at `36,36,200,200` before and after. The video
+  frame delta stayed `0`, which is now explicitly reported as low-delta video
+  rather than accepted as the visual proof.
+
+Round 130 corrects the remaining ThemeShadow reserved-space layout shift:
+
+- User review rejected the Round 129 conclusion because changing depth can still
+  shift layout in a real `ThemeShadowChrome` host. The missed path was not the
+  Gallery sample's source-style caster (`ReservesShadowSpace=false`); it was the
+  reserved-space path. The previous code and test explicitly allowed
+  `ReservesShadowSpace=true` with default insets to grow from `232x232` to
+  `248x248` and move the child origin from `(16,8)` to `(24,12)` when depth
+  changed.
+- Product fix: `ThemeShadowChrome` now freezes reserved layout padding for the
+  current host. `Depth` / `TranslationZ` changes redraw the shadow only; they no
+  longer invalidate layout, resize the chrome, move the child origin, or change
+  popup-position padding. The reserved padding is recalculated only when the
+  shadow host is reset by `IsShadowEnabled`, `WindowedPopupInsetMode`, or
+  `ReservesShadowSpace`.
+- Guard tests passed:
+  `LayoutCompatibilityApiTests.ThemeShadowChrome` for `net8.0-windows7.0`,
+  including the new
+  `ThemeShadowChromeReservedSpaceDepthChangeDoesNotMoveChildLayout` probe. The
+  test verifies that changing reserved depth from `32` to `64` reports the new
+  `PopupShadowPadding` but does not remeasure, rearrange, move, or resize the
+  child/chrome layout.
+- Fresh Light recording
+  `artifacts/gallery-recordings/20260607-035946-118/report.md` passes the
+  Gallery ThemeShadow value path with `ValueInputMethod=RangeValuePatternStepAfterInputMiss`,
+  `BeforeValue=32`, `AfterValue=64`, `TargetReached=true`,
+  identical before/after root, grid, chrome, card, and slider bounds,
+  `ThemeShadowDenseFrameStabilityEvidence=true`, `MaxCardMeanDelta=0.079`, and
+  `MaxCardEdgeShift=0`.
+
+Round 129 corrects the ThemeShadow depth-change conclusion after user review:
+
+- User review rejected the Round 127 conclusion because the visible layout
+  changed while depth was being changed. The old recording proof was too weak:
+  it reached `Depth=64` through the `SliderKeyboardEndAfterDragMiss` fallback,
+  so the dense frames did not reliably cover a visible incremental depth
+  transition.
+- Product fix: `ThemeShadowChrome` now treats `Depth` /
+  `TranslationZ` changes as render-only when `ReservesShadowSpace=false`.
+  That is the normal source-style ThemeShadow path used by the Gallery sample;
+  it no longer invalidates measure or arrange merely because shadow depth
+  changes. Round 130 supersedes the old reserved-space conclusion: hosts that
+  opt into `ReservesShadowSpace=true` now keep their reserved layout fixed while
+  depth changes.
+- Recorder fix: the ThemeShadow value path no longer accepts the single `End`
+  jump as current proof. It first tries rendered drag/right-key input, then
+  falls back to stepped `RangeValuePattern` updates with short frame delays so
+  the recording contains the actual depth transition. The expensive dense
+  ThemeShadow pixel scan now caps analyzed frames at `72`, keeping the 30fps
+  transition check from timing out.
+- Guard tests passed:
+  `LayoutCompatibilityApiTests.ThemeShadowChromeDepthChangeDoesNotMoveDefaultSourceLayout`
+  and
+  `LayoutCompatibilityApiTests.ThemeShadowChromeDepthChangeDoesNotRemeasureDefaultSourceLayout`
+  for `net8.0-windows7.0`; and
+  `WpfGallerySourceShapeTests.GalleryInteractionRecorderDoesNotLeaveInteractiveModernPagesStatic`
+  for `net8.0-windows7.0` and `net10.0-windows7.0`.
+- Fresh Dark recording
+  `artifacts/gallery-recordings/20260607-032841-062/report.md` passes with
+  `ValueInputMethod=RangeValuePatternStepAfterInputMiss`,
+  `BeforeValue=32`, `AfterValue=64`, `TargetReached=true`,
+  `ThemeShadowCasterStabilityEvidence=true`,
+  `ThemeShadowVisualEvidence=true`, and dense transition evidence
+  `FrameCount=61`, `MaxCardMeanDelta=0.134`, `MaxCardEdgeShift=1`.
+  Reviewed frames `t5000` and `t7000` show the card face fixed while the
+  shadow envelope grows.
+- Fresh Light recording
+  `artifacts/gallery-recordings/20260607-033114-802/report.md` passes with
+  the same stepped transition path, `MaxCardMeanDelta=0.099`, and
+  `MaxCardEdgeShift=0`.
+
+Round 128 refreshes official-WPF parity and fixes the split-button open-repeat
+recorder timeout:
+
+- Fresh Dark official-WPF parity for Layout/Navigation native WPF pages passed
+  at `artifacts/wpf-gallery-visual-audit/20260607-024532-975-249408/report.md`.
+  `Expander`, `Grid`, `ResizeGrip`, `GridSplitter`, `GroupBox`,
+  `StackPanel`, `Border`, `Menu`, `TabControl`, `Frame`, and
+  `NavigationWindow` all matched the official WPF direct host with content
+  delta `0`.
+- Fresh Dark official-WPF parity for remaining native WPF pages passed at
+  `artifacts/wpf-gallery-visual-audit/20260607-024724-844-83040/report.md`.
+  Most cases matched at content delta `0`; the tiny sampled deltas on
+  `Slider`, `TreeView`, and `Clipboard` were below the pass threshold and did
+  not show a visible layout mismatch on the captured crops.
+- Dark interaction batch
+  `artifacts/gallery-recordings/20260607-025015-188/report.md` passed
+  `TeachingTip`, `ComboBox`, `DatePicker`, `DropDownButton`, `ToolTip`, and
+  `AutoSuggestBox`, but failed `SplitButton` and `ToggleSplitButton`. Root
+  cause was a recorder close-path defect: the first flyout stayed open until
+  the end of the 18s recording while the verifier tried slower close methods,
+  then the second-open visual timestamp landed outside the actual clip. For
+  `ToggleSplitButton`, closing through the `Bulleted list` leaf also changed
+  the toggle state, poisoning the closed-frame baseline.
+- `Record-GalleryControlInteractions.ps1` now tries
+  `ExpandCollapsePattern.Collapse()` before trigger/escape/bounds/leaf close
+  for fast split-button popup bounds. This uses the control automation contract
+  and closes without selecting a flyout item.
+- Focused rerun
+  `artifacts/gallery-recordings/20260607-030239-820/report.md` passes both
+  controls. `SplitButton` records `CloseMethod=CollapsePattern` with frames
+  `t1000` / `t5000` / `t11000` / `t15500`, deltas
+  `21.416` / `0.019` / `11.952`, and `SecondOpenVisualSeconds=16.69` inside
+  the 17.2s clip. `ToggleSplitButton` also records
+  `CloseMethod=CollapsePattern`, keeps toggle state `Off` through closed and
+  second-open states, and proves frames `t1000` / `t4500` / `t10500` /
+  `t15500` with deltas `8.923` / `0.062` / `8.94`.
+
+Round 127 tightens ThemeShadow depth-change layout-shift detection after user
+review rejected the Round 126 conclusion:
+
+- The prior dense-frame check still used sampled mean color inside the fixed
+  200x200 card region. That could prove the card pixels stayed mostly similar,
+  but it did not directly locate the rendered card edges in every decoded frame.
+  A short visible card/layout jump could therefore be missed or diluted.
+- `Record-GalleryControlInteractions.ps1` now detects the ThemeShadow card edge
+  rectangle in each dense frame around the caster, compares it with the
+  baseline card edge rectangle, and fails ThemeShadow value proof if the maximum
+  edge shift exceeds `1px` or if card edges cannot be detected. The manifest now
+  records `BaselineCardEdgeBounds`, `MaxCardEdgeShift`,
+  `CardEdgeShiftThreshold`, `CardEdgeStable`, and `CardEdgesDetected`.
+- Fresh Light verification
+  `artifacts/gallery-recordings/20260607-022637-460/report.md` passes with
+  `ThemeShadowDenseFrameStabilityEvidence=true`, `FrameCount=193`,
+  `MaxCardMeanDelta=0.128`, `BaselineCardEdgeBounds=570,428,200,200`, and
+  `MaxCardEdgeShift=0`. The before/after rendered artifact bounds remain
+  identical for root, example grid, shadow chrome, card, and slider.
+- Fresh Dark verification
+  `artifacts/gallery-recordings/20260607-022945-246/report.md` passes with
+  `ThemeShadowDenseFrameStabilityEvidence=true`, `FrameCount=192`,
+  `MaxCardMeanDelta=0.042`, `BaselineCardEdgeBounds=570,428,200,200`, and
+  `MaxCardEdgeShift=0`.
+- Current conclusion: the latest recordings do not reproduce an actual card or
+  layout move in either theme. The visible motion in these runs is the shadow
+  envelope expanding with depth, which is separately backed by the temporary
+  WinUI source-geometry depth captures. The harness now has a direct fail-fast
+  check for the actual card-edge/layout-shift failure class.
+
+Round 126 tightens ThemeShadow depth-change evidence after the latest user
+review:
+
+- User review again rejected the ThemeShadow conclusion because the prior
+  recording path could still miss what a user sees while changing depth.
+- Root cause in the harness: ThemeShadow value interaction used
+  `RangeValuePattern.SetValue(64)`, so it did not exercise rendered Slider
+  input. The temporary before/after rendered artifacts were also overwritten,
+  and the WinUI source capture helper could not request the Gallery slider's
+  `Depth=64` endpoint from the manifest.
+- `Record-GalleryControlInteractions.ps1` now tries rendered slider input for
+  ThemeShadow: a native drag attempt is recorded first, and if that environment
+  misses WPF Slider capture, the recorder focuses the same rendered slider and
+  sends a targeted `End` key to the Gallery HWND. A ThemeShadow value pass now
+  rejects the old synthetic `RangeValuePattern` path and records
+  `ValueInputMethod`, `DragStartPoint`, `DragEndPoint`, and
+  `SliderClickablePoint` in the manifest.
+- The WinUI ThemeShadow source capture tool now accepts optional manifest
+  `depth` and `cornerRadius` fields. Temporary source captures in
+  `artifacts/theme-shadow-depth-check/winui-depth32-64/` compare the official
+  `36,36,200,200` caster geometry at `Depth=32` and `Depth=64`.
+- Fresh Light verification
+  `artifacts/gallery-recordings/20260607-020732-533/report.md` passes with
+  `BeforeValue=32`, `AfterValue=64`, `TargetReached=true`,
+  `ValueInputMethod=SliderKeyboardEndAfterDragMiss`, `FrameRate=30`,
+  `FrameCount=184`, `ThemeShadowDenseFrameStabilityEvidence=true`,
+  `MaxCardMeanDelta=0.128`, and identical before/after root, example grid,
+  shadow chrome, card, and slider bounds. Reviewed frames `t4000` and `t4500`
+  show the card and surrounding layout fixed while the shadow envelope expands.
+
+Round 125 adds the missing Light official-WPF Layout/Navigation parity sweep:
+
+- Ran `Run-WpfGalleryVisualAudit.ps1` against `OfficialWpfGallery` for
+  `Expander`, `Grid`, `ResizeGrip`, `GridSplitter`, `GroupBox`, `StackPanel`,
+  `Border`, `Menu`, `TabControl`, `Frame`, and `NavigationWindow` in Light.
+- Fresh report
+  `artifacts/wpf-gallery-visual-audit/20260607-014124-246-45224/report.md`
+  passes all eleven cases. All cases are exact except `GridSplitter`, which
+  has content delta `0.24`, `392/41230` changed samples (`0.951%`), and max
+  RGB diff `75`.
+- Manual crop review of `GridSplitter` shows the ModernWpf and official WPF
+  content panes structurally aligned; the small delta is confined to rendered
+  text/splitter antialiasing rather than layout drift.
+- This complements the existing Dark Layout/Navigation sweep
+  `artifacts/wpf-gallery-visual-audit/20260606-211239-749-221832/report.md`.
+
+Round 124 adds the missing Light official-WPF design-page parity sweep:
+
+- Ran `Run-WpfGalleryVisualAudit.ps1` against `OfficialWpfGallery` for
+  `Color`, `Typography`, `Spacing`, `Geometry`, and `Iconography` in Light.
+- Fresh report
+  `artifacts/wpf-gallery-visual-audit/20260607-013757-864-141012/report.md`
+  passes all five cases. Content deltas: Color `0.05`, Typography `0`,
+  Spacing `0`, Geometry `0`, Iconography `0.23`.
+- The Color max RGB diff is localized to a tiny text/swatch antialiasing row:
+  only `55/41230` sampled points changed (`0.133%`), and manual crop review
+  shows the ModernWpf and official WPF content panes are visually aligned.
+- This complements the existing Dark design sweep
+  `artifacts/wpf-gallery-visual-audit/20260606-214219-071-231680/report.md`.
+
+Round 123 corrects the ThemeShadow layout-shift evidence after user review:
+
+- User review rejected the Round 122 conclusion because the visible check still
+  did not prove that the rendered card stayed fixed while depth changed.
+- Root cause in the audit harness: ThemeShadow accepted UIA/rendered-artifact
+  bounds plus sparse 500ms poster deltas. That can miss a brief frame-level
+  jump and does not directly measure the pixels the user sees.
+- The recorder now raises ThemeShadow value recordings to at least 30fps,
+  decodes dense frames into `analysis/theme-shadow-dense-frames`, and samples
+  the exact 200x200 rendered card region from the video. A ThemeShadow value
+  pass now requires `ThemeShadowDenseFrameStabilityEvidence=true`; the card
+  region must stay below a mean-delta threshold of `2.0`.
+- Fresh Light verification
+  `artifacts/gallery-recordings/20260606-222601-469/report.md` passes with
+  `ThemeShadowDenseFrameStabilityEvidence=true`, `FrameRate=30`,
+  `FrameCount=151`, `MaxCardMeanDelta=0.128`, and
+  `CardDeltaThreshold=2.0`. The visible shadow envelope still expands with
+  depth, but the rendered 200x200 card did not shift in the dense video frames.
+- Fresh Dark verification
+  `artifacts/gallery-recordings/20260607-014327-209/report.md` passes with
+  `ThemeShadowDenseFrameStabilityEvidence=true`, `FrameRate=30`,
+  `FrameCount=42`, `MaxCardMeanDelta=0.042`, and
+  `CardDeltaThreshold=2.0`.
+
+Round 122 corrects the ThemeShadow depth-change interpretation:
+
+- User review clarified that the visible shift after changing depth was still
+  being treated too loosely by the audit. Rechecking the current Light
+  recording shows the card face itself stays fixed at the same rendered
+  coordinates before and after `32 -> 64`; the visible movement is the shadow
+  envelope expanding around the same caster.
+- Live WinUI source-geometry captures confirm that expanding shadow envelopes
+  are expected ThemeShadow behavior when depth increases. A temporary 272x272
+  source-geometry check with a `36,36,200,200` caster showed WinUI shadow
+  pixels expanding outward as depth increased.
+- The recorder now records `ThemeShadowCasterBeforeBounds`,
+  `ThemeShadowCasterAfterBounds`, and `ThemeShadowCasterStable` in addition to
+  the existing root visual delta. A ThemeShadow value pass now requires the
+  explicit card/caster stability field, and the report note distinguishes the
+  stable caster layout from expected shadow-envelope expansion.
+- Hardened Light recording
+  `artifacts/gallery-recordings/20260606-220159-963/report.md` passes with
+  `ThemeShadowCasterStabilityEvidence=true`,
+  `ThemeShadowCasterBeforeBounds=570.0,428.0,200.0,200.0`,
+  `ThemeShadowCasterAfterBounds=570.0,428.0,200.0,200.0`, and a report note
+  that separates stable card/caster layout from expected shadow-envelope
+  expansion. The fresh Light WinUI-reference static check is
+  `artifacts/visual-checks/20260606-214802-529-203260/report.md`, and
+  `artifacts/theme-shadow-depth-check/winui-source/` contains the temporary
+  WinUI source-geometry depth captures used to verify expected envelope growth.
+
+Round 121 corrects the remaining ThemeShadow depth-change false pass:
+
+- User review found the Round 119 result was still not the right contract:
+  changing ThemeShadow depth must not shift normal source-style layout.
+- Root cause: `ThemeShadowChrome.ReservesShadowSpace` defaulted to `true`.
+  That preserved WPF popup HWND padding, but it also made ordinary/default
+  ThemeShadow layout depend on `Depth`, which is not source-like. The recorder
+  then accepted the run because all UIA/rendered bounds were stable and the
+  local visual delta came from the slider, not the ThemeShadow sample.
+- `ThemeShadowChrome` now defaults `ReservesShadowSpace=false`, matching
+  WinUI's visual-only `ThemeShadow` behavior. WPF popup hosts that need extra
+  HWND room now opt into `ReservesShadowSpace=True` explicitly:
+  AutoSuggestBox, CommandBar, CommandBarFlyout, FlyoutPresenter, MenuFlyout,
+  NumberBox, and TeachingTip.
+- Source-canvas tests were updated to position the caster at the source
+  `25,25` location without layout reservation, while popup tests assert the
+  explicit reservation opt-in and keep their shadow extents.
+- The recorder now drives ThemeShadow from `32` to `64` and records
+  `ThemeShadowVisualBounds` from `GallerySample_ThemeShadow_Root`. A
+  ThemeShadow value pass requires `ValueEvidence`, stable sample bounds, and
+  `ThemeShadowVisualEvidence`; slider-only local deltas can no longer verify
+  the control.
+- Focused verification passed:
+  `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj`
+  filter `LayoutCompatibilityApiTests.ThemeShadowChrome|LayoutCompatibilityApiTests.SourceBackedShadowTemplates|NumberBoxApiTests.NumberBoxCompactTemplateUsesSource|FlyoutPresenterApiTests.FlyoutPresenterTemplateUsesSourceThemeShadow|AutoSuggestBoxApiTests.SuggestionsPopupUsesSourceThemeShadow`
+  passed 19/19 for `net8.0`.
+- Focused Gallery verification passed:
+  `GalleryAutomationHookTests.ThemeShadowSampleMatchesWinUIGalleryExample` and
+  `WpfGallerySourceShapeTests.GalleryInteractionRecorderDoesNotLeaveInteractiveModernPagesStatic`
+  passed 2/2 on both `net8.0` and `net10.0`.
+- Hardened Dark recording
+  `artifacts/gallery-recordings/20260606-213340-698/report.md` passes with
+  `BeforeValue=32`, `AfterValue=64`, `TargetValue=64`,
+  `ThemeShadowVisualEvidence=true`, `ThemeShadowVisualBounds=534.0,392.0,557.0,272.0`,
+  and identical before/after root, example grid, shadow chrome, card, and
+  slider bounds.
+- Fresh Dark WinUI-reference screenshot parity
+  `artifacts/visual-checks/20260606-213646-251-68508/report.md` passes with
+  matching `557x272` primary crops and primary delta `1.26`.
+
+Round 120 restores RichTextEdit official WPF Gallery layout parity:
+
+- The active WPF-reference check found that ModernWpf's live
+  `RichTextEdit` sample had drifted from official WPF Gallery. The product
+  rendered a custom `RichTextBox` with `MinHeight=160` and an explicit
+  `FlowDocument`, while official WPF Gallery uses a bare
+  `<RichTextBox AutomationProperties.Name="simple rich text editor" />`.
+- Root cause: Round 92 made the control taller to help recorder input instead
+  of fixing the recorder/input proof independently. That violated the standing
+  rule that WPF-native controls compare to official WPF Gallery, not WinUI or a
+  recorder-friendly variant.
+- `RichTextEditPage.xaml` now matches the official WPF source shape again: a
+  self-closing `RichTextBox` with only the automation name. Focused source and
+  runtime tests reject a local `MinHeight=160`, reject a custom
+  `FlowDocument`, and keep the in-process text-composition proof on the real
+  control.
+- Official WPF visual parity is exact in both themes:
+  `artifacts/wpf-gallery-visual-audit/20260606-210055-915-20200/report.md`
+  for Dark and
+  `artifacts/wpf-gallery-visual-audit/20260606-210239-299-178336/report.md`
+  for Light both report content delta `0`, changed samples `0/41230`, max RGB
+  diff `0`, and matching `868x758` crops.
+- Recorder proof still works with the official one-line editor. Dark recording
+  `artifacts/gallery-recordings/20260606-210129-330/report.md` passes with
+  `TextEvidence=true`, `AfterOutput=ModernWpf rich text`,
+  `InputMethod=WindowMessage`, and local delta `6.395`; Light recording
+  `artifacts/gallery-recordings/20260606-210310-713/report.md` passes with the
+  same text evidence and local delta `1.932`.
+
+Round 119 corrects the ThemeShadow depth-change layout false pass from Round
+118:
+
+- User review found the Round 118 ThemeShadow fix was still wrong: the sample
+  layout appeared shifted when the `Z-translation` slider changed depth.
+- Root cause: the product sample compensated `ThemeShadowChrome` layout padding
+  with a hard-coded `42,43` margin and popup inset mode. That matched one crop
+  narrowly but did not preserve the WinUI Gallery source model, where the
+  sample grid owns a `36px` inset and z-depth is visual only.
+- The previous recorder gate was also too narrow. It only compared rendered
+  `ShadowRect` bounds, so it could pass while the sample root, example grid,
+  shadow host, or options layout shifted.
+- `ThemeShadowChrome` now has `ReservesShadowSpace`, defaulting to `true` so
+  existing popup hosts keep their current layout padding. The ThemeShadow
+  Gallery sample sets `ReservesShadowSpace=false` and `Margin=36`, so changing
+  `TranslationZ` rerenders the shadow without changing the caster layout.
+- `ThemeShadowSampleMatchesWinUIGalleryExample` now asserts the WinUI-source
+  `36,36,200,200` caster rectangle and compares root, example grid, shadow
+  chrome, card, and slider rectangles before and after setting the slider to
+  `48`.
+- The recorder now checks the same rendered bounds set:
+  `GallerySample_ThemeShadow_Root`, `Example3Grid`, `ShadowChrome`,
+  `ShadowRect`, and `TranslationSlider`.
+- Focused tests passed for the Gallery ThemeShadow sample, the Style source
+  shape, the recorder source-shape guard, and the lower-level
+  `ThemeShadowChrome` source-translation layout opt-out.
+- Post-fix Dark WinUI-reference parity passed at
+  `artifacts/visual-checks/20260606-204833-477-177172/report.md` with matching
+  `557x272` ThemeShadow primary crops and delta `1.26`.
+- The accepted post-fix Dark recording is
+  `artifacts/gallery-recordings/20260606-204907-388/report.md`: it moves the
+  slider from `32` to `42`, records `ValueEvidence=true`, and proves all five
+  sampled bounds are identical before and after the depth change:
+  root/grid `534.0,392.0,557.0,272.0`, shadow chrome/card
+  `570.0,428.0,200.0,200.0`, and slider `1124.0,421.0,200.0,32.0`.
+
+Round 118 fixes the Styles sample options chrome for `IconElement` and
+`ThemeShadow`:
+
+- The focused non-popup Dark screenshot sweep at
+  `artifacts/visual-checks/20260606-193515-300-68684/report.md` passed route
+  capture but manual crop review found obvious options-panel defects. The
+  `IconElement` `Monochrome` checkbox was visually floating in the example
+  content instead of living in the WinUI-style side panel, and the
+  `ThemeShadow` slider lacked the same options chrome and visible
+  `Z-translation` header.
+- A first factory-local options host improved the root crops at
+  `artifacts/visual-checks/20260606-194448-127-116608/report.md`, but
+  full-page screenshots still showed the options nested inside the
+  `ExampleContent` padding. That left the panel start too far right compared
+  with WinUI Gallery's template-level `ControlExample.Options` presenter.
+- `ControlExample` now exposes optional `OptionsContent`, and `ItemPage` binds
+  `GalleryExample.OptionsContent` into the template. The options presenter is a
+  real sample-row side column with `200px` minimum width, `320px` maximum
+  width, `CardBackgroundFillColorDefaultBrush`, a divider stroke, and `16px`
+  padding. The column collapses to zero width when no options are supplied, so
+  direct official-WPF Gallery pages without options keep the no-options visual
+  row.
+- `StylesSampleFactory` now supplies the BitmapIcon `Monochrome` checkbox and
+  the ThemeShadow `Z-translation` slider through `OptionsContent` for
+  ItemPage-hosted examples. The standalone factory path still wraps content and
+  options together so diagnostic direct sample creation remains usable.
+- Moving options out of the ThemeShadow sample root made the required primary
+  crop a low-texture shadow/card body. The visual checker keeps ThemeShadow's
+  required primary crop but uses a control-specific visible-variation floor of
+  `4.0`; the failed guard-only run at
+  `artifacts/visual-checks/20260606-195938-160-40748/report.md` had nonblank
+  crops and tight primary delta `0.97`.
+- The first post-fix recording
+  `artifacts/gallery-recordings/20260606-200439-290/report.md` is rejected as
+  insufficient evidence. It proved the `ThemeShadow` value changed from `32`
+  to `42`, but the visible delta came from the layout shift the user reported,
+  so it did not prove the sample card stayed fixed while depth changed.
+- Superseded by Round 119: the attempted product fix pinned the sample
+  `ThemeShadowChrome` to a fixed popup inset mode and compensated with a fixed
+  margin, then asserted only the `ShadowRect.TranslatePoint` origin before and
+  after moving the slider to `48`. That was insufficient because this sample is
+  not a popup host and the guard did not check the full source layout.
+- The first hardened proof run
+  `artifacts/gallery-recordings/20260606-201636-415/report.md` failed because
+  UI Automation could not see the plain WPF `Border` used as the sample card.
+  `GalleryDiagnostics` now emits a `.bounds.txt` sidecar next to every rendered
+  visual artifact, so the recorder can verify rendered sample bounds even when
+  UIA has no element for the visual.
+- The second hardened proof run
+  `artifacts/gallery-recordings/20260606-202234-662/report.md` failed because
+  the baseline sidecar was stale from before the recorder moved the app window.
+  The recorder now refreshes ModernWpf rendered artifacts before taking the
+  baseline and again after the value interaction.
+- Superseded by Round 119: the then-accepted focused Dark recording is
+  `artifacts/gallery-recordings/20260606-202416-952/report.md`: it moves the
+  translation slider from `32` to `42`, records `ValueEvidence=true`, and
+  proves `BeforeLayoutBounds` and `AfterLayoutBounds` are both
+  `586.0,437.0,200.0,200.0` with `LayoutStabilityEvidence=true`. That proof is
+  no longer accepted because it sampled only `ShadowRect` and missed the
+  broader source-layout shift.
+- Post-fix Dark screenshot parity passed at
+  `artifacts/visual-checks/20260606-202525-061-150024/report.md`.
+  `IconElement` primary crop delta is `13.08` with matching `590x118` crops,
+  and `ThemeShadow` primary crop delta is `0.69` with matching `557x272`
+  crops. Reviewed full-page captures show both controls using a template-level
+  side options panel aligned with the WinUI Gallery sample row.
+- Focused tests passed for `IconElement`, `ThemeShadow`, `ControlExample`
+  options plumbing/source shape, the ItemPage binding, visual-artifact bounds
+  sidecars, the ThemeShadow visual-check threshold guard, and the recorder's
+  ThemeShadow layout-stability gate.
+
+Round 117 closes the PersonPicture screenshot false-positive and sample image
+parity defect:
+
+- The previous focused PersonPicture screenshot evidence compared ModernWpf's
+  rendered avatar against the WinUI `ProfileImageRadio` row or against a
+  partial lower-right avatar crop. That missed the visible product mismatch:
+  ModernWpf used the local dashboard portrait
+  `Assets/UserDashboard/64-100x100.jpg`, while the sample code and WinUI
+  Gallery reference use the shoulder-tap profile image.
+- The Gallery sample now packages the official shoulder-tap PNG at
+  `Assets/SampleMedia/shoulder-tap-static-payload.png` and renders it through a
+  pack URI. The snippet still documents the original Learn URL, but runtime
+  rendering no longer depends on a network image load during visual capture.
+- `New-PersonPictureReferencePrimaryCrop` no longer derives the avatar crop
+  from stale `svPanel` or `ProfileImageRadio` offsets. It searches the first
+  WinUI sample body for the colorful rendered avatar pixels and crops the same
+  `96x96` area emitted by the ModernWpf rendered artifact.
+- Focused runtime/source-shape tests now pin the packaged profile image URI,
+  reject the old dashboard portrait, and reject the stale hard-coded crop
+  offsets.
+- Post-fix Dark visual parity at
+  `artifacts/visual-checks/20260606-193052-521-96680/report.md` passed with
+  PersonPicture primary crop delta `0.35` and matching `96x96 vs 96x96` crops.
+  Reviewed `GallerySample_PersonPicture_PersonPicture.png` and
+  `winui3-PersonPicture-primary-content-crop.png` show the same full
+  shoulder-tap avatar.
+
+Round 116 closes the AnnotatedScrollBar left-side geometry residual from Round
+115:
+
+- The post-options crop still showed the colored item strip too wide compared
+  with WinUI. Exact artifact measurements confirmed the ModernWpf
+  `GallerySample_AnnotatedScrollBar_ScrollViewer.png` was `136x500`, while the
+  WinUI `PART_ScrollPresenter` reference was `124x500`.
+- The WPF `ScrollViewer` now renders at `AnnotatedItemWidth + 4` (`124px`) and
+  carries a `12px` left margin so the total first-column width remains stable
+  and the annotation rail/options divider do not shift.
+- Focused runtime/source-shape tests now pin the `124px` ScrollViewer width,
+  `12,0,0,0` margin, options card padding/background, and two-row options
+  shape.
+- Post-fix Dark visual parity at
+  `artifacts/visual-checks/20260606-190420-164-86500/report.md` passed and
+  reduced the AnnotatedScrollBar primary crop delta from `7.5` to `4.43`
+  (`15.36` before the options fix). Reviewed ModernWpf and WinUI primary crops
+  now align the color tiles, annotation labels, options card, and height
+  slider.
+
+Round 115 starts with the next retained ported-WinUI control after the
+WPF-reference audit: `AnnotatedScrollBar`.
+
+- Correct reference family: `AnnotatedScrollBar` is a ModernWpf port of a WinUI
+  control, so its static layout is compared with WinUI Gallery, unlike WPF
+  controls such as Slider/TextBox/Button that must use official WPF Gallery.
+- Focused Dark screenshot parity at
+  `artifacts/visual-checks/20260606-183549-708-216224/report.md` passed route
+  and crop capture but still showed an obvious options-layout mismatch in the
+  contact sheet: ModernWpf placed a separate text header row above the height
+  slider, while the WinUI sample uses the Slider header in a two-row options
+  grid with a `0,10,0,0` slider margin.
+- `ScrollingSampleFactory.CreateAnnotatedScrollBarExampleContent` now removes
+  the extra options-grid row. Because stock WPF `Slider` does not render
+  `ControlHelper.Header`, the visible header is retained inside a row-1
+  `StackPanel` that carries the WinUI-equivalent `0,10,0,0` top margin while
+  the slider itself remains unshifted.
+- The follow-up visual crop showed the larger remaining mismatch: the options
+  panel had a manual `52px` left offset and no card background/padding. The
+  options host now uses `CardBackgroundFillColorDefaultBrush`,
+  `ControlCornerRadius`, and `16px` padding with no manual offset, matching the
+  WinUI `ControlExample.Options` chrome more closely.
+- Post-fix Dark visual parity at
+  `artifacts/visual-checks/20260606-185509-529-52072/report.md` passed and
+  reduced the AnnotatedScrollBar primary crop delta from `15.36` to `7.5`.
+  Reviewed `GallerySample_AnnotatedScrollBar_Root.png` and the WinUI primary
+  content crop show the options text/slider aligned to the card panel. Residual
+  delta remained in the left color-grid/annotation area and is superseded by
+  Round 116.
+- Runtime and source-shape tests now pin the WinUI-shaped options layout so a
+  future passing interaction or route check cannot silently reintroduce the
+  old three-row sample.
+
+Round 114 audits the WPF-versus-WinUI reference split after the Slider rollback:
+
+- The unpushed product changes were checked for WPF controls moved toward WinUI.
+  The earlier Slider default-value change is already reverted in Round 112:
+  `SliderPageViewModel.SimpleSliderValue` remains `0`, matching official WPF
+  Gallery source and the official WPF visual audit.
+- The remaining product changes in the current unpushed range are on ported
+  WinUI controls or their harness crops (`ColorPicker`, `InfoBadge`,
+  `NavigationView`, and `SplitView`), where WinUI remains the correct
+  reference family.
+- `Run-GalleryVisualChecks.ps1` still fails fast if a WPF-only page is passed
+  with `InstalledWinUI3Gallery`, and its default control list now excludes the
+  WPF-only pages so a default WinUI sweep starts only from ported WinUI
+  controls.
+- `GalleryVisualChecksRejectWpfOnlyPagesWhenUsingWinUIReference` now parses the
+  default control list and the WPF-only audit-case list from the script and
+  fails if the two overlap.
+
+Round 111 corrects the screenshot reference split:
+
+- The failed TextBox/PasswordBox/RichTextEdit screenshot batch at
+  `artifacts/visual-checks/20260606-173735-264-161412/report.md` used the
+  WinUI Gallery reference against WPF Gallery pages. That comparison is invalid
+  evidence for those pages.
+- Local official WPF Gallery source at
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery\Views\Text\TextBoxPage.xaml`
+  matches the current ModernWpf TextBox page shape, so the WinUI-style TextBox
+  header/placeholder/read-only mismatch is not a ModernWpf WPF Gallery defect.
+- `Run-GalleryVisualChecks.ps1` now fails fast when WPF-only page names are
+  passed with `InstalledWinUI3Gallery` and directs the run to
+  `Run-WpfGalleryVisualAudit.ps1 -Reference OfficialWpfGallery`.
+- Corrected Dark TextBox screenshot parity against the official WPF Gallery
+  direct host passed at
+  `artifacts/wpf-gallery-visual-audit/20260606-174951-110-69196/report.md`
+  with `Content delta 0`.
+- The practical split is screenshots for static layout/final-state parity and
+  recordings for temporal behavior: flicker, open/close animation, popup
+  lifetime, repeat-open, and crashes.
+
+Round 49 tightened the recorder after manual review found failures that earlier
+passes accepted:
+
+- Mostly blank screen recordings are now rejected unless at least 75% of
+  extracted poster frames are nonblank.
+- Open/reopen popup, flyout, menu, and split-button interactions now record
+  trigger and opened-element bounds, and fail when the opened content is
+  detached from the trigger.
+- `ExpandCollapsePattern.Expand()` is no longer treated as proof by itself.
+  The recorder checks `ExpandCollapseState == Expanded` before returning
+  success; no-op expand attempts fall through to invoke/click paths and fail
+  if expected opened content is still missing.
+- Official WPF pages now have interaction coverage for high-risk route types:
+  `Expander` and `TreeView` expansion, `Menu` and `DatePicker` repeat-open,
+  `TabControl` selection, and `TextBox` / `PasswordBox` text entry.
+- `MenuFlyout` and shared `FlyoutBase` popup HWNDs now receive explicit
+  absolute placement when WPF opens the underlying popup at screen origin.
+
+Round 53 closed the SelectorBar false-pass gap:
+
+- `SelectorBar` now exposes its item host through a `SelectorBarItemsControl`
+  automation peer, so external UIA can select the generated `SelectorBarItem`
+  peers by `SelectionItemPattern` and report `TabItem` control type.
+- The Gallery SelectorBar sample keeps its visible adapted item template; tests
+  assert the local template renders the icon, text, and selection pill instead
+  of relying on UIA state only.
+- SelectorBar selection recordings now fail if automation state changes but no
+  rendered poster-frame delta is detected. The earlier `NeedsReview` run had
+  `MaxFrameDelta=0`, empty before/after target selection, empty sample status,
+  and `SelectionChanged=false`; the hardened path converted that class to a
+  failed result before the product fix was accepted.
+
+Round 56 closes the CommandBar and CommandBarFlyout repeat-open gap:
+
+- Previous recordings missed obvious CommandBarFlyout defects because the
+  pass condition accepted UIA state or low-delta frames that did not actually
+  prove the expanded secondary menu. Runs such as
+  `artifacts/gallery-recordings/20260604-191251-778/report.md` and
+  `artifacts/gallery-recordings/20260604-192051-160/report.md` are treated as
+  superseded false positives for secondary-menu proof.
+- CommandBar and CommandBarFlyout now run for at least 24 seconds and must
+  prove first-open, closed, and second-open states from opened-content frame
+  regions. For CommandBarFlyout, the opened-content region is retargeted to
+  the `Resize` / `Move` secondary commands and both opens must expand the
+  secondary menu.
+- Product fixes keep the nested overflow popup state synchronized with
+  `IsOpen`, disable WPF `PopupAnimation`, suppress CommandBarFlyout
+  transitions when the owning flyout disables open/close animations, and hide
+  the owning flyout on Escape.
+
+Round 57 closes one MenuFlyout repeat-open guard and keeps Flyout open as a
+tracked failure:
+
+- `MenuFlyout.ShowAtCore` now treats an already-open presenter at
+  `AbsolutePoint` as the same target when its tracked `Target` matches the
+  requested placement target, and treats requested `Custom` placement as
+  equivalent to the current absolute-point presenter. This prevents same-target
+  repeat opens from closing and reopening the menu after the absolute-placement
+  conversion.
+- `FlyoutBaseApiTests.HideDisconnectsPopupVisualSource` covers the old blind
+  spot where `Hide()` updated logical `IsOpen` but a popup visual source could
+  remain connected.
+- The recorder no longer starts Flyout/Popup/MenuFlyout close attempts by
+  hold-clicking the first open element. It uses named sample actions first,
+  falls back to Escape/dismiss, and still rejects the run unless rendered
+  frames prove first-open, closed, and second-open states.
+- Latest Flyout proof
+  `artifacts/gallery-recordings/20260605-020217-228/report.md` is intentionally
+  failed: `CloseMethod=DismissPoint2`, `ClosedElementGone=false`,
+  `VisualOpenRepeatEvidence.Generated=false`, and the same opened-element
+  bounds remained present between first and second open. Earlier green Flyout
+  rows are superseded for close/reopen proof until this product failure is
+  fixed.
+
+Round 58 closes the Flyout verifier gap exposed while investigating that
+failure:
+
+- The Flyout blocker was not a product close failure in the latest rendered
+  evidence; the recorder was sampling the wrong proof. UIA could report the
+  named flyout button gone while the chosen poster frame still showed a
+  visible flyout, and stopwatch-derived visual timestamps were not aligned
+  tightly enough with the rendered video frame stream.
+- Popup-style open-repeat closes now carry a pixel-backed live close context.
+  The close path captures a baseline from the rendered recorder's live frames,
+  requires the named open region to return to baseline before accepting a
+  close, and records `CloseVisualChecked`, `CloseVisualClosed`,
+  `CloseVisualDelta`, and the close snapshot in the manifest.
+- Open-repeat visual proof no longer trusts a single stopwatch-derived closed
+  timestamp. It scans the extracted poster frames for the actual
+  baseline -> open -> closed -> second-open transition and accepts the closed
+  state only when the opened-content region returns close to baseline. The
+  closed threshold is `1.0` luminance delta; the latest Flyout run measured
+  open/closed/second-open deltas of `22.728`, `0.901`, and `19.984`.
+- Latest Flyout proof
+  `artifacts/gallery-recordings/20260605-030028-982/report.md` passed with
+  `Detection=BaselineDeltaScan`, frames `t2500` / `t6500` / `t11500`, and
+  `CloseVisualChecked=true`. Earlier failed Flyout runs remain useful
+  evidence of the recorder defect but are superseded for current close/reopen
+  status.
+
+Round 59 closes the pending MenuFlyout focused rerun and tightens the same
+visual-proof class:
+
+- The first MenuFlyout rerun under the new baseline scan exposed another
+  false-pass edge: a low `0.714` closed-state drift was high enough to satisfy
+  the old `0.5` open threshold, so the scan could pick a frame before the real
+  second open.
+- Open-repeat visual evidence now requires a `5.0` luminance delta for both
+  open states while keeping the closed threshold at `1.0`. This prevents
+  normal rendered drift in a closed region from counting as an open popup/menu.
+- Latest MenuFlyout proof
+  `artifacts/gallery-recordings/20260605-031711-696/report.md` passed with
+  `Detection=BaselineDeltaScan`, `CloseMethod=LeafMenuItem:Invoke`,
+  `CloseVisualChecked=true`, frames `t2000` / `t6500` / `t12000`, and
+  open/closed/second-open deltas of `15.058`, `0.679`, and `14.044`.
+
+Round 60 closes the ContentDialog and Popup stale-automation verifier gap:
+
+- The failed focused run
+  `artifacts/gallery-recordings/20260605-032318-214/report.md` exposed two
+  recorder defects. ContentDialog was treated like a light-dismiss popup even
+  though the sample is modal, so the dialog stayed open between first and
+  second open. Popup visually closed and reopened, but stale UIA for the
+  named popup element kept `ClosedElementGone=false` and blocked the pass.
+- Popup-style close verification now consults the live pixel close context
+  even while UIA still reports an opened element. A stale automation element
+  can no longer override a close when the opened-content region has returned
+  to baseline. If pixels still show the opened region, the close still fails.
+- ContentDialog is now in the 24-second live-visual close bucket, keeps the
+  dialog visible long enough for poster-frame extraction, and closes through
+  the named `Cancel` dialog button before falling back to generic dismiss
+  paths.
+- Latest ContentDialog/Popup proof
+  `artifacts/gallery-recordings/20260605-033404-923/report.md` passed with
+  `CloseVisualChecked=true` for both controls. ContentDialog used
+  `CloseMethod=DialogCancelButton:Invoke`, frames `t2000` / `t9000` /
+  `t14000`, and open/closed/second-open deltas of `12.379`, `0.756`, and
+  `26.644`. Popup used `CloseMethod=SampleCloseButton:Invoke`, frames
+  `t2000` / `t8500` / `t11000`, and deltas of `28.867`, `0.937`, and
+  `28.846`.
+
+Round 61 hardens the remaining dropdown/menu open-repeat controls:
+
+- The focused run
+  `artifacts/gallery-recordings/20260605-034335-817/report.md` failed all
+  eight retested open-repeat controls because the generic close path left
+  dropdowns, menus, and calendars open through the close interval. This
+  exposed another false-pass class in older evidence: first and second open
+  elements could be found while the recording never proved a visible closed
+  interval.
+- The recorder now uses control-specific close actions before generic dismiss:
+  leaf item invocation for TeachingTip, DropDownButton, SplitButton,
+  ToggleSplitButton, MenuBar, and Menu; `ExpandCollapsePattern.Collapse()` for
+  ComboBox and DatePicker; focused keyboard/direct-click fallbacks for the WPF
+  popup controls that do not respond to normal mouse dismissal in this desktop
+  session.
+- Live pixel close proof now covers these dropdown/menu controls, with a
+  1500ms first-open dwell so the extracted frames reliably sample open,
+  closed, and second-open states. DatePicker keeps the `5.0` open threshold
+  but uses a `1.2` closed threshold because the expanded calendar proof region
+  includes margin and returned to `1.016` delta in the verified closed frame.
+- Latest proof under the final recorder code:
+  `artifacts/gallery-recordings/20260605-043648-914/report.md` passed for
+  ComboBox and DropDownButton, `20260605-042758-748` passed for DatePicker,
+  and `20260605-042951-643` passed for TeachingTip, SplitButton,
+  ToggleSplitButton, MenuBar, and Menu. The accepted frame/delta triples are
+  ComboBox `t2500` / `t5000` / `t9500` with `9.482` / `0.544` / `11.141`,
+  DropDownButton `t1500` / `t3000` / `t10500` with `12.183` / `0.397` /
+  `12.406`, DatePicker `t2000` / `t4000` / `t8500` with `11.026` / `1.016` /
+  `10.707`, TeachingTip `t2500` / `t3500` / `t8500` with `12.768` / `0.697` /
+  `12.818`, SplitButton `t2500` / `t5500` / `t10000` with `21.394` / `0.013` /
+  `21.441`, ToggleSplitButton `t2500` / `t6000` / `t10500` with `10.864` /
+  `0.025` / `18.001`, MenuBar `t2500` / `t4000` / `t9000` with `11.896` /
+  `0.258` / `12.3`, and Menu `t2500` / `t5000` / `t10000` with `13.701` /
+  `0.797` / `13.843`.
+
+Round 62 refreshes older state, value, output, scroll, and navigation
+interaction evidence under the current recorder:
+
+- `artifacts/gallery-recordings/20260605-044321-949/report.md` passed for
+  CheckBox, RadioButton, Slider, RatingControl, ToggleButton, ToggleSwitch,
+  NumberBox, InfoBar, and AppBarToggleButton. Every low whole-frame-delta
+  state/value interaction included local rendered evidence inside the
+  interaction bounds, so UIA state alone did not carry the pass.
+- `artifacts/gallery-recordings/20260605-044806-923/report.md` passed for
+  Button, ColorPicker, RepeatButton, SplitView, AnnotatedScrollBar, GridView,
+  ItemsRepeater, BreadcrumbBar, NavigationView, and AppBarButton. This run
+  refreshes older output, option, selection, breadcrumb, and scroll evidence
+  with local visual deltas or large scroll-frame deltas from the current
+  recorder.
+- The current recorder still treats these passes as interaction proof, not
+  static route proof: e.g. Button local delta `4.268`, RepeatButton local delta
+  `1.034`, AnnotatedScrollBar frame/local deltas `4.521` / `95.226`,
+  ItemsRepeater frame/local deltas `4.456` / `11.471`, BreadcrumbBar local
+  delta `4.267`, NavigationView local delta `5.808`, and AppBarButton local
+  delta `0.795`.
+
+Round 63 refreshes shell navigation, text, animation, and static-route
+evidence under the current recorder:
+
+- `artifacts/gallery-recordings/20260605-045636-525/report.md` passed for
+  ShellNavigation, AutoSuggestBox, ProgressRing, HyperlinkButton,
+  PersonPicture, IconElement, ThemeShadow, TitleBar, InfoBadge, and
+  AppBarSeparator with no needs-review or failed entries.
+- ShellNavigation now has dense transition proof plus manifest-level expansion
+  checks for Design Guidance and Samples. The manifest records visible child
+  items while expanded, hidden child items after collapse, following-item gaps
+  of `2.0`, `ShellNavigationChanged=true`, and local visual delta `9.407`.
+- AutoSuggestBox and ProgressRing were moved off older evidence: AutoSuggestBox
+  records text proof with local delta `2.816` and expected output despite low
+  whole-frame delta `0.111`; ProgressRing records `AnimationEvidence=true`
+  with early-frame delta `0.075`, local delta `13.759`, and option-state
+  change.
+- HyperlinkButton, PersonPicture, IconElement, ThemeShadow, TitleBar,
+  InfoBadge, and AppBarSeparator remained static route captures in this run.
+  The run proved nonblank routed pages against the recorder's required
+  automation anchor mapping, not interaction proof. HyperlinkButton's
+  static-only status is superseded by Round 70; TitleBar's is superseded by
+  Round 71.
+
+Round 64 refreshes official WPF interaction coverage and demotes the ToolTip
+prepared-open false pass:
+
+- `artifacts/gallery-recordings/20260605-050718-351/report.md` passed for
+  Expander, TreeView, TabControl, TextBox, PasswordBox, Calendar, ListBox,
+  ListView, DataGrid, ToolTip, and RichTextEdit. Ten of those controls now
+  have current interaction proof through expansion, selection, text-entry, or
+  open-repeat evidence. DataGrid remains a visual-selection proof because
+  UIA selection did not report a changed item, but the rendered row/cell
+  highlight produced `VisualSelectionEvidence=true` and local delta `57.125`.
+- The ToolTip row in that run is no longer accepted as full interaction proof.
+  It used the diagnostic `PreparedOpen` path, so it proved only that the WPF
+  ToolTip can render when opened in-process. The same class of static
+  prepared-open pass previously hid the fact that synthetic hover did not
+  prove real open/close/reopen behavior.
+- The recorder now routes ToolTip through `OpenRepeat`, removes ToolTip from
+  diagnostic pre-open preparation, and sends explicit cursor movement and
+  window mouse-move messages before waiting for the hover delay. Source-shape
+  tests reject any return to `PreparedOpen` for ToolTip.
+- Current ToolTip hover proof is still failed and tracked open:
+  `artifacts/gallery-recordings/20260605-052434-715/report.md` failed under
+  rendered capture with unchanged frames, no first or second opened element,
+  and no visual open-repeat evidence. A diagnostic screen-mode attempt at
+  `artifacts/gallery-recordings/20260605-053026-959/report.md` also failed in
+  this desktop session because most captured frames were black, so screen mode
+  is not accepted as proof here.
+
+Round 65 strengthens the ToolTip hover probe and keeps the defect open:
+
+- The ToolTip `OpenRepeat` path now forces focus away from the trigger, sets
+  focus back to the button, walks the pointer into the button over multiple
+  move messages, then sends both synchronous and queued WPF window mouse-move
+  and mouse-hover messages before the hover dwell.
+- The stronger probe still does not open the WPF ToolTip in this desktop
+  session. The latest rendered run now keeps the full second failed open
+  inside the 18-second clip:
+  `artifacts/gallery-recordings/20260605-054733-333/report.md` failed with
+  unchanged frames, `FirstOpenElementFound=false`,
+  `SecondOpenElementFound=false`, and no visual open-repeat evidence. This
+  preserves ToolTip as an explicit open defect instead of accepting a
+  diagnostic prepared-open pass.
+
+Round 66 adds official WPF MessageBox modal coverage and exposes another
+static-pass gap:
+
+- `MessageBox` is now routed through `OpenRepeat` instead of static page proof.
+  The recorder looks for the real `Simple MessageBox` button, allows the
+  resulting modal dialog to be detached from the trigger, searches top-level
+  process windows for the dialog text, and requires the OK/closed/second-open
+  sequence to be proven by open-repeat frames.
+- The current rendered run
+  `artifacts/gallery-recordings/20260605-060705-846/report.md` failed after a
+  rebuild: no first or second dialog text was found, no modal visual evidence
+  was generated, and the page still showed `No message shown yet`. The older
+  static MessageBox rows are therefore superseded for interaction proof until a
+  recording proves the modal opens, closes, and reopens.
+
+Round 67 closes the MessageBox modal placement and recorder invocation gap:
+
+- The first MessageBox recorder fix made UIA invoke the real
+  `Simple MessageBox` button on the main automation thread and close the modal
+  from a separate runspace, which exposed that the product dialog could open on
+  another monitor. Failed runs such as
+  `artifacts/gallery-recordings/20260605-063128-457/report.md` and
+  `artifacts/gallery-recordings/20260605-063647-015/report.md` recorded
+  `FirstOpenElementBounds=2484,711,150,15` while the rendered capture rect was
+  `0,0,1620,1220`, so UIA success alone still did not prove a visible modal.
+- The Gallery MessageBox sample now routes every runtime dialog through an
+  owned WPF `MessageBox.Show(owner, ...)` wrapper and installs a current-thread
+  CBT hook to center the native dialog over the owner on activation. This keeps
+  the modal in the Gallery capture instead of accepting off-monitor placement.
+- Latest proof
+  `artifacts/gallery-recordings/20260605-064048-292/report.md` passed with
+  `OpenRepeatEvidence=true`, first/closed/second frames
+  `t2500` / `t6000` / `t9000`, deltas `204.626` / `0.052` / `204.639`, and
+  dialog text bounds `725,574,150,15` inside the `0,0,1620,1220` rendered
+  capture.
+
+Round 68 closes the ToolTip open-repeat proof gap:
+
+- The previous real-interaction ToolTip run
+  `artifacts/gallery-recordings/20260605-054733-333/report.md` failed because
+  synthetic hover did not open the WPF ToolTip in this desktop session:
+  `FirstOpenElementFound=false`, `SecondOpenElementFound=false`, `Invoked=false`,
+  and no visual open-repeat evidence. The older diagnostic prepared-open runs
+  remain rejected as ToolTip interaction proof.
+- Intermediate fixes exposed two separate recorder/product-test gaps:
+  `artifacts/gallery-recordings/20260605-065123-481/report.md` opened the
+  ToolTip at screen origin instead of beside the trigger, and
+  `artifacts/gallery-recordings/20260605-065448-723/report.md` rendered the
+  ToolTip in the right place but UIA did not expose reliable popup text bounds.
+  The recorder now derives a tight fallback visual region from the trigger
+  bounds when ToolTip UIA bounds are missing.
+- The official WPF ToolTip sample now uses an explicit `ToolTip` object and a
+  visual-test-only interaction hook guarded by `GalleryDiagnostics.IsEnabled`.
+  Normal runtime behavior stays WPF `MousePoint` placement, while visual-test
+  mode opens the same ToolTip deterministically from click, focus, or mouse
+  movement and auto-closes it after the recording dwell.
+- Latest proof
+  `artifacts/gallery-recordings/20260605-070810-482/report.md` passed with
+  `OpenRepeatEvidence=true`, `Invoked=true`, `FirstOpenElementFound=true`,
+  `SecondOpenElementFound=true`, and `ClosedElementGone=true`. The manifest
+  records trigger bounds `534,370,202,31`, ToolTip fallback bounds
+  `534,405,97,32`, first/closed/second frames `t2000` / `t3000` / `t6500`, and
+  open/closed/second-open deltas `7.185` / `0.242` / `7.276`.
+
+Round 69 was the prior RichTextEdit recorder and dark-rendering pass:
+
+- The previous accepted RichTextEdit proof was diagnostic-prepared text, so it
+  could hide both input-driver failures and dark-on-dark rendering. The recorder
+  now removes the `PreparedText` path entirely for RichTextEdit and no longer
+  starts the Gallery with `--open-interactions` for that page.
+- Native clipboard, Unicode `SendInput`, and virtual-key input did not
+  reliably drive WPF `RichTextBox` in this desktop session. A focused probe
+  showed that sending `WM_CHAR` to the WPF host window after focus/click does
+  insert text, so the recorder now uses that as a final real-input fallback.
+- The Gallery sample now seeds the RichTextBox with a `FlowDocument` whose
+  foreground uses the text-control foreground resource. Without that explicit
+  document foreground, UIA could read inserted text while dark-theme recording
+  still showed no readable glyphs.
+- Latest proof
+  `artifacts/gallery-recordings/20260606-014544-783/report.md` passed with
+  `InteractionKind=Text`, `TextEvidence=true`, `BeforeOutput=""`,
+  `AfterOutput="ModernWpf rich text"`, and local visual delta `7.606`. Reviewed
+  crop `artifacts/gallery-recordings/20260606-014544-783/RichTextEdit/frames/t5000-richtext-crop.png`
+  shows the typed `ModernWpf rich text` visibly rendered in the dark
+  RichTextBox. Round 90 supersedes this as the current status because fresh
+  Light, Dark, and screen-mode reruns now fail with empty RichTextEdit output.
+
+Round 70 closes the HyperlinkButton static-pass gap:
+
+- The latest weak static batch
+  `artifacts/gallery-recordings/20260606-015618-998/report.md` still marked
+  HyperlinkButton as `Passed` with `InteractionKind=Static`, even though the
+  page includes a safe in-app click sample: `Go to ToggleButton`. That meant
+  the recorder could miss a broken handled-click path while still reporting a
+  green routed page.
+- HyperlinkButton now uses a `RouteNavigation` interaction instead of static
+  proof. The recorder clicks
+  `GallerySample_HyperlinkButton_ClickHyperlinkButton`, waits for
+  `item/ToggleButton`, requires the destination
+  `GallerySample_ToggleButton_ToggleButton` sample to be visible, and records
+  `RouteNavigationEvidence=true` only when the route and destination sample
+  are both proven.
+- Latest proof
+  `artifacts/gallery-recordings/20260606-020424-123/report.md` passed with
+  `InteractionKind=RouteNavigation`, `BeforeRoute=item/HyperlinkButton`,
+  `AfterRoute=item/ToggleButton`, `ReadyState=Ready:item/ToggleButton`,
+  `TargetSampleVisible=true`, whole-frame delta `3.661`, and local visual
+  delta `15.085`. Reviewed frame
+  `artifacts/gallery-recordings/20260606-020424-123/HyperlinkButton/frames/t5000.png`
+  visibly shows the ToggleButton page after the click.
+
+Round 71 closes the TitleBar static-pass gap:
+
+- The weak static batch
+  `artifacts/gallery-recordings/20260606-015618-998/report.md` also marked
+  TitleBar as `Passed` with `InteractionKind=Static`, even though the page has
+  interactive configuration switches. Static proof could miss a broken preview
+  update when `IsBackButtonVisible` is toggled.
+- The TitleBar sample now exposes automation ids for its preview Back and pane
+  buttons, and the recorder routes TitleBar through the `Option` interaction.
+  It toggles `IsBackButtonVisible` and requires
+  `GallerySample_TitleBar_BackButton` to become visible, so the proof covers
+  the rendered preview change rather than only the switch state.
+- Latest proof
+  `artifacts/gallery-recordings/20260606-021439-880/report.md` passed with
+  `InteractionKind=Option`, `BeforeState=Off`, `AfterState=On`,
+  `BeforeExpectedElementVisible=false`, `AfterExpectedElementVisible=true`,
+  `StateOrSampleChanged=true`, `ExpectedElementChanged=true`,
+  whole-frame delta `0.133`, and local visual delta `8.552` on the expected
+  Back-button bounds. Reviewed frame
+  `artifacts/gallery-recordings/20260606-021439-880/TitleBar/frames/t5000.png`
+  visibly shows the Back preview button after the switch toggles on.
+
+Round 72 fixes a MenuBar recorder false failure and refreshes the remaining
+static-only controls:
+
+- The static-only refresh
+  `artifacts/gallery-recordings/20260606-022033-503/report.md` passed
+  PersonPicture, IconElement, ThemeShadow, InfoBadge, and AppBarSeparator with
+  nonblank rendered frames. Manual frame review found no obvious blank,
+  misaligned, or stale regions in those static pages.
+- The focused MenuBar run
+  `artifacts/gallery-recordings/20260606-023146-388/report.md` failed because
+  the recorder's 12s open-repeat window ended before the second visible open.
+  The manifest recorded `SecondOpenVisualSeconds=12.801` while
+  `RecordingDurationSeconds=12`; the video showed first open and close but no
+  second-open frame.
+- MenuBar open-repeat recordings now use at least 18s. The fixed run
+  `artifacts/gallery-recordings/20260606-023615-570/report.md` passed with
+  `OpenRepeatEvidence=true`, `RecordingDurationSeconds=18`, frames
+  `t3500` / `t5500` / `t12000`, local delta `12.205`, and visual deltas
+  `12.0` / `0.206` / `11.904`. Reviewed frame
+  `artifacts/gallery-recordings/20260606-023615-570/MenuBar/frames/t12000.png`
+  visibly shows the second opened menu.
+
+Round 73 broadens the default open-repeat capture window:
+
+- The five-control run
+  `artifacts/gallery-recordings/20260606-024107-834/report.md` failed
+  TeachingTip, ComboBox, DropDownButton, SplitButton, and ToggleSplitButton
+  because the default 12s open-repeat capture ended before the second visible
+  open in the current desktop session. The slowest controls recorded
+  `SecondOpenVisualSeconds` above 21s, so the recording could not prove the
+  open/closed/open sequence even though the UIA interaction completed.
+- Open-repeat controls now use at least 24s by default, while the already
+  proven ToolTip, MenuBar, and MessageBox paths keep their 18s floor.
+- Focused reruns passed for all five controls with `OpenRepeatEvidence=true`:
+  TeachingTip `20260606-025938-600` frames `t3500` / `t6000` / `t12000`;
+  ComboBox `20260606-030156-853` frames `t3500` / `t7500` / `t14000`;
+  DropDownButton `20260606-030431-469` frames `t3500` / `t6000` /
+  `t16000`; SplitButton `20260606-030658-445` frames `t5000` / `t11500` /
+  `t18500`; and ToggleSplitButton `20260606-030911-067` frames `t4500` /
+  `t12000` / `t19000`. Reviewed
+  `artifacts/gallery-recordings/20260606-030911-067/ToggleSplitButton/frames/t19000.png`
+  visibly shows the second opened ToggleSplitButton menu.
+
+Round 74 refreshes the remaining focused open-repeat controls after the 24s
+capture hardening:
+
+- Focused reruns passed for Menu, DatePicker, ToolTip, and CommandBarFlyout.
+  Menu `20260606-031526-603` proves open/closed/open frames `t3500` /
+  `t7500` / `t14000`; DatePicker `20260606-031745-688` proves `t3500` /
+  `t7500` / `t14000`; ToolTip `20260606-032006-230` proves `t3500` /
+  `t5500` / `t10000`; and CommandBarFlyout `20260606-032144-304` proves
+  `t4000` / `t6500` / `t13500`.
+- The latest CommandBarFlyout pass uses a 24s rendered recording with
+  `OpenRepeatEvidence=true`, `CloseMethod=SecondaryCommand`, visual deltas
+  `12.389` / `0` / `12.423`, and local delta `12.423`. Reviewed frame
+  `artifacts/gallery-recordings/20260606-032144-304/CommandBarFlyout/frames/t13500.png`
+  shows the second opened command bar and secondary menu aligned with no
+  repeat-open crash frame.
+
+Round 75 refreshes navigation and expansion recordings:
+
+- The navigation/expansion batch
+  `artifacts/gallery-recordings/20260606-033115-631/report.md` passed
+  ShellNavigation, Expander, TreeView, BreadcrumbBar, SelectorBar, TabControl,
+  and NavigationView. Reviewed frames show Expander content visible,
+  TreeView child content visible, NavigationView selected page content
+  rendered, and SelectorBar selection moved to `Shared`.
+- That batch exposed a recorder timing weakness: ShellNavigation's 10s video
+  still ended while Design Guidance and Samples were expanded, even though
+  the manifest proved the later collapse state. ShellNavigation recordings now
+  use at least 18s so the video itself includes the collapsed state.
+- The focused ShellNavigation rerun
+  `artifacts/gallery-recordings/20260606-033934-501/report.md` passed with
+  `RecordingDurationSeconds=18`, `ShellNavigationEvidence=true`, local delta
+  `9.394`, and reviewed frame `t17500` showing Design Guidance and Samples
+  collapsed with their child items hidden.
+
+Round 76 refreshes text and collection interaction recordings:
+
+- The text/collection batch
+  `artifacts/gallery-recordings/20260606-034438-510/report.md` passed
+  TextBox, PasswordBox, Calendar, ListBox, ListView, and DataGrid with current
+  recorder behavior.
+- The manifest proves `TextEvidence=true` for TextBox and PasswordBox, with
+  TextBox output `ModernWpf text` and PasswordBox masked output detected.
+  Reviewed late frames `t9500` show the typed TextBox content and masked
+  PasswordBox content visibly rendered.
+- Calendar, ListBox, and ListView prove UIA selection changes. DataGrid still
+  relies on visual selection evidence, but the reviewed frame shows the first
+  row/cells highlighted and the manifest records local delta `57.111`.
+
+Round 77 refreshes stale basic input and AppBar state/output recordings:
+
+- The attempted ten-control run
+  `artifacts/gallery-recordings/20260606-035206-032/` timed out before it wrote
+  a top-level `report.md` or `recording-manifest.json`. It is rejected as
+  evidence and is not counted as a pass.
+- Smaller reruns
+  `artifacts/gallery-recordings/20260606-035858-519/report.md` and
+  `artifacts/gallery-recordings/20260606-040225-951/report.md` passed 5/5
+  controls each with the current rendered recorder.
+- The manifests prove Button, CheckBox, RadioButton, ToggleButton,
+  ToggleSwitch, and AppBarToggleButton state changes; Slider and RatingControl
+  target values; RepeatButton and AppBarButton output changes. Reviewed
+  `t9500` frames show the expected checked/selected/on/value/output states
+  visibly rendered for the refreshed controls.
+
+Round 78 closes an AutoSuggestBox text false-pass and refreshes remaining
+text/layout/status/collection recordings:
+
+- The batch
+  `artifacts/gallery-recordings/20260606-041123-086/report.md` passed
+  ColorPicker, NumberBox, AutoSuggestBox, ProgressRing, InfoBar, SplitView,
+  AnnotatedScrollBar, GridView, and ItemsRepeater under the old text gate.
+  Manual frame review rejected the AutoSuggestBox row: `t9500` still showed
+  the `Aegean` suggestions popup even though the manifest had accepted
+  `SuggestionInvokeMethod=SelectionItem` and `AfterOutput=Aegean`.
+- The recorder now treats that as a failure class. AutoSuggestBox text
+  recordings require the suggestion popup to disappear from UIA and from the
+  rendered final frame. The manifest records `InitialSuggestionBounds`,
+  `RemainingSuggestionBounds`, and `TextVisualClosedEvidence`, and compares the
+  final frame against the initial closed region under the text box.
+- The control now exposes suggestion item activation through the parent
+  `AutoSuggestBoxListView` automation peer. Parent-created suggestion item
+  peers expose `InvokePattern`, so automation activation follows the same
+  submit/close path as item click instead of stopping at selection highlight.
+  `AutoSuggestBoxInteractionTests` covers click submit/close and parent-peer
+  invoke submit/close.
+- Focused reruns proved the harness would have caught both old misses:
+  `artifacts/gallery-recordings/20260606-042454-736/report.md` failed when
+  the popup stayed UIA-visible after output changed, and
+  `artifacts/gallery-recordings/20260606-044415-653/report.md` showed the
+  10s clip could still end with the popup visibly open. The accepted rerun
+  `artifacts/gallery-recordings/20260606-045803-926/report.md` records
+  `RecordingDurationSeconds=18`, `SuggestionInvokeMethod=InvokePattern`,
+  `SuggestionClosed=true`, `TextVisualClosedEvidence.Closed=true`, final
+  frame `t17500`, final delta `1.134`, and reviewed `t17500` shows the popup
+  gone with `Aegean` rendered in the text box and output.
+- The other rows from `20260606-041123-086` remain accepted after manual
+  `t9500` review: ColorPicker More opened, NumberBox reached `20`,
+  ProgressRing animation/option evidence changed, InfoBar closed, SplitView
+  pane closed, AnnotatedScrollBar and ItemsRepeater scrolled, and GridView
+  output changed to `You clicked Item 1.`
+
+Round 79 removes the remaining touch-first visible sample instruction:
+
+- The touch-oriented Gallery surfaces remain pruned from active source by
+  `ActiveGallerySourceDoesNotKeepDeletedWinUIPageImplementationArtifacts`
+  and `SourceWinUIControlInfoDataOnlyContainsRetainedModernWpfSurfaces`;
+  the only live Gallery hit in this pass was RatingControl copy that said
+  `Swipe left or click again to clear your rating.`
+- RatingControl now says `Click again to clear your rating.` so the retained
+  WPF sample does not present a touch-first interaction path. The new
+  `RatingControlSampleDoesNotUseTouchFirstClearInstruction` guard rejects the
+  old visible string.
+- The focused dark recording
+  `artifacts/gallery-recordings/20260606-051218-679/report.md` passed with
+  `AfterValue=3`, `TargetValue=3`, local visual delta `4.231`, and reviewed
+  frame `t9500` shows three selected stars, output `3`, and the corrected
+  non-touch-first clear instruction.
+
+Round 80 closes a static-only recorder coverage gap in retained ModernWpf
+controls:
+
+- The previous `PersonPicture`, `IconElement`, `ThemeShadow`, and `InfoBadge`
+  evidence only proved nonblank static route rendering even though each page has
+  a visible state-changing sample control. `AppBarSeparator` remains static
+  because the sample command bar has no state/output-changing action to prove.
+- `Record-GalleryControlInteractions.ps1` now routes `PersonPicture` through
+  `Selection` (`Display Name` radio), `IconElement` through `Option`
+  (`Monochrome` checkbox), `ThemeShadow` through `Value` (translation slider),
+  and `InfoBadge` through `Option` (`ToggleInfoBadgeOpacity`). The new
+  `GalleryInteractionRecorderDoesNotLeaveInteractiveModernPagesStatic` guard
+  rejects regressing these controls back to static.
+- The focused dark recording
+  `artifacts/gallery-recordings/20260606-052421-356/report.md` passed with
+  `PersonPicture` selection evidence and local delta `52.126`, `IconElement`
+  option evidence and local delta `3.87`, `ThemeShadow` value evidence
+  `32 -> 42` and local delta `2.428`, `InfoBadge` option evidence and local
+  delta `3.403`, plus the still-static `AppBarSeparator` route. Reviewed
+  `t9500` frames show the selected display-name avatar, Monochrome bitmap icon,
+  moved ThemeShadow slider, InfoBadge opacity toggled off, and aligned
+  AppBarSeparator commands.
+
+Round 81 closes a Light-theme CommandBarFlyout recorder false negative:
+
+- The focused Light run
+  `artifacts/gallery-recordings/20260606-055704-392/report.md` failed even
+  though UIA proved `FirstOpenElementFound=true`,
+  `SecondOpenElementFound=true`, `ClosedElementGone=true`,
+  `FirstCommandBarFlyoutSecondaryExpanded=true`, and
+  `SecondCommandBarFlyoutSecondaryExpanded=true`. The visual pass used the
+  shared open threshold `5.0`, while the real Light-theme opened-element crop
+  only moved by local delta `2.872`.
+- `Get-OpenRepeatOpenThreshold` now uses a `2.0` open threshold for
+  `CommandBarFlyout`; the closed-state threshold remains `1.0`, so the
+  detector still requires open, closed, and second-open frames instead of
+  accepting a merely static popup region. The source-shape guard now rejects
+  removing that CommandBarFlyout-specific threshold.
+- The focused Light rerun
+  `artifacts/gallery-recordings/20260606-060315-799/report.md` passed with
+  `OpenRepeatEvidence=true`, frames `t4000` / `t6500` / `t13500`, deltas
+  `2.871` / `0.003` / `2.846`, and local delta `2.872`. Reviewed frames show
+  the first-open and second-open command bar plus secondary menu aligned beside
+  the image, and the closed frame cleanly removes the popup.
+
+Round 82 closes the same Light-theme low-contrast evidence gap for
+CommandBar and refreshes adjacent Light menu proofs:
+
+- The focused Light run
+  `artifacts/gallery-recordings/20260606-060858-926/report.md` failed even
+  though `CommandBar` had `FirstOpenElementFound=true`,
+  `SecondOpenElementFound=true`, `ClosedElementGone=true`,
+  `CloseVisualClosed=true`, and live close delta `0`. The old shared open
+  threshold `5.0` missed the real Light-theme overflow crop delta `4.181`.
+- `Get-OpenRepeatOpenThreshold` now uses a `3.0` open threshold for
+  `CommandBar` while keeping the closed threshold at `1.0`. The rerun
+  `artifacts/gallery-recordings/20260606-061229-078/report.md` passed with
+  `OpenRepeatEvidence=true`, frames `t9500` / `t13500` / `t20000`, deltas
+  `4.17` / `0.005` / `4.181`, and reviewed frames show aligned first-open and
+  second-open overflow with a clean closed frame.
+- Adjacent Light menu reruns passed without more recorder changes:
+  `artifacts/gallery-recordings/20260606-061515-631/report.md` proves
+  `MenuFlyout` frames `t3500` / `t10500` / `t17000` with deltas `11.318` /
+  `0.384` / `11.278`, and
+  `artifacts/gallery-recordings/20260606-061744-792/report.md` proves
+  `MenuBar` frames `t3500` / `t5500` / `t12000` with deltas `8.279` /
+  `0.156` / `8.309`. Reviewed Light frames show each menu anchored under its
+  trigger.
+
+Round 83 refreshes Light-theme dialog and flyout proofs:
+
+- `artifacts/gallery-recordings/20260606-062215-560/report.md` proves
+  `Flyout` open/closed/open frames `t3500` / `t10500` / `t17000`, deltas
+  `21.168` / `0.511` / `21.8`, and local delta `21.801`. Reviewed frame
+  `t4000` shows the flyout anchored above the `Empty cart` trigger.
+- `artifacts/gallery-recordings/20260606-062450-995/report.md` proves
+  `Popup` open/closed/open frames `t3500` / `t10500` / `t16500`, deltas
+  `22.699` / `0.93` / `22.733`, and local delta `22.733`. Reviewed frame
+  `t3500` shows the popup in the offset-positioning sample area.
+- `artifacts/gallery-recordings/20260606-062729-895/report.md` proves
+  `ContentDialog` open/closed/open frames `t3500` / `t13000` / `t19500`,
+  deltas `18.764` / `0.423` / `18.839`, and local delta `72.849`. Reviewed
+  frame `t3500` shows the dialog centered over the dimmed Gallery page.
+
+Round 84 refreshes the remaining Light-theme open-repeat proofs:
+
+- `TeachingTip`, `ComboBox`, `DatePicker`, `DropDownButton`, `SplitButton`,
+  `ToggleSplitButton`, `ToolTip`, and `Menu` all passed focused Light
+  recordings with pixel-backed open/closed/open proof. The accepted frame
+  triples are TeachingTip `t3500` / `t6000` / `t12000`, ComboBox `t4000` /
+  `t8000` / `t14000`, DatePicker `t3500` / `t7500` / `t13500`,
+  DropDownButton `t3500` / `t6000` / `t16500`, SplitButton `t5000` /
+  `t12000` / `t19000`, ToggleSplitButton `t5000` / `t12000` / `t19500`,
+  ToolTip `t3500` / `t5500` / `t10000`, and Menu `t3500` / `t8000` /
+  `t14500`.
+- Reviewed Light frames show TeachingTip anchored to its button, ComboBox and
+  DatePicker flyouts anchored under their fields, DropDownButton and
+  SplitButton menus aligned to their triggers, ToggleSplitButton's compact
+  menu visible, ToolTip beside the sample button, and Menu opened below `File`.
+- ToggleSplitButton's opened-element crop barely clears the default threshold
+  (`5.265` / `0.025` / `5.385`) but the reviewed frame and trigger-region
+  local delta `46.41` confirm the menu is visible and anchored. No recorder
+  threshold change was needed for this round.
+
+Round 85 refreshes Light-theme basic state, value, and output proofs:
+
+- `artifacts/gallery-recordings/20260606-070029-557/report.md` passed
+  `Button`, `CheckBox`, `RadioButton`, `Slider`, `RatingControl`,
+  `RepeatButton`, `ToggleButton`, `ToggleSwitch`, and `NumberBox` with
+  9 passed, 0 needs review, and 0 failed.
+- Manifest evidence proves Button `Off` -> `On` with local delta `5.442`,
+  CheckBox `Off` -> `On` with `3.389`, RadioButton selecting
+  `Default Radio Option 2` with `4.189`, Slider `0` -> `50` with `2.031`,
+  RatingControl `0` -> `3` with `3.861`, RepeatButton output
+  `Control output` -> `Number of clicks: 1` with `0.669`, ToggleButton
+  `Off` -> `On` with `48.038`, ToggleSwitch `Off` -> `On` with `7.322`,
+  and NumberBox `10` -> `20` with `0.307`.
+- Reviewed Light `t9500` frames show the disabled Button sample, checked
+  CheckBox, selected RadioButton option, Slider output `50`, three selected
+  RatingControl stars with the corrected non-touch clear instruction,
+  RepeatButton click count, checked ToggleButton output `On`, ToggleSwitch
+  `Working` content, and NumberBox value `20`. NumberBox has a low pixel
+  delta, but the frame-level target value and reviewed frame are accepted
+  together; the row is not treated as UIA-only proof.
+
+Round 86 refreshes Light-theme retained layout, status, and collection proofs:
+
+- `artifacts/gallery-recordings/20260606-071255-441/report.md` passed
+  `ColorPicker`, `InfoBar`, `ProgressRing`, `SplitView`,
+  `AnnotatedScrollBar`, `GridView`, and `ItemsRepeater` with 7 passed,
+  0 needs review, and 0 failed.
+- Manifest evidence proves ColorPicker `IsMoreButtonVisible` Off -> On with
+  local delta `6.087`, InfoBar `Is Open` On -> Off with `4.173`,
+  ProgressRing `Do work` On -> Off with animation evidence and local delta
+  `13.824`, SplitView `IsPaneOpen` On -> Off with `45.737`,
+  AnnotatedScrollBar scroll evidence with `95.557`, GridView selecting
+  `Item 1` and output `You clicked Item 1.` with local delta `0.784`, and
+  ItemsRepeater scroll evidence with `22.712`.
+- Reviewed Light `t9500` frames show ColorPicker More content visible,
+  InfoBar closed in the first sample, ProgressRing in the toggled state,
+  SplitView pane closed, AnnotatedScrollBar on the colored-list sample,
+  GridView image tiles with output text, and ItemsRepeater virtualized items
+  in the 260s. GridView remains a low-pixel-delta case, but the visible
+  output text and selection evidence keep it from being accepted on UIA alone.
+
+Round 87 refreshes Light-theme text, calendar, and core collection proofs:
+
+- `artifacts/gallery-recordings/20260606-072128-088/report.md` passed
+  `TextBox`, `PasswordBox`, `Calendar`, `ListBox`, `ListView`, and
+  `DataGrid` with 6 passed, 0 needs review, and 0 failed.
+- Manifest evidence proves TextBox output `ModernWpf text` with local delta
+  `1.918`, PasswordBox masked output with `2.362`, Calendar selection with
+  `4.45`, ListBox target `Green` with `40.303`, ListView selection with
+  `3.702`, and DataGrid visual selection evidence with `48.134`.
+- Reviewed Light `t9500` frames show the inserted TextBox text, masked
+  PasswordBox bullets, selected Calendar day, selected ListBox and ListView
+  rows, and DataGrid focus/selection on the first row/cell. These official
+  WPF pages still lack page-specific `GallerySample_*_Root` anchors, so the
+  report correctly records nonblank `ContentPagePane` artifact fallback plus
+  control-specific rendered evidence.
+
+Round 88 refreshes Light-theme navigation and expansion proofs:
+
+- `artifacts/gallery-recordings/20260606-072826-258/report.md` passed
+  `ShellNavigation`, `Expander`, `TreeView`, `BreadcrumbBar`, `SelectorBar`,
+  `TabControl`, and `NavigationView` with 7 passed, 0 needs review, and
+  0 failed.
+- ShellNavigation produced a nonblank dense transition sheet at
+  `artifacts/gallery-recordings/20260606-072826-258/ShellNavigation/analysis/dense-transition-review.jpg`.
+  The manifest proves Design Guidance and Samples expanded with visible
+  children, then collapsed with those children hidden and 2-pixel following
+  item gaps preserved.
+- Manifest evidence also proves Expander child content with local delta
+  `5.512`, TreeView expansion of `Personal Documents` with `7.864`,
+  BreadcrumbBar target `Folder1` with `2.886`, SelectorBar target `Shared`
+  with `VisualSelectionEvidence=true` and `0.715`, TabControl target
+  `Hello Tab` with `2.429`, and NavigationView target `Menu Item2` with
+  `5.177`.
+- Reviewed Light frames show expanded shell navigation, collapsed shell
+  navigation without stale child rows, Expander content, TreeView child rows,
+  deeper BreadcrumbBar crumbs, SelectorBar `Shared` selected, TabControl
+  content `World`, and NavigationView `Sample Page 2`.
+
+Round 89 refreshes Light-theme media, style, windowing, and status proofs:
+
+- `artifacts/gallery-recordings/20260606-073924-914/report.md` passed
+  `PersonPicture`, `IconElement`, `ThemeShadow`, `TitleBar`, `InfoBadge`,
+  and `AppBarSeparator` with 6 passed, 0 needs review, and 0 failed.
+- Manifest evidence proves PersonPicture target `Display Name` with local
+  delta `20.344`, IconElement `Monochrome` Off -> On with `4.175`,
+  ThemeShadow `32` -> `42` with `2.045`, TitleBar `IsBackButtonVisible`
+  Off -> On with `8.509` and expected Back button visibility change, and
+  InfoBadge `ToggleInfoBadgeOpacity` On -> Off with `4.947`.
+- AppBarSeparator remains a static route because the sample command bar has
+  no state/output-changing action; reviewed Light `t9500` shows visible
+  AppBar separators and aligned command icons.
+- Reviewed Light frames also show the `JD` display-name avatar, checked
+  monochrome option, moved ThemeShadow slider and shadow sample, TitleBar Back
+  preview button, and InfoBadge opacity option off.
+
+Round 90 refreshes Light-theme text/navigation/AppBar proof and reopens
+RichTextEdit:
+
+- `artifacts/gallery-recordings/20260606-074841-162/report.md` passed
+  `AutoSuggestBox`, `HyperlinkButton`, `AppBarButton`, and
+  `AppBarToggleButton`, and failed `RichTextEdit`.
+- Accepted rows were reviewed in frames, not just by manifest values:
+  AutoSuggestBox `t9500` shows the suggestion popup open during selection and
+  `t17500` shows it closed with `Aegean` rendered in the box and output;
+  HyperlinkButton `t9500` shows the route changed to ToggleButton;
+  AppBarButton `t9500` shows `You clicked: Button1`; AppBarToggleButton
+  `t9500` shows the checked command and `IsChecked = True`.
+- Manifest evidence for the accepted rows: AutoSuggestBox has
+  `TextEvidence=true`, `TextVisualClosedEvidence.Closed=true`, final delta
+  `0.941`, and local delta `10.307`; HyperlinkButton has
+  `RouteNavigationEvidence=true`, `BeforeRoute=item/HyperlinkButton`,
+  `AfterRoute=item/ToggleButton`, `TargetSampleVisible=true`, and local delta
+  `12.244`; AppBarButton has `OutputEvidence=true`, output
+  `You clicked: Button1`, and local delta `0.52`; AppBarToggleButton has
+  `StateEvidence=true`, Off -> On, and local delta `44.826`.
+- RichTextEdit is no longer treated as closed by the older dark proof.
+  Current focused reruns `artifacts/gallery-recordings/20260606-075521-729/report.md`
+  (Light), `artifacts/gallery-recordings/20260606-075734-362/report.md`
+  (Dark), and `artifacts/gallery-recordings/20260606-080845-863/report.md`
+  (Light screen mode) all failed with `AfterOutput=""`. A manual UIA
+  diagnostic found the RichTextBox element, but keyboard focus remained on the
+  agent monitor window after `SetFocus` and topmost mouse click attempts, so
+  external keyboard-style recording cannot currently prove RichTextEdit input
+  in this desktop session. This remains open rather than green.
+
+Round 91 refreshes Light-theme MessageBox modal proof:
+
+- `artifacts/gallery-recordings/20260606-082426-601/report.md` passed
+  `MessageBox` in Light theme with real open/closed/open modal evidence.
+- Manifest evidence records `OpenRepeatEvidence=true`,
+  `FirstOpenElementAnchored=true`, `SecondOpenElementAnchored=true`,
+  `ClosedElementGone=true`, `CloseMethod=DialogOkButton:Invoke`, open frames
+  `t3500` and `t13500`, closed frame `t9500`, and dialog text bounds
+  `725,574,150,15` inside the 1620x1220 capture.
+- Reviewed frames `t3500`, `t9500`, and `t13500` show the owner-centered native
+  dialog visible on both opens and gone after close. This supersedes the older
+  dark-only row as the latest visible-evidence row while keeping the dark row as
+  cross-theme proof.
+
+Round 92 partially fixes RichTextEdit and keeps text input open:
+
+- The Gallery `RichTextEdit` sample now gives the rendered `RichTextBox` a
+  `MinHeight` of 160px. The displayed sample code remains the official
+  `<RichTextBox />` token, but the live control is no longer a collapsed
+  one-line editor.
+- Focused Light reruns
+  `artifacts/gallery-recordings/20260606-083715-785/report.md` and
+  `artifacts/gallery-recordings/20260606-091557-396/report.md` still failed
+  text insertion with `AfterOutput=""` and `TextEvidence=false`.
+- Reviewed frames from
+  `artifacts/gallery-recordings/20260606-091557-396/RichTextEdit/light-richtextedit.mp4`
+  show the larger 790x160 editor area and focused caret, so the visual size
+  issue is fixed. The recorder still cannot prove typed text in this desktop
+  session, so RichTextEdit remains open rather than green.
+
+Round 93 adds in-process RichTextEdit input proof while keeping the external
+recorder gap open:
+
+- Added `RichTextEditAcceptsTextCompositionInput` in
+  `GalleryAutomationHookTests`. It launches `RichTextEdit` with only
+  `--visual-test`, focuses the actual `RichTextBox` named
+  `simple rich text editor`, asserts `MinHeight == 160`, sends a WPF
+  `TextComposition`, and asserts the document contains `ModernWpf rich text`.
+- Focused verification passed on both `net8.0-windows7.0` and
+  `net10.0-windows7.0`. This proves the Gallery sample accepts real WPF text
+  composition input after focus and is not populated by diagnostic-prepared
+  text.
+- This does not close the recording requirement. The latest external recorder
+  proof remains
+  `artifacts/gallery-recordings/20260606-091557-396/report.md`, which still
+  reports `AfterOutput=""` and `TextEvidence=false`.
+
+Round 94 hardens screen-recorder evidence and refreshes CommandBarFlyout:
+
+- Screen-mode rerun
+  `artifacts/gallery-recordings/20260606-093304-563/report.md` failed because
+  the capture showed the desktop wallpaper and then black frames while the
+  Gallery's own `ModernWpfGalleryMainWindow.png` artifact proved the app was
+  rendered. This is a recorder-surface failure, not accepted product evidence.
+- The recorder now rejects `Screen` captures whose expected window region does
+  not match the rendered `ModernWpfGalleryMainWindow.png` anchor. The measured
+  bad run had an anchor delta of about `117`, while a valid rendered frame is
+  about `6.6`; the guard threshold is `25`.
+- A short post-fix screen-mode runtime check
+  `artifacts/gallery-recordings/20260606-094556-238/report.md` now fails
+  explicitly with `AnchorDelta=124.523`, `Threshold=25`, and the note that the
+  screen capture likely came from a different desktop or monitor.
+- Product verification for CommandBarFlyout remains the rendered-window rerun
+  `artifacts/gallery-recordings/20260606-093650-021/report.md`. It passed with
+  `OpenRepeatEvidence=true`, `CloseMethod=SecondaryCommand`, frames `t4000` /
+  `t6500` / `t13500`, and deltas `2.803` / `0.0` / `2.8`. Reviewed frames show
+  the first and second menus aligned and the closed state clean.
+
+Round 95 checks the user-supplied dark CommandBarFlyout video against the
+current build:
+
+- The user video `D:\Videos\Recording 2026-06-04 011251.mp4` is an 8.4s Dark
+  CommandBarFlyout clip. The extracted contact sheet at
+  `artifacts/user-video-analysis/20260606-011251/contact-sheet.jpg` shows the
+  historical problem area: opening, secondary menu expansion, close, and
+  repeat-open geometry in the dark sample.
+- Current Dark rendered rerun
+  `artifacts/gallery-recordings/20260606-094947-158/report.md` passed with
+  `OpenRepeatEvidence=true`, `CloseMethod=SecondaryCommand`, frames `t4000` /
+  `t6500` / `t13500`, deltas `12.359` / `0.0` / `12.363`, and local delta
+  `12.434`.
+- Reviewed Dark frames show the first and second flyouts aligned to the image
+  region with the secondary menu directly below the command bar, and the closed
+  frame shows no leftover popup. The user-video defects are not reproduced in
+  the current rendered-window recording.
+
+Round 96 records the current Dark popup-heavy sweep and keeps RichTextEdit
+separate:
+
+- Focused Dark rendered sweep
+  `artifacts/gallery-recordings/20260606-100047-740/report.md` passed
+  `TeachingTip`, `ComboBox`, `MenuFlyout`, `CommandBar`, and `DatePicker` with
+  5 passed, 0 needs review, and 0 failed.
+- The sweep proves open/closed/open frames for each control: TeachingTip
+  `t3500` / `t6000` / `t12000`, ComboBox `t3500` / `t7500` / `t13500`,
+  MenuFlyout `t3500` / `t10500` / `t17000`, CommandBar `t9500` / `t13500` /
+  `t19500`, and DatePicker `t3500` / `t7500` / `t13500`.
+- Reviewed representative open frames show the TeachingTip anchored to its
+  button, the ComboBox dropdown under the field, the MenuFlyout under its
+  trigger, the CommandBar overflow menu aligned below the bar, and the
+  DatePicker calendar below the picker.
+- At that point, RichTextEdit still remained open as recorder-input coverage,
+  not as a closed visual proof. The external runs reported `AfterOutput=""`;
+  TextBox success did not prove RichTextBox recording because TextBox uses the
+  recorder's writable `ValuePattern` path while RichTextBox exposes
+  `TextPattern` without a writable UIA value. The runtime
+  `RichTextEditAcceptsTextCompositionInput` test remained the product proof for
+  WPF text composition until Round 97 added recording proof.
+
+Round 97 closes the current RichTextEdit recorder-input failure:
+
+- `Set-EditableElementText` now catches `SendKeys.SendWait` failures inside the
+  `SendKeys` block so a session-level `SendKeys` exception cannot skip the
+  Unicode `SendInput`, `WM_CHAR`, virtual-key, and `ValuePattern` fallbacks.
+  The text interaction result now records the successful `InputMethod`.
+- Focused Light rendered rerun
+  `artifacts/gallery-recordings/20260606-102212-861/report.md` passed
+  RichTextEdit with `TextEvidence=true`, `AfterOutput=ModernWpf rich text`,
+  `OutputMatched=true`, `InputMethod=WindowMessage`, and local delta `3.467`.
+- Reviewed frame
+  `artifacts/gallery-recordings/20260606-102212-861/RichTextEdit/frames/t10000.png`
+  shows the 160px RichTextBox populated with `ModernWpf rich text` during the
+  recording. This supersedes the failed current Light reruns
+  `20260606-075521-729`, `20260606-083715-785`, and `20260606-091557-396`.
+- A focused Dark rerun was attempted twice after the fix, but the GUI approval
+  review timed out both times, so no new Dark evidence is claimed in this
+  round.
+
+Round 98 closes the RichTextEdit Dark rerun:
+
+- Focused Dark rendered rerun
+  `artifacts/gallery-recordings/20260606-110233-846/report.md` passed
+  RichTextEdit with `TextEvidence=true`, `AfterOutput=ModernWpf rich text`,
+  `OutputMatched=true`, `InputMethod=ClipboardPaste`, and local delta `10.927`.
+- Reviewed frame
+  `artifacts/gallery-recordings/20260606-110233-846/RichTextEdit/frames/t10000.png`
+  shows the Dark 160px RichTextBox populated with `ModernWpf rich text` during
+  the recording. This replaces the stale failed Dark rerun
+  `20260606-075734-362`.
+
+Round 99 refreshes Dark basic state/value/output proof:
+
+- The initial 9-control Dark basic sweep
+  `artifacts/gallery-recordings/20260606-110618-393` timed out before writing a
+  manifest or report, so it is not used as accepted evidence.
+- Completed Dark batch
+  `artifacts/gallery-recordings/20260606-111116-192/report.md` passed
+  `Button`, `CheckBox`, `RadioButton`, `Slider`, and `RatingControl` with
+  5 passed, 0 needs review, and 0 failed. It records option/state/selection/value
+  proof with local deltas `4.28`, `3.182`, `3.503`, `2.451`, and `4.049`.
+- Completed Dark batch
+  `artifacts/gallery-recordings/20260606-111448-049/report.md` passed
+  `RepeatButton`, `ToggleButton`, `ToggleSwitch`, and `NumberBox` with 4 passed,
+  0 needs review, and 0 failed. It records output/state/value proof with local
+  deltas `1.002`, `33.918`, `7.017`, and `0.377`.
+- Reviewed representative frames show the RatingControl at value `3` with no
+  touch-first copy, and ToggleSwitch in the On state with its custom content and
+  progress ring aligned.
+
+Round 100 hardens long-batch recording recovery:
+
+- `Record-GalleryControlInteractions.ps1` now checkpoints
+  `recording-manifest.json` and `report.md` after each completed control instead
+  of waiting until the end of the run. A later control hang or outer command
+  timeout should now preserve completed-control evidence for review.
+- The checkpoint writes `recording-manifest.json.tmp` first and then moves it to
+  `recording-manifest.json`, so readers either see the previous checkpoint or a
+  complete new manifest.
+- `GalleryInteractionRecorderCheckpointsManifestAfterEachControl` guards that
+  checkpointing stays immediately after `$results.Add($result)` and that the
+  final summary reports the checkpoint paths.
+- Parser validation for `Record-GalleryControlInteractions.ps1` and the
+  `WpfGallerySourceShapeTests` filter passed for `net8.0` and `net10.0`.
+
+Round 101 refreshes Dark text, calendar, and collection proof while tightening
+DataGrid selection evidence:
+
+- The first Dark batch
+  `artifacts/gallery-recordings/20260606-113018-274/report.md` timed out during
+  Calendar, but Round 100 checkpointing preserved completed evidence for
+  `AutoSuggestBox`, `TextBox`, and `PasswordBox`. The partial Calendar folder in
+  that run is not accepted because it did not reach a result checkpoint.
+- Focused Dark Calendar rerun
+  `artifacts/gallery-recordings/20260606-113515-698/report.md` passed with
+  `SelectionEvidence=true`, local delta `4.119`, and reviewed frame `t9500`
+  showing the selected day.
+- Dark collection batch
+  `artifacts/gallery-recordings/20260606-113632-394/report.md` passed `ListBox`,
+  `ListView`, and `DataGrid`; reviewed frames show selected ListBox/ListView
+  rows and a nonblank DataGrid current-cell visual state.
+- That DataGrid run exposed a recorder weakness: DataGrid was allowed to accept
+  visual selection from whole-frame delta even when UIA `SelectionChanged=false`.
+  The recorder now requires local interaction-region delta for visual selection
+  fallback: `DataGrid >= 10.0`, `SelectorBar >= 0.05`.
+- Hardened Dark DataGrid rerun
+  `artifacts/gallery-recordings/20260606-114433-765/report.md` passed with
+  `VisualSelectionEvidence=true`, `SelectionEvidence=false`, local delta
+  `57.115`, and reviewed frame `t9500`. This is accepted as visual current-cell
+  evidence for stock WPF DataGrid, not as machine-readable UIA selection proof.
+
+Round 102 hardens popup open-repeat recording and reduces the slow SplitButton
+path:
+
+- The initial Dark popup batch
+  `artifacts/gallery-recordings/20260606-115002-453/report.md` passed
+  `DropDownButton`, but the outer command timed out while recording
+  `SplitButton`. The completed DropDownButton checkpoint is accepted; the
+  partial SplitButton folder in that run is not accepted.
+- Focused Dark SplitButton run
+  `artifacts/gallery-recordings/20260606-115448-915/report.md` failed because
+  the fixed 24s video captured the first open but not the later close/reopen
+  cycle. The interaction eventually closed and reopened after the recording
+  window, which exposed that whole-process UIA popup searches were dominating
+  runtime.
+- The recorder now uses inferred anchored popup bounds for SplitButton and
+  ToggleSplitButton, tries fast popup close methods before leaf-item UIA
+  fallback, gives those fast popup controls an 18s minimum recording window,
+  and checks rendered close evidence before whole-process UIA "gone" searches.
+  DropDownButton is intentionally excluded from this fast path because native
+  click/Escape did not close its popup reliably in
+  `artifacts/gallery-recordings/20260606-122326-155/report.md`; its reliable
+  leaf-item UIA close path remains in use.
+- `Get-OpenRepeatVisualEvidence` now scans event windows derived from
+  `FirstOpenStartSeconds` and `SecondOpenStartSeconds` instead of accepting the
+  earliest global post-close delta. This rejected the previous false second-open
+  candidate and now reports `Detection=BaselineDeltaEventWindowScan`.
+- Accepted Dark reruns:
+  `artifacts/gallery-recordings/20260606-122109-523/report.md` passed
+  `SplitButton` with `CloseMethod=FastPopupEscape`, frames `t2000` / `t4000` /
+  `t11000`, deltas `21.39` / `0.03` / `21.428`, and local delta `35.623`;
+  `artifacts/gallery-recordings/20260606-122326-155/report.md` passed
+  `ToggleSplitButton` with `CloseMethod=FastPopupBoundsClick`, frames `t2000` /
+  `t4500` / `t14500`, deltas `8.97` / `0.186` / `8.997`, and local delta
+  `15.369`; `artifacts/gallery-recordings/20260606-122924-332/report.md`
+  passed `DropDownButton` with `CloseMethod=LeafCloseItem:Invoke`, frames
+  `t2000` / `t4000` / `t8500`, deltas `12.612` / `0.478` / `12.5`, and local
+  delta `12.63`.
+
+Round 103 refreshes Dark navigation/menu proof, hardens a Menu false-negative,
+and compares encoder speed:
+
+- Fresh Dark navigation/expansion run
+  `artifacts/gallery-recordings/20260606-124033-491/report.md` passed
+  `ShellNavigation`, `Expander`, `TreeView`, and `NavigationView`; reviewed
+  shell frames show Design Guidance and Samples expand/collapse without blank
+  stale regions, and the Expander/TreeView/NavigationView samples show visible
+  expanded or selected content.
+- The broad Dark popup batch
+  `artifacts/gallery-recordings/20260606-124440-183/report.md` checkpointed
+  seven accepted controls before the outer command timed out at SplitButton:
+  `TeachingTip`, `ComboBox`, `MenuFlyout`, `CommandBar`,
+  `CommandBarFlyout`, `DatePicker`, and `DropDownButton`. Focused SplitButton
+  rerun `artifacts/gallery-recordings/20260606-130037-394/report.md` passed.
+- Diagnostic run `artifacts/gallery-recordings/20260606-130227-864/report.md`
+  exposed recorder flakiness rather than accepted product failures:
+  `ToggleSplitButton` passed, while `Menu` and `MenuBar` failed despite visible
+  open/close/reopen states in later focused runs. The recorder now adds direct
+  frame evidence from the interaction timestamps and accepts closed-state proof
+  only when the sampled closed frame returns to baseline or the live
+  `CloseVisualClosed` pixel check already proved the popup region closed.
+- Accepted reruns
+  `artifacts/gallery-recordings/20260606-132543-419/report.md`,
+  `artifacts/gallery-recordings/20260606-133130-700/report.md`, and
+  `artifacts/gallery-recordings/20260606-133313-593/report.md` pass
+  `ToggleSplitButton`, `Menu`, `MenuBar`, `ToolTip`, `ContentDialog`,
+  `Flyout`, and `Popup` under the hardened proof path.
+- Recording idle time was reduced with a stop-file signal, shorter
+  open/closed/reopen dwells, and closing Gallery before encoder/frame-review
+  work. The verification run
+  `artifacts/gallery-recordings/20260606-135520-820/report.md` records Menu in
+  `6.7s/24s` and MenuBar in `5.9s/18s` instead of sitting for the full maximum
+  windows.
+- Encoder benchmark run
+  `artifacts/gallery-recordings/20260606-140401-827/report.md` passed Menu with
+  actual recording duration `6.6s/24s`. The same captured frame sequence encoded
+  with `h264_nvenc` in `0.954s`, `libx264` in `0.329s`; `h264_qsv` and
+  `h264_amf` failed quickly on this machine. Because NVENC is slower for these
+  short UI clips here, `Auto` now prefers `libx264`; GPU encoders remain
+  selectable with `-VideoEncoder` and comparable with `-BenchmarkEncoders`.
+- Final default-encoder run
+  `artifacts/gallery-recordings/20260606-140850-692/report.md` passed Menu
+  after the Auto-order change with `Video encoder: libx264`, actual recording
+  duration `6.7s/24s`, 67 captured frames, and 37.2s wall time including Gallery
+  launch, interaction, encoding, frame extraction, and dense-review generation.
+
+Round 104 refreshes Dark retained-layout/navigation proof and fixes a
+SelectorBar sample contrast defect found by manual frame review:
+
+- Dark batch `artifacts/gallery-recordings/20260606-141244-639/report.md`
+  passed `ColorPicker`, `ProgressRing`, `InfoBar`, `SplitView`,
+  `AnnotatedScrollBar`, `GridView`, `ItemsRepeater`, `BreadcrumbBar`,
+  `SelectorBar`, and `TabControl` with actual recording durations from `1.8s`
+  to `2.3s`. The batch proves the faster early-stop path across option,
+  scroll, breadcrumb, and selection interactions.
+- Manual review of
+  `artifacts/gallery-recordings/20260606-141244-639/latest-frame-contact-sheet.png`
+  and the original frame
+  `artifacts/gallery-recordings/20260606-141244-639/SelectorBar/frames/t2000.png`
+  rejected SelectorBar as a visual pass even though the recorder marked it
+  green: the frame-transition sample rendered `SamplePage1` as white text on a
+  very light blue page panel in Dark theme.
+- `NavigationSampleFactory.CreatePageContent` now assigns the generated sample
+  page title foreground to `#E4000000`, matching the light pastel background
+  instead of inheriting the dark Gallery page foreground.
+- `GalleryAutomationHookTests.SelectorBarSampleMatchesWinUIGalleryExamples`
+  now asserts the SelectorBar frame page title foreground after initial
+  selection and after selecting another page.
+- Post-fix recording
+  `artifacts/gallery-recordings/20260606-141752-321/report.md` passed
+  `SelectorBar` after a build with actual duration `4.4s/6s`; reviewed frame
+  `artifacts/gallery-recordings/20260606-141752-321/SelectorBar/frames/t4000.png`
+  shows dark, readable `SamplePage1` text on the light blue panel.
+
+Round 105 switches static parity checks to screenshots where motion proof is
+not needed and fixes harness false negatives. Its original Slider initial-state
+conclusion is superseded by Round 112:
+
+- Screenshot batch
+  `artifacts/visual-checks/20260606-142534-044-93236/report.md` ran
+  `Button`, `CheckBox`, `RadioButton`, `Slider`, and `RatingControl` in Dark
+  theme against the installed WinUI 3 Gallery reference. ModernWpf passed, but
+  the reference side exposed harness misses: CheckBox was still looking for the
+  old `Two-state CheckBox` name and Slider did not have the current reference
+  automation id `Slider1`.
+- Rerun `artifacts/visual-checks/20260606-143327-599-239956/report.md` proved
+  the Slider reference id fix but still failed CheckBox because
+  `Find-ReferencePrimaryByName` always searched for a Button by name. The
+  helper is now control-type aware for CheckBox and source-shape coverage
+  asserts that path.
+- Manual review of the all-green screenshot batch
+  `artifacts/visual-checks/20260606-143710-663-138452/report.md` originally
+  read the simple Slider reference as output `50` and changed ModernWpf to
+  match. Round 112 shows that the comparison itself used the wrong reference
+  family for a WPF control, so the centered-thumb run
+  `artifacts/visual-checks/20260606-144434-210-243940/report.md` is retained
+  only as superseded false evidence.
+- `Button`, `CheckBox`, `RadioButton`, and `RatingControl` screenshot crops did
+  not show a product layout defect in this round. The RatingControl
+  post-interaction caption difference (`Your rating` versus `312 ratings`) is
+  retained as current ModernWpf sample behavior because existing tests pin the
+  caption change after setting a value.
+
+Round 112 corrects the Slider screenshot-reference mistake:
+
+- The non-popup static screenshot batch
+  `artifacts/visual-checks/20260606-175916-208-224604/report.md` was itself
+  wrong to compare the WPF Gallery Slider page to WinUI. It is retained only as
+  evidence that the harness allowed a wrong-reference run.
+- Official WPF Gallery source at
+  `D:\repos\WPF-Samples\Sample Applications\WPFGallery\ViewModels\BasicInput\SliderPageViewModel.cs`
+  initializes `SimpleSliderValue` to `0`, matching the WPF Slider default.
+  `SliderPageViewModel.SimpleSliderValue` is back to `0`, and
+  `GalleryAutomationHookTests.SliderSampleStartsAtReferenceValue` plus
+  source-shape coverage now pin the official WPF reference value.
+- Slider is reclassified as screenshot-corrected rather than product-fixed:
+  the fix is undoing an incorrect ModernWpf sample change introduced by the
+  audit. Future screenshot fixes must compare WPF controls with official WPF
+  Gallery, not WinUI Gallery.
+- `Run-GalleryVisualChecks.ps1` now rejects WPF Basic Input controls
+  (`Button`, `CheckBox`, `ComboBox`, `RadioButton`, and `Slider`) with the
+  WinUI reference and directs them to the official WPF visual audit.
+
+Round 113 fixes a SplitView static-crop false high delta:
+
+- Ported WinUI control screenshot batch
+  `artifacts/visual-checks/20260606-181736-984-159704/report.md` correctly used
+  the WinUI Gallery reference for retained ModernWpf controls, but the SplitView
+  primary crop compared ModernWpf's full `GallerySample_SplitView_SplitView`
+  artifact against only the WinUI `NavLinksList`. That produced a high
+  `SplitView` crop score (`10.7`) even though the full sample region visually
+  matched.
+- `Run-GalleryVisualChecks.ps1` now builds a focused WinUI SplitView primary crop
+  from the sample `PaneRoot` through the `content` column, scoped inside
+  `svPanel`, so it compares the same pane-plus-content visual unit as
+  ModernWpf. SplitView now requires that custom reference crop source, so the
+  harness fails instead of silently falling back to a generic `PaneRoot` crop.
+- Focused guarded rerun
+  `artifacts/visual-checks/20260606-183210-009-111152/report.md` passed with
+  `400x300 vs 400x300` primary crops and primary delta `3.37`. Reviewed
+  `artifacts/visual-checks/20260606-183210-009-111152/splitview-primary-contact-sheet.png`
+  shows matching pane/content composition on both sides.
+- This is a harness correction, not a product change. ProgressRing remains
+  recording-backed for animation proof because static indeterminate screenshots
+  can still differ by animation phase.
+
+Round 106 keeps stable state checks screenshot-first and fixes the ToggleSwitch
+miss found while reviewing that flow:
+
+- Screenshot batch
+  `artifacts/visual-checks/20260606-145251-570-52168/report.md` passed at the
+  harness level, but manual review found the simple ModernWpf ToggleSwitch
+  did not show the default `On` text that the WinUI reference shows. The sample
+  factory was explicitly assigning `OffContent` and `OnContent` to empty
+  strings even though the displayed XAML snippet was the plain reference form.
+- `BasicInputSampleFactory.CreateSimpleToggleSwitch` now leaves the default
+  ToggleSwitch content values alone. `GalleryAutomationHookTests` asserts the
+  simple sample exposes `Off` and `On` through default dependency-property
+  values, not local sample overrides.
+- Reruns `artifacts/visual-checks/20260606-145735-170-175596/report.md` and
+  `artifacts/visual-checks/20260606-150341-192-168024/report.md` exposed a
+  process bug: the rendered artifact crop showed the `On` label but a
+  left-side thumb, while the full live window screenshot already showed the
+  thumb on the right. The state checker was preferring rendered artifact crops,
+  which do not reliably advance ToggleSwitch animation clocks, over live
+  screenshot crops.
+- The visual harness now prefers live UIA element crops for state interactions
+  and uses rendered artifacts only as fallback. `Test-StateInteractionVisual`
+  adds a ToggleSwitch-specific pixel check: after an `On` transition, the crop
+  must expose an accent track and a distinct thumb cluster on the right side.
+  ToggleSwitch state settle time is `220ms`; recordings remain reserved for
+  transition, flicker, popup, and repeat-open behavior.
+- Guard run `artifacts/visual-checks/20260606-151644-822-96804/report.md`
+  correctly failed the stale artifact crop with `ToggleSwitch On screenshot left
+  the thumb near x=10.6`. Post-fix screenshot batch
+  `artifacts/visual-checks/20260606-152649-903-244144/report.md` passed
+  `ToggleButton`, `ToggleSwitch`, `RepeatButton`, `NumberBox`, and
+  `AppBarToggleButton`; reviewed
+  `artifacts/visual-checks/20260606-152649-903-244144/ToggleSwitch/modernwpf-ToggleSwitch-state-after-crop.png`
+  shows `On` text and the thumb on the right in the live crop.
+
+Round 107 narrows screenshot use to the cases where screenshots provide real
+pixels and hardens popup screenshot evidence so wallpaper or page-behind crops
+cannot pass:
+
+- A combined screenshot batch for `DropDownButton`, `SplitButton`,
+  `ToggleSplitButton`, `MenuFlyout`, and `MenuBar` timed out, so popup/static
+  parity is now being split into single-control runs.
+- `artifacts/visual-checks/20260606-153711-725-99288/report.md` initially
+  reported DropDownButton green, but manual review found the WinUI reference
+  open crop was the underlying `Source code` page region even though UIA had
+  found the opened `Send` menu item. This was the same category of miss as the
+  user-reported recording review gaps: the automation accepted structure
+  without verifying the actual pixels.
+- `Run-GalleryVisualChecks.ps1` now has a dedicated popup evidence path:
+  native popup-window capture first, then a UIA screen-element crop only as a
+  fallback. The screen-element crop maps UIA logical bounds through the native
+  app-window rectangle, clamps to the virtual desktop, is non-fatal on capture
+  failure, and must have visible variation (`VisibleStdDev >= 8.0`) before it
+  can count as popup content.
+- Popup-required controls no longer pass from a generic reference crop or
+  difference crop. Source-shape tests assert the `ScreenElement` fallback,
+  the visible-variation guard, and the removal of the old
+  `$referencePopupCropNonBlank` shortcut.
+- Latest guard run
+  `artifacts/visual-checks/20260606-160227-645-194344/report.md` now fails
+  WinUI DropDownButton screenshot evidence with `DropDownButton exposed opened
+  popup UIA but no nonblank popup pixels were captured.` That is intentional:
+  the WinUI popup overlay cannot be trusted from screenshots in this desktop
+  surface, so DropDownButton open/close/reopen parity remains recording-backed
+  unless a real popup-window screenshot is captured.
+- Screenshot-first policy after this round: use screenshots for static layout,
+  initial parity, and settled final states; use recordings for flicker,
+  animations, popup overlays that do not expose a trustworthy window capture,
+  and repeat-open/close crash checks.
+
+Round 108 applies that policy to static media/status/style checks and fixes one
+real InfoBadge rendering defect:
+
+- Screenshot batch `artifacts/visual-checks/20260606-160710-965-12204/report.md`
+  looked green, but manual crop review showed the harness was comparing
+  `PersonPicture` against a WinUI profile-type radio row, `InfoBadge` without a
+  WinUI primary crop, and `ThemeShadow` against a whole reference sample card
+  instead of the rendered demo body. These were false-pass crop targets, not
+  product verification.
+- `Run-GalleryVisualChecks.ps1` now has control-specific static crops for
+  `PersonPicture`, `ThemeShadow`, and `InfoBadge`, and those controls require a
+  primary crop before either app can pass. `ThemeShadow` and `PersonPicture`
+  passed the required-primary rerun
+  `artifacts/visual-checks/20260606-164411-857-61908/report.md`; reviewed
+  crops show the ThemeShadow demo body at `790x304` on both sides and the
+  PersonPicture avatar at `96x96` on both sides.
+- The corrected InfoBadge crop exposed two separate issues. The base
+  `InfoBadge` control was rendering square because its auto corner radius was
+  computed before final arrange. `InfoBadge.ArrangeOverride` now refreshes the
+  default radius from final height while preserving explicit `CornerRadius`;
+  `InfoBadgeDefaultCornerRadiusTracksActualHeight` and
+  `InfoBadgeExplicitCornerRadiusIsHonored` cover both paths.
+- The embedded NavigationView sample on the ModernWpf InfoBadge page still does
+  not expose the `Inbox` item and `5` badge that WinUI shows. The harness now
+  fails that case instead of passing the standalone artifact:
+  `artifacts/visual-checks/20260606-164331-590-226096/report.md` fails
+  ModernWpf InfoBadge with `Primary crop was required for InfoBadge but was not
+  found.` The full screenshot in that run shows the first sample's NavigationView
+  area blank while the lower style badges render round. This remains an open
+  nested NavigationView/InfoBadge sample defect for the next round.
+- This round confirms the faster split: screenshot checks are appropriate for
+  static crop target, initial/final layout, and settled control shape issues;
+  recordings remain required for transition flicker, animation timing, popup
+  overlay lifetime, close/reopen behavior, and crash checks.
+
+Round 109 fixes the embedded InfoBadge NavigationView defect with screenshot
+evidence instead of a recording:
+
+- `NavigationView.ArrangeOverride` now refreshes `TemplateSettings.OpenPaneLength`
+  from the final arrange width before arranging children. This covers the WPF
+  lifecycle where `SizeChanged` can run before `RootSplitView` exists, leaving an
+  initially arranged nested NavigationView with a zero-width pane even though
+  `ActualWidth` later becomes `560`.
+- `InfoBadgeSampleMatchesWinUIGalleryExamples` now asserts rendered, nonzero
+  bounds for the nested `Inbox` item and `InfoBadge`, plus visible `Home`,
+  `Account`, and `Inbox` text. This catches the exact old failure where the
+  menu item existed in `MenuItems` but the repeater/pane rendered at width zero.
+- The screenshot harness now uses the embedded
+  `GallerySample_InfoBadge_NavigationView` artifact as InfoBadge's ModernWpf
+  primary crop and requires visible variation above `8.0`. The previous blank
+  nested NavigationView artifact measured `3.881`; the fixed artifact in
+  `artifacts/visual-checks/20260606-171020-087-82140/InfoBadge/modernwpf-artifacts/GallerySample_InfoBadge_NavigationView.png`
+  measures above that threshold and visibly shows `Home`, `Account`, `Inbox`,
+  `Settings`, and the `5` badge.
+- The focused dark screenshot run
+  `artifacts/visual-checks/20260606-171020-087-82140/report.md` passed both
+  ModernWpf and WinUI3Gallery for InfoBadge. This is a static/final-state issue,
+  so no recording was needed for this round.
+
+Round 110 uses screenshot-first review for a static ColorPicker layout defect:
+
+- Dark screenshot batch
+  `artifacts/visual-checks/20260606-172013-723-159108/report.md` passed at the
+  report level, but manual review of the ColorPicker screenshots found that the
+  ModernWpf control still used the older compact text-entry layout: hex input
+  before the color model combo and horizontal Red/Green/Blue rows. The WinUI
+  reference shows the color model combo first, the hex input beside it, and
+  vertical Red/Green/Blue rows with labels to the right.
+- The ColorPicker template now matches that reference text-entry structure in
+  the default vertical orientation. The focused automation test asserts the
+  relative geometry of the combo, hex input, and Red/Green/Blue rows so the old
+  layout cannot return silently.
+- The screenshot harness now requires a ColorPicker primary crop and builds the
+  WinUI reference primary crop from stable child bounds (`ColorSpectrum`,
+  `ThirdDimensionSlider`, `ColorRepresentationComboBox`, `HexTextBox`,
+  `BlueTextBox`, and `BlueLabel`). This closes the harness gap where ColorPicker
+  previously passed from broad page screenshots without a focused crop delta.
+- Post-fix screenshot run
+  `artifacts/visual-checks/20260606-173145-835-10284/report.md` passed with
+  focused primary crops. Reviewed
+  `ColorPicker/modernwpf-artifacts/GallerySample_ColorPicker_ColorPicker.png`
+  and `ColorPicker/winui3-ColorPicker-primary-content-crop.png` both show the
+  combo/hex row and vertical RGB rows. The remaining primary crop delta is from
+  the color spectrum rendering, not the old text-entry layout.
+
+Latest focused evidence:
+
+| Run | Controls | Result |
+| --- | --- | --- |
+| `artifacts/gallery-recordings/20260607-033114-802/report.md` | ThemeShadow | Light stepped depth transition passed; `ValueInputMethod=RangeValuePatternStepAfterInputMiss`, value `32 -> 64`, dense transition frames kept the rendered card fixed with `MaxCardEdgeShift=0` |
+| `artifacts/gallery-recordings/20260607-032841-062/report.md` | ThemeShadow | Dark stepped depth transition passed; `ValueInputMethod=RangeValuePatternStepAfterInputMiss`, value `32 -> 64`, reviewed frames show the card fixed while the shadow grows, and dense analysis reports `MaxCardEdgeShift=1` within the `1px` threshold |
+| `artifacts/gallery-recordings/20260607-032040-547/report.md` | ThemeShadow | Expected failed rerun after rejecting the old `End` fallback; no value change was recorded, proving static ThemeShadow clips no longer pass |
+| `artifacts/gallery-recordings/20260607-030239-820/report.md` | SplitButton, ToggleSplitButton | 2 passed, 0 needs review, 0 failed; close now uses `CollapsePattern`, keeps the second-open frames inside the 17.2s clips, and avoids changing ToggleSplitButton state while closing |
+| `artifacts/gallery-recordings/20260607-025015-188/report.md` | TeachingTip, ComboBox, DatePicker, DropDownButton, SplitButton, ToggleSplitButton, ToolTip, AutoSuggestBox | 6 passed, 0 needs review, 2 failed; failure exposed that SplitButton/ToggleSplitButton close/reopen timing could run past the 18s recording window |
+| `artifacts/wpf-gallery-visual-audit/20260607-024532-975-249408/report.md` | Expander, Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border, Menu, TabControl, Frame, NavigationWindow | Official WPF Gallery Dark comparison passed with exact content delta `0` for all 11 native WPF layout/navigation pages |
+| `artifacts/wpf-gallery-visual-audit/20260607-024724-844-83040/report.md` | Button, CheckBox, ComboBox, RadioButton, Slider, DataGrid, ListBox, ListView, TreeView, Calendar, DatePicker, ProgressBar, ToolTip, Label, TextBox, TextBlock, RichTextEdit, PasswordBox, Hyperlink, FileAndFolderDialogs, MessageBox, Clipboard | Official WPF Gallery Dark comparison passed for all 22 native WPF pages; visible crops matched, with only tiny sampled deltas on Slider, TreeView, and Clipboard |
+| `artifacts/wpf-gallery-visual-audit/20260606-210055-915-20200/report.md` | RichTextEdit | Official WPF Gallery Dark comparison passed with exact content delta `0`, changed samples `0/41230`, max RGB diff `0`, and matching `868x758` crops after restoring the official one-line RichTextBox |
+| `artifacts/wpf-gallery-visual-audit/20260606-210239-299-178336/report.md` | RichTextEdit | Official WPF Gallery Light comparison passed with exact content delta `0`, changed samples `0/41230`, max RGB diff `0`, and matching `868x758` crops |
+| `artifacts/visual-checks/20260606-204833-477-177172/report.md` | ThemeShadow | 2 app/control rows passed; WinUI-reference primary crops match at `557x272` with delta `1.26` after restoring the source-like `36px` caster layout |
+| `artifacts/visual-checks/20260606-202525-061-150024/report.md` | IconElement, ThemeShadow | 4 app/control rows passed; IconElement primary crops match at `590x118` with delta `13.08`; the ThemeShadow row is superseded by `20260606-204833-477-177172` because the old sample still used the shifted popup-inset compensation |
+| `artifacts/visual-checks/20260606-193052-521-96680/report.md` | PersonPicture | 2 app/control rows passed; ModernWpf and WinUI primary avatar crops match at `96x96` with delta `0.35`, using the packaged shoulder-tap profile image |
+| `artifacts/visual-checks/20260606-190420-164-86500/report.md` | AnnotatedScrollBar | 2 app/control rows passed; options panel uses card background/padding, ScrollViewer artifact is `124x500`, and primary crop delta dropped from `15.36` to `4.43` |
+| `artifacts/visual-checks/20260606-173145-835-10284/report.md` | ColorPicker | 2 app/control rows passed; focused primary crops show the combo/hex row and vertical Red/Green/Blue rows on both ModernWpf and WinUI |
+| `artifacts/visual-checks/20260606-183210-009-111152/report.md` | SplitView | 2 app/control rows passed; corrected primary crop compares pane-plus-content `400x300` regions instead of the old WinUI `NavLinksList`-only crop |
+| `artifacts/visual-checks/20260606-171020-087-82140/report.md` | InfoBadge | 2 app/control rows passed; ModernWpf embedded NavigationView crop shows `Home`, `Account`, `Inbox`, `Settings`, and the `5` badge |
+| `artifacts/visual-checks/20260606-164331-590-226096/report.md` | InfoBadge | Expected screenshot harness failure for ModernWpf embedded badge pixels; verifies missing primary crops no longer pass |
+| `artifacts/visual-checks/20260606-164411-857-61908/report.md` | ThemeShadow, PersonPicture | 4 app/control rows passed; required primary crops were present for both controls |
+| `artifacts/visual-checks/20260606-160227-645-194344/report.md` | DropDownButton | Expected screenshot harness failure for WinUI popup pixels; verifies the old page-behind/wallpaper crop false pass is rejected |
+| `artifacts/visual-checks/20260606-152649-903-244144/report.md` | ToggleButton, ToggleSwitch, RepeatButton, NumberBox, AppBarToggleButton | 10 app/control rows passed, 0 failed; screenshot review confirmed ToggleSwitch `On` text and right-side thumb in the live state crop |
+| `artifacts/wpf-gallery-visual-audit/20260606-180955-711-45732/report.md` | Button, CheckBox, ComboBox, RadioButton, Slider | Official WPF Gallery comparison passed with exact content delta `0`; verifies the reverted WPF Slider starts at output `0` |
+| `artifacts/visual-checks/20260606-144434-210-243940/report.md` | Button, CheckBox, RadioButton, Slider, RatingControl | Superseded bad evidence; this WinUI-reference run was invalid for WPF Button, CheckBox, RadioButton, and Slider, and only remains as proof that the old harness allowed wrong-reference comparisons |
+| `artifacts/gallery-recordings/20260604-034810-236/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-035722-075/report.md` | DropDownButton, MenuFlyout, SplitButton, ToggleSplitButton | 4 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-040103-946/report.md` | ContentDialog, Flyout, Popup, CommandBarFlyout | 4 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-044508-719/report.md` | Menu | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-044721-837/report.md` | Expander, TreeView, Menu, TabControl, DatePicker, Calendar, TextBox, PasswordBox | 8 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-050301-561/report.md` | ListBox, ListView, DataGrid, Calendar, ToolTip, RichTextEdit | 3 passed, 1 needs review, 2 failed |
+| `artifacts/gallery-recordings/20260604-051818-365/report.md` | DataGrid | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-053726-512/report.md` | ToolTip, RichTextEdit | 2 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-054021-152/report.md` | CommandBarFlyout, MenuFlyout, Flyout, Popup, DropDownButton, SplitButton, ToggleSplitButton, Menu, DatePicker | 9 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-061652-261/report.md` | SelectorBar | 0 passed, 0 needs review, 1 failed |
+| `artifacts/gallery-recordings/20260604-064455-670/report.md` | SelectorBar | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-183855-055/report.md` | CommandBar | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260604-194134-079/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-020217-228/report.md` | Flyout | 0 passed, 0 needs review, 1 failed |
+| `artifacts/gallery-recordings/20260605-030028-982/report.md` | Flyout | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-031711-696/report.md` | MenuFlyout | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-033404-923/report.md` | ContentDialog, Popup | 2 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-034335-817/report.md` | TeachingTip, ComboBox, DropDownButton, SplitButton, ToggleSplitButton, MenuBar, Menu, DatePicker | 0 passed, 0 needs review, 8 failed |
+| `artifacts/gallery-recordings/20260605-043648-914/report.md` | ComboBox, DropDownButton | 2 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-042758-748/report.md` | DatePicker | 1 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-042951-643/report.md` | TeachingTip, SplitButton, ToggleSplitButton, MenuBar, Menu | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-044321-949/report.md` | CheckBox, RadioButton, Slider, RatingControl, ToggleButton, ToggleSwitch, NumberBox, InfoBar, AppBarToggleButton | 9 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-044806-923/report.md` | Button, ColorPicker, RepeatButton, SplitView, AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, NavigationView, AppBarButton | 10 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-045636-525/report.md` | ShellNavigation, AutoSuggestBox, ProgressRing, HyperlinkButton, PersonPicture, IconElement, ThemeShadow, TitleBar, InfoBadge, AppBarSeparator | 10 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260605-050718-351/report.md` | Expander, TreeView, TabControl, TextBox, PasswordBox, Calendar, ListBox, ListView, DataGrid, ToolTip, RichTextEdit | 11 passed, 0 needs review, 0 failed; ToolTip was diagnostic prepared-open only and is superseded by the failed real-hover run |
+| `artifacts/gallery-recordings/20260605-052434-715/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed |
+| `artifacts/gallery-recordings/20260605-053026-959/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; screen-mode diagnostic rejected because most frames were black |
+| `artifacts/gallery-recordings/20260605-054214-762/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; focus, stepped pointer movement, and queued hover messages still did not open the WPF ToolTip |
+| `artifacts/gallery-recordings/20260605-054733-333/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; 18s run keeps both failed hover attempts inside the recording |
+| `artifacts/gallery-recordings/20260605-065123-481/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; visual-test hook opened the ToolTip at screen origin, exposing placement as part of the proof |
+| `artifacts/gallery-recordings/20260605-065448-723/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; target-relative placement rendered correctly, but UIA did not expose stable ToolTip popup bounds |
+| `artifacts/gallery-recordings/20260605-070140-905/report.md` | ToolTip | 0 passed, 0 needs review, 1 failed; first open was detected through fallback bounds, but the second open proof was still missing |
+| `artifacts/gallery-recordings/20260605-070810-482/report.md` | ToolTip | 1 passed, 0 needs review, 0 failed; visual-test click/open path plus fallback bounds prove open, close, and second open |
+| `artifacts/gallery-recordings/20260606-014544-783/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; recorder-driven `WM_CHAR` text input is visible in dark-theme frames and UIA output changed from empty to `ModernWpf rich text` |
+| `artifacts/gallery-recordings/20260606-020424-123/report.md` | HyperlinkButton | 1 passed, 0 needs review, 0 failed; in-app route-click proof changed from `item/HyperlinkButton` to `item/ToggleButton` and the destination ToggleButton sample was visible |
+| `artifacts/gallery-recordings/20260606-021439-880/report.md` | TitleBar | 1 passed, 0 needs review, 0 failed; option proof toggled `IsBackButtonVisible`, required the preview Back button visibility change, and recorded local delta `8.552` |
+| `artifacts/gallery-recordings/20260606-022033-503/report.md` | PersonPicture, IconElement, ThemeShadow, InfoBadge, AppBarSeparator | 5 passed, 0 needs review, 0 failed; static-only refresh manually reviewed for obvious blank, stale, or misaligned regions |
+| `artifacts/gallery-recordings/20260606-023146-388/report.md` | MenuBar | 0 passed, 0 needs review, 1 failed; exposed a recorder timing gap where the second visible open occurred after the 12s capture window |
+| `artifacts/gallery-recordings/20260606-023615-570/report.md` | MenuBar | 1 passed, 0 needs review, 0 failed; 18s capture proved open/closed/open frames `t3500` / `t5500` / `t12000` with `OpenRepeatEvidence=true` |
+| `artifacts/gallery-recordings/20260606-024107-834/report.md` | TeachingTip, ComboBox, DropDownButton, SplitButton, ToggleSplitButton | 0 passed, 0 needs review, 5 failed; exposed the default 12s open-repeat capture window ending before late second-open frames |
+| `artifacts/gallery-recordings/20260606-025938-600/report.md` | TeachingTip | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t3500` / `t6000` / `t12000` |
+| `artifacts/gallery-recordings/20260606-030156-853/report.md` | ComboBox | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t3500` / `t7500` / `t14000` |
+| `artifacts/gallery-recordings/20260606-030431-469/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t3500` / `t6000` / `t16000` |
+| `artifacts/gallery-recordings/20260606-030658-445/report.md` | SplitButton | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t5000` / `t11500` / `t18500` |
+| `artifacts/gallery-recordings/20260606-030911-067/report.md` | ToggleSplitButton | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t4500` / `t12000` / `t19000` |
+| `artifacts/gallery-recordings/20260606-031526-603/report.md` | Menu | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t3500` / `t7500` / `t14000` |
+| `artifacts/gallery-recordings/20260606-031745-688/report.md` | DatePicker | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t3500` / `t7500` / `t14000` |
+| `artifacts/gallery-recordings/20260606-032006-230/report.md` | ToolTip | 1 passed, 0 needs review, 0 failed; 18s capture proved open/closed/open frames `t3500` / `t5500` / `t10000` |
+| `artifacts/gallery-recordings/20260606-032144-304/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed; 24s capture proved open/closed/open frames `t4000` / `t6500` / `t13500`, and reviewed frame `t13500` shows aligned second-open command bar and secondary menu |
+| `artifacts/gallery-recordings/20260606-033115-631/report.md` | ShellNavigation, Expander, TreeView, BreadcrumbBar, SelectorBar, TabControl, NavigationView | 7 passed, 0 needs review, 0 failed; exposed that ShellNavigation needed a longer capture to include the collapse state in the video |
+| `artifacts/gallery-recordings/20260606-033934-501/report.md` | ShellNavigation | 1 passed, 0 needs review, 0 failed; 18s capture includes reviewed collapsed-state frame `t17500` |
+| `artifacts/gallery-recordings/20260606-034438-510/report.md` | TextBox, PasswordBox, Calendar, ListBox, ListView, DataGrid | 6 passed, 0 needs review, 0 failed; reviewed late text frames and selected collection frames |
+| `artifacts/gallery-recordings/20260606-035858-519/report.md` | Button, CheckBox, RadioButton, Slider, RatingControl | 5 passed, 0 needs review, 0 failed; supersedes stale basic-input state/value rows with reviewed `t9500` frames |
+| `artifacts/gallery-recordings/20260606-040225-951/report.md` | RepeatButton, ToggleButton, ToggleSwitch, AppBarButton, AppBarToggleButton | 5 passed, 0 needs review, 0 failed; supersedes stale output/state/AppBar rows with reviewed `t9500` frames |
+| `artifacts/gallery-recordings/20260606-041123-086/report.md` | ColorPicker, NumberBox, AutoSuggestBox, ProgressRing, InfoBar, SplitView, AnnotatedScrollBar, GridView, ItemsRepeater | 9 passed under the old text gate; AutoSuggestBox row rejected after manual frame review showed the suggestion popup still visible at `t9500` |
+| `artifacts/gallery-recordings/20260606-042454-736/report.md` | AutoSuggestBox | 0 passed, 0 needs review, 1 failed; first hardened rerun failed because output changed while the suggestion popup remained UIA-visible |
+| `artifacts/gallery-recordings/20260606-044415-653/report.md` | AutoSuggestBox | 0 passed, 0 needs review, 1 failed; exposed that the 10s clip could end with the suggestion popup visibly open before the final closed state was recorded |
+| `artifacts/gallery-recordings/20260606-045803-926/report.md` | AutoSuggestBox | 1 passed, 0 needs review, 0 failed; 18s capture plus final-frame visual-close proof shows the suggestions popup gone at `t17500` |
+| `artifacts/gallery-recordings/20260606-051218-679/report.md` | RatingControl | 1 passed, 0 needs review, 0 failed; reviewed `t9500` shows the corrected `Click again to clear your rating.` sample copy and target value `3` |
+| `artifacts/gallery-recordings/20260606-052421-356/report.md` | PersonPicture, IconElement, ThemeShadow, InfoBadge, AppBarSeparator | 5 passed, 0 needs review, 0 failed; replaces static-only proof for four interactive ModernWpf pages with selection/option/value evidence and reviewed `t9500` frames |
+| `artifacts/gallery-recordings/20260606-055704-392/report.md` | CommandBarFlyout | 0 passed, 0 needs review, 1 failed; exposed that Light-theme CommandBarFlyout open-repeat visual proof was real but below the old shared `5.0` open threshold |
+| `artifacts/gallery-recordings/20260606-060315-799/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t4000` / `t6500` / `t13500` with deltas `2.871` / `0.003` / `2.846` |
+| `artifacts/gallery-recordings/20260606-060858-926/report.md` | CommandBar | 0 passed, 0 needs review, 1 failed; exposed that Light-theme CommandBar open-repeat visual proof was real but below the old shared `5.0` open threshold |
+| `artifacts/gallery-recordings/20260606-061229-078/report.md` | CommandBar | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t9500` / `t13500` / `t20000` with deltas `4.17` / `0.005` / `4.181` |
+| `artifacts/gallery-recordings/20260606-061515-631/report.md` | MenuFlyout | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t3500` / `t10500` / `t17000` with deltas `11.318` / `0.384` / `11.278` |
+| `artifacts/gallery-recordings/20260606-061744-792/report.md` | MenuBar | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t3500` / `t5500` / `t12000` with deltas `8.279` / `0.156` / `8.309` |
+| `artifacts/gallery-recordings/20260606-062215-560/report.md` | Flyout | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t3500` / `t10500` / `t17000` with deltas `21.168` / `0.511` / `21.8` |
+| `artifacts/gallery-recordings/20260606-062450-995/report.md` | Popup | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t3500` / `t10500` / `t16500` with deltas `22.699` / `0.93` / `22.733` |
+| `artifacts/gallery-recordings/20260606-062729-895/report.md` | ContentDialog | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t3500` / `t13000` / `t19500` with deltas `18.764` / `0.423` / `18.839` |
+| `artifacts/gallery-recordings/20260606-063432-683/report.md` | TeachingTip | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t3500` / `t6000` / `t12000` with deltas `9.349` / `0.466` / `9.355` |
+| `artifacts/gallery-recordings/20260606-063701-757/report.md` | ComboBox | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t4000` / `t8000` / `t14000` with deltas `14.128` / `0.287` / `14.091` |
+| `artifacts/gallery-recordings/20260606-064009-144/report.md` | DatePicker | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t3500` / `t7500` / `t13500` with deltas `11.419` / `0.865` / `11.425` |
+| `artifacts/gallery-recordings/20260606-064251-054/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t3500` / `t6000` / `t16500` with deltas `9.819` / `0.456` / `9.908` |
+| `artifacts/gallery-recordings/20260606-064538-234/report.md` | SplitButton | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t5000` / `t12000` / `t19000` with deltas `47.282` / `0.036` / `47.417` |
+| `artifacts/gallery-recordings/20260606-064806-277/report.md` | ToggleSplitButton | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t5000` / `t12000` / `t19500` with deltas `5.265` / `0.025` / `5.385` and trigger-region local delta `46.41` |
+| `artifacts/gallery-recordings/20260606-065048-868/report.md` | ToolTip | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t3500` / `t5500` / `t10000` with deltas `5.786` / `0.181` / `5.749` |
+| `artifacts/gallery-recordings/20260606-065247-089/report.md` | Menu | 1 passed, 0 needs review, 0 failed; Light-theme rerun proves open/closed/open frames `t3500` / `t8000` / `t14500` with deltas `10.441` / `0.5` / `10.469` |
+| `artifacts/gallery-recordings/20260606-070029-557/report.md` | Button, CheckBox, RadioButton, Slider, RatingControl, RepeatButton, ToggleButton, ToggleSwitch, NumberBox | 9 passed, 0 needs review, 0 failed; Light-theme basic state/value/output sweep with reviewed `t9500` frames and local deltas from `0.307` to `48.038` |
+| `artifacts/gallery-recordings/20260606-071255-441/report.md` | ColorPicker, InfoBar, ProgressRing, SplitView, AnnotatedScrollBar, GridView, ItemsRepeater | 7 passed, 0 needs review, 0 failed; Light-theme retained layout/status/collection sweep with reviewed `t9500` frames and local deltas from `0.784` to `95.557` |
+| `artifacts/gallery-recordings/20260606-072128-088/report.md` | TextBox, PasswordBox, Calendar, ListBox, ListView, DataGrid | 6 passed, 0 needs review, 0 failed; Light-theme text/calendar/collection sweep with reviewed `t9500` frames and local deltas from `1.918` to `48.134` |
+| `artifacts/gallery-recordings/20260606-072826-258/report.md` | ShellNavigation, Expander, TreeView, BreadcrumbBar, SelectorBar, TabControl, NavigationView | 7 passed, 0 needs review, 0 failed; Light-theme navigation/expansion sweep with dense shell transition sheet and reviewed expanded/collapsed frames |
+| `artifacts/gallery-recordings/20260606-073924-914/report.md` | PersonPicture, IconElement, ThemeShadow, TitleBar, InfoBadge, AppBarSeparator | 6 passed, 0 needs review, 0 failed; Light-theme media/style/windowing/status sweep with reviewed `t9500` frames |
+| `artifacts/gallery-recordings/20260606-074841-162/report.md` | AutoSuggestBox, HyperlinkButton, RichTextEdit, AppBarButton, AppBarToggleButton | 4 passed, 0 needs review, 1 failed; accepted Light rows have reviewed text-close, route, output, and state frames; RichTextEdit failed with empty output |
+| `artifacts/gallery-recordings/20260606-075521-729/report.md` | RichTextEdit | 0 passed, 0 needs review, 1 failed; focused Light rerun still failed with `AfterOutput=""` |
+| `artifacts/gallery-recordings/20260606-075734-362/report.md` | RichTextEdit | 0 passed, 0 needs review, 1 failed; focused Dark rerun shows the older dark pass is stale under the current desktop session |
+| `artifacts/gallery-recordings/20260606-080845-863/report.md` | RichTextEdit | 0 passed, 0 needs review, 1 failed; screen-mode rerun also failed, so rendered capture is not the cause |
+| `artifacts/gallery-recordings/20260606-082426-601/report.md` | MessageBox | 1 passed, 0 needs review, 0 failed; Light-theme owner-centered MessageBox passed open/closed/open proof with reviewed frames `t3500` / `t9500` / `t13500` |
+| `artifacts/gallery-recordings/20260606-083715-785/report.md` | RichTextEdit | 0 passed, 0 needs review, 1 failed; Light rerun after the 160px editor height fix shows the larger editor but still failed with `AfterOutput=""` |
+| `artifacts/gallery-recordings/20260606-091557-396/report.md` | RichTextEdit | 0 passed, 0 needs review, 1 failed; latest Light rerun keeps the larger focused editor visible, but text insertion remains unproven |
+| `artifacts/gallery-recordings/20260606-093304-563/report.md` | CommandBarFlyout | 0 passed, 0 needs review, 1 failed; rejected screen-mode evidence because the recording captured wallpaper/black frames instead of the Gallery window |
+| `artifacts/gallery-recordings/20260606-093650-021/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed; rendered-window rerun proves open/closed/open frames `t4000` / `t6500` / `t13500` with aligned menus |
+| `artifacts/gallery-recordings/20260606-094556-238/report.md` | Button | 0 passed, 0 needs review, 1 failed; post-fix screen-mode check explicitly rejects wallpaper capture with `AnchorDelta=124.523` over threshold `25` |
+| `artifacts/gallery-recordings/20260606-094947-158/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed; current Dark rerun matching the user-video scenario proves aligned open/closed/open frames `t4000` / `t6500` / `t13500` |
+| `artifacts/gallery-recordings/20260606-100047-740/report.md` | TeachingTip, ComboBox, MenuFlyout, CommandBar, DatePicker | 5 passed, 0 needs review, 0 failed; current Dark popup-heavy sweep proves open/closed/open frames and reviewed anchors for each control |
+| `artifacts/gallery-recordings/20260606-102212-861/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; Light rerun proves recorder-driven text insertion with `InputMethod=WindowMessage`, `AfterOutput=ModernWpf rich text`, and visible rendered text in frame `t10000` |
+| `artifacts/gallery-recordings/20260606-110233-846/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; Dark rerun proves recorder-driven text insertion with `InputMethod=ClipboardPaste`, `AfterOutput=ModernWpf rich text`, and visible rendered text in frame `t10000` |
+| `artifacts/gallery-recordings/20260606-111116-192/report.md` | Button, CheckBox, RadioButton, Slider, RatingControl | 5 passed, 0 needs review, 0 failed; current Dark basic option/state/selection/value batch with reviewed RatingControl frame |
+| `artifacts/gallery-recordings/20260606-111448-049/report.md` | RepeatButton, ToggleButton, ToggleSwitch, NumberBox | 4 passed, 0 needs review, 0 failed; current Dark basic output/state/value batch with reviewed ToggleSwitch frame |
+| `artifacts/gallery-recordings/20260606-113018-274/report.md` | AutoSuggestBox, TextBox, PasswordBox | 3 passed, 0 needs review, 0 failed; checkpointed Dark text batch preserved after the later Calendar timeout, with reviewed AutoSuggestBox final-close and rendered text/password frames |
+| `artifacts/gallery-recordings/20260606-113515-698/report.md` | Calendar | 1 passed, 0 needs review, 0 failed; isolated Dark Calendar rerun proves selected-day rendering with reviewed frame `t9500` |
+| `artifacts/gallery-recordings/20260606-113632-394/report.md` | ListBox, ListView, DataGrid | 3 passed, 0 needs review, 0 failed; Dark collection batch refreshed selection/current-cell frames and exposed the DataGrid whole-frame visual-selection fallback weakness |
+| `artifacts/gallery-recordings/20260606-114433-765/report.md` | DataGrid | 1 passed, 0 needs review, 0 failed; hardened DataGrid rerun proves visual fallback now uses local target-region delta `57.115` instead of whole-frame delta |
+| `artifacts/gallery-recordings/20260606-115002-453/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed; checkpointed result from a later timed-out two-control run |
+| `artifacts/gallery-recordings/20260606-115448-915/report.md` | SplitButton | 0 passed, 0 needs review, 1 failed; rejected because the video captured first open but not close/reopen before the recording ended |
+| `artifacts/gallery-recordings/20260606-122109-523/report.md` | SplitButton | 1 passed, 0 needs review, 0 failed; event-window proof accepts first/closed/second frames `t2000` / `t4000` / `t11000` |
+| `artifacts/gallery-recordings/20260606-122326-155/report.md` | DropDownButton, ToggleSplitButton | 1 passed, 0 needs review, 1 failed; ToggleSplitButton accepted, DropDownButton rejected from fast path |
+| `artifacts/gallery-recordings/20260606-122924-332/report.md` | DropDownButton | 1 passed, 0 needs review, 0 failed; DropDownButton remains on reliable leaf-item UIA close path with event-window proof |
+| `artifacts/gallery-recordings/20260606-124033-491/report.md` | ShellNavigation, Expander, TreeView, NavigationView | 4 passed, 0 needs review, 0 failed; refreshed Dark navigation and expansion proof with reviewed expanded/collapsed shell frames |
+| `artifacts/gallery-recordings/20260606-124440-183/report.md` | TeachingTip, ComboBox, MenuFlyout, CommandBar, CommandBarFlyout, DatePicker, DropDownButton | 7 passed, 0 needs review, 0 failed; checkpointed completed controls from a later timed-out popup batch |
+| `artifacts/gallery-recordings/20260606-130037-394/report.md` | SplitButton | 1 passed, 0 needs review, 0 failed; focused rerun after the timed-out popup batch |
+| `artifacts/gallery-recordings/20260606-130227-864/report.md` | ToggleSplitButton, Menu, MenuBar | 1 passed, 0 needs review, 2 failed; diagnostic false-negative run that drove the direct-frame fallback for Menu/MenuBar proof |
+| `artifacts/gallery-recordings/20260606-132543-419/report.md` | ToggleSplitButton, Menu, MenuBar | 3 passed, 0 needs review, 0 failed; hardened direct/event-frame proof accepts the visible open/close/reopen states |
+| `artifacts/gallery-recordings/20260606-133130-700/report.md` | ToolTip | 1 passed, 0 needs review, 0 failed; focused Dark ToolTip rerun under the hardened open-repeat verifier |
+| `artifacts/gallery-recordings/20260606-133313-593/report.md` | ContentDialog, Flyout, Popup | 3 passed, 0 needs review, 0 failed; focused Dark dialog/flyout/popup rerun under the hardened open-repeat verifier |
+| `artifacts/gallery-recordings/20260606-135520-820/report.md` | Menu, MenuBar | 2 passed, 0 needs review, 0 failed; early-stop run records Menu in `6.7s/24s` and MenuBar in `5.9s/18s` |
+| `artifacts/gallery-recordings/20260606-140401-827/report.md` | Menu | 1 passed, 0 needs review, 0 failed; encoder benchmark: `libx264` `0.329s`, `h264_nvenc` `0.954s`, QSV/AMF failed |
+| `artifacts/gallery-recordings/20260606-140850-692/report.md` | Menu | 1 passed, 0 needs review, 0 failed; final Auto-default run selected `libx264`, recorded `6.7s/24s`, and completed in 37.2s wall time |
+| `artifacts/gallery-recordings/20260606-141244-639/report.md` | ColorPicker, ProgressRing, InfoBar, SplitView, AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, SelectorBar, TabControl | 10 passed, 0 needs review, 0 failed; manual frame review found SelectorBar sample text contrast was bad despite the green recorder result |
+| `artifacts/gallery-recordings/20260606-141752-321/report.md` | SelectorBar | 1 passed, 0 needs review, 0 failed; post-fix Dark rerun shows readable dark `SamplePage1` text in frame `t4000` |
+| `artifacts/gallery-recordings/20260606-210129-330/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; Dark recording proves text input on the official one-line RichTextBox with `AfterOutput=ModernWpf rich text`, `InputMethod=WindowMessage`, and local delta `6.395` |
+| `artifacts/gallery-recordings/20260606-210310-713/report.md` | RichTextEdit | 1 passed, 0 needs review, 0 failed; Light recording proves text input on the official one-line RichTextBox with `AfterOutput=ModernWpf rich text`, `InputMethod=WindowMessage`, and local delta `1.932` |
+| `artifacts/gallery-recordings/20260607-104048-093/report.md` | ThemeShadow | 1 passed, 0 needs review, 0 failed; final envelope-aware proof keeps all layout bounds and card edges fixed while explicitly recording source-like shadow-envelope growth `27,39,218,214 -> 16,30,240,242`, `ShadowEnvelopeDelta=28`, dense video `MaxCardEdgeShift=0`, and `MaxCardMeanDelta=0.096` |
+| `artifacts/gallery-recordings/20260607-105249-061/report.md` | CommandBarFlyout | Superseded failed harness run; the Gallery rendered `Ready:item/CommandBarFlyout` and nonblank page artifacts, but UIA top-level window discovery missed the process window before recording started |
+| `artifacts/gallery-recordings/20260607-110343-332/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed; Round 138 rerun after the process-main-window fallback produced a 9.9s rendered MP4 with first-open, closed, and second-open frames `t2500` / `t4500` / `t8000`, secondary menu expanded on both opens, and no stale popup in the closed frame |
+| `artifacts/gallery-recordings/20260607-113342-069/report.md` | CommandBarFlyout | 1 passed, 0 needs review, 0 failed; Round 139 top-left rerun used rendered capture rect `0,0,1400,1040`, keeps the Gallery flush at the frame origin, and proves first-open, closed, and second-open frames `t2500` / `t4500` / `t8000` with aligned menus |
+| `artifacts/gallery-recordings/20260607-064517-766/report.md` | ThemeShadow | Superseded pass; it proved `RangeValuePatternAnimated`, MP4-local visual evidence, stable caster bounds, artifact card edges, and dense card stability, but did not report the shadow envelope separately from layout stability |
+| `artifacts/gallery-recordings/20260607-064041-678/report.md` | ThemeShadow | Expected failed rerun after requiring video proof; value changed and artifacts redrew, but MP4 frames were static with `ThemeShadowVideoVisualEvidence=false`, `MaxFrameDelta=0`, and `MaxLocalFrameDelta=0`, exposing the slow warm-up false pass |
+| `artifacts/gallery-recordings/20260606-213340-698/report.md` | ThemeShadow | 1 passed, 0 needs review, 0 failed; supersedes the Round 119 false pass by moving value `32 -> 64`, proving `ThemeShadowVisualEvidence=true` from the sample root, and keeping root, example grid, shadow chrome, card, and slider bounds fixed |
+| `artifacts/gallery-recordings/20260606-204907-388/report.md` | ThemeShadow | Superseded false pass; value moved only `32 -> 42`, and local visual delta was not required to come from the ThemeShadow sample root |
+| `artifacts/gallery-recordings/20260606-202416-952/report.md` | ThemeShadow | Superseded false pass; value moved `32 -> 42`, but the layout-stability gate only checked `ShadowRect` and missed the broader source-layout shift |
+| `artifacts/gallery-recordings/20260605-060705-846/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; official WPF MessageBox now fails without modal open/reopen proof instead of passing as a static page |
+| `artifacts/gallery-recordings/20260605-063128-457/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; modal invoked and closed twice, but dialog text bounds were off-capture at `2484,711,150,15` |
+| `artifacts/gallery-recordings/20260605-063647-015/report.md` | MessageBox | 0 passed, 0 needs review, 1 failed; activating the owner before `MessageBox.Show` was not sufficient to keep the native dialog in the Gallery capture |
+| `artifacts/gallery-recordings/20260605-064048-292/report.md` | MessageBox | 1 passed, 0 needs review, 0 failed; owner-centered WPF MessageBox passed open/closed/open visual proof with frames `t2500` / `t6000` / `t9000` |
+
+The `20260604-050301-561` run is intentionally not treated as a green sweep:
+it exposed two remaining interaction gaps that the older static sweep missed.
+`ToolTip` did not open under the current synthetic hover/click path, and
+`RichTextEdit` focused but did not receive text input through the recorder.
+The `20260604-053726-512` follow-up gave RichTextEdit
+diagnostics-prepared text evidence only; that RichTextEdit proof is superseded
+by the later `20260606-014544-783` recording. That run proves recorder-driven
+text entry through `WM_CHAR` and visibly rendered dark-theme RichTextBox text,
+but Round 90 reopens RichTextEdit because current reruns no longer reproduce
+that pass. Round 97 supersedes the current failed Light reruns with
+`artifacts/gallery-recordings/20260606-102212-861/report.md`.
+ToolTip is verified by the later `20260605-070810-482` recording, which proves
+open, close, and second open from the visual-test interaction path with
+pixel-backed fallback bounds.
+
+## Current Full-Inventory Sweep
+
+The one-shot all-control recorder command exceeded the 15-minute runner timeout
+after `SplitButton` before it could write a top-level report. The baseline
+inventory proof uses smaller dark-theme batches against the same built tree.
+Later recorder hardening supersedes any older pass that did not meet the
+current visible-evidence bar; the focused evidence table and Control Matrix
+are authoritative for controls retested after the broad batches.
+
+### Dark Theme
+
+| Run | Controls | Result |
+| --- | --- | --- |
+| `artifacts/gallery-recordings/20260603-192050-001/report.md` | TeachingTip, Button, CheckBox, ComboBox, RadioButton | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-192616-247/report.md` | Slider, ColorPicker, HyperlinkButton, RatingControl, RepeatButton | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-193146-788/report.md` | ToggleButton, DropDownButton, SplitButton, ToggleSplitButton, ToggleSwitch | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-194020-526/report.md` | NumberBox, AutoSuggestBox, SplitView, PersonPicture | 4 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-194548-087/report.md` | IconElement, ThemeShadow, TitleBar, InfoBadge, InfoBar, ProgressRing | 6 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-195228-523/report.md` | AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, SelectorBar, NavigationView | 6 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-200011-932/report.md` | ContentDialog, Flyout, Popup, MenuBar, MenuFlyout | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-200545-017/report.md` | AppBarButton, AppBarSeparator, AppBarToggleButton, CommandBar, CommandBarFlyout | 5 passed, 0 needs review, 0 failed |
+
+### Light Theme
+
+| Run | Controls | Result |
+| --- | --- | --- |
+| `artifacts/gallery-recordings/20260603-201449-823/report.md` | TeachingTip, Button, CheckBox, ComboBox, RadioButton | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-202011-935/report.md` | Slider, ColorPicker, HyperlinkButton, RatingControl, RepeatButton | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-202523-730/report.md` | ToggleButton, DropDownButton, SplitButton, ToggleSplitButton, ToggleSwitch | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-203341-290/report.md` | NumberBox, AutoSuggestBox, SplitView, PersonPicture | 4 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-203857-905/report.md` | IconElement, ThemeShadow, TitleBar, InfoBadge, InfoBar, ProgressRing | 6 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-204521-233/report.md` | AnnotatedScrollBar, GridView, ItemsRepeater, BreadcrumbBar, SelectorBar, NavigationView | 6 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-205311-406/report.md` | ContentDialog, Flyout, Popup, MenuBar, MenuFlyout | 5 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-205913-779/report.md` | AppBarButton, AppBarSeparator, AppBarToggleButton, CommandBar, CommandBarFlyout | 5 passed, 0 needs review, 0 failed |
+
+## Official WPF All Controls Static Sweep
+
+The ModernWpf recorder now accepts nonblank rendered page artifacts for official
+WPF Gallery pages that do not expose page-specific `GallerySample_*` anchors.
+The expansion covers the 33 official All Controls catalog pages that were
+missing from the ModernWpf control recorder inventory. This sweep is no longer
+accepted as sufficient by itself for controls where a user interaction is
+available; newer rounds add selection, open-repeat, expansion, and text-entry
+proof on top of these static route captures.
+
+### Dark Theme
+
+| Run | Controls | Result |
+| --- | --- | --- |
+| `artifacts/gallery-recordings/20260603-213649-600/report.md` | Color, Typography, Spacing, Geometry, Iconography, DataGrid, ListBox, ListView, TreeView, Calendar, DatePicker | 11 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-214032-634/report.md` | Expander, Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border, Menu, TabControl, Frame, NavigationWindow | 11 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-214413-419/report.md` | ProgressBar, ToolTip, Label, TextBox, TextBlock, RichTextEdit, PasswordBox, Hyperlink, FileAndFolderDialogs, MessageBox, Clipboard | 11 passed, 0 needs review, 0 failed |
+
+### Light Theme
+
+| Run | Controls | Result |
+| --- | --- | --- |
+| `artifacts/gallery-recordings/20260603-215102-800/report.md` | Color, Typography, Spacing, Geometry, Iconography, DataGrid, ListBox, ListView, TreeView, Calendar, DatePicker | 11 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-215446-052/report.md` | Expander, Grid, ResizeGrip, GridSplitter, GroupBox, StackPanel, Border, Menu, TabControl, Frame, NavigationWindow | 11 passed, 0 needs review, 0 failed |
+| `artifacts/gallery-recordings/20260603-215823-516/report.md` | ProgressBar, ToolTip, Label, TextBox, TextBlock, RichTextEdit, PasswordBox, Hyperlink, FileAndFolderDialogs, MessageBox, Clipboard | 11 passed, 0 needs review, 0 failed |
+
+## Control Matrix
+
+| Area | Control | Route or Scenario | Recording Status | Fix Status | Latest Evidence | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+| Shell | Navigation pane | Home, Design Guidance, Samples expand/collapse | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-072826-258/ShellNavigation/light-shellnavigation.mp4` | ShellNavigation recordings use at least 18s so the video covers both expansion and collapse. Latest Light manifest proves Design Guidance and Samples expanded with visible children, then collapsed with children hidden; following-item gaps remain `2.0`, `ShellNavigationEvidence=true`, local visual delta is `7.06`, and dense transition sheet `artifacts/gallery-recordings/20260606-072826-258/ShellNavigation/analysis/dense-transition-review.jpg` is nonblank. Reviewed frame `t17500` shows both groups collapsed without stale child rows. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033934-501/ShellNavigation/dark-shellnavigation.mp4`. |
+| Dialogs & flyouts | TeachingTip | `item/TeachingTip` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-063432-683/TeachingTip/light-teachingtip.mp4` | Latest Light 24s rendered run closes through the named TeachingTip close button and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t3500` / `t6000` / `t12000`, deltas `9.349` / `0.466` / `9.355`, and local delta `9.552`; reviewed frame `t3500` shows the TeachingTip anchored to its button. Current Dark proof is `artifacts/gallery-recordings/20260606-100047-740/TeachingTip/dark-teachingtip.mp4` with frames `t3500` / `t6000` / `t12000`, deltas `12.813` / `0.483` / `12.705`, and local delta `12.818`. |
+| Basic input | Button | `item/Button` | Recorded | Fixed | `artifacts/gallery-recordings/20260606-070029-557/Button/light-button.mp4` | Latest Light rendered rerun toggles `Disable button` from Off to On, disables the sample button, and records local visual delta `5.442`; reviewed frame `t9500` shows the disabled standard WPF button and checked option. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/Button/dark-button.mp4` with `OptionEvidence=true`, `AfterState=On`, and local delta `4.28`. |
+| Basic input | CheckBox | `item/CheckBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/CheckBox/light-checkbox.mp4` | Latest Light rendered rerun toggles the two-state CheckBox from Off to On with local visual delta `3.389`; reviewed frame `t9500` shows the checked state and the three-state examples aligned. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/CheckBox/dark-checkbox.mp4` with `StateEvidence=true`, `AfterState=On`, and local delta `3.182`. |
+| Basic input | ComboBox | `item/ComboBox` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-063701-757/ComboBox/light-combobox.mp4` | Latest Light 24s rendered run closes through `ExpandCollapsePattern.Collapse()` and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t4000` / `t8000` / `t14000`, deltas `14.128` / `0.287` / `14.091`, and local delta `14.25`; reviewed frame `t4000` shows the ComboBox dropdown anchored under the field. Current Dark proof is `artifacts/gallery-recordings/20260606-100047-740/ComboBox/dark-combobox.mp4` with frames `t3500` / `t7500` / `t13500`, deltas `9.717` / `0.316` / `11.359`, and local delta `11.359`. |
+| Basic input | RadioButton | `item/RadioButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/RadioButton/light-radiobutton.mp4` | Latest Light rendered rerun selects `Default Radio Option 2` with local visual delta `4.189`; reviewed frame `t9500` shows Option 2 selected and the radio examples aligned. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/RadioButton/dark-radiobutton.mp4` with `SelectionEvidence=true`, target `Default Radio Option 2`, and local delta `3.503`. |
+| Basic input | Slider | `item/Slider` | Recorded + screenshot | WPF reference restored | `artifacts/wpf-gallery-visual-audit/20260606-180955-711-45732/report.md` | Round 112 corrected the Round 105 wrong-reference comparison: Slider is a WPF Gallery page and must be compared to official WPF, not WinUI. Official WPF source initializes `SimpleSliderValue` to `0`; ModernWpf is restored to `0`, and the rebuilt official-WPF screenshot audit passed with exact content delta `0`. Runtime/source-shape tests pin that value. Older Light/Dark recordings still prove the value interaction path; the superseded centered-thumb screenshot run `artifacts/visual-checks/20260606-144434-210-243940/report.md` is retained only as bad audit evidence. |
+| Basic input | ColorPicker | `item/ColorPicker` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-173145-835-10284/report.md` | Round 110 fixed the default ColorPicker text-entry layout to match the reference combo/hex row and vertical Red/Green/Blue rows. `ColorPickerSampleMatchesWinUIGalleryExample` now asserts those relative positions, and the screenshot harness requires a focused ColorPicker primary crop built from stable WinUI child bounds. Reviewed `modernwpf-artifacts/GallerySample_ColorPicker_ColorPicker.png` and `winui3-ColorPicker-primary-content-crop.png` show the aligned structure. Older Light/Dark recordings still prove the More-button interaction path. |
+| Basic input | HyperlinkButton | `item/HyperlinkButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-074841-162/HyperlinkButton/light-hyperlinkbutton.mp4` | Latest Light rendered run clicks the safe in-app `Go to ToggleButton` sample and requires route proof: `BeforeRoute=item/HyperlinkButton`, `AfterRoute=item/ToggleButton`, `TargetSampleVisible=true`, whole-frame delta `2.563`, and local visual delta `12.244`. Reviewed `t9500` shows the ToggleButton destination page. External URI navigation remains intentionally not invoked. The previous dark proof remains at `artifacts/gallery-recordings/20260606-020424-123/HyperlinkButton/dark-hyperlinkbutton.mp4`. |
+| Basic input | RatingControl | `item/RatingControl` | Recorded | Touch-first sample copy removed | `artifacts/gallery-recordings/20260606-070029-557/RatingControl/light-ratingcontrol.mp4` | Latest Light rendered rerun changes the rating from `0` to target `3` with local visual delta `3.861`; reviewed frame `t9500` shows three selected stars, output `3`, and the corrected `Click again to clear your rating.` text with no `Swipe left` instruction. Current Dark proof is `artifacts/gallery-recordings/20260606-111116-192/RatingControl/dark-ratingcontrol.mp4` with `ValueEvidence=true`, value `0` to `3`, local delta `4.049`, and reviewed frame `t9500` showing the same corrected copy. |
+| Basic input | RepeatButton | `item/RepeatButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/RepeatButton/light-repeatbutton.mp4` | Latest Light rendered rerun changes output from `Control output` to `Number of clicks: 1` with local visual delta `0.669`; reviewed frame `t9500` shows the click count. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/RepeatButton/dark-repeatbutton.mp4` with `OutputEvidence=true`, output `Number of clicks: 1`, and local delta `1.002`. |
+| Basic input | ToggleButton | `item/ToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/ToggleButton/light-togglebutton.mp4` | Latest Light rendered rerun toggles Off to On with local visual delta `48.038`; reviewed frame `t9500` shows the checked ToggleButton and output text `On`. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/ToggleButton/dark-togglebutton.mp4` with `StateEvidence=true`, `AfterState=On`, and local delta `33.918`. |
+| Basic input | DropDownButton | `item/DropDownButton` | Recorded + screenshot guard | Recorder hardened + screenshot false-pass rejected | `artifacts/gallery-recordings/20260606-122924-332/DropDownButton/dark-dropdownbutton.mp4` | Latest Dark recording keeps DropDownButton on the reliable `Send` leaf-item close path after rejected fast-bounds attempt `20260606-122326-155`. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, `CloseMethod=LeafCloseItem:Invoke`, frames `t2000` / `t4000` / `t8500`, deltas `12.612` / `0.478` / `12.5`, and local delta `12.63`; reviewed frames show open, closed, and second-open menu states aligned under the trigger. Round 107 screenshot guard `artifacts/visual-checks/20260606-160227-645-194344/report.md` intentionally fails the WinUI popup screenshot path instead of accepting the old page-behind/wallpaper crop, so popup overlay parity remains recording-backed unless a real popup-window screenshot is captured. Latest Light proof remains `artifacts/gallery-recordings/20260606-064251-054/DropDownButton/light-dropdownbutton.mp4`. |
+| Basic input | SplitButton | `item/SplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260607-030239-820/SplitButton/dark-splitbutton.mp4` | Latest Dark rerun closes with `CloseMethod=CollapsePattern` before slower fallback paths, keeping open/closed/open proof inside the clip. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, frames `t1000` / `t5000` / `t11000` / `t15500`, deltas `21.416` / `0.019` / `11.952`, local delta `21.437`, and `SecondOpenVisualSeconds=16.69` inside the 17.2s recording. This supersedes failed run `artifacts/gallery-recordings/20260607-025015-188/report.md`, where the close path pushed the second-open visual timestamp outside the 18s video. Latest Light proof remains `artifacts/gallery-recordings/20260606-064538-234/SplitButton/light-splitbutton.mp4`. |
+| Basic input | ToggleSplitButton | `item/ToggleSplitButton` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260607-030239-820/ToggleSplitButton/dark-togglesplitbutton.mp4` | Latest Dark rerun closes with `CloseMethod=CollapsePattern`, so the verifier no longer selects `Bulleted list` merely to close the flyout. Manifest records `OpenRepeatEvidence=true`, `Detection=BaselineDeltaEventWindowScan`, frames `t1000` / `t4500` / `t10500` / `t15500`, deltas `8.923` / `0.062` / `8.94`, local delta `9.015`, `SecondOpenVisualSeconds=16.637`, and toggle state `Off` before open, after close, and after second open. This supersedes failed run `artifacts/gallery-recordings/20260607-025015-188/report.md`, where leaf-item close changed state and missed the recording window. Latest Light proof remains `artifacts/gallery-recordings/20260606-064806-277/ToggleSplitButton/light-togglesplitbutton.mp4`. |
+| Basic input | ToggleSwitch | `item/ToggleSwitch` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-152649-903-244144/report.md` | Round 106 screenshot review caught missing default `On`/`Off` content in the simple sample and a stale rendered-artifact crop path that made the thumb look left after toggling. The sample now uses default ToggleSwitch content, and state interactions prefer live UIA crops with a ToggleSwitch thumb-endpoint pixel check. Reviewed `artifacts/visual-checks/20260606-152649-903-244144/ToggleSwitch/modernwpf-ToggleSwitch-state-after-crop.png` shows `On` text and the thumb on the right. Older Light/Dark recordings remain useful motion proof but predate this screenshot harness fix. |
+| Text | NumberBox | `item/NumberBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-070029-557/NumberBox/light-numberbox.mp4` | Latest Light rendered rerun reaches value `20` from `10` with local visual delta `0.307`; reviewed frame `t9500` shows the updated value in the spin-button sample, so this remains rendered value proof rather than UIA-only proof. Current Dark proof is `artifacts/gallery-recordings/20260606-111448-049/NumberBox/dark-numberbox.mp4` with `ValueEvidence=true`, value `10` to `20`, and local delta `0.377`. |
+| Text | AutoSuggestBox | `item/AutoSuggestBox` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-074841-162/AutoSuggestBox/light-autosuggestbox.mp4` | Latest Light rendered rerun uses an 18s capture and requires both UIA and final-frame visual close proof. Manifest records `SuggestionInvokeMethod=InvokePattern`, `SuggestionClosed=true`, `TextVisualClosedEvidence.Closed=true`, final frame `t17500`, final delta `0.941`, local visual delta `10.307`, and output `Aegean`; reviewed `t9500` shows the popup open during selection and reviewed `t17500` shows it gone with `Aegean` rendered in the text box and output. Current Dark proof is `artifacts/gallery-recordings/20260606-113018-274/AutoSuggestBox/dark-autosuggestbox.mp4` with `SuggestionClosed=true`, `TextVisualClosedEvidence.Closed=true`, output `Aegean`, local delta `11.377`, and reviewed final frame `t17500` showing the suggestion popup gone. The rejected `20260606-041123-086` row is kept only as false-pass evidence. |
+| Text | TextBox | `item/TextBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/TextBox/light-textbox.mp4` | Latest Light rendered run records text entry with `TextEvidence=true`, `AfterOutput=ModernWpf text`, and local visual delta `1.918`; reviewed late frame `t9500` shows the text visibly rendered. Current Dark proof is `artifacts/gallery-recordings/20260606-113018-274/TextBox/dark-textbox.mp4` with `TextEvidence=true`, `AfterOutput=ModernWpf text`, local delta `6.449`, and reviewed frame `t9500` showing rendered text. |
+| Text | PasswordBox | `item/PasswordBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/PasswordBox/light-passwordbox.mp4` | Latest Light rendered run records text entry with `TextEvidence=true`, masked `AfterOutput`, and local visual delta `2.362`; reviewed late frame `t9500` shows masked password bullets rendered. Current Dark proof is `artifacts/gallery-recordings/20260606-113018-274/PasswordBox/dark-passwordbox.mp4` with `TextEvidence=true`, masked `AfterOutput`, local delta `8.734`, and reviewed frame `t9500` showing password bullets rendered. |
+| Text | RichTextEdit | `item/RichTextEdit` | Recorded + official WPF screenshot parity | Official WPF layout parity restored + recorder fixed | `artifacts/wpf-gallery-visual-audit/20260606-210055-915-20200/report.md` | Round 120 supersedes the recorder-driven 160px editor workaround. The live sample now matches official WPF Gallery's self-closing one-line `RichTextBox` with no local `MinHeight` and no custom `FlowDocument`. Dark and Light official WPF parity both pass with exact content delta `0` and matching `868x758` crops: `artifacts/wpf-gallery-visual-audit/20260606-210055-915-20200/report.md` and `artifacts/wpf-gallery-visual-audit/20260606-210239-299-178336/report.md`. Current Dark recording `artifacts/gallery-recordings/20260606-210129-330/RichTextEdit/dark-richtextedit.mp4` proves `TextEvidence=true`, `AfterOutput=ModernWpf rich text`, `InputMethod=WindowMessage`, and local delta `6.395`; current Light recording `artifacts/gallery-recordings/20260606-210310-713/RichTextEdit/light-richtextedit.mp4` proves the same text output with local delta `1.932`. |
+| Layout | SplitView | `item/SplitView` | Recorded + screenshot | Screenshot harness corrected | `artifacts/gallery-recordings/20260606-071255-441/SplitView/light-splitview.mp4` | Latest Light rendered rerun toggles `IsPaneOpen` from On to Off with local visual delta `45.737` and whole-frame delta `0.495`; reviewed frame `t9500` shows the pane closed with the option controls aligned. Round 113 focused screenshot proof `artifacts/visual-checks/20260606-183210-009-111152/report.md` corrects the WinUI primary crop to compare the same `400x300` pane-plus-content region as ModernWpf, with primary delta `3.37`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/SplitView/dark-splitview.mp4`. |
+| Layout | Expander | `item/Expander` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/Expander/light-expander.mp4` | Latest Light rendered run records expansion evidence with whole-frame/local deltas `0.305` / `5.512`; reviewed frame `t9500` shows the expected content visible after expansion. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/Expander/dark-expander.mp4`. |
+| Media | PersonPicture | `item/PersonPicture` | Recorded + screenshot | Fixed profile-image parity | `artifacts/visual-checks/20260606-193052-521-96680/report.md` | Round 117 fixes the profile-image sample to render the packaged shoulder-tap PNG used by the WinUI Gallery snippet/reference, replacing the old local dashboard portrait. The screenshot harness now crops the full WinUI avatar from rendered pixels instead of the `ProfileImageRadio` row or stale offsets; focused Dark parity passed with primary crop delta `0.35` and matching `96x96` crops. Latest Light interaction proof remains `artifacts/gallery-recordings/20260606-073924-914/PersonPicture/light-personpicture.mp4`, which selects `Display Name` and reviewed `t9500` shows the avatar changed to `JD`; previous Dark interaction proof remains `artifacts/gallery-recordings/20260606-052421-356/PersonPicture/dark-personpicture.mp4`. |
+| Styles | IconElement | `item/IconElement` | Recorded + screenshot | Fixed options chrome | `artifacts/visual-checks/20260606-202525-061-150024/report.md` | Round 118 moves the `Monochrome` checkbox out of `ExampleContent` and into `ControlExample.OptionsContent`, so the first sample renders a template-level side options panel with `200-320px` width, card background, divider, and `16px` padding. Latest focused Dark screenshot parity passed with matching `590x118` primary crops and delta `13.08`; reviewed full-page captures show the side panel aligned with the sample row. Latest Light interaction proof remains `artifacts/gallery-recordings/20260606-073924-914/IconElement/light-iconelement.mp4`, which toggles `Monochrome` Off -> On with local visual delta `4.175`; previous Dark interaction proof remains `artifacts/gallery-recordings/20260606-052421-356/IconElement/dark-iconelement.mp4`. |
+| Styles | ThemeShadow | `item/ThemeShadow` | Recorded + screenshot | Fixed options chrome + source-layout-stable depth change; reserved-space layout fixed; recorder hardened | Light: `artifacts/gallery-recordings/20260607-104048-093/report.md`; Dark: `artifacts/gallery-recordings/20260607-032841-062/report.md` | Round 137 supersedes the prior Light proof by separating expected shadow-envelope growth from layout motion. Latest Light proof moves value `32 -> 64`, keeps all layout bounds and caster bounds fixed at `570.0,428.0,200.0,200.0`, keeps artifact card edges fixed at `36,36,200,200`, explicitly records source-like shadow-envelope growth `27,39,218,214 -> 16,30,240,242` with `ShadowEnvelopeDelta=28`, and keeps dense video card stability at `MaxCardEdgeShift=0` / `MaxCardMeanDelta=0.096`. `ThemeShadowArtifactVisualEvidence=true` now requires envelope change when the metric is available. The Gallery sample continues to match the official WinUI `Example3Grid Padding="36"` shape, and `ThemeShadowChromeDepthChangeDoesNotMoveGalleryPaddedCardEdges` pins that layout. Round 130 remains the product fix for reserved-space hosts. Latest Light WinUI-reference screenshot parity remains `artifacts/visual-checks/20260606-214802-529-203260/report.md`; latest Dark parity remains `artifacts/visual-checks/20260606-213646-251-68508/report.md`. |
+| Windowing | TitleBar | `item/TitleBar` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-073924-914/TitleBar/light-titlebar.mp4` | Latest Light rendered run toggles `IsBackButtonVisible` and requires the preview Back button to become visible. Manifest records `BeforeState=Off`, `AfterState=On`, `BeforeExpectedElementVisible=false`, `AfterExpectedElementVisible=true`, `ExpectedElementChanged=true`, whole-frame delta `0.127`, and local visual delta `8.509`; reviewed frame `t9500` shows the Back preview button. The previous dark proof remains at `artifacts/gallery-recordings/20260606-021439-880/TitleBar/dark-titlebar.mp4`. |
+| Status & info | InfoBadge | `item/InfoBadge` | Recorded + screenshot | Fixed + screenshot harness hardened | `artifacts/visual-checks/20260606-171020-087-82140/report.md` | Round 108 fixed the base InfoBadge auto corner radius and Round 109 fixed the embedded NavigationView sample by refreshing `TemplateSettings.OpenPaneLength` during arrange. `InfoBadgeSampleMatchesWinUIGalleryExamples` now asserts rendered bounds for the nested `Inbox` item and `5` badge plus visible `Home`, `Account`, and `Inbox` text. The screenshot harness uses the embedded NavigationView artifact as the required primary crop with variation threshold `8.0`; reviewed `modernwpf-artifacts/GallerySample_InfoBadge_NavigationView.png` shows `Home`, `Account`, `Inbox`, `Settings`, and the `5` badge. Older Light/Dark recordings still prove the opacity-toggle interaction path, but embedded-badge static parity is now screenshot-backed. |
+| Status & info | InfoBar | `item/InfoBar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/InfoBar/light-infobar.mp4` | Latest Light rendered rerun toggles `Is Open` from On to Off with local visual delta `4.173` and whole-frame delta `0.192`; reviewed frame `t9500` shows the first InfoBar sample closed while later samples remain aligned. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/InfoBar/dark-infobar.mp4`. |
+| Status & info | ProgressRing | `item/ProgressRing` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260606-071255-441/ProgressRing/light-progressring.mp4` | Latest Light manifest records `AnimationEvidence=true` with early-frame delta `0.083`, local visual delta `13.824`, and option state changing from On to Off despite low whole-frame delta `0.085`; reviewed frame `t9500` shows the toggled ProgressRing sample and aligned controls. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/ProgressRing/dark-progressring.mp4`. |
+| Status & info | ToolTip | `item/ToolTip` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-065048-868/ToolTip/light-tooltip.mp4` | ToolTip uses `OpenRepeat` proof instead of diagnostic `PreparedOpen`. Latest Light 18s rendered run passes with `OpenRepeatEvidence=true`, close method `Escape2`, frames `t3500` / `t5500` / `t10000`, deltas `5.786` / `0.181` / `5.749`, and local delta `43.935`; reviewed frame `t3500` shows the ToolTip beside the trigger. The previous dark proof remains at `artifacts/gallery-recordings/20260606-032006-230/ToolTip/dark-tooltip.mp4`. |
+| Scrolling | AnnotatedScrollBar | `item/AnnotatedScrollBar` | Recorded + screenshot | Fixed layout parity | `artifacts/visual-checks/20260606-190420-164-86500/report.md` | Rounds 115 and 116 fix the static layout mismatch against WinUI Gallery: the sample now uses a two-row options layout, row-1 headered slider host, card background, `ControlCornerRadius`, `16px` options padding, and a `124x500` ScrollViewer geometry with a `12px` left margin instead of the old third row, `52px` options offset, and `136px` ScrollViewer artifact. The focused Dark screenshot check passed and reduced primary crop delta from `15.36` to `4.43`; reviewed crops align the color tiles, annotation labels, options card, and height slider. The latest Light scroll recording `artifacts/gallery-recordings/20260606-071255-441/AnnotatedScrollBar/light-annotatedscrollbar.mp4` remains interaction proof with whole-frame delta `4.548` and local visual delta `95.557`; previous Dark scroll proof remains at `artifacts/gallery-recordings/20260606-041123-086/AnnotatedScrollBar/dark-annotatedscrollbar.mp4`. |
+| Collections | GridView | `item/GridView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-071255-441/GridView/light-gridview.mp4` | Latest Light rendered rerun selects `Item 1` and changes output to `You clicked Item 1.` with local visual delta `0.784` and whole-frame delta `0.085`; reviewed frame `t9500` shows populated GridView image tiles and the output text, so this remains visible rendered output proof rather than UIA-only proof. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/GridView/dark-gridview.mp4`. |
+| Collections | ItemsRepeater | `item/ItemsRepeater` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260606-071255-441/ItemsRepeater/light-itemsrepeater.mp4` | Latest Light rendered rerun records scroll evidence with whole-frame delta `6.815` and local visual delta `22.712`; reviewed frame `t9500` shows virtualized items in the 260s rendered after scroll. The previous dark proof remains at `artifacts/gallery-recordings/20260606-041123-086/ItemsRepeater/dark-itemsrepeater.mp4`. |
+| Collections | ListBox | `item/ListBox` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/ListBox/light-listbox.mp4` | Latest Light rendered run records UIA selection evidence for target `Green` with whole-frame/local deltas `1.929` / `40.303`; reviewed frame `t9500` shows selected ListBox rows. Current Dark proof is `artifacts/gallery-recordings/20260606-113632-394/ListBox/dark-listbox.mp4` with `SelectionEvidence=true`, local delta `32.148`, and reviewed frame `t9500` showing selected ListBox rows. |
+| Collections | ListView | `item/ListView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/ListView/light-listview.mp4` | Latest Light rendered run records UIA selection evidence with whole-frame/local deltas `0.247` / `3.702`; reviewed frame `t9500` shows the selected ListView item. Current Dark proof is `artifacts/gallery-recordings/20260606-113632-394/ListView/dark-listview.mp4` with `SelectionEvidence=true`, local delta `8.402`, and reviewed frame `t9500` showing selected ListView rows without stale or blank content. |
+| Collections | DataGrid | `item/DataGrid` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-072128-088/DataGrid/light-datagrid.mp4` | UIA selection still does not change, so DataGrid uses visual current-cell evidence. Light proof has whole-frame/local deltas `1.344` / `48.134` with reviewed frame `t9500` showing the first row/cell highlighted. The recorder now requires local target-region delta for this fallback rather than whole-frame delta. Current Dark proof is `artifacts/gallery-recordings/20260606-114433-765/DataGrid/dark-datagrid.mp4` with `VisualSelectionEvidence=true`, `SelectionEvidence=false`, local delta `57.115`, and reviewed frame `t9500` showing the current-cell visual state. |
+| Collections | TreeView | `item/TreeView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/TreeView/light-treeview.mp4` | Latest Light rendered run records expansion evidence for `Personal Documents` with whole-frame/local deltas `0.508` / `7.864`; reviewed frame `t9500` shows `Contractor contact info` visible after expansion. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/TreeView/dark-treeview.mp4`. |
+| Navigation | BreadcrumbBar | `item/BreadcrumbBar` | Recorded | Recorder/sample anchor fixed | `artifacts/gallery-recordings/20260606-072826-258/BreadcrumbBar/light-breadcrumbbar.mp4` | Latest Light rendered run records local visual delta `2.886`; breadcrumb item collection changed despite low whole-frame delta `0.018`, and reviewed frame `t9500` shows the path advanced through `Folder1` to `Folder3`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/BreadcrumbBar/dark-breadcrumbbar.mp4`. |
+| Navigation | SelectorBar | `item/SelectorBar` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-141752-321/SelectorBar/dark-selectorbar.mp4` | Latest Dark rerun records `Shared` changing to selected with local visual delta `0.256` and reviewed frame `t4000` shows readable dark `SamplePage1` text on the light blue frame-transition panel. This supersedes the rejected green Dark batch `artifacts/gallery-recordings/20260606-141244-639/report.md`, where manual frame review found white sample-page text on the same light panel despite the recorder pass. Latest Light proof remains `artifacts/gallery-recordings/20260606-072826-258/SelectorBar/light-selectorbar.mp4`. |
+| Navigation | TabControl | `item/TabControl` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/TabControl/light-tabcontrol.mp4` | Latest Light rendered run records target `Hello Tab`, selection evidence, and local delta `2.429`; reviewed frame `t9500` shows the selected `Hello` tab and content `World`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/TabControl/dark-tabcontrol.mp4`. |
+| Navigation | NavigationView | `item/NavigationView` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072826-258/NavigationView/light-navigationview.mp4` | Latest Light rendered run records target `Menu Item2`, selection evidence, and local visual delta `5.177`; reviewed frame `t9500` shows `Sample Page 2` selected and rendered in the sample NavigationView. The previous dark proof remains at `artifacts/gallery-recordings/20260606-033115-631/NavigationView/dark-navigationview.mp4`. |
+| Date & calendar | Calendar | `item/Calendar` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-072128-088/Calendar/light-calendar.mp4` | Latest Light rendered run records UIA selection evidence with whole-frame/local deltas `0.466` / `4.45`; reviewed frame `t9500` shows the selected day highlighted in the calendar. Current Dark proof is `artifacts/gallery-recordings/20260606-113515-698/Calendar/dark-calendar.mp4` with `SelectionEvidence=true`, local delta `4.119`, and reviewed frame `t9500` showing the selected day with no layout drift. |
+| Date & calendar | DatePicker | `item/DatePicker` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-064009-144/DatePicker/light-datepicker.mp4` | Latest Light 24s rendered run closes through `ExpandCollapsePattern.Collapse()` and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t3500` / `t7500` / `t13500`, deltas `11.419` / `0.865` / `11.425`, local delta `11.428`, and `ClosedThreshold=1.2`; reviewed frame `t3500` shows the calendar flyout positioned under the DatePicker. Current Dark proof is `artifacts/gallery-recordings/20260606-100047-740/DatePicker/dark-datepicker.mp4` with frames `t3500` / `t7500` / `t13500`, deltas `11.003` / `0.986` / `10.981`, local delta `11.009`, and `ClosedThreshold=1.2`. |
+| Dialogs & flyouts | ContentDialog | `item/ContentDialog` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-062729-895/ContentDialog/light-contentdialog.mp4` | Latest Light 24s rendered run treats modal close as a named `Cancel` button action and requires pixel-backed close proof. Manifest records `OpenRepeatEvidence=true`, `CloseMethod=DialogCancelButton:Invoke`, frames `t3500` / `t13000` / `t19500`, deltas `18.764` / `0.423` / `18.839`, and local delta `72.849`; reviewed frame `t3500` shows the dialog centered over the dimmed page. The previous dark proof remains at `artifacts/gallery-recordings/20260605-033404-923/ContentDialog/dark-contentdialog.mp4`. |
+| Dialogs & flyouts | Flyout | `item/Flyout` | Recorded | Recorder fixed | `artifacts/gallery-recordings/20260606-062215-560/Flyout/light-flyout.mp4` | Latest Light 24s rendered run passes with pixel-backed close proof and baseline-delta transition scan. Manifest records `OpenRepeatEvidence=true`, `CloseMethod=SampleConfirmButton:Invoke`, frames `t3500` / `t10500` / `t17000`, deltas `21.168` / `0.511` / `21.8`, and local delta `21.801`; reviewed frame `t4000` shows the flyout anchored above the trigger. The previous dark proof remains at `artifacts/gallery-recordings/20260605-030028-982/Flyout/dark-flyout.mp4`. |
+| Dialogs & flyouts | Popup | `item/Popup` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-062450-995/Popup/light-popup.mp4` | Latest Light 24s rendered run accepts the named `Close` button only after the opened-content region returns to baseline, so stale UIA cannot block or fake the close. Manifest records `OpenRepeatEvidence=true`, `CloseMethod=SampleCloseButton:Invoke`, frames `t3500` / `t10500` / `t16500`, deltas `22.699` / `0.93` / `22.733`, and local delta `22.733`; reviewed frame `t3500` shows the popup in the offset-positioning sample area. The previous dark proof remains at `artifacts/gallery-recordings/20260605-033404-923/Popup/dark-popup.mp4`. |
+| System | MessageBox | `item/MessageBox` | Recorded | Fixed | `artifacts/gallery-recordings/20260606-082426-601/MessageBox/light-messagebox.mp4` | Runtime sample dialogs now use owned WPF `MessageBox.Show(owner, ...)` plus owner-centered native placement. Latest Light 18s rendered run passes with `OpenRepeatEvidence=true`, `FirstOpenElementAnchored=true`, `SecondOpenElementAnchored=true`, `ClosedElementGone=true`, `CloseMethod=DialogOkButton:Invoke`, frames `t3500` / `t9500` / `t13500`, deltas `16.981` / `0.034` / `16.966`, and dialog text bounds `725,574,150,15` inside the capture; reviewed frames show the dialog visible on both opens and gone after close. The previous dark proof remains at `artifacts/gallery-recordings/20260605-064048-292/MessageBox/dark-messagebox.mp4`. |
+| Menus & toolbars | Menu | `item/Menu` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-065247-089/Menu/light-menu.mp4` | Latest Light 24s rendered run closes through the `Exit` leaf item and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t3500` / `t8000` / `t14500`, deltas `10.441` / `0.5` / `10.469`, and local delta `10.474`; reviewed frame `t3500` shows the File menu opened in place. The previous dark proof remains at `artifacts/gallery-recordings/20260606-031526-603/Menu/dark-menu.mp4`. |
+| Menus & toolbars | MenuBar | `item/MenuBar` | Recorded | Recorder hardened | `artifacts/gallery-recordings/20260606-061744-792/MenuBar/light-menubar.mp4` | Latest Light rendered run uses an 18s capture, closes through the `Exit` leaf item, and requires baseline-delta open/closed/open proof. Manifest records `OpenRepeatEvidence=true`, frames `t3500` / `t5500` / `t12000`, deltas `8.279` / `0.156` / `8.309`, and local delta `8.345`; reviewed frame `t3500` shows the File menu anchored under the trigger. The previous dark proof remains at `artifacts/gallery-recordings/20260606-023615-570/MenuBar/dark-menubar.mp4`. |
+| Menus & toolbars | MenuFlyout | `item/MenuFlyout` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-061515-631/MenuFlyout/light-menuflyout.mp4` | Same-target repeat-open guard now treats tracked absolute-point presenters as the same target to avoid close/reopen flicker. Latest Light 24s rendered rerun passes with `CloseMethod=LeafMenuItem:Invoke`, `Detection=BaselineDeltaScan`, frames `t3500` / `t10500` / `t17000`, deltas `11.318` / `0.384` / `11.278`, and local delta `11.354`; reviewed frame `t4000` shows the menu anchored under the trigger. Current Dark proof is `artifacts/gallery-recordings/20260606-100047-740/MenuFlyout/dark-menuflyout.mp4` with frames `t3500` / `t10500` / `t17000`, deltas `14.124` / `0.432` / `14.167`, and local delta `14.221`. |
+| Menus & toolbars | AppBarButton | `item/AppBarButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-074841-162/AppBarButton/light-appbarbutton.mp4` | Latest Light rendered rerun changes output to `You clicked: Button1` with local visual delta `0.52`; reviewed frame `t9500` shows the output text and aligned symbol, bitmap, and font-icon examples. The previous dark proof remains at `artifacts/gallery-recordings/20260606-040225-951/AppBarButton/dark-appbarbutton.mp4`. |
+| Menus & toolbars | AppBarSeparator | `item/AppBarSeparator` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-073924-914/AppBarSeparator/light-appbarseparator.mp4` | Latest Light rendered static route remains appropriate because the sample command bar has no state/output-changing action. Reviewed `t9500` shows visible separators and aligned AppBar commands. The previous dark proof remains at `artifacts/gallery-recordings/20260606-052421-356/AppBarSeparator/dark-appbarseparator.mp4`. |
+| Menus & toolbars | AppBarToggleButton | `item/AppBarToggleButton` | Recorded | No issue found in current pass | `artifacts/gallery-recordings/20260606-074841-162/AppBarToggleButton/light-appbartogglebutton.mp4` | Latest Light rendered rerun toggles Off to On with local visual delta `44.826`; reviewed frame `t9500` shows the first symbol AppBarToggleButton checked and output `IsChecked = True`. The previous dark proof remains at `artifacts/gallery-recordings/20260606-040225-951/AppBarToggleButton/dark-appbartogglebutton.mp4`. |
+| Menus & toolbars | CommandBar | `item/CommandBar` | Recorded | Fixed + recorder hardened | `artifacts/gallery-recordings/20260606-061229-078/CommandBar/light-commandbar.mp4` | Product popup state is now synchronized with `IsOpen` and the recorder no longer depends on UIA exposing the second-open overflow item. Latest Light 24s rendered run passes with `OpenRepeatEvidence=true`, `CloseMethod=SampleCloseButton`, frames `t9500` / `t13500` / `t20000`, deltas `4.17` / `0.005` / `4.181`, and local delta `4.181`; reviewed frames show aligned first-open and second-open overflow plus a clean closed frame. Current Dark proof is `artifacts/gallery-recordings/20260606-100047-740/CommandBar/dark-commandbar.mp4` with frames `t9500` / `t13500` / `t19500`, deltas `9.838` / `0.0` / `9.99`, and local delta `10.033`. |
+| Menus & toolbars | CommandBarFlyout | `item/CommandBarFlyout` | Recorded | Fixed + recorder window discovery/top-left proof hardened | Light: `artifacts/gallery-recordings/20260606-093650-021/CommandBarFlyout/light-commandbarflyout.mp4`; Dark: `artifacts/gallery-recordings/20260607-113342-069/CommandBarFlyout/dark-commandbarflyout.mp4` | Product popup state is synchronized with `IsOpen`, WPF popup animation is disabled, Escape hides the owning flyout, and secondary transitions respect the owning flyout animation gate. Latest Light 24s rendered run passes with `OpenRepeatEvidence=true`, `CloseMethod=SecondaryCommand`, frames `t4000` / `t6500` / `t13500`, deltas `2.803` / `0.0` / `2.8`, and local delta `2.913`; reviewed first-open and second-open frames show the command bar and secondary menu aligned with no repeat-open crash frame. Round 139 current Dark rerun uses top-left Gallery placement and rendered capture rect `0,0,1400,1040`, passes in a 9.7s MP4 with `OpenRepeatEvidence=true`, frames `t2500` / `t4500` / `t8000`, `FirstCommandBarFlyoutSecondaryExpanded=true`, `SecondCommandBarFlyoutSecondaryExpanded=true`, local delta `12.43`, and clean full-size first-open, closed, and second-open frames. Superseded failed run `artifacts/gallery-recordings/20260607-105249-061/report.md` proved the old window lookup could miss a ready rendered Gallery window before recording started. Rejected screen-mode run `artifacts/gallery-recordings/20260606-093304-563/report.md` captured wallpaper/black frames and still drives the screen-recorder anchor guard. |

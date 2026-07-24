@@ -178,8 +178,8 @@ namespace ModernWpf.Controls
 
                 fontIcon.FontWeight = fontIconSource.FontWeight;
                 fontIcon.FontStyle = fontIconSource.FontStyle;
-                //fontIcon.IsTextScaleFactorEnabled(fontIconSource.IsTextScaleFactorEnabled());
-                //fontIcon.MirroredWhenRightToLeft(fontIconSource.MirroredWhenRightToLeft());
+                fontIcon.IsTextScaleFactorEnabled = fontIconSource.IsTextScaleFactorEnabled;
+                fontIcon.MirroredWhenRightToLeft = fontIconSource.MirroredWhenRightToLeft;
 
                 return fontIcon;
             }
@@ -192,6 +192,22 @@ namespace ModernWpf.Controls
                     symbolIcon.Foreground = newForeground;
                 }
                 return symbolIcon;
+            }
+            else if (iconSource is ImageIconSource imageIconSource)
+            {
+                ImageIcon imageIcon = new();
+
+                if (imageIconSource.ImageSource != null)
+                {
+                    imageIcon.Source = imageIconSource.ImageSource;
+                }
+
+                if (imageIconSource.Foreground is { } newForeground)
+                {
+                    imageIcon.Foreground = newForeground;
+                }
+
+                return imageIcon;
             }
             else if (iconSource is BitmapIconSource bitmapIconSource)
             {

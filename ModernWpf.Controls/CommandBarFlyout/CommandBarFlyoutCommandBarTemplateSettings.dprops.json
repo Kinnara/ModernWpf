@@ -1,0 +1,32 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public sealed partial class",
+    "name": "CommandBarFlyoutCommandBarTemplateSettings"
+  },
+  "properties": [
+    { "name": "CloseAnimationEndPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "ContentClipRect", "type": "Rect", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "CurrentWidth", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "ExpandDownAnimationEndPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "ExpandDownAnimationHoldPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "ExpandDownAnimationStartPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "ExpandDownOverflowVerticalPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "ExpandedWidth", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "ExpandUpAnimationEndPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "ExpandUpAnimationHoldPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "ExpandUpAnimationStartPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "ExpandUpOverflowVerticalPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "OpenAnimationEndPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "OpenAnimationStartPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "OverflowContentClipRect", "type": "Rect", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "WidthExpansionAnimationEndPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "WidthExpansionAnimationStartPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "WidthExpansionDelta", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "WidthExpansionMoreButtonAnimationEndPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" },
+    { "name": "WidthExpansionMoreButtonAnimationStartPosition", "type": "double", "kind": "RegisterReadOnly", "metadata": "null", "setterAccessibility": "internal" }
+  ]
+}

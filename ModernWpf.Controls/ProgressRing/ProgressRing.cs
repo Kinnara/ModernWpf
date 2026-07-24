@@ -7,12 +7,12 @@ using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public class ProgressRing : Control
+    public partial class ProgressRing : Control
     {
+        const string s_LayoutRootName = "LayoutRoot";
         const string s_ActiveStateName = "Active";
+        const string s_DeterminateActiveStateName = "DeterminateActive";
         const string s_InactiveStateName = "Inactive";
-        const string s_SmallStateName = "Small";
-        const string s_LargeStateName = "Large";
 
         static ProgressRing()
         {
@@ -24,48 +24,8 @@ namespace ModernWpf.Controls
             SetValue(TemplateSettingsPropertyKey, new ProgressRingTemplateSettings());
 
             SizeChanged += OnSizeChanged;
+            Loaded += OnLoaded;
         }
-
-        #region IsActive
-
-        public bool IsActive
-        {
-            get => (bool)GetValue(IsActiveProperty);
-            set => SetValue(IsActiveProperty, value);
-        }
-
-        public static readonly DependencyProperty IsActiveProperty =
-            DependencyProperty.Register(
-                nameof(IsActive),
-                typeof(bool),
-                typeof(ProgressRing),
-                new FrameworkPropertyMetadata(OnIsActivePropertyChanged));
-
-        private static void OnIsActivePropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-        {
-            ((ProgressRing)sender).OnIsActivePropertyChanged(args);
-        }
-
-        #endregion
-
-        #region TemplateSettings
-
-        private static readonly DependencyPropertyKey TemplateSettingsPropertyKey =
-            DependencyProperty.RegisterReadOnly(
-                nameof(TemplateSettings),
-                typeof(ProgressRingTemplateSettings),
-                typeof(ProgressRing),
-                null);
-
-        public static readonly DependencyProperty TemplateSettingsProperty =
-            TemplateSettingsPropertyKey.DependencyProperty;
-
-        public ProgressRingTemplateSettings TemplateSettings
-        {
-            get => (ProgressRingTemplateSettings)GetValue(TemplateSettingsProperty);
-        }
-
-        #endregion
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
@@ -76,24 +36,94 @@ namespace ModernWpf.Controls
         {
             base.OnApplyTemplate();
 
-            ChangeVisualState();
+            m_layoutRoot = GetTemplateChild(s_LayoutRootName) as FrameworkElement;
+
+            UpdateLottieProgress();
+            UpdateStates();
         }
 
         void OnSizeChanged(object sender, SizeChangedEventArgs e)
         {
             ApplyTemplateSettings();
-            ChangeVisualState();
+        }
+
+        void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            UpdateStates();
         }
 
         void OnIsActivePropertyChanged(DependencyPropertyChangedEventArgs args)
         {
-            ChangeVisualState();
+            UpdateStates();
         }
 
-        void ChangeVisualState()
+        void OnIsIndeterminatePropertyChanged(DependencyPropertyChangedEventArgs args)
         {
-            VisualStateManager.GoToState(this, IsActive ? s_ActiveStateName : s_InactiveStateName, true);
-            VisualStateManager.GoToState(this, TemplateSettings.MaxSideLength < 60 ? s_SmallStateName : s_LargeStateName, true);
+            UpdateStates();
+        }
+
+        void OnValuePropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            if (!m_rangePropertyUpdating)
+            {
+                m_rangePropertyUpdating = true;
+                CoerceValue();
+                m_rangePropertyUpdating = false;
+
+                if (!IsIndeterminate)
+                {
+                    UpdateLottieProgress();
+                }
+            }
+        }
+
+        void OnMinimumPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            if (!m_rangePropertyUpdating)
+            {
+                m_rangePropertyUpdating = true;
+                CoerceMaximum();
+                CoerceValue();
+                m_rangePropertyUpdating = false;
+
+                if (!IsIndeterminate)
+                {
+                    UpdateLottieProgress();
+                }
+            }
+        }
+
+        void OnMaximumPropertyChanged(DependencyPropertyChangedEventArgs args)
+        {
+            if (!m_rangePropertyUpdating)
+            {
+                m_rangePropertyUpdating = true;
+                CoerceMinimum();
+                CoerceValue();
+                m_rangePropertyUpdating = false;
+
+                if (!IsIndeterminate)
+                {
+                    UpdateLottieProgress();
+                }
+            }
+        }
+
+        void UpdateStates()
+        {
+            if (m_layoutRoot != null)
+            {
+                m_layoutRoot.Opacity = IsActive ? 1.0 : 0.0;
+            }
+
+            if (IsActive)
+            {
+                VisualStateManager.GoToState(this, IsIndeterminate ? s_ActiveStateName : s_DeterminateActiveStateName, true);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, s_InactiveStateName, true);
+            }
         }
 
         void ApplyTemplateSettings()
@@ -106,7 +136,7 @@ namespace ModernWpf.Controls
             {
                 if (ActualWidth != 0)
                 {
-                    double width = Math.Min(ActualWidth, ActualHeight);
+                    double width = ActualWidth;
 
                     double diameterAdditive;
                     {
@@ -136,5 +166,48 @@ namespace ModernWpf.Controls
             templateSettings.EllipseOffset = thicknessEllipseOffset;
             templateSettings.MaxSideLength = width;
         }
+
+        void CoerceMinimum()
+        {
+            if (Minimum > Maximum)
+            {
+                Minimum = Maximum;
+            }
+        }
+
+        void CoerceMaximum()
+        {
+            if (Maximum < Minimum)
+            {
+                Maximum = Minimum;
+            }
+        }
+
+        void CoerceValue()
+        {
+            var value = Value;
+            if (!double.IsNaN(value) && !IsInBounds(value))
+            {
+                Value = value > Maximum ? Maximum : Minimum;
+            }
+        }
+
+        bool IsInBounds(double value)
+        {
+            return value >= Minimum && value <= Maximum;
+        }
+
+        void UpdateLottieProgress()
+        {
+            // WPF has no WinUI AnimatedVisualPlayer/Lottie pipeline in this control.
+            // The source state flow is kept, while the template provides a storyboard substitute.
+            if (m_layoutRoot == null)
+            {
+                return;
+            }
+        }
+
+        bool m_rangePropertyUpdating;
+        FrameworkElement m_layoutRoot;
     }
 }

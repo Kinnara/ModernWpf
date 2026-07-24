@@ -3,20 +3,30 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using ModernWpf.Automation.Peers;
 
 namespace ModernWpf.Controls
 {
     [TemplatePart(Name = nameof(Container), Type = typeof(Border))]
     [TemplatePart(Name = nameof(LayoutRoot), Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = "BackgroundElement", Type = typeof(Border))]
+    [TemplatePart(Name = "Title", Type = typeof(ContentControl))]
+    [TemplatePart(Name = "Content", Type = typeof(ContentPresenter))]
+    [TemplatePart(Name = "ContentPanel", Type = typeof(Panel))]
+    [TemplatePart(Name = nameof(CommandSpace), Type = typeof(Panel))]
+    [TemplatePart(Name = "DialogSpace", Type = typeof(Panel))]
+    [TemplatePart(Name = "ContentScrollViewer", Type = typeof(ScrollViewer))]
     [TemplatePart(Name = nameof(PrimaryButton), Type = typeof(Button))]
     [TemplatePart(Name = nameof(SecondaryButton), Type = typeof(Button))]
     [TemplatePart(Name = nameof(CloseButton), Type = typeof(Button))]
+    [TemplatePart(Name = "ScaleTransform", Type = typeof(ScaleTransform))]
     [TemplateVisualState(GroupName = DialogShowingStatesGroup, Name = DialogHiddenState)]
     [TemplateVisualState(GroupName = DialogShowingStatesGroup, Name = DialogShowingState)]
     [TemplateVisualState(GroupName = DialogShowingStatesGroup, Name = DialogShowingWithoutSmokeLayerState)]
@@ -39,7 +49,7 @@ namespace ModernWpf.Controls
     [StyleTypedProperty(Property = nameof(PrimaryButtonStyle), StyleTargetType = typeof(Button))]
     [StyleTypedProperty(Property = nameof(SecondaryButtonStyle), StyleTargetType = typeof(Button))]
     [StyleTypedProperty(Property = nameof(CloseButtonStyle), StyleTargetType = typeof(Button))]
-    public class ContentDialog : ContentControl
+    public partial class ContentDialog : ContentControl
     {
         static ContentDialog()
         {
@@ -59,292 +69,7 @@ namespace ModernWpf.Controls
             m_closeTimer.Tick += OnCloseTimerTick;
         }
 
-        #region Title
-
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(
-                nameof(Title),
-                typeof(object),
-                typeof(ContentDialog),
-                null);
-
-        public object Title
-        {
-            get => GetValue(TitleProperty);
-            set => SetValue(TitleProperty, value);
-        }
-
-        #endregion
-
-        #region TitleTemplate
-
-        public static readonly DependencyProperty TitleTemplateProperty =
-            DependencyProperty.Register(
-                nameof(TitleTemplate),
-                typeof(DataTemplate),
-                typeof(ContentDialog),
-                null);
-
-        public DataTemplate TitleTemplate
-        {
-            get => (DataTemplate)GetValue(TitleTemplateProperty);
-            set => SetValue(TitleTemplateProperty, value);
-        }
-
-        #endregion
-
-        #region PrimaryButtonText
-
-        public static readonly DependencyProperty PrimaryButtonTextProperty =
-            DependencyProperty.Register(
-                nameof(PrimaryButtonText),
-                typeof(string),
-                typeof(ContentDialog),
-                new PropertyMetadata(string.Empty, OnButtonTextChanged));
-
-        public string PrimaryButtonText
-        {
-            get => (string)GetValue(PrimaryButtonTextProperty);
-            set => SetValue(PrimaryButtonTextProperty, value);
-        }
-
-        #endregion
-
-        #region PrimaryButtonCommand
-
-        public static readonly DependencyProperty PrimaryButtonCommandProperty =
-            DependencyProperty.Register(
-                nameof(PrimaryButtonCommand),
-                typeof(ICommand),
-                typeof(ContentDialog),
-                null);
-
-        public ICommand PrimaryButtonCommand
-        {
-            get => (ICommand)GetValue(PrimaryButtonCommandProperty);
-            set => SetValue(PrimaryButtonCommandProperty, value);
-        }
-
-        #endregion
-
-        #region PrimaryButtonCommandParameter
-
-        public static readonly DependencyProperty PrimaryButtonCommandParameterProperty =
-            DependencyProperty.Register(
-                nameof(PrimaryButtonCommandParameter),
-                typeof(object),
-                typeof(ContentDialog),
-                null);
-
-        public object PrimaryButtonCommandParameter
-        {
-            get => GetValue(PrimaryButtonCommandParameterProperty);
-            set => SetValue(PrimaryButtonCommandParameterProperty, value);
-        }
-
-        #endregion
-
-        #region PrimaryButtonStyle
-
-        public static readonly DependencyProperty PrimaryButtonStyleProperty =
-            DependencyProperty.Register(
-                nameof(PrimaryButtonStyle),
-                typeof(Style),
-                typeof(ContentDialog),
-                null);
-
-        public Style PrimaryButtonStyle
-        {
-            get => (Style)GetValue(PrimaryButtonStyleProperty);
-            set => SetValue(PrimaryButtonStyleProperty, value);
-        }
-
-        #endregion
-
-        #region IsPrimaryButtonEnabled
-
-        public static readonly DependencyProperty IsPrimaryButtonEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsPrimaryButtonEnabled),
-                typeof(bool),
-                typeof(ContentDialog),
-                new PropertyMetadata(true));
-
-        public bool IsPrimaryButtonEnabled
-        {
-            get => (bool)GetValue(IsPrimaryButtonEnabledProperty);
-            set => SetValue(IsPrimaryButtonEnabledProperty, value);
-        }
-
-        #endregion
-
-        #region SecondaryButtonText
-
-        public static readonly DependencyProperty SecondaryButtonTextProperty =
-            DependencyProperty.Register(
-                nameof(SecondaryButtonText),
-                typeof(string),
-                typeof(ContentDialog),
-                new PropertyMetadata(string.Empty, OnButtonTextChanged));
-
-        public string SecondaryButtonText
-        {
-            get => (string)GetValue(SecondaryButtonTextProperty);
-            set => SetValue(SecondaryButtonTextProperty, value);
-        }
-
-        #endregion
-
-        #region SecondaryButtonCommand
-
-        public static readonly DependencyProperty SecondaryButtonCommandProperty =
-            DependencyProperty.Register(
-                nameof(SecondaryButtonCommand),
-                typeof(ICommand),
-                typeof(ContentDialog),
-                null);
-
-        public ICommand SecondaryButtonCommand
-        {
-            get => (ICommand)GetValue(SecondaryButtonCommandProperty);
-            set => SetValue(SecondaryButtonCommandProperty, value);
-        }
-
-        #endregion
-
-        #region SecondaryButtonCommandParameter
-
-        public static readonly DependencyProperty SecondaryButtonCommandParameterProperty =
-            DependencyProperty.Register(
-                nameof(SecondaryButtonCommandParameter),
-                typeof(object),
-                typeof(ContentDialog),
-                null);
-
-        public object SecondaryButtonCommandParameter
-        {
-            get => GetValue(SecondaryButtonCommandParameterProperty);
-            set => SetValue(SecondaryButtonCommandParameterProperty, value);
-        }
-
-        #endregion
-
-        #region SecondaryButtonStyle
-
-        public static readonly DependencyProperty SecondaryButtonStyleProperty =
-            DependencyProperty.Register(
-                nameof(SecondaryButtonStyle),
-                typeof(Style),
-                typeof(ContentDialog),
-                null);
-
-        public Style SecondaryButtonStyle
-        {
-            get => (Style)GetValue(SecondaryButtonStyleProperty);
-            set => SetValue(SecondaryButtonStyleProperty, value);
-        }
-
-        #endregion
-
-        #region IsSecondaryButtonEnabled
-
-        public static readonly DependencyProperty IsSecondaryButtonEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsSecondaryButtonEnabled),
-                typeof(bool),
-                typeof(ContentDialog),
-                new PropertyMetadata(true));
-
-        public bool IsSecondaryButtonEnabled
-        {
-            get => (bool)GetValue(IsSecondaryButtonEnabledProperty);
-            set => SetValue(IsSecondaryButtonEnabledProperty, value);
-        }
-
-        #endregion
-
-        #region CloseButtonText
-
-        public static readonly DependencyProperty CloseButtonTextProperty =
-            DependencyProperty.Register(
-                nameof(CloseButtonText),
-                typeof(string),
-                typeof(ContentDialog),
-                new PropertyMetadata(string.Empty, OnButtonTextChanged));
-
-        public string CloseButtonText
-        {
-            get => (string)GetValue(CloseButtonTextProperty);
-            set => SetValue(CloseButtonTextProperty, value);
-        }
-
-        #endregion
-
-        #region CloseButtonCommand
-
-        public static readonly DependencyProperty CloseButtonCommandProperty =
-            DependencyProperty.Register(
-                nameof(CloseButtonCommand),
-                typeof(ICommand),
-                typeof(ContentDialog),
-                null);
-
-        public ICommand CloseButtonCommand
-        {
-            get => (ICommand)GetValue(CloseButtonCommandProperty);
-            set => SetValue(CloseButtonCommandProperty, value);
-        }
-
-        #endregion
-
-        #region CloseButtonCommandParameter
-
-        public static readonly DependencyProperty CloseButtonCommandParameterProperty =
-            DependencyProperty.Register(
-                nameof(CloseButtonCommandParameter),
-                typeof(object),
-                typeof(ContentDialog),
-                null);
-
-        public object CloseButtonCommandParameter
-        {
-            get => GetValue(CloseButtonCommandParameterProperty);
-            set => SetValue(CloseButtonCommandParameterProperty, value);
-        }
-
-        #endregion
-
-        #region CloseButtonStyle
-
-        public static readonly DependencyProperty CloseButtonStyleProperty =
-            DependencyProperty.Register(
-                nameof(CloseButtonStyle),
-                typeof(Style),
-                typeof(ContentDialog),
-                null);
-
-        public Style CloseButtonStyle
-        {
-            get => (Style)GetValue(CloseButtonStyleProperty);
-            set => SetValue(CloseButtonStyleProperty, value);
-        }
-
-        #endregion
-
         #region DefaultButton
-
-        public static readonly DependencyProperty DefaultButtonProperty =
-            DependencyProperty.Register(
-                nameof(DefaultButton),
-                typeof(ContentDialogButton),
-                typeof(ContentDialog),
-                new PropertyMetadata(OnDefaultButtonChanged));
-
-        public ContentDialogButton DefaultButton
-        {
-            get => (ContentDialogButton)GetValue(DefaultButtonProperty);
-            set => SetValue(DefaultButtonProperty, value);
-        }
 
         private static void OnDefaultButtonChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -355,19 +80,6 @@ namespace ModernWpf.Controls
 
         #region FullSizeDesired
 
-        public static readonly DependencyProperty FullSizeDesiredProperty =
-            DependencyProperty.Register(
-                nameof(FullSizeDesired),
-                typeof(bool),
-                typeof(ContentDialog),
-                new PropertyMetadata(OnFullSizeDesiredChanged));
-
-        public bool FullSizeDesired
-        {
-            get => (bool)GetValue(FullSizeDesiredProperty);
-            set => SetValue(FullSizeDesiredProperty, value);
-        }
-
         private static void OnFullSizeDesiredChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             ((ContentDialog)d).UpdateVisualStates(true);
@@ -375,47 +87,7 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region CornerRadius
-
-        public static readonly DependencyProperty CornerRadiusProperty =
-            DependencyProperty.Register(
-                nameof(CornerRadius),
-                typeof(CornerRadius),
-                typeof(ContentDialog),
-                null);
-
-        public CornerRadius CornerRadius
-        {
-            get => (CornerRadius)GetValue(CornerRadiusProperty);
-            set => SetValue(CornerRadiusProperty, value);
-        }
-
-        #endregion
-
-        #region IsShadowEnabled
-
-        public static readonly DependencyProperty IsShadowEnabledProperty =
-            DependencyProperty.Register(
-                nameof(IsShadowEnabled),
-                typeof(bool),
-                typeof(ContentDialog),
-                new FrameworkPropertyMetadata(false));
-
-        public bool IsShadowEnabled
-        {
-            get => (bool)GetValue(IsShadowEnabledProperty);
-            set => SetValue(IsShadowEnabledProperty, value);
-        }
-
-        #endregion
-
         #region OpenDialog
-
-        private static readonly DependencyProperty OpenDialogProperty =
-            DependencyProperty.RegisterAttached(
-                "OpenDialog",
-                typeof(ContentDialog),
-                typeof(ContentDialog));
 
         private static ContentDialog GetOpenDialog(Window window)
         {
@@ -429,6 +101,32 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        protected override AutomationPeer OnCreateAutomationPeer()
+        {
+            return new ContentDialogAutomationPeer(this);
+        }
+
+        internal bool IsShowingForAutomation => IsShowing;
+
+        #region OpenInPlaceDialog
+
+        private static ContentDialog GetOpenInPlaceDialog(DependencyObject element)
+        {
+            return (ContentDialog)element.GetValue(OpenInPlaceDialogProperty);
+        }
+
+        private static void SetOpenInPlaceDialog(DependencyObject element, ContentDialog value)
+        {
+            element.SetValue(OpenInPlaceDialogProperty, value);
+        }
+
+        private static void ClearOpenInPlaceDialog(DependencyObject element)
+        {
+            element.ClearValue(OpenInPlaceDialogProperty);
+        }
+
+        #endregion
+
         public Window Owner { get; set; }
 
         private Window ActualOwner => Owner ?? SharedHelpers.GetActiveWindow();
@@ -436,6 +134,8 @@ namespace ModernWpf.Controls
         private Border Container { get; set; }
 
         private FrameworkElement LayoutRoot { get; set; }
+
+        private FrameworkElement CommandSpace { get; set; }
 
         private Button PrimaryButton { get; set; }
 
@@ -466,6 +166,16 @@ namespace ModernWpf.Controls
                         if (m_isShowingInPlace)
                         {
                             m_isShowingInPlace = false;
+
+                            if (m_openInPlaceDialogHost != null)
+                            {
+                                if (GetOpenInPlaceDialog(m_openInPlaceDialogHost) == this)
+                                {
+                                    ClearOpenInPlaceDialog(m_openInPlaceDialogHost);
+                                }
+
+                                m_openInPlaceDialogHost = null;
+                            }
                         }
                         else if (m_openDialogOwner != null)
                         {
@@ -567,7 +277,20 @@ namespace ModernWpf.Controls
                 {
                     ThrowAlreadyOpenException();
                 }
+
+                var inPlaceHost = Parent as DependencyObject;
+                if (inPlaceHost != null && GetOpenInPlaceDialog(inPlaceHost) != null)
+                {
+                    ThrowAlreadyOpenException();
+                }
+
                 RemovePopup();
+                if (inPlaceHost != null)
+                {
+                    SetOpenInPlaceDialog(inPlaceHost, this);
+                    m_openInPlaceDialogHost = inPlaceHost;
+                }
+
                 IsShowing = true;
                 m_isShowingInPlace = true;
                 return CreateAsyncOperation();
@@ -592,6 +315,12 @@ namespace ModernWpf.Controls
                 LayoutRoot.KeyDown -= OnLayoutRootKeyDown;
             }
 
+            if (CommandSpace != null)
+            {
+                CommandSpace.GotKeyboardFocus -= OnCommandSpaceKeyboardFocusChanged;
+                CommandSpace.LostKeyboardFocus -= OnCommandSpaceKeyboardFocusChanged;
+            }
+
             if (PrimaryButton != null)
             {
                 PrimaryButton.Click -= OnButtonClick;
@@ -611,6 +340,7 @@ namespace ModernWpf.Controls
 
             Container = GetTemplateChild(nameof(Container)) as Border;
             LayoutRoot = GetTemplateChild(nameof(LayoutRoot)) as FrameworkElement;
+            CommandSpace = GetTemplateChild(nameof(CommandSpace)) as FrameworkElement;
             PrimaryButton = GetTemplateChild(nameof(PrimaryButton)) as Button;
             SecondaryButton = GetTemplateChild(nameof(SecondaryButton)) as Button;
             CloseButton = GetTemplateChild(nameof(CloseButton)) as Button;
@@ -620,6 +350,12 @@ namespace ModernWpf.Controls
                 LayoutRoot.IsVisibleChanged += OnLayoutRootIsVisibleChanged;
                 LayoutRoot.Loaded += OnLayoutRootLoaded;
                 LayoutRoot.KeyDown += OnLayoutRootKeyDown;
+            }
+
+            if (CommandSpace != null)
+            {
+                CommandSpace.GotKeyboardFocus += OnCommandSpaceKeyboardFocusChanged;
+                CommandSpace.LostKeyboardFocus += OnCommandSpaceKeyboardFocusChanged;
             }
 
             if (PrimaryButton != null)
@@ -787,6 +523,11 @@ namespace ModernWpf.Controls
             HandleKeyDown(e);
         }
 
+        private void OnCommandSpaceKeyboardFocusChanged(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            UpdateDefaultButtonStates(true);
+        }
+
         private void OnCloseTimerTick(object sender, EventArgs e)
         {
             m_closeTimer.Stop();
@@ -828,25 +569,7 @@ namespace ModernWpf.Controls
                 case Key.Enter:
                     if (IsShowing)
                     {
-                        Button button = null;
-
-                        switch (DefaultButton)
-                        {
-                            case ContentDialogButton.Primary:
-                                button = PrimaryButton;
-                                break;
-                            case ContentDialogButton.Secondary:
-                                button = SecondaryButton;
-                                break;
-                            case ContentDialogButton.Close:
-                                button = CloseButton;
-                                break;
-                        }
-
-                        if (button == null)
-                        {
-                            button = PrimaryButton ?? SecondaryButton ?? CloseButton;
-                        }
+                        var button = GetDefaultButton();
 
                         if (button != null && button.IsEnabled)
                         {
@@ -857,9 +580,42 @@ namespace ModernWpf.Controls
                     break;
 
                 case Key.Escape:
-                    Hide();
+                    ExecuteCloseAction();
                     e.Handled = true;
                     break;
+            }
+        }
+
+        private Button GetDefaultButton()
+        {
+            switch (DefaultButton)
+            {
+                case ContentDialogButton.Primary:
+                    return PrimaryButton;
+                case ContentDialogButton.Secondary:
+                    return SecondaryButton;
+                case ContentDialogButton.Close:
+                    return CloseButton;
+                default:
+                    return null;
+            }
+        }
+
+        private void ExecuteCloseAction()
+        {
+            var didInvokeClose = false;
+
+            if (!string.IsNullOrEmpty(CloseButtonText) &&
+                CloseButton != null &&
+                CloseButton.IsEnabled)
+            {
+                OnButtonClick(CloseButton, null);
+                didInvokeClose = true;
+            }
+
+            if (!didInvokeClose)
+            {
+                Hide(ContentDialogResult.None);
             }
         }
 
@@ -934,18 +690,27 @@ namespace ModernWpf.Controls
         private void UpdateDefaultButtonStates(bool useTransitions)
         {
             string stateName = NoDefaultButtonState;
+            var defaultButton = GetDefaultButton();
 
-            switch (DefaultButton)
+            if (defaultButton != null)
             {
-                case ContentDialogButton.Primary:
-                    stateName = PrimaryAsDefaultButtonState;
-                    break;
-                case ContentDialogButton.Secondary:
-                    stateName = SecondaryAsDefaultButtonState;
-                    break;
-                case ContentDialogButton.Close:
-                    stateName = CloseAsDefaultButtonState;
-                    break;
+                bool isFocusInCommandArea = CommandSpace?.IsKeyboardFocusWithin == true;
+
+                if (!isFocusInCommandArea || defaultButton.IsKeyboardFocusWithin)
+                {
+                    switch (DefaultButton)
+                    {
+                        case ContentDialogButton.Primary:
+                            stateName = PrimaryAsDefaultButtonState;
+                            break;
+                        case ContentDialogButton.Secondary:
+                            stateName = SecondaryAsDefaultButtonState;
+                            break;
+                        case ContentDialogButton.Close:
+                            stateName = CloseAsDefaultButtonState;
+                            break;
+                    }
+                }
             }
 
             VisualStateManager.GoToState(this, stateName, useTransitions);
@@ -1009,7 +774,7 @@ namespace ModernWpf.Controls
                 if (openDialog != null)
                 {
                     e.Handled = true;
-                    openDialog.Hide();
+                    openDialog.ExecuteCloseAction();
                 }
             }
         }
@@ -1237,6 +1002,7 @@ namespace ModernWpf.Controls
         private bool m_opening;
         private bool m_isShowing;
         private bool m_isShowingInPlace;
+        private DependencyObject m_openInPlaceDialogHost;
         private Window m_openDialogOwner;
         private ContentDialogResult m_result;
         private readonly DispatcherTimer m_closeTimer;

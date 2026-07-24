@@ -1,4 +1,4 @@
-﻿using ModernWpf.Controls.Primitives;
+using ModernWpf.Controls.Primitives;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -45,7 +45,7 @@ namespace ModernWpf.Controls
         /// Identifies the CornerRadius dependency property.
         /// </summary>
         public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(ListViewBaseHeaderItem));
+            System.Windows.Controls.Border.CornerRadiusProperty.AddOwner(typeof(ListViewBaseHeaderItem));
 
         /// <summary>
         /// Gets or sets the radius for the corners of the control's border.

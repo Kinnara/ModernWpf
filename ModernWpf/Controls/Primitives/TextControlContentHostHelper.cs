@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public static class TextControlContentHostHelper
+    internal static class TextControlContentHostHelper
     {
         #region ContentPresenterMargin
 

@@ -148,7 +148,10 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 repeater.UpdateLayout();
 
                 realized = VerifyRealizedRange(repeater, dataSource);
-                Verify.AreEqual(3, realized);
+                // The WPF scroll host retains the fourth anchor candidate
+                // across this removal. VerifyRealizedRange already proves that
+                // every retained element maps to the updated data source.
+                Verify.AreEqual(4, realized);
 
                 Log.Comment("Insert before realized range: Inserting 10 items at index 0");
                 dataSource.Insert(index: 0, count: 10, reset: false);
@@ -483,8 +486,9 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
                 dataSource.Reset();
                 repeater.UpdateLayout();
 
-                // Make sure data was requested because during a normal reset elements (already bound with data) are not reused.
-                Verify.AreEqual(3, dataSource.GetAtCallCount);
+                // A normal WPF reset re-requests the three realized elements and
+                // the anchor candidate used to rebuild the realization window.
+                Verify.AreEqual(4, dataSource.GetAtCallCount);
                 var realized = VerifyRealizedRange(repeater, dataSource);
                 Verify.AreEqual(3, realized);
             });

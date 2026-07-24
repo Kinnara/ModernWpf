@@ -67,11 +67,6 @@
                                 HorizontalAlignment="Right"
                                 x:Name="DatePicker"
                                 ui:ControlHelper.Header="DatePicker Header" />
-                            <ui:SimpleTimePicker
-                                Grid.Row="3"
-                                HorizontalAlignment="Right"
-                                x:Name="TimePicker"
-                                Header="TimePicker Header" />
                             <ui:ToggleSwitch
                                 Grid.Row="4"
                                 HorizontalAlignment="Right"
@@ -166,9 +161,6 @@
                             <DatePicker
                                 Grid.Row="2"
                                 ui:ControlHelper.Header="DatePicker Header" />
-                            <ui:SimpleTimePicker
-                                Grid.Row="3"
-                                Header="TimePicker Header" />
                             <ui:ToggleSwitch
                                 Grid.Row="4"
                                 Header="Toggle work"
@@ -571,11 +563,6 @@
                             AutomationProperties.Name="DatePickerDensityTest"
                             Content="DatePicker"
                             Click="DatePickerDensityTest_Click" />
-                        <Button
-                            x:Name="TimePickerDensityTest"
-                            AutomationProperties.Name="TimePickerDensityTest"
-                            Content="TimePicker"
-                            Click="TimePickerDensityTest_Click" />
                         <Button
                             x:Name="AutoSuggestBoxDensityTest"
                             AutomationProperties.Name="AutoSuggestBoxDensityTest"

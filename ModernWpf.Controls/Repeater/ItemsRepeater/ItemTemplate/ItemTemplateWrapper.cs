@@ -8,7 +8,7 @@ using System.Windows.Shapes;
 
 namespace ModernWpf.Controls
 {
-    internal class ItemTemplateWrapper : IElementFactoryShim
+    internal class ItemTemplateWrapper : IElementFactory
     {
         public ItemTemplateWrapper(DataTemplate dataTemplate)
         {

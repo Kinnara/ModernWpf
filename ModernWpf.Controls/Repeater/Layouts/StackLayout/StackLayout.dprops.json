@@ -1,0 +1,38 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "StackLayout"
+  },
+  "properties": [
+    {
+      "name": "DisableVirtualization",
+      "type": "bool",
+      "default": "false",
+      "changed": "OnPropertyChanged",
+      "generateWrapper": false
+    },
+    {
+      "name": "IsVirtualizationEnabled",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnPropertyChanged"
+    },
+    {
+      "name": "Orientation",
+      "type": "Orientation",
+      "default": "Orientation.Vertical",
+      "changed": "OnPropertyChanged"
+    },
+    {
+      "name": "Spacing",
+      "type": "double",
+      "default": "0.0",
+      "changed": "OnPropertyChanged"
+    }
+  ]
+}

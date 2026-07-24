@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -121,6 +121,10 @@
     <value>See more</value>
     <comment>319-5102</comment>
   </data>
+  <data name="AppBarLessButtonName" xml:space="preserve">
+    <value>Less app bar</value>
+    <comment>Localized accessibility name for an expanded app bar's overflow button.</comment>
+  </data>
   <data name="AppBarMoreButtonName" xml:space="preserve">
     <value>More app bar</value>
     <comment>332-5305</comment>
@@ -132,6 +136,58 @@
   <data name="IgnoreMenuItemLabel" xml:space="preserve">
     <value>Ignore</value>
     <comment>5580</comment>
+  </data>
+  <data name="InfoBarCloseButtonName" xml:space="preserve">
+    <value>Close</value>
+    <comment>Automation name of the close button.</comment>
+  </data>
+  <data name="InfoBarCloseButtonTooltip" xml:space="preserve">
+    <value>Close</value>
+    <comment>The tooltip that appears on the Close button in InfoBar.</comment>
+  </data>
+  <data name="InfoBarClosedNotification" xml:space="preserve">
+    <value>InfoBar dismissed</value>
+    <comment>The string read by narrator when the InfoBar closes.</comment>
+  </data>
+  <data name="InfoBarCustomLandmarkName" xml:space="preserve">
+    <value>InfoBar</value>
+    <comment>This is the custom landmark used to denote an InfoBar to narrator.</comment>
+  </data>
+  <data name="InfoBarIconSeverityErrorName" xml:space="preserve">
+    <value>Error icon</value>
+    <comment>Automation name used to announce the severity error icon.</comment>
+  </data>
+  <data name="InfoBarIconSeverityInformationalName" xml:space="preserve">
+    <value>Informational icon</value>
+    <comment>Automation name used to announce the severity informational icon.</comment>
+  </data>
+  <data name="InfoBarIconSeveritySuccessName" xml:space="preserve">
+    <value>Success icon</value>
+    <comment>Automation name used to announce the severity success icon.</comment>
+  </data>
+  <data name="InfoBarIconSeverityWarningName" xml:space="preserve">
+    <value>Warning icon</value>
+    <comment>Automation name used to announce the severity warning icon.</comment>
+  </data>
+  <data name="InfoBarOpenedNotification" xml:space="preserve">
+    <value>{0} {1} {2}</value>
+    <comment>The formatted string read by narrator when the InfoBar opens: "{Severity level}, {Title} {Message}"</comment>
+  </data>
+  <data name="InfoBarSeverityErrorName" xml:space="preserve">
+    <value>Info message, severity error</value>
+    <comment>Name used to announce severity error to users.</comment>
+  </data>
+  <data name="InfoBarSeverityInformationalName" xml:space="preserve">
+    <value>Info message, severity informational</value>
+    <comment>Name used to announce severity informational to users.</comment>
+  </data>
+  <data name="InfoBarSeveritySuccessName" xml:space="preserve">
+    <value>Info message, severity success</value>
+    <comment>Name used to announce severity success to users.</comment>
+  </data>
+  <data name="InfoBarSeverityWarningName" xml:space="preserve">
+    <value>Info message, severity warning</value>
+    <comment>Name used to announce severity warning to users.</comment>
   </data>
   <data name="ToggleSwitchOff" xml:space="preserve">
     <value>Off</value>

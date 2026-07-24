@@ -1,42 +1,52 @@
-﻿<ResourceDictionary
+<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <Thickness x:Key="GroupBoxPadding">0,0,0,15</Thickness>
+    <Thickness x:Key="GroupBoxPadding">0,0,0,16</Thickness>
     <sys:Double x:Key="GroupBoxHeaderFontSize">20</sys:Double>
-    <Thickness x:Key="GroupBoxHeaderMargin">0,4,0,20</Thickness>
+    <Thickness x:Key="GroupBoxHeaderMargin">0,4,0,12</Thickness>
+    <Thickness x:Key="GroupBoxBorderThickness">0</Thickness>
 
-    <Style x:Key="DefaultGroupBoxStyle" TargetType="GroupBox">
+    <Style x:Key="DefaultGroupBoxStyle" TargetType="{x:Type GroupBox}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource GroupBoxBorderThickness}" />
+        <Setter Property="Background" Value="{DynamicResource GroupBoxBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource GroupBoxBorderBrush}" />
         <Setter Property="Padding" Value="{DynamicResource GroupBoxPadding}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="GroupBox">
-                    <Grid
+                <ControlTemplate TargetType="{x:Type GroupBox}">
+                    <Border
                         Background="{TemplateBinding Background}"
-                        SnapsToDevicePixels="true">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <ContentPresenter
-                            Grid.Row="0"
-                            TextElement.FontSize="{DynamicResource GroupBoxHeaderFontSize}"
-                            Margin="{DynamicResource GroupBoxHeaderMargin}"
-                            ContentSource="Header"
-                            RecognizesAccessKey="True"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        <ContentPresenter
-                            Grid.Row="1"
-                            Margin="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                    </Grid>
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ContentPresenter
+                                Grid.Row="0"
+                                Margin="{DynamicResource GroupBoxHeaderMargin}"
+                                ContentSource="Header"
+                                RecognizesAccessKey="True"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                TextElement.FontSize="{DynamicResource GroupBoxHeaderFontSize}"
+                                TextElement.Foreground="{DynamicResource GroupBoxHeaderForeground}" />
+                            <ContentPresenter
+                                Grid.Row="1"
+                                Margin="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Grid>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style TargetType="GroupBox" BasedOn="{StaticResource DefaultGroupBoxStyle}" />
+    <Style TargetType="{x:Type GroupBox}" BasedOn="{StaticResource DefaultGroupBoxStyle}" />
+
 </ResourceDictionary>

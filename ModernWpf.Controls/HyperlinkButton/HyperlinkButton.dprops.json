@@ -1,0 +1,38 @@
+{
+  "usings": [
+    "System",
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "HyperlinkButton"
+  },
+  "properties": [
+    {
+      "name": "NavigateUri",
+      "type": "Uri",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null"
+    },
+    {
+      "name": "UseSystemFocusVisuals",
+      "type": "bool",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty"
+    },
+    {
+      "name": "FocusVisualMargin",
+      "type": "Thickness",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty"
+    }
+  ]
+}

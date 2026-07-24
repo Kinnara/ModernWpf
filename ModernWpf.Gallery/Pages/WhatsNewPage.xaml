@@ -1,0 +1,271 @@
+<Page x:Class="ModernWpf.Gallery.Pages.WhatsNewPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:pages="clr-namespace:ModernWpf.Gallery.Pages"
+      xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
+      mc:Ignorable="d"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      d:DesignHeight="900"
+      d:DesignWidth="800"
+      Title="{StaticResource GalleryWhatsNewPageTitle}">
+    <Page.Resources>
+        <Style x:Key="UpdateCardStyle" TargetType="Border">
+            <Setter Property="Padding" Value="16" />
+            <Setter Property="Background" Value="{DynamicResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+        </Style>
+
+        <Style
+            x:Key="SectionHeadingStyle"
+            BasedOn="{StaticResource SubtitleTextBlockStyle}"
+            TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,0,0,12" />
+        </Style>
+    </Page.Resources>
+
+    <Grid x:Name="ContentPagePane" Height="Auto" Style="{StaticResource GalleryPageRootStyle}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <controls:PageHeader
+            Margin="0,0,0,32"
+            Description="{Binding ViewModel.PageDescription}"
+            ShowDescription="True"
+            Title="{Binding ViewModel.PageTitle}" />
+
+        <ScrollViewer
+            Grid.Row="1"
+            Margin="0,0,0,24"
+            Padding="0,0,24,0"
+            HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+                <Border
+                    x:Name="MaintenanceStatusCard"
+                    Margin="0,0,0,24"
+                    Style="{StaticResource UpdateCardStyle}">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Border
+                                Padding="10,5"
+                                Background="{DynamicResource AccentFillColorDefaultBrush}"
+                                CornerRadius="12">
+                                <TextBlock
+                                    Foreground="{DynamicResource TextOnAccentFillColorPrimaryBrush}"
+                                    FontWeight="SemiBold"
+                                    Text="1.x preview" />
+                            </Border>
+                            <TextBlock
+                                Margin="12,0,0,0"
+                                VerticalAlignment="Center"
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="Active maintenance line"
+                                pages:GalleryAutomation.HeadingLevel="Level2" />
+                        </StackPanel>
+                        <TextBlock
+                            Margin="0,12,0,0"
+                            Text="ModernWPF is restarting active maintenance on a new 1.x line. The package name remains ModernWpfUI, so existing apps can move forward without changing package identity."
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <TextBlock
+                    Style="{StaticResource SectionHeadingStyle}"
+                    Text="Supported targets"
+                    pages:GalleryAutomation.HeadingLevel="Level2" />
+
+                <Grid Margin="0,0,0,24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border
+                        x:Name="Net462TargetCard"
+                        MinHeight="136"
+                        Margin="0,0,8,0"
+                        Style="{StaticResource UpdateCardStyle}">
+                        <StackPanel>
+                            <TextBlock
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text=".NET Framework 4.6.2"
+                                TextWrapping="Wrap"
+                                pages:GalleryAutomation.HeadingLevel="Level3" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Opacity="0.7"
+                                Text="ModernWPF Fluent backport for existing .NET Framework WPF apps."
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border
+                        x:Name="Net8TargetCard"
+                        Grid.Column="1"
+                        MinHeight="136"
+                        Margin="4,0"
+                        Style="{StaticResource UpdateCardStyle}">
+                        <StackPanel>
+                            <TextBlock
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text=".NET 8 for Windows"
+                                TextWrapping="Wrap"
+                                pages:GalleryAutomation.HeadingLevel="Level3" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Opacity="0.7"
+                                Text="ModernWPF Fluent backport for the current LTS WPF target."
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border
+                        x:Name="Net10TargetCard"
+                        Grid.Column="2"
+                        MinHeight="136"
+                        Margin="8,0,0,0"
+                        Style="{StaticResource UpdateCardStyle}">
+                        <StackPanel>
+                            <TextBlock
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text=".NET 10 for Windows"
+                                TextWrapping="Wrap"
+                                pages:GalleryAutomation.HeadingLevel="Level3" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Opacity="0.7"
+                                Text="Platform WPF Fluent resources for stock controls, plus ModernWPF controls."
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <TextBlock
+                    Style="{StaticResource SectionHeadingStyle}"
+                    Text="Recommended resource setup"
+                    pages:GalleryAutomation.HeadingLevel="Level2" />
+                <TextBlock
+                    Margin="0,0,0,12"
+                    Text="Use the same application resource entry on every supported target. FluentControlsResources selects the ModernWPF backport or the platform WPF Fluent theme as appropriate."
+                    TextWrapping="Wrap" />
+
+                <controls:ControlExample
+                    x:Name="ResourceSetupExample"
+                    Margin="2,0,2,24"
+                    HeaderText="Application resources"
+                    XamlCode="{Binding ViewModel.RecommendedResourcesXamlCode}">
+                    <StackPanel MaxWidth="520" HorizontalAlignment="Left">
+                        <TextBlock
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            Text="ThemeResources" />
+                        <TextBlock
+                            Margin="0,4,0,0"
+                            Opacity="0.7"
+                            Text="Theme-aware colors, typography, and ModernWPF resources."
+                            TextWrapping="Wrap" />
+                        <Separator Margin="0,12" />
+                        <TextBlock
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            Text="FluentControlsResources" />
+                        <TextBlock
+                            Margin="0,4,0,0"
+                            Opacity="0.7"
+                            Text="The target-aware Fluent resource entry for stock WPF controls."
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </controls:ControlExample>
+
+                <TextBlock
+                    Style="{StaticResource SectionHeadingStyle}"
+                    Text="Gallery updates"
+                    pages:GalleryAutomation.HeadingLevel="Level2" />
+
+                <Grid Margin="0,0,0,24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border
+                        x:Name="WinUiShellUpdateCard"
+                        Margin="0,0,8,0"
+                        Style="{StaticResource UpdateCardStyle}">
+                        <StackPanel>
+                            <TextBlock
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="ModernWPF shell"
+                                TextWrapping="Wrap"
+                                pages:GalleryAutomation.HeadingLevel="Level3" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Opacity="0.7"
+                                Text="NavigationView-based left navigation, title bar, and search form a cohesive ModernWPF sample shell."
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border
+                        x:Name="CuratedSamplesUpdateCard"
+                        Grid.Column="1"
+                        Margin="4,0"
+                        Style="{StaticResource UpdateCardStyle}">
+                        <StackPanel>
+                            <TextBlock
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="Curated sample set"
+                                TextWrapping="Wrap"
+                                pages:GalleryAutomation.HeadingLevel="Level3" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Opacity="0.7"
+                                Text="Navigation focuses on controls and guidance that map cleanly to ModernWPF."
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border
+                        x:Name="TargetAwareUpdateCard"
+                        Grid.Column="2"
+                        Margin="8,0,0,0"
+                        Style="{StaticResource UpdateCardStyle}">
+                        <StackPanel>
+                            <TextBlock
+                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                Text="Target-aware behavior"
+                                TextWrapping="Wrap"
+                                pages:GalleryAutomation.HeadingLevel="Level3" />
+                            <TextBlock
+                                Margin="0,8,0,0"
+                                Opacity="0.7"
+                                Text="Guidance distinguishes ModernWPF backport behavior from .NET 10 platform Fluent behavior."
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <TextBlock
+                    Style="{StaticResource SectionHeadingStyle}"
+                    Text="New and updated samples"
+                    pages:GalleryAutomation.HeadingLevel="Level2" />
+                <TextBlock
+                    Margin="0,0,0,8"
+                    Text="These cards come from the current gallery catalog, so the list stays aligned as samples change."
+                    TextWrapping="Wrap" />
+                <ItemsControl
+                    x:Name="NewOrUpdatedSamples"
+                    Margin="-10,-7,0,16"
+                    AutomationProperties.Name="{StaticResource GalleryNewSamplesAutomationName}"
+                    ItemTemplate="{StaticResource NavigationCardTemplate}"
+                    ItemsPanel="{StaticResource WrapPanelTemplate}"
+                    ItemsSource="{Binding ViewModel.NewOrUpdatedItems}" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

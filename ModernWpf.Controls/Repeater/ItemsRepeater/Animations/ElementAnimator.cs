@@ -13,7 +13,7 @@ namespace ModernWpf.Controls
     // is correct (hide -> bounds change -> show).
     // It's possible to customize the animations by inheriting from ElementAnimator
     // and overriding virtual/abstract members.
-    public class ElementAnimator
+    internal class ElementAnimator
     {
         public event ElementAnimationCompleted ShowAnimationCompleted;
 
@@ -260,5 +260,5 @@ namespace ModernWpf.Controls
         private readonly List<ElementInfo> m_animatingElements = new List<ElementInfo>();
     }
 
-    public delegate void ElementAnimationCompleted(ElementAnimator sender, UIElement element);
+    internal delegate void ElementAnimationCompleted(ElementAnimator sender, UIElement element);
 }

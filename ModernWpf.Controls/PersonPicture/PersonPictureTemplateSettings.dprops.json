@@ -1,0 +1,15 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Media"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public sealed partial class",
+    "name": "PersonPictureTemplateSettings"
+  },
+  "properties": [
+    { "name": "ActualImageBrush", "type": "ImageBrush", "kind": "RegisterReadOnly", "metadata": "null" },
+    { "name": "ActualInitials", "type": "string", "kind": "RegisterReadOnly", "default": "string.Empty" }
+  ]
+}

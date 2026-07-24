@@ -1,0 +1,29 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls.Primitives",
+    "System.Windows.Input",
+    "ModernWpf.Controls.Primitives",
+    "ModernWpf.Media.Animation"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "SplitButton"
+  },
+  "properties": [
+    { "name": "CornerRadius", "type": "CornerRadius", "kind": "AddOwner", "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty" },
+    { "name": "UseSystemFocusVisuals", "type": "bool", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty" },
+    { "name": "FocusVisualMargin", "type": "Thickness", "kind": "AddOwner", "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty" },
+    { "name": "Command", "type": "ICommand", "kind": "AddOwner", "sourceProperty": "ButtonBase.CommandProperty" },
+    { "name": "CommandParameter", "type": "object", "kind": "AddOwner", "sourceProperty": "ButtonBase.CommandParameterProperty" },
+    { "name": "CommandTarget", "type": "IInputElement", "kind": "AddOwner", "sourceProperty": "ButtonBase.CommandTargetProperty" },
+    { "name": "ContentTransitions", "type": "TransitionCollection", "kind": "AddOwner", "sourceProperty": "ControlHelper.ContentTransitionsProperty" },
+    { "name": "Flyout", "type": "FlyoutBase", "changed": "OnFlyoutChanged" },
+    { "name": "PrimaryButtonIsPressed", "type": "bool", "metadataType": "FrameworkPropertyMetadata", "changed": "OnVisualPropertyChanged", "fieldAccessibility": "private", "generateWrapper": false, "registrationName": "PrimaryButtonIsPressed" },
+    { "name": "PrimaryButtonIsMouseOver", "type": "bool", "metadataType": "FrameworkPropertyMetadata", "changed": "OnVisualPropertyChanged", "fieldAccessibility": "private", "generateWrapper": false, "registrationName": "PrimaryButtonIsMouseOver" },
+    { "name": "SecondaryButtonIsPressed", "type": "bool", "metadataType": "FrameworkPropertyMetadata", "changed": "OnVisualPropertyChanged", "fieldAccessibility": "private", "generateWrapper": false, "registrationName": "SecondaryButtonIsPressed" },
+    { "name": "SecondaryButtonIsMouseOver", "type": "bool", "metadataType": "FrameworkPropertyMetadata", "changed": "OnVisualPropertyChanged", "fieldAccessibility": "private", "generateWrapper": false, "registrationName": "SecondaryButtonIsMouseOver" },
+    { "name": "FlyoutPlacement", "type": "FlyoutPlacementMode", "kind": "AddOwner", "sourceProperty": "FlyoutBase.PlacementProperty", "metadataType": "FrameworkPropertyMetadata", "changed": "OnFlyoutPlacementChanged", "fieldAccessibility": "private", "generateWrapper": false }
+  ]
+}

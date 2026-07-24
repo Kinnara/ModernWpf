@@ -1,9 +1,51 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <doc>
   <assembly>
     <name>ModernWpf.Controls</name>
   </assembly>
   <members>
+    <member name="T:ModernWpf.Automation.Peers.AppBarButtonAutomationPeer">
+      <summary>Exposes AppBarButton types to Microsoft UI Automation.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AppBarButtonAutomationPeer.#ctor(ModernWpf.Controls.AppBarButton)">
+      <summary>Initializes a new instance of the AppBarButtonAutomationPeer class.</summary>
+      <param name="owner">The AppBarButton control instance to create the peer for.</param>
+    </member>
+    <member name="P:ModernWpf.Automation.Peers.AppBarButtonAutomationPeer.ExpandCollapseState">
+      <summary>Gets the state, expanded or collapsed, of the control.</summary>
+      <returns>A value of the enumeration.</returns>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AppBarButtonAutomationPeer.Collapse">
+      <summary>Hides the control's flyout.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AppBarButtonAutomationPeer.Expand">
+      <summary>Displays the control's flyout.</summary>
+    </member>
+    <member name="T:ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer">
+      <summary>Exposes AppBarToggleButton types to Microsoft UI Automation.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer.#ctor(ModernWpf.Controls.AppBarToggleButton)">
+      <summary>Initializes a new instance of the AppBarToggleButtonAutomationPeer class.</summary>
+      <param name="owner">The AppBarToggleButton control instance to create the peer for.</param>
+    </member>
+    <member name="P:ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer.ToggleState">
+      <summary>Gets the toggle state of the control.</summary>
+      <returns>A value of the enumeration.</returns>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer.Toggle">
+      <summary>Cycles through the toggle states of a control.</summary>
+    </member>
+
+
+    <member name="T:ModernWpf.Automation.Peers.AutoSuggestBoxAutomationPeer">
+      <summary>Exposes AutoSuggestBox types to Microsoft UI Automation.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AutoSuggestBoxAutomationPeer.#ctor(ModernWpf.Controls.AutoSuggestBox)">
+      <summary>Initializes a new instance of the AutoSuggestBoxAutomationPeer class.</summary>
+    </member>
+    <member name="M:ModernWpf.Automation.Peers.AutoSuggestBoxAutomationPeer.Invoke">
+      <summary>Sends a request to activate a control and initiate its single, unambiguous action.</summary>
+    </member>
     <member name="T:ModernWpf.Automation.Peers.DropDownButtonAutomationPeer">
       <summary>Exposes DropDownButton types to Microsoft UI Automation.</summary>
     </member>
@@ -81,29 +123,25 @@
     <member name="M:ModernWpf.Automation.Peers.ToggleSplitButtonAutomationPeer.Toggle">
       <summary>Cycles through the toggle states of a control.</summary>
     </member>
-    <member name="T:ModernWpf.Controls.AnimationContext">
-      <summary>Defines constants that specify information about changes to a data collection that is useful for animating data elements.</summary>
-    </member>
-    <member name="F:ModernWpf.Controls.AnimationContext.CollectionChangeAdd">
-      <summary>An item was added to the collection.</summary>
-    </member>
-    <member name="F:ModernWpf.Controls.AnimationContext.CollectionChangeRemove">
-      <summary>An item was removed from the collection.</summary>
-    </member>
-    <member name="F:ModernWpf.Controls.AnimationContext.CollectionChangeReset">
-      <summary>The collection was reset.</summary>
-    </member>
-    <member name="F:ModernWpf.Controls.AnimationContext.LayoutTransition">
-      <summary>The layout of items was changed.</summary>
-    </member>
-    <member name="F:ModernWpf.Controls.AnimationContext.None">
-      <summary>There was no change.</summary>
-    </member>
+
+
+
+
+
+
     <member name="T:ModernWpf.Controls.AppBarButton">
       <summary>Represents a templated button control to be displayed in an AppBar.</summary>
     </member>
     <member name="M:ModernWpf.Controls.AppBarButton.#ctor">
       <summary>Initializes a new instance of the AppBarButton class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarButton.DynamicOverflowOrder">
+      <summary>Gets or sets the order in which this item is moved to the CommandBar overflow menu.</summary>
+      <returns>The order in which this item is moved to the overflow menu relative to other items.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarButton.DynamicOverflowOrderProperty">
+      <summary>Identifies the DynamicOverflowOrder dependency property.</summary>
+      <returns>The identifier for the DynamicOverflowOrder dependency property.</returns>
     </member>
     <member name="P:ModernWpf.Controls.AppBarButton.Icon">
       <summary>Gets or sets the graphic content of the app bar button.</summary>
@@ -181,6 +219,14 @@
     <member name="M:ModernWpf.Controls.AppBarSeparator.#ctor">
       <summary>Initializes a new instance of the AppBarSeparator class.</summary>
     </member>
+    <member name="P:ModernWpf.Controls.AppBarSeparator.DynamicOverflowOrder">
+      <summary>Gets or sets the order in which this item is moved to the CommandBar overflow menu.</summary>
+      <returns>The order in which this item is moved to the overflow menu relative to other items.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarSeparator.DynamicOverflowOrderProperty">
+      <summary>Identifies the DynamicOverflowOrder dependency property.</summary>
+      <returns>The identifier for the DynamicOverflowOrder dependency property.</returns>
+    </member>
     <member name="P:ModernWpf.Controls.AppBarSeparator.IsCompact">
       <summary>Gets or sets a value that indicates whether the separator is shown with reduced padding.</summary>
       <returns>**True** if the separator is shown in its compact state; otherwise, **false**. The default is **false**.</returns>
@@ -202,6 +248,14 @@
     </member>
     <member name="M:ModernWpf.Controls.AppBarToggleButton.#ctor">
       <summary>Initializes a new instance of the AppBarToggleButton class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.AppBarToggleButton.DynamicOverflowOrder">
+      <summary>Gets or sets the order in which this item is moved to the CommandBar overflow menu.</summary>
+      <returns>The order in which this item is moved to the overflow menu relative to other items.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AppBarToggleButton.DynamicOverflowOrderProperty">
+      <summary>Identifies the DynamicOverflowOrder dependency property.</summary>
+      <returns>The identifier for the DynamicOverflowOrder dependency property.</returns>
     </member>
     <member name="P:ModernWpf.Controls.AppBarToggleButton.Icon">
       <summary>Gets or sets the graphic content of the app bar toggle button.</summary>
@@ -249,6 +303,14 @@
     <member name="M:ModernWpf.Controls.AutoSuggestBox.#ctor">
       <summary>Initializes a new instance of the AutoSuggestBox class.</summary>
     </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.AutoMaximizeSuggestionArea">
+      <summary>Gets or sets a value that indicates whether the suggestion area is automatically maximized.</summary>
+      <returns>true if the suggestion area is automatically maximized; otherwise, false. The default is true.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.AutoMaximizeSuggestionAreaProperty">
+      <summary>Identifies the AutoMaximizeSuggestionArea dependency property.</summary>
+      <returns>Identifier for the AutoMaximizeSuggestionArea dependency property.</returns>
+    </member>
     <member name="P:ModernWpf.Controls.AutoSuggestBox.Description">
       <summary>Gets or sets content that is shown below the control. The content should provide guidance about the input expected by the control.</summary>
       <returns>The content to be displayed below the control. The default is **null**.</returns>
@@ -265,6 +327,14 @@
       <summary>Identifies the Header dependency property.</summary>
       <returns>The identifier for the Header dependency property.</returns>
     </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.HeaderPlacement">
+      <summary>Gets or sets a value that indicates where the header is placed.</summary>
+      <returns>A value that indicates where the header is placed. The default is Top.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.HeaderPlacementProperty">
+      <summary>Identifies the HeaderPlacement dependency property.</summary>
+      <returns>Identifier for the HeaderPlacement dependency property.</returns>
+    </member>
     <member name="P:ModernWpf.Controls.AutoSuggestBox.IsSuggestionListOpen">
       <summary>Gets or sets a Boolean value indicating whether the drop-down portion of the AutoSuggestBox is open.</summary>
       <returns>A Boolean value indicating whether the drop-down portion of the AutoSuggestBox is open.</returns>
@@ -272,6 +342,14 @@
     <member name="F:ModernWpf.Controls.AutoSuggestBox.IsSuggestionListOpenProperty">
       <summary>Identifies the IsSuggestionListOpen dependency property.</summary>
       <returns>Identifier for the IsSuggestionListOpen dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.AutoSuggestBox.LightDismissOverlayMode">
+      <summary>Gets or sets a value that indicates whether the light-dismiss overlay is shown.</summary>
+      <returns>A value that indicates whether the light-dismiss overlay is shown. The default is Auto.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.AutoSuggestBox.LightDismissOverlayModeProperty">
+      <summary>Identifies the LightDismissOverlayMode dependency property.</summary>
+      <returns>Identifier for the LightDismissOverlayMode dependency property.</returns>
     </member>
     <member name="P:ModernWpf.Controls.AutoSuggestBox.MaxSuggestionListHeight">
       <summary>Gets or set the maximum height for the drop-down portion of the AutoSuggestBox control.</summary>
@@ -398,6 +476,12 @@
     <member name="M:ModernWpf.Controls.CommandBar.#ctor">
       <summary>Initializes a new instance of the CommandBar class.</summary>
     </member>
+    <member name="E:ModernWpf.Controls.CommandBar.Closed">
+      <summary>Occurs after the CommandBar overflow closes.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.CommandBar.Closing">
+      <summary>Occurs when the CommandBar overflow starts to close.</summary>
+    </member>
     <member name="P:ModernWpf.Controls.CommandBar.CommandBarOverflowPresenterStyle">
       <summary>Gets or sets the Style applied to the overflow content of the CommandBar.</summary>
       <returns>The applied Style for the overflow content of the CommandBar, if present; otherwise, **null**. The default is **null**.</returns>
@@ -405,6 +489,14 @@
     <member name="F:ModernWpf.Controls.CommandBar.CommandBarOverflowPresenterStyleProperty">
       <summary>Identifies the CommandBarOverflowPresenterStyle dependency property.</summary>
       <returns>The identifier for the CommandBarOverflowPresenterStyle dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBar.CommandBarTemplateSettings">
+      <summary>Gets an object that provides calculated values that can be referenced as TemplateBinding sources when defining templates for a CommandBar.</summary>
+      <returns>An object that provides calculated values for CommandBar templates.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBar.CommandBarTemplateSettingsProperty">
+      <summary>Identifies the CommandBarTemplateSettings dependency property.</summary>
+      <returns>The identifier for the CommandBarTemplateSettings dependency property.</returns>
     </member>
     <member name="P:ModernWpf.Controls.CommandBar.DefaultLabelPosition">
       <summary>Gets or sets a value that indicates the placement and visibility of the labels on the command bar's buttons.</summary>
@@ -414,6 +506,9 @@
       <summary>Identifies the DefaultLabelPosition dependency property.</summary>
       <returns>The identifier for the DefaultLabelPosition dependency property.</returns>
     </member>
+    <member name="E:ModernWpf.Controls.CommandBar.DynamicOverflowItemsChanging">
+      <summary>Occurs before primary commands move into or out of the overflow menu.</summary>
+    </member>
     <member name="P:ModernWpf.Controls.CommandBar.IsDynamicOverflowEnabled">
       <summary>Gets or sets a value that indicates whether primary commands automatically move to the overflow menu when space is limited.</summary>
       <returns>**true** if primary commands automatically move to the overflow menu when space is limited; otherwise, **false**. The default is **true**.</returns>
@@ -421,6 +516,28 @@
     <member name="F:ModernWpf.Controls.CommandBar.IsDynamicOverflowEnabledProperty">
       <summary>Identifies the IsDynamicOverflowEnabled dependency property.</summary>
       <returns>The identifier for the IsDynamicOverflowEnabled dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBar.IsOpen">
+      <summary>Gets or sets a value that indicates whether the CommandBar overflow is open.</summary>
+      <returns>**true** if the overflow is open; otherwise, **false**. The default is **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBar.IsOpenProperty">
+      <summary>Identifies the IsOpen dependency property.</summary>
+      <returns>The identifier for the IsOpen dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBar.IsSticky">
+      <summary>Gets or sets a value that indicates whether the CommandBar ignores light-dismiss input.</summary>
+      <returns>**true** if the CommandBar ignores light-dismiss input; otherwise, **false**. The default is **false**.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBar.IsStickyProperty">
+      <summary>Identifies the IsSticky dependency property.</summary>
+      <returns>The identifier for the IsSticky dependency property.</returns>
+    </member>
+    <member name="E:ModernWpf.Controls.CommandBar.Opened">
+      <summary>Occurs after the CommandBar overflow opens.</summary>
+    </member>
+    <member name="E:ModernWpf.Controls.CommandBar.Opening">
+      <summary>Occurs when the CommandBar overflow starts to open.</summary>
     </member>
     <member name="P:ModernWpf.Controls.CommandBar.OverflowButtonVisibility">
       <summary>Gets or sets a value that indicates when a command bar's overflow button is shown.</summary>
@@ -438,6 +555,26 @@
       <summary>Gets the collection of secondary command elements for the CommandBar.</summary>
       <returns>The collection of secondary command elements for the CommandBar. The default is an empty collection.</returns>
     </member>
+    <member name="T:ModernWpf.Controls.CommandBarDynamicOverflowAction">
+      <summary>Defines constants that indicate whether commands are moving into or out of the CommandBar overflow menu.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBarDynamicOverflowAction.AddingToOverflow">
+      <summary>Commands are moving into the overflow menu.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.CommandBarDynamicOverflowAction.RemovingFromOverflow">
+      <summary>Commands are moving out of the overflow menu.</summary>
+    </member>
+    <member name="T:ModernWpf.Controls.DynamicOverflowItemsChangingEventArgs">
+      <summary>Provides data for the CommandBar.DynamicOverflowItemsChanging event.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.DynamicOverflowItemsChangingEventArgs.#ctor">
+      <summary>Initializes a new instance of the DynamicOverflowItemsChangingEventArgs class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.DynamicOverflowItemsChangingEventArgs.Action">
+      <summary>Gets a value that indicates whether commands are moving into or out of the overflow menu.</summary>
+      <returns>The dynamic overflow action.</returns>
+    </member>
+
     <member name="T:ModernWpf.Controls.CommandBarDefaultLabelPosition">
       <summary>Defines constants that specify the placement and visibility of AppBarButton labels in a CommandBar.</summary>
     </member>
@@ -455,6 +592,10 @@
     </member>
     <member name="M:ModernWpf.Controls.CommandBarFlyout.#ctor">
       <summary>Initializes a new instance of the CommandBarFlyout class.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.CommandBarFlyout.AlwaysExpanded">
+      <summary>Gets or sets whether the secondary commands remain expanded and the overflow button stays hidden while the flyout is open.</summary>
+      <returns><see langword="true" /> to keep the secondary commands expanded; otherwise, <see langword="false" />. The default is <see langword="false" />.</returns>
     </member>
     <member name="P:ModernWpf.Controls.CommandBarFlyout.PrimaryCommands">
       <summary>Gets the collection of primary command elements for the CommandBarFlyout.</summary>
@@ -485,11 +626,10 @@
     <member name="F:ModernWpf.Controls.CommandBarOverflowButtonVisibility.Visible">
       <summary>The overflow button is always shown.</summary>
     </member>
-    <member name="T:ModernWpf.Controls.CommandBarOverflowPresenter">
-      <summary>Displays the overflow content of a CommandBar.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.CommandBarOverflowPresenter.#ctor">
-      <summary>Initializes a new instance of the CommandBarOverflowPresenter class.</summary>
+
+
+    <member name="T:ModernWpf.Controls.Primitives.CommandBarTemplateSettings">
+      <summary>Provides calculated values that can be referenced as TemplateBinding sources when defining templates for a CommandBar.</summary>
     </member>
     <member name="T:ModernWpf.Controls.ContentDialog">
       <summary>Represents a dialog box that can be customized to contain checkboxes, hyperlinks, buttons and any other XAML content.</summary>
@@ -778,123 +918,30 @@
     <member name="M:ModernWpf.Controls.DropDownButton.#ctor">
       <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.DropDownButton?text=DropDownButton" /> class.</summary>
     </member>
-    <member name="T:ModernWpf.Controls.ElementAnimator">
-      <summary>Represents the base class for components that coordinate the animations of elements that are being conceptually added, repositioned/resized, or removed from the live visual tree.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.#ctor">
-      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.ElementAnimator?text=ElementAnimator" /> class.</summary>
-    </member>
-    <member name="E:ModernWpf.Controls.ElementAnimator.BoundsChangeAnimationCompleted">
-      <summary>Raised by a derived class to notify the framework that a bounds change animation has completed.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.HasBoundsChangeAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext,System.Windows.Rect,System.Windows.Rect)">
-      <summary>Determines whether a bounds change animation is being provided by this animator.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the reason for the animation.</param>
-      <param name="oldBounds">The old bounds used to arrange the element.</param>
-      <param name="newBounds">The new bounds used to arrange the element.</param>
-      <returns>true if the animation is being provided by this animator.; otherwise, false.</returns>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.HasBoundsChangeAnimationCore(System.Windows.UIElement,ModernWpf.Controls.AnimationContext,System.Windows.Rect,System.Windows.Rect)">
-      <summary>When implemented in a derived class, determines whether a bounds change animation is being provided by this animator.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the reason for the animation.</param>
-      <param name="oldBounds">The old bounds used to arrange the element.</param>
-      <param name="newBounds">The new bounds used to arrange the element.</param>
-      <returns>true if the animation is being provided by this animator; otherwise, false.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.ElementAnimator.HasBoundsChangeAnimationsPending">
-      <summary>Gets a value that indicates whether a bounds change animation is pending.</summary>
-      <returns>true if a bounds change animation is pending; otherwise, false.</returns>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.HasHideAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>Determines whether a hide animation is being provided by this animator.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the reason for the animation.</param>
-      <returns>true if the animation is being provided by this animator; otherwise, false.</returns>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.HasHideAnimationCore(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>When implemented in a derived class, determines whether a hide animation is being provided by this animator.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the reason for the animation.</param>
-      <returns>true if the animation is being provided by this animator; otherwise, false.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.ElementAnimator.HasHideAnimationsPending">
-      <summary>Gets a value that indicates whether a hide animation is pending.</summary>
-      <returns>true if a hide animation is pending; otherwise, false.</returns>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.HasShowAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>Determines whether a show animation is being provided by this animator.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the reason for the animation.</param>
-      <returns>true if the animation is being provided by this animator; otherwise, false.</returns>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.HasShowAnimationCore(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>When implemented in a derived class, determines whether a show animation is being provided by this animator.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the reason for the animation.</param>
-      <returns>true if the animation is being provided by this animator, false.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.ElementAnimator.HasShowAnimationsPending">
-      <summary>Gets a value that indicates whether a show animation is pending.</summary>
-      <returns>true if a show animation is pending; otherwise, false.</returns>
-    </member>
-    <member name="E:ModernWpf.Controls.ElementAnimator.HideAnimationCompleted">
-      <summary>Raised by a derived class to notify the framework that a hide animation has completed.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.OnBoundsChangeAnimationCompleted(System.Windows.UIElement)">
-      <summary>Called when a bounds changed animation completes.</summary>
-      <param name="element">The element that was animated.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.OnElementBoundsChanged(System.Windows.UIElement,ModernWpf.Controls.AnimationContext,System.Windows.Rect,System.Windows.Rect)">
-      <summary>Determines whether a bounds changed animation is needed, and prepares the animation if it is.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the change that is being animated.</param>
-      <param name="oldBounds">The old bounds used to arrange the element.</param>
-      <param name="newBounds">The new bounds used to arrange the element.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.OnElementHidden(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>Determines whether a hide animation is needed, and prepares the animation if it is.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the change that is being animated.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.OnElementShown(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>Determines whether a show animation is needed, and prepares the animation if it is.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the change that is being animated.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.OnHideAnimationCompleted(System.Windows.UIElement)">
-      <summary>Called when a hide animation completes.</summary>
-      <param name="element">The element that was animated.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.OnShowAnimationCompleted(System.Windows.UIElement)">
-      <summary>Called when a show animation completes.</summary>
-      <param name="element">The element that was animated.</param>
-    </member>
-    <member name="P:ModernWpf.Controls.ElementAnimator.SharedContext">
-      <summary>Gets the union of all animation contexts during the current tick.</summary>
-      <returns>The union of all animation contexts during the current tick.</returns>
-    </member>
-    <member name="E:ModernWpf.Controls.ElementAnimator.ShowAnimationCompleted">
-      <summary>Raised by a derived class to notify the framework that a show animation has completed.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.StartBoundsChangeAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext,System.Windows.Rect,System.Windows.Rect)">
-      <summary>Starts the animation to play when the bounds used to arrange an element change.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the change that is being animated.</param>
-      <param name="oldBounds">The old bounds used to arrange the element.</param>
-      <param name="newBounds">The new bounds used to arrange the element.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.StartHideAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>Starts the animation to play when an element is conceptually removed from the visual tree.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the change that is being animated.</param>
-    </member>
-    <member name="M:ModernWpf.Controls.ElementAnimator.StartShowAnimation(System.Windows.UIElement,ModernWpf.Controls.AnimationContext)">
-      <summary>Starts the animation to play when an element is conceptually added to the visual tree.</summary>
-      <param name="element">The element to animate.</param>
-      <param name="context">Information about the change that is being animated.</param>
-    </member>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <member name="T:ModernWpf.Controls.ElementFactory">
       <summary>Represents the base class for components that create and optionally recycle elements for use in a <see cref="ModernWpf.Controls.Layout?text=Layout" />.</summary>
     </member>
@@ -1005,11 +1052,27 @@
     </member>
     <member name="P:ModernWpf.Controls.FlowLayout.LineAlignment">
       <summary>Gets or sets a value that indicates how items are aligned on the non-scrolling or non-virtualizing axis.</summary>
-      <returns>An enumeration value that indicates how items are aligned. The default is Near.</returns>
+      <returns>An enumeration value that indicates how items are aligned. The default is Start.</returns>
     </member>
     <member name="F:ModernWpf.Controls.FlowLayout.LineAlignmentProperty">
       <summary>Identifies the <see cref="ModernWpf.Controls.FlowLayout.LineAlignment?text=LineAlignment" /> dependency property.</summary>
       <returns>The identifier for the <see cref="ModernWpf.Controls.FlowLayout.LineAlignment?text=LineAlignment" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.FlowLayout.LineSpacing">
+      <summary>Gets or sets the minimum space between lines of items.</summary>
+      <returns>The minimum space (in pixels) between lines of items. The default is 0.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.FlowLayout.LineSpacingProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.FlowLayout.LineSpacing?text=LineSpacing" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.FlowLayout.LineSpacing?text=LineSpacing" /> dependency property.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.FlowLayout.MinItemSpacing">
+      <summary>Gets or sets the minimum space between items in a line.</summary>
+      <returns>The minimum space (in pixels) between items in a line. The default is 0.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.FlowLayout.MinItemSpacingProperty">
+      <summary>Identifies the <see cref="ModernWpf.Controls.FlowLayout.MinItemSpacing?text=MinItemSpacing" /> dependency property.</summary>
+      <returns>The identifier for the <see cref="ModernWpf.Controls.FlowLayout.MinItemSpacing?text=MinItemSpacing" /> dependency property.</returns>
     </member>
     <member name="P:ModernWpf.Controls.FlowLayout.MinColumnSpacing">
       <summary>Gets or sets the minimum space between items on the horizontal axis.</summary>
@@ -1046,7 +1109,7 @@
     </member>
     <member name="P:ModernWpf.Controls.FlowLayout.Orientation">
       <summary>Gets or sets the axis along which items are laid out.</summary>
-      <returns>One of the enumeration values that specifies the axis along which items are laid out. The default is Vertical.</returns>
+      <returns>One of the enumeration values that specifies the axis along which items are laid out. The default is Horizontal.</returns>
     </member>
     <member name="F:ModernWpf.Controls.FlowLayout.OrientationProperty">
       <summary>Identifies the <see cref="ModernWpf.Controls.FlowLayout.Orientation?text=Orientation" /> dependency property.</summary>
@@ -1392,6 +1455,18 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <param name="index">The index of the item to get the key for.</param>
       <returns>The unique identifier (key) for the item at the specified index.</returns>
     </member>
+    <member name="T:ModernWpf.Controls.IndexBasedLayoutOrientation">
+      <summary>Defines constants that specify whether a layout's item indices map to a stable layout direction.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.IndexBasedLayoutOrientation.LeftToRight">
+      <summary>Item indices increase from left to right.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.IndexBasedLayoutOrientation.None">
+      <summary>No index-based layout orientation is specified.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.IndexBasedLayoutOrientation.TopToBottom">
+      <summary>Item indices increase from top to bottom.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.Layout">
       <summary>Represents the base class for an object that sizes and arranges child elements for a host.</summary>
     </member>
@@ -1403,6 +1478,10 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     </member>
     <member name="E:ModernWpf.Controls.Layout.ArrangeInvalidated">
       <summary>Occurs when the arrange state (layout) has been invalidated.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Layout.IndexBasedLayoutOrientation">
+      <summary>Gets the direction in which item indices increase for this layout.</summary>
+      <returns>An enumeration value that indicates the direction in which item indices increase. The default is None.</returns>
     </member>
     <member name="M:ModernWpf.Controls.Layout.InitializeForContext(ModernWpf.Controls.LayoutContext)">
       <summary>Initializes any per-container state the layout requires when it is attached to a UIElement container.</summary>
@@ -1422,6 +1501,10 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     </member>
     <member name="E:ModernWpf.Controls.Layout.MeasureInvalidated">
       <summary>Occurs when the measurement state (layout) has been invalidated.</summary>
+    </member>
+    <member name="M:ModernWpf.Controls.Layout.SetIndexBasedLayoutOrientation(ModernWpf.Controls.IndexBasedLayoutOrientation)">
+      <summary>Sets the direction in which item indices increase for this layout.</summary>
+      <param name="orientation">The direction in which item indices increase.</param>
     </member>
     <member name="M:ModernWpf.Controls.Layout.UninitializeForContext(ModernWpf.Controls.LayoutContext)">
       <summary>Removes any state the layout previously stored on the UIElement container.</summary>
@@ -1978,12 +2061,8 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     <member name="M:ModernWpf.Controls.NavigationViewItemSeparator.#ctor">
       <summary>Initializes a new instance of the NavigationViewItemSeparator class.</summary>
     </member>
-    <member name="T:ModernWpf.Controls.NavigationViewList">
-      <summary>Represents a control that displays menu items in a <see cref="ModernWpf.Controls.NavigationView?text=NavigationView" /> control.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.NavigationViewList.#ctor">
-      <summary>Initializes a new instance of the NavigationViewList class.</summary>
-    </member>
+
+
     <member name="T:ModernWpf.Controls.NavigationViewOverflowLabelMode">
       <summary>Defines constants that specify the label for the overflow button in a NavigationView.</summary>
     </member>
@@ -2266,6 +2345,14 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Identifies the Placement dependency property.</summary>
       <returns>The identifier for the Placement dependency property.</returns>
     </member>
+    <member name="P:ModernWpf.Controls.Primitives.FlyoutBase.Target">
+      <summary>Gets the element that is used as the flyout's placement target while the flyout is open.</summary>
+      <returns>The element that is used as the flyout's placement target.</returns>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutBase.TargetProperty">
+      <summary>Identifies the Target dependency property.</summary>
+      <returns>The identifier for the Target dependency property.</returns>
+    </member>
     <member name="E:ModernWpf.Controls.Primitives.FlyoutBase.Closed">
       <summary>Occurs when the flyout is hidden.</summary>
     </member>
@@ -2296,12 +2383,35 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Shows the flyout placed in relation to the specified element.</summary>
       <param name="placementTarget">The element to use as the flyout's placement target.</param>
     </member>
+    <member name="M:ModernWpf.Controls.Primitives.FlyoutBase.ShowAt(System.Windows.FrameworkElement,ModernWpf.Controls.Primitives.FlyoutShowOptions)">
+      <summary>Shows the flyout using the specified placement target and show options.</summary>
+      <param name="placementTarget">The element to use as the flyout's placement target.</param>
+      <param name="showOptions">Options that configure the flyout's placement, position, and show mode for this show request.</param>
+    </member>
     <member name="M:ModernWpf.Controls.Primitives.FlyoutBase.ShowAttachedFlyout(System.Windows.FrameworkElement)">
       <summary>Shows the flyout associated with the specified element, if any.</summary>
       <param name="flyoutOwner">The element for which to show the associated flyout.</param>
     </member>
+    <member name="T:ModernWpf.Controls.Primitives.FlyoutShowOptions">
+      <summary>Represents options used when showing a flyout.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.FlyoutShowOptions.ExclusionRect">
+      <summary>Gets or sets the rectangle to exclude when placing the flyout.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.FlyoutShowOptions.Placement">
+      <summary>Gets or sets the preferred placement for this show request.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.FlyoutShowOptions.Position">
+      <summary>Gets or sets the position at which to show the flyout, relative to the placement target.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.FlyoutShowOptions.ShowMode">
+      <summary>Gets or sets the show mode for this show request.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.Primitives.FlyoutPlacementMode">
       <summary>Defines constants that specify the preferred location for positioning a FlyoutBase derived control relative to a visual element.</summary>
+    </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutPlacementMode.Auto">
+      <summary>The default placement is used.</summary>
     </member>
     <member name="F:ModernWpf.Controls.Primitives.FlyoutPlacementMode.Bottom">
       <summary>The preferred location of the flyout is below the target element.</summary>
@@ -2330,6 +2440,9 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     <member name="F:ModernWpf.Controls.Primitives.FlyoutShowMode.Transient">
       <summary>Behavior is typical of a flyout shown proactively. The open flyout does not take focus. For a CommandBarFlyout, it opens in it's collapsed state.</summary>
     </member>
+    <member name="F:ModernWpf.Controls.Primitives.FlyoutShowMode.TransientWithDismissOnPointerMoveAway">
+      <summary>Behavior is typical of a flyout shown proactively. The open flyout does not take focus and hides when the pointer moves away.</summary>
+    </member>
     <member name="T:ModernWpf.Controls.Primitives.ProgressRingTemplateSettings">
       <summary>Provides calculated values that can be referenced as **TemplatedParent** sources when defining templates for a ProgressRing control. Not intended for general use.</summary>
     </member>
@@ -2345,14 +2458,10 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Gets the maximum bounding size of the progress ring as rendered.</summary>
       <returns>The maximum bounding size of the progress ring as rendered, in pixels.</returns>
     </member>
-    <member name="T:ModernWpf.Controls.Primitives.RadioButtonsListView" />
-    <member name="M:ModernWpf.Controls.Primitives.RadioButtonsListView.#ctor">
-      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.Primitives.RadioButtonsListView?text=RadioButtonsListView" /> class.</summary>
-    </member>
-    <member name="T:ModernWpf.Controls.Primitives.RadioButtonsListViewItem" />
-    <member name="M:ModernWpf.Controls.Primitives.RadioButtonsListViewItem.#ctor">
-      <summary>Initializes a new instance of the <see cref="ModernWpf.Controls.Primitives.RadioButtonsListViewItem?text=RadioButtonsListViewItem" /> class.</summary>
-    </member>
+
+
+
+
     <member name="T:ModernWpf.Controls.Primitives.SplitViewTemplateSettings">
       <summary>Provides calculated values that can be referenced as **TemplatedParent** sources when defining templates for a SplitView. Not intended for general use.</summary>
     </member>
@@ -2379,6 +2488,41 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     <member name="P:ModernWpf.Controls.Primitives.SplitViewTemplateSettings.OpenPaneLengthMinusCompactLength">
       <summary>Gets a value calculated by subtracting the CompactPaneLength value from the OpenPaneLength value.</summary>
       <returns>The value calculated by subtracting the CompactPaneLength value from the OpenPaneLength value.</returns>
+    </member>
+    <member name="T:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings">
+      <summary>Provides calculated values that can be referenced as **TemplatedParent** sources when defining templates for a ToggleSwitch control. Not intended for general use.</summary>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.CurtainCurrentToOffOffset">
+      <summary>Gets the current curtain offset from the Off position.</summary>
+      <returns>The current curtain offset from the Off position, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.CurtainCurrentToOnOffset">
+      <summary>Gets the current curtain offset from the On position.</summary>
+      <returns>The current curtain offset from the On position, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.CurtainOffToOnOffset">
+      <summary>Gets the curtain offset used when transitioning from Off to On.</summary>
+      <returns>The curtain offset used when transitioning from Off to On, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.CurtainOnToOffOffset">
+      <summary>Gets the curtain offset used when transitioning from On to Off.</summary>
+      <returns>The curtain offset used when transitioning from On to Off, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.KnobCurrentToOffOffset">
+      <summary>Gets the current knob offset from the Off position.</summary>
+      <returns>The current knob offset from the Off position, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.KnobCurrentToOnOffset">
+      <summary>Gets the current knob offset from the On position.</summary>
+      <returns>The current knob offset from the On position, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.KnobOffToOnOffset">
+      <summary>Gets the knob offset used when transitioning from Off to On.</summary>
+      <returns>The knob offset used when transitioning from Off to On, in pixels.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.Primitives.ToggleSwitchTemplateSettings.KnobOnToOffOffset">
+      <summary>Gets the knob offset used when transitioning from On to Off.</summary>
+      <returns>The knob offset used when transitioning from On to Off, in pixels.</returns>
     </member>
     <member name="T:ModernWpf.Controls.RadioButtons" />
     <member name="M:ModernWpf.Controls.RadioButtons.#ctor">
@@ -2493,7 +2637,7 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     </member>
     <member name="P:ModernWpf.Controls.RatingControl.PlaceholderValue">
       <summary>Gets or sets the rating that is displayed in the control until the value is changed by a user action or some other operation.</summary>
-      <returns>The rating that is displayed in the control when no value is entered. The default is null.</returns>
+      <returns>The rating that is displayed when no value is entered. Zero and fractional values are valid; negative values use the -1 unset sentinel. The default is -1.</returns>
     </member>
     <member name="F:ModernWpf.Controls.RatingControl.PlaceholderValueProperty">
       <summary>Identifies the PlaceholderValue dependency property.</summary>
@@ -2510,60 +2654,20 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Identifies the Value dependency property.</summary>
       <returns>The identifier for Value dependency property.</returns>
     </member>
-    <member name="T:ModernWpf.Controls.RatingItemFontInfo">
-      <summary>Represents information about the visual states of font elements that represent a rating.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.RatingItemFontInfo.#ctor">
-      <summary>Initializes a new instance of the RatingItemFontInfo class.</summary>
-    </member>
-    <member name="P:ModernWpf.Controls.RatingItemFontInfo.DisabledGlyph">
-      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that is disabled.</summary>
-      <returns>The hexadecimal character code for the rating element glyph.</returns>
-    </member>
-    <member name="F:ModernWpf.Controls.RatingItemFontInfo.DisabledGlyphProperty">
-      <summary>Identifies the DisabledGlyph dependency property.</summary>
-      <returns>The identifier for DisabledGlyph dependency property.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.RatingItemFontInfo.Glyph">
-      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that has been set by the user.</summary>
-      <returns>The hexadecimal character code for the rating element glyph.</returns>
-    </member>
-    <member name="F:ModernWpf.Controls.RatingItemFontInfo.GlyphProperty">
-      <summary>Identifies the Glyph dependency property.</summary>
-      <returns>The identifier for Glyph dependency property.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.RatingItemFontInfo.PlaceholderGlyph">
-      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that is showing a placeholder value.</summary>
-      <returns>The hexadecimal character code for the rating element glyph.</returns>
-    </member>
-    <member name="F:ModernWpf.Controls.RatingItemFontInfo.PlaceholderGlyphProperty">
-      <summary>Identifies the PlaceholderGlyph dependency property.</summary>
-      <returns>The identifier for PlaceholderGlyph dependency property.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.RatingItemFontInfo.PointerOverGlyph">
-      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that has the pointer over it.</summary>
-      <returns>The hexadecimal character code for the rating element glyph.</returns>
-    </member>
-    <member name="F:ModernWpf.Controls.RatingItemFontInfo.PointerOverGlyphProperty">
-      <summary>Identifies the PointerOverGlyph dependency property.</summary>
-      <returns>The identifier for PointerOverGlyph dependency property.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.RatingItemFontInfo.PointerOverPlaceholderGlyph">
-      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element showing a placeholder value with the pointer over it.</summary>
-      <returns>The hexadecimal character code for the rating element glyph.</returns>
-    </member>
-    <member name="F:ModernWpf.Controls.RatingItemFontInfo.PointerOverPlaceholderGlyphProperty">
-      <summary>Identifies the PointerOverPlaceholderGlyph dependency property.</summary>
-      <returns>The identifier for PointerOverPlaceholderGlyph dependency property.</returns>
-    </member>
-    <member name="P:ModernWpf.Controls.RatingItemFontInfo.UnsetGlyph">
-      <summary>Gets or sets a Segoe MDL2 Assets font glyph that represents a rating element that has not been set.</summary>
-      <returns>The hexadecimal character code for the rating element glyph.</returns>
-    </member>
-    <member name="F:ModernWpf.Controls.RatingItemFontInfo.UnsetGlyphProperty">
-      <summary>Identifies the UnsetGlyph dependency property.</summary>
-      <returns>The identifier for UnsetGlyph dependency property.</returns>
-    </member>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <member name="T:ModernWpf.Controls.RatingItemImageInfo">
       <summary>Represents information about the visual states of image elements that represent a rating.</summary>
     </member>
@@ -2618,12 +2722,8 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
       <summary>Identifies the UnsetImage dependency property.</summary>
       <returns>The identifier for UnsetImage dependency property.</returns>
     </member>
-    <member name="T:ModernWpf.Controls.RatingItemInfo">
-      <summary>Represents information about the visual states of the elements that represent a rating.</summary>
-    </member>
-    <member name="M:ModernWpf.Controls.RatingItemInfo.#ctor">
-      <summary>Initializes a new instance of the RatingItemInfo class.</summary>
-    </member>
+
+
     <member name="T:ModernWpf.Controls.RecyclePool">
       <summary>Represents a cache of elements that can be re-used to display data items.</summary>
     </member>
@@ -3334,6 +3434,14 @@ Use the ItemsRepeaterScrollHost if your app will run on versions of Windows prio
     <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.RealizationRectCore">
       <summary>When implemented in a derived class, retrieves an area that represents the viewport and buffer that the layout should fill with realized elements.</summary>
       <returns>An area that represents the viewport and buffer that the layout should fill with realized elements.</returns>
+    </member>
+    <member name="P:ModernWpf.Controls.VirtualizingLayoutContext.VisibleRect">
+      <summary>Gets the visible viewport area for the layout.</summary>
+      <returns>The visible viewport area for the layout.</returns>
+    </member>
+    <member name="M:ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore">
+      <summary>When implemented in a derived class, retrieves the visible viewport area for the layout.</summary>
+      <returns>The visible viewport area for the layout.</returns>
     </member>
     <member name="P:ModernWpf.Controls.VirtualizingLayoutContext.RecommendedAnchorIndex">
       <summary>Gets the recommended index from which to start the generation and layout of elements.</summary>

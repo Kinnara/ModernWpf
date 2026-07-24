@@ -1,16 +1,17 @@
-﻿using System;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class CommandBarOverflowPanel : ToolBarOverflowPanel
+    internal class CommandBarOverflowPanel : Panel
     {
         public CommandBarOverflowPanel()
         {
             Loaded += OnLoaded;
         }
+
+        internal CommandBar OwnerCommandBar { get; set; }
 
         internal bool HasToggleButton { get; private set; }
 
@@ -18,54 +19,55 @@ namespace ModernWpf.Controls.Primitives
 
         protected override Size MeasureOverride(Size constraint)
         {
-            base.MeasureOverride(constraint);
+            UpdateChildrenApplicationViewState();
 
-            Size stackDesiredSize = new Size();
+            Size desiredSize = new();
             UIElementCollection children = InternalChildren;
-            Size layoutSlotSize = constraint;
-
-            layoutSlotSize.Height = double.PositiveInfinity;
+            Size childConstraint = constraint;
+            childConstraint.Height = double.PositiveInfinity;
 
             for (int i = 0, count = children.Count; i < count; ++i)
             {
                 UIElement child = children[i];
 
-                if (child == null) { continue; }
-
-                if (child is AppBarSeparator separator && IsPrimaryCommand(separator))
+                if (child == null)
                 {
-                    UpdateSeparatorVisibility(i, separator);
+                    continue;
                 }
 
-                child.Measure(layoutSlotSize);
+                child.Measure(childConstraint);
                 Size childDesiredSize = child.DesiredSize;
 
-                stackDesiredSize.Width = Math.Max(stackDesiredSize.Width, childDesiredSize.Width);
-                stackDesiredSize.Height += childDesiredSize.Height;
+                desiredSize.Width = Math.Max(desiredSize.Width, childDesiredSize.Width);
+                desiredSize.Height += childDesiredSize.Height;
             }
 
-            return stackDesiredSize;
+            return desiredSize;
         }
 
         protected override Size ArrangeOverride(Size arrangeBounds)
         {
             UIElementCollection children = InternalChildren;
-            Rect rcChild = new Rect(arrangeBounds);
-            double previousChildSize = 0.0;
+            Rect childBounds = new(arrangeBounds);
+            double previousChildHeight = 0.0;
 
             for (int i = 0, count = children.Count; i < count; ++i)
             {
                 UIElement child = children[i];
 
-                if (child == null) { continue; }
+                if (child == null)
+                {
+                    continue;
+                }
 
-                rcChild.Y += previousChildSize;
-                previousChildSize = child.DesiredSize.Height;
-                rcChild.Height = previousChildSize;
-                rcChild.Width = Math.Max(arrangeBounds.Width, child.DesiredSize.Width);
+                childBounds.Y += previousChildHeight;
+                previousChildHeight = child.DesiredSize.Height;
+                childBounds.Height = previousChildHeight;
+                childBounds.Width = Math.Max(arrangeBounds.Width, child.DesiredSize.Width);
 
-                child.Arrange(rcChild);
+                child.Arrange(childBounds);
             }
+
             return arrangeBounds;
         }
 
@@ -73,18 +75,21 @@ namespace ModernWpf.Controls.Primitives
         {
             base.OnVisualChildrenChanged(visualAdded, visualRemoved);
 
-            if (visualAdded != null)
+            if (visualRemoved is DependencyObject removedElement)
             {
-                UpdateChildrenApplicationViewState();
+                AppBarElementProperties.SetUseOverflowStyle(removedElement, false);
+
+                if (removedElement is IAppBarButtonElement appBarButtonElement)
+                {
+                    appBarButtonElement.SetOverflowStyleParams(false, false, false);
+                    appBarButtonElement.UpdateTemplateSettings(0);
+                }
             }
 
-            if (visualRemoved is AppBarSeparator separator && IsPrimaryCommand(separator))
-            {
-                RestoreSeparatorVisibility(separator);
-            }
+            UpdateChildrenApplicationViewState();
         }
 
-        private void UpdateChildrenApplicationViewState()
+        internal void UpdateChildrenApplicationViewState()
         {
             bool hasToggleButton = false;
             bool hasMenuIcon = false;
@@ -95,7 +100,7 @@ namespace ModernWpf.Controls.Primitives
             {
                 UIElement child = children[i];
 
-                if (!child.IsVisible)
+                if (child == null || !child.IsVisible)
                 {
                     continue;
                 }
@@ -129,45 +134,10 @@ namespace ModernWpf.Controls.Primitives
             HasToggleButton = hasToggleButton;
             HasMenuIcon = hasMenuIcon;
 
-            for (int i = 0, count = children.Count; i < count; ++i)
-            {
-                UIElement child = children[i];
-
-                if (child is IAppBarElement element)
-                {
-                    element.UpdateApplicationViewState();
-                }
-            }
-        }
-
-        private bool IsPrimaryCommand(DependencyObject element)
-        {
-            return ToolBar.GetOverflowMode(element) != OverflowMode.Always;
-        }
-
-        private void UpdateSeparatorVisibility(int index, AppBarSeparator separator)
-        {
-            var visibility = separator.Visibility;
-            if (index == 0)
-            {
-                if (visibility == Visibility.Visible)
-                {
-                    separator.SetCurrentValue(VisibilityProperty, Visibility.Collapsed);
-                }
-            }
-            else
-            {
-                RestoreSeparatorVisibility(separator);
-            }
-        }
-
-        private void RestoreSeparatorVisibility(AppBarSeparator separator)
-        {
-            if (separator.Visibility == Visibility.Collapsed &&
-                DependencyPropertyHelper.GetValueSource(separator, VisibilityProperty).IsCurrent)
-            {
-                separator.InvalidateProperty(VisibilityProperty);
-            }
+            AppBarElementProperties.UpdateOverflowStyleParams(
+                children,
+                true,
+                OwnerCommandBar?.GetInputModeForOverflowCommands() ?? AppBarButtonInputMode.Default);
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

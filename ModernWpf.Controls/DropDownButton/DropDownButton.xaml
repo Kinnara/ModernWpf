@@ -19,69 +19,119 @@
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="UseSystemFocusVisuals" Value="{DynamicResource UseSystemFocusVisuals}" />
-        <Setter Property="FocusVisualMargin" Value="-3" />
+        <!-- The WPF desired width is one DIP narrower while rasterizing to the same
+             resting pixels as WinUI. Extend only the focus adorner's right edge so
+             its physical ring retains WinUI's width as well. -->
+        <Setter Property="FocusVisualMargin" Value="-3,-3,-4,-3" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
         <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
+        <Setter Property="ui:ButtonHelper.VisualStateSettersEnabled" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:DropDownButton">
                     <ControlTemplate.Resources>
                         <StreamGeometry x:Key="ChevronDownSmall">F1 M 17.568359 3.408203 L 19.931641 5.761719 L 10 15.693359 L 0.068359 5.761719 L 2.431641 3.408203 L 10 10.976562 L 17.568359 3.408203 Z</StreamGeometry>
                     </ControlTemplate.Resources>
-                    <Border x:Name="RootBorder"
+                    <ui:GridEx x:Name="RootGrid"
                         Padding="{TemplateBinding Padding}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         Background="{TemplateBinding Background}"
+                        BackgroundSizing="{TemplateBinding BackgroundSizing}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
 
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                        <ui:GridEx.BackgroundTransition>
+                            <ui:BrushTransition Duration="0:0:0.083" />
+                        </ui:GridEx.BackgroundTransition>
 
-                            <ContentPresenter
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <ui:VisualStateEx x:Name="PointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource ButtonForegroundPointerOver}" />
+                                        <ui:VisualStateSetter Target="ChevronIcon.Foreground" Value="{DynamicResource DropDownButtonForegroundSecondaryPointerOver}" />
+                                        <ui:VisualStateSetter Target="ChevronIcon.(ui:AnimatedIcon.State)" Value="PointerOver" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Pressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource ButtonBackgroundPressed}" />
+                                        <ui:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource ButtonBorderBrushPressed}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
+                                        <ui:VisualStateSetter Target="ChevronIcon.Foreground" Value="{DynamicResource DropDownButtonForegroundSecondaryPressed}" />
+                                        <ui:VisualStateSetter Target="ChevronIcon.(ui:AnimatedIcon.State)" Value="Pressed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="RootGrid.Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
+                                        <ui:VisualStateSetter Target="RootGrid.BorderBrush" Value="{DynamicResource ButtonBorderBrushDisabled}" />
+                                        <ui:VisualStateSetter Target="ContentPresenter.Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="ChevronIcon.Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
+                                        <ui:VisualStateSetter Target="ChevronIcon.(ui:AnimatedIcon.State)" Value="Normal" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <StackPanel
+                            x:Name="ContentPanel"
+                            Orientation="Horizontal"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                            <ui:ContentPresenterEx
                                 x:Name="ContentPresenter"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                CharacterSpacing="{TemplateBinding CharacterSpacing}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                Foreground="{TemplateBinding Foreground}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                IsTextScaleFactorEnabled="{TemplateBinding IsTextScaleFactorEnabled}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Focusable="False"
                                 RecognizesAccessKey="True"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}">
+                                <!-- WPF's AccessText baseline rasterizes one physical pixel lower than
+                                     WinUI's ContentPresenter when this presenter is centered by a
+                                     horizontal StackPanel. Keep layout sizing unchanged and align only
+                                     the rendered content. -->
+                                <ui:ContentPresenterEx.RenderTransform>
+                                    <TranslateTransform Y="-1" />
+                                </ui:ContentPresenterEx.RenderTransform>
+                            </ui:ContentPresenterEx>
 
                             <ui:FontIconFallback
                                 x:Name="ChevronIcon"
-                                Grid.Column="1"
+                                Width="12"
+                                Height="12"
                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                 FontSize="8"
+                                Foreground="{DynamicResource DropDownButtonForegroundSecondary}"
                                 Data="{StaticResource ChevronDownSmall}"
                                 VerticalAlignment="Center"
-                                Padding="2,4,2,0"
-                                Margin="8,0,0,0" />
-                        </Grid>
+                                Margin="8,0,0,0"
+                                ui:AnimatedIcon.State="Normal">
+                                <!-- The WPF button's 77-DIP layout rasterizes to the same 78 physical
+                                     pixels as WinUI. Offset only the fallback glyph so it shares the
+                                     WinUI chevron column without changing that correct outer extent. -->
+                                <ui:FontIconFallback.RenderTransform>
+                                    <TranslateTransform X="1" />
+                                </ui:FontIconFallback.RenderTransform>
+                            </ui:FontIconFallback>
+                        </StackPanel>
 
-                    </Border>
-
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ButtonBackgroundPointerOver}" />
-                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPointerOver}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ButtonForegroundPointerOver}" />
-                        </Trigger>
-                        <Trigger Property="IsPressed" Value="True">
-                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ButtonBackgroundPressed}" />
-                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushPressed}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ButtonForegroundPressed}" />
-                            <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource DropDownButtonForegroundSecondaryPressed}" />
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="RootBorder" Property="Background" Value="{DynamicResource ButtonBackgroundDisabled}" />
-                            <Setter TargetName="RootBorder" Property="BorderBrush" Value="{DynamicResource ButtonBorderBrushDisabled}" />
-                            <Setter TargetName="ContentPresenter" Property="TextElement.Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
-                            <Setter TargetName="ChevronIcon" Property="Foreground" Value="{DynamicResource ButtonForegroundDisabled}" />
-                        </Trigger>
-                    </ControlTemplate.Triggers>
+                    </ui:GridEx>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

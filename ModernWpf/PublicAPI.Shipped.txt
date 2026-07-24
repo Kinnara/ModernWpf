@@ -1,0 +1,1551 @@
+#nullable enable
+ModernWpf.ApplicationTheme
+ModernWpf.ApplicationTheme.Dark = 1 -> ModernWpf.ApplicationTheme
+ModernWpf.ApplicationTheme.Light = 0 -> ModernWpf.ApplicationTheme
+ModernWpf.Automation.Peers.ProgressBarAutomationPeer
+ModernWpf.ColorPaletteResources
+ModernWpf.ColorPaletteResources.Accent.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.Accent.set -> void
+ModernWpf.ColorPaletteResources.AltHigh.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.AltHigh.set -> void
+ModernWpf.ColorPaletteResources.AltLow.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.AltLow.set -> void
+ModernWpf.ColorPaletteResources.AltMedium.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.AltMedium.set -> void
+ModernWpf.ColorPaletteResources.AltMediumHigh.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.AltMediumHigh.set -> void
+ModernWpf.ColorPaletteResources.AltMediumLow.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.AltMediumLow.set -> void
+ModernWpf.ColorPaletteResources.BaseHigh.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.BaseHigh.set -> void
+ModernWpf.ColorPaletteResources.BaseLow.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.BaseLow.set -> void
+ModernWpf.ColorPaletteResources.BaseMedium.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.BaseMedium.set -> void
+ModernWpf.ColorPaletteResources.BaseMediumHigh.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.BaseMediumHigh.set -> void
+ModernWpf.ColorPaletteResources.BaseMediumLow.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.BaseMediumLow.set -> void
+ModernWpf.ColorPaletteResources.BeginInit() -> void
+ModernWpf.ColorPaletteResources.ChromeAltLow.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeAltLow.set -> void
+ModernWpf.ColorPaletteResources.ChromeBlackHigh.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeBlackHigh.set -> void
+ModernWpf.ColorPaletteResources.ChromeBlackLow.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeBlackLow.set -> void
+ModernWpf.ColorPaletteResources.ChromeBlackMedium.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeBlackMedium.set -> void
+ModernWpf.ColorPaletteResources.ChromeBlackMediumLow.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeBlackMediumLow.set -> void
+ModernWpf.ColorPaletteResources.ChromeDisabledHigh.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeDisabledHigh.set -> void
+ModernWpf.ColorPaletteResources.ChromeDisabledLow.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeDisabledLow.set -> void
+ModernWpf.ColorPaletteResources.ChromeGray.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeGray.set -> void
+ModernWpf.ColorPaletteResources.ChromeHigh.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeHigh.set -> void
+ModernWpf.ColorPaletteResources.ChromeLow.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeLow.set -> void
+ModernWpf.ColorPaletteResources.ChromeMedium.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeMedium.set -> void
+ModernWpf.ColorPaletteResources.ChromeMediumLow.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeMediumLow.set -> void
+ModernWpf.ColorPaletteResources.ChromeWhite.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ChromeWhite.set -> void
+ModernWpf.ColorPaletteResources.ColorPaletteResources() -> void
+ModernWpf.ColorPaletteResources.EndInit() -> void
+ModernWpf.ColorPaletteResources.ErrorText.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ErrorText.set -> void
+ModernWpf.ColorPaletteResources.ListLow.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ListLow.set -> void
+ModernWpf.ColorPaletteResources.ListMedium.get -> System.Windows.Media.Color?
+ModernWpf.ColorPaletteResources.ListMedium.set -> void
+ModernWpf.ColorPaletteResources.TargetTheme.get -> ModernWpf.ApplicationTheme?
+ModernWpf.ColorPaletteResources.TargetTheme.set -> void
+ModernWpf.Controls.AnimatedIcon
+ModernWpf.Controls.BackgroundSizing
+ModernWpf.Controls.BackgroundSizing.InnerBorderEdge = 0 -> ModernWpf.Controls.BackgroundSizing
+ModernWpf.Controls.BackgroundSizing.OuterBorderEdge = 1 -> ModernWpf.Controls.BackgroundSizing
+ModernWpf.Controls.BackRequestedEventArgs
+ModernWpf.Controls.BitmapIcon
+ModernWpf.Controls.BitmapIcon.BitmapIcon() -> void
+ModernWpf.Controls.BitmapIcon.ShowAsMonochrome.get -> bool
+ModernWpf.Controls.BitmapIcon.ShowAsMonochrome.set -> void
+ModernWpf.Controls.BitmapIconSource
+ModernWpf.Controls.BitmapIconSource.BitmapIconSource() -> void
+ModernWpf.Controls.BitmapIconSource.ShowAsMonochrome.get -> bool
+ModernWpf.Controls.BitmapIconSource.ShowAsMonochrome.set -> void
+ModernWpf.Controls.BorderEx
+ModernWpf.Controls.BorderEx.BackgroundSizing.get -> ModernWpf.Controls.BackgroundSizing
+ModernWpf.Controls.BorderEx.BackgroundSizing.set -> void
+ModernWpf.Controls.BorderEx.BorderEx() -> void
+ModernWpf.Controls.BrushTransition
+ModernWpf.Controls.BrushTransition.BrushTransition() -> void
+ModernWpf.Controls.BrushTransition.Duration.get -> System.TimeSpan
+ModernWpf.Controls.BrushTransition.Duration.set -> void
+ModernWpf.Controls.CanvasEx
+ModernWpf.Controls.CanvasEx.CanvasEx() -> void
+ModernWpf.Controls.ContentControlEx
+ModernWpf.Controls.ContentControlEx.BackgroundSizing.get -> ModernWpf.Controls.BackgroundSizing
+ModernWpf.Controls.ContentControlEx.BackgroundSizing.set -> void
+ModernWpf.Controls.ContentControlEx.CharacterSpacing.get -> int
+ModernWpf.Controls.ContentControlEx.CharacterSpacing.set -> void
+ModernWpf.Controls.ContentControlEx.ContentControlEx() -> void
+ModernWpf.Controls.ContentControlEx.CornerRadius.get -> System.Windows.CornerRadius
+ModernWpf.Controls.ContentControlEx.CornerRadius.set -> void
+ModernWpf.Controls.ContentControlEx.IsTextScaleFactorEnabled.get -> bool
+ModernWpf.Controls.ContentControlEx.IsTextScaleFactorEnabled.set -> void
+ModernWpf.Controls.ContentControlEx.RecognizesAccessKey.get -> bool
+ModernWpf.Controls.ContentControlEx.RecognizesAccessKey.set -> void
+ModernWpf.Controls.ContentPresenterEx
+ModernWpf.Controls.ContentPresenterEx.BackgroundSizing.get -> ModernWpf.Controls.BackgroundSizing
+ModernWpf.Controls.ContentPresenterEx.BackgroundSizing.set -> void
+ModernWpf.Controls.ContentPresenterEx.BorderThickness.get -> System.Windows.Thickness
+ModernWpf.Controls.ContentPresenterEx.BorderThickness.set -> void
+ModernWpf.Controls.ContentPresenterEx.CharacterSpacing.get -> int
+ModernWpf.Controls.ContentPresenterEx.CharacterSpacing.set -> void
+ModernWpf.Controls.ContentPresenterEx.ContentPresenterEx() -> void
+ModernWpf.Controls.ContentPresenterEx.CornerRadius.get -> System.Windows.CornerRadius
+ModernWpf.Controls.ContentPresenterEx.CornerRadius.set -> void
+ModernWpf.Controls.ContentPresenterEx.FontSize.get -> double
+ModernWpf.Controls.ContentPresenterEx.FontSize.set -> void
+ModernWpf.Controls.ContentPresenterEx.FontStretch.get -> System.Windows.FontStretch
+ModernWpf.Controls.ContentPresenterEx.FontStretch.set -> void
+ModernWpf.Controls.ContentPresenterEx.FontStyle.get -> System.Windows.FontStyle
+ModernWpf.Controls.ContentPresenterEx.FontStyle.set -> void
+ModernWpf.Controls.ContentPresenterEx.FontWeight.get -> System.Windows.FontWeight
+ModernWpf.Controls.ContentPresenterEx.FontWeight.set -> void
+ModernWpf.Controls.ContentPresenterEx.HorizontalContentAlignment.get -> System.Windows.HorizontalAlignment
+ModernWpf.Controls.ContentPresenterEx.HorizontalContentAlignment.set -> void
+ModernWpf.Controls.ContentPresenterEx.IsTextScaleFactorEnabled.get -> bool
+ModernWpf.Controls.ContentPresenterEx.IsTextScaleFactorEnabled.set -> void
+ModernWpf.Controls.ContentPresenterEx.LineHeight.get -> double
+ModernWpf.Controls.ContentPresenterEx.LineHeight.set -> void
+ModernWpf.Controls.ContentPresenterEx.LineStackingStrategy.get -> System.Windows.LineStackingStrategy
+ModernWpf.Controls.ContentPresenterEx.LineStackingStrategy.set -> void
+ModernWpf.Controls.ContentPresenterEx.MaxLines.get -> int
+ModernWpf.Controls.ContentPresenterEx.MaxLines.set -> void
+ModernWpf.Controls.ContentPresenterEx.OpticalMarginAlignment.get -> ModernWpf.OpticalMarginAlignment
+ModernWpf.Controls.ContentPresenterEx.OpticalMarginAlignment.set -> void
+ModernWpf.Controls.ContentPresenterEx.Padding.get -> System.Windows.Thickness
+ModernWpf.Controls.ContentPresenterEx.Padding.set -> void
+ModernWpf.Controls.ContentPresenterEx.TextLineBounds.get -> ModernWpf.TextLineBounds
+ModernWpf.Controls.ContentPresenterEx.TextLineBounds.set -> void
+ModernWpf.Controls.ContentPresenterEx.TextWrapping.get -> System.Windows.TextWrapping
+ModernWpf.Controls.ContentPresenterEx.TextWrapping.set -> void
+ModernWpf.Controls.ContentPresenterEx.VerticalContentAlignment.get -> System.Windows.VerticalAlignment
+ModernWpf.Controls.ContentPresenterEx.VerticalContentAlignment.set -> void
+ModernWpf.Controls.ControlEx
+ModernWpf.Controls.ControlEx.ControlEx() -> void
+ModernWpf.Controls.ControlEx.CornerRadius.get -> System.Windows.CornerRadius
+ModernWpf.Controls.ControlEx.CornerRadius.set -> void
+ModernWpf.Controls.FluentControlsResources
+ModernWpf.Controls.FluentControlsResources.FluentControlsResources() -> void
+ModernWpf.Controls.FluentControlsResources.UseCompactResources.get -> bool
+ModernWpf.Controls.FluentControlsResources.UseCompactResources.set -> void
+ModernWpf.Controls.FontIcon
+ModernWpf.Controls.FontIcon.FontIcon() -> void
+ModernWpf.Controls.FontIcon.FontSize.get -> double
+ModernWpf.Controls.FontIcon.FontSize.set -> void
+ModernWpf.Controls.FontIcon.FontStyle.get -> System.Windows.FontStyle
+ModernWpf.Controls.FontIcon.FontStyle.set -> void
+ModernWpf.Controls.FontIcon.FontWeight.get -> System.Windows.FontWeight
+ModernWpf.Controls.FontIcon.FontWeight.set -> void
+ModernWpf.Controls.FontIcon.IsTextScaleFactorEnabled.get -> bool
+ModernWpf.Controls.FontIcon.IsTextScaleFactorEnabled.set -> void
+ModernWpf.Controls.FontIcon.MirroredWhenRightToLeft.get -> bool
+ModernWpf.Controls.FontIcon.MirroredWhenRightToLeft.set -> void
+ModernWpf.Controls.FontIconFallback
+ModernWpf.Controls.FontIconFallback.FontIconFallback() -> void
+ModernWpf.Controls.FontIconSource
+ModernWpf.Controls.FontIconSource.FontIconSource() -> void
+ModernWpf.Controls.FontIconSource.FontSize.get -> double
+ModernWpf.Controls.FontIconSource.FontSize.set -> void
+ModernWpf.Controls.FontIconSource.FontStyle.get -> System.Windows.FontStyle
+ModernWpf.Controls.FontIconSource.FontStyle.set -> void
+ModernWpf.Controls.FontIconSource.FontWeight.get -> System.Windows.FontWeight
+ModernWpf.Controls.FontIconSource.FontWeight.set -> void
+ModernWpf.Controls.FontIconSource.IsTextScaleFactorEnabled.get -> bool
+ModernWpf.Controls.FontIconSource.IsTextScaleFactorEnabled.set -> void
+ModernWpf.Controls.FontIconSource.MirroredWhenRightToLeft.get -> bool
+ModernWpf.Controls.FontIconSource.MirroredWhenRightToLeft.set -> void
+ModernWpf.Controls.Frame
+ModernWpf.Controls.Frame.BackStackDepth.get -> int
+ModernWpf.Controls.Frame.Frame() -> void
+ModernWpf.Controls.GridEx
+ModernWpf.Controls.GridEx.BackgroundSizing.get -> ModernWpf.Controls.BackgroundSizing
+ModernWpf.Controls.GridEx.BackgroundSizing.set -> void
+ModernWpf.Controls.GridEx.BorderThickness.get -> System.Windows.Thickness
+ModernWpf.Controls.GridEx.BorderThickness.set -> void
+ModernWpf.Controls.GridEx.ColumnSpacing.get -> double
+ModernWpf.Controls.GridEx.ColumnSpacing.set -> void
+ModernWpf.Controls.GridEx.CornerRadius.get -> System.Windows.CornerRadius
+ModernWpf.Controls.GridEx.CornerRadius.set -> void
+ModernWpf.Controls.GridEx.GridEx() -> void
+ModernWpf.Controls.GridEx.Padding.get -> System.Windows.Thickness
+ModernWpf.Controls.GridEx.Padding.set -> void
+ModernWpf.Controls.GridEx.RowSpacing.get -> double
+ModernWpf.Controls.GridEx.RowSpacing.set -> void
+ModernWpf.Controls.IconElement
+ModernWpf.Controls.IconElementConverter
+ModernWpf.Controls.IconElementConverter.IconElementConverter() -> void
+ModernWpf.Controls.IconSource
+ModernWpf.Controls.IconSource.IconSource() -> void
+ModernWpf.Controls.ImageIcon
+ModernWpf.Controls.ImageIcon.ImageIcon() -> void
+ModernWpf.Controls.ImageIconSource
+ModernWpf.Controls.ImageIconSource.ImageIconSource() -> void
+ModernWpf.Controls.ItemsStackPanel
+ModernWpf.Controls.ItemsStackPanel.AreStickyGroupHeadersEnabled.get -> bool
+ModernWpf.Controls.ItemsStackPanel.AreStickyGroupHeadersEnabled.set -> void
+ModernWpf.Controls.ItemsStackPanel.CacheLength.get -> double
+ModernWpf.Controls.ItemsStackPanel.CacheLength.set -> void
+ModernWpf.Controls.ItemsStackPanel.FirstCacheIndex.get -> int
+ModernWpf.Controls.ItemsStackPanel.FirstVisibleIndex.get -> int
+ModernWpf.Controls.ItemsStackPanel.GroupHeaderPlacement.get -> ModernWpf.Controls.Primitives.GroupHeaderPlacement
+ModernWpf.Controls.ItemsStackPanel.GroupHeaderPlacement.set -> void
+ModernWpf.Controls.ItemsStackPanel.GroupPadding.get -> System.Windows.Thickness
+ModernWpf.Controls.ItemsStackPanel.GroupPadding.set -> void
+ModernWpf.Controls.ItemsStackPanel.ItemsStackPanel() -> void
+ModernWpf.Controls.ItemsStackPanel.ItemsUpdatingScrollMode.get -> ModernWpf.Controls.ItemsUpdatingScrollMode
+ModernWpf.Controls.ItemsStackPanel.ItemsUpdatingScrollMode.set -> void
+ModernWpf.Controls.ItemsStackPanel.LastCacheIndex.get -> int
+ModernWpf.Controls.ItemsStackPanel.LastVisibleIndex.get -> int
+ModernWpf.Controls.ItemsStackPanel.Orientation.get -> System.Windows.Controls.Orientation
+ModernWpf.Controls.ItemsStackPanel.Orientation.set -> void
+ModernWpf.Controls.ItemsStackPanel.ScrollingDirection.get -> ModernWpf.Controls.PanelScrollingDirection
+ModernWpf.Controls.ItemsUpdatingScrollMode
+ModernWpf.Controls.ItemsUpdatingScrollMode.KeepItemsInView = 0 -> ModernWpf.Controls.ItemsUpdatingScrollMode
+ModernWpf.Controls.ItemsUpdatingScrollMode.KeepLastItemInView = 2 -> ModernWpf.Controls.ItemsUpdatingScrollMode
+ModernWpf.Controls.ItemsUpdatingScrollMode.KeepScrollOffset = 1 -> ModernWpf.Controls.ItemsUpdatingScrollMode
+ModernWpf.Controls.ItemsWrapGrid
+ModernWpf.Controls.ItemsWrapGrid.AreStickyGroupHeadersEnabled.get -> bool
+ModernWpf.Controls.ItemsWrapGrid.AreStickyGroupHeadersEnabled.set -> void
+ModernWpf.Controls.ItemsWrapGrid.CacheLength.get -> double
+ModernWpf.Controls.ItemsWrapGrid.CacheLength.set -> void
+ModernWpf.Controls.ItemsWrapGrid.FirstCacheIndex.get -> int
+ModernWpf.Controls.ItemsWrapGrid.FirstVisibleIndex.get -> int
+ModernWpf.Controls.ItemsWrapGrid.GroupHeaderPlacement.get -> ModernWpf.Controls.Primitives.GroupHeaderPlacement
+ModernWpf.Controls.ItemsWrapGrid.GroupHeaderPlacement.set -> void
+ModernWpf.Controls.ItemsWrapGrid.GroupPadding.get -> System.Windows.Thickness
+ModernWpf.Controls.ItemsWrapGrid.GroupPadding.set -> void
+ModernWpf.Controls.ItemsWrapGrid.ItemHeight.get -> double
+ModernWpf.Controls.ItemsWrapGrid.ItemHeight.set -> void
+ModernWpf.Controls.ItemsWrapGrid.ItemsWrapGrid() -> void
+ModernWpf.Controls.ItemsWrapGrid.ItemWidth.get -> double
+ModernWpf.Controls.ItemsWrapGrid.ItemWidth.set -> void
+ModernWpf.Controls.ItemsWrapGrid.LastCacheIndex.get -> int
+ModernWpf.Controls.ItemsWrapGrid.LastVisibleIndex.get -> int
+ModernWpf.Controls.ItemsWrapGrid.MaximumRowsOrColumns.get -> int
+ModernWpf.Controls.ItemsWrapGrid.MaximumRowsOrColumns.set -> void
+ModernWpf.Controls.ItemsWrapGrid.Orientation.get -> System.Windows.Controls.Orientation
+ModernWpf.Controls.ItemsWrapGrid.Orientation.set -> void
+ModernWpf.Controls.ItemsWrapGrid.ScrollingDirection.get -> ModernWpf.Controls.PanelScrollingDirection
+ModernWpf.Controls.ListViewBaseHeaderItem
+ModernWpf.Controls.ListViewBaseHeaderItem.CornerRadius.get -> System.Windows.CornerRadius
+ModernWpf.Controls.ListViewBaseHeaderItem.CornerRadius.set -> void
+ModernWpf.Controls.ListViewBaseHeaderItem.UseSystemFocusVisuals.get -> bool
+ModernWpf.Controls.ListViewBaseHeaderItem.UseSystemFocusVisuals.set -> void
+ModernWpf.Controls.ListViewHeaderItem
+ModernWpf.Controls.ListViewHeaderItem.ListViewHeaderItem() -> void
+ModernWpf.Controls.Page
+ModernWpf.Controls.Page.Page() -> void
+ModernWpf.Controls.PanelScrollingDirection
+ModernWpf.Controls.PanelScrollingDirection.Backward = 2 -> ModernWpf.Controls.PanelScrollingDirection
+ModernWpf.Controls.PanelScrollingDirection.Forward = 1 -> ModernWpf.Controls.PanelScrollingDirection
+ModernWpf.Controls.PanelScrollingDirection.None = 0 -> ModernWpf.Controls.PanelScrollingDirection
+ModernWpf.Controls.PasswordRevealMode
+ModernWpf.Controls.PasswordRevealMode.Hidden = 1 -> ModernWpf.Controls.PasswordRevealMode
+ModernWpf.Controls.PasswordRevealMode.Peek = 0 -> ModernWpf.Controls.PasswordRevealMode
+ModernWpf.Controls.PasswordRevealMode.Visible = 2 -> ModernWpf.Controls.PasswordRevealMode
+ModernWpf.Controls.PathIcon
+ModernWpf.Controls.PathIcon.PathIcon() -> void
+ModernWpf.Controls.PathIconSource
+ModernWpf.Controls.PathIconSource.PathIconSource() -> void
+ModernWpf.Controls.Primitives.BindingProxy
+ModernWpf.Controls.Primitives.BindingProxy.BindingProxy() -> void
+ModernWpf.Controls.Primitives.BorderHelper
+ModernWpf.Controls.Primitives.ButtonHelper
+ModernWpf.Controls.Primitives.CalendarHelper
+ModernWpf.Controls.Primitives.ColumnDefinitionHelper
+ModernWpf.Controls.Primitives.ControlHelper
+ModernWpf.Controls.Primitives.CornerRadiusFilterConverter
+ModernWpf.Controls.Primitives.CornerRadiusFilterConverter.Convert(System.Windows.CornerRadius radius, ModernWpf.Controls.Primitives.CornerRadiusFilterKind filterKind) -> System.Windows.CornerRadius
+ModernWpf.Controls.Primitives.CornerRadiusFilterConverter.CornerRadiusFilterConverter() -> void
+ModernWpf.Controls.Primitives.CornerRadiusFilterConverter.Filter.get -> ModernWpf.Controls.Primitives.CornerRadiusFilterKind
+ModernWpf.Controls.Primitives.CornerRadiusFilterConverter.Filter.set -> void
+ModernWpf.Controls.Primitives.CornerRadiusFilterConverter.Scale.get -> double
+ModernWpf.Controls.Primitives.CornerRadiusFilterConverter.Scale.set -> void
+ModernWpf.Controls.Primitives.CornerRadiusFilterKind
+ModernWpf.Controls.Primitives.CornerRadiusFilterKind.Bottom = 3 -> ModernWpf.Controls.Primitives.CornerRadiusFilterKind
+ModernWpf.Controls.Primitives.CornerRadiusFilterKind.BottomRightValue = 6 -> ModernWpf.Controls.Primitives.CornerRadiusFilterKind
+ModernWpf.Controls.Primitives.CornerRadiusFilterKind.Left = 4 -> ModernWpf.Controls.Primitives.CornerRadiusFilterKind
+ModernWpf.Controls.Primitives.CornerRadiusFilterKind.None = 0 -> ModernWpf.Controls.Primitives.CornerRadiusFilterKind
+ModernWpf.Controls.Primitives.CornerRadiusFilterKind.Right = 2 -> ModernWpf.Controls.Primitives.CornerRadiusFilterKind
+ModernWpf.Controls.Primitives.CornerRadiusFilterKind.Top = 1 -> ModernWpf.Controls.Primitives.CornerRadiusFilterKind
+ModernWpf.Controls.Primitives.CornerRadiusFilterKind.TopLeftValue = 5 -> ModernWpf.Controls.Primitives.CornerRadiusFilterKind
+ModernWpf.Controls.Primitives.FocusVisualHelper
+ModernWpf.Controls.Primitives.GroupHeaderPlacement
+ModernWpf.Controls.Primitives.GroupHeaderPlacement.Left = 1 -> ModernWpf.Controls.Primitives.GroupHeaderPlacement
+ModernWpf.Controls.Primitives.GroupHeaderPlacement.Top = 0 -> ModernWpf.Controls.Primitives.GroupHeaderPlacement
+ModernWpf.Controls.Primitives.HyperlinkHelper
+ModernWpf.Controls.Primitives.IScrollSnapPointsInfo
+ModernWpf.Controls.Primitives.IScrollSnapPointsInfo.AreHorizontalSnapPointsRegular.get -> bool
+ModernWpf.Controls.Primitives.IScrollSnapPointsInfo.AreVerticalSnapPointsRegular.get -> bool
+ModernWpf.Controls.Primitives.IScrollSnapPointsInfo.GetRegularSnapPoints(System.Windows.Controls.Orientation orientation, ModernWpf.Controls.Primitives.SnapPointsAlignment alignment, out float offset) -> float
+ModernWpf.Controls.Primitives.IScrollSnapPointsInfo.HorizontalSnapPointsChanged -> System.EventHandler<object>
+ModernWpf.Controls.Primitives.IScrollSnapPointsInfo.VerticalSnapPointsChanged -> System.EventHandler<object>
+ModernWpf.Controls.Primitives.MenuItemHelper
+ModernWpf.Controls.Primitives.MenuPopup
+ModernWpf.Controls.Primitives.MenuPopup.IsSuspendingAnimation.get -> bool
+ModernWpf.Controls.Primitives.MenuPopup.MenuPopup() -> void
+ModernWpf.Controls.Primitives.MultiSelectHelper
+ModernWpf.Controls.Primitives.OpeningAnimationHelper
+ModernWpf.Controls.Primitives.PasswordBoxHelper
+ModernWpf.Controls.Primitives.PopupEx
+ModernWpf.Controls.Primitives.PopupEx.PopupEx() -> void
+ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.Auto = 0 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.Bottom = 2 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.BottomEdgeAlignedLeft = 7 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.BottomEdgeAlignedRight = 8 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.Left = 3 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.LeftEdgeAlignedBottom = 10 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.LeftEdgeAlignedTop = 9 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.Right = 4 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.RightEdgeAlignedBottom = 12 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.RightEdgeAlignedTop = 11 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.Top = 1 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.TopEdgeAlignedLeft = 5 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PopupPlacementMode.TopEdgeAlignedRight = 6 -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.PressHelper
+ModernWpf.Controls.Primitives.ProgressBarTemplateSettings
+ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.Container2AnimationEndPosition.get -> double
+ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.Container2AnimationStartPosition.get -> double
+ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.ContainerAnimationEndPosition.get -> double
+ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.ContainerAnimationMidPosition.get -> double
+ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.ContainerAnimationStartPosition.get -> double
+ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.EllipseAnimationEndPosition.get -> double
+ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.EllipseAnimationWellPosition.get -> double
+ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.EllipseDiameter.get -> double
+ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.EllipseOffset.get -> double
+ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.IndicatorLengthDelta.get -> double
+ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.TrackHeight.get -> double
+ModernWpf.Controls.Primitives.RowDefinitionHelper
+ModernWpf.Controls.Primitives.ScrollBarHelper
+ModernWpf.Controls.Primitives.ScrollingIndicatorMode
+ModernWpf.Controls.Primitives.ScrollingIndicatorMode.MouseIndicator = 2 -> ModernWpf.Controls.Primitives.ScrollingIndicatorMode
+ModernWpf.Controls.Primitives.ScrollingIndicatorMode.None = 0 -> ModernWpf.Controls.Primitives.ScrollingIndicatorMode
+ModernWpf.Controls.Primitives.ScrollingIndicatorMode.TouchIndicator = 1 -> ModernWpf.Controls.Primitives.ScrollingIndicatorMode
+ModernWpf.Controls.Primitives.SnapPointsAlignment
+ModernWpf.Controls.Primitives.SnapPointsAlignment.Center = 1 -> ModernWpf.Controls.Primitives.SnapPointsAlignment
+ModernWpf.Controls.Primitives.SnapPointsAlignment.Far = 2 -> ModernWpf.Controls.Primitives.SnapPointsAlignment
+ModernWpf.Controls.Primitives.SnapPointsAlignment.Near = 0 -> ModernWpf.Controls.Primitives.SnapPointsAlignment
+ModernWpf.Controls.Primitives.TextBoxHelper
+ModernWpf.Controls.Primitives.ThemeShadow
+ModernWpf.Controls.Primitives.ThemeShadow.ThemeShadow() -> void
+ModernWpf.Controls.Primitives.ThemeShadowChrome
+ModernWpf.Controls.Primitives.ThemeShadowChrome.CornerRadius.get -> System.Windows.CornerRadius
+ModernWpf.Controls.Primitives.ThemeShadowChrome.CornerRadius.set -> void
+ModernWpf.Controls.Primitives.ThemeShadowChrome.Depth.get -> double
+ModernWpf.Controls.Primitives.ThemeShadowChrome.Depth.set -> void
+ModernWpf.Controls.Primitives.ThemeShadowChrome.IsShadowEnabled.get -> bool
+ModernWpf.Controls.Primitives.ThemeShadowChrome.IsShadowEnabled.set -> void
+ModernWpf.Controls.Primitives.ThemeShadowChrome.ReservesShadowSpace.get -> bool
+ModernWpf.Controls.Primitives.ThemeShadowChrome.ReservesShadowSpace.set -> void
+ModernWpf.Controls.Primitives.ThemeShadowChrome.ThemeShadowChrome() -> void
+ModernWpf.Controls.Primitives.ThemeShadowChrome.TranslationZ.get -> double
+ModernWpf.Controls.Primitives.ThemeShadowChrome.TranslationZ.set -> void
+ModernWpf.Controls.Primitives.ThemeShadowChrome.WindowedPopupInsetMode.get -> ModernWpf.Controls.Primitives.ThemeShadowChromeWindowedPopupInsetMode
+ModernWpf.Controls.Primitives.ThemeShadowChrome.WindowedPopupInsetMode.set -> void
+ModernWpf.Controls.Primitives.ThemeShadowChromeWindowedPopupInsetMode
+ModernWpf.Controls.Primitives.ThemeShadowChromeWindowedPopupInsetMode.Default = 0 -> ModernWpf.Controls.Primitives.ThemeShadowChromeWindowedPopupInsetMode
+ModernWpf.Controls.Primitives.ThemeShadowChromeWindowedPopupInsetMode.Medium = 2 -> ModernWpf.Controls.Primitives.ThemeShadowChromeWindowedPopupInsetMode
+ModernWpf.Controls.Primitives.ThemeShadowChromeWindowedPopupInsetMode.Small = 1 -> ModernWpf.Controls.Primitives.ThemeShadowChromeWindowedPopupInsetMode
+ModernWpf.Controls.Primitives.TitleBarButton
+ModernWpf.Controls.Primitives.TitleBarButton.IsActive.get -> bool
+ModernWpf.Controls.Primitives.TitleBarButton.IsActive.set -> void
+ModernWpf.Controls.Primitives.TitleBarButton.IsMouseReallyOver.get -> bool
+ModernWpf.Controls.Primitives.TitleBarButton.IsReallyPressed.get -> bool
+ModernWpf.Controls.Primitives.TitleBarButton.TitleBarButton() -> void
+ModernWpf.Controls.Primitives.TitleBarControl
+ModernWpf.Controls.Primitives.TitleBarControl.ExtendViewIntoTitleBar.get -> bool
+ModernWpf.Controls.Primitives.TitleBarControl.ExtendViewIntoTitleBar.set -> void
+ModernWpf.Controls.Primitives.TitleBarControl.IsActive.get -> bool
+ModernWpf.Controls.Primitives.TitleBarControl.IsActive.set -> void
+ModernWpf.Controls.Primitives.TitleBarControl.IsBackButtonVisible.get -> bool
+ModernWpf.Controls.Primitives.TitleBarControl.IsBackButtonVisible.set -> void
+ModernWpf.Controls.Primitives.TitleBarControl.IsBackEnabled.get -> bool
+ModernWpf.Controls.Primitives.TitleBarControl.IsBackEnabled.set -> void
+ModernWpf.Controls.Primitives.TitleBarControl.IsIconVisible.get -> bool
+ModernWpf.Controls.Primitives.TitleBarControl.IsIconVisible.set -> void
+ModernWpf.Controls.Primitives.TitleBarControl.TitleBarControl() -> void
+ModernWpf.Controls.Primitives.TitleBarControlAutomationPeer
+ModernWpf.Controls.Primitives.ToggleButtonHelper
+ModernWpf.Controls.Primitives.ValidationHelper
+ModernWpf.Controls.Primitives.WindowedPopup
+ModernWpf.Controls.Primitives.WindowedPopup.ActualPlacement.get -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.WindowedPopup.ActualPlacementChanged -> System.EventHandler<object>
+ModernWpf.Controls.Primitives.WindowedPopup.Closed -> System.EventHandler
+ModernWpf.Controls.Primitives.WindowedPopup.DesiredPlacement.get -> ModernWpf.Controls.Primitives.PopupPlacementMode
+ModernWpf.Controls.Primitives.WindowedPopup.DesiredPlacement.set -> void
+ModernWpf.Controls.Primitives.WindowedPopup.HorizontalOffset.get -> double
+ModernWpf.Controls.Primitives.WindowedPopup.HorizontalOffset.set -> void
+ModernWpf.Controls.Primitives.WindowedPopup.IsOpen.get -> bool
+ModernWpf.Controls.Primitives.WindowedPopup.IsOpen.set -> void
+ModernWpf.Controls.Primitives.WindowedPopup.Opened -> System.EventHandler
+ModernWpf.Controls.Primitives.WindowedPopup.VerticalOffset.get -> double
+ModernWpf.Controls.Primitives.WindowedPopup.VerticalOffset.set -> void
+ModernWpf.Controls.Primitives.WindowedPopup.WindowedPopup() -> void
+ModernWpf.Controls.Primitives.WindowHelper
+ModernWpf.Controls.ProgressBar
+ModernWpf.Controls.ProgressBar.CornerRadius.get -> System.Windows.CornerRadius
+ModernWpf.Controls.ProgressBar.CornerRadius.set -> void
+ModernWpf.Controls.ProgressBar.IsIndeterminate.get -> bool
+ModernWpf.Controls.ProgressBar.IsIndeterminate.set -> void
+ModernWpf.Controls.ProgressBar.ProgressBar() -> void
+ModernWpf.Controls.ProgressBar.ShowError.get -> bool
+ModernWpf.Controls.ProgressBar.ShowError.set -> void
+ModernWpf.Controls.ProgressBar.ShowPaused.get -> bool
+ModernWpf.Controls.ProgressBar.ShowPaused.set -> void
+ModernWpf.Controls.RatingItemFontInfo
+ModernWpf.Controls.RatingItemFontInfo.RatingItemFontInfo() -> void
+ModernWpf.Controls.RatingItemInfo
+ModernWpf.Controls.RatingItemInfo.RatingItemInfo() -> void
+ModernWpf.Controls.RelativePanel
+ModernWpf.Controls.RelativePanel.BackgroundSizing.get -> ModernWpf.Controls.BackgroundSizing
+ModernWpf.Controls.RelativePanel.BackgroundSizing.set -> void
+ModernWpf.Controls.RelativePanel.BorderThickness.get -> System.Windows.Thickness
+ModernWpf.Controls.RelativePanel.BorderThickness.set -> void
+ModernWpf.Controls.RelativePanel.CornerRadius.get -> System.Windows.CornerRadius
+ModernWpf.Controls.RelativePanel.CornerRadius.set -> void
+ModernWpf.Controls.RelativePanel.Padding.get -> System.Windows.Thickness
+ModernWpf.Controls.RelativePanel.Padding.set -> void
+ModernWpf.Controls.RelativePanel.RelativePanel() -> void
+ModernWpf.Controls.ScrollViewerEx
+ModernWpf.Controls.ScrollViewerEx.ScrollViewerEx() -> void
+ModernWpf.Controls.StackPanelEx
+ModernWpf.Controls.StackPanelEx.AreHorizontalSnapPointsRegular.get -> bool
+ModernWpf.Controls.StackPanelEx.AreScrollSnapPointsRegular.get -> bool
+ModernWpf.Controls.StackPanelEx.AreScrollSnapPointsRegular.set -> void
+ModernWpf.Controls.StackPanelEx.AreVerticalSnapPointsRegular.get -> bool
+ModernWpf.Controls.StackPanelEx.BackgroundSizing.get -> ModernWpf.Controls.BackgroundSizing
+ModernWpf.Controls.StackPanelEx.BackgroundSizing.set -> void
+ModernWpf.Controls.StackPanelEx.BorderThickness.get -> System.Windows.Thickness
+ModernWpf.Controls.StackPanelEx.BorderThickness.set -> void
+ModernWpf.Controls.StackPanelEx.CornerRadius.get -> System.Windows.CornerRadius
+ModernWpf.Controls.StackPanelEx.CornerRadius.set -> void
+ModernWpf.Controls.StackPanelEx.GetRegularSnapPoints(System.Windows.Controls.Orientation orientation, ModernWpf.Controls.Primitives.SnapPointsAlignment alignment, out float offset) -> float
+ModernWpf.Controls.StackPanelEx.HorizontalSnapPointsChanged -> System.EventHandler<object>
+ModernWpf.Controls.StackPanelEx.Orientation.get -> System.Windows.Controls.Orientation
+ModernWpf.Controls.StackPanelEx.Orientation.set -> void
+ModernWpf.Controls.StackPanelEx.Padding.get -> System.Windows.Thickness
+ModernWpf.Controls.StackPanelEx.Padding.set -> void
+ModernWpf.Controls.StackPanelEx.Spacing.get -> double
+ModernWpf.Controls.StackPanelEx.Spacing.set -> void
+ModernWpf.Controls.StackPanelEx.StackPanelEx() -> void
+ModernWpf.Controls.StackPanelEx.VerticalSnapPointsChanged -> System.EventHandler<object>
+ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Accept = 57611 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Account = 57704 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Add = 57609 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.AddFriend = 57826 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Admin = 57767 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.AlignCenter = 57761 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.AlignLeft = 57762 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.AlignRight = 57760 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.AllApps = 57721 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Attach = 57708 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.AttachCamera = 57645 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Audio = 57737 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Back = 57618 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.BackToWindow = 57816 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.BlockContact = 57824 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Bold = 57755 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Bookmarks = 57647 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.BrowsePhotos = 57685 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Bullets = 57651 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Calculator = 57808 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Calendar = 57699 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.CalendarDay = 57697 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.CalendarReply = 57819 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.CalendarWeek = 57698 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Camera = 57620 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Cancel = 57610 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Caption = 57690 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.CellPhone = 57801 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Character = 57700 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Clear = 57606 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ClearSelection = 57797 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Clock = 57633 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ClosedCaption = 57744 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ClosePane = 57639 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Comment = 57652 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Contact = 57661 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Contact2 = 57735 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ContactInfo = 57654 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ContactPresence = 57729 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Copy = 57711 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Crop = 57635 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Cut = 57707 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Delete = 57607 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Directions = 57809 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.DisableUpdates = 57748 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.DisconnectDrive = 57722 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Dislike = 57758 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.DockBottom = 57671 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.DockLeft = 57669 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.DockRight = 57670 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Document = 57648 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Download = 57624 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Edit = 57604 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Emoji = 57629 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Emoji2 = 57712 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Favorite = 57619 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Filter = 57710 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Find = 57626 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Flag = 57641 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Folder = 57736 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Font = 57733 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.FontColor = 57734 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.FontDecrease = 57798 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.FontIncrease = 57799 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.FontSize = 57800 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Forward = 57617 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.FourBars = 57833 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.FullScreen = 57817 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.GlobalNavigationButton = 59136 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Globe = 57643 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Go = 57667 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.GoToStart = 57828 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.GoToToday = 57732 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.HangUp = 57655 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Help = 57627 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.HideBcc = 57706 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Highlight = 57747 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Home = 57615 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Import = 57680 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ImportAll = 57681 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Important = 57713 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Italic = 57753 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Keyboard = 57668 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.LeaveChat = 57631 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Library = 57811 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Like = 57759 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.LikeDislike = 57757 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Link = 57703 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.List = 57676 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Mail = 57625 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.MailFilled = 57653 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.MailForward = 57632 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.MailReply = 57714 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.MailReplyAll = 57701 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Manage = 57720 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Map = 57796 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.MapDrive = 57723 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.MapPin = 57657 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Memo = 57813 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Message = 57695 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Microphone = 57814 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.More = 57612 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.MoveToFolder = 57756 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.MusicInfo = 57666 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Mute = 57752 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.NewFolder = 57818 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.NewWindow = 57724 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Next = 57601 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.OneBar = 57830 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.OpenFile = 57765 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.OpenLocal = 57751 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.OpenPane = 57638 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.OpenWith = 57725 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Orientation = 57679 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.OtherUser = 57766 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.OutlineStar = 57806 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Page = 57650 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Page2 = 57696 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Paste = 57709 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Pause = 57603 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.People = 57637 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Permissions = 57746 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Phone = 57658 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.PhoneBook = 57812 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Pictures = 57688 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Pin = 57665 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Placeholder = 57738 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Play = 57602 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.PostUpdate = 57815 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Preview = 58005 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.PreviewLink = 57642 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Previous = 57600 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Print = 59209 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Priority = 57730 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ProtectedDocument = 57649 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Read = 57702 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Redo = 57613 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Refresh = 57673 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Remote = 57672 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Remove = 57608 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Rename = 57662 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Repair = 57694 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.RepeatAll = 57805 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.RepeatOne = 57804 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ReportHacked = 57822 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ReShare = 57802 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Rotate = 57674 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.RotateCamera = 57636 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Save = 57605 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.SaveLocal = 57689 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Scan = 58004 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.SelectAll = 57678 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Send = 57634 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.SetLockScreen = 57740 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.SetTile = 57741 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Setting = 57621 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Share = 59181 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Shop = 57677 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ShowBcc = 57705 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ShowResults = 57692 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Shuffle = 57675 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.SlideShow = 57715 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.SolidStar = 57807 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Sort = 57716 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Stop = 57691 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.StopSlideShow = 57745 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Street = 57795 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Switch = 57660 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.SwitchApps = 57825 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Sync = 57623 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.SyncFolder = 57823 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Tag = 57803 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Target = 57810 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ThreeBars = 57832 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.TouchPointer = 57827 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Trim = 57644 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.TwoBars = 57831 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.TwoPage = 57630 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Underline = 57754 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Undo = 57614 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.UnFavorite = 57749 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.UnPin = 57750 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.UnSyncFolder = 57821 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Up = 57616 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Upload = 57628 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Video = 57622 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.VideoChat = 57659 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.View = 57739 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ViewAll = 57656 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Volume = 57693 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.WebCam = 57686 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.World = 57640 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.XboxOneConsole = 59792 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ZeroBars = 57829 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Zoom = 57763 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ZoomIn = 57646 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ZoomOut = 57764 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.SymbolIcon
+ModernWpf.Controls.SymbolIcon.Symbol.get -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.SymbolIcon.Symbol.set -> void
+ModernWpf.Controls.SymbolIcon.SymbolIcon() -> void
+ModernWpf.Controls.SymbolIcon.SymbolIcon(ModernWpf.Controls.Symbol symbol) -> void
+ModernWpf.Controls.SymbolIconSource
+ModernWpf.Controls.SymbolIconSource.Symbol.get -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.SymbolIconSource.Symbol.set -> void
+ModernWpf.Controls.SymbolIconSource.SymbolIconSource() -> void
+ModernWpf.Controls.TextContextMenu
+ModernWpf.Controls.TextContextMenu.TextContextMenu() -> void
+ModernWpf.Controls.TitleBar
+ModernWpf.Controls.VariableSizedWrapGrid
+ModernWpf.Controls.VariableSizedWrapGrid.HorizontalChildrenAlignment.get -> System.Windows.HorizontalAlignment
+ModernWpf.Controls.VariableSizedWrapGrid.HorizontalChildrenAlignment.set -> void
+ModernWpf.Controls.VariableSizedWrapGrid.ItemHeight.get -> double
+ModernWpf.Controls.VariableSizedWrapGrid.ItemHeight.set -> void
+ModernWpf.Controls.VariableSizedWrapGrid.ItemWidth.get -> double
+ModernWpf.Controls.VariableSizedWrapGrid.ItemWidth.set -> void
+ModernWpf.Controls.VariableSizedWrapGrid.MaximumRowsOrColumns.get -> int
+ModernWpf.Controls.VariableSizedWrapGrid.MaximumRowsOrColumns.set -> void
+ModernWpf.Controls.VariableSizedWrapGrid.Orientation.get -> System.Windows.Controls.Orientation
+ModernWpf.Controls.VariableSizedWrapGrid.Orientation.set -> void
+ModernWpf.Controls.VariableSizedWrapGrid.VariableSizedWrapGrid() -> void
+ModernWpf.Controls.VariableSizedWrapGrid.VerticalChildrenAlignment.get -> System.Windows.VerticalAlignment
+ModernWpf.Controls.VariableSizedWrapGrid.VerticalChildrenAlignment.set -> void
+ModernWpf.Controls.WrapGrid
+ModernWpf.Controls.WrapGrid.WrapGrid() -> void
+ModernWpf.Controls.XamlControlsResources
+ModernWpf.Controls.XamlControlsResources.UseCompactResources.get -> bool
+ModernWpf.Controls.XamlControlsResources.UseCompactResources.set -> void
+ModernWpf.Controls.XamlControlsResources.XamlControlsResources() -> void
+ModernWpf.DesignTime.Design
+ModernWpf.DesignTime.IntellisenseResources
+ModernWpf.DesignTime.IntellisenseResources.IntellisenseResources() -> void
+ModernWpf.DesignTime.IntellisenseResourcesBase
+ModernWpf.DesignTime.IntellisenseResourcesBase.EndInit() -> void
+ModernWpf.DesignTime.IntellisenseResourcesBase.IntellisenseResourcesBase() -> void
+ModernWpf.ElementTheme
+ModernWpf.ElementTheme.Dark = 2 -> ModernWpf.ElementTheme
+ModernWpf.ElementTheme.Default = 0 -> ModernWpf.ElementTheme
+ModernWpf.ElementTheme.Light = 1 -> ModernWpf.ElementTheme
+ModernWpf.Markup.DynamicColorExtension
+ModernWpf.Markup.DynamicColorExtension.DynamicColorExtension() -> void
+ModernWpf.Markup.DynamicColorExtensionConverter
+ModernWpf.Markup.DynamicColorExtensionConverter.DynamicColorExtensionConverter() -> void
+ModernWpf.Markup.KeyTimeExtension
+ModernWpf.Markup.KeyTimeExtension.KeyTimeExtension() -> void
+ModernWpf.Markup.KeyTimeExtension.TimeSpan.get -> System.TimeSpan
+ModernWpf.Markup.KeyTimeExtension.TimeSpan.set -> void
+ModernWpf.Markup.StaticColorExtension
+ModernWpf.Markup.StaticColorExtension.StaticColorExtension() -> void
+ModernWpf.Markup.StaticResourceExtension
+ModernWpf.Markup.StaticResourceExtension.StaticResourceExtension() -> void
+ModernWpf.Markup.TextContextMenuExtension
+ModernWpf.Markup.TextContextMenuExtension.TextContextMenuExtension() -> void
+ModernWpf.Markup.ThemeResouceExtensionConverter
+ModernWpf.Markup.ThemeResouceExtensionConverter.ThemeResouceExtensionConverter() -> void
+ModernWpf.Markup.ThemeResourceExtension
+ModernWpf.Markup.ThemeResourceExtension.ThemeResourceExtension() -> void
+ModernWpf.Media.Animation.CubicBezierEase
+ModernWpf.Media.Animation.CubicBezierEase.ControlPoint1.get -> System.Windows.Point
+ModernWpf.Media.Animation.CubicBezierEase.ControlPoint1.set -> void
+ModernWpf.Media.Animation.CubicBezierEase.ControlPoint2.get -> System.Windows.Point
+ModernWpf.Media.Animation.CubicBezierEase.ControlPoint2.set -> void
+ModernWpf.Media.Animation.CubicBezierEase.CubicBezierEase() -> void
+ModernWpf.Media.Animation.DrillInNavigationTransitionInfo
+ModernWpf.Media.Animation.DrillInNavigationTransitionInfo.DrillInNavigationTransitionInfo() -> void
+ModernWpf.Media.Animation.EntranceNavigationTransitionInfo
+ModernWpf.Media.Animation.EntranceNavigationTransitionInfo.EntranceNavigationTransitionInfo() -> void
+ModernWpf.Media.Animation.FadeInThemeAnimation
+ModernWpf.Media.Animation.FadeInThemeAnimation.FadeInThemeAnimation() -> void
+ModernWpf.Media.Animation.FadeOutThemeAnimation
+ModernWpf.Media.Animation.FadeOutThemeAnimation.FadeOutThemeAnimation() -> void
+ModernWpf.Media.Animation.NavigationThemeTransition
+ModernWpf.Media.Animation.NavigationThemeTransition.NavigationThemeTransition() -> void
+ModernWpf.Media.Animation.NavigationTransitionInfo
+ModernWpf.Media.Animation.NavigationTransitionInfo.NavigationTransitionInfo() -> void
+ModernWpf.Media.Animation.SlideNavigationTransitionEffect
+ModernWpf.Media.Animation.SlideNavigationTransitionEffect.FromBottom = 0 -> ModernWpf.Media.Animation.SlideNavigationTransitionEffect
+ModernWpf.Media.Animation.SlideNavigationTransitionEffect.FromLeft = 1 -> ModernWpf.Media.Animation.SlideNavigationTransitionEffect
+ModernWpf.Media.Animation.SlideNavigationTransitionEffect.FromRight = 2 -> ModernWpf.Media.Animation.SlideNavigationTransitionEffect
+ModernWpf.Media.Animation.SlideNavigationTransitionInfo
+ModernWpf.Media.Animation.SlideNavigationTransitionInfo.Effect.get -> ModernWpf.Media.Animation.SlideNavigationTransitionEffect
+ModernWpf.Media.Animation.SlideNavigationTransitionInfo.Effect.set -> void
+ModernWpf.Media.Animation.SlideNavigationTransitionInfo.SlideNavigationTransitionInfo() -> void
+ModernWpf.Media.Animation.SuppressNavigationTransitionInfo
+ModernWpf.Media.Animation.SuppressNavigationTransitionInfo.SuppressNavigationTransitionInfo() -> void
+ModernWpf.Media.Animation.Transition
+ModernWpf.Media.Animation.TransitionCollection
+ModernWpf.Media.Animation.TransitionCollection.TransitionCollection() -> void
+ModernWpf.Navigation.Extensions
+ModernWpf.OpticalMarginAlignment
+ModernWpf.OpticalMarginAlignment.None = 0 -> ModernWpf.OpticalMarginAlignment
+ModernWpf.OpticalMarginAlignment.TrimSideBearings = 1 -> ModernWpf.OpticalMarginAlignment
+ModernWpf.ResourceDictionaryEx
+ModernWpf.ResourceDictionaryEx.ResourceDictionaryEx() -> void
+ModernWpf.SimpleVisualStateManager
+ModernWpf.SimpleVisualStateManager.SimpleVisualStateManager() -> void
+ModernWpf.TextLineBounds
+ModernWpf.TextLineBounds.Full = 0 -> ModernWpf.TextLineBounds
+ModernWpf.TextLineBounds.Tight = 3 -> ModernWpf.TextLineBounds
+ModernWpf.TextLineBounds.TrimToBaseline = 2 -> ModernWpf.TextLineBounds
+ModernWpf.TextLineBounds.TrimToCapHeight = 1 -> ModernWpf.TextLineBounds
+ModernWpf.ThemeDictionary
+ModernWpf.ThemeManager
+ModernWpf.ThemeManager.AccentColor.get -> System.Windows.Media.Color?
+ModernWpf.ThemeManager.AccentColor.set -> void
+ModernWpf.ThemeManager.ActualAccentColor.get -> System.Windows.Media.Color
+ModernWpf.ThemeManager.ActualApplicationTheme.get -> ModernWpf.ApplicationTheme
+ModernWpf.ThemeManager.ApplicationTheme.get -> ModernWpf.ApplicationTheme?
+ModernWpf.ThemeManager.ApplicationTheme.set -> void
+ModernWpf.ThemeResources
+ModernWpf.ThemeResources.AccentColor.get -> System.Windows.Media.Color?
+ModernWpf.ThemeResources.AccentColor.set -> void
+ModernWpf.ThemeResources.BeginInit() -> void
+ModernWpf.ThemeResources.CanBeAccessedAcrossThreads.get -> bool
+ModernWpf.ThemeResources.CanBeAccessedAcrossThreads.set -> void
+ModernWpf.ThemeResources.EndInit() -> void
+ModernWpf.ThemeResources.RequestedTheme.get -> ModernWpf.ApplicationTheme?
+ModernWpf.ThemeResources.RequestedTheme.set -> void
+ModernWpf.ThemeResources.ThemeResources() -> void
+ModernWpf.TypedEventHandler<TSender, TResult>
+ModernWpf.VisualStateEx
+ModernWpf.VisualStateEx.VisualStateEx() -> void
+ModernWpf.VisualStateManagerEx
+ModernWpf.VisualStateManagerEx.VisualStateManagerEx() -> void
+ModernWpf.VisualStateSetter
+ModernWpf.VisualStateSetter.VisualStateSetter() -> void
+ModernWpf.VisualTree
+override ModernWpf.Automation.Peers.ProgressBarAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
+override ModernWpf.Controls.ContentControlEx.OnApplyTemplate() -> void
+override ModernWpf.Controls.ContentPresenterEx.ArrangeOverride(System.Windows.Size arrangeSize) -> System.Windows.Size
+override ModernWpf.Controls.ContentPresenterEx.MeasureOverride(System.Windows.Size constraint) -> System.Windows.Size
+override ModernWpf.Controls.FontIcon.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs e) -> void
+override ModernWpf.Controls.Frame.OnApplyTemplate() -> void
+override ModernWpf.Controls.Frame.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs e) -> void
+override ModernWpf.Controls.GridEx.ArrangeOverride(System.Windows.Size finalSize) -> System.Windows.Size
+override ModernWpf.Controls.GridEx.MeasureOverride(System.Windows.Size availableSize) -> System.Windows.Size
+override ModernWpf.Controls.GridEx.VisualChildrenCount.get -> int
+override ModernWpf.Controls.IconSource.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs args) -> void
+override ModernWpf.Controls.Page.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs e) -> void
+override ModernWpf.Controls.Primitives.MenuPopup.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs e) -> void
+override ModernWpf.Controls.Primitives.ThemeShadowChrome.ArrangeOverride(System.Windows.Size arrangeSize) -> System.Windows.Size
+override ModernWpf.Controls.Primitives.ThemeShadowChrome.MeasureOverride(System.Windows.Size constraint) -> System.Windows.Size
+override ModernWpf.Controls.Primitives.ThemeShadowChrome.OnDpiChanged(System.Windows.DpiScale oldDpi, System.Windows.DpiScale newDpi) -> void
+override ModernWpf.Controls.Primitives.ThemeShadowChrome.VisualChildrenCount.get -> int
+override ModernWpf.Controls.Primitives.TitleBarButton.OnApplyTemplate() -> void
+override ModernWpf.Controls.Primitives.TitleBarButton.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs e) -> void
+override ModernWpf.Controls.Primitives.TitleBarControl.OnApplyTemplate() -> void
+override ModernWpf.Controls.Primitives.TitleBarControlAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
+override ModernWpf.Controls.Primitives.WindowedPopup.ArrangeOverride(System.Windows.Size finalSize) -> System.Windows.Size
+override ModernWpf.Controls.Primitives.WindowedPopup.MeasureOverride(System.Windows.Size availableSize) -> System.Windows.Size
+override ModernWpf.Controls.ProgressBar.OnApplyTemplate() -> void
+override ModernWpf.Controls.ProgressBar.OnMaximumChanged(double oldMaximum, double newMaximum) -> void
+override ModernWpf.Controls.ProgressBar.OnMinimumChanged(double oldMinimum, double newMinimum) -> void
+override ModernWpf.Controls.ProgressBar.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs e) -> void
+override ModernWpf.Controls.ProgressBar.OnValueChanged(double oldValue, double newValue) -> void
+override ModernWpf.Controls.RelativePanel.ArrangeOverride(System.Windows.Size finalSize) -> System.Windows.Size
+override ModernWpf.Controls.RelativePanel.MeasureOverride(System.Windows.Size availableSize) -> System.Windows.Size
+override ModernWpf.Controls.RelativePanel.VisualChildrenCount.get -> int
+override ModernWpf.Controls.StackPanelEx.ArrangeOverride(System.Windows.Size finalSize) -> System.Windows.Size
+override ModernWpf.Controls.StackPanelEx.HasLogicalOrientation.get -> bool
+override ModernWpf.Controls.StackPanelEx.LogicalOrientation.get -> System.Windows.Controls.Orientation
+override ModernWpf.Controls.StackPanelEx.MeasureOverride(System.Windows.Size availableSize) -> System.Windows.Size
+override ModernWpf.Controls.StackPanelEx.VisualChildrenCount.get -> int
+override ModernWpf.Controls.VariableSizedWrapGrid.ArrangeOverride(System.Windows.Size finalSize) -> System.Windows.Size
+override ModernWpf.Controls.VariableSizedWrapGrid.MeasureOverride(System.Windows.Size availableSize) -> System.Windows.Size
+override ModernWpf.Media.Animation.CubicBezierEase.EaseInCore(double normalizedTime) -> double
+override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
+~ModernWpf.Automation.Peers.ProgressBarAutomationPeer.ProgressBarAutomationPeer(ModernWpf.Controls.ProgressBar owner) -> void
+~ModernWpf.Controls.BitmapIcon.UriSource.get -> System.Uri
+~ModernWpf.Controls.BitmapIcon.UriSource.set -> void
+~ModernWpf.Controls.BitmapIconSource.UriSource.get -> System.Uri
+~ModernWpf.Controls.BitmapIconSource.UriSource.set -> void
+~ModernWpf.Controls.BorderEx.BackgroundTransition.get -> ModernWpf.Controls.BrushTransition
+~ModernWpf.Controls.BorderEx.BackgroundTransition.set -> void
+~ModernWpf.Controls.BorderEx.ChildTransitions.get -> ModernWpf.Media.Animation.TransitionCollection
+~ModernWpf.Controls.BorderEx.ChildTransitions.set -> void
+~ModernWpf.Controls.CanvasEx.BackgroundTransition.get -> ModernWpf.Controls.BrushTransition
+~ModernWpf.Controls.CanvasEx.BackgroundTransition.set -> void
+~ModernWpf.Controls.CanvasEx.ChildrenTransitions.get -> ModernWpf.Media.Animation.TransitionCollection
+~ModernWpf.Controls.CanvasEx.ChildrenTransitions.set -> void
+~ModernWpf.Controls.ContentControlEx.BackgroundTransition.get -> ModernWpf.Controls.BrushTransition
+~ModernWpf.Controls.ContentControlEx.BackgroundTransition.set -> void
+~ModernWpf.Controls.ContentControlEx.ContentTemplateRoot.get -> System.Windows.UIElement
+~ModernWpf.Controls.ContentControlEx.ContentTransitions.get -> ModernWpf.Media.Animation.TransitionCollection
+~ModernWpf.Controls.ContentControlEx.ContentTransitions.set -> void
+~ModernWpf.Controls.ContentPresenterEx.Background.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.ContentPresenterEx.Background.set -> void
+~ModernWpf.Controls.ContentPresenterEx.BackgroundTransition.get -> ModernWpf.Controls.BrushTransition
+~ModernWpf.Controls.ContentPresenterEx.BackgroundTransition.set -> void
+~ModernWpf.Controls.ContentPresenterEx.BorderBrush.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.ContentPresenterEx.BorderBrush.set -> void
+~ModernWpf.Controls.ContentPresenterEx.ContentTransitions.get -> ModernWpf.Media.Animation.TransitionCollection
+~ModernWpf.Controls.ContentPresenterEx.ContentTransitions.set -> void
+~ModernWpf.Controls.ContentPresenterEx.FontFamily.get -> System.Windows.Media.FontFamily
+~ModernWpf.Controls.ContentPresenterEx.FontFamily.set -> void
+~ModernWpf.Controls.ContentPresenterEx.Foreground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.ContentPresenterEx.Foreground.set -> void
+~ModernWpf.Controls.FontIcon.FontFamily.get -> System.Windows.Media.FontFamily
+~ModernWpf.Controls.FontIcon.FontFamily.set -> void
+~ModernWpf.Controls.FontIcon.Glyph.get -> string
+~ModernWpf.Controls.FontIcon.Glyph.set -> void
+~ModernWpf.Controls.FontIconFallback.Data.get -> System.Windows.Media.Geometry
+~ModernWpf.Controls.FontIconFallback.Data.set -> void
+~ModernWpf.Controls.FontIconSource.FontFamily.get -> System.Windows.Media.FontFamily
+~ModernWpf.Controls.FontIconSource.FontFamily.set -> void
+~ModernWpf.Controls.FontIconSource.Glyph.get -> string
+~ModernWpf.Controls.FontIconSource.Glyph.set -> void
+~ModernWpf.Controls.Frame.ContentTransitions.get -> ModernWpf.Media.Animation.TransitionCollection
+~ModernWpf.Controls.Frame.ContentTransitions.set -> void
+~ModernWpf.Controls.Frame.CurrentSourcePageType.get -> System.Type
+~ModernWpf.Controls.Frame.GoBack(ModernWpf.Media.Animation.NavigationTransitionInfo transitionInfoOverride) -> void
+~ModernWpf.Controls.Frame.Navigate(System.Type sourcePageType) -> bool
+~ModernWpf.Controls.Frame.Navigate(System.Type sourcePageType, object parameter) -> bool
+~ModernWpf.Controls.Frame.Navigate(System.Type sourcePageType, object parameter, ModernWpf.Media.Animation.NavigationTransitionInfo infoOverride) -> bool
+~ModernWpf.Controls.Frame.Navigate(System.Uri source, object extraData, ModernWpf.Media.Animation.NavigationTransitionInfo infoOverride) -> bool
+~ModernWpf.Controls.Frame.SourcePageType.get -> System.Type
+~ModernWpf.Controls.Frame.SourcePageType.set -> void
+~ModernWpf.Controls.GridEx.BackgroundTransition.get -> ModernWpf.Controls.BrushTransition
+~ModernWpf.Controls.GridEx.BackgroundTransition.set -> void
+~ModernWpf.Controls.GridEx.BorderBrush.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.GridEx.BorderBrush.set -> void
+~ModernWpf.Controls.GridEx.ChildrenTransitions.get -> ModernWpf.Media.Animation.TransitionCollection
+~ModernWpf.Controls.GridEx.ChildrenTransitions.set -> void
+~ModernWpf.Controls.GridEx.ColumnDefinitions.get -> System.Windows.Controls.ColumnDefinitionCollection
+~ModernWpf.Controls.GridEx.RowDefinitions.get -> System.Windows.Controls.RowDefinitionCollection
+~ModernWpf.Controls.IconElement.Foreground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.IconElement.Foreground.set -> void
+~ModernWpf.Controls.IconSource.CreateIconElement() -> ModernWpf.Controls.IconElement
+~ModernWpf.Controls.IconSource.Foreground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.IconSource.Foreground.set -> void
+~ModernWpf.Controls.ImageIcon.Source.get -> System.Windows.Media.ImageSource
+~ModernWpf.Controls.ImageIcon.Source.set -> void
+~ModernWpf.Controls.ImageIconSource.ImageSource.get -> System.Windows.Media.ImageSource
+~ModernWpf.Controls.ImageIconSource.ImageSource.set -> void
+~ModernWpf.Controls.Page.Frame.get -> ModernWpf.Controls.Frame
+~ModernWpf.Controls.PathIcon.Data.get -> System.Windows.Media.Geometry
+~ModernWpf.Controls.PathIcon.Data.set -> void
+~ModernWpf.Controls.PathIconSource.Data.get -> System.Windows.Media.Geometry
+~ModernWpf.Controls.PathIconSource.Data.set -> void
+~ModernWpf.Controls.Primitives.BindingProxy.Value.get -> object
+~ModernWpf.Controls.Primitives.BindingProxy.Value.set -> void
+~ModernWpf.Controls.Primitives.CornerRadiusFilterConverter.Convert(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture) -> object
+~ModernWpf.Controls.Primitives.CornerRadiusFilterConverter.ConvertBack(object value, System.Type targetType, object parameter, System.Globalization.CultureInfo culture) -> object
+~ModernWpf.Controls.Primitives.IScrollSnapPointsInfo.GetIrregularSnapPoints(System.Windows.Controls.Orientation orientation, ModernWpf.Controls.Primitives.SnapPointsAlignment alignment) -> System.Collections.Generic.IReadOnlyList<float>
+~ModernWpf.Controls.Primitives.PasswordBoxHelper.PasswordBoxHelper(System.Windows.Controls.PasswordBox passwordBox) -> void
+~ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.ClipRect.get -> System.Windows.Media.RectangleGeometry
+~ModernWpf.Controls.Primitives.ThemeShadowChrome.Shadow.get -> ModernWpf.Controls.Primitives.ThemeShadow
+~ModernWpf.Controls.Primitives.ThemeShadowChrome.Shadow.set -> void
+~ModernWpf.Controls.Primitives.TitleBarButton.HoverBackground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.Primitives.TitleBarButton.HoverBackground.set -> void
+~ModernWpf.Controls.Primitives.TitleBarButton.HoverForeground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.Primitives.TitleBarButton.HoverForeground.set -> void
+~ModernWpf.Controls.Primitives.TitleBarButton.InactiveBackground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.Primitives.TitleBarButton.InactiveBackground.set -> void
+~ModernWpf.Controls.Primitives.TitleBarButton.InactiveForeground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.Primitives.TitleBarButton.InactiveForeground.set -> void
+~ModernWpf.Controls.Primitives.TitleBarButton.PressedBackground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.Primitives.TitleBarButton.PressedBackground.set -> void
+~ModernWpf.Controls.Primitives.TitleBarButton.PressedForeground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.Primitives.TitleBarButton.PressedForeground.set -> void
+~ModernWpf.Controls.Primitives.TitleBarControl.ActualIcon.get -> System.Windows.Media.ImageSource
+~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommand.get -> System.Windows.Input.ICommand
+~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommand.set -> void
+~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandParameter.get -> object
+~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandParameter.set -> void
+~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandTarget.get -> System.Windows.IInputElement
+~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandTarget.set -> void
+~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonStyle.get -> System.Windows.Style
+~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonStyle.set -> void
+~ModernWpf.Controls.Primitives.TitleBarControl.ButtonStyle.get -> System.Windows.Style
+~ModernWpf.Controls.Primitives.TitleBarControl.ButtonStyle.set -> void
+~ModernWpf.Controls.Primitives.TitleBarControl.Icon.get -> System.Windows.Media.ImageSource
+~ModernWpf.Controls.Primitives.TitleBarControl.Icon.set -> void
+~ModernWpf.Controls.Primitives.TitleBarControl.InactiveBackground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.Primitives.TitleBarControl.InactiveBackground.set -> void
+~ModernWpf.Controls.Primitives.TitleBarControl.InactiveForeground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.Primitives.TitleBarControl.InactiveForeground.set -> void
+~ModernWpf.Controls.Primitives.TitleBarControl.Title.get -> string
+~ModernWpf.Controls.Primitives.TitleBarControl.Title.set -> void
+~ModernWpf.Controls.Primitives.TitleBarControlAutomationPeer.TitleBarControlAutomationPeer(ModernWpf.Controls.Primitives.TitleBarControl owner) -> void
+~ModernWpf.Controls.Primitives.WindowedPopup.Child.get -> System.Windows.UIElement
+~ModernWpf.Controls.Primitives.WindowedPopup.Child.set -> void
+~ModernWpf.Controls.Primitives.WindowedPopup.PlacementTarget.get -> System.Windows.FrameworkElement
+~ModernWpf.Controls.Primitives.WindowedPopup.PlacementTarget.set -> void
+~ModernWpf.Controls.ProgressBar.TemplateSettings.get -> ModernWpf.Controls.Primitives.ProgressBarTemplateSettings
+~ModernWpf.Controls.RatingItemFontInfo.DisabledGlyph.get -> string
+~ModernWpf.Controls.RatingItemFontInfo.DisabledGlyph.set -> void
+~ModernWpf.Controls.RatingItemFontInfo.Glyph.get -> string
+~ModernWpf.Controls.RatingItemFontInfo.Glyph.set -> void
+~ModernWpf.Controls.RatingItemFontInfo.PlaceholderGlyph.get -> string
+~ModernWpf.Controls.RatingItemFontInfo.PlaceholderGlyph.set -> void
+~ModernWpf.Controls.RatingItemFontInfo.PointerOverGlyph.get -> string
+~ModernWpf.Controls.RatingItemFontInfo.PointerOverGlyph.set -> void
+~ModernWpf.Controls.RatingItemFontInfo.PointerOverPlaceholderGlyph.get -> string
+~ModernWpf.Controls.RatingItemFontInfo.PointerOverPlaceholderGlyph.set -> void
+~ModernWpf.Controls.RatingItemFontInfo.UnsetGlyph.get -> string
+~ModernWpf.Controls.RatingItemFontInfo.UnsetGlyph.set -> void
+~ModernWpf.Controls.RelativePanel.BackgroundTransition.get -> ModernWpf.Controls.BrushTransition
+~ModernWpf.Controls.RelativePanel.BackgroundTransition.set -> void
+~ModernWpf.Controls.RelativePanel.BorderBrush.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.RelativePanel.BorderBrush.set -> void
+~ModernWpf.Controls.RelativePanel.ChildrenTransitions.get -> ModernWpf.Media.Animation.TransitionCollection
+~ModernWpf.Controls.RelativePanel.ChildrenTransitions.set -> void
+~ModernWpf.Controls.StackPanelEx.BackgroundTransition.get -> ModernWpf.Controls.BrushTransition
+~ModernWpf.Controls.StackPanelEx.BackgroundTransition.set -> void
+~ModernWpf.Controls.StackPanelEx.BorderBrush.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.StackPanelEx.BorderBrush.set -> void
+~ModernWpf.Controls.StackPanelEx.ChildrenTransitions.get -> ModernWpf.Media.Animation.TransitionCollection
+~ModernWpf.Controls.StackPanelEx.ChildrenTransitions.set -> void
+~ModernWpf.Controls.StackPanelEx.GetIrregularSnapPoints(System.Windows.Controls.Orientation orientation, ModernWpf.Controls.Primitives.SnapPointsAlignment alignment) -> System.Collections.Generic.IReadOnlyList<float>
+~ModernWpf.Controls.VariableSizedWrapGrid.BackgroundTransition.get -> ModernWpf.Controls.BrushTransition
+~ModernWpf.Controls.VariableSizedWrapGrid.BackgroundTransition.set -> void
+~ModernWpf.Controls.VariableSizedWrapGrid.ChildrenTransitions.get -> ModernWpf.Media.Animation.TransitionCollection
+~ModernWpf.Controls.VariableSizedWrapGrid.ChildrenTransitions.set -> void
+~ModernWpf.DesignTime.IntellisenseResourcesBase.Source.get -> System.Uri
+~ModernWpf.DesignTime.IntellisenseResourcesBase.Source.set -> void
+~ModernWpf.Markup.DynamicColorExtension.DynamicColorExtension(object resourceKey) -> void
+~ModernWpf.Markup.StaticColorExtension.StaticColorExtension(object resourceKey) -> void
+~ModernWpf.Markup.StaticResourceExtension.StaticResourceExtension(object resourceKey) -> void
+~ModernWpf.Markup.ThemeResourceExtension.ThemeResourceExtension(object resourceKey) -> void
+~ModernWpf.Media.Animation.FadeInThemeAnimation.TargetName.get -> string
+~ModernWpf.Media.Animation.FadeInThemeAnimation.TargetName.set -> void
+~ModernWpf.Media.Animation.FadeOutThemeAnimation.TargetName.get -> string
+~ModernWpf.Media.Animation.FadeOutThemeAnimation.TargetName.set -> void
+~ModernWpf.Media.Animation.NavigationThemeTransition.DefaultNavigationTransitionInfo.get -> ModernWpf.Media.Animation.NavigationTransitionInfo
+~ModernWpf.Media.Animation.NavigationThemeTransition.DefaultNavigationTransitionInfo.set -> void
+~ModernWpf.ResourceDictionaryEx.ThemeDictionaries.get -> System.Collections.Generic.Dictionary<object, System.Windows.ResourceDictionary>
+~ModernWpf.ThemeManager.ActualAccentColorChanged -> ModernWpf.TypedEventHandler<ModernWpf.ThemeManager, object>
+~ModernWpf.ThemeManager.ActualApplicationThemeChanged -> ModernWpf.TypedEventHandler<ModernWpf.ThemeManager, object>
+~ModernWpf.VisualStateEx.Setters.get -> System.Collections.ObjectModel.Collection<ModernWpf.VisualStateSetter>
+~ModernWpf.VisualStateSetter.Property.get -> string
+~ModernWpf.VisualStateSetter.Property.set -> void
+~ModernWpf.VisualStateSetter.Target.get -> string
+~ModernWpf.VisualStateSetter.Target.set -> void
+~ModernWpf.VisualStateSetter.Value.get -> object
+~ModernWpf.VisualStateSetter.Value.set -> void
+~override ModernWpf.Automation.Peers.ProgressBarAutomationPeer.GetClassNameCore() -> string
+~override ModernWpf.Automation.Peers.ProgressBarAutomationPeer.GetNameCore() -> string
+~override ModernWpf.Automation.Peers.ProgressBarAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
+~override ModernWpf.Controls.BitmapIconSource.CreateIconElementCore() -> ModernWpf.Controls.IconElement
+~override ModernWpf.Controls.BitmapIconSource.GetIconElementPropertyCore(System.Windows.DependencyProperty sourceProperty) -> System.Windows.DependencyProperty
+~override ModernWpf.Controls.BorderEx.GetLayoutClip(System.Windows.Size layoutSlotSize) -> System.Windows.Media.Geometry
+~override ModernWpf.Controls.BorderEx.HitTestCore(System.Windows.Media.PointHitTestParameters hitTestParameters) -> System.Windows.Media.HitTestResult
+~override ModernWpf.Controls.BorderEx.OnRender(System.Windows.Media.DrawingContext drawingContext) -> void
+~override ModernWpf.Controls.CanvasEx.OnRender(System.Windows.Media.DrawingContext drawingContext) -> void
+~override ModernWpf.Controls.ContentPresenterEx.ChooseTemplate() -> System.Windows.DataTemplate
+~override ModernWpf.Controls.ContentPresenterEx.GetLayoutClip(System.Windows.Size layoutSlotSize) -> System.Windows.Media.Geometry
+~override ModernWpf.Controls.ContentPresenterEx.HitTestCore(System.Windows.Media.PointHitTestParameters hitTestParameters) -> System.Windows.Media.HitTestResult
+~override ModernWpf.Controls.ContentPresenterEx.OnRender(System.Windows.Media.DrawingContext drawingContext) -> void
+~override ModernWpf.Controls.ContentPresenterEx.OnVisualChildrenChanged(System.Windows.DependencyObject visualAdded, System.Windows.DependencyObject visualRemoved) -> void
+~override ModernWpf.Controls.FontIconSource.CreateIconElementCore() -> ModernWpf.Controls.IconElement
+~override ModernWpf.Controls.FontIconSource.GetIconElementPropertyCore(System.Windows.DependencyProperty sourceProperty) -> System.Windows.DependencyProperty
+~override ModernWpf.Controls.Frame.OnContentChanged(object oldContent, object newContent) -> void
+~override ModernWpf.Controls.GridEx.CreateUIElementCollection(System.Windows.FrameworkElement logicalParent) -> System.Windows.Controls.UIElementCollection
+~override ModernWpf.Controls.GridEx.GetLayoutClip(System.Windows.Size layoutSlotSize) -> System.Windows.Media.Geometry
+~override ModernWpf.Controls.GridEx.GetVisualChild(int index) -> System.Windows.Media.Visual
+~override ModernWpf.Controls.GridEx.OnRender(System.Windows.Media.DrawingContext drawingContext) -> void
+~override ModernWpf.Controls.IconElementConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Type sourceType) -> bool
+~override ModernWpf.Controls.IconElementConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) -> bool
+~override ModernWpf.Controls.IconElementConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value) -> object
+~override ModernWpf.Controls.IconElementConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) -> object
+~override ModernWpf.Controls.ImageIconSource.CreateIconElementCore() -> ModernWpf.Controls.IconElement
+~override ModernWpf.Controls.ImageIconSource.GetIconElementPropertyCore(System.Windows.DependencyProperty sourceProperty) -> System.Windows.DependencyProperty
+~override ModernWpf.Controls.PathIconSource.CreateIconElementCore() -> ModernWpf.Controls.IconElement
+~override ModernWpf.Controls.PathIconSource.GetIconElementPropertyCore(System.Windows.DependencyProperty sourceProperty) -> System.Windows.DependencyProperty
+~override ModernWpf.Controls.Primitives.MenuPopup.OnClosed(System.EventArgs e) -> void
+~override ModernWpf.Controls.Primitives.MenuPopup.OnOpened(System.EventArgs e) -> void
+~override ModernWpf.Controls.Primitives.PopupEx.OnOpened(System.EventArgs e) -> void
+~override ModernWpf.Controls.Primitives.PopupEx.OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e) -> void
+~override ModernWpf.Controls.Primitives.PopupEx.OnPreviewMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e) -> void
+~override ModernWpf.Controls.Primitives.PopupEx.OnPreviewMouseRightButtonDown(System.Windows.Input.MouseButtonEventArgs e) -> void
+~override ModernWpf.Controls.Primitives.PopupEx.OnPreviewMouseRightButtonUp(System.Windows.Input.MouseButtonEventArgs e) -> void
+~override ModernWpf.Controls.Primitives.ThemeShadowChrome.GetLayoutClip(System.Windows.Size layoutSlotSize) -> System.Windows.Media.Geometry
+~override ModernWpf.Controls.Primitives.ThemeShadowChrome.GetVisualChild(int index) -> System.Windows.Media.Visual
+~override ModernWpf.Controls.Primitives.ThemeShadowChrome.HitTestCore(System.Windows.Media.PointHitTestParameters hitTestParameters) -> System.Windows.Media.HitTestResult
+~override ModernWpf.Controls.Primitives.ThemeShadowChrome.OnInitialized(System.EventArgs e) -> void
+~override ModernWpf.Controls.Primitives.ThemeShadowChrome.OnVisualChildrenChanged(System.Windows.DependencyObject visualAdded, System.Windows.DependencyObject visualRemoved) -> void
+~override ModernWpf.Controls.Primitives.ThemeShadowChrome.OnVisualParentChanged(System.Windows.DependencyObject oldParent) -> void
+~override ModernWpf.Controls.Primitives.TitleBarControl.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
+~override ModernWpf.Controls.Primitives.TitleBarControl.OnInitialized(System.EventArgs e) -> void
+~override ModernWpf.Controls.Primitives.TitleBarControl.OnRenderSizeChanged(System.Windows.SizeChangedInfo sizeInfo) -> void
+~override ModernWpf.Controls.Primitives.TitleBarControl.OnVisualParentChanged(System.Windows.DependencyObject oldParent) -> void
+~override ModernWpf.Controls.Primitives.TitleBarControlAutomationPeer.GetClassNameCore() -> string
+~override ModernWpf.Controls.Primitives.TitleBarControlAutomationPeer.GetNameCore() -> string
+~override ModernWpf.Controls.ProgressBar.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
+~override ModernWpf.Controls.RatingItemFontInfo.CreateInstanceCore() -> System.Windows.Freezable
+~override ModernWpf.Controls.RatingItemInfo.CreateInstanceCore() -> System.Windows.Freezable
+~override ModernWpf.Controls.RelativePanel.CreateUIElementCollection(System.Windows.FrameworkElement logicalParent) -> System.Windows.Controls.UIElementCollection
+~override ModernWpf.Controls.RelativePanel.GetLayoutClip(System.Windows.Size layoutSlotSize) -> System.Windows.Media.Geometry
+~override ModernWpf.Controls.RelativePanel.GetVisualChild(int index) -> System.Windows.Media.Visual
+~override ModernWpf.Controls.RelativePanel.OnRender(System.Windows.Media.DrawingContext drawingContext) -> void
+~override ModernWpf.Controls.ScrollViewerEx.OnInitialized(System.EventArgs e) -> void
+~override ModernWpf.Controls.ScrollViewerEx.OnMouseWheel(System.Windows.Input.MouseWheelEventArgs e) -> void
+~override ModernWpf.Controls.StackPanelEx.CreateUIElementCollection(System.Windows.FrameworkElement logicalParent) -> System.Windows.Controls.UIElementCollection
+~override ModernWpf.Controls.StackPanelEx.GetLayoutClip(System.Windows.Size layoutSlotSize) -> System.Windows.Media.Geometry
+~override ModernWpf.Controls.StackPanelEx.GetVisualChild(int index) -> System.Windows.Media.Visual
+~override ModernWpf.Controls.StackPanelEx.OnRender(System.Windows.Media.DrawingContext drawingContext) -> void
+~override ModernWpf.Controls.SymbolIconSource.CreateIconElementCore() -> ModernWpf.Controls.IconElement
+~override ModernWpf.Controls.SymbolIconSource.GetIconElementPropertyCore(System.Windows.DependencyProperty sourceProperty) -> System.Windows.DependencyProperty
+~override ModernWpf.Controls.TextContextMenu.OnClosed(System.Windows.RoutedEventArgs e) -> void
+~override ModernWpf.Controls.TextContextMenu.OnOpened(System.Windows.RoutedEventArgs e) -> void
+~override ModernWpf.Controls.VariableSizedWrapGrid.OnRender(System.Windows.Media.DrawingContext drawingContext) -> void
+~override ModernWpf.Markup.DynamicColorExtension.ProvideValue(System.IServiceProvider serviceProvider) -> object
+~override ModernWpf.Markup.DynamicColorExtensionConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) -> bool
+~override ModernWpf.Markup.DynamicColorExtensionConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) -> object
+~override ModernWpf.Markup.KeyTimeExtension.ProvideValue(System.IServiceProvider serviceProvider) -> object
+~override ModernWpf.Markup.StaticColorExtension.ProvideValue(System.IServiceProvider serviceProvider) -> object
+~override ModernWpf.Markup.TextContextMenuExtension.ProvideValue(System.IServiceProvider serviceProvider) -> object
+~override ModernWpf.Markup.ThemeResouceExtensionConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) -> bool
+~override ModernWpf.Markup.ThemeResouceExtensionConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) -> object
+~override ModernWpf.Markup.ThemeResourceExtension.ProvideValue(System.IServiceProvider serviceProvider) -> object
+~override ModernWpf.Media.Animation.CubicBezierEase.CreateInstanceCore() -> System.Windows.Freezable
+~override ModernWpf.SimpleVisualStateManager.GoToStateCore(System.Windows.FrameworkElement control, System.Windows.FrameworkElement stateGroupsRoot, string stateName, System.Windows.VisualStateGroup group, System.Windows.VisualState state, bool useTransitions) -> bool
+~override ModernWpf.VisualStateManagerEx.GoToStateCore(System.Windows.FrameworkElement control, System.Windows.FrameworkElement stateGroupsRoot, string stateName, System.Windows.VisualStateGroup group, System.Windows.VisualState state, bool useTransitions) -> bool
+~static ModernWpf.Controls.AnimatedIcon.GetState(System.Windows.DependencyObject element) -> string
+~static ModernWpf.Controls.AnimatedIcon.SetState(System.Windows.DependencyObject element, string value) -> void
+~static ModernWpf.Controls.CanvasEx.GetLeft(System.Windows.UIElement element) -> double
+~static ModernWpf.Controls.CanvasEx.GetTop(System.Windows.UIElement element) -> double
+~static ModernWpf.Controls.CanvasEx.GetZIndex(System.Windows.UIElement element) -> int
+~static ModernWpf.Controls.CanvasEx.SetLeft(System.Windows.UIElement element, double length) -> void
+~static ModernWpf.Controls.CanvasEx.SetTop(System.Windows.UIElement element, double length) -> void
+~static ModernWpf.Controls.CanvasEx.SetZIndex(System.Windows.UIElement element, int value) -> void
+~static ModernWpf.Controls.Primitives.BorderHelper.GetChild(System.Windows.Controls.Border border) -> System.Windows.UIElement
+~static ModernWpf.Controls.Primitives.BorderHelper.SetChild(System.Windows.Controls.Border border, System.Windows.UIElement value) -> void
+~static ModernWpf.Controls.Primitives.ButtonHelper.GetVisualStateSettersEnabled(System.Windows.Controls.Primitives.ButtonBase button) -> bool
+~static ModernWpf.Controls.Primitives.ButtonHelper.SetVisualStateSettersEnabled(System.Windows.Controls.Primitives.ButtonBase button, bool value) -> void
+~static ModernWpf.Controls.Primitives.CalendarHelper.GetAutoReleaseMouseCapture(System.Windows.Controls.Calendar calendar) -> bool
+~static ModernWpf.Controls.Primitives.CalendarHelper.SetAutoReleaseMouseCapture(System.Windows.Controls.Calendar calendar, bool value) -> void
+~static ModernWpf.Controls.Primitives.ColumnDefinitionHelper.GetPixelWidth(System.Windows.Controls.ColumnDefinition columnDefinition) -> double
+~static ModernWpf.Controls.Primitives.ColumnDefinitionHelper.SetPixelWidth(System.Windows.Controls.ColumnDefinition columnDefinition, double value) -> void
+~static ModernWpf.Controls.Primitives.ControlHelper.GetBackgroundSizing(System.Windows.Controls.Control control) -> ModernWpf.Controls.BackgroundSizing
+~static ModernWpf.Controls.Primitives.ControlHelper.GetCharacterSpacing(System.Windows.Controls.Control control) -> int
+~static ModernWpf.Controls.Primitives.ControlHelper.GetContentTransitions(System.Windows.Controls.Control control) -> ModernWpf.Media.Animation.TransitionCollection
+~static ModernWpf.Controls.Primitives.ControlHelper.GetCornerRadius(System.Windows.DependencyObject element) -> System.Windows.CornerRadius
+~static ModernWpf.Controls.Primitives.ControlHelper.GetDescription(System.Windows.Controls.Control control) -> object
+~static ModernWpf.Controls.Primitives.ControlHelper.GetDescriptionVisibility(System.Windows.Controls.Control control) -> System.Windows.Visibility
+~static ModernWpf.Controls.Primitives.ControlHelper.GetHeader(System.Windows.Controls.Control control) -> object
+~static ModernWpf.Controls.Primitives.ControlHelper.GetHeaderTemplate(System.Windows.Controls.Control control) -> System.Windows.DataTemplate
+~static ModernWpf.Controls.Primitives.ControlHelper.GetHeaderVisibility(System.Windows.Controls.Control control) -> System.Windows.Visibility
+~static ModernWpf.Controls.Primitives.ControlHelper.GetIsTextScaleFactorEnabled(System.Windows.Controls.Control control) -> bool
+~static ModernWpf.Controls.Primitives.ControlHelper.GetPlaceholderForeground(System.Windows.Controls.Control control) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.Primitives.ControlHelper.GetPlaceholderText(System.Windows.Controls.Control control) -> string
+~static ModernWpf.Controls.Primitives.ControlHelper.GetPlaceholderTextVisibility(System.Windows.Controls.Control control) -> System.Windows.Visibility
+~static ModernWpf.Controls.Primitives.ControlHelper.SetBackgroundSizing(System.Windows.Controls.Control control, ModernWpf.Controls.BackgroundSizing value) -> void
+~static ModernWpf.Controls.Primitives.ControlHelper.SetCharacterSpacing(System.Windows.Controls.Control control, int value) -> void
+~static ModernWpf.Controls.Primitives.ControlHelper.SetContentTransitions(System.Windows.Controls.Control control, ModernWpf.Media.Animation.TransitionCollection value) -> void
+~static ModernWpf.Controls.Primitives.ControlHelper.SetCornerRadius(System.Windows.DependencyObject element, System.Windows.CornerRadius value) -> void
+~static ModernWpf.Controls.Primitives.ControlHelper.SetDescription(System.Windows.Controls.Control control, object value) -> void
+~static ModernWpf.Controls.Primitives.ControlHelper.SetHeader(System.Windows.Controls.Control control, object value) -> void
+~static ModernWpf.Controls.Primitives.ControlHelper.SetHeaderTemplate(System.Windows.Controls.Control control, System.Windows.DataTemplate value) -> void
+~static ModernWpf.Controls.Primitives.ControlHelper.SetIsTextScaleFactorEnabled(System.Windows.Controls.Control control, bool value) -> void
+~static ModernWpf.Controls.Primitives.ControlHelper.SetPlaceholderForeground(System.Windows.Controls.Control control, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.Primitives.ControlHelper.SetPlaceholderText(System.Windows.Controls.Control control, string value) -> void
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.GetFocusVisualMargin(System.Windows.FrameworkElement element) -> System.Windows.Thickness
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.GetFocusVisualPrimaryBrush(System.Windows.FrameworkElement element) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.GetFocusVisualPrimaryThickness(System.Windows.FrameworkElement element) -> System.Windows.Thickness
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.GetFocusVisualSecondaryBrush(System.Windows.FrameworkElement element) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.GetFocusVisualSecondaryThickness(System.Windows.FrameworkElement element) -> System.Windows.Thickness
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.GetIsSystemFocusVisual(System.Windows.Controls.Control control) -> bool
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.GetIsTemplateFocusTarget(System.Windows.FrameworkElement element) -> bool
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.GetShowFocusVisual(System.Windows.FrameworkElement element) -> bool
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.GetUseSystemFocusVisuals(System.Windows.Controls.Control control) -> bool
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.SetFocusVisualMargin(System.Windows.FrameworkElement element, System.Windows.Thickness value) -> void
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.SetFocusVisualPrimaryBrush(System.Windows.FrameworkElement element, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.SetFocusVisualPrimaryThickness(System.Windows.FrameworkElement element, System.Windows.Thickness value) -> void
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.SetFocusVisualSecondaryBrush(System.Windows.FrameworkElement element, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.SetFocusVisualSecondaryThickness(System.Windows.FrameworkElement element, System.Windows.Thickness value) -> void
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.SetIsSystemFocusVisual(System.Windows.Controls.Control control, bool value) -> void
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.SetIsTemplateFocusTarget(System.Windows.FrameworkElement element, bool value) -> void
+~static ModernWpf.Controls.Primitives.FocusVisualHelper.SetUseSystemFocusVisuals(System.Windows.Controls.Control control, bool value) -> void
+~static ModernWpf.Controls.Primitives.HyperlinkHelper.GetIsPressed(System.Windows.Documents.Hyperlink hyperlink) -> bool
+~static ModernWpf.Controls.Primitives.HyperlinkHelper.GetIsPressEnabled(System.Windows.Documents.Hyperlink hyperlink) -> bool
+~static ModernWpf.Controls.Primitives.HyperlinkHelper.SetIsPressEnabled(System.Windows.Documents.Hyperlink hyperlink, bool value) -> void
+~static ModernWpf.Controls.Primitives.MenuItemHelper.GetVisualStateSettersEnabled(System.Windows.Controls.MenuItem menuItem) -> bool
+~static ModernWpf.Controls.Primitives.MenuItemHelper.SetVisualStateSettersEnabled(System.Windows.Controls.MenuItem menuItem, bool value) -> void
+~static ModernWpf.Controls.Primitives.MultiSelectHelper.GetSelectionMode(System.Windows.Controls.ListBoxItem container) -> System.Windows.Controls.SelectionMode
+~static ModernWpf.Controls.Primitives.MultiSelectHelper.SetSelectionMode(System.Windows.Controls.ListBoxItem container, System.Windows.Controls.SelectionMode value) -> void
+~static ModernWpf.Controls.Primitives.OpeningAnimationHelper.GetStoryboard(System.Windows.FrameworkElement element) -> System.Windows.Media.Animation.Storyboard
+~static ModernWpf.Controls.Primitives.OpeningAnimationHelper.SetStoryboard(System.Windows.FrameworkElement element, System.Windows.Media.Animation.Storyboard value) -> void
+~static ModernWpf.Controls.Primitives.PasswordBoxHelper.GetIsEnabled(System.Windows.Controls.PasswordBox passwordBox) -> bool
+~static ModernWpf.Controls.Primitives.PasswordBoxHelper.GetPasswordRevealMode(System.Windows.Controls.PasswordBox passwordBox) -> ModernWpf.Controls.PasswordRevealMode
+~static ModernWpf.Controls.Primitives.PasswordBoxHelper.GetPlaceholderTextVisibility(System.Windows.Controls.Control control) -> System.Windows.Visibility
+~static ModernWpf.Controls.Primitives.PasswordBoxHelper.SetIsEnabled(System.Windows.Controls.PasswordBox passwordBox, bool value) -> void
+~static ModernWpf.Controls.Primitives.PasswordBoxHelper.SetPasswordRevealMode(System.Windows.Controls.PasswordBox passwordBox, ModernWpf.Controls.PasswordRevealMode value) -> void
+~static ModernWpf.Controls.Primitives.PressHelper.GetIsEnabled(System.Windows.UIElement element) -> bool
+~static ModernWpf.Controls.Primitives.PressHelper.GetIsPressed(System.Windows.UIElement element) -> bool
+~static ModernWpf.Controls.Primitives.PressHelper.SetIsEnabled(System.Windows.UIElement element, bool value) -> void
+~static ModernWpf.Controls.Primitives.RowDefinitionHelper.GetPixelHeight(System.Windows.Controls.RowDefinition rowDefinition) -> double
+~static ModernWpf.Controls.Primitives.RowDefinitionHelper.SetPixelHeight(System.Windows.Controls.RowDefinition rowDefinition, double value) -> void
+~static ModernWpf.Controls.Primitives.ScrollBarHelper.GetAutoHide(System.Windows.Controls.Primitives.ScrollBar scrollBar) -> bool
+~static ModernWpf.Controls.Primitives.ScrollBarHelper.GetIndicatorMode(System.Windows.Controls.Primitives.ScrollBar scrollBar) -> ModernWpf.Controls.Primitives.ScrollingIndicatorMode
+~static ModernWpf.Controls.Primitives.ScrollBarHelper.GetIsEnabled(System.Windows.Controls.Primitives.ScrollBar scrollBar) -> bool
+~static ModernWpf.Controls.Primitives.ScrollBarHelper.SetAutoHide(System.Windows.Controls.Primitives.ScrollBar scrollBar, bool value) -> void
+~static ModernWpf.Controls.Primitives.ScrollBarHelper.SetIndicatorMode(System.Windows.Controls.Primitives.ScrollBar scrollBar, ModernWpf.Controls.Primitives.ScrollingIndicatorMode value) -> void
+~static ModernWpf.Controls.Primitives.ScrollBarHelper.SetIsEnabled(System.Windows.Controls.Primitives.ScrollBar scrollBar, bool value) -> void
+~static ModernWpf.Controls.Primitives.TextBoxHelper.GetHasText(System.Windows.Controls.TextBox textBox) -> bool
+~static ModernWpf.Controls.Primitives.TextBoxHelper.GetIsDeleteButton(System.Windows.Controls.Button button) -> bool
+~static ModernWpf.Controls.Primitives.TextBoxHelper.GetIsDeleteButtonVisible(System.Windows.Controls.TextBox textBox) -> bool
+~static ModernWpf.Controls.Primitives.TextBoxHelper.GetIsEnabled(System.Windows.Controls.TextBox textBox) -> bool
+~static ModernWpf.Controls.Primitives.TextBoxHelper.SetIsDeleteButton(System.Windows.Controls.Button button, bool value) -> void
+~static ModernWpf.Controls.Primitives.TextBoxHelper.SetIsDeleteButtonVisible(System.Windows.Controls.TextBox textBox, bool value) -> void
+~static ModernWpf.Controls.Primitives.TextBoxHelper.SetIsEnabled(System.Windows.Controls.TextBox textBox, bool value) -> void
+~static ModernWpf.Controls.Primitives.ToggleButtonHelper.GetVisualStateSettersEnabled(System.Windows.Controls.Primitives.ToggleButton button) -> bool
+~static ModernWpf.Controls.Primitives.ToggleButtonHelper.SetVisualStateSettersEnabled(System.Windows.Controls.Primitives.ToggleButton button, bool value) -> void
+~static ModernWpf.Controls.Primitives.ValidationHelper.GetIsTemplateValidationAdornerSite(System.Windows.FrameworkElement element) -> bool
+~static ModernWpf.Controls.Primitives.ValidationHelper.SetIsTemplateValidationAdornerSite(System.Windows.FrameworkElement element, bool value) -> void
+~static ModernWpf.Controls.Primitives.WindowHelper.GetFixMaximizedWindow(System.Windows.Window window) -> bool
+~static ModernWpf.Controls.Primitives.WindowHelper.GetUseModernWindowStyle(System.Windows.Window window) -> bool
+~static ModernWpf.Controls.Primitives.WindowHelper.SetFixMaximizedWindow(System.Windows.Window window, bool value) -> void
+~static ModernWpf.Controls.Primitives.WindowHelper.SetUseModernWindowStyle(System.Windows.Window window, bool value) -> void
+~static ModernWpf.Controls.RelativePanel.GetAbove(System.Windows.UIElement element) -> object
+~static ModernWpf.Controls.RelativePanel.GetAlignBottomWith(System.Windows.UIElement element) -> object
+~static ModernWpf.Controls.RelativePanel.GetAlignBottomWithPanel(System.Windows.UIElement element) -> bool
+~static ModernWpf.Controls.RelativePanel.GetAlignHorizontalCenterWith(System.Windows.UIElement element) -> object
+~static ModernWpf.Controls.RelativePanel.GetAlignHorizontalCenterWithPanel(System.Windows.UIElement element) -> bool
+~static ModernWpf.Controls.RelativePanel.GetAlignLeftWith(System.Windows.UIElement element) -> object
+~static ModernWpf.Controls.RelativePanel.GetAlignLeftWithPanel(System.Windows.UIElement element) -> bool
+~static ModernWpf.Controls.RelativePanel.GetAlignRightWith(System.Windows.UIElement element) -> object
+~static ModernWpf.Controls.RelativePanel.GetAlignRightWithPanel(System.Windows.UIElement element) -> bool
+~static ModernWpf.Controls.RelativePanel.GetAlignTopWith(System.Windows.UIElement element) -> object
+~static ModernWpf.Controls.RelativePanel.GetAlignTopWithPanel(System.Windows.UIElement element) -> bool
+~static ModernWpf.Controls.RelativePanel.GetAlignVerticalCenterWith(System.Windows.UIElement element) -> object
+~static ModernWpf.Controls.RelativePanel.GetAlignVerticalCenterWithPanel(System.Windows.UIElement element) -> bool
+~static ModernWpf.Controls.RelativePanel.GetBelow(System.Windows.UIElement element) -> object
+~static ModernWpf.Controls.RelativePanel.GetLeftOf(System.Windows.UIElement element) -> object
+~static ModernWpf.Controls.RelativePanel.GetRightOf(System.Windows.UIElement element) -> object
+~static ModernWpf.Controls.RelativePanel.SetAbove(System.Windows.UIElement element, object value) -> void
+~static ModernWpf.Controls.RelativePanel.SetAlignBottomWith(System.Windows.UIElement element, object value) -> void
+~static ModernWpf.Controls.RelativePanel.SetAlignBottomWithPanel(System.Windows.UIElement element, bool value) -> void
+~static ModernWpf.Controls.RelativePanel.SetAlignHorizontalCenterWith(System.Windows.UIElement element, object value) -> void
+~static ModernWpf.Controls.RelativePanel.SetAlignHorizontalCenterWithPanel(System.Windows.UIElement element, bool value) -> void
+~static ModernWpf.Controls.RelativePanel.SetAlignLeftWith(System.Windows.UIElement element, object value) -> void
+~static ModernWpf.Controls.RelativePanel.SetAlignLeftWithPanel(System.Windows.UIElement element, bool value) -> void
+~static ModernWpf.Controls.RelativePanel.SetAlignRightWith(System.Windows.UIElement element, object value) -> void
+~static ModernWpf.Controls.RelativePanel.SetAlignRightWithPanel(System.Windows.UIElement element, bool value) -> void
+~static ModernWpf.Controls.RelativePanel.SetAlignTopWith(System.Windows.UIElement element, object value) -> void
+~static ModernWpf.Controls.RelativePanel.SetAlignTopWithPanel(System.Windows.UIElement element, bool value) -> void
+~static ModernWpf.Controls.RelativePanel.SetAlignVerticalCenterWith(System.Windows.UIElement element, object value) -> void
+~static ModernWpf.Controls.RelativePanel.SetAlignVerticalCenterWithPanel(System.Windows.UIElement element, bool value) -> void
+~static ModernWpf.Controls.RelativePanel.SetBelow(System.Windows.UIElement element, object value) -> void
+~static ModernWpf.Controls.RelativePanel.SetLeftOf(System.Windows.UIElement element, object value) -> void
+~static ModernWpf.Controls.RelativePanel.SetRightOf(System.Windows.UIElement element, object value) -> void
+~static ModernWpf.Controls.TextContextMenu.GetUsingTextContextMenu(System.Windows.Controls.Control textControl) -> bool
+~static ModernWpf.Controls.TextContextMenu.SetUsingTextContextMenu(System.Windows.Controls.Control textControl, bool value) -> void
+~static ModernWpf.Controls.TitleBar.AddBackRequestedHandler(System.Windows.Window window, System.EventHandler<ModernWpf.Controls.BackRequestedEventArgs> handler) -> void
+~static ModernWpf.Controls.TitleBar.GetBackButtonCommand(System.Windows.Window window) -> System.Windows.Input.ICommand
+~static ModernWpf.Controls.TitleBar.GetBackButtonCommandParameter(System.Windows.Window window) -> object
+~static ModernWpf.Controls.TitleBar.GetBackButtonCommandTarget(System.Windows.Window window) -> System.Windows.IInputElement
+~static ModernWpf.Controls.TitleBar.GetBackButtonStyle(System.Windows.Window window) -> System.Windows.Style
+~static ModernWpf.Controls.TitleBar.GetBackground(System.Windows.Window window) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.TitleBar.GetButtonStyle(System.Windows.Window window) -> System.Windows.Style
+~static ModernWpf.Controls.TitleBar.GetExtendViewIntoTitleBar(System.Windows.Window window) -> bool
+~static ModernWpf.Controls.TitleBar.GetForeground(System.Windows.Window window) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.TitleBar.GetHeight(System.Windows.Window window) -> double
+~static ModernWpf.Controls.TitleBar.GetInactiveBackground(System.Windows.Window window) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.TitleBar.GetInactiveForeground(System.Windows.Window window) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.TitleBar.GetIsBackButtonVisible(System.Windows.Window window) -> bool
+~static ModernWpf.Controls.TitleBar.GetIsBackEnabled(System.Windows.Window window) -> bool
+~static ModernWpf.Controls.TitleBar.GetIsIconVisible(System.Windows.Window window) -> bool
+~static ModernWpf.Controls.TitleBar.GetStyle(System.Windows.Window window) -> System.Windows.Style
+~static ModernWpf.Controls.TitleBar.GetSystemOverlayLeftInset(System.Windows.Window window) -> double
+~static ModernWpf.Controls.TitleBar.GetSystemOverlayRightInset(System.Windows.Window window) -> double
+~static ModernWpf.Controls.TitleBar.HeightKey.get -> System.Windows.ComponentResourceKey
+~static ModernWpf.Controls.TitleBar.RemoveBackRequestedHandler(System.Windows.Window window, System.EventHandler<ModernWpf.Controls.BackRequestedEventArgs> handler) -> void
+~static ModernWpf.Controls.TitleBar.SetBackButtonCommand(System.Windows.Window window, System.Windows.Input.ICommand value) -> void
+~static ModernWpf.Controls.TitleBar.SetBackButtonCommandParameter(System.Windows.Window window, object value) -> void
+~static ModernWpf.Controls.TitleBar.SetBackButtonCommandTarget(System.Windows.Window window, System.Windows.IInputElement value) -> void
+~static ModernWpf.Controls.TitleBar.SetBackButtonStyle(System.Windows.Window window, System.Windows.Style value) -> void
+~static ModernWpf.Controls.TitleBar.SetBackground(System.Windows.Window window, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.TitleBar.SetButtonStyle(System.Windows.Window window, System.Windows.Style value) -> void
+~static ModernWpf.Controls.TitleBar.SetExtendViewIntoTitleBar(System.Windows.Window window, bool value) -> void
+~static ModernWpf.Controls.TitleBar.SetForeground(System.Windows.Window window, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.TitleBar.SetInactiveBackground(System.Windows.Window window, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.TitleBar.SetInactiveForeground(System.Windows.Window window, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.TitleBar.SetIsBackButtonVisible(System.Windows.Window window, bool value) -> void
+~static ModernWpf.Controls.TitleBar.SetIsBackEnabled(System.Windows.Window window, bool value) -> void
+~static ModernWpf.Controls.TitleBar.SetIsIconVisible(System.Windows.Window window, bool value) -> void
+~static ModernWpf.Controls.TitleBar.SetStyle(System.Windows.Window window, System.Windows.Style value) -> void
+~static ModernWpf.Controls.VariableSizedWrapGrid.GetColumnSpan(System.Windows.UIElement element) -> int
+~static ModernWpf.Controls.VariableSizedWrapGrid.GetRowSpan(System.Windows.UIElement element) -> int
+~static ModernWpf.Controls.VariableSizedWrapGrid.SetColumnSpan(System.Windows.UIElement element, int value) -> void
+~static ModernWpf.Controls.VariableSizedWrapGrid.SetRowSpan(System.Windows.UIElement element, int value) -> void
+~static ModernWpf.DesignTime.Design.GetRequestedTheme(System.Windows.FrameworkElement element) -> ModernWpf.ElementTheme
+~static ModernWpf.DesignTime.Design.SetRequestedTheme(System.Windows.FrameworkElement element, ModernWpf.ElementTheme value) -> void
+~static ModernWpf.Navigation.Extensions.Parameter(this System.Windows.Navigation.NavigatingCancelEventArgs e) -> object
+~static ModernWpf.Navigation.Extensions.Parameter(this System.Windows.Navigation.NavigationEventArgs e) -> object
+~static ModernWpf.Navigation.Extensions.SourcePageType(this System.Windows.Navigation.NavigatingCancelEventArgs e) -> System.Type
+~static ModernWpf.Navigation.Extensions.SourcePageType(this System.Windows.Navigation.NavigationEventArgs e) -> System.Type
+~static ModernWpf.ThemeDictionary.SetKey(System.Windows.ResourceDictionary themeDictionary, string key) -> void
+~static ModernWpf.ThemeManager.AddActualThemeChangedHandler(System.Windows.FrameworkElement element, System.Windows.RoutedEventHandler handler) -> void
+~static ModernWpf.ThemeManager.Current.get -> ModernWpf.ThemeManager
+~static ModernWpf.ThemeManager.GetActualTheme(System.Windows.FrameworkElement element) -> ModernWpf.ElementTheme
+~static ModernWpf.ThemeManager.GetHasThemeResources(System.Windows.FrameworkElement element) -> bool
+~static ModernWpf.ThemeManager.GetIsThemeAware(System.Windows.Window window) -> bool
+~static ModernWpf.ThemeManager.GetRequestedTheme(System.Windows.FrameworkElement element) -> ModernWpf.ElementTheme
+~static ModernWpf.ThemeManager.RemoveActualThemeChangedHandler(System.Windows.FrameworkElement element, System.Windows.RoutedEventHandler handler) -> void
+~static ModernWpf.ThemeManager.SetHasThemeResources(System.Windows.FrameworkElement element, bool value) -> void
+~static ModernWpf.ThemeManager.SetIsThemeAware(System.Windows.Window window, bool value) -> void
+~static ModernWpf.ThemeManager.SetRequestedTheme(System.Windows.FrameworkElement element, ModernWpf.ElementTheme value) -> void
+~static ModernWpf.VisualTree.FindAscendant(this System.Windows.DependencyObject element, System.Type type) -> object
+~static ModernWpf.VisualTree.FindAscendant<T>(this System.Windows.DependencyObject element) -> T
+~static ModernWpf.VisualTree.FindAscendantByName(this System.Windows.DependencyObject element, string name) -> System.Windows.FrameworkElement
+~static ModernWpf.VisualTree.FindAscendants(this System.Windows.DependencyObject element) -> System.Collections.Generic.IEnumerable<System.Windows.DependencyObject>
+~static ModernWpf.VisualTree.FindDescendant(this System.Windows.DependencyObject element, System.Type type) -> object
+~static ModernWpf.VisualTree.FindDescendant<T>(this System.Windows.DependencyObject element) -> T
+~static ModernWpf.VisualTree.FindDescendantByName(this System.Windows.DependencyObject element, string name) -> System.Windows.FrameworkElement
+~static ModernWpf.VisualTree.FindDescendants<T>(this System.Windows.DependencyObject element) -> System.Collections.Generic.IEnumerable<T>
+~static readonly ModernWpf.Controls.AnimatedIcon.StateProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.BitmapIcon.ShowAsMonochromeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.BitmapIcon.UriSourceProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.BitmapIconSource.ShowAsMonochromeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.BitmapIconSource.UriSourceProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.BorderEx.BackgroundSizingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.BorderEx.BackgroundTransitionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.BorderEx.ChildTransitionsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.BrushTransition.DurationProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.CanvasEx.BackgroundTransitionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.CanvasEx.ChildrenTransitionsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.CanvasEx.LeftProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.CanvasEx.TopProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.CanvasEx.ZIndexProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentControlEx.BackgroundSizingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentControlEx.BackgroundTransitionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentControlEx.CharacterSpacingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentControlEx.ContentTransitionsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentControlEx.CornerRadiusProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentControlEx.IsTextScaleFactorEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentControlEx.RecognizesAccessKeyProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.BackgroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.BackgroundSizingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.BackgroundTransitionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.BorderBrushProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.BorderThicknessProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.CharacterSpacingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.ContentTransitionsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.CornerRadiusProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.FontFamilyProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.FontSizeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.FontStretchProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.FontStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.FontWeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.ForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.HorizontalContentAlignmentProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.IsTextScaleFactorEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.LineHeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.LineStackingStrategyProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.MaxLinesProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.OpticalMarginAlignmentProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.PaddingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.TextLineBoundsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.TextWrappingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ContentPresenterEx.VerticalContentAlignmentProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ControlEx.CornerRadiusProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIcon.FontFamilyProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIcon.FontSizeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIcon.FontStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIcon.FontWeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIcon.GlyphProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIcon.IsTextScaleFactorEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIcon.MirroredWhenRightToLeftProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIconFallback.DataProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIconSource.FontFamilyProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIconSource.FontSizeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIconSource.FontStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIconSource.FontWeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIconSource.GlyphProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIconSource.IsTextScaleFactorEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.FontIconSource.MirroredWhenRightToLeftProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Frame.BackStackDepthProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Frame.ContentTransitionsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Frame.CurrentSourcePageTypeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Frame.SourcePageTypeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.GridEx.BackgroundSizingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.GridEx.BackgroundTransitionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.GridEx.BorderBrushProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.GridEx.BorderThicknessProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.GridEx.ChildrenTransitionsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.GridEx.ColumnSpacingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.GridEx.CornerRadiusProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.GridEx.PaddingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.GridEx.RowSpacingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.IconElement.ForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.IconSource.ForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ImageIcon.SourceProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ImageIconSource.ImageSourceProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsStackPanel.AreStickyGroupHeadersEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsStackPanel.CacheLengthProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsStackPanel.GroupHeaderPlacementProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsStackPanel.GroupPaddingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsStackPanel.ItemsUpdatingScrollModeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsStackPanel.OrientationProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsWrapGrid.AreStickyGroupHeadersEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsWrapGrid.CacheLengthProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsWrapGrid.GroupHeaderPlacementProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsWrapGrid.GroupPaddingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsWrapGrid.ItemHeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsWrapGrid.ItemWidthProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsWrapGrid.MaximumRowsOrColumnsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsWrapGrid.OrientationProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ListViewBaseHeaderItem.CornerRadiusProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ListViewBaseHeaderItem.UseSystemFocusVisualsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Page.FrameProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.PathIcon.DataProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.PathIconSource.DataProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.BindingProxy.ValueProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.BorderHelper.ChildProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ButtonHelper.VisualStateSettersEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.CalendarHelper.AutoReleaseMouseCaptureProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ColumnDefinitionHelper.PixelWidthProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.BackgroundSizingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.CharacterSpacingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.ContentTransitionsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.CornerRadiusProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.DescriptionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.DescriptionVisibilityProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.HeaderProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.HeaderTemplateProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.HeaderVisibilityProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.IsTextScaleFactorEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.PlaceholderForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.PlaceholderTextProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ControlHelper.PlaceholderTextVisibilityProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.FocusVisualHelper.FocusVisualMarginProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.FocusVisualHelper.FocusVisualPrimaryBrushProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.FocusVisualHelper.FocusVisualPrimaryThicknessProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.FocusVisualHelper.FocusVisualSecondaryBrushProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.FocusVisualHelper.FocusVisualSecondaryThicknessProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.FocusVisualHelper.IsSystemFocusVisualProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.FocusVisualHelper.IsTemplateFocusTargetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.FocusVisualHelper.ShowFocusVisualProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.FocusVisualHelper.UseSystemFocusVisualsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.HyperlinkHelper.IsPressedProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.MenuItemHelper.VisualStateSettersEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.MenuPopup.IsSuspendingAnimationProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.MultiSelectHelper.SelectionModeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.OpeningAnimationHelper.StoryboardProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.PasswordBoxHelper.IsEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.PasswordBoxHelper.PasswordRevealModeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.PasswordBoxHelper.PlaceholderTextVisibilityProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.PressHelper.IsEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.PressHelper.IsPressedProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.ClipRectProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.Container2AnimationEndPositionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.Container2AnimationStartPositionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.ContainerAnimationEndPositionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.ContainerAnimationMidPositionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.ContainerAnimationStartPositionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.EllipseAnimationEndPositionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.EllipseAnimationWellPositionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.EllipseDiameterProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.EllipseOffsetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.IndicatorLengthDeltaProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ProgressBarTemplateSettings.TrackHeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.RowDefinitionHelper.PixelHeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ScrollBarHelper.AutoHideProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ScrollBarHelper.IndicatorModeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ScrollBarHelper.IsEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TextBoxHelper.HasTextProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TextBoxHelper.IsDeleteButtonProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TextBoxHelper.IsDeleteButtonVisibleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TextBoxHelper.IsEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ThemeShadowChrome.CornerRadiusProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ThemeShadowChrome.DepthProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ThemeShadowChrome.IsShadowEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ThemeShadowChrome.ReservesShadowSpaceProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ThemeShadowChrome.ShadowProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ThemeShadowChrome.TranslationZProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ThemeShadowChrome.WindowedPopupInsetModeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarButton.HoverBackgroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarButton.HoverForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarButton.InactiveBackgroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarButton.InactiveForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarButton.IsActiveProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarButton.IsMouseReallyOverProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarButton.IsReallyPressedProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarButton.PressedBackgroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarButton.PressedForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.ActualIconProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandParameterProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandTargetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.BackButtonStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.ButtonStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.ExtendViewIntoTitleBarProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.IconProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.InactiveBackgroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.InactiveForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.IsActiveProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.IsBackButtonVisibleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.IsBackEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.IsIconVisibleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.TitleBarControl.TitleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ToggleButtonHelper.VisualStateSettersEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.ValidationHelper.IsTemplateValidationAdornerSiteProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowedPopup.ActualPlacementProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowedPopup.ChildProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowedPopup.DesiredPlacementProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowedPopup.HorizontalOffsetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowedPopup.IsOpenProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowedPopup.PlacementTargetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowedPopup.VerticalOffsetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowHelper.FixMaximizedWindowProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowHelper.UseModernWindowStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ProgressBar.CornerRadiusProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ProgressBar.IsIndeterminateProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ProgressBar.ShowErrorProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ProgressBar.ShowPausedProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ProgressBar.TemplateSettingsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RatingItemFontInfo.DisabledGlyphProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RatingItemFontInfo.GlyphProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RatingItemFontInfo.PlaceholderGlyphProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RatingItemFontInfo.PointerOverGlyphProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RatingItemFontInfo.PointerOverPlaceholderGlyphProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RatingItemFontInfo.UnsetGlyphProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AboveProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AlignBottomWithPanelProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AlignBottomWithProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AlignHorizontalCenterWithPanelProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AlignHorizontalCenterWithProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AlignLeftWithPanelProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AlignLeftWithProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AlignRightWithPanelProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AlignRightWithProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AlignTopWithPanelProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AlignTopWithProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AlignVerticalCenterWithPanelProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.AlignVerticalCenterWithProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.BackgroundSizingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.BackgroundTransitionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.BelowProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.BorderBrushProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.BorderThicknessProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.ChildrenTransitionsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.CornerRadiusProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.LeftOfProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.PaddingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RelativePanel.RightOfProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.StackPanelEx.AreScrollSnapPointsRegularProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.StackPanelEx.BackgroundSizingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.StackPanelEx.BackgroundTransitionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.StackPanelEx.BorderBrushProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.StackPanelEx.BorderThicknessProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.StackPanelEx.ChildrenTransitionsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.StackPanelEx.CornerRadiusProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.StackPanelEx.OrientationProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.StackPanelEx.PaddingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.StackPanelEx.SpacingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.SymbolIcon.SymbolProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.SymbolIconSource.SymbolProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TextContextMenu.UsingTextContextMenuProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.BackButtonCommandParameterProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.BackButtonCommandProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.BackButtonCommandTargetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.BackButtonStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.BackgroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.BackRequestedEvent -> System.Windows.RoutedEvent
+~static readonly ModernWpf.Controls.TitleBar.ButtonStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.ExtendViewIntoTitleBarProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.ForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.HeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.InactiveBackgroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.InactiveForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.IsBackButtonVisibleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.IsBackEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.IsIconVisibleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.StyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.SystemOverlayLeftInsetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.SystemOverlayRightInsetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.VariableSizedWrapGrid.BackgroundTransitionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.VariableSizedWrapGrid.ChildrenTransitionsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.VariableSizedWrapGrid.ColumnSpanProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.VariableSizedWrapGrid.HorizontalChildrenAlignmentProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.VariableSizedWrapGrid.ItemHeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.VariableSizedWrapGrid.ItemWidthProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.VariableSizedWrapGrid.MaximumRowsOrColumnsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.VariableSizedWrapGrid.OrientationProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.VariableSizedWrapGrid.RowSpanProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.VariableSizedWrapGrid.VerticalChildrenAlignmentProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.DesignTime.Design.RequestedThemeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Media.Animation.CubicBezierEase.ControlPoint1Property -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Media.Animation.CubicBezierEase.ControlPoint2Property -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Media.Animation.FadeInThemeAnimation.TargetNameProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Media.Animation.FadeOutThemeAnimation.TargetNameProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Media.Animation.NavigationThemeTransition.DefaultNavigationTransitionInfoProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Media.Animation.SlideNavigationTransitionInfo.EffectProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.ThemeManager.AccentColorProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.ThemeManager.ActualAccentColorProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.ThemeManager.ActualApplicationThemeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.ThemeManager.ActualThemeChangedEvent -> System.Windows.RoutedEvent
+~static readonly ModernWpf.ThemeManager.ActualThemeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.ThemeManager.ApplicationThemeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.ThemeManager.HasThemeResourcesProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.ThemeManager.IsThemeAwareProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.ThemeManager.RequestedThemeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.VisualStateSetter.PropertyProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.VisualStateSetter.TargetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.VisualStateSetter.ValueProperty -> System.Windows.DependencyProperty
+~virtual ModernWpf.Controls.IconSource.CreateIconElementCore() -> ModernWpf.Controls.IconElement
+~virtual ModernWpf.Controls.IconSource.GetIconElementPropertyCore(System.Windows.DependencyProperty sourceProperty) -> System.Windows.DependencyProperty
+~virtual ModernWpf.Controls.Page.OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e) -> void
+~virtual ModernWpf.Controls.Page.OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e) -> void
+~virtual ModernWpf.Controls.Page.OnNavigatingFrom(System.Windows.Navigation.NavigatingCancelEventArgs e) -> void

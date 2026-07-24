@@ -1,0 +1,179 @@
+using System;
+using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Navigation;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.Gallery.Models;
+using ModernWpf.Gallery.Pages;
+
+namespace ModernWpf.Gallery.Tests
+{
+    [TestClass]
+    public class WpfGalleryPageRegistryTests
+    {
+        private static readonly string[] WpfGalleryDirectPageIds =
+        {
+            "Border",
+            "Button",
+            "Calendar",
+            "CheckBox",
+            "Color",
+            "ComboBox",
+            "DataGrid",
+            "DatePicker",
+            "Expander",
+            "Frame",
+            "Geometry",
+            "Grid",
+            "GridSplitter",
+            "GroupBox",
+            "Hyperlink",
+            "Iconography",
+            "Label",
+            "ListBox",
+            "ListView",
+            "Menu",
+            "NavigationWindow",
+            "PasswordBox",
+            "ProgressBar",
+            "RadioButton",
+            "ResizeGrip",
+            "RichTextBox",
+            "Slider",
+            "Spacing",
+            "StackPanel",
+            "TabControl",
+            "TextBlock",
+            "TextBox",
+            "ToolTip",
+            "TreeView",
+            "Typography"
+        };
+
+        [TestMethod]
+        public void DirectPageRegistryCoversWpfGalleryEquivalentPages()
+        {
+            var expected = WpfGalleryDirectPageIds
+                .OrderBy(id => id, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            var actual = WpfGalleryPageRegistry.DirectPageIds.ToArray();
+
+            CollectionAssert.AreEqual(expected, actual);
+        }
+
+        [TestMethod]
+        public void DirectPageRegistryCreatesWpfGalleryPageInstances()
+        {
+            WpfTestHost.Run(() =>
+            {
+                foreach (var uniqueId in WpfGalleryDirectPageIds)
+                {
+                    var page = WpfGalleryPageRegistry.CreatePageContent(uniqueId);
+
+                    Assert.IsNotNull(page, uniqueId);
+                    Assert.IsInstanceOfType(page, typeof(UIElement), uniqueId);
+                    StringAssert.Contains(page.GetType().FullName, ".Pages.WpfGallery.");
+                    Assert.AreEqual(
+                        Application.Current.FindResource("BodyTextBlockFontSize"),
+                        TextElement.GetFontSize(page),
+                        uniqueId);
+                }
+
+                Assert.IsFalse(WpfGalleryPageRegistry.HasDirectPageContent("NavigationView"));
+                Assert.IsNull(WpfGalleryPageRegistry.CreatePageContent("NavigationView"));
+            });
+        }
+
+        [TestMethod]
+        public void DirectPageRegistryAcceptsOfficialWpfGalleryDisplayItemIds()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var expected = new[]
+                {
+                    new { LookupId = "Colors", PageType = typeof(ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.ColorsPage) },
+                    new { LookupId = "Icons", PageType = typeof(ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance.IconsPage) },
+                    new { LookupId = "RichTextEdit", PageType = typeof(ModernWpf.Gallery.Pages.WpfGallery.Text.RichTextEditPage) }
+                };
+
+                foreach (var item in expected)
+                {
+                    var page = WpfGalleryPageRegistry.CreatePageContent(item.LookupId);
+
+                    Assert.IsTrue(WpfGalleryPageRegistry.HasDirectPageContent(item.LookupId), item.LookupId);
+                    Assert.IsNotNull(page, item.LookupId);
+                    Assert.IsInstanceOfType(page, item.PageType, item.LookupId);
+                }
+            });
+        }
+
+        [TestMethod]
+        [DataRow("UserDashboard")]
+        [DataRow("FileAndFolderDialogs")]
+        [DataRow("MessageBox")]
+        [DataRow("Clipboard")]
+        [DataRow("Canvas")]
+        [DataRow("Image")]
+        public void RetiredPagesAreNotRegistered(string uniqueId)
+        {
+            Assert.IsFalse(WpfGalleryPageRegistry.HasDirectPageContent(uniqueId));
+            Assert.IsNull(WpfGalleryPageRegistry.CreatePageContent(uniqueId));
+        }
+
+        [TestMethod]
+        public void DirectPageRegistryItemsUseDirectPageHosting()
+        {
+            WpfTestHost.Run(() =>
+            {
+                foreach (var uniqueId in WpfGalleryDirectPageIds)
+                {
+                    var page = new ItemPage(GalleryCatalog.FindItem(uniqueId));
+
+                    Assert.IsTrue(page.UsesWpfGalleryPageMode, uniqueId);
+                    Assert.IsTrue(page.HasDirectPageContent, uniqueId);
+                    Assert.AreEqual(new Thickness(0), page.DirectPageContentMargin, uniqueId);
+                    Assert.AreEqual(0, page.Examples.Count, uniqueId);
+                    Assert.IsFalse(page.ShowScrolledPageContent, uniqueId);
+                    Assert.IsFalse(page.ShowCatalogDetails, uniqueId);
+
+                    var directPageHost = FindDirectPageContentHost(page);
+                    Assert.AreEqual(NavigationUIVisibility.Hidden, directPageHost.NavigationUIVisibility, uniqueId);
+                }
+            });
+        }
+
+        [TestMethod]
+        public void DirectPagesDoNotUseLegacySampleFactoryRoutes()
+        {
+            foreach (var uniqueId in WpfGalleryDirectPageIds)
+            {
+                Assert.IsNull(CreateLegacyFactoryContent(uniqueId), uniqueId);
+            }
+        }
+
+        private static UIElement CreateLegacyFactoryContent(string uniqueId)
+        {
+            return BasicInputSampleFactory.Create(uniqueId)
+                ?? StatusInfoSampleFactory.Create(uniqueId)
+                ?? DialogsFlyoutsSampleFactory.Create(uniqueId)
+                ?? MenusToolbarsSampleFactory.Create(uniqueId)
+                ?? CollectionsSampleFactory.Create(uniqueId)
+                ?? ScrollingSampleFactory.Create(uniqueId)
+                ?? LayoutSampleFactory.Create(uniqueId)
+                ?? NavigationSampleFactory.Create(uniqueId)
+                ?? MediaSampleFactory.Create(uniqueId)
+                ?? StylesSampleFactory.Create(uniqueId)
+                ?? TextSampleFactory.Create(uniqueId)
+                ?? WindowingSampleFactory.Create(uniqueId);
+        }
+
+        private static Frame FindDirectPageContentHost(ItemPage page)
+        {
+            var root = (Grid)page.Content;
+            return root.Children.OfType<Frame>().Single(frame => Grid.GetRow(frame) == 1);
+        }
+    }
+}

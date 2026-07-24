@@ -1,0 +1,14 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ColorPickerSlider"
+  },
+  "properties": [
+    { "name": "ColorChannel", "type": "ColorPickerHsvChannel", "default": "ColorPickerHsvChannel.Value" }
+  ]
+}

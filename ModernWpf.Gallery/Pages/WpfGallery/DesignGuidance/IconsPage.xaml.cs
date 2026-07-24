@@ -1,0 +1,80 @@
+using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Input;
+
+namespace ModernWpf.Gallery.Pages.WpfGallery.DesignGuidance
+{
+    /// <summary>
+    /// Interaction logic for IconsPage.xaml
+    /// </summary>
+    public partial class IconsPage : Page
+    {
+        static IconsPage()
+        {
+            CommandManager.RegisterClassCommandBinding(typeof(IconsPage), new CommandBinding(ApplicationCommands.Copy, Copy_Content));
+        }
+
+        public IconsPage(IconsPageViewModel viewModel)
+        {
+            InitializeComponent();
+            ViewModel = viewModel;
+            DataContext = this;
+        }
+
+        public IconsPageViewModel ViewModel { get; }
+
+        public static void Copy_Content(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(((ExecutedRoutedEventArgs)e).Parameter.ToString()))
+            {
+                try
+                {
+                    Clipboard.SetText(((ExecutedRoutedEventArgs)e).Parameter.ToString());
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error copying to clipboard: " + ex.Message);
+                }
+            }
+        }
+
+        private void IconsSearchBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (IconsSearchBox.Text.Length > 0)
+            {
+                IconsSearchBoxPlaceholder.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                IconsSearchBoxPlaceholder.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void IconsSearchBox_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+        {
+            if (IconsSearchBox.Text.Length > 0)
+            {
+                IconsSearchBoxPlaceholder.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                IconsSearchBoxPlaceholder.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void IconsSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(IconsSearchBox.Text.Length > 0)
+            {
+                IconsSearchBoxPlaceholder.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                IconsSearchBoxPlaceholder.Visibility = Visibility.Visible;
+            }
+        }
+
+    }
+}

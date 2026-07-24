@@ -1,0 +1,829 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Windows;
+using System.Windows.Automation;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
+using ModernWpf.Gallery.Pages;
+
+namespace ModernWpf.Gallery.Testing
+{
+    internal static class GalleryDiagnostics
+    {
+        public const string StatusFileName = "modernwpf-gallery-status.txt";
+        public const string VisualScrollRequestFileName = "modernwpf-gallery-scroll-request.txt";
+        public const string VisualScrollResultFileName = "modernwpf-gallery-scroll-result.txt";
+
+        private static readonly object Gate = new object();
+
+        public static bool IsEnabled { get; private set; }
+        public static bool OpenInteractions { get; private set; }
+        public static bool PreserveAnimatedVisuals { get; private set; }
+        public static string ArtifactDirectory { get; private set; }
+        public static string Theme { get; private set; }
+        public static string ColorSubpage { get; private set; }
+        public static string CurrentRoute { get; private set; } = "home";
+        public static string ReadyState { get; private set; } = "Starting";
+        public static string LastException { get; private set; } = string.Empty;
+
+        public static void Configure(GalleryLaunchOptions options)
+        {
+            if (options == null)
+            {
+                return;
+            }
+
+            lock (Gate)
+            {
+                IsEnabled = options.VisualTestMode;
+                OpenInteractions = options.OpenInteractions;
+                PreserveAnimatedVisuals = options.PreserveAnimatedVisuals;
+                ArtifactDirectory = options.ArtifactDirectory;
+                Theme = options.Theme;
+                ColorSubpage = options.ColorSubpage;
+                CurrentRoute = "home";
+                ReadyState = "Starting";
+                LastException = string.Empty;
+            }
+
+            WriteStatusFile();
+        }
+
+        public static void ResetForTests()
+        {
+            lock (Gate)
+            {
+                IsEnabled = false;
+                OpenInteractions = false;
+                PreserveAnimatedVisuals = false;
+                ArtifactDirectory = null;
+                Theme = null;
+                ColorSubpage = null;
+                CurrentRoute = "home";
+                ReadyState = "Starting";
+                LastException = string.Empty;
+            }
+        }
+
+        public static void RecordRoute(string route)
+        {
+            lock (Gate)
+            {
+                CurrentRoute = string.IsNullOrWhiteSpace(route) ? "home" : route;
+            }
+        }
+
+        public static void SetReadyState(string state)
+        {
+            lock (Gate)
+            {
+                ReadyState = string.IsNullOrWhiteSpace(state) ? "Unknown" : state;
+            }
+        }
+
+        public static void RecordException(Exception exception)
+        {
+            if (exception == null)
+            {
+                return;
+            }
+
+            var text = FormatException(exception);
+            lock (Gate)
+            {
+                LastException = text;
+            }
+
+            if (IsEnabled && !string.IsNullOrWhiteSpace(ArtifactDirectory))
+            {
+                TryAppendExceptionLog(text);
+                WriteStatusFile();
+            }
+        }
+
+        public static void WriteStatusFile()
+        {
+            string artifactDirectory;
+            string currentRoute;
+            string readyState;
+            string lastException;
+            bool isEnabled;
+
+            lock (Gate)
+            {
+                isEnabled = IsEnabled;
+                artifactDirectory = ArtifactDirectory;
+                currentRoute = CurrentRoute;
+                readyState = ReadyState;
+                lastException = LastException;
+            }
+
+            if (!isEnabled || string.IsNullOrWhiteSpace(artifactDirectory))
+            {
+                return;
+            }
+
+            try
+            {
+                Directory.CreateDirectory(artifactDirectory);
+                File.WriteAllLines(
+                    Path.Combine(artifactDirectory, StatusFileName),
+                    new[]
+                    {
+                        currentRoute ?? string.Empty,
+                        readyState ?? string.Empty,
+                        Convert.ToBase64String(Encoding.UTF8.GetBytes(lastException ?? string.Empty))
+                    });
+            }
+            catch
+            {
+                // File-backed status is a test aid and must not affect the Gallery runtime.
+            }
+        }
+
+        public static void WriteVisualArtifacts(DependencyObject root)
+        {
+            if (!IsEnabled || string.IsNullOrWhiteSpace(ArtifactDirectory) || root == null)
+            {
+                return;
+            }
+
+            try
+            {
+                Directory.CreateDirectory(ArtifactDirectory);
+                if (!PreserveAnimatedVisuals)
+                {
+                    StabilizeAnimatedVisualState(root);
+                }
+
+                var scrollPositions = CaptureScrollPositions(root);
+                try
+                {
+                    WriteVisualArtifactsCore(root);
+                }
+                finally
+                {
+                    RestoreScrollPositions(scrollPositions);
+                }
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+            }
+        }
+
+        public static void PrepareInteractiveVisualState(DependencyObject root)
+        {
+            if (!IsEnabled || !OpenInteractions || root == null)
+            {
+                return;
+            }
+
+            try
+            {
+                OpenTeachingTip(root);
+                OpenWpfToolTip(root);
+            }
+            catch (Exception ex)
+            {
+                RecordException(ex);
+            }
+        }
+
+        private static void OpenTeachingTip(DependencyObject root)
+        {
+            var teachingTipButton = FindByAutomationId(root, "GallerySample_TeachingTip_ShowButton") as ButtonBase;
+            if (teachingTipButton == null)
+            {
+                return;
+            }
+
+            teachingTipButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            root.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
+        }
+
+        private static void OpenWpfToolTip(DependencyObject root)
+        {
+            var button = FindByAutomationName(root, "TooltipButton") as FrameworkElement;
+            if (button == null)
+            {
+                return;
+            }
+
+            var content = ToolTipService.GetToolTip(button);
+            if (content == null)
+            {
+                return;
+            }
+
+            var toolTip = content as ToolTip;
+            if (toolTip == null)
+            {
+                toolTip = new ToolTip
+                {
+                    Content = content
+                };
+                ToolTipService.SetToolTip(button, toolTip);
+            }
+
+            toolTip.PlacementTarget = button;
+            toolTip.Placement = ToolTipService.GetPlacement(button);
+            toolTip.IsOpen = true;
+            root.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
+        }
+
+        private static string FormatException(Exception exception)
+        {
+            var builder = new StringBuilder();
+            builder.Append(exception.GetType().FullName);
+            builder.Append(": ");
+            builder.Append(exception.Message);
+
+            if (exception.InnerException != null)
+            {
+                builder.Append(" | Inner: ");
+                builder.Append(exception.InnerException.GetType().FullName);
+                builder.Append(": ");
+                builder.Append(exception.InnerException.Message);
+            }
+
+            return builder.ToString();
+        }
+
+        private static void TryAppendExceptionLog(string text)
+        {
+            try
+            {
+                Directory.CreateDirectory(ArtifactDirectory);
+                File.AppendAllText(
+                    Path.Combine(ArtifactDirectory, "modernwpf-gallery-exceptions.log"),
+                    DateTimeOffset.Now.ToString("o") + " " + text + Environment.NewLine);
+            }
+            catch
+            {
+                // Diagnostics must not create new Gallery failures.
+            }
+        }
+
+        private static void WriteVisualArtifactsCore(DependencyObject root)
+        {
+            var element = root as FrameworkElement;
+            if (element != null)
+            {
+                var automationId = AutomationProperties.GetAutomationId(element);
+                var artifactId = GetVisualArtifactId(element, automationId);
+                if (ShouldWriteVisualArtifact(artifactId) && !ShouldSkipVisualArtifact(element, artifactId))
+                {
+                    PrepareElementForVisualArtifact(element, artifactId);
+                    var artifactFileName = SanitizeFileName(artifactId);
+                    WriteElementPng(element, Path.Combine(ArtifactDirectory, artifactFileName + ".png"));
+                    WriteElementBounds(element, Path.Combine(ArtifactDirectory, artifactFileName + ".bounds.txt"));
+                }
+
+                var popup = element as Popup;
+                if (popup?.Child != null)
+                {
+                    WriteVisualArtifactsCore(popup.Child);
+                }
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                WriteVisualArtifactsCore(VisualTreeHelper.GetChild(root, i));
+            }
+        }
+
+        public static bool BringVisualArtifactIntoView(DependencyObject root, string automationId)
+        {
+            if (!IsEnabled || root == null || string.IsNullOrWhiteSpace(automationId))
+            {
+                return false;
+            }
+
+            var element = FindByAutomationId(root, automationId) as FrameworkElement;
+            if (element == null || !element.IsLoaded)
+            {
+                return false;
+            }
+
+            return BringVisualArtifactIntoView(element);
+        }
+
+        private static bool BringVisualArtifactIntoView(FrameworkElement element)
+        {
+            if (element == null || !element.IsLoaded)
+            {
+                return false;
+            }
+
+            element.BringIntoView(new Rect(
+                0,
+                0,
+                Math.Max(1, element.ActualWidth),
+                Math.Max(1, element.ActualHeight)));
+            element.UpdateLayout();
+            var scrollViewer = FindAncestorScrollViewer(element);
+            if (scrollViewer != null)
+            {
+                scrollViewer.ApplyTemplate();
+                var scrollPresenter = scrollViewer.Template?.FindName("PART_ScrollContentPresenter", scrollViewer) as ScrollContentPresenter;
+                if (scrollPresenter != null && scrollPresenter.ViewportHeight > 0)
+                {
+                    var position = element.TransformToAncestor(scrollPresenter).Transform(new Point());
+                    var maximumOffset = Math.Max(0, scrollPresenter.ExtentHeight - scrollPresenter.ViewportHeight);
+                    var desiredOffset = Math.Max(
+                        0,
+                        Math.Min(maximumOffset, scrollPresenter.VerticalOffset + position.Y));
+                    scrollPresenter.SetVerticalOffset(desiredOffset);
+                    scrollPresenter.InvalidateArrange();
+                }
+                else
+                {
+                    var position = element.TransformToAncestor(scrollViewer).Transform(new Point());
+                    scrollViewer.ScrollToVerticalOffset(Math.Max(0, scrollViewer.VerticalOffset + position.Y));
+                }
+                scrollViewer.UpdateLayout();
+            }
+            element.UpdateLayout();
+            return true;
+        }
+
+        public static bool TryProcessVisualScrollRequest(DependencyObject root)
+        {
+            if (!IsEnabled || string.IsNullOrWhiteSpace(ArtifactDirectory) || root == null)
+            {
+                return false;
+            }
+
+            var requestPath = Path.Combine(ArtifactDirectory, VisualScrollRequestFileName);
+            if (!File.Exists(requestPath))
+            {
+                return false;
+            }
+
+            string automationId;
+            try
+            {
+                automationId = File.ReadAllText(requestPath).Trim();
+                File.Delete(requestPath);
+            }
+            catch
+            {
+                return false;
+            }
+
+            var element = FindByAutomationId(root, automationId) as FrameworkElement;
+            if (!BringVisualArtifactIntoView(element))
+            {
+                WriteVisualScrollResult(automationId + "|NotFound");
+                return true;
+            }
+
+            // ScrollViewer applies its content translation on the render pass. Delay the
+            // reported screen bounds until that pass so the external recorder never crops
+            // the stale, pre-scroll location of a lower sample.
+            element.Dispatcher.BeginInvoke(
+                DispatcherPriority.Render,
+                new Action(() =>
+                {
+                    element.UpdateLayout();
+                    var topLeft = element.PointToScreen(new Point());
+                    var bottomRight = element.PointToScreen(new Point(element.ActualWidth, element.ActualHeight));
+                    WriteVisualScrollResult(string.Format(
+                        System.Globalization.CultureInfo.InvariantCulture,
+                        "{0}|Found|{1:0.###}|{2:0.###}|{3:0.###}|{4:0.###}",
+                        automationId,
+                        topLeft.X,
+                        topLeft.Y,
+                        Math.Max(1, bottomRight.X - topLeft.X),
+                        Math.Max(1, bottomRight.Y - topLeft.Y)));
+                }));
+            return true;
+        }
+
+        private static void WriteVisualScrollResult(string result)
+        {
+            File.WriteAllText(
+                Path.Combine(ArtifactDirectory, VisualScrollResultFileName),
+                result);
+        }
+
+        private static ScrollViewer FindAncestorScrollViewer(DependencyObject element)
+        {
+            var candidate = VisualTreeHelper.GetParent(element);
+            while (candidate != null)
+            {
+                var scrollViewer = candidate as ScrollViewer;
+                if (scrollViewer != null)
+                {
+                    return scrollViewer;
+                }
+
+                candidate = VisualTreeHelper.GetParent(candidate);
+            }
+
+            return null;
+        }
+
+        private static void PrepareElementForVisualArtifact(FrameworkElement element, string artifactId)
+        {
+            if (!IsControlExampleArtifactId(artifactId) || !element.IsLoaded)
+            {
+                return;
+            }
+
+            element.BringIntoView(new Rect(0, 0, Math.Max(1, element.ActualWidth), 1));
+            element.Dispatcher.Invoke(DispatcherPriority.Loaded, new Action(() => { }));
+            element.UpdateLayout();
+            element.Dispatcher.Invoke(DispatcherPriority.Background, new Action(() => { }));
+        }
+
+        private static bool IsControlExampleArtifactId(string artifactId)
+        {
+            const string prefix = "GallerySample_";
+            const string marker = "_Example";
+            if (string.IsNullOrEmpty(artifactId) || !artifactId.StartsWith(prefix, StringComparison.Ordinal))
+            {
+                return false;
+            }
+
+            var markerIndex = artifactId.LastIndexOf(marker, StringComparison.Ordinal);
+            int exampleIndex;
+            return markerIndex > prefix.Length &&
+                int.TryParse(artifactId.Substring(markerIndex + marker.Length), out exampleIndex) &&
+                exampleIndex > 0;
+        }
+
+        private static List<ScrollPosition> CaptureScrollPositions(DependencyObject root)
+        {
+            var positions = new List<ScrollPosition>();
+            CaptureScrollPositionsCore(root, positions);
+            return positions;
+        }
+
+        private static void CaptureScrollPositionsCore(DependencyObject root, List<ScrollPosition> positions)
+        {
+            var scrollViewer = root as ScrollViewer;
+            if (scrollViewer != null)
+            {
+                positions.Add(new ScrollPosition(scrollViewer));
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                CaptureScrollPositionsCore(VisualTreeHelper.GetChild(root, i), positions);
+            }
+        }
+
+        private static void RestoreScrollPositions(IEnumerable<ScrollPosition> positions)
+        {
+            foreach (var position in positions)
+            {
+                if (!position.ScrollViewer.IsLoaded)
+                {
+                    continue;
+                }
+
+                position.ScrollViewer.ScrollToHorizontalOffset(position.HorizontalOffset);
+                position.ScrollViewer.ScrollToVerticalOffset(position.VerticalOffset);
+            }
+        }
+
+        private sealed class ScrollPosition
+        {
+            public ScrollPosition(ScrollViewer scrollViewer)
+            {
+                ScrollViewer = scrollViewer;
+                HorizontalOffset = scrollViewer.HorizontalOffset;
+                VerticalOffset = scrollViewer.VerticalOffset;
+            }
+
+            public ScrollViewer ScrollViewer { get; private set; }
+
+            public double HorizontalOffset { get; private set; }
+
+            public double VerticalOffset { get; private set; }
+        }
+
+        private static void StabilizeAnimatedVisualState(DependencyObject root)
+        {
+            var progressBar = root as ProgressBar;
+            if (progressBar != null && progressBar.IsIndeterminate)
+            {
+                StabilizeIndeterminateProgressBar(progressBar);
+            }
+
+            var progressRing = root as ModernWpf.Controls.ProgressRing;
+            if (progressRing != null && progressRing.IsIndeterminate)
+            {
+                StabilizeIndeterminateProgressRing(progressRing);
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                StabilizeAnimatedVisualState(VisualTreeHelper.GetChild(root, i));
+            }
+        }
+
+        private static void StabilizeIndeterminateProgressBar(ProgressBar progressBar)
+        {
+            progressBar.ApplyTemplate();
+            progressBar.UpdateLayout();
+
+            var animation = progressBar.Template.FindName("Animation", progressBar) as FrameworkElement;
+            if (animation == null)
+            {
+                return;
+            }
+
+            animation.BeginAnimation(UIElement.RenderTransformOriginProperty, null);
+            animation.RenderTransformOrigin = new Point(0, 0.5);
+
+            var scale = FindScaleTransform(animation.RenderTransform);
+            if (scale != null)
+            {
+                scale.BeginAnimation(ScaleTransform.ScaleXProperty, null);
+                scale.ScaleX = 0.25;
+            }
+        }
+
+        private static void StabilizeIndeterminateProgressRing(ModernWpf.Controls.ProgressRing progressRing)
+        {
+            progressRing.ApplyTemplate();
+            progressRing.UpdateLayout();
+
+            var ring = progressRing.Template.FindName("Ring", progressRing) as ModernWpf.Controls.Primitives.ProgressRingIndicator;
+            if (ring == null)
+            {
+                return;
+            }
+
+            ring.BeginAnimation(ModernWpf.Controls.Primitives.ProgressRingIndicator.IndeterminateStartAngleProperty, null);
+            ring.IndeterminateStartAngle = 305.0;
+        }
+
+        private static ScaleTransform FindScaleTransform(Transform transform)
+        {
+            var scale = transform as ScaleTransform;
+            if (scale != null)
+            {
+                return scale;
+            }
+
+            var group = transform as TransformGroup;
+            if (group != null)
+            {
+                return group.Children.OfType<ScaleTransform>().FirstOrDefault();
+            }
+
+            return null;
+        }
+
+        private static void WriteElementPng(FrameworkElement element, string path)
+        {
+            element.UpdateLayout();
+            var width = (int)Math.Ceiling(element.ActualWidth);
+            var height = (int)Math.Ceiling(element.ActualHeight);
+            if (width <= 0 || height <= 0)
+            {
+                return;
+            }
+
+            var drawingVisual = new DrawingVisual();
+            var viewbox = GetArtifactViewbox(element, width, height);
+            var visualBrush = new VisualBrush(element)
+            {
+                AlignmentX = AlignmentX.Left,
+                AlignmentY = AlignmentY.Top,
+                Stretch = Stretch.None,
+                Viewbox = viewbox,
+                ViewboxUnits = BrushMappingMode.Absolute,
+                Viewport = new Rect(0, 0, width, height),
+                ViewportUnits = BrushMappingMode.Absolute
+            };
+
+            using (var drawingContext = drawingVisual.RenderOpen())
+            {
+                drawingContext.DrawRectangle(
+                    GetArtifactBackgroundBrush(element),
+                    null,
+                    new Rect(0, 0, width, height));
+                drawingContext.DrawRectangle(
+                    visualBrush,
+                    null,
+                    new Rect(0, 0, width, height));
+            }
+
+            var bitmap = new RenderTargetBitmap(width, height, 96, 96, PixelFormats.Pbgra32);
+            bitmap.Render(drawingVisual);
+
+            var encoder = new PngBitmapEncoder();
+            encoder.Frames.Add(BitmapFrame.Create(bitmap));
+            using (var stream = File.Create(path))
+            {
+                encoder.Save(stream);
+            }
+        }
+
+        private static void WriteElementBounds(FrameworkElement element, string path)
+        {
+            element.UpdateLayout();
+            var width = element.ActualWidth;
+            var height = element.ActualHeight;
+            if (width <= 0 || height <= 0)
+            {
+                return;
+            }
+
+            var topLeft = element.PointToScreen(new Point(0, 0));
+            File.WriteAllText(
+                path,
+                string.Format(
+                    System.Globalization.CultureInfo.InvariantCulture,
+                    "{0:0.0},{1:0.0},{2:0.0},{3:0.0}",
+                    topLeft.X,
+                    topLeft.Y,
+                    width,
+                    height));
+        }
+
+        private static Rect GetArtifactViewbox(FrameworkElement element, int width, int height)
+        {
+            var automationId = AutomationProperties.GetAutomationId(element);
+            if ((element is ModernWpf.Controls.NavigationView &&
+                    automationId.StartsWith("GallerySample_NavigationView_", StringComparison.Ordinal)) ||
+                string.Equals(automationId, "GallerySample_AnnotatedScrollBar_AnnotatedScrollBar", StringComparison.Ordinal) ||
+                string.Equals(automationId, "GallerySample_GridView_BasicGridView", StringComparison.Ordinal) ||
+                string.Equals(automationId, "GallerySample_IconElement_SlicesIcon", StringComparison.Ordinal) ||
+                string.Equals(automationId, "GallerySample_ProgressRing_DeterminateProgressRing", StringComparison.Ordinal) ||
+                string.Equals(automationId, "GallerySample_CommandBarFlyout_ShowButton", StringComparison.Ordinal))
+            {
+                return GetParentOffsetViewbox(element, width, height);
+            }
+
+            return new Rect(0, 0, width, height);
+        }
+
+        private static Rect GetParentOffsetViewbox(FrameworkElement element, int width, int height)
+        {
+            var parent = VisualTreeHelper.GetParent(element) as Visual;
+            if (parent != null)
+            {
+                var offset = element.TransformToAncestor(parent).Transform(new Point());
+                if (offset.X > 0 || offset.Y > 0)
+                {
+                    return new Rect(offset.X, offset.Y, width, height);
+                }
+            }
+
+            return new Rect(0, 0, width, height);
+        }
+
+        private static bool ShouldWriteVisualArtifact(string automationId)
+        {
+            return !string.IsNullOrEmpty(automationId) &&
+                (GalleryAutomation.IsSampleAutomationId(automationId) ||
+                    string.Equals(automationId, "AllControlsContentRootPane", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "GalleryContentHost", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "HomeContentRootPane", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "GalleryItemPageRoot", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "SettingsContentRootPane", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "ModernWpfGalleryMainWindow", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "GalleryNavigationRoot", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "GalleryNavigationView", StringComparison.Ordinal) ||
+                    string.Equals(automationId, "ContentPagePane", StringComparison.Ordinal));
+        }
+
+        private static string GetVisualArtifactId(FrameworkElement element, string automationId)
+        {
+            if (ShouldWriteVisualArtifact(automationId))
+            {
+                return automationId;
+            }
+
+            var itemPage = element.DataContext as ItemPage;
+            if (itemPage != null && ReferenceEquals(element, itemPage.Content))
+            {
+                return itemPage.ContentRootArtifactId;
+            }
+
+            var homePage = element.DataContext as DashboardPage;
+            if (homePage != null && ReferenceEquals(element, homePage.Content))
+            {
+                return "HomeContentRootPane";
+            }
+
+            var allControlsPage = element.DataContext as AllSamplesPage;
+            if (allControlsPage != null && ReferenceEquals(element, allControlsPage.Content))
+            {
+                return "AllControlsContentRootPane";
+            }
+
+            var settingsPage = element.DataContext as SettingsPage;
+            if (settingsPage != null && ReferenceEquals(element, settingsPage.Content))
+            {
+                return "SettingsContentRootPane";
+            }
+
+            var sectionPage = element.DataContext as SectionPage;
+            if (sectionPage != null && ReferenceEquals(element, sectionPage.Content))
+            {
+                return "ContentPagePane";
+            }
+
+            return element.Name;
+        }
+
+        private static bool ShouldSkipVisualArtifact(FrameworkElement element, string artifactId)
+        {
+            return string.Equals(artifactId, "GalleryContentHost", StringComparison.Ordinal) &&
+                element is Frame;
+        }
+
+        private static DependencyObject FindByAutomationId(DependencyObject root, string automationId)
+        {
+            var element = root as UIElement;
+            if (element != null && AutomationProperties.GetAutomationId(element) == automationId)
+            {
+                return root;
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var result = FindByAutomationId(VisualTreeHelper.GetChild(root, i), automationId);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        private static DependencyObject FindByAutomationName(DependencyObject root, string automationName)
+        {
+            var element = root as UIElement;
+            if (element != null && AutomationProperties.GetName(element) == automationName)
+            {
+                return root;
+            }
+
+            var childCount = VisualTreeHelper.GetChildrenCount(root);
+            for (var i = 0; i < childCount; i++)
+            {
+                var result = FindByAutomationName(VisualTreeHelper.GetChild(root, i), automationName);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+
+            return null;
+        }
+
+        private static Brush GetArtifactBackgroundBrush(FrameworkElement element)
+        {
+            var automationId = AutomationProperties.GetAutomationId(element);
+            if (!string.IsNullOrEmpty(automationId) &&
+                GalleryAutomation.IsSampleAutomationId(automationId))
+            {
+                return element.TryFindResource("SolidBackgroundFillColorBaseBrush") as Brush
+                    ?? new SolidColorBrush(
+                        string.Equals(Theme, "Dark", StringComparison.OrdinalIgnoreCase)
+                            ? Color.FromRgb(0x20, 0x20, 0x20)
+                            : Color.FromRgb(0xF3, 0xF3, 0xF3));
+            }
+
+            return element.TryFindResource("SolidBackgroundFillColorTertiaryBrush") as Brush
+                ?? element.TryFindResource("LayerFillColorDefaultBrush") as Brush
+                ?? element.TryFindResource("ApplicationPageBackgroundThemeBrush") as Brush
+                ?? element.TryFindResource("SolidBackgroundFillColorBaseBrush") as Brush
+                ?? new SolidColorBrush(
+                    string.Equals(Theme, "Dark", StringComparison.OrdinalIgnoreCase)
+                        ? Color.FromRgb(0x20, 0x20, 0x20)
+                        : Color.FromRgb(0xF3, 0xF3, 0xF3));
+        }
+
+        private static string SanitizeFileName(string value)
+        {
+            var invalid = Path.GetInvalidFileNameChars();
+            var builder = new StringBuilder(value.Length);
+            foreach (var ch in value)
+            {
+                builder.Append(Array.IndexOf(invalid, ch) >= 0 ? '_' : ch);
+            }
+
+            return builder.ToString();
+        }
+    }
+}

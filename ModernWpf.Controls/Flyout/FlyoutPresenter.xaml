@@ -32,11 +32,14 @@
                 <ControlTemplate TargetType="local:FlyoutPresenter">
                     <ui:ThemeShadowChrome
                         IsShadowEnabled="{TemplateBinding IsDefaultShadowEnabled}"
+                        WindowedPopupInsetMode="Medium"
+                        ReservesShadowSpace="True"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         SnapsToDevicePixels="True">
-                        <Border
+                        <ui:BorderEx
                             x:Name="LayoutRoot"
                             Background="{TemplateBinding Background}"
+                            BackgroundSizing="InnerBorderEdge"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}">
@@ -44,13 +47,18 @@
                                 x:Name="ScrollViewer"
                                 HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                 VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
-                                <ContentPresenter
+                                <ui:ContentPresenterEx
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                                    ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"
                                     Margin="{TemplateBinding Padding}"
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                     VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             </ScrollViewer>
-                        </Border>
+                        </ui:BorderEx>
                     </ui:ThemeShadowChrome>
                 </ControlTemplate>
             </Setter.Value>

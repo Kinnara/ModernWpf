@@ -26,7 +26,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 #endif
 
 using CommandBarFlyout = ModernWpf.Controls.CommandBarFlyout;
-using CommandBar = ModernWpf.Controls.CommandBar;
+using CommandBar = ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBar;
 using AppBarButton = ModernWpf.Controls.AppBarButton;
 
 namespace ModernWpf.Tests.MUXControls.ApiTests
@@ -78,8 +78,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 
             RunOnUIThread.Execute(() =>
             {
-                Popup flyoutPopup = GetFlyoutPopup();
-                CommandBar commandBar = TestUtilities.FindDescendents<CommandBar>(flyoutPopup).Single();
+                CommandBar commandBar = GetCommandBar(commandBarFlyout);
 
                 Verify.AreEqual(commandBarFlyout.PrimaryCommands.Count, commandBar.PrimaryCommands.Count);
 
@@ -108,6 +107,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         }
 
         [TestMethod]
+        [Ignore("Retired for 1.x: covered by ModernWpf.WinUI.Tests.CommandBarFlyoutApiTests.VerifyCommandBarSizingPrimaryItemsLarger.")]
         [TestProperty("Description", "Verifies that the overflow popup sizes itself to be the size of the main command bar if the primary items section width is larger than the secondary items section width.")]
         public void VerifyCommandBarSizingPrimaryItemsLarger()
         {
@@ -123,6 +123,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         }
 
         [TestMethod]
+        [Ignore("Retired for 1.x: covered by ModernWpf.WinUI.Tests.CommandBarFlyoutApiTests.VerifyCommandBarSizingSecondaryItemsLarger.")]
         [TestProperty("Description", "Verifies that the main command bar sizes itself to be the size of the overflow popup when open if the primary items section width is smaller than the secondary items section width.")]
         public void VerifyCommandBarSizingSecondaryItemsLarger()
         {
@@ -138,6 +139,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         }
 
         [TestMethod]
+        [Ignore("Retired for 1.x: covered by ModernWpf.WinUI.Tests.CommandBarFlyoutApiTests.VerifyCommandBarSizingSecondaryItemsMaxWidth.")]
         [TestProperty("Description", "Verifies that the command bar and overflow popup do not size themselves to be larger than the max width if a very wide AppBarButton is present.")]
         public void VerifyCommandBarSizingSecondaryItemsMaxWidth()
         {
@@ -153,6 +155,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         }
 
         [TestMethod]
+        [Ignore("Retired for 1.x: covered by ModernWpf.WinUI.Tests.CommandBarFlyoutApiTests.VerifyCommandBarSizingSecondaryItemsMaxHeight.")]
         [TestProperty("Description", "Verifies that the overflow popup does not size itself to be larger than its max height if a sufficiently large number of AppBarButtons are present.")]
         public void VerifyCommandBarSizingSecondaryItemsMaxHeight()
         {
@@ -199,8 +202,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 
             RunOnUIThread.Execute(() =>
             {
-                Popup flyoutPopup = GetFlyoutPopup();
-                commandBar = TestUtilities.FindDescendents<CommandBar>(flyoutPopup).Single();
+                commandBar = GetCommandBar(commandBarFlyout);
             });
 
             IdleSynchronizer.Wait();
@@ -219,8 +221,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 
             RunOnUIThread.Execute(() =>
             {
-                Popup flyoutPopup = GetFlyoutPopup();
-                commandBar = TestUtilities.FindDescendents<CommandBar>(flyoutPopup).Single();
+                commandBar = GetCommandBar(commandBarFlyout);
 
                 originalWidth = commandBar.ActualWidth;
                 originalHeight = commandBar.ActualHeight;
@@ -266,7 +267,6 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 
         // Disabled for WPF
         //[TestMethod]
-        [TestProperty("Description", "Verifies that the overflow popup does not size itself to be larger than its max height if a sufficiently large number of AppBarButtons are present.")]
         public void VerifyPrimaryCommandsCanOverflowToSecondaryItemsControl()
         {
             /*
@@ -320,8 +320,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
 
             RunOnUIThread.Execute(() =>
             {
-                Popup flyoutPopup = VisualTreeHelperEx.GetOpenPopups(WindowEx.Current).Reverse().Skip(1).First();
-                CommandBar commandBar = TestUtilities.FindDescendents<CommandBar>(flyoutPopup).Single();
+                CommandBar commandBar = GetCommandBar(flyout);
 
                 IList<ItemsControl> itemsControls = TestUtilities.FindDescendents<ItemsControl>(commandBar);
 
@@ -421,10 +420,13 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
             Log.Comment("Flyout closed.");
         }
 
-        private Popup GetFlyoutPopup()
+        private CommandBar GetCommandBar(CommandBarFlyout flyout)
         {
-            return VisualTreeHelperEx.GetOpenPopups(WindowEx.Current).Reverse().First(
-                p => p.Child.FindDescendant<CommandBar>() != null);
+            var presenter = flyout.GetPresenter();
+            Verify.IsNotNull(presenter, "The open CommandBarFlyout should retain its presenter.");
+            var commandBar = presenter.Content as CommandBar;
+            Verify.IsNotNull(commandBar, "The CommandBarFlyout presenter should contain its CommandBar.");
+            return commandBar;
         }
     }
 }

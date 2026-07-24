@@ -24,6 +24,8 @@
         <Setter Property="Background" Value="{DynamicResource ContentDialogBackground}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ContentDialogBorderWidth}" />
         <Setter Property="BorderBrush" Value="{DynamicResource ContentDialogBorderBrush}" />
+        <Setter Property="FontFamily" Value="{DynamicResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="CornerRadius" Value="{DynamicResource OverlayCornerRadius}" />
         <Setter Property="PrimaryButtonStyle" Value="{DynamicResource DefaultButtonStyle}" />
@@ -36,7 +38,7 @@
                 <ControlTemplate TargetType="local:ContentDialog">
                     <Border x:Name="Container">
                         <VisualStateManager.CustomVisualStateManager>
-                            <ui:SimpleVisualStateManager />
+                            <ui:VisualStateManagerEx />
                         </VisualStateManager.CustomVisualStateManager>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="DialogShowingStates">
@@ -90,138 +92,108 @@
                                     </VisualTransition>
                                 </VisualStateGroup.Transitions>
                                 <VisualState x:Name="DialogHidden" />
-                                <VisualState x:Name="DialogShowing">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement" Storyboard.TargetProperty="(KeyboardNavigation.TabNavigation)">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static KeyboardNavigationMode.Cycle}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="DialogShowingWithoutSmokeLayer">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Visible}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Null}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="DialogShowing">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryButton.IsTabStop" Value="True" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.IsTabStop" Value="True" />
+                                        <ui:VisualStateSetter Target="CloseButton.IsTabStop" Value="True" />
+                                        <ui:VisualStateSetter Target="LayoutRoot.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="BackgroundElement.(KeyboardNavigation.TabNavigation)" Value="Cycle" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="DialogShowingWithoutSmokeLayer">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryButton.IsTabStop" Value="True" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.IsTabStop" Value="True" />
+                                        <ui:VisualStateSetter Target="CloseButton.IsTabStop" Value="True" />
+                                        <ui:VisualStateSetter Target="LayoutRoot.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{x:Null}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="DialogSizingStates">
                                 <VisualState x:Name="DefaultDialogSizing" />
-                                <VisualState x:Name="FullDialogSizing">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement" Storyboard.TargetProperty="VerticalAlignment">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static VerticalAlignment.Stretch}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="FullDialogSizing">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="BackgroundElement.VerticalAlignment" Value="Stretch" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ButtonsVisibilityStates">
-                                <VisualState x:Name="AllVisible">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="FirstSpacer" Storyboard.TargetProperty="Width">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{StaticResource ContentDialogButtonSpacing}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SecondaryColumn" Storyboard.TargetProperty="Width">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0">
-                                                <DiscreteObjectKeyFrame.Value>
-                                                    <GridLength>*</GridLength>
-                                                </DiscreteObjectKeyFrame.Value>
-                                            </DiscreteObjectKeyFrame>
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="(Grid.Column)">
-                                            <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="2" />
-                                        </Int32AnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="NoneVisible">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CommandSpace" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="PrimaryVisible">
-                                    <Storyboard>
-                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="PrimaryButton" Storyboard.TargetProperty="(Grid.Column)">
-                                            <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="4" />
-                                        </Int32AnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButton" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="SecondaryVisible">
-                                    <Storyboard>
-                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="(Grid.Column)">
-                                            <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="4" />
-                                        </Int32AnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PrimaryButton" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButton" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="CloseVisible">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PrimaryButton" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="PrimaryAndSecondaryVisible">
-                                    <Storyboard>
-                                        <Int32AnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="(Grid.Column)">
-                                            <DiscreteInt32KeyFrame KeyTime="0:0:0" Value="4" />
-                                        </Int32AnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButton" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="PrimaryAndCloseVisible">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SecondaryButton" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="SecondaryAndCloseVisible">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PrimaryButton" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{x:Static Visibility.Collapsed}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="AllVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="FirstSpacer.Width" Value="{StaticResource ContentDialogButtonSpacing}" />
+                                        <ui:VisualStateSetter Target="SecondaryColumn.Width" Value="*" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.(Grid.Column)" Value="2" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="NoneVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="CommandSpace.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PrimaryVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryButton.(Grid.Column)" Value="4" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="CloseButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SecondaryVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SecondaryButton.(Grid.Column)" Value="4" />
+                                        <ui:VisualStateSetter Target="PrimaryButton.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="CloseButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CloseVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryButton.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="SecondaryButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PrimaryAndSecondaryVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SecondaryButton.(Grid.Column)" Value="4" />
+                                        <ui:VisualStateSetter Target="CloseButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PrimaryAndCloseVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SecondaryButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SecondaryAndCloseVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryButton.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="DefaultButtonStates">
                                 <VisualState x:Name="NoDefaultButton" />
-                                <VisualState x:Name="PrimaryAsDefaultButton" />
-                                <VisualState x:Name="SecondaryAsDefaultButton" />
-                                <VisualState x:Name="CloseAsDefaultButton" />
+                                <ui:VisualStateEx x:Name="PrimaryAsDefaultButton">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PrimaryButton.Style" Value="{DynamicResource AccentButtonStyle}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SecondaryAsDefaultButton">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SecondaryButton.Style" Value="{DynamicResource AccentButtonStyle}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="CloseAsDefaultButton">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="CloseButton.Style" Value="{DynamicResource AccentButtonStyle}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="DialogBorderStates">
                                 <VisualState x:Name="NoBorder" />
-                                <VisualState x:Name="AccentColorBorder">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackgroundElement" Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0" Value="{DynamicResource SystemControlForegroundAccentBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <ui:VisualStateEx x:Name="AccentColorBorder">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="BackgroundElement.BorderBrush" Value="{DynamicResource SystemControlForegroundAccentBrush}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Border x:Name="LayoutRoot"
@@ -245,6 +217,7 @@
                                     </Grid.RenderTransform>
                                     <ui:ThemeShadowChrome
                                         x:Name="Shdw"
+                                        Depth="128"
                                         IsShadowEnabled="{TemplateBinding IsShadowEnabled}"
                                         CornerRadius="{TemplateBinding CornerRadius}"
                                         Margin="{DynamicResource ContentDialogBorderWidth}" />
@@ -281,7 +254,8 @@
                                                                 Content="{TemplateBinding Title}"
                                                                 ContentTemplate="{TemplateBinding TitleTemplate}"
                                                                 FontSize="20"
-                                                                FontFamily="{DynamicResource {x:Static SystemFonts.MessageFontFamilyKey}}"
+                                                                FontFamily="{DynamicResource ContentControlThemeFontFamily}"
+                                                                MinHeight="27"
                                                                 FontWeight="SemiBold"
                                                                 Foreground="{TemplateBinding Foreground}"
                                                                 HorizontalAlignment="Left"
@@ -322,7 +296,15 @@
                                                     Margin="{StaticResource ContentDialogPadding}"
                                                     Background="{TemplateBinding Background}">
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition x:Name="PrimaryColumn" Width="*" />
+                                                        <!--
+                                                            WPF can redistribute the two flexible columns by
+                                                            four physical pixels as the dialog's screen origin
+                                                            changes. WinUI keeps the primary column at 85 pixels
+                                                            in the 320-pixel three-button layout; this minimum
+                                                            makes that source geometry deterministic while wider
+                                                            dialogs continue to use star sizing.
+                                                        -->
+                                                        <ColumnDefinition x:Name="PrimaryColumn" Width="*" MinWidth="85" />
                                                         <ColumnDefinition x:Name="FirstSpacer" Width="0" />
                                                         <ColumnDefinition x:Name="SecondaryColumn" Width="0" />
                                                         <ColumnDefinition x:Name="SecondSpacer" Width="{StaticResource ContentDialogButtonSpacing}" />
@@ -333,18 +315,27 @@
                                                         Content="{TemplateBinding PrimaryButtonText}"
                                                         IsEnabled="{TemplateBinding IsPrimaryButtonEnabled}"
                                                         Style="{TemplateBinding PrimaryButtonStyle}"
+                                                        FontFamily="{DynamicResource ContentControlThemeFontFamily}"
+                                                        FontSize="{DynamicResource ControlContentThemeFontSize}"
+                                                        MinHeight="32"
                                                         HorizontalAlignment="Stretch" />
                                                     <Button
                                                         x:Name="SecondaryButton"
                                                         Content="{TemplateBinding SecondaryButtonText}"
                                                         IsEnabled="{TemplateBinding IsSecondaryButtonEnabled}"
                                                         Style="{TemplateBinding SecondaryButtonStyle}"
+                                                        FontFamily="{DynamicResource ContentControlThemeFontFamily}"
+                                                        FontSize="{DynamicResource ControlContentThemeFontSize}"
+                                                        MinHeight="32"
                                                         HorizontalAlignment="Stretch" />
                                                     <Button
                                                         x:Name="CloseButton"
                                                         Grid.Column="4"
                                                         Content="{TemplateBinding CloseButtonText}"
                                                         Style="{TemplateBinding CloseButtonStyle}"
+                                                        FontFamily="{DynamicResource ContentControlThemeFontFamily}"
+                                                        FontSize="{DynamicResource ControlContentThemeFontSize}"
+                                                        MinHeight="32"
                                                         HorizontalAlignment="Stretch" />
                                                 </Grid>
                                             </Grid>
@@ -357,15 +348,6 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsShadowEnabled" Value="False">
                             <Setter TargetName="Shdw" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
-                        <Trigger Property="DefaultButton" Value="Primary">
-                            <Setter TargetName="PrimaryButton" Property="Style" Value="{DynamicResource AccentButtonStyle}" />
-                        </Trigger>
-                        <Trigger Property="DefaultButton" Value="Secondary">
-                            <Setter TargetName="SecondaryButton" Property="Style" Value="{DynamicResource AccentButtonStyle}" />
-                        </Trigger>
-                        <Trigger Property="DefaultButton" Value="Close">
-                            <Setter TargetName="CloseButton" Property="Style" Value="{DynamicResource AccentButtonStyle}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

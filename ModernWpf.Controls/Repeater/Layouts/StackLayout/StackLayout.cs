@@ -9,52 +9,20 @@ using System.Windows.Controls;
 
 namespace ModernWpf.Controls
 {
-    public class StackLayout : VirtualizingLayout, IFlowLayoutAlgorithmDelegates
+    public partial class StackLayout : VirtualizingLayout, IFlowLayoutAlgorithmDelegates
     {
         public StackLayout()
         {
             LayoutId = "StackLayout";
+            UpdateIndexBasedLayoutOrientation(Orientation.Vertical);
         }
 
         #region Properties
 
-        public static readonly DependencyProperty DisableVirtualizationProperty =
-            DependencyProperty.Register(
-                nameof(DisableVirtualization),
-                typeof(bool),
-                typeof(StackLayout),
-                new PropertyMetadata(false, OnPropertyChanged));
-
         public bool DisableVirtualization
         {
-            get => (bool)GetValue(DisableVirtualizationProperty);
-            set => SetValue(DisableVirtualizationProperty, value);
-        }
-
-        public static readonly DependencyProperty OrientationProperty =
-            DependencyProperty.Register(
-                nameof(Orientation),
-                typeof(Orientation),
-                typeof(StackLayout),
-                new PropertyMetadata(Orientation.Vertical, OnPropertyChanged));
-
-        public Orientation Orientation
-        {
-            get => (Orientation)GetValue(OrientationProperty);
-            set => SetValue(OrientationProperty, value);
-        }
-
-        public static readonly DependencyProperty SpacingProperty =
-            DependencyProperty.Register(
-                nameof(Spacing),
-                typeof(double),
-                typeof(StackLayout),
-                new PropertyMetadata(0.0, OnPropertyChanged));
-
-        public double Spacing
-        {
-            get => (double)GetValue(SpacingProperty);
-            set => SetValue(SpacingProperty, value);
+            get => !IsVirtualizationEnabled;
+            set => IsVirtualizationEnabled = !value;
         }
 
         private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
@@ -108,7 +76,7 @@ namespace ModernWpf.Controls
                 m_itemSpacing,
                 uint.MaxValue /* maxItemsPerLine */,
                 OM.ScrollOrientation,
-                DisableVirtualization,
+                !IsVirtualizationEnabled,
                 LayoutId);
             return desiredSize;
         }
@@ -132,7 +100,13 @@ namespace ModernWpf.Controls
             object source,
             NotifyCollectionChangedEventArgs args)
         {
-            GetFlowAlgorithm(context).OnItemsSourceChanged(source, args, context);
+            var stackState = GetAsStackState(context.LayoutState);
+            if (args.Action == NotifyCollectionChangedAction.Reset)
+            {
+                stackState.OnElementSizesReset();
+            }
+
+            stackState.FlowAlgorithm.OnItemsSourceChanged(source, args, context);
             // Always invalidate layout to keep the view accurate.
             InvalidateLayout();
         }
@@ -337,10 +311,16 @@ namespace ModernWpf.Controls
                 //Horizontal Orientation means we have a Horizontal ScrollOrientation.
                 ScrollOrientation scrollOrientation = (orientation == Orientation.Horizontal) ? ScrollOrientation.Horizontal : ScrollOrientation.Vertical;
                 OM.ScrollOrientation = scrollOrientation;
+
+                UpdateIndexBasedLayoutOrientation(orientation);
             }
             else if (property == SpacingProperty)
             {
                 m_itemSpacing = (double)args.NewValue;
+            }
+            else if (property == DisableVirtualizationProperty)
+            {
+                IsVirtualizationEnabled = !(bool)args.NewValue;
             }
 
             InvalidateLayout();
@@ -363,7 +343,11 @@ namespace ModernWpf.Controls
                 }
 
                 Debug.Assert(stackLayoutState.TotalElementsMeasured > 0);
-                averageElementSize = Math.Round(stackLayoutState.TotalElementSize / stackLayoutState.TotalElementsMeasured, MidpointRounding.AwayFromZero);
+                averageElementSize = stackLayoutState.TotalElementSize / stackLayoutState.TotalElementsMeasured;
+                if (!stackLayoutState.AreElementsMeasuredRegular)
+                {
+                    averageElementSize = Math.Round(averageElementSize, MidpointRounding.AwayFromZero);
+                }
             }
 
             return averageElementSize;
@@ -382,6 +366,13 @@ namespace ModernWpf.Controls
         private FlowLayoutAlgorithm GetFlowAlgorithm(VirtualizingLayoutContext context)
         {
             return GetAsStackState(context.LayoutState).FlowAlgorithm;
+        }
+
+        private void UpdateIndexBasedLayoutOrientation(Orientation orientation)
+        {
+            SetIndexBasedLayoutOrientation(orientation == Orientation.Horizontal ?
+                IndexBasedLayoutOrientation.LeftToRight :
+                IndexBasedLayoutOrientation.TopToBottom);
         }
 
         private double m_itemSpacing;

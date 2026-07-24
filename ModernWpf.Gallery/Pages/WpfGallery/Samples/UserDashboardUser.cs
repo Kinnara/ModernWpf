@@ -1,0 +1,151 @@
+using System;
+using System.ComponentModel;
+
+namespace ModernWpf.Gallery.Pages.WpfGallery.Samples
+{
+    public class UserDashboardUser : INotifyPropertyChanged
+    {
+        private string _firstName;
+        private string _lastName;
+        private string _company;
+        private string _address;
+        private bool _isNewGraduate;
+        private string _imageId = "91";
+        private int _age;
+        private string _deletedname;
+        private DateTime _dateOfJoining;
+
+        public string Deletedname
+        {
+            get => _deletedname;
+            set
+            {
+                _deletedname = value;
+                OnPropertyChanged(nameof(Deletedname));
+            }
+        }
+
+        public string FirstName
+        {
+            get => _firstName;
+            set
+            {
+                if (SetProperty(ref _firstName, value, nameof(FirstName)))
+                {
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
+
+        public string LastName
+        {
+            get => _lastName;
+            set
+            {
+                if (SetProperty(ref _lastName, value, nameof(LastName)))
+                {
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
+
+        public string Name => $"{FirstName} {LastName}";
+
+        public string ImageId
+        {
+            get => _imageId;
+            set
+            {
+                if (SetProperty(ref _imageId, value, nameof(ImageId)))
+                {
+                    OnPropertyChanged(nameof(ImageKey));
+                }
+            }
+        }
+
+        public string ImageKey => $"p{ImageId}";
+
+        public string Company
+        {
+            get => _company;
+            set { SetProperty(ref _company, value, nameof(Company)); }
+        }
+
+        public string Address
+        {
+            get => _address;
+            set { SetProperty(ref _address, value, nameof(Address)); }
+        }
+
+        public int Age
+        {
+            get => _age;
+            set { SetProperty(ref _age, value, nameof(Age)); }
+        }
+
+        public DateTime DateOfJoining
+        {
+            get => _dateOfJoining;
+            set { SetProperty(ref _dateOfJoining, value, nameof(DateOfJoining)); }
+        }
+
+        public bool IsNewGraduate
+        {
+            get => _isNewGraduate;
+            set { SetProperty(ref _isNewGraduate, value, nameof(IsNewGraduate)); }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public UserDashboardUser(string firstName, string lastName)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+        }
+
+        //public UserDashboardUser()
+        //{
+        //}
+
+        public UserDashboardUser(UserDashboardUser user)
+        {
+            ImageId = user.ImageId;
+            FirstName = user.FirstName;
+            LastName = user.LastName;
+            Company = user.Company;
+            Address = user.Address;
+            Age = user.Age;
+            DateOfJoining = user.DateOfJoining;
+            IsNewGraduate = user.IsNewGraduate;
+        }
+
+        public UserDashboardUser(string imageID, string firstName, string lastName, string company, string address, int age, DateTime doj, bool isNewGraduate = false)
+        {
+            ImageId = imageID;
+            FirstName = firstName;
+            LastName = lastName;
+            Company = company;
+            Address = address;
+            IsNewGraduate = isNewGraduate;
+            Age = age;
+            DateOfJoining = doj;
+        }
+
+        private bool SetProperty<T>(ref T field, T value, string propertyName)
+        {
+            if (Equals(field, value))
+            {
+                return false;
+            }
+
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+    }
+}

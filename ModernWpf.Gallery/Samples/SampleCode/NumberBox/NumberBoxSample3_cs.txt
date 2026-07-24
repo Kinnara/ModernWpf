@@ -1,0 +1,12 @@
+﻿private void SetNumberBoxNumberFormatter()
+{
+    IncrementNumberRounder rounder = new IncrementNumberRounder();
+    rounder.Increment = 0.25;
+    rounder.RoundingAlgorithm = RoundingAlgorithm.RoundHalfUp;
+
+    DecimalFormatter formatter = new DecimalFormatter();
+    formatter.IntegerDigits = 1;
+    formatter.FractionDigits = 2;
+    formatter.NumberRounder = rounder;
+    FormattedNumberBox.NumberFormatter = formatter;
+}

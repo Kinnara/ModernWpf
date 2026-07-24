@@ -1,0 +1,24 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "MenuFlyoutPresenter"
+  },
+  "properties": [
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty"
+    },
+    {
+      "name": "IsDefaultShadowEnabled",
+      "type": "bool",
+      "default": "true"
+    }
+  ]
+}

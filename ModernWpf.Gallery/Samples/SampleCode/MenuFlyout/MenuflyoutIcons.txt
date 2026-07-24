@@ -1,0 +1,16 @@
+<Button Content="Edit Options">
+    <Button.Flyout>
+        <MenuFlyout>
+            <MenuFlyoutItem Text="Share">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon Glyph="&#xE72D;"/>
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem Text="Copy" Icon="Copy"/>
+            <MenuFlyoutItem Text="Delete" Icon="Delete"/>
+            <MenuFlyoutSeparator/>
+            <MenuFlyoutItem Text="Rename"/>
+            <MenuFlyoutItem Text="Select"/>
+        </MenuFlyout>
+    </Button.Flyout>
+</Button>

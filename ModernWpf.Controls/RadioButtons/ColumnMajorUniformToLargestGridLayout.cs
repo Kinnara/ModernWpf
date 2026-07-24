@@ -6,26 +6,13 @@ using System.Windows;
 
 namespace ModernWpf.Controls.Primitives
 {
-    public class ColumnMajorUniformToLargestGridLayout : NonVirtualizingLayout
+    public partial class ColumnMajorUniformToLargestGridLayout : NonVirtualizingLayout
     {
         public ColumnMajorUniformToLargestGridLayout()
         {
         }
 
         #region ColumnSpacing
-
-        public static readonly DependencyProperty ColumnSpacingProperty =
-            DependencyProperty.Register(
-                nameof(ColumnSpacing),
-                typeof(double),
-                typeof(ColumnMajorUniformToLargestGridLayout),
-                new FrameworkPropertyMetadata(OnColumnSpacingPropertyChanged));
-
-        public double ColumnSpacing
-        {
-            get => (double)GetValue(ColumnSpacingProperty);
-            set => SetValue(ColumnSpacingProperty, value);
-        }
 
         private static void OnColumnSpacingPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
@@ -42,19 +29,6 @@ namespace ModernWpf.Controls.Primitives
 
         #region RowSpacing
 
-        public static readonly DependencyProperty RowSpacingProperty =
-            DependencyProperty.Register(
-                nameof(RowSpacing),
-                typeof(double),
-                typeof(ColumnMajorUniformToLargestGridLayout),
-                new FrameworkPropertyMetadata(OnRowSpacingPropertyChanged));
-
-        public double RowSpacing
-        {
-            get => (double)GetValue(RowSpacingProperty);
-            set => SetValue(RowSpacingProperty, value);
-        }
-
         private static void OnRowSpacingPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             var owner = (ColumnMajorUniformToLargestGridLayout)sender;
@@ -69,20 +43,6 @@ namespace ModernWpf.Controls.Primitives
         #endregion
 
         #region MaxColumns
-
-        public static readonly DependencyProperty MaxColumnsProperty =
-            DependencyProperty.Register(
-                nameof(MaxColumns),
-                typeof(int),
-                typeof(ColumnMajorUniformToLargestGridLayout),
-                new FrameworkPropertyMetadata(1, OnMaxColumnsPropertyChanged),
-                ValidateMaxColumns);
-
-        public int MaxColumns
-        {
-            get => (int)GetValue(MaxColumnsProperty);
-            set => SetValue(MaxColumnsProperty, value);
-        }
 
         private static void OnMaxColumnsPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {

@@ -17,6 +17,7 @@ namespace ModernWpf.Controls
         public abstract Rect GetLayoutRealizationWindow();
 
         public abstract void SetLayoutExtent(Rect extent);
+        public abstract Rect GetLayoutExtent();
         public abstract Point GetOrigin();
 
         public abstract void OnLayoutChanged(bool isVirtualizing);

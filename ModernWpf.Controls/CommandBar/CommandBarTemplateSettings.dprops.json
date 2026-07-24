@@ -1,0 +1,24 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public sealed partial class",
+    "name": "CommandBarTemplateSettings"
+  },
+  "properties": [
+    { "name": "ContentHeight", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "OverflowContentClipRect", "type": "Rect", "kind": "RegisterReadOnly", "default": "Rect.Empty" },
+    { "name": "OverflowContentMinWidth", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "OverflowContentMaxWidth", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "OverflowContentMaxHeight", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "OverflowContentHorizontalOffset", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "OverflowContentHeight", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "NegativeOverflowContentHeight", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "EffectiveOverflowButtonVisibility", "type": "Visibility", "kind": "RegisterReadOnly", "default": "Visibility.Collapsed" },
+    { "name": "OverflowContentCompactYTranslation", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "OverflowContentMinimalYTranslation", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" },
+    { "name": "OverflowContentHiddenYTranslation", "type": "double", "kind": "RegisterReadOnly", "default": "0.0" }
+  ]
+}

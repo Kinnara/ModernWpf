@@ -1,0 +1,46 @@
+<Page x:Class="ModernWpf.Gallery.Pages.WpfGallery.Layout.ResizeGripPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:ModernWpf.Gallery.Pages.WpfGallery.Layout"
+      xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls"
+      mc:Ignorable="d"
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ResizeGripPage"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+
+    <Grid>
+        <Grid x:Name="ContentPagePane" Height="Auto">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <controls:PageHeader Margin="0,0,0,32" Title="{Binding ViewModel.PageTitle}" ShowDescription="False" />
+            <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
+                <StackPanel Margin="0,0,0,24">
+                    <controls:ControlExample
+                        Margin="10"
+                        HeaderText="A ResizeGrip"
+                        XamlCode="&lt;Window&#x0a;    Width=&quot;500&quot;&#x0a;    Height=&quot;300&quot;&#x0a;    ResizeMode=&quot;CanResizeWithGrip&quot;&gt;&#x0a;    &lt;TextBlock&#x0a;        Text=&quot;ResizeGrip is present at the bottom right corner of the window&quot;&#x0a;        HorizontalAlignment=&quot;Center&quot;&#x0a;        VerticalAlignment=&quot;Center&quot;&#x0a;        FontSize=&quot;16&quot; /&gt;&#x0a;&lt;/Window&gt;"
+                        CSharpCode="private void OpenResizeGripWindow_Click(object sender, RoutedEventArgs e)&#x0a;{&#x0a;    Window window = new Window()&#x0a;    {&#x0a;        Width = 500,&#x0a;        Height = 300,&#x0a;        ResizeMode = ResizeMode.CanResizeWithGrip,&#x0a;        Content = new TextBlock&#x0a;        {&#x0a;            Text = &quot;ResizeGrip is present at the bottom right corner of the window&quot;,&#x0a;            HorizontalAlignment = HorizontalAlignment.Center,&#x0a;            VerticalAlignment = VerticalAlignment.Center,&#x0a;            FontSize = 16&#x0a;        }&#x0a;    };&#x0a;    window.Show();&#x0a;}">
+                        <StackPanel Orientation="Vertical" Grid.Row="1">
+                            <TextBlock Margin="0 10 0 40">
+                                Resize grip control is only used along with a Window in WPF.
+                                <LineBreak/>
+                                It can not be used in other places as such.
+                                To see the resize grip in action click the button.
+                            </TextBlock>
+                            <Button
+                                x:Name="OpenResizeGripWindow"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Content="Open window with resize grip"
+                                Click="OpenResizeGripWindow_Click" />
+                        </StackPanel>
+                    </controls:ControlExample>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
+</Page>

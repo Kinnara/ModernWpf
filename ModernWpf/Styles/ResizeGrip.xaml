@@ -1,48 +1,36 @@
-﻿<ResourceDictionary
+<!-- Copyright (c) Microsoft Corporation. All rights reserved. Licensed under the MIT License. See LICENSE in the project root for license information. -->
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <Style x:Key="ResizeGripDefaultStyle" TargetType="ResizeGrip">
+    <sys:Double x:Key="ResizeGripMinHeight">12</sys:Double>
+    <sys:Double x:Key="ResizeGripMinWidth">12</sys:Double>
+    <sys:Double x:Key="ResizeGripIconSize">8.0</sys:Double>
+    <sys:String x:Key="ResizeGripIconGlyph">&#xF169;</sys:String>
+
+    <Style x:Key="DefaultResizeGripStyle" TargetType="{x:Type ResizeGrip}">
         <Setter Property="OverridesDefaultStyle" Value="True" />
-        <Setter Property="MinWidth" Value="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" />
-        <Setter Property="MinHeight" Value="{DynamicResource {x:Static SystemParameters.HorizontalScrollBarHeightKey}}" />
+        <Setter Property="MinWidth" Value="{DynamicResource ResizeGripMinWidth}" />
+        <Setter Property="MinHeight" Value="{DynamicResource ResizeGripMinHeight}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="ResizeGrip">
+                <ControlTemplate TargetType="{x:Type ResizeGrip}">
                     <Grid
-                        SnapsToDevicePixels="true"
-                        Background="{TemplateBinding Background}">
-                        <Path
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Bottom"
-                            Margin="0,0,2,2"
-                            Data="M 9,0 L 11,0 L 11,11 L 0,11 L 0,9 L 3,9 L 3,6 L 6,6 L 6,3 L 9,3 z">
-
-                            <Path.Fill>
-                                <DrawingBrush
-                                    Viewbox="0,0,3,3"
-                                    Viewport="0,0,3,3"
-                                    TileMode="Tile"
-                                    ViewportUnits="Absolute"
-                                    ViewboxUnits="Absolute">
-                                    <DrawingBrush.Drawing>
-                                        <DrawingGroup>
-                                            <DrawingGroup.Children>
-                                                <GeometryDrawing
-                                                    Brush="{DynamicResource ResizeGripForeground}"
-                                                    Geometry="M 0,0 L 2,0 L 2,2 L 0,2 z " />
-                                            </DrawingGroup.Children>
-                                        </DrawingGroup>
-                                    </DrawingBrush.Drawing>
-                                </DrawingBrush>
-                            </Path.Fill>
-                        </Path>
+                        Background="{TemplateBinding Background}"
+                        SnapsToDevicePixels="True">
+                        <TextBlock
+                            FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                            FontSize="{DynamicResource ResizeGripIconSize}"
+                            Foreground="{DynamicResource ResizeGripForeground}"
+                            Text="{StaticResource ResizeGripIconGlyph}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style TargetType="ResizeGrip" BasedOn="{StaticResource ResizeGripDefaultStyle}" />
+    <Style TargetType="{x:Type ResizeGrip}" BasedOn="{StaticResource DefaultResizeGripStyle}" />
+
 </ResourceDictionary>

@@ -7,7 +7,7 @@ using ModernWpf.Controls;
 
 namespace ModernWpf.Automation.Peers
 {
-    internal class NavigationViewAutomationPeer : FrameworkElementAutomationPeer, ISelectionProvider
+    public class NavigationViewAutomationPeer : FrameworkElementAutomationPeer, ISelectionProvider
     {
         public NavigationViewAutomationPeer(NavigationView owner) :
             base(owner)
@@ -43,7 +43,7 @@ namespace ModernWpf.Automation.Peers
             return new IRawElementProviderSimple[0];
         }
 
-        internal void RaiseSelectionChangedEvent(object oldSelection, object newSelecttion)
+        internal void RaiseSelectionChangedEvent(object oldSelection, object newSelection)
         {
             if (AutomationPeer.ListenerExists(AutomationEvents.SelectionPatternOnInvalidated))
             {

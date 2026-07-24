@@ -1,0 +1,12 @@
+<CommandBar Background="Transparent" IsOpen="$(IsOpen)" DefaultLabelPosition="Right"$(IsSticky)>
+    <AppBarButton Icon="Add" Label="Add"/>
+    <AppBarButton Icon="Edit" Label="Edit"/>
+    <AppBarButton Icon="Share" Label="Share"/>
+    <CommandBar.SecondaryCommands>
+        <AppBarButton Icon="Setting" Label="Settings">
+            <AppBarButton.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="Control" Key="I" />
+            </AppBarButton.KeyboardAccelerators>
+        </AppBarButton>$(MultipleButtonsSecondaryCommands)
+    </CommandBar.SecondaryCommands>
+</CommandBar>

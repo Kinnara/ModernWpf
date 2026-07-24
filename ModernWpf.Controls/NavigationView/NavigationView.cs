@@ -17,6 +17,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shell;
 using System.Windows.Threading;
 using ModernWpf.Automation.Peers;
+using ModernWpf.Controls.Primitives;
 using ModernWpf.Input;
 using ModernWpf.Media.Animation;
 using static CppWinRTHelpers;
@@ -149,6 +150,8 @@ namespace ModernWpf.Controls
             m_paneTitleOnTopPane = null;
 
             m_itemsContainerSizeChangedRevoker?.Revoke();
+
+            m_itemsContainer = null;
 
             if (m_paneTitleHolderFrameworkElement != null)
             {
@@ -428,6 +431,31 @@ namespace ModernWpf.Controls
 
             // Stop update anything because of PropertyChange during OnApplyTemplate. Update them all together at the end of this function
             m_appliedTemplate = false;
+            m_fromOnApplyTemplate = true;
+
+            try
+            {
+                ApplyTemplateCore();
+            }
+            finally
+            {
+                m_fromOnApplyTemplate = false;
+            }
+
+            // WPF can apply a template lazily after Loaded (for example, when a
+            // NavigationView below a ScrollViewer viewport is first revealed).
+            // In that case there will be no later Loaded event to complete the
+            // WinUI display-mode deferral.
+            if (IsLoaded && m_updateVisualStateForDisplayModeFromOnLoaded)
+            {
+                Dispatcher.BeginInvoke(
+                    new Action(CompleteDeferredDisplayModeUpdate),
+                    DispatcherPriority.Loaded);
+            }
+        }
+
+        void ApplyTemplateCore()
+        {
 
             UnhookEventsAndClearFields();
 
@@ -718,6 +746,7 @@ namespace ModernWpf.Controls
             m_itemsContainerSizeChangedRevoker?.Revoke();
             if (GetTemplateChildT<FrameworkElement>(c_itemsContainer, controlProtected) is { } itemsContainer)
             {
+                m_itemsContainer = itemsContainer;
                 m_itemsContainerSizeChangedRevoker = new FrameworkElementSizeChangedRevoker(itemsContainer, OnItemsContainerSizeChanged);
             }
 
@@ -745,6 +774,7 @@ namespace ModernWpf.Controls
             m_appliedTemplate = true;
 
             // Do initial setup
+            UpdateOpenPaneLength(ActualWidth);
             UpdatePaneDisplayMode();
             UpdateHeaderVisibility();
             UpdatePaneTitleFrameworkElementParents();
@@ -961,7 +991,16 @@ namespace ModernWpf.Controls
 
                 if (m_settingsItem is { } settings)
                 {
-                    settings.BringIntoView();
+                    if (SharedHelpers.GetAncestorOfType<ItemsRepeaterScrollHost>(VisualTreeHelper.GetParent(settings)) is { } scrollHost)
+                    {
+                        scrollHost.StartBringIntoView(
+                            settings,
+                            0.0 /* alignmentX */,
+                            1.0 /* alignmentY */,
+                            0.0 /* offsetX */,
+                            0.0 /* offsetY */,
+                            false /* animate */);
+                    }
                 }
             }
         }
@@ -1434,6 +1473,12 @@ namespace ModernWpf.Controls
             return base.MeasureOverride(availableSize);
         }
 
+        protected override Size ArrangeOverride(Size arrangeBounds)
+        {
+            UpdateOpenPaneLength(arrangeBounds.Width);
+            return base.ArrangeOverride(arrangeBounds);
+        }
+
         void OnLayoutUpdated(object sender, object e)
         {
             // We only need to handle once after MeasureOverride, so revoke the token.
@@ -1462,10 +1507,25 @@ namespace ModernWpf.Controls
         void OnSizeChanged(object sender, SizeChangedEventArgs args)
         {
             var width = args.NewSize.Width;
+            UpdateOpenPaneLength(width);
             UpdateAdaptiveLayout(width);
             UpdateTitleBarPadding();
             UpdateBackAndCloseButtonsVisibility();
             UpdatePaneLayout();
+        }
+
+        void UpdateOpenPaneLength(double width)
+        {
+            if (!IsTopNavigationView() && m_rootSplitView != null)
+            {
+                var openPaneLength = Math.Max(0.0, Math.Min(width, OpenPaneLength));
+                var templateSettings = GetTemplateSettings();
+                if (m_OpenPaneLength != openPaneLength || templateSettings.OpenPaneLength != openPaneLength)
+                {
+                    m_OpenPaneLength = openPaneLength;
+                    templateSettings.OpenPaneLength = openPaneLength;
+                }
+            }
         }
 
         void OnItemsContainerSizeChanged(object sender, SizeChangedEventArgs e)
@@ -1573,24 +1633,6 @@ namespace ModernWpf.Controls
                         }
                         var availableHeight = paneContentRow.ActualHeight - itemsContainerMargin;
 
-                        // The c_paneItemsSeparatorHeight is to account for the 9px separator height that we need to subtract.
-                        if (PaneFooter is { })
-                        {
-                            availableHeight -= c_paneItemsSeparatorHeight;
-                            if (m_leftNavFooterContentBorder is { } paneFooter)
-                            {
-                                availableHeight -= paneFooter.ActualHeight;
-                            }
-                        }
-                        else if (IsSettingsVisible)
-                        {
-                            availableHeight -= c_paneItemsSeparatorHeight;
-                        }
-                        else if (m_footerItemsSource is { } && m_menuItemsSource is { } && m_footerItemsSource.Count * m_menuItemsSource.Count > 0)
-                        {
-                            availableHeight -= c_paneItemsSeparatorHeight;
-                        }
-
                         return availableHeight;
                     }
                     return 0.0;
@@ -1614,8 +1656,54 @@ namespace ModernWpf.Controls
                                     // We know the actual height of footer items, so use that to determine how to split pane.
                                     if (m_leftNavRepeater is { } menuItems)
                                     {
-                                        var footersActualHeight = footerItemsRepeater.ActualHeight;
-                                        var menuItemsActualHeight = menuItems.ActualHeight;
+                                        var footersDesiredHeight = FooterItemsDesiredHeight();
+                                        double FooterItemsDesiredHeight()
+                                        {
+                                            double footerItemsRepeaterTopBottomMargin = 0.0;
+                                            if (footerItemsRepeater.Visibility == Visibility.Visible)
+                                            {
+                                                var footerItemsRepeaterMargin = footerItemsRepeater.Margin;
+                                                footerItemsRepeaterTopBottomMargin = footerItemsRepeaterMargin.Top + footerItemsRepeaterMargin.Bottom;
+                                            }
+
+                                            var footerItemsDesiredHeight = LayoutUtils.MeasureAndGetDesiredHeightFor(footerItemsRepeater, c_infSize);
+                                            return footerItemsDesiredHeight + footerItemsRepeaterTopBottomMargin;
+                                        }
+
+                                        var paneFooterActualHeight = PaneFooterActualHeight();
+                                        double PaneFooterActualHeight()
+                                        {
+                                            if (m_leftNavFooterContentBorder is { } paneFooter)
+                                            {
+                                                double paneFooterTopBottomMargin = 0.0;
+                                                if (paneFooter.Visibility == Visibility.Visible)
+                                                {
+                                                    var paneFooterMargin = paneFooter.Margin;
+                                                    paneFooterTopBottomMargin = paneFooterMargin.Top + paneFooterMargin.Bottom;
+                                                }
+
+                                                return paneFooter.ActualHeight + paneFooterTopBottomMargin;
+                                            }
+                                            return 0.0;
+                                        }
+
+                                        // DesiredSize is from the measure pass and is the stable partition input.
+                                        var menuItemsDesiredHeight = menuItems.DesiredSize.Height;
+
+                                        var menuItemsActualHeight = MenuItemsActualHeight();
+                                        double MenuItemsActualHeight()
+                                        {
+                                            double menuItemsTopBottomMargin = 0.0;
+                                            if (menuItems.Visibility == Visibility.Visible)
+                                            {
+                                                var menuItemsMargin = menuItems.Margin;
+                                                menuItemsTopBottomMargin = menuItemsMargin.Top + menuItemsMargin.Bottom;
+                                            }
+
+                                            return menuItems.ActualHeight + menuItemsTopBottomMargin;
+                                        }
+
+                                        var footerGroupDesiredHeight = footersDesiredHeight + paneFooterActualHeight;
 
                                         if (m_footerItemsSource.Count == 0 && !IsSettingsVisible)
                                         {
@@ -1628,12 +1716,12 @@ namespace ModernWpf.Controls
                                             VisualStateManager.GoToState(this, c_separatorCollapsedStateName, false);
                                             return 0.0;
                                         }
-                                        else if (totalAvailableHeight > menuItemsActualHeight + footersActualHeight)
+                                        else if (totalAvailableHeight >= menuItemsDesiredHeight + footerGroupDesiredHeight)
                                         {
                                             // We have enough space for two so let everyone get as much as they need.
-                                            footerItemsScrollViewer.MaxHeight = footersActualHeight;
+                                            footerItemsScrollViewer.MaxHeight = footersDesiredHeight;
                                             VisualStateManager.GoToState(this, c_separatorCollapsedStateName, false);
-                                            return totalAvailableHeight - footersActualHeight;
+                                            return totalAvailableHeight - footerGroupDesiredHeight;
                                         }
                                         else if (menuItemsActualHeight <= totalAvailableHeightHalf)
                                         {
@@ -1642,12 +1730,12 @@ namespace ModernWpf.Controls
                                             VisualStateManager.GoToState(this, c_separatorVisibleStateName, false);
                                             return menuItemsActualHeight;
                                         }
-                                        else if (footersActualHeight <= totalAvailableHeightHalf)
+                                        else if (footerGroupDesiredHeight <= totalAvailableHeightHalf)
                                         {
                                             // Menu items exceed over the half, so let's limit them.
-                                            footerItemsScrollViewer.MaxHeight = footersActualHeight;
+                                            footerItemsScrollViewer.MaxHeight = footersDesiredHeight;
                                             VisualStateManager.GoToState(this, c_separatorVisibleStateName, false);
-                                            return totalAvailableHeight - footersActualHeight;
+                                            return totalAvailableHeight - footerGroupDesiredHeight;
                                         }
                                         else
                                         {
@@ -1657,7 +1745,7 @@ namespace ModernWpf.Controls
                                             return totalAvailableHeightHalf;
                                         }
                                     }
-                                    else
+                                    else if (totalAvailableHeight >= footerItemsRepeater.ActualHeight)
                                     {
                                         // Couldn't determine the menuItems.
                                         // Let's just take all the height and let the other repeater deal with it.
@@ -1842,23 +1930,16 @@ namespace ModernWpf.Controls
                 m_isClosedCompact = !splitView.IsPaneOpen && (splitViewDisplayMode == SplitViewDisplayMode.CompactOverlay || splitViewDisplayMode == SplitViewDisplayMode.CompactInline);
                 VisualStateManager.GoToState(this, m_isClosedCompact ? "ClosedCompact" : "NotClosedCompact", true /*useTransitions*/);
 
-                // Set the initial state of the list size
+                // WinUI normally updates subsequent list-size state from the
+                // SplitView pane lifecycle events. WPF can update the initial
+                // two-way IsPaneOpen binding or display mode without raising
+                // those events, so every authoritative SplitView notification
+                // must also reconcile the list width.
                 if (!m_initialListSizeStateSet)
                 {
                     m_initialListSizeStateSet = true;
-                    VisualStateManager.GoToState(this, m_isClosedCompact ? "ListSizeCompact" : "ListSizeFull", true /*useTransitions*/);
                 }
-                else if (false /*!SharedHelpers.IsRS3OrHigher()*/) // Do any changes that would otherwise happen on opening/closing for RS2 and earlier:
-                {
-                    // RS3+ animation timing enhancement:
-                    // Pre-RS3, we didn't have the full suite of Closed, Closing, Opened,
-                    // Opening events on SplitView. So when doing open/closed operations,
-                    // we have to do them immediately. Just one example: on RS2 when you
-                    // close the pane, the PaneTitle will disappear *immediately* which
-                    // looks janky. But on RS4, it'll have its visibility set after the
-                    // closed event fires.
-                    VisualStateManager.GoToState(this, m_isClosedCompact ? "ListSizeCompact" : "ListSizeFull", true /*useTransitions*/);
-                }
+                VisualStateManager.GoToState(this, m_isClosedCompact ? "ListSizeCompact" : "ListSizeFull", true /*useTransitions*/);
 
                 UpdateTitleBarPadding();
                 UpdateBackAndCloseButtonsVisibility();
@@ -2092,7 +2173,10 @@ namespace ModernWpf.Controls
             {
                 UIElement paneContentGrid = m_paneContentGrid;
 
-                if ((prevIndicator != nextIndicator) && paneContentGrid != null && prevIndicator != null && nextIndicator != null && SharedHelpers.IsAnimationsEnabled)
+                var indicatorsSharePane = paneContentGrid != null &&
+                    prevIndicator?.FindCommonVisualAncestor(paneContentGrid) != null &&
+                    nextIndicator?.FindCommonVisualAncestor(paneContentGrid) != null;
+                if ((prevIndicator != nextIndicator) && indicatorsSharePane && SharedHelpers.IsAnimationsEnabled)
                 {
                     // Make sure both indicators are visible and in their original locations
                     ResetElementAnimationProperties(prevIndicator, 1.0);
@@ -2769,7 +2853,17 @@ namespace ModernWpf.Controls
                 {
                     VisualStateManager.GoToState(this, visualStateName, false /*useTransitions*/);
                 }
-                splitView.DisplayMode = splitViewDisplayMode;
+                // Updating SplitView.DisplayMode while NavigationView is applying its
+                // template can add children to a popup root during measure. Current
+                // WinUI defers every update originating in OnApplyTemplate until Loaded.
+                if (m_fromOnApplyTemplate)
+                {
+                    m_updateVisualStateForDisplayModeFromOnLoaded = true;
+                }
+                else
+                {
+                    splitView.DisplayMode = splitViewDisplayMode;
+                }
             }
         }
 
@@ -4120,7 +4214,6 @@ namespace ModernWpf.Controls
                 // When PaneDisplayMode is changed, reset the force flag to make the Pane can be opened automatically again.
                 m_wasForceClosed = false;
 
-                CollapseTopLevelMenuItems((NavigationViewPaneDisplayMode)args.OldValue);
                 UpdatePaneToggleButtonVisibility();
                 UpdatePaneDisplayMode((NavigationViewPaneDisplayMode)args.OldValue, (NavigationViewPaneDisplayMode)args.NewValue);
                 UpdatePaneTitleFrameworkElementParents();
@@ -4179,6 +4272,10 @@ namespace ModernWpf.Controls
 
                 // Update pane-button-grid width when pane is closed and we are not in minimal
                 UpdatePaneButtonsWidths();
+            }
+            else if (property == OpenPaneLengthProperty)
+            {
+                UpdateOpenPaneLength(ActualWidth);
             }
             else if (property == IsTitleBarAutoPaddingEnabledProperty)
             {
@@ -4254,6 +4351,8 @@ namespace ModernWpf.Controls
 
         void OnLoaded(object sender, RoutedEventArgs args)
         {
+            CompleteDeferredDisplayModeUpdate();
+
             if (m_coreTitleBar is { } coreTitleBar)
             {
                 coreTitleBar.LayoutMetricsChanged += OnTitleBarMetricsChanged;
@@ -4261,6 +4360,15 @@ namespace ModernWpf.Controls
             }
             // Update pane buttons now since we the CompactPaneLength is actually known now.
             UpdatePaneButtonsWidths();
+        }
+
+        void CompleteDeferredDisplayModeUpdate()
+        {
+            if (m_updateVisualStateForDisplayModeFromOnLoaded)
+            {
+                m_updateVisualStateForDisplayModeFromOnLoaded = false;
+                UpdateVisualStateForDisplayModeGroup(DisplayMode);
+            }
         }
 
         void OnIsPaneOpenChanged()
@@ -4390,7 +4498,7 @@ namespace ModernWpf.Controls
             // From other navigation PaneDisplayMode to LeftMinimal, we expect pane is closed.
             // From LeftMinimal to Left, it is expected the pane is open. For other configurations, this seems counterintuitive.
             // See #1702 and #1787
-            if (!IsTopNavigationView())
+            if (!IsTopNavigationView() && newDisplayMode == PaneDisplayMode)
             {
                 if (IsPaneOpen)
                 {
@@ -4555,19 +4663,19 @@ namespace ModernWpf.Controls
                     {
                         if (splitView.DisplayMode == SplitViewDisplayMode.Overlay && IsPaneOpen)
                         {
-                            width = OpenPaneLength;
-                            togglePaneButtonWidth = OpenPaneLength - ((ShouldShowBackButton() || ShouldShowCloseButton()) ? c_backButtonWidth : 0);
+                            width = m_OpenPaneLength;
+                            togglePaneButtonWidth = m_OpenPaneLength - ((ShouldShowBackButton() || ShouldShowCloseButton()) ? c_backButtonWidth : 0);
                         }
                         else if (!(splitView.DisplayMode == SplitViewDisplayMode.Overlay && !IsPaneOpen))
                         {
-                            width = OpenPaneLength;
-                            togglePaneButtonWidth = OpenPaneLength;
+                            width = m_OpenPaneLength;
+                            togglePaneButtonWidth = m_OpenPaneLength;
                         }
                     }
 
                     if (m_paneToggleButton is { } toggleButton)
                     {
-                        toggleButton.Width = togglePaneButtonWidth;
+                        toggleButton.Width = Math.Max(0.0, togglePaneButtonWidth);
                     }
                 }
             }
@@ -5548,6 +5656,9 @@ namespace ModernWpf.Controls
             var nviImpl = nvi;
 
             nviImpl.ShowHideChildren();
+            // The nested repeater visibility changes the item desired height; refresh the
+            // owner repeater so its StackLayout drops the previous expanded extent.
+            GetParentItemsRepeaterForContainer(nvi)?.InvalidateMeasure();
 
             if (nviImpl.ShouldRepeaterShowInFlyout())
             {
@@ -5698,20 +5809,6 @@ namespace ModernWpf.Controls
             return null;
         }
 
-        void CollapseTopLevelMenuItems(NavigationViewPaneDisplayMode oldDisplayMode)
-        {
-            // We want to make sure only top level items are visible when switching pane modes
-            if (oldDisplayMode == NavigationViewPaneDisplayMode.Top)
-            {
-                CollapseMenuItemsInRepeater(m_topNavRepeater);
-                CollapseMenuItemsInRepeater(m_topNavRepeaterOverflowView);
-            }
-            else
-            {
-                CollapseMenuItemsInRepeater(m_leftNavRepeater);
-            }
-        }
-
         void CollapseMenuItemsInRepeater(ItemsRepeater ir)
         {
             for (int index = 0; index < GetContainerCountInRepeater(ir); index++)
@@ -5771,7 +5868,6 @@ namespace ModernWpf.Controls
         FrameworkElement m_menuItemsScrollViewer;
         FrameworkElement m_footerItemsScrollViewer;
         UIElement m_paneContentGrid;
-        ColumnDefinition m_paneToggleButtonIconGridColumn;
         FrameworkElement m_paneTitleHolderFrameworkElement;
         FrameworkElement m_paneTitleFrameworkElement;
         Button m_paneSearchButton;
@@ -5831,6 +5927,8 @@ namespace ModernWpf.Controls
         bool m_isClosedCompact = false;
         bool m_blockNextClosingEvent = false;
         bool m_initialListSizeStateSet = false;
+        bool m_fromOnApplyTemplate = false;
+        bool m_updateVisualStateForDisplayModeFromOnLoaded = false;
 
         TopNavigationViewDataProvider m_topDataProvider = new TopNavigationViewDataProvider();
 
@@ -5842,12 +5940,12 @@ namespace ModernWpf.Controls
 
         bool m_appliedTemplate = false;
 
+        double m_OpenPaneLength = 320.0;
+
         // flag is used to stop recursive call. eg:
         // Customer select an item from SelectedItem property->ChangeSelection update ListView->LIstView raise OnSelectChange(we want stop here)->change property do do animation again.
         // Customer clicked listview->listview raised OnSelectChange->SelectedItem property changed->ChangeSelection->Undo the selection by SelectedItem(prevItem) (we want it stop here)->ChangeSelection again ->...
         bool m_shouldIgnoreNextSelectionChange = false;
-        // Used to disable raising selection change iff settings item gets restored because of displaymode change
-        bool m_shouldIgnoreNextSelectionChangeBecauseSettingsRestore = false;
         // A flag to track that the selectionchange is caused by selection a item in topnav overflow menu
         bool m_selectionChangeFromOverflowMenu = false;
         // Flag indicating whether selection change should raise item invoked. This is needed to be able to raise ItemInvoked before SelectionChanged while SelectedItem should point to the clicked item

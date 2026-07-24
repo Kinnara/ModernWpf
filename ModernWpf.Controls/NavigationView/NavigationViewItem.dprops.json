@@ -1,0 +1,77 @@
+{
+  "usings": [
+    "System.Collections",
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "NavigationViewItem"
+  },
+  "properties": [
+    {
+      "name": "Icon",
+      "type": "IconElement",
+      "changed": "OnIconPropertyChanged",
+      "changedForwardTo": "OnIconPropertyChanged"
+    },
+    {
+      "name": "InfoBadge",
+      "type": "InfoBadge",
+      "changed": "OnInfoBadgePropertyChanged",
+      "changedForwardTo": "OnInfoBadgePropertyChanged"
+    },
+    {
+      "name": "CompactPaneLength",
+      "type": "double",
+      "kind": "RegisterReadOnly",
+      "default": "48.0",
+      "setterAccessibility": "private"
+    },
+    {
+      "name": "SelectsOnInvoked",
+      "type": "bool",
+      "default": "true"
+    },
+    {
+      "name": "IsExpanded",
+      "type": "bool",
+      "default": "false",
+      "changed": "OnIsExpandedPropertyChanged",
+      "changedBody": "var owner = (NavigationViewItem)sender;\nowner.OnIsExpandedPropertyChanged(args);\nowner.IsExpandedChanged?.Invoke(owner, args.Property);"
+    },
+    {
+      "name": "HasUnrealizedChildren",
+      "type": "bool",
+      "default": "false",
+      "changed": "OnHasUnrealizedChildrenPropertyChanged",
+      "changedForwardTo": "OnHasUnrealizedChildrenPropertyChanged"
+    },
+    {
+      "name": "IsChildSelected",
+      "type": "bool",
+      "default": "false"
+    },
+    {
+      "name": "MenuItems",
+      "type": "IList",
+      "kind": "RegisterReadOnly",
+      "changed": "OnMenuItemsPropertyChanged",
+      "changedForwardTo": "OnMenuItemsPropertyChanged",
+      "setterAccessibility": "none"
+    },
+    {
+      "name": "MenuItemsSource",
+      "type": "object",
+      "changed": "OnMenuItemsSourcePropertyChanged",
+      "changedForwardTo": "OnMenuItemsSourcePropertyChanged"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty"
+    }
+  ]
+}

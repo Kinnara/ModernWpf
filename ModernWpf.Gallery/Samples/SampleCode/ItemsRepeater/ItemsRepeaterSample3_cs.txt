@@ -1,0 +1,117 @@
+// C# Code
+
+// Initialization code
+
+private readonly List<FrameworkElement> preparedElements = new List<FrameworkElement>();
+
+private void InitializeData()
+{
+
+    IList<string> colors = new List<String>()
+    {
+        "Blue",
+        "BlueViolet",
+        "Crimson",
+        "DarkCyan",
+        "DarkGoldenrod",
+        "DarkMagenta",
+        "DarkOliveGreen",
+        "DarkRed",
+        "DarkSlateBlue",
+        "DeepPink",
+        "IndianRed",
+        "MediumSlateBlue",
+        "Maroon",
+        "MidnightBlue",
+        "Peru",
+        "SaddleBrown",
+        "SteelBlue",
+        "OrangeRed",
+        "Firebrick",
+        "DarkKhaki"
+    };
+
+    animatedScrollRepeater.ItemsSource = colors;
+    animatedScrollRepeater.ElementPrepared += OnElementPrepared;
+    animatedScrollRepeater.ElementClearing += OnElementClearing;
+    animatedScrollRepeater.LayoutUpdated += AnimatedRepeater_LayoutUpdated;
+}
+
+// Animation code
+
+private void Animated_GotItem(object sender, RoutedEventArgs e)
+{
+    if (sender is not Button senderBtn)
+    {
+        return;
+    }
+
+    // Bring the selected item into view using WPF scrolling.
+    senderBtn.BringIntoView();
+
+    // Update corresponding rectangle with selected color
+    colorRectangle.Fill = senderBtn.Background;
+}
+
+/* This function occurs each time an element is made ready for use.
+* This is necessary for virtualization. */
+private void OnElementPrepared(ModernWpf.Controls.ItemsRepeater sender,
+                               ModernWpf.Controls.ItemsRepeaterElementPreparedEventArgs args)
+{
+    if (args.Element is FrameworkElement element)
+    {
+        element.RenderTransformOrigin = new Point(0.5, 0.5);
+        element.RenderTransform = new ScaleTransform(1, 1);
+        if (!preparedElements.Contains(element))
+        {
+            preparedElements.Add(element);
+        }
+    }
+}
+
+private void OnElementClearing(ModernWpf.Controls.ItemsRepeater sender,
+                               ModernWpf.Controls.ItemsRepeaterElementClearingEventArgs args)
+{
+    if (args.Element is FrameworkElement element)
+    {
+        preparedElements.Remove(element);
+    }
+}
+
+private void Animated_ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+{
+    UpdateElementScales();
+}
+
+private void AnimatedRepeater_LayoutUpdated(object sender, EventArgs e)
+{
+    UpdateElementScales();
+}
+
+private void UpdateElementScales()
+{
+    if (Animated_ScrollViewer.ViewportHeight <= 0)
+    {
+        return;
+    }
+
+    var viewportCenter =
+        Animated_ScrollViewer.VerticalOffset + (Animated_ScrollViewer.ViewportHeight / 2);
+    var scalePerPixel = 0.25 / (Animated_ScrollViewer.ViewportHeight / 2);
+
+    foreach (var element in preparedElements)
+    {
+        var elementTop = element.TransformToAncestor(animatedScrollRepeater)
+            .Transform(new Point()).Y;
+        var elementCenter = elementTop + (element.ActualHeight / 2);
+        var scale = Math.Max(
+            0,
+            1 - (Math.Abs(viewportCenter - elementCenter) * scalePerPixel));
+
+        if (element.RenderTransform is ScaleTransform scaleTransform)
+        {
+            scaleTransform.ScaleX = scale;
+            scaleTransform.ScaleY = scale;
+        }
+    }
+}

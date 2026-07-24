@@ -1,0 +1,1269 @@
+{
+  "$schema": "ControlInfoDataSchema.json",
+  "Groups": [
+    {
+      "UniqueId": "MenusAndToolbars",
+      "Title": "Menus & toolbars",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "AppBarButton",
+          "Title": "AppBarButton",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ContentControl",
+            "ButtonBase",
+            "Button"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A button that's styled for use in a CommandBar.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/AppBarButton.png",
+          "Description": "AppBarButton differs from standard buttons in several ways:\n- Their default appearance is a transparent background with a smaller size.\n- You use the Label and Icon properties to set the content instead of the Content property. The Content property is ignored.\n- The button's IsCompact property controls its size.",
+          "SourcePath": "/CommonStyles/AppBarButton_themeresources.xaml",
+          "Docs": [
+            {
+              "Title": "AppBarButton - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.appbarbutton"
+            },
+            {
+              "Title": "SymbolIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.symbolicon"
+            },
+            {
+              "Title": "FontIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.fonticon"
+            },
+            {
+              "Title": "BitmapIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.bitmapicon"
+            },
+            {
+              "Title": "PathIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.pathicon"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/command-bar"
+            }
+          ],
+          "RelatedControls": [
+            "AppBarToggleButton",
+            "AppBarSeparator",
+            "CommandBar"
+          ]
+        },
+        {
+          "UniqueId": "AppBarSeparator",
+          "Title": "AppBarSeparator",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A vertical line that's used to visually separate groups of commands in an app bar.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/AppBarSeparator.png",
+          "Description": "An AppBarSeparator creates a vertical line to visually separate groups of commands in a app bar. It has a compact state with reduced padding to match the compact state of the AppBarButton and AppBarToggleButton controls.",
+          "SourcePath": "/CommonStyles/AppBarSeparator_themeresources.xaml",
+          "Docs": [
+            {
+              "Title": "AppBarSeparator - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.appbarseparator"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/command-bar"
+            }
+          ],
+          "RelatedControls": [
+            "AppBarButton",
+            "AppBarToggleButton",
+            "CommandBar"
+          ]
+        },
+        {
+          "UniqueId": "AppBarToggleButton",
+          "Title": "AppBarToggleButton",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ContentControl",
+            "ButtonBase",
+            "ToggleButton"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A button that can be on, off, or indeterminate like a CheckBox, and is styled for use in an app bar or other specialized UI.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/AppBarToggleButton.png",
+          "Description": "An AppBarToggleButton looks like an AppBarButton, but works like a CheckBox. It typically has two states, checked (on) or unchecked (off), but can be indeterminate if the IsThreeState property is true. You can determine it's state by checking the IsChecked property.",
+          "SourcePath": "/CommonStyles/AppBarToggleButton_themeresources.xaml",
+          "Docs": [
+            {
+              "Title": "AppBarToggleButton - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.appbartogglebutton"
+            },
+            {
+              "Title": "SymbolIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.symbolicon"
+            },
+            {
+              "Title": "FontIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.fonticon"
+            },
+            {
+              "Title": "BitmapIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.bitmapicon"
+            },
+            {
+              "Title": "PathIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.pathicon"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/command-bar"
+            }
+          ],
+          "RelatedControls": [
+            "AppBarButton",
+            "AppBarSeparator",
+            "CommandBar"
+          ]
+        },
+        {
+          "UniqueId": "CommandBar",
+          "Title": "CommandBar",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ContentControl",
+            "AppBar"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A toolbar for displaying application-specific commands that handles layout and resizing of its contents.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/CommandBar.png",
+          "Description": "Command bars provide users with easy access to your app's most common tasks. Command bars can provide access to app-level or page-specific commands and can be used with any navigation pattern. By default, the command bar shows a row of icon buttons and an optional \"see more\" button, which is represented by an ellipsis [...].",
+          "SourcePath": "/CommonStyles/CommandBar_themeresources.xaml",
+          "Docs": [
+            {
+              "Title": "CommandBar - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.commandbar"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/command-bar"
+            }
+          ],
+          "RelatedControls": [
+            "AppBarButton",
+            "AppBarToggleButton",
+            "AppBarSeparator"
+          ]
+        },
+        {
+          "UniqueId": "CommandBarFlyout",
+          "Title": "CommandBarFlyout",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "FlyoutBase"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A mini-toolbar displaying proactive commands, and an optional menu of commands.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/CommandBarFlyout.png",
+          "Description": "A mini-toolbar which displays a set of proactive commands, as well as a secondary menu of commands if desired.",
+          "SourcePath": "/MenuBar",
+          "Docs": [
+            {
+              "Title": "CommandBarFlyout - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.commandbarflyout"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/command-bar-flyout"
+            }
+          ],
+          "RelatedControls": [
+            "CommandBar",
+            "MenuFlyout"
+          ]
+        },
+        {
+          "UniqueId": "MenuBar",
+          "Title": "MenuBar",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A classic menu, allowing the display of MenuItems containing MenuFlyoutItems.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/MenuBar.png",
+          "Description": "The Menubar simplifies the creation of basic applications by providing a set of menus at the top of the app or window.",
+          "SourcePath": "/MenuBar",
+          "Docs": [
+            {
+              "Title": "MenuBar - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.MenuBar"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/menus"
+            }
+          ],
+          "RelatedControls": [
+            "CommandBar",
+            "MenuFlyout"
+          ]
+        },
+        {
+          "UniqueId": "MenuFlyout",
+          "Title": "MenuFlyout",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "FlyoutBase"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Shows a contextual list of simple commands or options.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/MenuFlyout.png",
+          "Description": "A MenuFlyout displays lightweight UI that is light dismissed by clicking or tapping off of it. Use it to let the user choose from a contextual list of simple commands or options.",
+          "SourcePath": "/CommonStyles/MenuFlyout_themeresources.xaml",
+          "Docs": [
+            {
+              "Title": "MenuFlyout - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.menuflyout"
+            },
+            {
+              "Title": "MenuFlyoutItem - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.menuflyoutitem"
+            },
+            {
+              "Title": "MenuFlyoutSubItem - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.menuflyoutsubitem"
+            },
+            {
+              "Title": "MenuFlyoutSeparator - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.menuflyoutseparator"
+            },
+            {
+              "Title": "ToggleMenuFlyoutItem - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.togglemenuflyoutitem"
+            },
+            {
+              "Title": "RadioMenuFlyoutItem - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.radiomenuflyoutitem"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/menus"
+            }
+          ],
+          "RelatedControls": [
+            "Flyout",
+            "ContentDialog",
+            "AppBarButton"
+          ]
+        }
+      ]
+    },
+    {
+      "UniqueId": "Collections",
+      "Title": "Collections",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "GridView",
+          "Title": "GridView",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ItemsControl",
+            "Selector",
+            "ListViewBase"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A control that presents a collection of items in rows and columns.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/GridView.png",
+          "Description": "The GridView lets you show a collection of items arranged in rows and columns that scroll horizontally.",
+          "SourcePath": "/CommonStyles/GridViewItem_themeresources.xaml",
+          "Docs": [
+            {
+              "Title": "GridView - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.gridview"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/lists"
+            }
+          ],
+          "RelatedControls": []
+        },
+        {
+          "UniqueId": "ItemsRepeater",
+          "Title": "ItemsRepeater",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A flexible, primitive control for data-driven layouts.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ItemsRepeater.png",
+          "Description": "The ItemsRepeater is like a markup-based loop that supports virtualization.",
+          "Docs": [
+            {
+              "Title": "ItemsRepeater - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.itemsrepeater"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/items-repeater"
+            },
+            {
+              "Title": "StackLayout - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.stacklayout"
+            },
+            {
+              "Title": "UniformGridLayout - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.uniformgridlayout"
+            }
+          ],
+          "RelatedControls": [
+            "GridView"
+          ]
+        }
+      ]
+    },
+    {
+      "UniqueId": "BasicInput",
+      "Title": "Basic input",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "DropDownButton",
+          "Title": "DropDownButton",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ContentControl",
+            "ButtonBase",
+            "Button"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A button that displays a flyout of choices when clicked.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/DropDownButton.png",
+          "Description": "A control that drops down a flyout of choices from which one can be chosen.",
+          "SourcePath": "/DropDownButton",
+          "Docs": [
+            {
+              "Title": "DropDownButton - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.dropdownbutton"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/buttons"
+            }
+          ],
+          "RelatedControls": [
+            "SplitButton",
+            "ToggleSplitButton",
+            "ToggleButton",
+            "RepeatButton",
+            "HyperlinkButton",
+            "AppBarButton",
+            "CommandBar"
+          ]
+        },
+        {
+          "UniqueId": "HyperlinkButton",
+          "Title": "HyperlinkButton",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ContentControl",
+            "ButtonBase"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A button that appears as hyperlink text, and can navigate to a URI or handle a Click event.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/HyperlinkButton.png",
+          "Description": "A HyperlinkButton appears as a text hyperlink. When a user clicks it, it opens the page you specify in the NavigateUri property in the default browser. Or you can handle its Click event, typically to navigate within your app.",
+          "SourcePath": "/CommonStyles/HyperlinkButton_themeresources.xaml",
+          "Docs": [
+            {
+              "Title": "HyperlinkButton - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.hyperlinkbutton"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/hyperlinks"
+            }
+          ],
+          "RelatedControls": [
+            "ToggleButton",
+            "RepeatButton",
+            "AppBarButton"
+          ]
+        },
+        {
+          "UniqueId": "RepeatButton",
+          "Title": "RepeatButton",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ContentControl",
+            "ButtonBase"
+          ],
+          "ApiNamespace": "System.Windows.Controls.Primitives",
+          "Subtitle": "A button that raises its Click event repeatedly from the time it's pressed until it's released.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/RepeatButton.png",
+          "Description": "The RepeatButton control is like a standard Button, except that the Click event occurs continuously while the user presses the RepeatButton.",
+          "SourcePath": "/CommonStyles/RepeatButton_themeresources.xaml",
+          "Docs": [
+            {
+              "Title": "RepeatButton - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.primitives.repeatbutton"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/buttons"
+            }
+          ],
+          "RelatedControls": [
+            "ToggleButton",
+            "HyperlinkButton",
+            "AppBarButton"
+          ]
+        },
+        {
+          "UniqueId": "ToggleButton",
+          "Title": "ToggleButton",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ContentControl",
+            "ButtonBase"
+          ],
+          "ApiNamespace": "System.Windows.Controls.Primitives",
+          "Subtitle": "A button that can be switched between two states like a CheckBox.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ToggleButton.png",
+          "Description": "A ToggleButton looks like a Button, but works like a CheckBox. It typically has two states, checked (on) or unchecked (off), but can be indeterminate if the IsThreeState property is true. You can determine it's state by checking the IsChecked property.",
+          "SourcePath": "/CommonStyles/ToggleButton_themeresources.xaml",
+          "Docs": [
+            {
+              "Title": "ToggleButton - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.primitives.togglebutton"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/buttons#create-a-toggle-split-button"
+            }
+          ],
+          "RelatedControls": [
+            "AppBarToggleButton",
+            "ToggleSwitch",
+            "CommandBarFlyout",
+            "CommandBar"
+          ]
+        },
+        {
+          "UniqueId": "SplitButton",
+          "Title": "SplitButton",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ContentControl"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A two-part button that displays a flyout when its secondary part is clicked.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/SplitButton.png",
+          "Description": "The SplitButton is a dropdown button, but with an addition execution hit target.",
+          "SourcePath": "/SplitButton",
+          "Docs": [
+            {
+              "Title": "SplitButton - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.splitbutton"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/buttons#create-a-split-button"
+            }
+          ],
+          "RelatedControls": [
+            "DropDownButton",
+            "ToggleSplitButton",
+            "AppBarButton",
+            "CommandBar"
+          ]
+        },
+        {
+          "UniqueId": "ToggleSplitButton",
+          "Title": "ToggleSplitButton",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ContentControl",
+            "SplitButton"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A version of the SplitButton where the activation target toggles on/off.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ToggleSplitButton.png",
+          "Description": "A version of the SplitButton where the activation target toggles on/off.",
+          "SourcePath": "/SplitButton",
+          "Docs": [
+            {
+              "Title": "ToggleSplitButton - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.togglesplitbutton"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/buttons"
+            }
+          ],
+          "RelatedControls": [
+            "SplitButton",
+            "DropDownButton",
+            "ToggleButton",
+            "ToggleSwitch"
+          ]
+        },
+        {
+          "UniqueId": "ColorPicker",
+          "Title": "ColorPicker",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A control that displays a selectable color spectrum.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ColorPicker.png",
+          "Description": "A selectable color spectrum.",
+          "SourcePath": "/ColorPicker",
+          "Docs": [
+            {
+              "Title": "ColorPicker - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.ColorPicker"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/color-picker"
+            }
+          ],
+          "RelatedControls": []
+        },
+        {
+          "UniqueId": "RatingControl",
+          "Title": "RatingControl",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Rate something 1 to 5 stars.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/RatingControl.png",
+          "Description": "Rate something 1 to 5 stars.",
+          "SourcePath": "/RatingControl",
+          "Docs": [
+            {
+              "Title": "RatingControl - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.RatingControl"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/rating"
+            }
+          ],
+          "RelatedControls": []
+        },
+        {
+          "UniqueId": "ToggleSwitch",
+          "Title": "ToggleSwitch",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A switch that can be toggled between 2 states.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ToggleSwitch.png",
+          "Description": "Use ToggleSwitch controls to present users with exactly two mutually exclusive options (like on/off), where choosing an option results in an immediate commit. A toggle switch should have a single label.",
+          "SourcePath": "/CommonStyles/ToggleSwitch_themeresources.xaml",
+          "Docs": [
+            {
+              "Title": "ToggleSwitch - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.toggleswitch"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/toggles"
+            }
+          ],
+          "RelatedControls": [
+            "ToggleButton",
+            "AppBarToggleButton"
+          ]
+        }
+      ]
+    },
+    {
+      "UniqueId": "StatusAndInfo",
+      "Title": "Status & info",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "InfoBadge",
+          "Title": "InfoBadge",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "An non-intrusive UI to display notifications or bring focus to an area.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/InfoBadge.png",
+          "Description": "Badging is a non-intrusive and intuitive way to display notifications or bring focus to an area within an app - whether that be for notifications, indicating new content, or showing an alert.",
+          "SourcePath": "/InfoBadge",
+          "Docs": [
+            {
+              "Title": "InfoBadge - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.infobadge"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/info-badge"
+            }
+          ],
+          "RelatedControls": [
+            "InfoBar",
+            "TeachingTip"
+          ]
+        },
+        {
+          "UniqueId": "InfoBar",
+          "Title": "InfoBar",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "An inline message to display app-wide status change information.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/InfoBar.png",
+          "Description": "Use an InfoBar control when a user should be informed of, acknowledge, or take action on a changed application state. By default the notification will remain in the content area until closed by the user but will not necessarily break user flow.",
+          "SourcePath": "/InfoBar",
+          "Docs": [
+            {
+              "Title": "InfoBar - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.infobar"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/infobar"
+            }
+          ],
+          "RelatedControls": [
+            "TeachingTip",
+            "ContentDialog"
+          ]
+        },
+        {
+          "UniqueId": "ProgressRing",
+          "Title": "ProgressRing",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Shows the apps progress on a task, or that the app is performing ongoing work that does block user interaction.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ProgressRing.png",
+          "Description": "The ProgressRing has two different visual representations:\nIndeterminate - shows that a task is ongoing, but blocks user interaction.\nDeterminate - shows how much progress has been made on a known amount of work.",
+          "SourcePath": "/ProgressRing",
+          "Docs": [
+            {
+              "Title": "ProgressRing - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.progressring"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/progress-controls"
+            }
+          ],
+          "RelatedControls": []
+        },
+        {
+          "UniqueId": "WinUIProgressBar",
+          "Title": "ProgressBar (ModernWPF)",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "RangeBase"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Shows an app's progress on a task, or that the app is performing ongoing work that doesn't block user interaction.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ProgressBar.png",
+          "Description": "The ModernWPF ProgressBar has two visual representations:\nIndeterminate - shows that a task is ongoing, but doesn't block user interaction.\nDeterminate - shows how much progress has been made on a known amount of work.",
+          "SourcePath": "/ProgressBar",
+          "Docs": [
+            {
+              "Title": "ProgressBar - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.progressbar"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/progress-controls"
+            }
+          ],
+          "RelatedControls": [
+            "ProgressRing"
+          ]
+        }
+      ]
+    },
+    {
+      "UniqueId": "DialogsAndFlyouts",
+      "Title": "Dialogs & flyouts",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "ContentDialog",
+          "Title": "ContentDialog",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ContentControl"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A dialog box that can be customized to contain any XAML content.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ContentDialog.png",
+          "Description": "Use a ContentDialog to show relevant information or to provide a modal dialog experience that can show any XAML content.",
+          "SourcePath": "/CommonStyles/ContentDialog_themeresources.xaml",
+          "Docs": [
+            {
+              "Title": "ContentDialog - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.contentdialog"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/dialogs-and-flyouts/dialogs"
+            }
+          ],
+          "RelatedControls": [
+            "Flyout",
+            "MenuFlyout",
+            "TeachingTip"
+          ]
+        },
+        {
+          "UniqueId": "Flyout",
+          "Title": "Flyout",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "FlyoutBase"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Shows contextual information and enables user interaction.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/Flyout.png",
+          "Description": "A Flyout displays lightweight UI that is either information, or requires user interaction. Unlike a dialog, a Flyout can be light dismissed by clicking or tapping off of it. Use it to collect input from the user, show more details about an item, or ask the user to confirm an action.",
+          "SourcePath": "/CommonStyles/FlyoutPresenter_themeresources.xaml",
+          "Docs": [
+            {
+              "Title": "Flyout - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.flyout"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/dialogs-and-flyouts"
+            }
+          ],
+          "RelatedControls": [
+            "TeachingTip",
+            "ContentDialog",
+            "MenuFlyout",
+            "AppBarButton"
+          ]
+        },
+        {
+          "UniqueId": "Popup",
+          "Title": "Popup",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement"
+          ],
+          "ApiNamespace": "System.Windows.Controls.Primitives",
+          "Subtitle": "A UI element displaying temporary content over existing interface.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/Popup.png",
+          "Description": "The Popup Control allows your app to display temporary content above other UI elements. It can be used for lightweight interactions such as tooltips, notifications, or custom floating panels to enhance user workflows or highlight specific parts of the interface.",
+          "IsNew": true,
+          "Docs": [
+            {
+              "Title": "Popup - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.primitives.popup"
+            }
+          ],
+          "RelatedControls": [
+            "ContentDialog"
+          ]
+        },
+        {
+          "UniqueId": "TeachingTip",
+          "Title": "TeachingTip",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ContentControl"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A content-rich flyout for guiding users and enabling teaching moments.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/TeachingTip.png",
+          "Description": "The XAML TeachingTip Control provides a way for your app to guide and inform users in your application with a non-invasive and content rich notification. TeachingTip can be used for bringing focus to a new or important feature, teaching users how to perform a task, or enhancing the user workflow by providing contextually relevant information to their task at hand.",
+          "SourcePath": "/TeachingTip",
+          "Docs": [
+            {
+              "Title": "TeachingTip - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.teachingtip"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/dialogs-and-flyouts/teaching-tip"
+            }
+          ],
+          "RelatedControls": [
+            "ContentDialog",
+            "Flyout"
+          ]
+        }
+      ]
+    },
+    {
+      "UniqueId": "Scrolling",
+      "Title": "Scrolling",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "AnnotatedScrollBar",
+          "Title": "AnnotatedScrollBar",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A control that extends a regular vertical scrollbar's functionality for an easy navigation through large collections.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/AnnotatedScrollbar.png",
+          "Description": "The AnnotatedScrollBar lets you navigate through a large collection of items via a clickable rail with labels which act as markers.",
+          "SourcePath": "/AnnotatedScrollBar",
+          "Docs": [
+            {
+              "Title": "AnnotatedScrollBar - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.annotatedscrollbar"
+            }
+          ],
+          "RelatedControls": []
+        }
+      ]
+    },
+    {
+      "UniqueId": "Layout",
+      "Title": "Layout",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "SplitView",
+          "Title": "SplitView",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A container that has 2 content areas, with multiple display options for the pane.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/SplitView.png",
+          "Description": "Use a SplitView to display content, such as navigation options, in a pane on the side. There are multiple options for displaying the pane, namely CompactOverlay, Compact, Overlay, Inline. If you are looking for a hamburger navigation pattern, check out the NavigationView sample.",
+          "SourcePath": "/SplitView",
+          "Docs": [
+            {
+              "Title": "SplitView - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.splitview"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/split-view"
+            }
+          ],
+          "RelatedControls": [
+            "GridView"
+          ]
+        }
+      ]
+    },
+    {
+      "UniqueId": "Navigation",
+      "Title": "Navigation",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "BreadcrumbBar",
+          "Title": "BreadcrumbBar",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Shows the trail of navigation taken to the current location.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/BreadcrumbBar.png",
+          "Description": "The BreadcrumbBar control provides a common horizontal layout to display the trail of navigation taken to the current location. Resize to see the nodes crumble, starting at the root.",
+          "SourcePath": "/Breadcrumb",
+          "Docs": [
+            {
+              "Title": "BreadcrumbBar - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.breadcrumbbar"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/breadcrumbbar"
+            }
+          ],
+          "RelatedControls": [
+            "NavigationView",
+            "SelectorBar"
+          ]
+        },
+        {
+          "UniqueId": "NavigationView",
+          "Title": "NavigationView",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ContentControl"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Common vertical layout for top-level areas of your app via a collapsible navigation menu.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/NavigationView.png",
+          "Description": "The NavigationView control provides a common vertical layout for top-level areas of your app via a collapsible navigation menu.",
+          "SourcePath": "/NavigationView",
+          "Docs": [
+            {
+              "Title": "NavigationView - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.NavigationView"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/navigationview"
+            }
+          ],
+          "RelatedControls": [
+            "SplitView",
+            "SelectorBar"
+          ]
+        },
+        {
+          "UniqueId": "SelectorBar",
+          "Title": "SelectorBar",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Presents information from a small set of different sources. The user can pick one of them.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/TabView.png",
+          "Description": "SelectorBar is used to modify the content shown by allowing users to select and switch between a small, finite set of data.",
+          "SourcePath": "/SelectorBar/SelectorBar_themeresources.xaml",
+          "IsNew": true,
+          "Docs": [
+            {
+              "Title": "SelectorBar - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.selectorbar"
+            },
+            {
+              "Title": "SelectorBarItem - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.selectorbaritem"
+            }
+          ],
+          "RelatedControls": [
+            "NavigationView"
+          ]
+        }
+      ]
+    },
+    {
+      "UniqueId": "Media",
+      "Title": "Media",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "PersonPicture",
+          "Title": "PersonPicture",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Displays the picture of a person/contact.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/PersonPicture.png",
+          "Description": "Displays the picture of a person/contact.",
+          "SourcePath": "/PersonPicture",
+          "Docs": [
+            {
+              "Title": "PersonPicture - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.Controls.PersonPicture"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/person-picture"
+            }
+          ],
+          "RelatedControls": []
+        }
+      ]
+    },
+    {
+      "UniqueId": "Styles",
+      "Title": "Styles",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "IconElement",
+          "Title": "IconElement",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Represents icon controls that use different image types as its content.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/Image.png",
+          "Description": "Represents icon controls that use different image types as its content.",
+          "SourcePath": "/ImageIcon",
+          "Docs": [
+            {
+              "Title": "BitmapIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.bitmapicon"
+            },
+            {
+              "Title": "FontIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.fonticon"
+            },
+            {
+              "Title": "ImageIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.imageicon"
+            },
+            {
+              "Title": "PathIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.pathicon"
+            },
+            {
+              "Title": "SymbolIcon - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.symbolicon"
+            },
+            {
+              "Title": "Icon Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/style/icons"
+            }
+          ],
+          "RelatedControls": [
+            "AppBarButton"
+          ]
+        },
+        {
+          "UniqueId": "ThemeShadow",
+          "Title": "ThemeShadow",
+          "ApiNamespace": "ModernWpf.Controls.Primitives",
+          "Subtitle": "Adds a depth-aware shadow to UI elements using system lighting.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ThemeShadow.png",
+          "Description": "Adds a realistic shadow effect to UI elements using the system's lighting and depth to enhance visual hierarchy.",
+          "IsNew": true,
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "Shadow"
+          ],
+          "Docs": [
+            {
+              "Title": "Z-depth and shadow design guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/layout/depth-shadow"
+            },
+            {
+              "Title": "ThemeShadow - API",
+              "Uri": "https://learn.microsoft.com/en-us/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.media.themeshadow"
+            }
+          ],
+          "RelatedControls": []
+        }
+      ]
+    },
+    {
+      "UniqueId": "Text",
+      "Title": "Text",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "AutoSuggestBox",
+          "Title": "AutoSuggestBox",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control",
+            "ItemsControl"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A control to provide suggestions as a user is typing.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/AutoSuggestBox.png",
+          "Description": "A text control that makes suggestions to users as they type. The app is notified when text has been changed by the user and is responsible for providing relevant suggestions for this control to display.",
+          "SourcePath": "/AutoSuggestBox",
+          "Docs": [
+            {
+              "Title": "AutoSuggestBox - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.autosuggestbox"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/auto-suggest-box"
+            }
+          ],
+          "RelatedControls": []
+        },
+        {
+          "UniqueId": "NumberBox",
+          "Title": "NumberBox",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A text control used for numeric input and evaluation of algebraic equations.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/NumberBox.png",
+          "Description": "Use NumberBox to allow users to enter algebraic equations and numeric input in your app.",
+          "SourcePath": "/NumberBox",
+          "Docs": [
+            {
+              "Title": "NumberBox - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.numberbox"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/number-box"
+            }
+          ],
+          "RelatedControls": []
+        }
+      ]
+    },
+    {
+      "UniqueId": "MultipleWindows",
+      "Title": "Windowing",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "TitleBar",
+          "Title": "TitleBar",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "An example showing how to use the default TitleBar control.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/TitleBar.png",
+          "Description": "The TitleBar control provides a simple way to create a modern titlebar UX with interactive content.",
+          "IsUpdated": true,
+          "Docs": [
+            {
+              "Title": "Title bar customization",
+              "Uri": "https://learn.microsoft.com/windows/apps/develop/title-bar"
+            },
+            {
+              "Title": "Title bar - design guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/basics/titlebar-design"
+            }
+          ],
+          "RelatedControls": []
+        }
+      ]
+    }
+  ]
+}

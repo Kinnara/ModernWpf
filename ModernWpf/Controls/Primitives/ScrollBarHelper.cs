@@ -6,6 +6,8 @@ namespace ModernWpf.Controls.Primitives
 {
     public static class ScrollBarHelper
     {
+        private const string StateNormal = "Normal";
+        private const string StateDisabled = "Disabled";
         private const string StateExpanded = "Expanded";
         private const string StateCollapsed = "Collapsed";
 
@@ -138,6 +140,11 @@ namespace ModernWpf.Controls.Primitives
         private static void UpdateVisualState(ScrollBar scrollBar, bool useTransitions = true)
         {
             string stateName;
+
+            VisualStateManager.GoToState(
+                scrollBar,
+                scrollBar.IsEnabled ? StateNormal : StateDisabled,
+                scrollBar.IsEnabled && useTransitions);
 
             if (scrollBar.IsEnabled)
             {

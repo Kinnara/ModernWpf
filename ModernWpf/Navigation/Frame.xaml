@@ -17,12 +17,12 @@
                         Padding="{TemplateBinding Padding}"
                         ClipToBounds="True">
                         <Grid>
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 x:Name="FirstContentPresenter"
                                 Content="{x:Null}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                            <ContentPresenter
+                            <local:ContentPresenterEx
                                 x:Name="SecondContentPresenter"
                                 Content="{x:Null}"
                                 HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"

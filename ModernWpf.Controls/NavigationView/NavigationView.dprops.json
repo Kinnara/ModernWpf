@@ -1,0 +1,272 @@
+{
+  "usings": [
+    "System.Collections",
+    "System.Windows",
+    "System.Windows.Controls",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "NavigationView"
+  },
+  "properties": [
+    {
+      "name": "IsPaneOpen",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnIsPaneOpenPropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "CompactModeThresholdWidth",
+      "type": "double",
+      "default": "641.0",
+      "changed": "OnCompactModeThresholdWidthPropertyChanged",
+      "changedForwardTo": "PropertyChanged",
+      "coerce": "CoerceToGreaterThanZero"
+    },
+    {
+      "name": "ExpandedModeThresholdWidth",
+      "type": "double",
+      "default": "1008.0",
+      "changed": "OnExpandedModeThresholdWidthPropertyChanged",
+      "changedForwardTo": "PropertyChanged",
+      "coerce": "CoerceToGreaterThanZero"
+    },
+    {
+      "name": "FooterMenuItems",
+      "type": "IList",
+      "kind": "RegisterReadOnly",
+      "fieldAccessibility": "private",
+      "changed": "OnFooterMenuItemsPropertyChanged",
+      "changedForwardTo": "PropertyChanged",
+      "setterAccessibility": "none"
+    },
+    {
+      "name": "FooterMenuItemsSource",
+      "type": "object",
+      "changed": "OnFooterMenuItemsSourcePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "PaneFooter",
+      "type": "UIElement",
+      "changed": "OnPaneFooterPropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "Header",
+      "type": "object",
+      "changed": "OnHeaderPropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "HeaderTemplate",
+      "type": "DataTemplate",
+      "changed": "OnHeaderTemplatePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "DisplayMode",
+      "type": "NavigationViewDisplayMode",
+      "kind": "RegisterReadOnly",
+      "default": "NavigationViewDisplayMode.Minimal",
+      "changed": "OnDisplayModePropertyChanged",
+      "changedForwardTo": "PropertyChanged",
+      "setterAccessibility": "none"
+    },
+    {
+      "name": "IsSettingsVisible",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnIsSettingsVisiblePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "IsPaneToggleButtonVisible",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnIsPaneToggleButtonVisiblePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "AlwaysShowHeader",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnAlwaysShowHeaderPropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "CompactPaneLength",
+      "type": "double",
+      "default": "48.0",
+      "changed": "OnCompactPaneLengthPropertyChanged",
+      "changedForwardTo": "PropertyChanged",
+      "coerce": "CoerceToGreaterThanZero"
+    },
+    {
+      "name": "OpenPaneLength",
+      "type": "double",
+      "default": "320.0",
+      "changed": "OnOpenPaneLengthPropertyChanged",
+      "changedForwardTo": "PropertyChanged",
+      "coerce": "CoerceToGreaterThanZero"
+    },
+    {
+      "name": "PaneToggleButtonStyle",
+      "type": "Style",
+      "changed": "OnPaneToggleButtonStylePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "SelectedItem",
+      "type": "object",
+      "changed": "OnSelectedItemPropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "MenuItems",
+      "type": "IList",
+      "kind": "RegisterReadOnly",
+      "fieldAccessibility": "private",
+      "changed": "OnMenuItemsPropertyChanged",
+      "changedForwardTo": "PropertyChanged",
+      "setterAccessibility": "none"
+    },
+    {
+      "name": "MenuItemsSource",
+      "type": "object",
+      "changed": "OnMenuItemsSourcePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "SettingsItem",
+      "type": "object",
+      "kind": "RegisterReadOnly",
+      "changed": "OnSettingsItemPropertyChanged",
+      "changedForwardTo": "PropertyChanged",
+      "setterAccessibility": "none"
+    },
+    {
+      "name": "AutoSuggestBox",
+      "type": "AutoSuggestBox",
+      "changed": "OnAutoSuggestBoxPropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "MenuItemTemplate",
+      "type": "DataTemplate",
+      "changed": "OnMenuItemTemplatePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "MenuItemTemplateSelector",
+      "type": "DataTemplateSelector",
+      "changed": "OnMenuItemTemplateSelectorPropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "MenuItemContainerStyle",
+      "type": "Style",
+      "changed": "OnMenuItemContainerStylePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "MenuItemContainerStyleSelector",
+      "type": "StyleSelector",
+      "changed": "OnMenuItemContainerStyleSelectorPropertyChanged",
+      "changedForwardTo": "OnMenuItemContainerStyleSelectorPropertyChanged"
+    },
+    {
+      "name": "IsBackButtonVisible",
+      "type": "NavigationViewBackButtonVisible",
+      "default": "NavigationViewBackButtonVisible.Auto",
+      "changed": "OnIsBackButtonVisiblePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "IsBackEnabled",
+      "type": "bool",
+      "changed": "OnIsBackEnabledPropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "PaneTitle",
+      "type": "string",
+      "default": "string.Empty",
+      "changed": "OnPaneTitlePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "PaneDisplayMode",
+      "type": "NavigationViewPaneDisplayMode",
+      "default": "NavigationViewPaneDisplayMode.Auto",
+      "changed": "OnPaneDisplayModePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "PaneHeader",
+      "type": "UIElement",
+      "metadata": "null"
+    },
+    {
+      "name": "PaneCustomContent",
+      "type": "UIElement",
+      "metadata": "null"
+    },
+    {
+      "name": "ContentOverlay",
+      "type": "UIElement",
+      "metadata": "null"
+    },
+    {
+      "name": "IsPaneVisible",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnIsPaneVisiblePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "SelectionFollowsFocus",
+      "type": "NavigationViewSelectionFollowsFocus",
+      "default": "NavigationViewSelectionFollowsFocus.Disabled",
+      "changed": "OnSelectionFollowsFocusPropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "TemplateSettings",
+      "type": "NavigationViewTemplateSettings",
+      "kind": "RegisterReadOnly",
+      "metadata": "null",
+      "setterAccessibility": "private"
+    },
+    {
+      "name": "ShoulderNavigationEnabled",
+      "type": "NavigationViewShoulderNavigationEnabled",
+      "default": "NavigationViewShoulderNavigationEnabled.Never",
+      "changed": "OnShoulderNavigationEnabledPropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "OverflowLabelMode",
+      "type": "NavigationViewOverflowLabelMode",
+      "default": "NavigationViewOverflowLabelMode.MoreLabel",
+      "changed": "OnOverflowLabelModePropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "IsTitleBarAutoPaddingEnabled",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnIsTitleBarAutoPaddingEnabledPropertyChanged",
+      "changedForwardTo": "PropertyChanged"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty"
+    }
+  ]
+}

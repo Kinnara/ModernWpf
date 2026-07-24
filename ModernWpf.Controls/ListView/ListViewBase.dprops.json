@@ -1,0 +1,48 @@
+{
+  "usings": [
+    "System.Windows",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ListViewBase"
+  },
+  "properties": [
+    {
+      "name": "IsItemClickEnabled",
+      "type": "bool",
+      "default": "false"
+    },
+    {
+      "name": "IsSelectionEnabled",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnIsSelectionEnabledChanged"
+    },
+    {
+      "name": "IsMultiSelectCheckBoxEnabled",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnIsMultiSelectCheckBoxEnabledChanged"
+    },
+    {
+      "name": "UseSystemFocusVisuals",
+      "type": "bool",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.UseSystemFocusVisualsProperty"
+    },
+    {
+      "name": "FocusVisualMargin",
+      "type": "Thickness",
+      "kind": "AddOwner",
+      "sourceProperty": "FocusVisualHelper.FocusVisualMarginProperty"
+    },
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty"
+    }
+  ]
+}

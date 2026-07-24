@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using ModernWpf.Controls.Primitives;
@@ -178,7 +178,7 @@ namespace ModernWpf.Controls
         /// Identifies the CornerRadius dependency property.
         /// </summary>
         public static readonly DependencyProperty CornerRadiusProperty =
-            ControlHelper.CornerRadiusProperty.AddOwner(typeof(ProgressBar));
+            System.Windows.Controls.Border.CornerRadiusProperty.AddOwner(typeof(ProgressBar));
 
         /// <summary>
         /// Gets or sets the radius for the corners of the control's border.
@@ -211,6 +211,7 @@ namespace ModernWpf.Controls
             m_indeterminateProgressBarIndicator = GetTemplateChild(s_IndeterminateProgressBarIndicatorName) as Rectangle;
             m_indeterminateProgressBarIndicator2 = GetTemplateChild(s_IndeterminateProgressBarIndicator2Name) as Rectangle;
 
+            UpdateResourceBasedTemplateSettings();
             UpdateStates();
 
             ThemeManager.AddActualThemeChangedHandler(this, OnActualThemeChanged);
@@ -251,6 +252,12 @@ namespace ModernWpf.Controls
             SetProgressBarIndicatorWidth();
         }
 
+        private void UpdateResourceBasedTemplateSettings()
+        {
+            var trackHeightResource = TryFindResource("ProgressBarTrackHeight");
+            TemplateSettings.TrackHeight = trackHeightResource is double trackHeight ? trackHeight : 1.0;
+        }
+
         private void OnIsIndeterminatePropertyChanged(DependencyPropertyChangedEventArgs args)
         {
             SetProgressBarIndicatorWidth();
@@ -260,29 +267,31 @@ namespace ModernWpf.Controls
 
         private void OnShowPausedPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
+            SetProgressBarIndicatorWidth();
             UpdateStates();
         }
 
         private void OnShowErrorPropertyChanged(DependencyPropertyChangedEventArgs args)
         {
+            SetProgressBarIndicatorWidth();
             UpdateStates();
         }
 
         private void UpdateStates(bool useTransitions = true)
         {
-            if (IsIndeterminate)
+            if (IsIndeterminate && Visibility == Visibility.Visible)
             {
                 if (ShowError)
                 {
-                    VisualStateManager.GoToState(this, s_IndeterminateErrorStateName, true);
+                    VisualStateManager.GoToState(this, s_IndeterminateErrorStateName, useTransitions);
                 }
                 else if (ShowPaused)
                 {
-                    VisualStateManager.GoToState(this, s_IndeterminatePausedStateName, true);
+                    VisualStateManager.GoToState(this, s_IndeterminatePausedStateName, useTransitions);
                 }
                 else
                 {
-                    VisualStateManager.GoToState(this, s_IndeterminateStateName, true);
+                    VisualStateManager.GoToState(this, s_IndeterminateStateName, useTransitions);
                 }
                 UpdateWidthBasedTemplateSettings();
             }
@@ -290,15 +299,15 @@ namespace ModernWpf.Controls
             {
                 if (ShowError)
                 {
-                    VisualStateManager.GoToState(this, s_ErrorStateName, true);
+                    VisualStateManager.GoToState(this, s_ErrorStateName, useTransitions);
                 }
                 else if (ShowPaused)
                 {
-                    VisualStateManager.GoToState(this, s_PausedStateName, true);
+                    VisualStateManager.GoToState(this, s_PausedStateName, useTransitions);
                 }
                 else
                 {
-                    VisualStateManager.GoToState(this, s_DeterminateStateName, true);
+                    VisualStateManager.GoToState(this, s_DeterminateStateName, useTransitions);
                 }
             }
 
@@ -319,6 +328,12 @@ namespace ModernWpf.Controls
                     double maximum = Maximum;
                     double minimum = Minimum;
                     var padding = Padding;
+                    var borderThickness = BorderThickness;
+                    double roundedBorderWidth = UseLayoutRounding
+                        ? (LayoutRound(borderThickness.Left) + LayoutRound(borderThickness.Right))
+                        : (borderThickness.Left + borderThickness.Right);
+                    double paddingAndBorderWidth = padding.Left + padding.Right + roundedBorderWidth;
+                    double maxIndicatorWidth = Math.Max(progressBarWidth - paddingAndBorderWidth, 0);
 
                     // Adds "Updating" state in between to trigger RepositionThemeAnimation Visual Transition
                     // in ProgressBar.xaml when reverting back to previous state
@@ -337,17 +352,23 @@ namespace ModernWpf.Controls
 
                         if (m_indeterminateProgressBarIndicator != null)
                         {
-                            m_indeterminateProgressBarIndicator.Width = progressBarWidth * 0.4; // 40% of ProgressBar Width
+                            m_indeterminateProgressBarIndicator.Width = maxIndicatorWidth * 0.4; // 40% of ProgressBar Width
                         }
 
                         if (m_indeterminateProgressBarIndicator2 != null)
                         {
-                            m_indeterminateProgressBarIndicator2.Width = progressBarWidth * 0.6; // 60% of ProgressBar Width
+                            if (ShowPaused || ShowError)
+                            {
+                                m_indeterminateProgressBarIndicator2.Width = maxIndicatorWidth; // 100% of ProgressBar Width
+                            }
+                            else
+                            {
+                                m_indeterminateProgressBarIndicator2.Width = maxIndicatorWidth * 0.6; // 60% of ProgressBar Width
+                            }
                         }
                     }
                     else if (Math.Abs(maximum - minimum) > double.Epsilon)
                     {
-                        double maxIndicatorWidth = progressBarWidth - (padding.Left + padding.Right);
                         double increment = maxIndicatorWidth / (maximum - minimum);
                         double indicatorWidth = increment * (Value - minimum);
                         double widthDelta = indicatorWidth - prevIndicatorWidth;
@@ -393,15 +414,15 @@ namespace ModernWpf.Controls
             templateSettings.Container2AnimationStartPosition = indeterminateProgressBarIndicatorWidth2 * -1.5; // Position at -150%
             templateSettings.Container2AnimationEndPosition = indeterminateProgressBarIndicatorWidth2 * 1.66; // Position at 166%
 
-            templateSettings.ContainerAnimationMidPosition = width * 0.2;
+            templateSettings.ContainerAnimationMidPosition = 0;
 
             var padding = Padding;
             var rectangle = new RectangleGeometry(
                 new Rect(
                     padding.Left,
                     padding.Top,
-                    width - (padding.Right + padding.Left),
-                    height - (padding.Bottom + padding.Top)
+                    Math.Max(width - (padding.Right + padding.Left), 0),
+                    Math.Max(height - (padding.Bottom + padding.Top), 0)
                     ));
 
             if (m_indeterminateProgressBarIndicator != null)
@@ -452,10 +473,31 @@ namespace ModernWpf.Controls
             Dispatcher.BeginInvoke(RefreshStates, DispatcherPriority.Render);
         }
 
+        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+
+            if (e.Property == VisibilityProperty)
+            {
+                OnVisibilityPropertyChanged(e);
+            }
+        }
+
+        private void OnVisibilityPropertyChanged(DependencyPropertyChangedEventArgs e)
+        {
+            UpdateStates();
+        }
+
         private void RefreshStates()
         {
             VisualStateManager.GoToState(this, s_UpdatingStateName, false);
             UpdateStates(false);
+        }
+
+        private double LayoutRound(double value)
+        {
+            double scaleFactor = VisualTreeHelper.GetDpi(this).DpiScaleX;
+            return Math.Round(value * scaleFactor) / scaleFactor;
         }
 
         private void ReapplyIndeterminateStoryboard()

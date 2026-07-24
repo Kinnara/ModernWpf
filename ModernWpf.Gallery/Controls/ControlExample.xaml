@@ -1,0 +1,209 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:ModernWpf.Gallery.Controls">
+
+    <controls:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
+
+    <Style x:Key="SelectionTextBox" TargetType="TextBox">
+        <Setter Property="Foreground" Value="{DynamicResource TextControlForeground}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="IsReadOnly" Value="True" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="KeyboardNavigation.IsTabStop" Value="False" />
+    </Style>
+
+    <Style TargetType="{x:Type controls:ControlExample}">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:ControlExample}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock
+                            x:Name="HeaderTextPresenter"
+                            Grid.Row="0"
+                            Margin="0,0,0,10"
+                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                            Text="{TemplateBinding HeaderText}"
+                            Visibility="{TemplateBinding HeaderText,
+                            Converter={StaticResource NullToVisibilityConverter}}" />
+
+                        <Border
+                            x:Name="ExampleDisplayBorder"
+                            Grid.Row="1"
+                            Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1,1,1,0"
+                            CornerRadius="8,8,0,0"
+                            TextElement.FontSize="{StaticResource BodyTextBlockFontSize}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition
+                                        x:Name="OutputColumn"
+                                        Width="Auto"
+                                        MaxWidth="320" />
+                                    <ColumnDefinition
+                                        x:Name="OptionsColumn"
+                                        Width="Auto"
+                                        MaxWidth="{Binding OptionsMaxWidth, RelativeSource={RelativeSource TemplatedParent}}" />
+                                </Grid.ColumnDefinitions>
+
+                                <ContentPresenter
+                                    Margin="12"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Content="{TemplateBinding ExampleContent}" />
+
+                                <Border
+                                    x:Name="OutputRoot"
+                                    Grid.Column="1"
+                                    Margin="0,12,12,12"
+                                    Padding="16"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Stretch"
+                                    Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                                    CornerRadius="8">
+                                    <StackPanel>
+                                        <TextBlock
+                                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                            Text="Output:" />
+                                        <ContentPresenter
+                                            Content="{TemplateBinding OutputContent}"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </StackPanel>
+                                </Border>
+
+                                <Border
+                                    x:Name="OptionsRoot"
+                                    Grid.Column="2"
+                                    Padding="16"
+                                    Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource DividerStrokeColorDefaultBrush}"
+                                    BorderThickness="1,0,0,0"
+                                    CornerRadius="0,8,0,0">
+                                    <ContentPresenter
+                                        Content="{TemplateBinding OptionsContent}"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <Expander
+                            x:Name="SourceCodeExpander"
+                            Grid.Row="2"
+                            AutomationProperties.Name="{Binding HeaderText, RelativeSource={RelativeSource TemplatedParent}, StringFormat=View Source Code for {0}}"
+                            Header="Source code">
+                            <StackPanel>
+                                <StackPanel x:Name="XamlCodeBlock">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Margin="0,0,0,5"
+                                            FontWeight="Bold"
+                                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                            Text="XAML" />
+
+                                        <Button Grid.Column="1" Padding="8" Command="ApplicationCommands.Copy" CommandParameter="Copy_XamlCode" ToolTipService.ToolTip="Copy to clipboard" AutomationProperties.Name="Copy XAML Code" >
+                                          <Grid>
+                                                <TextBlock x:Name="CopyGlyphTextBlock" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE8C8;"/>
+                                                <TextBlock x:Name="SuccessGlyphTextBlock" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE73E;" Opacity="0" />
+                                          </Grid>
+                                            <Button.Triggers>
+                                              <EventTrigger RoutedEvent="Button.Click">
+                                                <EventTrigger.Actions>
+                                                    <BeginStoryboard>
+                                                        <Storyboard BeginTime="00:00:00">
+                                                            <DoubleAnimation Duration="0:0:0.333" Storyboard.TargetName="CopyGlyphTextBlock" Storyboard.TargetProperty="Opacity" To="0" />
+                                                            <DoubleAnimation Duration="0:0:0.666" BeginTime="0:0:0.333" Storyboard.TargetName="SuccessGlyphTextBlock" Storyboard.TargetProperty="Opacity" To="1" />
+                                                            <DoubleAnimation Storyboard.TargetName="SuccessGlyphTextBlock" BeginTime="0:0:2" Duration="0:0:0.01" Storyboard.TargetProperty="Opacity" To="0" />
+                                                            <DoubleAnimation Storyboard.TargetName="CopyGlyphTextBlock" BeginTime="0:0:2.1" Duration="0:0:0.01" Storyboard.TargetProperty="Opacity" To="1" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger.Actions>
+                                              </EventTrigger>
+                                            </Button.Triggers>
+                                        </Button>
+                                    </Grid>
+                                    <TextBox
+                                        Style="{StaticResource SelectionTextBox}"
+                                        AutomationProperties.Name="XAML Source Code"
+                                        Text="{TemplateBinding XamlCode}"/>
+                                </StackPanel>
+
+                                <Border
+                                    x:Name="Border"
+                                    Margin="0,20"
+                                    BorderThickness="1"
+                                    Visibility="Visible" />
+
+                                <StackPanel x:Name="CSharpCodeBlock">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Margin="0,0,0,5"
+                                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                            Text="C#" />
+
+                                        <Button Grid.Column="1" Padding="8" Command="ApplicationCommands.Copy" CommandParameter="Copy_CSharpCode" FocusManager.IsFocusScope="True" >
+                                            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE8C8;" />
+                                        </Button>
+                                    </Grid>
+                                    <TextBox
+                                        Style="{StaticResource SelectionTextBox}"
+                                        AutomationProperties.Name="CSharp Source Code"
+                                        Text="{TemplateBinding CSharpCode}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Expander>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="XamlCode" Value="{x:Null}">
+                            <Setter TargetName="XamlCodeBlock" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Border" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="CSharpCode" Value="{x:Null}">
+                            <Setter TargetName="CSharpCodeBlock" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="Border" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="OptionsContent" Value="{x:Null}">
+                            <Setter TargetName="OptionsRoot" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="OutputContent" Value="{x:Null}">
+                            <Setter TargetName="OutputRoot" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="UseWinUIGalleryLayout" Value="True">
+                            <Setter TargetName="HeaderTextPresenter" Property="Margin" Value="0,0,0,12" />
+                            <Setter TargetName="ExampleDisplayBorder" Property="BorderThickness" Value="1" />
+                            <Setter TargetName="SourceCodeExpander" Property="MinHeight" Value="48" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -50,6 +50,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests
         }
 
         [TestMethod]
+        [Ignore("Retired for 1.x: covered by the current-style corner-radius tests in ModernWpf.WinUI.Tests.NumberBoxApiTests.")]
         public void VerifyNumberBoxCornerRadius()
         {
             /*

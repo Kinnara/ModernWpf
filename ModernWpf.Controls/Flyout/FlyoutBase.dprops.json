@@ -1,0 +1,53 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls.Primitives",
+  "type": {
+    "declaration": "public abstract partial class",
+    "name": "FlyoutBase"
+  },
+  "properties": [
+    {
+      "name": "Placement",
+      "type": "FlyoutPlacementMode",
+      "default": "FlyoutPlacementMode.Top"
+    },
+    {
+      "name": "AreOpenCloseAnimationsEnabled",
+      "type": "bool",
+      "default": "true",
+      "changed": "OnAreOpenCloseAnimationsEnabledChanged"
+    },
+    {
+      "name": "ShouldConstrainToRootBounds",
+      "type": "bool",
+      "default": "true"
+    },
+    {
+      "name": "IsOpen",
+      "type": "bool",
+      "kind": "RegisterReadOnly",
+      "default": "false",
+      "changed": "OnIsOpenChanged"
+    },
+    {
+      "name": "Target",
+      "type": "FrameworkElement",
+      "kind": "RegisterReadOnly",
+      "default": "null"
+    },
+    {
+      "name": "ShowMode",
+      "type": "FlyoutShowMode",
+      "default": "FlyoutShowMode.Standard",
+      "changed": "OnShowModeChanged"
+    },
+    {
+      "name": "AttachedFlyout",
+      "type": "FlyoutBase",
+      "kind": "RegisterAttached",
+      "generateWrapper": false
+    }
+  ]
+}

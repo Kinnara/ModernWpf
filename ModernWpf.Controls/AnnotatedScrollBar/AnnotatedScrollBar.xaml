@@ -1,0 +1,185 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:ModernWpf.Controls"
+    xmlns:m="clr-namespace:ModernWpf.Markup;assembly=ModernWpf"
+    xmlns:primitives="clr-namespace:ModernWpf.Controls.Primitives;assembly=ModernWpf"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/ModernWpf;component/Styles/RepeatButton.xaml" />
+        <ResourceDictionary Source="/ModernWpf;component/Styles/TextStyles.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <m:StaticResource x:Key="ScrollButtonBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ScrollButtonForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="ScrollButtonForegroundPointerOver" ResourceKey="TextFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ScrollButtonForegroundPressed" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ScrollButtonForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
+    <m:StaticResource x:Key="ScrollButtonBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="VerticalThumbBrush" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="VerticalThumbGhostBrush" ResourceKey="AccentFillColorDisabledBrush" />
+    <Thickness x:Key="ScrollButtonStyleBorderThickness">0</Thickness>
+    <sys:Double x:Key="ThumbHeight">3</sys:Double>
+    <sys:Double x:Key="ThumbWidth">30</sys:Double>
+    <sys:Double x:Key="LabelsGridMinWidth">44</sys:Double>
+    <sys:Double x:Key="AnnotatedScrollBarTooltipMaxWidth">360</sys:Double>
+    <sys:Double x:Key="AnnotatedScrollBarTooltipMinHeight">40</sys:Double>
+    <sys:Double x:Key="ScrollButtonFontSize">8</sys:Double>
+    <CornerRadius x:Key="ThumbCornerRadius">1.5</CornerRadius>
+
+    <Style x:Key="ScrollButtonStyle" TargetType="RepeatButton" BasedOn="{StaticResource DefaultRepeatButtonStyle}">
+        <Setter Property="MinWidth" Value="16" />
+        <Setter Property="MinHeight" Value="16" />
+        <Setter Property="Background" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource SubtleFillColorTransparentBrush}" />
+        <Setter Property="BorderThickness" Value="{StaticResource ScrollButtonStyleBorderThickness}" />
+        <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="FontFamily" Value="{DynamicResource SymbolThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{StaticResource ScrollButtonFontSize}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <ui:ContentPresenterEx x:Name="ContentPresenter"
+                                           Background="{TemplateBinding Background}"
+                                           BorderBrush="{TemplateBinding BorderBrush}"
+                                           BorderThickness="{TemplateBinding BorderThickness}"
+                                           Content="{TemplateBinding Content}"
+                                           ContentTemplate="{TemplateBinding ContentTemplate}"
+                                           CornerRadius="{TemplateBinding Border.CornerRadius}"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                           Padding="{TemplateBinding Padding}"
+                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TextFillColorTertiaryBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ContentPresenter" Property="Foreground" Value="{DynamicResource TextFillColorDisabledBrush}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:AnnotatedScrollBar">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="MinWidth" Value="{StaticResource LabelsGridMinWidth}" />
+        <Setter Property="LabelTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Border MinWidth="{StaticResource LabelsGridMinWidth}">
+                        <TextBlock
+                            Margin="0,-5,0,-2"
+                            HorizontalAlignment="Right"
+                            TextAlignment="Right"
+                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="{Binding Content}"
+                            TextWrapping="NoWrap" />
+                    </Border>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:AnnotatedScrollBar">
+                    <Grid x:Name="PART_RootGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <RepeatButton
+                            x:Name="PART_VerticalIncrementRepeatButton"
+                            Grid.Row="0"
+                            HorizontalAlignment="Right"
+                            IsTabStop="False"
+                            Style="{StaticResource ScrollButtonStyle}">
+                            <ui:FontIcon
+                                x:Name="PART_VerticalIncrementRepeatIcon"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontSize="{StaticResource ScrollButtonFontSize}"
+                                Glyph="&#xEDDB;" />
+                        </RepeatButton>
+
+                        <Grid x:Name="PART_VerticalGrid" Grid.Row="1">
+                            <Grid
+                                x:Name="PART_LabelsGrid"
+                                MinWidth="{StaticResource LabelsGridMinWidth}"
+                                HorizontalAlignment="Center"
+                                Background="Transparent" />
+
+                            <Border x:Name="PART_ToolTipRail" Width="1" HorizontalAlignment="Right">
+                                <ToolTipService.ToolTip>
+                                    <ToolTip
+                                        x:Name="PART_DetailLabelToolTip"
+                                        MaxWidth="{StaticResource AnnotatedScrollBarTooltipMaxWidth}"
+                                        MinHeight="{StaticResource AnnotatedScrollBarTooltipMinHeight}"
+                                        HorizontalAlignment="Right"
+                                        VerticalContentAlignment="Center">
+                                        <ContentPresenter x:Name="PART_TooltipContentPresenter">
+                                            <ContentPresenter.ContentTemplate>
+                                                <DataTemplate>
+                                                    <Border>
+                                                        <TextBlock
+                                                            Margin="0,0,0,2"
+                                                            HorizontalAlignment="Right"
+                                                            VerticalAlignment="Center"
+                                                            Style="{StaticResource BaseTextBlockStyle}"
+                                                            Text="{Binding}"
+                                                            TextWrapping="Wrap" />
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ContentPresenter.ContentTemplate>
+                                        </ContentPresenter>
+                                    </ToolTip>
+                                </ToolTipService.ToolTip>
+                            </Border>
+
+                            <Border
+                                x:Name="PART_VerticalThumbGhost"
+                                Width="{StaticResource ThumbWidth}"
+                                Height="{StaticResource ThumbHeight}"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Background="{DynamicResource AccentFillColorDisabledBrush}"
+                                CornerRadius="{StaticResource ThumbCornerRadius}"
+                                Visibility="Collapsed" />
+
+                            <Border
+                                x:Name="PART_VerticalThumb"
+                                Width="{StaticResource ThumbWidth}"
+                                Height="{StaticResource ThumbHeight}"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Background="{DynamicResource AccentFillColorDefaultBrush}"
+                                CornerRadius="{StaticResource ThumbCornerRadius}" />
+                        </Grid>
+
+                        <RepeatButton
+                            x:Name="PART_VerticalDecrementRepeatButton"
+                            Grid.Row="2"
+                            HorizontalAlignment="Right"
+                            IsTabStop="False"
+                            Style="{StaticResource ScrollButtonStyle}">
+                            <ui:FontIcon
+                                x:Name="PART_VerticalDecrementRepeatIcon"
+                                FontFamily="{DynamicResource SymbolThemeFontFamily}"
+                                FontSize="{StaticResource ScrollButtonFontSize}"
+                                Glyph="&#xEDDC;" />
+                        </RepeatButton>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

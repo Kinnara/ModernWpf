@@ -23,13 +23,13 @@
     </Page.Resources>
 
     <Grid Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
-        <ui:SimpleStackPanel Spacing="4">
+        <ui:StackPanelEx Spacing="4">
             <TextBlock x:Name="HeaderBlock" Text="Compact Size" FontSize="18"/>
             <TextBox ui:ControlHelper.Header="First Name:" x:Name="txtfirstName" />
             <TextBox ui:ControlHelper.Header="Last Name:" x:Name="txtLastName"  />
             <PasswordBox ui:ControlHelper.Header="Password:" />
             <PasswordBox ui:ControlHelper.Header="Confirm Password:" />
             <DatePicker ui:ControlHelper.Header="Pick a date" HorizontalAlignment="Stretch" />
-        </ui:SimpleStackPanel>
+        </ui:StackPanelEx>
     </Grid>
 </ui:Page>

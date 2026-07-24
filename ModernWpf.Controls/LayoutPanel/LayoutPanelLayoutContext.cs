@@ -57,56 +57,6 @@ namespace ModernWpf.Controls
             }
 
             private readonly UIElementCollection m_collection;
-
-            //private class Enumerator : IEnumerator<UIElement>
-            //{
-            //    public Enumerator(UIElementCollection collection)
-            //    {
-            //        m_collection = collection;
-            //    }
-
-            //    public UIElement Current
-            //    {
-            //        get
-            //        {
-            //            if (m_currentIndex < m_collection.Count)
-            //            {
-            //                return m_collection[m_currentIndex];
-            //            }
-            //            else
-            //            {
-            //                throw new InvalidOperationException();
-            //            }
-            //        }
-            //    }
-
-            //    object IEnumerator.Current => Current;
-
-            //    public bool MoveNext()
-            //    {
-            //        if (m_currentIndex < m_collection.Count)
-            //        {
-            //            ++m_currentIndex;
-            //            return (m_currentIndex < m_collection.Count);
-            //        }
-            //        else
-            //        {
-            //            return false;
-            //        }
-            //    }
-
-            //    public void Reset()
-            //    {
-            //        m_currentIndex = -1;
-            //    }
-
-            //    public void Dispose()
-            //    {
-            //    }
-
-            //    private readonly UIElementCollection m_collection;
-            //    private int m_currentIndex = -1;
-            //}
         }
     }
 }

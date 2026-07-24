@@ -1,0 +1,136 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Controls",
+    "System.Windows.Input"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "PagerControl"
+  },
+  "properties": [
+    {
+      "name": "DisplayMode",
+      "type": "PagerControlDisplayMode",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "PagerControlDisplayMode.Auto",
+      "changed": "OnPagerPropertyChanged"
+    },
+    {
+      "name": "NumberOfPages",
+      "type": "int",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0",
+      "changed": "OnNumberOfPagesPropertyChanged",
+      "coerce": "CoerceNumberOfPages"
+    },
+    {
+      "name": "FirstButtonVisibility",
+      "type": "PagerControlButtonVisibility",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "PagerControlButtonVisibility.Visible",
+      "changed": "OnPagerPropertyChanged"
+    },
+    {
+      "name": "PreviousButtonVisibility",
+      "type": "PagerControlButtonVisibility",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "PagerControlButtonVisibility.Visible",
+      "changed": "OnPagerPropertyChanged"
+    },
+    {
+      "name": "NextButtonVisibility",
+      "type": "PagerControlButtonVisibility",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "PagerControlButtonVisibility.Visible",
+      "changed": "OnPagerPropertyChanged"
+    },
+    {
+      "name": "LastButtonVisibility",
+      "type": "PagerControlButtonVisibility",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "PagerControlButtonVisibility.Visible",
+      "changed": "OnPagerPropertyChanged"
+    },
+    {
+      "name": "FirstButtonCommand",
+      "type": "ICommand",
+      "metadata": "null"
+    },
+    {
+      "name": "PreviousButtonCommand",
+      "type": "ICommand",
+      "metadata": "null"
+    },
+    {
+      "name": "NextButtonCommand",
+      "type": "ICommand",
+      "metadata": "null"
+    },
+    {
+      "name": "LastButtonCommand",
+      "type": "ICommand",
+      "metadata": "null"
+    },
+    {
+      "name": "PagerInputCommand",
+      "type": "ICommand",
+      "metadata": "null"
+    },
+    {
+      "name": "FirstButtonStyle",
+      "type": "Style",
+      "metadata": "null"
+    },
+    {
+      "name": "PreviousButtonStyle",
+      "type": "Style",
+      "metadata": "null"
+    },
+    {
+      "name": "NextButtonStyle",
+      "type": "Style",
+      "metadata": "null"
+    },
+    {
+      "name": "LastButtonStyle",
+      "type": "Style",
+      "metadata": "null"
+    },
+    {
+      "name": "ButtonPanelAlwaysShowFirstLastPageIndex",
+      "type": "bool",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "true",
+      "changed": "OnPagerPropertyChanged"
+    },
+    {
+      "name": "SelectedPageIndex",
+      "type": "int",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "0",
+      "changed": "OnSelectedPageIndexPropertyChanged",
+      "coerce": "CoerceSelectedPageIndex"
+    },
+    {
+      "name": "PrefixText",
+      "type": "string",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "string.Empty"
+    },
+    {
+      "name": "SuffixText",
+      "type": "string",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "string.Empty"
+    },
+    {
+      "name": "TemplateSettings",
+      "type": "PagerControlTemplateSettings",
+      "kind": "RegisterReadOnly",
+      "default": "null",
+      "setterAccessibility": "none"
+    }
+  ]
+}

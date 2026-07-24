@@ -1,0 +1,73 @@
+{
+  "usings": [
+    "System.Collections",
+    "System.Windows",
+    "System.Windows.Controls",
+    "ModernWpf.Controls.Primitives"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "RadioButtons"
+  },
+  "properties": [
+    {
+      "name": "ItemsSource",
+      "type": "IEnumerable",
+      "metadataType": "FrameworkPropertyMetadata",
+      "changed": "OnItemsSourcePropertyChanged",
+      "changedBody": "((RadioButtons)sender).UpdateItemsSource();"
+    },
+    {
+      "name": "Items",
+      "type": "IList",
+      "metadataType": "FrameworkPropertyMetadata",
+      "changed": "OnItemsPropertyChanged",
+      "changedBody": "((RadioButtons)sender).UpdateItemsSource();",
+      "setterAccessibility": "none"
+    },
+    {
+      "name": "ItemTemplate",
+      "type": "object",
+      "metadataType": "FrameworkPropertyMetadata",
+      "changed": "OnItemTemplateChanged",
+      "changedBody": "((RadioButtons)sender).UpdateItemTemplate();"
+    },
+    {
+      "name": "SelectedIndex",
+      "type": "int",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "-1",
+      "options": [ "BindsTwoWayByDefault", "Journal" ],
+      "changed": "OnSelectedIndexPropertyChanged",
+      "changedBody": "((RadioButtons)sender).UpdateSelectedIndex();"
+    },
+    {
+      "name": "SelectedItem",
+      "type": "object",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "null",
+      "options": [ "BindsTwoWayByDefault" ],
+      "changed": "OnSelectedItemPropertyChanged",
+      "changedBody": "((RadioButtons)sender).UpdateSelectedItem();"
+    },
+    {
+      "name": "MaxColumns",
+      "type": "int",
+      "metadataType": "FrameworkPropertyMetadata",
+      "default": "1",
+      "validate": "ValidateMaxColumns"
+    },
+    {
+      "name": "Header",
+      "type": "object",
+      "kind": "AddOwner",
+      "sourceProperty": "ControlHelper.HeaderProperty"
+    },
+    {
+      "name": "HeaderTemplate",
+      "type": "DataTemplate",
+      "metadata": "null"
+    }
+  ]
+}

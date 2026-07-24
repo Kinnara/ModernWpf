@@ -9,7 +9,7 @@ using System.Xaml;
 
 namespace ModernWpf.Controls
 {
-    public class RecyclePool
+    public partial class RecyclePool
     {
         public void PutElement(
             UIElement element,
@@ -47,6 +47,10 @@ namespace ModernWpf.Controls
             var winrtKey = key;
             var winrtOwner = owner;
             var winrtOwnerAsPanel = EnsureOwnerIsPanelOrNull(winrtOwner);
+            if (winrtOwnerAsPanel == null)
+            {
+                winrtOwnerAsPanel = (element as FrameworkElement)?.Parent as Panel;
+            }
 
             ElementInfo elementInfo = new ElementInfo(element, winrtOwnerAsPanel);
 
@@ -115,13 +119,6 @@ namespace ModernWpf.Controls
 
         #region Properties
 
-        internal static readonly DependencyProperty ReuseKeyProperty =
-            DependencyProperty.RegisterAttached(
-                "ReuseKey",
-                typeof(string),
-                typeof(RecyclePool),
-                new PropertyMetadata(string.Empty));
-
         internal static string GetReuseKey(UIElement element)
         {
             return (string)element.GetValue(ReuseKeyProperty);
@@ -147,13 +144,6 @@ namespace ModernWpf.Controls
         {
             AttachablePropertyServices.SetProperty(dataTemplate, PoolInstanceProperty, value);
         }
-
-        internal static readonly DependencyProperty OriginTemplateProperty =
-            DependencyProperty.RegisterAttached(
-                "OriginTemplate",
-                typeof(DataTemplate),
-                typeof(RecyclePool),
-                null);
 
         #endregion
 

@@ -1,0 +1,89 @@
+{
+  "usings": [
+    "System.Windows",
+    "System.Windows.Media"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "PersonPicture"
+  },
+  "properties": [
+    {
+      "name": "BadgeGlyph",
+      "type": "string",
+      "default": "string.Empty",
+      "changed": "OnBadgeGlyphPropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged",
+      "coerce": "CoerceStringProperty"
+    },
+    {
+      "name": "BadgeImageSource",
+      "type": "ImageSource",
+      "default": "null",
+      "changed": "OnBadgeImageSourcePropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "BadgeNumber",
+      "type": "int",
+      "default": "0",
+      "changed": "OnBadgeNumberPropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "BadgeText",
+      "type": "string",
+      "default": "string.Empty",
+      "changed": "OnBadgeTextPropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged",
+      "coerce": "CoerceStringProperty"
+    },
+    {
+      "name": "DisplayName",
+      "type": "string",
+      "default": "string.Empty",
+      "changed": "OnDisplayNamePropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged",
+      "coerce": "CoerceStringProperty"
+    },
+    {
+      "name": "Initials",
+      "type": "string",
+      "default": "string.Empty",
+      "changed": "OnInitialsPropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged",
+      "coerce": "CoerceStringProperty"
+    },
+    {
+      "name": "IsGroup",
+      "type": "bool",
+      "default": "false",
+      "changed": "OnIsGroupPropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "PreferSmallImage",
+      "type": "bool",
+      "default": "false",
+      "changed": "OnPreferSmallImagePropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "ProfilePicture",
+      "type": "ImageSource",
+      "default": "null",
+      "changed": "OnProfilePicturePropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged"
+    },
+    {
+      "name": "TemplateSettings",
+      "type": "PersonPictureTemplateSettings",
+      "kind": "RegisterReadOnly",
+      "default": "null",
+      "changed": "OnTemplateSettingsPropertyChanged",
+      "changedForwardTo": "PrivateOnPropertyChanged",
+      "setterAccessibility": "private"
+    }
+  ]
+}

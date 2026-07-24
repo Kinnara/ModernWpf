@@ -9,7 +9,7 @@ using ModernWpf.Controls.Primitives;
 
 namespace ModernWpf.Controls
 {
-    public class NavigationViewItemBase : ContentControl, IControlProtected
+    public partial class NavigationViewItemBase : ContentControl, IControlProtected
     {
         static NavigationViewItemBase()
         {
@@ -30,21 +30,6 @@ namespace ModernWpf.Controls
         {
         }
 
-        #region IsSelected
-
-        public static readonly DependencyProperty IsSelectedProperty =
-            DependencyProperty.Register(
-                nameof(IsSelected),
-                typeof(bool),
-                typeof(NavigationViewItemBase),
-                new PropertyMetadata(false, OnIsSelectedPropertyChanged));
-
-        public bool IsSelected
-        {
-            get => (bool)GetValue(IsSelectedProperty);
-            set => SetValue(IsSelectedProperty, value);
-        }
-
         internal event DependencyPropertyChangedCallback IsSelectedChanged;
 
         private static void OnIsSelectedPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
@@ -57,21 +42,6 @@ namespace ModernWpf.Controls
             OnPropertyChangedPrivate(args);
             IsSelectedChanged?.Invoke(this, args.Property);
         }
-
-        #endregion
-
-        #region UseSystemFocusVisuals
-
-        public static readonly DependencyProperty UseSystemFocusVisualsProperty =
-            FocusVisualHelper.UseSystemFocusVisualsProperty.AddOwner(typeof(NavigationViewItemBase));
-
-        public bool UseSystemFocusVisuals
-        {
-            get => (bool)GetValue(UseSystemFocusVisualsProperty);
-            set => SetValue(UseSystemFocusVisualsProperty, value);
-        }
-
-        #endregion
 
         internal NavigationViewRepeaterPosition Position
         {

@@ -69,6 +69,8 @@ namespace ModernWpf.Controls
 
         public int ItemCount => ItemCountCore();
 
+        public Rect VisibleRect => VisibleRectCore();
+
         public Rect RealizationRect => RealizationRectCore();
 
         public int RecommendedAnchorIndex => RecommendedAnchorIndexCore;
@@ -80,6 +82,11 @@ namespace ModernWpf.Controls
         }
 
         protected virtual int RecommendedAnchorIndexCore => throw new NotImplementedException();
+
+        protected virtual Rect VisibleRectCore()
+        {
+            throw new NotImplementedException();
+        }
 
         internal NonVirtualizingLayoutContext GetNonVirtualizingContextAdapter()
         {
@@ -116,6 +123,11 @@ namespace ModernWpf.Controls
             return RealizationRectCore();
         }
 
+        Rect IVirtualizingLayoutContextOverrides.VisibleRectCore()
+        {
+            return VisibleRectCore();
+        }
+
         int IVirtualizingLayoutContextOverrides.RecommendedAnchorIndexCore => RecommendedAnchorIndexCore;
 
         Point IVirtualizingLayoutContextOverrides.LayoutOriginCore
@@ -136,6 +148,8 @@ namespace ModernWpf.Controls
         void RecycleElementCore(UIElement element);
 
         Rect RealizationRectCore();
+
+        Rect VisibleRectCore();
 
         int RecommendedAnchorIndexCore { get; }
 

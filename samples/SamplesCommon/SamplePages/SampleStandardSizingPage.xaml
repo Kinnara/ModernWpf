@@ -19,13 +19,13 @@
     mc:Ignorable="d">
 
     <Grid Background="{DynamicResource ApplicationPageBackgroundThemeBrush}">
-        <ui:SimpleStackPanel x:Name="CompactPanel" Spacing="16">
+        <ui:StackPanelEx x:Name="CompactPanel" Spacing="16">
             <TextBlock x:Name="HeaderBlock" Text="Standard Size" FontSize="18"/>
             <TextBox ui:ControlHelper.Header="First Name:" x:Name="txtfirstName" />
             <TextBox ui:ControlHelper.Header="Last Name:" x:Name="txtLastName"  />
             <PasswordBox ui:ControlHelper.Header="Password:" />
             <PasswordBox ui:ControlHelper.Header="Confirm Password:" />
             <DatePicker ui:ControlHelper.Header="Pick a date" HorizontalAlignment="Stretch" />
-        </ui:SimpleStackPanel>
+        </ui:StackPanelEx>
     </Grid>
 </ui:Page>

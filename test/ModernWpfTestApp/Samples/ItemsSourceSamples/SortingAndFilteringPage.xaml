@@ -12,7 +12,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <mux:SimpleStackPanel
+        <mux:StackPanelEx
             Orientation="Horizontal"
             Spacing="10">
             <Button
@@ -26,7 +26,7 @@
                 x:Name="filterText"
                 mux:ControlHelper.PlaceholderText="Filter Text"
                 TextChanged="filterText_TextChanged" />
-        </mux:SimpleStackPanel>
+        </mux:StackPanelEx>
         <ScrollViewer Grid.Row="1">
             <mux:ItemsRepeater x:Name="repeater">
                 <!--<mux:ItemsRepeater.Animator>

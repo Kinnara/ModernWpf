@@ -169,8 +169,6 @@ namespace MUXControlsTestApp
             simpleVerify.IsTrue(contentPresenter != null, "HeaderContentPresenter can't be found");
 
             string expectedHeaderMargin = "0,0,0,4";
-            string expectDatePickerFlyoutPresenterItemPadding = "0,3,0,6";
-            string expectDatePickerFlyoutPresenterMonthPadding = "9,3,0,6";
 
             if (contentPresenter != null)
             {
@@ -188,36 +186,6 @@ namespace MUXControlsTestApp
 
                 textBlock = (TextBlock)root.FindName("YearTextBlock");
                 simpleVerify.IsEqual(textBlock.Padding.ToString(), expectDatePickerFlyoutPresenterItemPadding, "YearTextBlock.Padding");
-            }*/
-            DensityTestResult.Text = simpleVerify.ToString();
-        }
-
-        private void TimePickerDensityTest_Click(object sender, RoutedEventArgs e)
-        {
-            SimpleVerify simpleVerify = new SimpleVerify();
-            var root = (FrameworkElement)VisualTreeHelper.GetChild(TimePicker, 0);
-            var contentPresenter = (ContentPresenter)root.FindName("HeaderContentPresenter");
-            simpleVerify.IsTrue(contentPresenter != null, "HeaderContentPresenter can't be found");
-
-            string expectedHeaderMargin = "0,0,0,4";
-            string expectTimePickerFlyoutPresenterItemPadding = "0,3,0,6";
-
-            if (contentPresenter != null)
-            {
-                simpleVerify.IsEqual(contentPresenter.Margin.ToString(), expectedHeaderMargin, "HeaderContentPresenter.Margin");
-            }
-
-            // Down-level need to change code, so RS5 have different ItemPadding, see bug 19373347, but we will not fix it
-            /*if (!PlatformConfiguration.IsOsVersionGreaterThan(OSVersion.Redstone4))
-            {
-                var textBlock = (TextBlock)root.FindName("HourTextBlock");
-                simpleVerify.IsEqual(textBlock.Padding.ToString(), expectTimePickerFlyoutPresenterItemPadding, "HourTextBlock.Padding");
-
-                textBlock = (TextBlock)root.FindName("MinuteTextBlock");
-                simpleVerify.IsEqual(textBlock.Padding.ToString(), expectTimePickerFlyoutPresenterItemPadding, "MinuteTextBlock.Padding");
-
-                textBlock = (TextBlock)root.FindName("PeriodTextBlock");
-                simpleVerify.IsEqual(textBlock.Padding.ToString(), expectTimePickerFlyoutPresenterItemPadding, "PeriodTextBlock.Padding");
             }*/
             DensityTestResult.Text = simpleVerify.ToString();
         }

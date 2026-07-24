@@ -51,7 +51,8 @@ namespace ModernWpf.Controls.Primitives
             Size popupSize,
             Size targetSize,
             Point offset,
-            FrameworkElement child = null)
+            FrameworkElement child = null,
+            Rect? exclusionRect = null)
         {
             Matrix transformToDevice = default;
             if (child != null)
@@ -59,23 +60,30 @@ namespace ModernWpf.Controls.Primitives
                 Helper.TryGetTransformToDevice(child, out transformToDevice);
             }
 
-            CustomPopupPlacement preferredPlacement = CalculatePopupPlacement(placement, popupSize, targetSize, offset, child, transformToDevice);
+            var fallbackOrder = GetPlacementFallbackOrder(placement);
+            var placements = new CustomPopupPlacement[fallbackOrder.Length];
 
-            CustomPopupPlacement? alternativePlacement = null;
-            var alternativePlacementMode = GetAlternativePlacementMode(placement);
-            if (alternativePlacementMode.HasValue)
+            for (int i = 0; i < fallbackOrder.Length; i++)
             {
-                alternativePlacement = CalculatePopupPlacement(alternativePlacementMode.Value, popupSize, targetSize, offset, child, transformToDevice);
+                placements[i] = CalculatePopupPlacement(
+                    fallbackOrder[i],
+                    popupSize,
+                    targetSize,
+                    offset,
+                    child,
+                    transformToDevice);
+
+                if (exclusionRect.HasValue)
+                {
+                    placements[i] = AccountForExclusionRect(
+                        fallbackOrder[i],
+                        placements[i],
+                        popupSize,
+                        exclusionRect.Value);
+                }
             }
 
-            if (alternativePlacement.HasValue)
-            {
-                return new[] { preferredPlacement, alternativePlacement.Value };
-            }
-            else
-            {
-                return new[] { preferredPlacement };
-            }
+            return placements;
         }
 
         private static CustomPopupPlacement CalculatePopupPlacement(
@@ -161,39 +169,174 @@ namespace ModernWpf.Controls.Primitives
             return new CustomPopupPlacement(point, primaryAxis);
         }
 
-        private static CustomPlacementMode? GetAlternativePlacementMode(CustomPlacementMode placement)
+        private static CustomPopupPlacement AccountForExclusionRect(
+            CustomPlacementMode placement,
+            CustomPopupPlacement popupPlacement,
+            Size popupSize,
+            Rect exclusionRect)
+        {
+            var popupRect = new Rect(popupPlacement.Point, popupSize);
+            if (!popupRect.IntersectsWith(exclusionRect))
+            {
+                return popupPlacement;
+            }
+
+            var point = popupPlacement.Point;
+            switch (GetMajorPlacement(placement))
+            {
+                case CustomPlacementMode.Top:
+                    point.Y = exclusionRect.Y - popupSize.Height;
+                    break;
+                case CustomPlacementMode.Bottom:
+                    point.Y = exclusionRect.Y + exclusionRect.Height;
+                    break;
+                case CustomPlacementMode.Left:
+                    point.X = exclusionRect.X - popupSize.Width;
+                    break;
+                case CustomPlacementMode.Right:
+                    point.X = exclusionRect.X + exclusionRect.Width;
+                    break;
+                case CustomPlacementMode.Full:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(placement));
+            }
+
+            return new CustomPopupPlacement(point, popupPlacement.PrimaryAxis);
+        }
+
+        private static CustomPlacementMode GetMajorPlacement(CustomPlacementMode placement)
         {
             switch (placement)
             {
                 case CustomPlacementMode.Top:
-                    return CustomPlacementMode.Bottom;
-                case CustomPlacementMode.Bottom:
-                    return CustomPlacementMode.Top;
-                case CustomPlacementMode.Left:
-                    return CustomPlacementMode.Right;
-                case CustomPlacementMode.Right:
-                    return CustomPlacementMode.Left;
-                case CustomPlacementMode.Full:
-                    return null;
                 case CustomPlacementMode.TopEdgeAlignedLeft:
-                    return CustomPlacementMode.BottomEdgeAlignedLeft;
                 case CustomPlacementMode.TopEdgeAlignedRight:
-                    return CustomPlacementMode.BottomEdgeAlignedRight;
+                    return CustomPlacementMode.Top;
+                case CustomPlacementMode.Bottom:
                 case CustomPlacementMode.BottomEdgeAlignedLeft:
-                    return CustomPlacementMode.TopEdgeAlignedLeft;
                 case CustomPlacementMode.BottomEdgeAlignedRight:
-                    return CustomPlacementMode.TopEdgeAlignedRight;
+                    return CustomPlacementMode.Bottom;
+                case CustomPlacementMode.Left:
                 case CustomPlacementMode.LeftEdgeAlignedTop:
-                    return CustomPlacementMode.RightEdgeAlignedTop;
                 case CustomPlacementMode.LeftEdgeAlignedBottom:
-                    return CustomPlacementMode.RightEdgeAlignedBottom;
+                    return CustomPlacementMode.Left;
+                case CustomPlacementMode.Right:
                 case CustomPlacementMode.RightEdgeAlignedTop:
-                    return CustomPlacementMode.RightEdgeAlignedTop;
                 case CustomPlacementMode.RightEdgeAlignedBottom:
-                    return CustomPlacementMode.LeftEdgeAlignedBottom;
+                    return CustomPlacementMode.Right;
+                case CustomPlacementMode.Full:
+                    return CustomPlacementMode.Full;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(placement));
+            }
+        }
+
+        private static CustomPlacementMode[] GetPlacementFallbackOrder(CustomPlacementMode placement)
+        {
+            switch (placement)
+            {
+                case CustomPlacementMode.Top:
+                    return new[]
+                    {
+                        CustomPlacementMode.Top,
+                        CustomPlacementMode.Bottom,
+                        CustomPlacementMode.Left,
+                        CustomPlacementMode.Right
+                    };
+                case CustomPlacementMode.Bottom:
+                    return new[]
+                    {
+                        CustomPlacementMode.Bottom,
+                        CustomPlacementMode.Top,
+                        CustomPlacementMode.Left,
+                        CustomPlacementMode.Right
+                    };
+                case CustomPlacementMode.Left:
+                    return new[]
+                    {
+                        CustomPlacementMode.Left,
+                        CustomPlacementMode.Right,
+                        CustomPlacementMode.Top,
+                        CustomPlacementMode.Bottom
+                    };
+                case CustomPlacementMode.Right:
+                    return new[]
+                    {
+                        CustomPlacementMode.Right,
+                        CustomPlacementMode.Left,
+                        CustomPlacementMode.Top,
+                        CustomPlacementMode.Bottom
+                    };
+                case CustomPlacementMode.Full:
+                    return new[] { CustomPlacementMode.Full };
+                case CustomPlacementMode.TopEdgeAlignedLeft:
+                    return new[]
+                    {
+                        CustomPlacementMode.TopEdgeAlignedLeft,
+                        CustomPlacementMode.BottomEdgeAlignedLeft,
+                        CustomPlacementMode.LeftEdgeAlignedTop,
+                        CustomPlacementMode.RightEdgeAlignedTop
+                    };
+                case CustomPlacementMode.TopEdgeAlignedRight:
+                    return new[]
+                    {
+                        CustomPlacementMode.TopEdgeAlignedRight,
+                        CustomPlacementMode.BottomEdgeAlignedRight,
+                        CustomPlacementMode.LeftEdgeAlignedBottom,
+                        CustomPlacementMode.RightEdgeAlignedBottom
+                    };
+                case CustomPlacementMode.BottomEdgeAlignedLeft:
+                    return new[]
+                    {
+                        CustomPlacementMode.BottomEdgeAlignedLeft,
+                        CustomPlacementMode.TopEdgeAlignedLeft,
+                        CustomPlacementMode.LeftEdgeAlignedTop,
+                        CustomPlacementMode.RightEdgeAlignedTop
+                    };
+                case CustomPlacementMode.BottomEdgeAlignedRight:
+                    return new[]
+                    {
+                        CustomPlacementMode.BottomEdgeAlignedRight,
+                        CustomPlacementMode.TopEdgeAlignedRight,
+                        CustomPlacementMode.LeftEdgeAlignedBottom,
+                        CustomPlacementMode.RightEdgeAlignedBottom
+                    };
+                case CustomPlacementMode.LeftEdgeAlignedTop:
+                    return new[]
+                    {
+                        CustomPlacementMode.LeftEdgeAlignedTop,
+                        CustomPlacementMode.RightEdgeAlignedTop,
+                        CustomPlacementMode.TopEdgeAlignedLeft,
+                        CustomPlacementMode.BottomEdgeAlignedLeft
+                    };
+                case CustomPlacementMode.LeftEdgeAlignedBottom:
+                    return new[]
+                    {
+                        CustomPlacementMode.LeftEdgeAlignedBottom,
+                        CustomPlacementMode.RightEdgeAlignedBottom,
+                        CustomPlacementMode.TopEdgeAlignedRight,
+                        CustomPlacementMode.BottomEdgeAlignedRight
+                    };
+                case CustomPlacementMode.RightEdgeAlignedTop:
+                    return new[]
+                    {
+                        CustomPlacementMode.RightEdgeAlignedTop,
+                        CustomPlacementMode.LeftEdgeAlignedTop,
+                        CustomPlacementMode.TopEdgeAlignedLeft,
+                        CustomPlacementMode.BottomEdgeAlignedLeft
+                    };
+                case CustomPlacementMode.RightEdgeAlignedBottom:
+                    return new[]
+                    {
+                        CustomPlacementMode.RightEdgeAlignedBottom,
+                        CustomPlacementMode.LeftEdgeAlignedBottom,
+                        CustomPlacementMode.TopEdgeAlignedRight,
+                        CustomPlacementMode.BottomEdgeAlignedRight
+                    };
                 //case CustomPopupPlacementMode.Auto:
                 default:
-                    return null;
+                    throw new ArgumentOutOfRangeException(nameof(placement));
             }
         }
     }
