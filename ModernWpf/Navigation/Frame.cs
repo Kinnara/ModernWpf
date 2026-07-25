@@ -1,5 +1,7 @@
 ﻿using ModernWpf.Media.Animation;
+using ModernWpf.Navigation;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
@@ -146,6 +148,43 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region CacheSize
+
+        /// <summary>
+        /// Identifies the CacheSize dependency property.
+        /// </summary>
+        public static readonly DependencyProperty CacheSizeProperty =
+            DependencyProperty.Register(
+                nameof(CacheSize),
+                typeof(int),
+                typeof(Frame),
+                new PropertyMetadata(10, OnCacheSizePropertyChanged),
+                IsValidCacheSize);
+
+        /// <summary>
+        /// Gets or sets the number of pages with
+        /// <see cref="NavigationCacheMode.Enabled"/> that can be cached.
+        /// </summary>
+        public int CacheSize
+        {
+            get => (int)GetValue(CacheSizeProperty);
+            set => SetValue(CacheSizeProperty, value);
+        }
+
+        private static void OnCacheSizePropertyChanged(
+            DependencyObject sender,
+            DependencyPropertyChangedEventArgs args)
+        {
+            ((Frame)sender).TrimTransientPageCache();
+        }
+
+        private static bool IsValidCacheSize(object value)
+        {
+            return value is int cacheSize && cacheSize >= 0;
+        }
+
+        #endregion
+
         #region ContentTransitions
 
         /// <summary>
@@ -234,7 +273,11 @@ namespace ModernWpf.Controls
         /// <returns>true if navigation is not canceled; otherwise, false.</returns>
         public bool Navigate(Type sourcePageType)
         {
-            return Navigate(Activator.CreateInstance(sourcePageType));
+            var content = GetCachedOrCreatePage(sourcePageType, out var wasCached);
+            var cacheMode = GetNavigationCacheMode(content);
+            var navigated = Navigate(content);
+            CachePageAfterNavigation(sourcePageType, content, cacheMode, wasCached, navigated);
+            return navigated;
         }
 
         /// <summary>
@@ -246,7 +289,11 @@ namespace ModernWpf.Controls
         /// <returns>true if navigation is not canceled; otherwise, false.</returns>
         public bool Navigate(Type sourcePageType, object parameter)
         {
-            return Navigate(Activator.CreateInstance(sourcePageType), parameter);
+            var content = GetCachedOrCreatePage(sourcePageType, out var wasCached);
+            var cacheMode = GetNavigationCacheMode(content);
+            var navigated = Navigate(content, parameter);
+            CachePageAfterNavigation(sourcePageType, content, cacheMode, wasCached, navigated);
+            return navigated;
         }
 
         /// <summary>
@@ -261,7 +308,11 @@ namespace ModernWpf.Controls
         public bool Navigate(Type sourcePageType, object parameter, NavigationTransitionInfo infoOverride)
         {
             _transitionInfoOverride = infoOverride;
-            return Navigate(Activator.CreateInstance(sourcePageType), parameter);
+            var content = GetCachedOrCreatePage(sourcePageType, out var wasCached);
+            var cacheMode = GetNavigationCacheMode(content);
+            var navigated = Navigate(content, parameter);
+            CachePageAfterNavigation(sourcePageType, content, cacheMode, wasCached, navigated);
+            return navigated;
         }
 
         /// <summary>
@@ -592,8 +643,123 @@ namespace ModernWpf.Controls
             }
         }
 
+        private object GetCachedOrCreatePage(Type sourcePageType, out bool wasCached)
+        {
+            if (_permanentPageCache.TryGetValue(sourcePageType, out var permanentPage))
+            {
+                if (permanentPage.NavigationCacheMode != NavigationCacheMode.Disabled)
+                {
+                    wasCached = true;
+                    return permanentPage;
+                }
+
+                _permanentPageCache.Remove(sourcePageType);
+            }
+
+            if (_transientPageCache.TryGetValue(sourcePageType, out var transientPage))
+            {
+                if (transientPage.NavigationCacheMode != NavigationCacheMode.Disabled)
+                {
+                    wasCached = true;
+                    return transientPage;
+                }
+
+                RemoveTransientPageFromCache(sourcePageType);
+            }
+
+            wasCached = false;
+            return Activator.CreateInstance(sourcePageType);
+        }
+
+        private void CachePageAfterNavigation(
+            Type sourcePageType,
+            object content,
+            NavigationCacheMode cacheMode,
+            bool wasCached,
+            bool navigated)
+        {
+            if (!navigated)
+            {
+                return;
+            }
+
+            if (wasCached)
+            {
+                if (_transientPageCache.TryGetValue(sourcePageType, out var transientPage) &&
+                    ReferenceEquals(transientPage, content))
+                {
+                    _transientPageCacheOrder.Remove(sourcePageType);
+                    _transientPageCacheOrder.AddLast(sourcePageType);
+                }
+
+                return;
+            }
+
+            if (!(content is Page page) ||
+                page.NavigationCacheMode == NavigationCacheMode.Disabled)
+            {
+                return;
+            }
+
+            switch (cacheMode)
+            {
+                case NavigationCacheMode.Required:
+                    _permanentPageCache[sourcePageType] = page;
+                    break;
+
+                case NavigationCacheMode.Enabled when CacheSize > 0:
+                    while (_transientPageCache.Count >= CacheSize)
+                    {
+                        RemoveLeastRecentlyUsedTransientPage();
+                    }
+
+                    _transientPageCache[sourcePageType] = page;
+                    _transientPageCacheOrder.AddLast(sourcePageType);
+                    break;
+            }
+        }
+
+        private static NavigationCacheMode GetNavigationCacheMode(object content)
+        {
+            return content is Page page
+                ? page.NavigationCacheMode
+                : NavigationCacheMode.Disabled;
+        }
+
+        internal void RemovePageFromCache(Type sourcePageType)
+        {
+            _permanentPageCache.Remove(sourcePageType);
+            RemoveTransientPageFromCache(sourcePageType);
+        }
+
+        private void TrimTransientPageCache()
+        {
+            while (_transientPageCache.Count > CacheSize)
+            {
+                RemoveLeastRecentlyUsedTransientPage();
+            }
+        }
+
+        private void RemoveLeastRecentlyUsedTransientPage()
+        {
+            if (_transientPageCacheOrder.First is { } first)
+            {
+                RemoveTransientPageFromCache(first.Value);
+            }
+        }
+
+        private void RemoveTransientPageFromCache(Type sourcePageType)
+        {
+            _transientPageCache.Remove(sourcePageType);
+            _transientPageCacheOrder.Remove(sourcePageType);
+        }
+
         private const string FirstContentPresenterName = "FirstContentPresenter";
         private const string SecondContentPresenterName = "SecondContentPresenter";
+
+        private readonly Dictionary<Type, Page> _permanentPageCache = new Dictionary<Type, Page>();
+        private readonly Dictionary<Type, Page> _transientPageCache = new Dictionary<Type, Page>();
+        private readonly LinkedList<Type> _transientPageCacheOrder = new LinkedList<Type>();
 
         private ContentPresenter _oldContentPresenter;
         private ContentPresenter _newContentPresenter;

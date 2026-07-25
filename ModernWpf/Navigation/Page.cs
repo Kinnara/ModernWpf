@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using ModernWpf.Navigation;
 
 namespace ModernWpf.Controls
 {
@@ -60,6 +61,51 @@ namespace ModernWpf.Controls
             {
                 ClearValue(FramePropertyKey);
             }
+        }
+
+        #endregion
+
+        #region NavigationCacheMode
+
+        /// <summary>
+        /// Identifies the NavigationCacheMode dependency property.
+        /// </summary>
+        public static readonly DependencyProperty NavigationCacheModeProperty =
+            DependencyProperty.Register(
+                nameof(NavigationCacheMode),
+                typeof(NavigationCacheMode),
+                typeof(Page),
+                new PropertyMetadata(
+                    NavigationCacheMode.Disabled,
+                    OnNavigationCacheModePropertyChanged),
+                IsValidNavigationCacheMode);
+
+        /// <summary>
+        /// Gets or sets whether this page instance is cached by its controlling frame.
+        /// </summary>
+        public NavigationCacheMode NavigationCacheMode
+        {
+            get => (NavigationCacheMode)GetValue(NavigationCacheModeProperty);
+            set => SetValue(NavigationCacheModeProperty, value);
+        }
+
+        private static void OnNavigationCacheModePropertyChanged(
+            DependencyObject sender,
+            DependencyPropertyChangedEventArgs args)
+        {
+            var page = (Page)sender;
+            if ((NavigationCacheMode)args.NewValue == NavigationCacheMode.Disabled)
+            {
+                page.Frame?.RemovePageFromCache(page.GetType());
+            }
+        }
+
+        private static bool IsValidNavigationCacheMode(object value)
+        {
+            return value is NavigationCacheMode mode &&
+                (mode == NavigationCacheMode.Disabled ||
+                 mode == NavigationCacheMode.Required ||
+                 mode == NavigationCacheMode.Enabled);
         }
 
         #endregion
