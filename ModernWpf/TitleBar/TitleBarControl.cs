@@ -8,6 +8,8 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Shell;
+using Standard;
 using static Windows.Win32.PInvoke;
 
 namespace ModernWpf.Controls.Primitives
@@ -26,6 +28,7 @@ namespace ModernWpf.Controls.Primitives
         private const string RightSystemOverlayName = "PART_RightSystemOverlay";
 
         private Window _parentWindow;
+        private HwndSource _parentHwndSource;
         private KeyBinding _altLeftBinding;
 
         static TitleBarControl()
@@ -45,6 +48,9 @@ namespace ModernWpf.Controls.Primitives
             CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, CloseWindow));
 
             SetInsideTitleBar(this, true);
+
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
         #region IsActive
@@ -429,6 +435,67 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_parentWindow == null)
+            {
+                return;
+            }
+
+            var hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+            if (!ReferenceEquals(hwndSource, _parentHwndSource))
+            {
+                RemoveWindowHook();
+                _parentHwndSource = hwndSource;
+                _parentHwndSource?.AddHook(FilterWindowMessage);
+            }
+        }
+
+        private void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            RemoveWindowHook();
+        }
+
+        private void RemoveWindowHook()
+        {
+            if (_parentHwndSource != null)
+            {
+                _parentHwndSource.RemoveHook(FilterWindowMessage);
+                _parentHwndSource = null;
+            }
+        }
+
+        private IntPtr FilterWindowMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == WmNcHitTest &&
+                _parentWindow != null &&
+                IsVisible &&
+                ActualHeight > 0)
+            {
+                var mousePosition = _parentWindow.PointFromScreen(
+                    new Point(Utility.GET_X_LPARAM(lParam), Utility.GET_Y_LPARAM(lParam)));
+                var titleBarBottom = TranslatePoint(new Point(0, ActualHeight), _parentWindow).Y;
+                var chrome = WindowChrome.GetWindowChrome(_parentWindow);
+                var resizeBorder = chrome?.ResizeBorderThickness ?? default;
+
+                if (mousePosition.Y >= titleBarBottom &&
+                    mousePosition.X >= resizeBorder.Left &&
+                    mousePosition.X < _parentWindow.ActualWidth - resizeBorder.Right &&
+                    mousePosition.Y < _parentWindow.ActualHeight - resizeBorder.Bottom)
+                {
+                    var inputElement = _parentWindow.InputHitTest(mousePosition);
+                    if (inputElement == null ||
+                        WindowChrome.GetResizeGripDirection(inputElement) == ResizeGripDirection.None)
+                    {
+                        handled = true;
+                        return (IntPtr)HtClient;
+                    }
+                }
+            }
+
+            return IntPtr.Zero;
+        }
+
         private void OnBackButtonClick(object sender, RoutedEventArgs e)
         {
             if (TemplatedParent is Window window)
@@ -552,6 +619,8 @@ namespace ModernWpf.Controls.Primitives
 
         private const int GwlStyle = -16;
         private const int WsMinimizeBox = 0x00020000;
+        private const int WmNcHitTest = 0x0084;
+        private const int HtClient = 1;
 
         [DllImport("user32.dll", EntryPoint = "GetWindowLongW")]
         private static extern int GetWindowLong(IntPtr hWnd, int nIndex);

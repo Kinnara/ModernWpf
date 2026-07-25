@@ -1,9 +1,12 @@
+using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Interop;
 using System.Windows.Shell;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls.Primitives;
@@ -168,6 +171,100 @@ public class WindowVisualStateTests
     }
 
     [TestMethod]
+    public void ContentImmediatelyBelowTitleBarUsesClientHitTesting()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var button = new Button
+            {
+                Content = "Button",
+                Width = 120,
+                Height = 32,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            var window = new Window
+            {
+                Width = 420,
+                Height = 240,
+                Left = -30000,
+                Top = -30000,
+                Content = button,
+                ResizeMode = ResizeMode.CanResizeWithGrip,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            WindowHelper.SetUseModernWindowStyle(window, true);
+
+            try
+            {
+                window.Show();
+                WpfTestHost.DoEvents();
+                window.UpdateLayout();
+                WpfTestHost.DoEvents();
+
+                var handle = new WindowInteropHelper(window).Handle;
+                var buttonTopLeft = button.PointToScreen(new Point());
+                var buttonTopRight = button.PointToScreen(new Point(button.ActualWidth, 0));
+                var screenX = (int)Math.Floor((buttonTopLeft.X + buttonTopRight.X) / 2);
+                var firstButtonPixelY = (int)Math.Ceiling(buttonTopLeft.Y);
+                var hitTests = Enumerable.Range(0, 4)
+                    .Select(offset => SendMessage(
+                        handle,
+                        WmNcHitTest,
+                        IntPtr.Zero,
+                        PackScreenPoint(screenX, firstButtonPixelY + offset)).ToInt32())
+                    .ToArray();
+
+                CollectionAssert.AreEqual(
+                    new[] { HtClient, HtClient, HtClient, HtClient },
+                    hitTests,
+                    $"Expected the first four button rows to be clickable. " +
+                    $"Actual={string.Join(",", hitTests)}, button top={buttonTopLeft.Y}, " +
+                    $"chrome={WindowChrome.GetWindowChrome(window)?.CaptionHeight}, " +
+                    $"resize={WindowChrome.GetWindowChrome(window)?.ResizeBorderThickness.Top}.");
+
+                var titleBar = VisualTreeTestHelper.FindDescendant<TitleBarControl>(window)
+                    ?? throw new AssertFailedException("Expected the modern window title bar.");
+                var titleBarPoint = titleBar.PointToScreen(
+                    new Point(titleBar.ActualWidth / 2, titleBar.ActualHeight / 2));
+                Assert.AreEqual(
+                    HtCaption,
+                    SendMessage(
+                        handle,
+                        WmNcHitTest,
+                        IntPtr.Zero,
+                        PackScreenPoint(
+                            (int)Math.Floor(titleBarPoint.X),
+                            (int)Math.Floor(titleBarPoint.Y))).ToInt32(),
+                    "Empty title-bar space must remain draggable.");
+
+                var resizeGrip = VisualTreeTestHelper.FindDescendant<ResizeGrip>(window)
+                    ?? throw new AssertFailedException("Expected the modern window resize grip.");
+                var resizeGripPoint = resizeGrip.PointToScreen(
+                    new Point(resizeGrip.ActualWidth / 2, resizeGrip.ActualHeight / 2));
+                Assert.AreEqual(
+                    HtBottomRight,
+                    SendMessage(
+                        handle,
+                        WmNcHitTest,
+                        IntPtr.Zero,
+                        PackScreenPoint(
+                            (int)Math.Floor(resizeGripPoint.X),
+                            (int)Math.Floor(resizeGripPoint.Y))).ToInt32(),
+                    "The content client bridge must preserve the explicit resize grip.");
+            }
+            finally
+            {
+                window.Close();
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    [TestMethod]
     public void WindowStyleDocumentsOfficialWpfFluentSubstitutions()
     {
         var repoRoot = FindRepoRoot();
@@ -229,4 +326,17 @@ public class WindowVisualStateTests
         Assert.Fail("Could not locate ModernWpf.sln from the test output directory.");
         return string.Empty;
     }
+
+    private static IntPtr PackScreenPoint(int x, int y)
+    {
+        return new IntPtr(unchecked((int)((uint)(ushort)x | ((uint)(ushort)y << 16))));
+    }
+
+    private const int WmNcHitTest = 0x0084;
+    private const int HtClient = 1;
+    private const int HtCaption = 2;
+    private const int HtBottomRight = 17;
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 }
