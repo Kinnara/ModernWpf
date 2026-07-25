@@ -138,6 +138,12 @@ API controls are covered by the focused Gallery regression.
   therefore completes the source display-mode deferral through the dispatcher
   when template application is late and explicitly reconciles the paired pane
   and list-size visual-state groups.
+- WPF XAML applies `NavigationView` attributes sequentially before the control
+  template exists. The port therefore resets the source `m_wasForceClosed`
+  state for `PaneDisplayMode` changes only after template application. This
+  keeps an explicitly closed initial pane closed regardless of whether
+  `IsPaneOpen` appears before or after `PaneDisplayMode`, while runtime display
+  mode changes retain the source automatic open/close behavior.
 - WinUI `ItemsRepeater`, `SplitView`, `Flyout`, popup/XamlRoot services, focus
   movement, top overflow measurement, gamepad/access-key paths, composition
   animations, x:Bind phases, and recycle metadata use the existing documented
@@ -217,7 +223,7 @@ API controls are covered by the focused Gallery regression.
 - The WPF initial-window-layout substitute defers SplitView's state replay when
   dispatcher processing is suspended; the existing launch-state regression
   now covers the path without a nested-dispatcher exception.
-- NavigationView product/source-audit tests pass 57/57; SplitView product tests
+- NavigationView product/source-audit tests pass 59/59; SplitView product tests
   pass 14/14; the focused Gallery sample/source-shape slice passes 7/7 on net8
   and net10. Gallery builds successfully on net462, net8, and net10 with zero
   errors; current target builds retain existing unrelated warnings.
