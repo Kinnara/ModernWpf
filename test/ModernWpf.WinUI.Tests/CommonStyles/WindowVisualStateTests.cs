@@ -124,6 +124,50 @@ public class WindowVisualStateTests
     }
 
     [TestMethod]
+    public void WindowStyleNoneRemovesModernTitleBarAndChrome()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var content = new Border();
+            var window = new Window
+            {
+                Width = 320,
+                Height = 240,
+                Left = -32000,
+                Top = -32000,
+                BorderThickness = new Thickness(0),
+                Content = content,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                WindowStyle = WindowStyle.None
+            };
+            WindowHelper.SetUseModernWindowStyle(window, true);
+
+            try
+            {
+                window.Show();
+                WpfTestHost.DoEvents();
+                window.UpdateLayout();
+                WpfTestHost.DoEvents();
+
+                var titleBar = VisualTreeTestHelper.FindDescendant<TitleBarControl>(window);
+                Assert.IsNotNull(titleBar);
+                Assert.AreEqual(Visibility.Collapsed, titleBar!.Visibility);
+                Assert.IsNull(WindowChrome.GetWindowChrome(window));
+                Assert.IsFalse(WindowHelper.GetFixMaximizedWindow(window));
+                Assert.AreEqual(new Point(0, 0), content.TranslatePoint(new Point(), window));
+            }
+            finally
+            {
+                window.Close();
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    [TestMethod]
     public void WindowStyleDocumentsOfficialWpfFluentSubstitutions()
     {
         var repoRoot = FindRepoRoot();
