@@ -452,7 +452,7 @@ namespace ModernWpf.Controls
             {
                 _ignoreSourcePageTypeChanged = true;
                 var pageType = e.Content?.GetType();
-                SourcePageType = pageType;
+                SetCurrentValue(SourcePageTypeProperty, pageType);
                 CurrentSourcePageType = pageType;
             }
             finally
