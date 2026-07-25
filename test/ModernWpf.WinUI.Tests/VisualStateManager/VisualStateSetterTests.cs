@@ -314,6 +314,70 @@ public class VisualStateSetterTests
     }
 
     [TestMethod]
+    public void ClientAreaAnimationResourceCanDisableTransitions()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var control = CreateControl(
+                """
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualStateGroup.Transitions>
+                        <VisualTransition To="PointerOver">
+                            <Storyboard>
+                                <DoubleAnimation
+                                    Storyboard.TargetName="TargetBorder"
+                                    Storyboard.TargetProperty="Opacity"
+                                    To="0.25"
+                                    Duration="0:0:10" />
+                            </Storyboard>
+                        </VisualTransition>
+                    </VisualStateGroup.Transitions>
+                    <VisualState x:Name="Normal">
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="TargetBorder"
+                                Storyboard.TargetProperty="Opacity"
+                                To="1"
+                                Duration="0" />
+                        </Storyboard>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver">
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="TargetBorder"
+                                Storyboard.TargetProperty="Opacity"
+                                To="0.25"
+                                Duration="0" />
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+                """,
+                """
+                <Border x:Name="TargetBorder" Opacity="1" />
+                """);
+
+            using var host = new TestWindowHost(control);
+            var target = FindTemplateChild<Border>(control, "TargetBorder");
+
+            control.Resources[SystemParameters.ClientAreaAnimationKey] = true;
+            Assert.IsTrue(SimpleVisualStateManager.AreAnimationsEnabled(control, true));
+            Assert.IsFalse(SimpleVisualStateManager.AreAnimationsEnabled(control, false));
+
+            control.Resources[SystemParameters.ClientAreaAnimationKey] = false;
+            Assert.IsFalse(SimpleVisualStateManager.AreAnimationsEnabled(control, true));
+            Assert.IsFalse(SimpleVisualStateManager.AreAnimationsEnabled(control, false));
+
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(control, "Normal", false));
+            WpfTestHost.DoEvents();
+            Assert.AreEqual(1.0, target.Opacity, 0.01);
+
+            Assert.IsTrue(System.Windows.VisualStateManager.GoToState(control, "PointerOver", true));
+            WpfTestHost.DoEvents();
+            Assert.AreEqual(0.25, target.Opacity, 0.01);
+        });
+    }
+
+    [TestMethod]
     public void VisualStateExThrowsForMissingTarget()
     {
         WpfTestHost.Run(() =>

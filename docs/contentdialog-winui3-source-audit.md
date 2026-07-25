@@ -135,6 +135,11 @@ unrelated warnings.
   window-scoped ownership.
 - WinUI compositor shadows and DComp validation are represented through
   `ThemeShadowChrome` with the source depth rather than native composition.
+- WPF visual-state transitions keep the operating-system animation preference
+  and render tier as an upper bound. A scoped
+  `SystemParameters.ClientAreaAnimationKey=false` resource can additionally
+  suppress the ContentDialog transition, matching standard WPF resource
+  customization without forcing animation when the system has disabled it.
 - WinUI `XamlUICommand` label, keyboard-accelerator, description, and tooltip
   binding has no direct ModernWpf command type; WPF `ICommand` execution and
   parameters are preserved.
