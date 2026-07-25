@@ -2,6 +2,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Markup;
@@ -45,6 +46,19 @@ public class TextBoxPasswordBoxVisualStateTests
             AssertTextBoxTriggerShape(textBox.Template);
             AssertTextBoxClearButtonSubstitutionClearsText(textBox);
             AssertDisabledTextControlTemplateResources(textBox);
+        });
+    }
+
+    [TestMethod]
+    public void InitialTextBoxValidationErrorAdornerClearsWhenValueBecomesValid()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            AssertInitialTextBoxValidationErrorClears();
+            AssertInitialTextBoxValidationErrorClears(
+                (ControlTemplate)Application.Current.FindResource("DataGridTextControlValidationErrorTemplate"));
         });
     }
 
@@ -581,6 +595,67 @@ public class TextBoxPasswordBoxVisualStateTests
             ?? throw new AssertFailedException($"Expected {control.GetType().Name} template child '{name}' to be a {typeof(T).Name}.");
     }
 
+    private static void AssertInitialTextBoxValidationErrorClears(ControlTemplate? localErrorTemplate = null)
+    {
+        var model = new RequiredTextModel();
+        var textBox = new TextBox
+        {
+            DataContext = model,
+            Width = 240
+        };
+        if (localErrorTemplate != null)
+        {
+            Validation.SetErrorTemplate(textBox, localErrorTemplate);
+        }
+
+        textBox.SetBinding(
+            TextBox.TextProperty,
+            new Binding(nameof(RequiredTextModel.Value))
+            {
+                Mode = BindingMode.TwoWay,
+                UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                ValidatesOnDataErrors = true
+            });
+        WpfTestHost.DoEvents();
+
+        Assert.IsTrue(
+            Validation.GetHasError(textBox),
+            "The binding must be invalid before the TextBox template is applied.");
+
+        using var host = new TestWindowHost(textBox, width: 320, height: 120);
+        host.UpdateLayout();
+
+        var contentBorder = GetTemplateChild<Border>(textBox, "ContentBorder");
+        var adornerLayer = AdornerLayer.GetAdornerLayer(textBox)
+            ?? throw new AssertFailedException("Expected the hosted TextBox to have an AdornerLayer.");
+        Assert.AreSame(
+            localErrorTemplate ?? textBox.TryFindResource("TextControlValidationErrorTemplate"),
+            Validation.GetErrorTemplate(textBox),
+            "Redirecting the validation site must preserve the effective error template.");
+        Assert.IsTrue(
+            GetValidationAdornerCount(adornerLayer, textBox, contentBorder) > 0,
+            "Expected the initial validation error to display an adorner.");
+
+        textBox.Text = "valid";
+        WpfTestHost.DoEvents();
+        host.UpdateLayout();
+
+        Assert.IsFalse(Validation.GetHasError(textBox));
+        Assert.AreEqual(
+            0,
+            GetValidationAdornerCount(adornerLayer, textBox, contentBorder),
+            "The validation adorner must be removed after the initial error is corrected.");
+    }
+
+    private static int GetValidationAdornerCount(
+        AdornerLayer adornerLayer,
+        TextBox textBox,
+        Border contentBorder)
+    {
+        return (adornerLayer.GetAdorners(textBox)?.Length ?? 0)
+            + (adornerLayer.GetAdorners(contentBorder)?.Length ?? 0);
+    }
+
     private static string FindRepoRoot()
     {
         var directory = new System.IO.DirectoryInfo(System.AppContext.BaseDirectory);
@@ -597,5 +672,17 @@ public class TextBoxPasswordBoxVisualStateTests
 
         Assert.Fail("Could not locate ModernWpf.sln from the test output directory.");
         return string.Empty;
+    }
+
+    private sealed class RequiredTextModel : System.ComponentModel.IDataErrorInfo
+    {
+        public string Value { get; set; } = string.Empty;
+
+        public string Error => string.Empty;
+
+        public string this[string columnName] =>
+            columnName == nameof(Value) && string.IsNullOrEmpty(Value)
+                ? "Value is required."
+                : string.Empty;
     }
 }

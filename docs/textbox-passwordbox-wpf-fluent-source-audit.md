@@ -42,7 +42,12 @@ the stock WPF `TextBox`, `TextBoxBase`, and `PasswordBox` templates.
   existing text-control context menu integration remains available.
 - ModernWpf keeps `Validation.ErrorTemplate` and
   `ValidationHelper.IsTemplateValidationAdornerSite` for `TextBox` and
-  `TextBoxBase` validation chrome.
+  `TextBoxBase` validation chrome. When validation is already invalid before
+  the template is applied, the helper suppresses the deferred original-site
+  adorner while redirecting validation to the template border, then restores
+  the existing error-template value source at dispatcher `Loaded` priority.
+  This prevents the original-site adorner from remaining after validation
+  succeeds.
 - Official WPF Fluent's `TextBox` clear button invokes the newer WPF
   `TemplateButtonCommand`. ModernWpf older targets do not expose that platform
   property, so the clear button uses the existing
@@ -59,8 +64,9 @@ the stock WPF `TextBox`, `TextBoxBase`, and `PasswordBox` templates.
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\TextBoxPasswordBoxVisualStateTests.cs`
   covers the official WPF Fluent style setter surfaces, template parts,
-  trigger shapes, clear-button substitution, `DataGridTextBoxStyle`, and
-  deletion of the old WinUI-derived template branches.
+  trigger shapes, clear-button substitution, `DataGridTextBoxStyle`,
+  initial-error validation-adorners, and deletion of the old WinUI-derived
+  template branches.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies
   `ModernWpf\Styles\TextBox.xaml` and
   `ModernWpf\Styles\PasswordBox.xaml` as official WPF Fluent stock templates
