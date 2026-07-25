@@ -117,22 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AppBarMoreButtonClosedToolTip" xml:space="preserve">
-    <value>Weitere Infos</value>
+  <data name="NumberBoxDownSpinButtonName" xml:space="preserve">
+    <value>Verringerung</value>
+    <comment>Automation name for the down button</comment>
   </data>
-  <data name="AppBarMoreButtonName" xml:space="preserve">
-    <value>Mehr (App-Leiste)</value>
-  </data>
-  <data name="AppBarMoreButtonOpenToolTip" xml:space="preserve">
-    <value>Weniger anzeigen</value>
-  </data>
-  <data name="IgnoreMenuItemLabel" xml:space="preserve">
-    <value>Ignorieren</value>
-  </data>
-  <data name="ToggleSwitchOff" xml:space="preserve">
-    <value>Aus</value>
-  </data>
-  <data name="ToggleSwitchOn" xml:space="preserve">
-    <value>Ein</value>
+  <data name="NumberBoxUpSpinButtonName" xml:space="preserve">
+    <value>Anstieg</value>
+    <comment>Automation name for the up button</comment>
   </data>
 </root>
