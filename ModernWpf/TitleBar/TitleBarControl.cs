@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
@@ -35,7 +36,10 @@ namespace ModernWpf.Controls.Primitives
 
         public TitleBarControl()
         {
-            CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, MinimizeWindow));
+            CommandBindings.Add(new CommandBinding(
+                SystemCommands.MinimizeWindowCommand,
+                MinimizeWindow,
+                CanMinimizeWindow));
             CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, MaximizeWindow));
             CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, RestoreWindow));
             CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, CloseWindow));
@@ -475,10 +479,27 @@ namespace ModernWpf.Controls.Primitives
 
         private void MinimizeWindow(object sender, ExecutedRoutedEventArgs e)
         {
-            if (TemplatedParent is Window window)
+            if (TemplatedParent is Window window && CanMinimizeWindow(window))
             {
                 SystemCommands.MinimizeWindow(window);
             }
+        }
+
+        private void CanMinimizeWindow(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = TemplatedParent is Window window && CanMinimizeWindow(window);
+            e.Handled = true;
+        }
+
+        private static bool CanMinimizeWindow(Window window)
+        {
+            var handle = new WindowInteropHelper(window).Handle;
+            if (handle == IntPtr.Zero)
+            {
+                return window.ResizeMode != ResizeMode.NoResize;
+            }
+
+            return (GetWindowLong(handle, GwlStyle) & WsMinimizeBox) != 0;
         }
 
         private void MaximizeWindow(object sender, ExecutedRoutedEventArgs e)
@@ -528,6 +549,12 @@ namespace ModernWpf.Controls.Primitives
                 }
             }
         }
+
+        private const int GwlStyle = -16;
+        private const int WsMinimizeBox = 0x00020000;
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongW")]
+        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
         private class GoBackCommand : ICommand
         {
