@@ -117,98 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ProofingMenuItemLabel" xml:space="preserve">
-    <value>Dokumentprüfung</value>
-    <comment>The label for the text command bar flyout menu item that provides the proofing menu.</comment>
+  <data name="BasicRatingString" xml:space="preserve">
+    <value>Bewertung, {0} von {1}</value>
+    <comment>English example: Rating, 1.0 of 5.</comment>
   </data>
-  <data name="TextCommandDescriptionBold" xml:space="preserve">
-    <value>Ausgewählten Text fett formatieren</value>
+  <data name="CommunityRatingString" xml:space="preserve">
+    <value>Community-Bewertung, {0} von {1}</value>
+    <comment>English example: Community Rating, 3.3 of 6.</comment>
   </data>
-  <data name="TextCommandDescriptionCopy" xml:space="preserve">
-    <value>Ausgewählten Inhalt in die Zwischenablage kopieren</value>
+  <data name="RatingUnset" xml:space="preserve">
+    <value>Bewertung nicht gesetzt</value>
+    <comment>This text is used to show the number of stars none are selected.</comment>
   </data>
-  <data name="TextCommandDescriptionCut" xml:space="preserve">
-    <value>Ausgewählten Inhalt entfernen und in der Zwischenablage ablegen</value>
-  </data>
-  <data name="TextCommandDescriptionItalic" xml:space="preserve">
-    <value>Ausgewählten Text kursiv formatieren</value>
-  </data>
-  <data name="TextCommandDescriptionPaste" xml:space="preserve">
-    <value>Inhalte der Zwischenablage an der aktuellen Position einfügen</value>
-  </data>
-  <data name="TextCommandDescriptionRedo" xml:space="preserve">
-    <value>Die zuletzt rückgängig gemachte Aktion wiederholen</value>
-  </data>
-  <data name="TextCommandDescriptionSelectAll" xml:space="preserve">
-    <value>Alle Inhalte auswählen</value>
-  </data>
-  <data name="TextCommandDescriptionUnderline" xml:space="preserve">
-    <value>Ausgewählten Text unterstreichen</value>
-  </data>
-  <data name="TextCommandDescriptionUndo" xml:space="preserve">
-    <value>Die zuletzt ausgeführte Aktion rückgängig machen</value>
-  </data>
-  <data name="TextCommandKeyboardAcceleratorKeyBold" xml:space="preserve">
-    <value>B</value>
-    <comment>{ValidChars="A-Z"}{MinLength=source}{MaxLength=source}Keyboard accelerator key for bolding - Ctrl+B. Must be unique with respect to every other keyboard accelerator in this file.</comment>
-  </data>
-  <data name="TextCommandKeyboardAcceleratorKeyCopy" xml:space="preserve">
-    <value>C</value>
-    <comment>{ValidChars="A-Z"}{MinLength=source}{MaxLength=source}Keyboard accelerator key for copying - Ctrl+C. Must be unique with respect to every other keyboard accelerator in this file.</comment>
-  </data>
-  <data name="TextCommandKeyboardAcceleratorKeyCut" xml:space="preserve">
-    <value>X</value>
-    <comment>{ValidChars="A-Z"}{MinLength=source}{MaxLength=source}Keyboard accelerator key for cutting - Ctrl+X. Must be unique with respect to every other keyboard accelerator in this file.</comment>
-  </data>
-  <data name="TextCommandKeyboardAcceleratorKeyItalic" xml:space="preserve">
-    <value>I</value>
-    <comment>{ValidChars="A-Z"}{MinLength=source}{MaxLength=source}Keyboard accelerator key for italicizing - Ctrl+I. Must be unique with respect to every other keyboard accelerator in this file.</comment>
-  </data>
-  <data name="TextCommandKeyboardAcceleratorKeyPaste" xml:space="preserve">
-    <value>V</value>
-    <comment>{ValidChars="A-Z"}{MinLength=source}{MaxLength=source}Keyboard accelerator key for pasting - Ctrl+V. Must be unique with respect to every other keyboard accelerator in this file.</comment>
-  </data>
-  <data name="TextCommandKeyboardAcceleratorKeyRedo" xml:space="preserve">
-    <value>Y</value>
-    <comment>{ValidChars="A-Z"}{MinLength=source}{MaxLength=source}Keyboard accelerator key for redoing - Ctrl+Y. Must be unique with respect to every other keyboard accelerator in this file.</comment>
-  </data>
-  <data name="TextCommandKeyboardAcceleratorKeySelectAll" xml:space="preserve">
-    <value>A</value>
-    <comment>{ValidChars="A-Z"}{MinLength=source}{MaxLength=source}Keyboard accelerator key for selecting all - Ctrl+A. Must be unique with respect to every other keyboard accelerator in this file.</comment>
-  </data>
-  <data name="TextCommandKeyboardAcceleratorKeyUnderline" xml:space="preserve">
-    <value>U</value>
-    <comment>{ValidChars="A-Z"}{MinLength=source}{MaxLength=source}Keyboard accelerator key for underlining - Ctrl+U. Must be unique with respect to every other keyboard accelerator in this file.</comment>
-  </data>
-  <data name="TextCommandKeyboardAcceleratorKeyUndo" xml:space="preserve">
-    <value>Z</value>
-    <comment>{ValidChars="A-Z"}{MinLength=source}{MaxLength=source}Keyboard accelerator key for undoing - Ctrl+Z. Must be unique with respect to every other keyboard accelerator in this file.</comment>
-  </data>
-  <data name="TextCommandLabelBold" xml:space="preserve">
-    <value>Fett</value>
-  </data>
-  <data name="TextCommandLabelCopy" xml:space="preserve">
-    <value>Kopieren</value>
-  </data>
-  <data name="TextCommandLabelCut" xml:space="preserve">
-    <value>Ausschneiden</value>
-  </data>
-  <data name="TextCommandLabelItalic" xml:space="preserve">
-    <value>Kursiv</value>
-  </data>
-  <data name="TextCommandLabelPaste" xml:space="preserve">
-    <value>Einfügen</value>
-  </data>
-  <data name="TextCommandLabelRedo" xml:space="preserve">
-    <value>Wiederholen</value>
-  </data>
-  <data name="TextCommandLabelSelectAll" xml:space="preserve">
-    <value>Alles auswählen</value>
-  </data>
-  <data name="TextCommandLabelUnderline" xml:space="preserve">
-    <value>Unterstreichen</value>
-  </data>
-  <data name="TextCommandLabelUndo" xml:space="preserve">
-    <value>Rückgängig machen</value>
+  <data name="RatingLocalizedControlType" xml:space="preserve">
+    <value>Schieberegler zur Bewertung</value>
+    <comment>A simple description of the control for UIA</comment>
   </data>
 </root>
