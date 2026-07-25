@@ -30,9 +30,41 @@ namespace ModernWpf.Controls.Primitives
             var element = (FrameworkElement)d;
             if ((bool)e.NewValue)
             {
-                Debug.Assert(element.TemplatedParent != null);
+                var templatedParent = element.TemplatedParent;
+                Debug.Assert(templatedParent != null);
                 Validation.SetErrorTemplate(element, null);
-                Validation.SetValidationAdornerSiteFor(element, element.TemplatedParent);
+
+                if (templatedParent != null &&
+                    Validation.GetHasError(templatedParent) &&
+                    Validation.GetErrorTemplate(templatedParent) is ControlTemplate errorTemplate)
+                {
+                    var valueSource = DependencyPropertyHelper.GetValueSource(
+                        templatedParent,
+                        Validation.ErrorTemplateProperty);
+                    bool restoreLocalValue =
+                        valueSource.BaseValueSource == BaseValueSource.Local &&
+                        !valueSource.IsExpression;
+
+                    templatedParent.SetCurrentValue(Validation.ErrorTemplateProperty, null);
+                    Validation.SetValidationAdornerSiteFor(element, templatedParent);
+                    templatedParent.Dispatcher.BeginInvoke(
+                        System.Windows.Threading.DispatcherPriority.Loaded,
+                        new System.Action(() =>
+                        {
+                            if (restoreLocalValue)
+                            {
+                                Validation.SetErrorTemplate(templatedParent, errorTemplate);
+                            }
+                            else
+                            {
+                                templatedParent.InvalidateProperty(Validation.ErrorTemplateProperty);
+                            }
+                        }));
+                }
+                else
+                {
+                    Validation.SetValidationAdornerSiteFor(element, templatedParent);
+                }
             }
             else
             {
