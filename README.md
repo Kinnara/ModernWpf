@@ -100,6 +100,32 @@ For existing 0.9.x applications, the old resource entry remains supported:
 
 5. See [the wiki](https://github.com/Kinnara/ModernWpf/wiki) for more information.
 
+## Build and run the Gallery
+
+The sample application for the active 1.x line is
+`ModernWpf.Gallery` (formerly `ModernWpf.SampleApp`). Build the Gallery project
+directly so unrelated test and integration projects are not required.
+
+On Windows, install the .NET SDK selected by [`global.json`](global.json). If
+you use Visual Studio, also install the **.NET desktop development** workload.
+Then run these commands from the repository root:
+
+```powershell
+dotnet restore .\ModernWpf.Gallery\ModernWpf.Gallery.csproj
+dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --framework net10.0-windows7.0 --no-restore
+dotnet run --project .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --framework net10.0-windows7.0 --no-build
+```
+
+Use `net8.0-windows7.0` instead to run that supported target. Building
+`net462` also requires the .NET Framework 4.6.2 Developer Pack. In Visual
+Studio, open `ModernWpf.sln`, set `ModernWpf.Gallery` as the startup project,
+choose a supported target framework, and start debugging.
+
+The built executable is written under
+`ModernWpf.Gallery\bin\Debug\<target-framework>\ModernWpf.Gallery.exe`.
+GitHub releases publish the library packages rather than a separate Gallery
+binary.
+
 ## Packages
 | NuGet Package | Latest Versions |
 | --- | --- |
