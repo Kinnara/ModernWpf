@@ -24,12 +24,21 @@
         </Setter>
     </Style>
 
-    <WindowChrome
+    <primitives:ModernWindowChrome
         x:Key="DefaultWindowChrome"
         x:Shared="False"
         CaptionHeight="{DynamicResource {x:Static local:TitleBar.HeightKey}}"
         CornerRadius="0"
         GlassFrameThickness="{x:Static WindowChrome.GlassFrameCompleteThickness}"
+        UseAeroCaptionButtons="False" />
+
+    <primitives:ModernWindowChrome
+        x:Key="HighContrastWindowChrome"
+        x:Shared="False"
+        CaptionHeight="{DynamicResource {x:Static local:TitleBar.HeightKey}}"
+        CornerRadius="0"
+        GlassFrameThickness="{x:Static WindowChrome.GlassFrameCompleteThickness}"
+        NonClientFrameEdges="None"
         UseAeroCaptionButtons="False" />
 
     <Style x:Key="BaseWindowStyle" TargetType="Window">
@@ -140,6 +149,9 @@
             </Setter.Value>
         </Setter>
         <Style.Triggers>
+            <DataTrigger Binding="{Binding Path=(SystemParameters.HighContrast)}" Value="true">
+                <Setter Property="WindowChrome.WindowChrome" Value="{DynamicResource HighContrastWindowChrome}" />
+            </DataTrigger>
             <Trigger Property="WindowChrome.WindowChrome" Value="{x:Null}">
                 <Setter Property="primitives:WindowHelper.FixMaximizedWindow" Value="False" />
             </Trigger>

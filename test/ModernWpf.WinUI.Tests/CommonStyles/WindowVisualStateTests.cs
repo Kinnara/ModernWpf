@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Shell;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls.Primitives;
@@ -32,6 +33,64 @@ public class WindowVisualStateTests
             AssertStyleSetter(baseStyle, Control.BorderThicknessProperty, new Thickness(1));
             AssertStyleSetter(baseStyle, WindowHelper.FixMaximizedWindowProperty, true);
             AssertStyleSetter(defaultStyle, FrameworkElement.OverridesDefaultStyleProperty, true);
+        });
+    }
+
+    [TestMethod]
+    public void DefaultWindowChromeKeepsWindows11ResizeEdgesOutOfFullClientGlass()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var baseStyle = AssertStyle("BaseWindowStyle");
+            var chrome = Application.Current.FindResource("DefaultWindowChrome") as WindowChrome;
+            var highContrastChrome = Application.Current.FindResource("HighContrastWindowChrome") as WindowChrome;
+            Assert.IsNotNull(chrome);
+            Assert.IsNotNull(highContrastChrome);
+            Assert.IsInstanceOfType<ModernWindowChrome>(chrome);
+            Assert.IsInstanceOfType<ModernWindowChrome>(highContrastChrome);
+            Assert.AreEqual(WindowChrome.GlassFrameCompleteThickness, chrome!.GlassFrameThickness);
+            Assert.AreEqual(WindowChrome.GlassFrameCompleteThickness, highContrastChrome!.GlassFrameThickness);
+            Assert.AreEqual(NonClientFrameEdges.None, highContrastChrome!.NonClientFrameEdges);
+
+            var resizeEdges =
+                NonClientFrameEdges.Left |
+                NonClientFrameEdges.Right |
+                NonClientFrameEdges.Bottom;
+            Assert.AreEqual(
+                resizeEdges,
+                ModernWindowChrome.GetPreferredNonClientFrameEdges(
+                    isHighContrast: false,
+                    isWindows11OrGreater: true));
+            Assert.AreEqual(
+                NonClientFrameEdges.None,
+                ModernWindowChrome.GetPreferredNonClientFrameEdges(
+                    isHighContrast: true,
+                    isWindows11OrGreater: true));
+            Assert.AreEqual(
+                NonClientFrameEdges.None,
+                ModernWindowChrome.GetPreferredNonClientFrameEdges(
+                    isHighContrast: false,
+                    isWindows11OrGreater: false));
+            Assert.AreEqual(
+                ModernWindowChrome.GetPreferredNonClientFrameEdges(
+                    isHighContrast: false,
+                    OSVersionHelper.IsWindows11OrGreater),
+                chrome.NonClientFrameEdges);
+
+            var highContrastTrigger = baseStyle.Triggers
+                .OfType<DataTrigger>()
+                .Single(trigger => trigger.Setters
+                    .OfType<Setter>()
+                    .Any(setter => setter.Property == WindowChrome.WindowChromeProperty));
+            Assert.IsInstanceOfType<Binding>(highContrastTrigger.Binding);
+            var chromeSetter = highContrastTrigger.Setters
+                .OfType<Setter>()
+                .Single(setter => setter.Property == WindowChrome.WindowChromeProperty);
+            var highContrastResource = chromeSetter.Value as DynamicResourceExtension;
+            Assert.IsNotNull(highContrastResource);
+            Assert.AreEqual("HighContrastWindowChrome", highContrastResource!.ResourceKey);
         });
     }
 
@@ -77,6 +136,8 @@ public class WindowVisualStateTests
         Assert.IsTrue(text.Contains("TitleBarControl", System.StringComparison.Ordinal));
         Assert.IsTrue(text.Contains("WindowChrome.WindowChrome", System.StringComparison.Ordinal));
         Assert.IsTrue(text.Contains("WindowHelper.FixMaximizedWindow", System.StringComparison.Ordinal));
+        Assert.IsTrue(text.Contains("Path=(SystemParameters.HighContrast)", System.StringComparison.Ordinal));
+        Assert.IsTrue(text.Contains("HighContrastWindowChrome", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("ContentPresenterEx", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("MS.Internal", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("Fluent.Controls", System.StringComparison.Ordinal));
