@@ -12,6 +12,7 @@ shell pieces as documented WPF substitutions.
 - `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Light.xaml`
 - `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
 - `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
+- [Microsoft WPF Gallery `MainWindow.xaml.cs`](https://github.com/microsoft/WPF-Samples/blob/30ee5948dd92d2a81ef6a54d25b1b921463da107/Sample%20Applications/WPFGallery/MainWindow.xaml.cs)
 
 ## ModernWpf Files
 
@@ -41,6 +42,10 @@ ModernWpf now follows the compatible parts of that source shape:
   instead of `ContentPresenterEx`.
 - `DefaultWindowStyle` remains based on `BaseWindowStyle`, preserving the
   ModernWpf shell contract.
+- On Windows 11 outside High Contrast, the left, right, and bottom resize
+  borders remain non-client edges. This follows the current Microsoft WPF
+  Gallery shell policy and prevents full-client glass from exposing an
+  unpainted compositor surface while a dark window is resized.
 
 ## WPF Substitutions
 
@@ -50,6 +55,7 @@ ModernWpf now follows the compatible parts of that source shape:
 | Transparent backdrop default with `MS.Internal.FrameworkAppContextSwitches.DisableFluentThemeWindowBackdrop` and `Standard.Utility.IsOSWindows11OrNewer` guards | Always resolve the visible window background through `WindowBackground` | ModernWpf does not own .NET WPF Fluent's platform backdrop implementation; using the fallback resource is the stable WPF substitute. |
 | Plain `AdornerDecorator` / `ContentPresenter` content host | Same plain WPF `ContentPresenter` inside ModernWpf's title-bar grid | The content presenter is source-compatible while the surrounding custom chrome remains ModernWpf-owned. |
 | Stock `WindowTemplateKey` template swap for resize grip | Existing resize-grip trigger inside the custom shell template | Preserves ModernWpf's title bar, high-contrast border, and maximized-window handling while keeping the source `ResizeMode=CanResizeWithGrip` / `WindowState=Normal` visibility rule. |
+| Stock content window with platform-owned non-client chrome | Full-glass custom title bar with Windows 11 left, right, and bottom `NonClientFrameEdges` | Matches the Microsoft WPF Gallery shell adaptation, preserves the top client title bar and snap-layout hit testing, and prevents resize-time white flashes reported in issue #683. High Contrast and pre-Windows 11 retain `NonClientFrameEdges.None`. |
 
 ## Intentional Differences
 
@@ -68,6 +74,9 @@ surface.
   `WindowForeground`, `WindowBackground`, `DefaultWindowChrome`, and
   `WindowHelper.FixMaximizedWindow`, and that the applied window template keeps
   `TitleBarControl`, `ResizeGrip`, and a plain WPF content presenter.
+- `WindowVisualStateTests` verifies the guarded Windows 11 resize-edge policy,
+  the legacy and High Contrast fallbacks, the complete-glass requirement, and
+  the High Contrast chrome-resource override.
 - `WindowVisualStateTests` statically guards `Styles\Window.xaml` against
   `ContentPresenterEx`, `MS.Internal`, `Fluent.Controls`, and `System.Runtime`
   source markers.
