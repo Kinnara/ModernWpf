@@ -53,6 +53,11 @@ ModernWpf now follows the compatible parts of that source shape:
 - Disabled custom caption buttons remain inert when Windows 11 routes their
   input through non-client messages. In particular, `ResizeMode=CanMinimize`
   keeps the disabled maximize button from invoking its command.
+- The rendered client area immediately below `TitleBarControl` is explicitly
+  returned as `HTCLIENT`, avoiding WPF `WindowChrome`'s resize-border addition
+  to `CaptionHeight`. Caption-button bounds use half-open right/bottom edges,
+  while title dragging, side/bottom resize borders, and explicit resize grips
+  retain their native hit-test codes.
 - `WindowStyle=None` suppresses the ModernWpf title bar, detaches the custom
   `WindowChrome`, and lets content fill the captionless client area.
 
@@ -90,6 +95,10 @@ surface.
   `SourceInitialized` disables the ModernWpf minimize button and its routed
   command, and that the non-client click bridge cannot invoke the disabled
   maximize button when `ResizeMode=CanMinimize`.
+- `WindowVisualStateTests` sends native `WM_NCHITTEST` messages across the
+  first four content pixels below the title bar and verifies `HTCLIENT`, while
+  separately retaining `HTCAPTION` for draggable title space and
+  `HTBOTTOMRIGHT` for the explicit resize grip.
 - `WindowVisualStateTests` verifies that `WindowStyle=None` collapses the
   ModernWpf title bar, removes custom chrome/maximized-window compensation, and
   places content at the top of the client area.

@@ -382,9 +382,11 @@ namespace ModernWpf.Controls.Primitives
         private bool IsMousePositionWithin(IntPtr lParam)
         {
             var mousePosScreen = new Point(Utility.GET_X_LPARAM(lParam), Utility.GET_Y_LPARAM(lParam));
-            var bounds = new Rect(new Point(), RenderSize);
             var mousePosRelative = PointFromScreen(mousePosScreen);
-            return bounds.Contains(mousePosRelative);
+            return mousePosRelative.X >= 0 &&
+                mousePosRelative.X < RenderSize.Width &&
+                mousePosRelative.Y >= 0 &&
+                mousePosRelative.Y < RenderSize.Height;
         }
     }
 }
