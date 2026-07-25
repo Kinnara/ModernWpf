@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media;
@@ -176,6 +177,27 @@ namespace ModernWpf
 
         public static void UpdateBrushes(ResourceDictionary themeDictionary, ResourceDictionary colors)
         {
+            UpdateBrushes(
+                themeDictionary,
+                colors,
+                new HashSet<ResourceDictionary>());
+        }
+
+        private static void UpdateBrushes(
+            ResourceDictionary themeDictionary,
+            ResourceDictionary colors,
+            HashSet<ResourceDictionary> visited)
+        {
+            if (!visited.Add(themeDictionary))
+            {
+                return;
+            }
+
+            foreach (var mergedDictionary in themeDictionary.MergedDictionaries)
+            {
+                UpdateBrushes(mergedDictionary, colors, visited);
+            }
+
             foreach (DictionaryEntry entry in themeDictionary)
             {
                 if (entry.Value is SolidColorBrush brush && !brush.IsFrozen)
