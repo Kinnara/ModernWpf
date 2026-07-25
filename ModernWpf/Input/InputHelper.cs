@@ -98,8 +98,8 @@ namespace ModernWpf.Input
         internal static void RaiseTapped(UIElement element, int timestamp)
         {
             var e = new TappedRoutedEventArgs { RoutedEvent = TappedEvent, Source = element, Timestamp = timestamp };
-            _lastTappedArgs = e;
             element.RaiseEvent(e);
+            _lastHandledTapTimestamp = e.Handled ? timestamp : (int?)null;
         }
 
         #endregion
@@ -107,6 +107,7 @@ namespace ModernWpf.Input
         private static void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             var element = (UIElement)sender;
+            _lastHandledTapTimestamp = null;
 
             if (!GetIsPressed(element))
             {
@@ -122,9 +123,7 @@ namespace ModernWpf.Input
             {
                 SetIsPressed((UIElement)sender, false);
 
-                var lastArgs = _lastTappedArgs;
-
-                if (lastArgs != null && lastArgs.Handled && lastArgs.Timestamp == e.Timestamp)
+                if (_lastHandledTapTimestamp == e.Timestamp)
                 {
                     // Handled by a child element, don't raise
                 }
@@ -149,6 +148,7 @@ namespace ModernWpf.Input
             SetIsPressed((UIElement)sender, false);
         }
 
-        private static TappedRoutedEventArgs _lastTappedArgs;
+        [System.ThreadStatic]
+        private static int? _lastHandledTapTimestamp;
     }
 }
