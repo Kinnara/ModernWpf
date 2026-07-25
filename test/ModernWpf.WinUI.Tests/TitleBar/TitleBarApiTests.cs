@@ -1,10 +1,12 @@
 using System;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
@@ -200,6 +202,61 @@ public class TitleBarApiTests
             Assert.AreEqual("Minimize", AutomationProperties.GetName(FindNamedDescendant<TitleBarButton>(titleBarControl, "MinimizeButton")));
             Assert.AreEqual("Maximize", AutomationProperties.GetName(FindNamedDescendant<TitleBarButton>(titleBarControl, "PART_MaximizeRestoreButton")));
             Assert.AreEqual("Close", AutomationProperties.GetName(FindNamedDescendant<TitleBarButton>(titleBarControl, "CloseButton")));
+        });
+    }
+
+    [TestMethod]
+    public void ModernWindowMinimizeButtonHonorsNativeWindowStyle()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var window = new Window
+            {
+                Width = 420,
+                Height = 180,
+                Left = -32000,
+                Top = -32000,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            WindowHelper.SetUseModernWindowStyle(window, true);
+
+            window.SourceInitialized += (_, _) =>
+            {
+                var handle = new WindowInteropHelper(window).Handle;
+                var style = GetWindowLong(handle, GwlStyle);
+                Assert.AreNotEqual(0, style);
+                SetWindowLong(handle, GwlStyle, style & ~WsMinimizeBox);
+            };
+
+            try
+            {
+                window.Show();
+                WpfTestHost.DoEvents();
+                window.UpdateLayout();
+                WpfTestHost.DoEvents();
+
+                var titleBarControl = VisualTreeTestHelper.EnumerateDescendants(window)
+                    .OfType<TitleBarControl>()
+                    .Single();
+                var minimizeButton = FindNamedDescendant<TitleBarButton>(
+                    titleBarControl,
+                    "MinimizeButton");
+
+                Assert.IsFalse(minimizeButton.IsEnabled);
+                Assert.IsFalse(SystemCommands.MinimizeWindowCommand.CanExecute(null, titleBarControl));
+
+                minimizeButton.DoClick();
+                WpfTestHost.DoEvents();
+                Assert.AreEqual(WindowState.Normal, window.WindowState);
+            }
+            finally
+            {
+                window.Close();
+                WpfTestHost.DoEvents();
+            }
         });
     }
 
@@ -494,4 +551,13 @@ public class TitleBarApiTests
         throw new InvalidOperationException(
             $"Could not find {typeof(T).Name} descendant named '{name}'. Descendants: {string.Join(", ", VisualTreeTestHelper.EnumerateDescendants(root).OfType<FrameworkElement>().Select(element => element.Name).Where(elementName => !string.IsNullOrEmpty(elementName)))}");
     }
+
+    private const int GwlStyle = -16;
+    private const int WsMinimizeBox = 0x00020000;
+
+    [DllImport("user32.dll", EntryPoint = "GetWindowLongW", SetLastError = true)]
+    private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+    [DllImport("user32.dll", EntryPoint = "SetWindowLongW", SetLastError = true)]
+    private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 }

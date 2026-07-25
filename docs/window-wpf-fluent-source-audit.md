@@ -46,6 +46,10 @@ ModernWpf now follows the compatible parts of that source shape:
   borders remain non-client edges. This follows the current Microsoft WPF
   Gallery shell policy and prevents full-client glass from exposing an
   unpainted compositor surface while a dark window is resized.
+- The custom minimize button honors the native `WS_MINIMIZEBOX` window-style
+  bit. Applications can remove that bit during `SourceInitialized` while
+  retaining `WindowHelper.UseModernWindowStyle`; the custom command is then
+  disabled and cannot minimize the window.
 
 ## WPF Substitutions
 
@@ -77,6 +81,9 @@ surface.
 - `WindowVisualStateTests` verifies the guarded Windows 11 resize-edge policy,
   the legacy and High Contrast fallbacks, the complete-glass requirement, and
   the High Contrast chrome-resource override.
+- `TitleBarApiTests` verifies that removing `WS_MINIMIZEBOX` during
+  `SourceInitialized` disables the ModernWpf minimize button and its routed
+  command.
 - `WindowVisualStateTests` statically guards `Styles\Window.xaml` against
   `ContentPresenterEx`, `MS.Internal`, `Fluent.Controls`, and `System.Runtime`
   source markers.
