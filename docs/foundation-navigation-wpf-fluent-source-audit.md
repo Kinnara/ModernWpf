@@ -17,6 +17,15 @@ Date: 2026-05-18
 - `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
 - `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
 
+The enhanced ModernWpf `Frame` and `Page` runtime also use these current WinUI
+3 inputs from `microsoft-ui-xaml` commit
+`3cae15f071f1ab8565f9a7592dbf27f04bafe651`:
+
+- `dxaml\xcp\dxaml\lib\NavigationCache.cpp`
+- `dxaml\xcp\dxaml\lib\Frame_Partial.cpp`
+- `dxaml\xcp\dxaml\lib\Page_Partial.cpp`
+- `dxaml\test\native\external\controls\frame\FrameIntegrationTests.cpp`
+
 ## ModernWpf Files
 
 - `ModernWpf\Styles\ContentControl.xaml`
@@ -28,11 +37,16 @@ Date: 2026-05-18
 - `ModernWpf\Styles\NavigationWindow.xaml`
 - `ModernWpf\Styles\TextStyles.xaml`
 - `ModernWpf\Styles\Thumb.xaml`
+- `ModernWpf\Navigation\Frame.cs`
+- `ModernWpf\Navigation\Page.cs`
+- `ModernWpf\Navigation\NavigationCacheMode.cs`
 - `ModernWpf\StockControlsResources.xaml`
 - `ModernWpf\ThemeResources\Light.xaml`
 - `ModernWpf\ThemeResources\Dark.xaml`
 - `ModernWpf\ThemeResources\HighContrast.xaml`
 - `test\ModernWpf.WinUI.Tests\CommonStyles\FoundationNavigationVisualStateTests.cs`
+- `test\ModernWpf.WinUI.Tests\Navigation\FrameApiTests.cs`
+- `test\ModernWpf.WinUI.Tests\Navigation\FrameNavigationCacheTests.cs`
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs`
 
 ## Summary
@@ -59,6 +73,28 @@ source-backed.
 `Thumb.xaml` was already an official WPF Fluent-shaped import with only the
 older-target `Border.CornerRadius` substitution; this audit adds it to
 the foundation/navigation coverage because it is a generic stock primitive.
+
+## Enhanced Frame and Page Runtime
+
+ModernWpf's enhanced `Frame` and `Page` remain WPF controls, but their
+type-navigation surface follows the current WinUI cache contract:
+
+- `Page.NavigationCacheMode` defaults to `Disabled`.
+- `Required` pages are retained in a permanent per-frame cache and do not
+  count against `Frame.CacheSize`.
+- `Enabled` pages use a bounded least-recently-used cache.
+- `Frame.CacheSize` defaults to 10 and immediately evicts least-recently-used
+  enabled pages when reduced.
+- Changing a cached page's mode to `Disabled` removes its type from both
+  caches.
+- Every `Navigate(Type, ...)` overload and `SourcePageType` navigation uses
+  the cache before activating a new page.
+
+The WPF adapter keys entries by CLR `Type`, corresponding to WinUI's page-type
+descriptor. Navigation by an explicit object remains caller-owned, and
+back/forward behavior remains owned by WPF's `NavigationService` journal
+instead of replacing that platform journal with WinUI's `PageStackEntry`
+implementation.
 
 ## Backport Substitutions
 
@@ -89,3 +125,8 @@ legacy resource aliases even though official WPF Fluent no longer defines them.
 - `TemplateParityTests` classifies the new stock foundation/navigation style
   files as official WPF Fluent-backed files that must not use `VisualStateEx`
   or `ContentPresenterEx`.
+- `FrameNavigationCacheTests` covers the cache API defaults and validation, disabled
+  recreation, required retention independent of cache size, enabled LRU
+  eviction, live cache-size reduction, cache flushing, and the existing
+  type-navigation overloads. `FrameApiTests` retains the instance-navigation
+  transition coverage.
