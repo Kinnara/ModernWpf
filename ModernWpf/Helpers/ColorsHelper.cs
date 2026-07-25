@@ -54,14 +54,58 @@ namespace ModernWpf
         public void FetchSystemAccentColors()
         {
             var uiSettings = new UISettings();
-            _colors[AccentKey] = uiSettings.GetColorValue(UIColorType.Accent).ToColor();
-            _colors[AccentDark1Key] = uiSettings.GetColorValue(UIColorType.AccentDark1).ToColor();
-            _colors[AccentDark2Key] = uiSettings.GetColorValue(UIColorType.AccentDark2).ToColor();
-            _colors[AccentDark3Key] = uiSettings.GetColorValue(UIColorType.AccentDark3).ToColor();
-            _colors[AccentLight1Key] = uiSettings.GetColorValue(UIColorType.AccentLight1).ToColor();
-            _colors[AccentLight2Key] = uiSettings.GetColorValue(UIColorType.AccentLight2).ToColor();
-            _colors[AccentLight3Key] = uiSettings.GetColorValue(UIColorType.AccentLight3).ToColor();
-            UpdateSystemAccentResources();
+            if (TryApplySystemAccentPalette(
+                _colors,
+                uiSettings.GetColorValue(UIColorType.Accent).ToColor(),
+                uiSettings.GetColorValue(UIColorType.AccentDark1).ToColor(),
+                uiSettings.GetColorValue(UIColorType.AccentDark2).ToColor(),
+                uiSettings.GetColorValue(UIColorType.AccentDark3).ToColor(),
+                uiSettings.GetColorValue(UIColorType.AccentLight1).ToColor(),
+                uiSettings.GetColorValue(UIColorType.AccentLight2).ToColor(),
+                uiSettings.GetColorValue(UIColorType.AccentLight3).ToColor()))
+            {
+                UpdateSystemAccentResources();
+            }
+            else if (!_colors.Contains(AccentKey))
+            {
+                SetAccent(DefaultAccentColor);
+            }
+        }
+
+        internal static bool TryApplySystemAccentPalette(
+            ResourceDictionary colors,
+            Color accent,
+            Color accentDark1,
+            Color accentDark2,
+            Color accentDark3,
+            Color accentLight1,
+            Color accentLight2,
+            Color accentLight3)
+        {
+            if (!IsUsableSystemColor(accent) ||
+                !IsUsableSystemColor(accentDark1) ||
+                !IsUsableSystemColor(accentDark2) ||
+                !IsUsableSystemColor(accentDark3) ||
+                !IsUsableSystemColor(accentLight1) ||
+                !IsUsableSystemColor(accentLight2) ||
+                !IsUsableSystemColor(accentLight3))
+            {
+                return false;
+            }
+
+            colors[AccentKey] = accent;
+            colors[AccentDark1Key] = accentDark1;
+            colors[AccentDark2Key] = accentDark2;
+            colors[AccentDark3Key] = accentDark3;
+            colors[AccentLight1Key] = accentLight1;
+            colors[AccentLight2Key] = accentLight2;
+            colors[AccentLight3Key] = accentLight3;
+            return true;
+        }
+
+        private static bool IsUsableSystemColor(Color color)
+        {
+            return color.A != 0;
         }
 
         public void SetAccent(Color accent)
@@ -157,7 +201,10 @@ namespace ModernWpf
             }
 
             _systemBackground = _uiSettings.GetColorValue(UIColorType.Background).ToColor();
-            _systemAccent = _uiSettings.GetColorValue(UIColorType.Accent).ToColor();
+            var systemAccent = _uiSettings.GetColorValue(UIColorType.Accent).ToColor();
+            _systemAccent = IsUsableSystemColor(systemAccent)
+                ? systemAccent
+                : DefaultAccentColor;
             UpdateSystemAppTheme();
         }
 
@@ -188,7 +235,7 @@ namespace ModernWpf
             }
 
             var accent = _uiSettings.GetColorValue(UIColorType.Accent).ToColor();
-            if (_systemAccent != accent)
+            if (IsUsableSystemColor(accent) && _systemAccent != accent)
             {
                 _systemAccent = accent;
                 SystemAccentColorChanged?.Invoke(null, EventArgs.Empty);
