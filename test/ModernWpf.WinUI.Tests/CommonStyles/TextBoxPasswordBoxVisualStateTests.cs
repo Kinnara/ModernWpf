@@ -50,6 +50,53 @@ public class TextBoxPasswordBoxVisualStateTests
     }
 
     [TestMethod]
+    public void TextBoxDeleteButtonVisibilityCanBeDisabledByDerivedStyle()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var hiddenButtonStyle = new Style(
+                typeof(TextBox),
+                (Style)Application.Current.FindResource("DefaultTextBoxStyle"));
+            hiddenButtonStyle.Setters.Add(
+                new Setter(TextBoxHelper.IsDeleteButtonVisibleProperty, false));
+
+            var hiddenButtonTextBox = new TextBox
+            {
+                Style = hiddenButtonStyle,
+                Text = "Hidden clear button",
+                Width = 240
+            };
+            var visibleButtonTextBox = new TextBox
+            {
+                Style = hiddenButtonStyle,
+                Text = "Visible clear button",
+                Width = 240
+            };
+            TextBoxHelper.SetIsDeleteButtonVisible(visibleButtonTextBox, true);
+
+            var panel = new StackPanel();
+            panel.Children.Add(hiddenButtonTextBox);
+            panel.Children.Add(visibleButtonTextBox);
+
+            using var host = new TestWindowHost(panel, width: 320, height: 160);
+
+            Assert.IsTrue(hiddenButtonTextBox.Focus());
+            host.UpdateLayout();
+            Assert.AreEqual(
+                Visibility.Collapsed,
+                GetTemplateChild<Button>(hiddenButtonTextBox, "DeleteButton").Visibility);
+
+            Assert.IsTrue(visibleButtonTextBox.Focus());
+            host.UpdateLayout();
+            Assert.AreEqual(
+                Visibility.Visible,
+                GetTemplateChild<Button>(visibleButtonTextBox, "DeleteButton").Visibility);
+        });
+    }
+
+    [TestMethod]
     public void InitialTextBoxValidationErrorAdornerClearsWhenValueBecomesValid()
     {
         WpfTestHost.Run(() =>
@@ -185,7 +232,6 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.IsFalse(text.Contains("FontIconFallback", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("TextBoxHelper.HasText", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("TextBoxHelper.IsEnabled", System.StringComparison.Ordinal));
-        Assert.IsFalse(text.Contains("TextBoxHelper.IsDeleteButtonVisible", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("TemplateButtonCommand", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("ControlHelper.CornerRadius", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("DefaultControlContextMenu", System.StringComparison.Ordinal));
@@ -282,6 +328,7 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.AreEqual((double)textBox.TryFindResource("TextControlThemeMinWidth"), textBox.MinWidth);
         Assert.AreEqual((Thickness)textBox.TryFindResource("TextControlThemePadding"), textBox.Padding);
         Assert.AreEqual((CornerRadius)textBox.TryFindResource("ControlCornerRadius"), ((CornerRadius)textBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)));
+        Assert.IsTrue(TextBoxHelper.GetIsDeleteButtonVisible(textBox));
         Assert.IsTrue(textBox.OverridesDefaultStyle);
         Assert.AreEqual(Cursors.IBeam, textBox.Cursor);
         Assert.IsTrue(textBox.AllowDrop);
@@ -311,6 +358,7 @@ public class TextBoxPasswordBoxVisualStateTests
         AssertDynamicResourceSetter(setters, FrameworkElement.MinWidthProperty, "TextControlThemeMinWidth");
         AssertDynamicResourceSetter(setters, Control.PaddingProperty, "TextControlThemePadding");
         AssertDynamicResourceSetter(setters, System.Windows.Controls.Border.CornerRadiusProperty, "ControlCornerRadius");
+        AssertSetter(setters, TextBoxHelper.IsDeleteButtonVisibleProperty, true);
         AssertSetter(setters, Control.OverridesDefaultStyleProperty, true);
         AssertSetter(setters, FrameworkElement.CursorProperty, Cursors.IBeam);
         AssertSetter(setters, UIElement.AllowDropProperty, true);
@@ -444,6 +492,21 @@ public class TextBoxPasswordBoxVisualStateTests
     private static void AssertTextBoxTriggerShape(ControlTemplate template)
     {
         var triggers = template.Triggers.OfType<Trigger>().ToArray();
+        var deleteButtonTrigger = template.Triggers
+            .OfType<MultiTrigger>()
+            .Single(item =>
+                item.Conditions.OfType<Condition>().Any(condition =>
+                    condition.Property == UIElement.IsKeyboardFocusWithinProperty &&
+                    Equals(condition.Value, true)) &&
+                item.Conditions.OfType<Condition>().Any(condition =>
+                    condition.Property == TextBoxHelper.IsDeleteButtonVisibleProperty &&
+                    Equals(condition.Value, true)));
+
+        AssertSetter(
+            deleteButtonTrigger.Setters.OfType<Setter>().ToArray(),
+            "DeleteButton",
+            "Visibility",
+            Visibility.Visible);
 
         AssertTrigger(triggers, "IsMouseOver", true,
             ("ContentBorder", "Background", "TextControlBackgroundPointerOver"),
@@ -524,6 +587,15 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.IsInstanceOfType(setter.Value, typeof(DynamicResourceExtension));
         var resource = (DynamicResourceExtension)setter.Value;
         Assert.AreEqual(resourceKey, resource.ResourceKey);
+    }
+
+    private static void AssertSetter(Setter[] setters, string targetName, string propertyName, object? value)
+    {
+        var setter = setters.Single(item =>
+            item.TargetName == targetName &&
+            item.Property.Name == propertyName);
+
+        Assert.AreEqual(value, setter.Value);
     }
 
     private static void AssertSetter(Setter[] setters, DependencyProperty property, object? value)

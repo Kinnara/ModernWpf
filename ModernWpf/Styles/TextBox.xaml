@@ -192,10 +192,14 @@
             </Button>
         </Grid>
         <ControlTemplate.Triggers>
-            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsKeyboardFocusWithin" Value="True" />
+                    <Condition Property="primitives:TextBoxHelper.IsDeleteButtonVisible" Value="True" />
+                </MultiTrigger.Conditions>
                 <Setter TargetName="DeleteButton" Property="Visibility" Value="Visible" />
                 <Setter TargetName="DeleteButton" Property="Margin" Value="{StaticResource TextBoxClearButtonMargin}" />
-            </Trigger>
+            </MultiTrigger>
             <Trigger Property="Text" Value="{x:Static system:String.Empty}">
                 <Setter TargetName="DeleteButton" Property="Visibility" Value="Collapsed" />
             </Trigger>
@@ -253,6 +257,7 @@
         <Setter Property="MinWidth" Value="{DynamicResource TextControlThemeMinWidth}" />
         <Setter Property="Padding" Value="{DynamicResource TextControlThemePadding}" />
         <Setter Property="Border.CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="primitives:TextBoxHelper.IsDeleteButtonVisible" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Cursor" Value="IBeam" />
         <Setter Property="AllowDrop" Value="True"/>
