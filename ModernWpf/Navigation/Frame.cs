@@ -265,6 +265,32 @@ namespace ModernWpf.Controls
         }
 
         /// <summary>
+        /// Causes the Frame to load the specified content and use the specified animated transition.
+        /// </summary>
+        /// <param name="content">The content to navigate to.</param>
+        /// <param name="infoOverride">Info about the animated transition.</param>
+        /// <returns>true if navigation is not canceled; otherwise, false.</returns>
+        public bool Navigate(object content, NavigationTransitionInfo infoOverride)
+        {
+            _transitionInfoOverride = infoOverride;
+            return Navigate(content);
+        }
+
+        /// <summary>
+        /// Causes the Frame to load the specified content, pass extra data to the navigation target,
+        /// and use the specified animated transition.
+        /// </summary>
+        /// <param name="content">The content to navigate to.</param>
+        /// <param name="extraData">An object that contains data to be used for processing during navigation.</param>
+        /// <param name="infoOverride">Info about the animated transition.</param>
+        /// <returns>true if navigation is not canceled; otherwise, false.</returns>
+        public bool Navigate(object content, object extraData, NavigationTransitionInfo infoOverride)
+        {
+            _transitionInfoOverride = infoOverride;
+            return Navigate(content, extraData);
+        }
+
+        /// <summary>
         /// Navigates asynchronously to source content located at a uniform resource identifier
         /// (URI), and passes an object that contains data to be used for processing during
         /// navigation, and a value indicating the animated transition to use.

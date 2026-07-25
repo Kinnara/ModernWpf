@@ -1,1 +1,3 @@
 #nullable enable
+~ModernWpf.Controls.Frame.Navigate(object content, ModernWpf.Media.Animation.NavigationTransitionInfo infoOverride) -> bool
+~ModernWpf.Controls.Frame.Navigate(object content, object extraData, ModernWpf.Media.Animation.NavigationTransitionInfo infoOverride) -> bool
