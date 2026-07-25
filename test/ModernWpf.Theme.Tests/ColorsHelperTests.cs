@@ -99,6 +99,40 @@ public class ColorsHelperTests
     }
 
     [TestMethod]
+    public void TargetedColorPaletteKeepsCustomAccentAcrossGlobalPaletteRefresh()
+    {
+        WpfTestHost.Run(() =>
+        {
+            ThemeTestApplication.EnsureInitialized();
+
+            var themeManager = ThemeManager.Current;
+            var originalAccent = themeManager.AccentColor;
+            var customAccent = Color.FromRgb(0xE0, 0x20, 0x30);
+            var palette = new ColorPaletteResources
+            {
+                TargetTheme = ApplicationTheme.Light,
+                Accent = customAccent
+            };
+            var accentBrush =
+                (SolidColorBrush)palette["SystemControlForegroundAccentBrush"];
+            Assert.AreEqual(customAccent, accentBrush.Color);
+
+            try
+            {
+                themeManager.AccentColor = Color.FromRgb(0x20, 0x60, 0xC0);
+                WpfTestHost.DoEvents();
+
+                Assert.AreEqual(customAccent, accentBrush.Color);
+            }
+            finally
+            {
+                themeManager.AccentColor = originalAccent;
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    [TestMethod]
     [DataRow("Light", "SystemAccentColorDark1")]
     [DataRow("Dark", "SystemAccentColorLight2")]
     [DataRow("HighContrast", "SystemAccentColorLight2")]
