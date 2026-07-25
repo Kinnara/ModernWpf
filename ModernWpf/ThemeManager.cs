@@ -236,6 +236,11 @@ namespace ModernWpf
                 {
                     ColorsHelper.Current.UpdateBrushes(themeDictionary);
                 }
+
+                if (ThemeResources.Current.CanBeAccessedAcrossThreads)
+                {
+                    ThemeResources.Current.RefreshResources();
+                }
             }
         }
 
@@ -758,15 +763,14 @@ namespace ModernWpf
         {
             if (!_defaultThemeDictionaries.TryGetValue(key, out ResourceDictionary dictionary))
             {
-                dictionary = new ResourceDictionary { Source = GetDefaultSource(key) };
+                // Keep a stable outer dictionary so frozen sourced resources can be
+                // reloaded without replacing every consumer's merged dictionary.
+                dictionary = new ResourceDictionary();
+                dictionary.MergedDictionaries.Add(
+                    new ResourceDictionary { Source = GetDefaultSource(key) });
                 _defaultThemeDictionaries[key] = dictionary;
             }
             return dictionary;
-        }
-
-        internal static void SetDefaultThemeDictionary(string key, ResourceDictionary dictionary)
-        {
-            _defaultThemeDictionaries[key] = dictionary;
         }
 
         private static ApplicationTheme GetDefaultAppTheme()

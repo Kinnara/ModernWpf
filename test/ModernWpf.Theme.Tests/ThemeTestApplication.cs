@@ -16,7 +16,12 @@ internal static class ThemeTestApplication
                 Resources = new ResourceDictionary()
             };
 
-            var themeResources = new ThemeResources();
+            // Exercise the frozen resource path here; the other test applications use
+            // the default mutable resource path.
+            var themeResources = new ThemeResources
+            {
+                CanBeAccessedAcrossThreads = true
+            };
             ((ISupportInitialize)themeResources).BeginInit();
             ((ISupportInitialize)themeResources).EndInit();
 

@@ -1,5 +1,7 @@
 using System;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.WinUI.TestInfra;
@@ -9,6 +11,93 @@ namespace ModernWpf.Theme.Tests;
 [TestClass]
 public class ColorsHelperTests
 {
+    [TestMethod]
+    public void FrozenThemeResourcesRefreshWhenAccentChanges()
+    {
+        WpfTestHost.Run(() =>
+        {
+            ThemeTestApplication.EnsureInitialized();
+            Assert.IsTrue(ThemeResources.Current.CanBeAccessedAcrossThreads);
+
+            var themeManager = ThemeManager.Current;
+            var originalTheme = themeManager.ApplicationTheme;
+            var originalAccent = themeManager.AccentColor;
+
+            try
+            {
+                themeManager.ApplicationTheme = ApplicationTheme.Light;
+                var themeResources = ThemeResources.Current;
+
+                var target = new Border();
+                target.SetResourceReference(
+                    Border.BackgroundProperty,
+                    "SystemControlForegroundAccentBrush");
+
+                using var host = new TestWindowHost(target, width: 120, height: 80);
+                host.UpdateLayout();
+                WpfTestHost.DoEvents();
+
+                var updatedAccent = Color.FromRgb(0x12, 0xA4, 0x6C);
+                themeManager.AccentColor = updatedAccent;
+                WpfTestHost.DoEvents();
+
+                var accentBrush = (SolidColorBrush)target.Background;
+                Assert.AreEqual(updatedAccent, accentBrush.Color);
+                Assert.IsTrue(accentBrush.IsFrozen);
+                Assert.AreEqual(
+                    updatedAccent,
+                    Task.Run(() => accentBrush.Color).GetAwaiter().GetResult());
+
+                AssertFrozenBrushColor(
+                    themeResources.GetThemeDictionary(ThemeManager.LightKey),
+                    "SystemControlForegroundAccentBrush",
+                    updatedAccent);
+                AssertFrozenBrushColor(
+                    themeResources.GetThemeDictionary(ThemeManager.DarkKey),
+                    "SystemControlForegroundAccentBrush",
+                    updatedAccent);
+                AssertFrozenBrushColor(
+                    themeResources.GetThemeDictionary(ThemeManager.HighContrastKey),
+                    "SystemAccentColorDark1Brush",
+                    (Color)ColorsHelper.Current.Colors["SystemAccentColorDark1"]);
+
+                var focusedBorder = (LinearGradientBrush)themeResources
+                    .GetThemeDictionary(ThemeManager.LightKey)["TextControlElevationBorderFocusedBrush"];
+                Assert.IsTrue(focusedBorder.IsFrozen);
+                Assert.AreEqual(
+                    focusedBorder.GradientStops[0].Color,
+                    Task.Run(() => focusedBorder.GradientStops[0].Color).GetAwaiter().GetResult());
+            }
+            finally
+            {
+                themeManager.AccentColor = originalAccent;
+                themeManager.ApplicationTheme = originalTheme;
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    [TestMethod]
+    public void UpdateBrushesTraversesMergedDictionaries()
+    {
+        var accent = Color.FromRgb(0x30, 0x80, 0xD0);
+        var accentBrush = new SolidColorBrush();
+        ThemeResourceHelper.SetColorKey(accentBrush, "SystemAccentColor");
+
+        var child = new ResourceDictionary
+        {
+            ["SystemControlForegroundAccentBrush"] = accentBrush
+        };
+        var root = new ResourceDictionary();
+        root.MergedDictionaries.Add(child);
+
+        ColorsHelper.UpdateBrushes(
+            root,
+            new ResourceDictionary { ["SystemAccentColor"] = accent });
+
+        Assert.AreEqual(accent, accentBrush.Color);
+    }
+
     [TestMethod]
     [DataRow("Light", "SystemAccentColorDark1")]
     [DataRow("Dark", "SystemAccentColorLight2")]
@@ -90,5 +179,19 @@ public class ColorsHelperTests
         Assert.AreEqual(accentLight1, palette["SystemAccentColorLight1"]);
         Assert.AreEqual(accentLight2, palette["SystemAccentColorLight2"]);
         Assert.AreEqual(accentLight3, palette["SystemAccentColorLight3"]);
+    }
+
+    private static void AssertFrozenBrushColor(
+        ResourceDictionary resources,
+        object key,
+        Color expected)
+    {
+        var brush = (SolidColorBrush)resources[key];
+        Assert.AreEqual(expected, brush.Color, key.ToString());
+        Assert.IsTrue(brush.IsFrozen, key.ToString());
+        Assert.AreEqual(
+            expected,
+            Task.Run(() => ((SolidColorBrush)resources[key]).Color).GetAwaiter().GetResult(),
+            key.ToString());
     }
 }
