@@ -75,6 +75,7 @@
                                 </Grid.RowDefinitions>
 
                                 <primitives:TitleBarControl
+                                    x:Name="TitleBarControl"
                                     Icon="{TemplateBinding Icon}"
                                     Title="{TemplateBinding Title}"
                                     IsActive="{TemplateBinding IsActive}"
@@ -133,6 +134,9 @@
                             <Setter TargetName="ContentGrid" Property="Margin" Value="0" />
                             <Setter TargetName="HighContrastBorder" Property="Visibility" Value="Collapsed" />
                         </Trigger>
+                        <Trigger Property="WindowStyle" Value="None">
+                            <Setter TargetName="TitleBarControl" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
                         <Trigger Property="local:TitleBar.ExtendViewIntoTitleBar" Value="True">
                             <Setter TargetName="AdornerDecorator" Property="Grid.Row" Value="0" />
                             <Setter TargetName="AdornerDecorator" Property="Grid.RowSpan" Value="2" />
@@ -154,6 +158,9 @@
             </DataTrigger>
             <Trigger Property="WindowChrome.WindowChrome" Value="{x:Null}">
                 <Setter Property="primitives:WindowHelper.FixMaximizedWindow" Value="False" />
+            </Trigger>
+            <Trigger Property="WindowStyle" Value="None">
+                <Setter Property="WindowChrome.WindowChrome" Value="{x:Null}" />
             </Trigger>
         </Style.Triggers>
     </Style>

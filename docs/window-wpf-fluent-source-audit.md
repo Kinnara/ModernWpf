@@ -53,6 +53,8 @@ ModernWpf now follows the compatible parts of that source shape:
 - Disabled custom caption buttons remain inert when Windows 11 routes their
   input through non-client messages. In particular, `ResizeMode=CanMinimize`
   keeps the disabled maximize button from invoking its command.
+- `WindowStyle=None` suppresses the ModernWpf title bar, detaches the custom
+  `WindowChrome`, and lets content fill the captionless client area.
 
 ## WPF Substitutions
 
@@ -88,6 +90,9 @@ surface.
   `SourceInitialized` disables the ModernWpf minimize button and its routed
   command, and that the non-client click bridge cannot invoke the disabled
   maximize button when `ResizeMode=CanMinimize`.
+- `WindowVisualStateTests` verifies that `WindowStyle=None` collapses the
+  ModernWpf title bar, removes custom chrome/maximized-window compensation, and
+  places content at the top of the client area.
 - `WindowVisualStateTests` statically guards `Styles\Window.xaml` against
   `ContentPresenterEx`, `MS.Internal`, `Fluent.Controls`, and `System.Runtime`
   source markers.
