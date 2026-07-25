@@ -53,6 +53,11 @@ the stock WPF `TextBox`, `TextBoxBase`, and `PasswordBox` templates.
   property, so the clear button uses the existing
   `TextBoxHelper.IsDeleteButton` click hook while retaining the official
   template shape and trigger matrix.
+- ModernWpf keeps the shipped `TextBoxHelper.IsDeleteButtonVisible` attached
+  property as an additional gate on the official clear-button visibility
+  rules. `DefaultTextBoxStyle` enables the gate, so a derived style can set it
+  to `False` to hide clear buttons by default while an individual `TextBox`
+  can set it back to `True`.
 - ModernWpf tags the accent `GradientStop` in
   `TextControlElevationBorderFocusedBrush` with `DynamicColor`. This preserves
   the official focused-border gradient while allowing runtime accent changes
@@ -68,7 +73,8 @@ the stock WPF `TextBox`, `TextBoxBase`, and `PasswordBox` templates.
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\TextBoxPasswordBoxVisualStateTests.cs`
   covers the official WPF Fluent style setter surfaces, template parts,
-  trigger shapes, clear-button substitution, `DataGridTextBoxStyle`,
+  trigger shapes, clear-button substitution and visibility opt-out,
+  `DataGridTextBoxStyle`,
   initial-error validation-adorners, and deletion of the old WinUI-derived
   template branches.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies
