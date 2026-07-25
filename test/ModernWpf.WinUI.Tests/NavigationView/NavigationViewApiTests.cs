@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
@@ -12,6 +13,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
 using ModernWpf.Automation.Peers;
 using ModernWpf.Controls.Primitives;
+using ModernWpf.Input;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -628,6 +630,26 @@ public class NavigationViewApiTests
 
             GC.Collect();
             menuItem.IsSelected = !menuItem.IsSelected;
+        });
+    }
+
+    [TestMethod]
+    public void HandledTapDoesNotKeepSourceAlive()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var sourceReference = RaiseHandledTapAndReleaseSource();
+
+            for (int i = 0; i < 3 && sourceReference.IsAlive; i++)
+            {
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            }
+
+            Assert.IsFalse(
+                sourceReference.IsAlive,
+                "The last handled tap state must not root its routed-event source.");
         });
     }
 
@@ -2718,6 +2740,21 @@ public class NavigationViewApiTests
         };
         chevron.RaiseEvent(mouseUp);
         Assert.IsTrue(mouseUp.Handled);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference RaiseHandledTapAndReleaseSource()
+    {
+        var source = new Border();
+        InputHelper.AddTappedHandler(source, MarkTapHandled);
+        InputHelper.RaiseTapped(source, Environment.TickCount);
+        InputHelper.RemoveTappedHandler(source, MarkTapHandled);
+        return new WeakReference(source);
+    }
+
+    private static void MarkTapHandled(object sender, TappedRoutedEventArgs args)
+    {
+        args.Handled = true;
     }
 
     private static T FindNamedDescendant<T>(DependencyObject root, string name)
