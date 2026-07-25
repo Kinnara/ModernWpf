@@ -4210,10 +4210,6 @@ namespace ModernWpf.Controls
             }
             else if (property == PaneDisplayModeProperty)
             {
-                // m_wasForceClosed is set to true because ToggleButton is clicked and Pane is closed.
-                // When PaneDisplayMode is changed, reset the force flag to make the Pane can be opened automatically again.
-                m_wasForceClosed = false;
-
                 UpdatePaneToggleButtonVisibility();
                 UpdatePaneDisplayMode((NavigationViewPaneDisplayMode)args.OldValue, (NavigationViewPaneDisplayMode)args.NewValue);
                 UpdatePaneTitleFrameworkElementParents();
@@ -4491,6 +4487,11 @@ namespace ModernWpf.Controls
             {
                 return;
             }
+
+            // m_wasForceClosed is set to true because ToggleButton is clicked and Pane is closed.
+            // When PaneDisplayMode changes after template application, reset the force flag so the pane can open automatically.
+            // Before template application, preserving the flag keeps the initial IsPaneOpen value independent of XAML attribute order.
+            m_wasForceClosed = false;
 
             UpdatePaneDisplayMode();
 

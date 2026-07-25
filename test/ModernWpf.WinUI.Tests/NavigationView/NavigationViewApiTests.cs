@@ -7,6 +7,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -777,6 +778,36 @@ public class NavigationViewApiTests
             using var host = CreateNavigationViewHost(out var navView, paneDisplayMode, isPaneOpen, displayMode);
             Assert.AreEqual(expectedIsPaneOpen, navView.IsPaneOpen);
         }
+    }
+
+    [TestMethod]
+    public void XamlPaneStateDoesNotDependOnAttributeOrder()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (string attributes in new[]
+            {
+                "IsPaneOpen='False' PaneDisplayMode='Left'",
+                "PaneDisplayMode='Left' IsPaneOpen='False'"
+            })
+            {
+                var navView = (ModernWpf.Controls.NavigationView)XamlReader.Parse(
+                    $@"<ui:NavigationView
+                            xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
+                            xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
+                            xmlns:ui='http://schemas.modernwpf.com/2019'
+                            Width='800'
+                            Height='600'
+                            {attributes} />");
+
+                Assert.IsFalse(navView.IsPaneOpen, attributes);
+                using var host = new TestWindowHost(navView);
+                host.UpdateLayout();
+                Assert.IsFalse(navView.IsPaneOpen, attributes);
+            }
+        });
     }
 
     [TestMethod]
