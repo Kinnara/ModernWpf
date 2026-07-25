@@ -21,7 +21,9 @@ namespace ModernWpf
         {
             if (state != null)
             {
-                useTransitions &= Helper.IsAnimationsEnabled;
+                useTransitions &= AreAnimationsEnabled(
+                    stateGroupsRoot ?? control,
+                    Helper.IsAnimationsEnabled);
 
                 if (group.Transitions.Count > 0 && VisualStateGroupHelper.IsSupported)
                 {
@@ -34,6 +36,20 @@ namespace ModernWpf
             }
 
             return false;
+        }
+
+        internal static bool AreAnimationsEnabled(
+            FrameworkElement resourceScope,
+            bool systemAnimationsEnabled)
+        {
+            if (!systemAnimationsEnabled)
+            {
+                return false;
+            }
+
+            return resourceScope == null ||
+                   !(resourceScope.TryFindResource(SystemParameters.ClientAreaAnimationKey) is bool isEnabled) ||
+                   isEnabled;
         }
 
         #region VisualStateGroups
