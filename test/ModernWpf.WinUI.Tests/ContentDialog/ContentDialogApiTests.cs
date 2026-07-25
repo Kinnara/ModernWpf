@@ -476,6 +476,70 @@ public class ContentDialogApiTests
     }
 
     [TestMethod]
+    public void MinimizingParentWindowKeepsOwnedWindowDialogOpen()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            using var mainHost = new TestWindowHost(new Grid(), width: 640, height: 480);
+            var childWindow = new Window
+            {
+                Owner = mainHost.Window,
+                Width = 480,
+                Height = 360,
+                Left = -32000,
+                Top = -32000,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.Manual,
+                Content = new Grid()
+            };
+
+            try
+            {
+                childWindow.Show();
+                WpfTestHost.DoEvents();
+
+                var dialog = CreateDialog();
+                dialog.Owner = childWindow;
+                var closedCount = 0;
+                dialog.Closed += (_, _) => closedCount++;
+
+                var showTask = dialog.ShowAsync();
+                WpfTestHost.DoEvents();
+                Assert.IsFalse(showTask.IsCompleted);
+
+                mainHost.Window.WindowState = WindowState.Minimized;
+                WpfTestHost.DoEvents();
+                mainHost.Window.WindowState = WindowState.Normal;
+                WpfTestHost.DoEvents();
+
+                Assert.IsFalse(
+                    showTask.IsCompleted,
+                    "Temporarily hiding an owned window must not close its ContentDialog.");
+                Assert.AreEqual(0, closedCount);
+
+                dialog.Hide();
+                Assert.AreEqual(ContentDialogResult.None, WaitForResult(showTask));
+
+                var reopenTask = dialog.ShowAsync();
+                WpfTestHost.DoEvents();
+                Assert.IsFalse(reopenTask.IsCompleted);
+
+                dialog.Hide();
+                Assert.AreEqual(ContentDialogResult.None, WaitForResult(reopenTask));
+                Assert.AreEqual(2, closedCount);
+            }
+            finally
+            {
+                childWindow.Content = null;
+                childWindow.Close();
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    [TestMethod]
     public void DefaultButtonVisualStatesApplyAccentStyle()
     {
         WpfTestHost.Run(() =>

@@ -515,9 +515,29 @@ namespace ModernWpf.Controls
             }
             else
             {
+                if (IsShowing && IsOwnerChainMinimized(m_openDialogOwner))
+                {
+                    return;
+                }
+
                 m_closeTimer.Stop();
                 OnClosed();
             }
+        }
+
+        private static bool IsOwnerChainMinimized(Window window)
+        {
+            while (window != null)
+            {
+                if (window.WindowState == WindowState.Minimized)
+                {
+                    return true;
+                }
+
+                window = window.Owner;
+            }
+
+            return false;
         }
 
         private void OnLayoutRootKeyDown(object sender, KeyEventArgs e)
