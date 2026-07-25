@@ -304,7 +304,10 @@ namespace ModernWpf.Controls.Primitives
 
         internal void DoClick()
         {
-            OnClick();
+            if (IsEnabled)
+            {
+                OnClick();
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -361,7 +364,7 @@ namespace ModernWpf.Controls.Primitives
 
                         if (IsMousePositionWithin(lParam))
                         {
-                            OnClick();
+                            DoClick();
                         }
 
                         handled = true;

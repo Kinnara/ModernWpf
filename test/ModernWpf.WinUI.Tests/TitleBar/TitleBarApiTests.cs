@@ -261,6 +261,53 @@ public class TitleBarApiTests
     }
 
     [TestMethod]
+    public void CanMinimizeWindowCannotInvokeDisabledMaximizeButton()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var window = new Window
+            {
+                Width = 420,
+                Height = 180,
+                Left = -32000,
+                Top = -32000,
+                ShowInTaskbar = false,
+                ResizeMode = ResizeMode.CanMinimize,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            WindowHelper.SetUseModernWindowStyle(window, true);
+
+            try
+            {
+                window.Show();
+                WpfTestHost.DoEvents();
+                window.UpdateLayout();
+                WpfTestHost.DoEvents();
+
+                var titleBarControl = VisualTreeTestHelper.EnumerateDescendants(window)
+                    .OfType<TitleBarControl>()
+                    .Single();
+                var maximizeButton = FindNamedDescendant<TitleBarButton>(
+                    titleBarControl,
+                    "PART_MaximizeRestoreButton");
+
+                Assert.IsFalse(maximizeButton.IsEnabled);
+
+                maximizeButton.DoClick();
+                WpfTestHost.DoEvents();
+                Assert.AreEqual(WindowState.Normal, window.WindowState);
+            }
+            finally
+            {
+                window.Close();
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    [TestMethod]
     public void VerifyTitleBarControlAutomationPeerMatchesCurrentWinUI()
     {
         WpfTestHost.Run(() =>
