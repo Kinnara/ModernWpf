@@ -53,6 +53,10 @@ the stock WPF `TextBox`, `TextBoxBase`, and `PasswordBox` templates.
   property, so the clear button uses the existing
   `TextBoxHelper.IsDeleteButton` click hook while retaining the official
   template shape and trigger matrix.
+- ModernWpf tags the accent `GradientStop` in
+  `TextControlElevationBorderFocusedBrush` with `DynamicColor`. This preserves
+  the official focused-border gradient while allowing runtime accent changes
+  to update the existing brush in Light, Dark, and High Contrast themes.
 - `DataGridTextBoxStyle` is retained as a ModernWpf support style because the
   callers that reference it directly; the stock DataGrid template no longer
   wires it through `DataGridHelper`.
@@ -71,3 +75,6 @@ the stock WPF `TextBox`, `TextBoxBase`, and `PasswordBox` templates.
   `ModernWpf\Styles\TextBox.xaml` and
   `ModernWpf\Styles\PasswordBox.xaml` as official WPF Fluent stock templates
   that should not use `VisualStateEx`.
+- `test\ModernWpf.Theme.Tests\ColorsHelperTests.cs` verifies that runtime
+  accent updates reach the focused-border gradient in Light, Dark, and High
+  Contrast themes.

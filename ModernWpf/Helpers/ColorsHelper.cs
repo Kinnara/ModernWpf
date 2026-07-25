@@ -180,12 +180,30 @@ namespace ModernWpf
             {
                 if (entry.Value is SolidColorBrush brush && !brush.IsFrozen)
                 {
-                    object colorKey = ThemeResourceHelper.GetColorKey(brush);
-                    if (colorKey != null && colors.Contains(colorKey))
+                    UpdateColor(brush, SolidColorBrush.ColorProperty, colors);
+                }
+                else if (entry.Value is GradientBrush gradientBrush && !gradientBrush.IsFrozen)
+                {
+                    foreach (GradientStop gradientStop in gradientBrush.GradientStops)
                     {
-                        brush.SetCurrentValue(SolidColorBrush.ColorProperty, (Color)colors[colorKey]);
+                        if (!gradientStop.IsFrozen)
+                        {
+                            UpdateColor(gradientStop, GradientStop.ColorProperty, colors);
+                        }
                     }
                 }
+            }
+        }
+
+        private static void UpdateColor(
+            DependencyObject target,
+            DependencyProperty colorProperty,
+            ResourceDictionary colors)
+        {
+            object colorKey = ThemeResourceHelper.GetColorKey(target);
+            if (colorKey != null && colors.Contains(colorKey))
+            {
+                target.SetCurrentValue(colorProperty, (Color)colors[colorKey]);
             }
         }
 

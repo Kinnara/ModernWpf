@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Media;
 
 namespace ModernWpf
 {
@@ -11,12 +10,12 @@ namespace ModernWpf
                 typeof(object),
                 typeof(ThemeResourceHelper));
 
-        internal static object GetColorKey(SolidColorBrush element)
+        internal static object GetColorKey(DependencyObject element)
         {
             return element.GetValue(ColorKeyProperty);
         }
 
-        internal static void SetColorKey(SolidColorBrush element, object value)
+        internal static void SetColorKey(DependencyObject element, object value)
         {
             element.SetValue(ColorKeyProperty, value);
         }
