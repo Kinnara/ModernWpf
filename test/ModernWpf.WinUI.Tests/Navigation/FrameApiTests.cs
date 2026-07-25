@@ -1,4 +1,7 @@
+using System;
+using System.ComponentModel;
 using System.Reflection;
+using System.Windows.Data;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Media.Animation;
 using ModernWpf.WinUI.TestApp;
@@ -75,5 +78,75 @@ public class FrameApiTests
             Assert.AreSame(extraData, observedExtraData);
             Assert.IsNull(transitionOverrideField.GetValue(frame));
         });
+    }
+
+    [TestMethod]
+    public void SourcePageTypeBindingRemainsActiveAcrossNavigation()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var viewModel = new FrameSourcePageTypeViewModel();
+            var frame = new ModernWpf.Controls.Frame
+            {
+                DataContext = viewModel
+            };
+            frame.SetBinding(
+                ModernWpf.Controls.Frame.SourcePageTypeProperty,
+                new Binding(nameof(FrameSourcePageTypeViewModel.SourcePageType)));
+
+            using var host = new TestWindowHost(frame, width: 320, height: 240);
+            host.UpdateLayout();
+
+            Assert.IsInstanceOfType(frame.Content, typeof(FrameBindingFirstPage));
+            Assert.AreEqual(typeof(FrameBindingFirstPage), frame.CurrentSourcePageType);
+            Assert.IsTrue(BindingOperations.IsDataBound(
+                frame,
+                ModernWpf.Controls.Frame.SourcePageTypeProperty));
+
+            viewModel.SourcePageType = typeof(FrameBindingSecondPage);
+            host.UpdateLayout();
+
+            Assert.IsInstanceOfType(frame.Content, typeof(FrameBindingSecondPage));
+            Assert.AreEqual(typeof(FrameBindingSecondPage), frame.CurrentSourcePageType);
+            Assert.IsTrue(BindingOperations.IsDataBound(
+                frame,
+                ModernWpf.Controls.Frame.SourcePageTypeProperty));
+
+            viewModel.SourcePageType = typeof(FrameBindingFirstPage);
+            host.UpdateLayout();
+
+            Assert.IsInstanceOfType(frame.Content, typeof(FrameBindingFirstPage));
+            Assert.AreEqual(typeof(FrameBindingFirstPage), frame.CurrentSourcePageType);
+        });
+    }
+
+    public sealed class FrameBindingFirstPage : ModernWpf.Controls.Page
+    {
+    }
+
+    public sealed class FrameBindingSecondPage : ModernWpf.Controls.Page
+    {
+    }
+
+    private sealed class FrameSourcePageTypeViewModel : INotifyPropertyChanged
+    {
+        private Type _sourcePageType = typeof(FrameBindingFirstPage);
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public Type SourcePageType
+        {
+            get => _sourcePageType;
+            set
+            {
+                if (_sourcePageType != value)
+                {
+                    _sourcePageType = value;
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(SourcePageType)));
+                }
+            }
+        }
     }
 }
