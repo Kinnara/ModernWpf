@@ -1,12 +1,44 @@
+using System;
 using System.Windows;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.Theme.Tests;
 
 [TestClass]
 public class ColorsHelperTests
 {
+    [TestMethod]
+    [DataRow("Light", "SystemAccentColorDark1")]
+    [DataRow("Dark", "SystemAccentColorLight2")]
+    [DataRow("HighContrast", "SystemAccentColorLight2")]
+    public void FocusedTextControlBorderTracksDynamicAccentColor(
+        string themeName,
+        string accentColorKey)
+    {
+        WpfTestHost.Run(() =>
+        {
+            var themeDictionary = new ResourceDictionary
+            {
+                Source = new Uri(
+                    $"pack://application:,,,/ModernWpf;component/ThemeResources/{themeName}.xaml",
+                    UriKind.Absolute)
+            };
+            var focusedBorder =
+                (LinearGradientBrush)themeDictionary["TextControlElevationBorderFocusedBrush"];
+            var expectedAccent = Color.FromRgb(0xC2, 0x39, 0xB3);
+            var palette = new ResourceDictionary
+            {
+                [accentColorKey] = expectedAccent
+            };
+
+            ColorsHelper.UpdateBrushes(themeDictionary, palette);
+
+            Assert.AreEqual(expectedAccent, focusedBorder.GradientStops[0].Color);
+        });
+    }
+
     [TestMethod]
     public void TransparentSystemAccentSnapshotDoesNotReplaceDynamicColorBrush()
     {

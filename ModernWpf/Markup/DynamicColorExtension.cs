@@ -25,9 +25,10 @@ namespace ModernWpf.Markup
 
             if (serviceProvider?.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget provideValueTarget)
             {
-                if (provideValueTarget.TargetObject is SolidColorBrush solidColorBrush)
+                if (provideValueTarget.TargetObject is DependencyObject targetObject &&
+                    (targetObject is SolidColorBrush || targetObject is GradientStop))
                 {
-                    ThemeResourceHelper.SetColorKey(solidColorBrush, ResourceKey);
+                    ThemeResourceHelper.SetColorKey(targetObject, ResourceKey);
                 }
             }
 
