@@ -415,7 +415,35 @@ namespace ModernWpf
             var overrides = new ResourceDictionary();
             var originalsToOverrides = new Dictionary<SolidColorBrush, SolidColorBrush>();
 
-            // TODO: recursive
+            AddBrushOverrides(
+                originals,
+                overrides,
+                originalsToOverrides,
+                new HashSet<ResourceDictionary>());
+
+            MergedDictionaries.Add(overrides);
+        }
+
+        private void AddBrushOverrides(
+            ResourceDictionary originals,
+            ResourceDictionary overrides,
+            Dictionary<SolidColorBrush, SolidColorBrush> originalsToOverrides,
+            HashSet<ResourceDictionary> visited)
+        {
+            if (!visited.Add(originals))
+            {
+                return;
+            }
+
+            foreach (var mergedDictionary in originals.MergedDictionaries)
+            {
+                AddBrushOverrides(
+                    mergedDictionary,
+                    overrides,
+                    originalsToOverrides,
+                    visited);
+            }
+
             foreach (DictionaryEntry entry in originals)
             {
                 if (entry.Value is SolidColorBrush originalBrush)
@@ -429,12 +457,10 @@ namespace ModernWpf
                             overrideBrush.Color = (Color)this[colorKey];
                             originalsToOverrides[originalBrush] = overrideBrush;
                         }
-                        overrides.Add(entry.Key, overrideBrush);
+                        overrides[entry.Key] = overrideBrush;
                     }
                 }
             }
-
-            MergedDictionaries.Add(overrides);
         }
 
         #region ISupportInitialize
