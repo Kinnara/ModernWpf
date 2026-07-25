@@ -39,3 +39,20 @@ shell resources retained as documented WPF substitutions.
 | `Themes/TextContextMenu.xaml` | ModernWpf compatibility resource | `docs\textbox-passwordbox-wpf-fluent-source-audit.md`, `docs\richtextbox-wpf-fluent-source-audit.md` |
 | `TitleBar/TitleBarButton.xaml` | Official WPF Fluent shell substitution | `docs\window-wpf-fluent-source-audit.md`, `docs\winui-visualstate-setters-audit.md` |
 | `TitleBar/TitleBarControl.xaml` | Official WPF Fluent shell substitution | `docs\window-wpf-fluent-source-audit.md`, `docs\winui-visualstate-setters-audit.md` |
+
+## Dynamic System Colors
+
+`DynamicColorExtension` tags mutable `SolidColorBrush` resources with their
+source color key. `ColorsHelper` updates those brush instances when the Windows
+accent palette changes so existing `DynamicResource` consumers keep their
+resource identity.
+
+Windows color-change notifications can produce a transient fully transparent
+palette while the session is locking or resuming. ModernWpf rejects any such
+incomplete system palette and retains the last valid colors; if the first
+system read is invalid, it uses `DefaultAccentColor` until Windows supplies a
+valid snapshot. Explicit application `ThemeManager.AccentColor` values still
+flow through the separate `SetAccent` path.
+
+`ColorsHelperTests.TransparentSystemAccentSnapshotDoesNotReplaceDynamicColorBrush`
+guards the palette and brush behavior.
