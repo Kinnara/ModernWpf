@@ -46,6 +46,11 @@ than WinUI 3 common styles.
 - Official WPF Fluent uses `DefaultControlFocusVisualStyle`; ModernWpf keeps
   `{x:Static SystemParameters.FocusVisualStyleKey}` plus
   `FocusVisualHelper.UseSystemFocusVisuals` and `FocusVisualHelper.FocusVisualMargin`.
+- ModernWpf explicitly keeps the direction-neutral check glyph
+  `FlowDirection="LeftToRight"` so an inherited right-to-left application
+  flow reorders the CheckBox layout and content without mirroring the check.
+  The override is scoped to `ControlIcon`, avoiding application-wide `Path`
+  styles that would also reverse directional menu and scrollbar glyphs.
 - Existing ModernWpf brush aliases such as `CheckBoxBackgroundUnchecked` and
   `CheckBoxCheckBackgroundFillChecked` are retained because they already map to
   Fluent color concepts and are part of the public resource surface.
@@ -59,6 +64,9 @@ than WinUI 3 common styles.
   native trigger matrix, and disabled resource application.
 - `CheckBoxVisualStateTests.CheckedAndIndeterminateStatesUseOfficialWpfFluentResources`
   verifies checked and indeterminate glyph/chrome resources at runtime.
+- `CheckBoxVisualStateTests.RightToLeftCheckBoxKeepsCheckGlyphOrientation`
+  verifies that the CheckBox layout and content inherit right-to-left flow
+  while only the direction-neutral check glyph remains left-to-right.
 - `CheckBoxVisualStateTests.ThemeDictionariesExposeOfficialCheckBoxGlyphResources`
   verifies the new official glyph brush aliases across Light, Dark, and HighContrast.
 

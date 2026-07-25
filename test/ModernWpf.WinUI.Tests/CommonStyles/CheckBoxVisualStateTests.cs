@@ -128,6 +128,33 @@ public class CheckBoxVisualStateTests
     }
 
     [TestMethod]
+    public void RightToLeftCheckBoxKeepsCheckGlyphOrientation()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var checkBox = CreateCheckBox();
+            checkBox.Content = "خيار";
+            checkBox.IsChecked = true;
+            checkBox.FlowDirection = FlowDirection.RightToLeft;
+            using var host = new TestWindowHost(checkBox, width: 180, height: 80);
+            host.UpdateLayout();
+
+            var rootGrid = GetTemplateChild<Grid>(checkBox, "RootGrid");
+            var controlIcon = GetTemplateChild<TextBlock>(checkBox, "ControlIcon");
+            var contentPresenter = GetTemplateChild<ContentPresenter>(checkBox, "ContentPresenter");
+
+            Assert.AreEqual(FlowDirection.RightToLeft, rootGrid.FlowDirection);
+            Assert.AreEqual(FlowDirection.RightToLeft, contentPresenter.FlowDirection);
+            Assert.AreEqual(
+                FlowDirection.LeftToRight,
+                controlIcon.FlowDirection,
+                "Only the direction-neutral check glyph should opt out of the inherited right-to-left layout.");
+        });
+    }
+
+    [TestMethod]
     public void ThemeDictionariesExposeOfficialCheckBoxGlyphResources()
     {
         WpfTestHost.Run(() =>

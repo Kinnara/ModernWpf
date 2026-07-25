@@ -73,6 +73,7 @@
                                             FontFamily="{DynamicResource SymbolThemeFontFamily}"
                                             FontSize="{StaticResource CheckBoxIconSize}"
                                             FontWeight="Bold"
+                                            FlowDirection="LeftToRight"
                                             Foreground="{DynamicResource CheckBoxCheckGlyphForeground}"
                                             Text="{StaticResource CheckBoxCheckedGlyph}"
                                             Visibility="Collapsed" />
