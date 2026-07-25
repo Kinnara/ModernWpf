@@ -91,7 +91,11 @@
                                         </Storyboard>
                                     </VisualTransition>
                                 </VisualStateGroup.Transitions>
-                                <VisualState x:Name="DialogHidden" />
+                                <ui:VisualStateEx x:Name="DialogHidden">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="SmokeLayerBackground.Fill" Value="{x:Null}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
                                 <ui:VisualStateEx x:Name="DialogShowing">
                                     <ui:VisualStateEx.Setters>
                                         <ui:VisualStateSetter Target="PrimaryButton.IsTabStop" Value="True" />
@@ -108,6 +112,7 @@
                                         <ui:VisualStateSetter Target="CloseButton.IsTabStop" Value="True" />
                                         <ui:VisualStateSetter Target="LayoutRoot.Visibility" Value="Visible" />
                                         <ui:VisualStateSetter Target="LayoutRoot.Background" Value="{x:Null}" />
+                                        <ui:VisualStateSetter Target="SmokeLayerBackground.Fill" Value="{x:Null}" />
                                     </ui:VisualStateEx.Setters>
                                 </ui:VisualStateEx>
                             </VisualStateGroup>

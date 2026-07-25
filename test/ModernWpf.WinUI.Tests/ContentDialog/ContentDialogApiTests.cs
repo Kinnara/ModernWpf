@@ -8,7 +8,9 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
@@ -421,6 +423,55 @@ public class ContentDialogApiTests
             Assert.AreEqual(128.0, shadow.Depth);
             Assert.AreEqual(ThemeShadowChromeWindowedPopupInsetMode.Default, shadow.WindowedPopupInsetMode);
             Assert.AreEqual(new Thickness(64, 32, 64, 96), shadow.ShadowPadding);
+        });
+    }
+
+    [TestMethod]
+    public void WindowModalOverlayCoversOwnerWhenDialogHasMaxWidth()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var root = new Grid();
+            using var host = new TestWindowHost(root, width: 1000, height: 600);
+            var dialog = CreateDialog();
+            dialog.Owner = host.Window;
+            dialog.MaxWidth = 500;
+
+            var showTask = dialog.ShowAsync();
+            WpfTestHost.DoEvents();
+            host.UpdateLayout();
+
+            var ownerPresenter = VisualTreeTestHelper
+                .EnumerateDescendants(host.Window)
+                .OfType<ContentPresenter>()
+                .Single(candidate => ReferenceEquals(candidate.Content, root));
+            var adornerLayer = AdornerLayer.GetAdornerLayer(ownerPresenter)
+                ?? throw new AssertFailedException("Expected the owner ContentPresenter to have an AdornerLayer.");
+            var adorner = adornerLayer.GetAdorners(ownerPresenter)?.Single()
+                ?? throw new AssertFailedException("Expected the ContentDialog modal adorner.");
+
+            Assert.AreEqual(ownerPresenter.ActualWidth, adorner.ActualWidth, 0.1);
+            Assert.AreEqual(ownerPresenter.ActualHeight, adorner.ActualHeight, 0.1);
+            Assert.IsTrue(
+                dialog.ActualWidth <= dialog.MaxWidth + 0.1,
+                $"Expected the dialog width ({dialog.ActualWidth}) to respect MaxWidth ({dialog.MaxWidth}).");
+            Assert.IsNull(
+                GetTemplateChild<Rectangle>(dialog, "SmokeLayerBackground").Fill,
+                "The constrained dialog must not paint a second smoke layer over the adorner smoke layer.");
+
+            var dialogOrigin = dialog.TranslatePoint(new Point(), adorner);
+            var overlayPoint = new Point(adorner.ActualWidth - 1, adorner.ActualHeight / 2);
+            Assert.IsTrue(
+                overlayPoint.X > dialogOrigin.X + dialog.ActualWidth,
+                "Expected the regression hit-test point to be outside the constrained dialog.");
+            Assert.IsNotNull(
+                VisualTreeHelper.HitTest(adorner, overlayPoint),
+                "The modal overlay must remain hit-testable outside the MaxWidth-constrained dialog.");
+
+            dialog.Hide();
+            Assert.AreEqual(ContentDialogResult.None, WaitForResult(showTask));
         });
     }
 
