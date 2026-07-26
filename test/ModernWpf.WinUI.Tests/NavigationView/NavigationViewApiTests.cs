@@ -414,6 +414,79 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void MenuItemTemplateSelectorWithMoreThanFourItemsRemainsBounded()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (var paneDisplayMode in new[]
+            {
+                ModernWpf.Controls.NavigationViewPaneDisplayMode.Left,
+                ModernWpf.Controls.NavigationViewPaneDisplayMode.Top
+            })
+            {
+                var defaultTemplate = (DataTemplate)XamlReader.Parse(
+                    @"<DataTemplate
+                          xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
+                          xmlns:ui='http://schemas.modernwpf.com/2019'>
+                          <ui:NavigationViewItem Content='{Binding}' Tag='Default' />
+                      </DataTemplate>");
+                var alternateTemplate = (DataTemplate)XamlReader.Parse(
+                    @"<DataTemplate
+                          xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
+                          xmlns:ui='http://schemas.modernwpf.com/2019'>
+                          <ui:NavigationViewItem Content='{Binding}' Tag='Alternate' />
+                      </DataTemplate>");
+                var items = new ObservableCollection<string>(
+                    Enumerable.Range(1, 8).Select(index => $"Item {index}"));
+                var maximumCallCount = items.Count * 8;
+                var selector = new CountingNavigationItemTemplateSelector(
+                    defaultTemplate,
+                    alternateTemplate,
+                    items[^1],
+                    maximumCallCount);
+                var navView = new ModernWpf.Controls.NavigationView
+                {
+                    IsSettingsVisible = false,
+                    MenuItemsSource = items,
+                    MenuItemTemplateSelector = selector,
+                    PaneDisplayMode = paneDisplayMode,
+                    Width = 1200,
+                    Height = 500
+                };
+
+                using var host = new TestWindowHost(navView, width: 1200, height: 500);
+                var initialCallCount = selector.CallCount;
+                Assert.IsTrue(
+                    initialCallCount > 0,
+                    $"{paneDisplayMode} did not invoke the item template selector.");
+                Assert.IsTrue(
+                    initialCallCount <= maximumCallCount,
+                    $"{paneDisplayMode} invoked the selector too often during initial realization.");
+
+                for (var pass = 0; pass < 5; pass++)
+                {
+                    WpfTestHost.DoEvents();
+                    host.UpdateLayout();
+                    Assert.AreEqual(
+                        initialCallCount,
+                        selector.CallCount,
+                        $"{paneDisplayMode} re-entered the selector after layout pass {pass + 1}.");
+                }
+
+                foreach (var item in items)
+                {
+                    var container = navView.ContainerFromMenuItem(item) as ModernWpf.Controls.NavigationViewItem;
+                    Assert.IsNotNull(container, $"{paneDisplayMode} did not realize '{item}'.");
+                    Assert.AreEqual(item, container!.Content);
+                    Assert.AreEqual(item == items[^1] ? "Alternate" : "Default", container.Tag);
+                }
+            }
+        });
+    }
+
+    [TestMethod]
     public void VerifyMenuItemAndContainerMappingMenuItems()
     {
         WpfTestHost.Run(() =>
@@ -2940,6 +3013,43 @@ public class NavigationViewApiTests
         return VisualStateManager.GetVisualStateGroups(stateGroupsRoot)
             .OfType<VisualStateGroup>()
             .Single(item => item.Name == groupName);
+    }
+
+    private sealed class CountingNavigationItemTemplateSelector : DataTemplateSelector
+    {
+        private readonly int _maximumCallCount;
+
+        public CountingNavigationItemTemplateSelector(
+            DataTemplate defaultTemplate,
+            DataTemplate alternateTemplate,
+            object alternateItem,
+            int maximumCallCount)
+        {
+            DefaultTemplate = defaultTemplate;
+            AlternateTemplate = alternateTemplate;
+            AlternateItem = alternateItem;
+            _maximumCallCount = maximumCallCount;
+        }
+
+        public int CallCount { get; private set; }
+
+        public DataTemplate DefaultTemplate { get; }
+
+        public DataTemplate AlternateTemplate { get; }
+
+        public object AlternateItem { get; }
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            CallCount++;
+            if (CallCount > _maximumCallCount)
+            {
+                throw new InvalidOperationException(
+                    $"The NavigationView item template selector exceeded {_maximumCallCount} calls.");
+            }
+
+            return Equals(item, AlternateItem) ? AlternateTemplate : DefaultTemplate;
+        }
     }
 
     private static TestWindowHost CreateNavigationViewHost(
