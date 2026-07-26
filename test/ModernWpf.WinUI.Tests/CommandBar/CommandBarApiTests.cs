@@ -574,6 +574,34 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void CommandBarMoreButtonIconDataCanBeOverriddenPerInstance()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                OverflowButtonVisibility = CommandBarOverflowButtonVisibility.Visible
+            };
+
+            using var host = new TestWindowHost(commandBar, width: 360, height: 160);
+
+            var ellipsisIcon = FindTemplateChild<FontIconFallback>(commandBar, "EllipsisIcon");
+            var defaultIconData = commandBar.TryFindResource("CommandBarMoreButtonIconData") as Geometry;
+
+            Assert.IsNotNull(defaultIconData);
+            Assert.AreSame(defaultIconData, ellipsisIcon.Data);
+
+            var customIconData = Geometry.Parse("M 0,0 L 20,0 20,20 0,20 Z");
+            commandBar.Resources["CommandBarMoreButtonIconData"] = customIconData;
+            host.UpdateLayout();
+
+            Assert.AreSame(customIconData, ellipsisIcon.Data);
+        });
+    }
+
+    [TestMethod]
     public void CommandBarOverflowPresenterConsumesLiveThemeResources()
     {
         WpfTestHost.Run(() =>
