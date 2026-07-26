@@ -239,7 +239,14 @@ API controls are covered by the focused Gallery regression.
   covers issue #319 with header, footer, 24 top items, overflow, an idle-layout
   bound, and 768-to-1200-to-640 resize recovery. It also verifies that both the
   primary scroll host and top grid remain inside the NavigationView width.
-- NavigationView product/source-audit tests pass 61/61; SplitView product tests
+- `MenuItemTemplateSelectorWithMoreThanFourItemsRemainsBounded` covers issue
+  #111 with eight source items and a selector whose template root is a
+  `NavigationViewItem`. Left and Top navigation both realize and map every
+  item, stay within a bounded initial selector-call budget, and make no further
+  selector calls across five dispatcher and layout passes. This confirms that
+  the selector loop reported against 0.9 is resolved on the active 1.x
+  repeater implementation.
+- NavigationView product/source-audit tests pass 62/62; SplitView product tests
   pass 14/14; the focused Gallery sample/source-shape slice passes 7/7 on net8
   and net10. Gallery builds successfully on net462, net8, and net10 with zero
   errors; current target builds retain existing unrelated warnings.
