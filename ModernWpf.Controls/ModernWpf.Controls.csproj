@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="!$(DefineConstants.Contains('NET47_OR_NEWER'))">
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.6.2" />
   </ItemGroup>
 
   <ItemGroup>
