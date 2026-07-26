@@ -666,13 +666,13 @@ Source inspected:
 | Text-entry context menu | `DefaultControlContextMenu` for `TextBox` / `TextBoxBase`, `DefaultPasswordBoxContextMenu` for `PasswordBox` | `TextControlContextMenu` plus `TextContextMenu.UsingTextContextMenu=True` | Keeps ModernWpf's existing text-control context-menu integration. |
 | Text-entry corner radius property | `Border.CornerRadius` setters and template bindings | `Border.CornerRadius` | Older ModernWpf targets do not expose the official source property on these controls; this preserves the existing backport radius bridge. |
 | `TextBox` clear-button command | `TemplateButtonCommand` | `TextBoxHelper.IsDeleteButton` | Older target frameworks do not expose the official platform command property; the substitution keeps the official button shape and clear behavior. |
-| `TextBox` validation chrome | Official `DefaultTextBoxInvalidationStyle` | Existing `TextControlValidationErrorTemplate` plus `ValidationHelper.IsTemplateValidationAdornerSite` | Keeps ModernWpf's existing validation adorner routing. |
+| `TextBox` validation chrome | Official `DefaultTextBoxInvalidationStyle` | Existing `TextControlValidationErrorTemplate` on the TextBox itself, without internal-site redirection | Retains the existing public error-template resource while restoring standard WPF `Validation.Errors` data-context behavior; the official template's `ContentBorder` fills the TextBox, so chrome bounds are unchanged. |
 | `DataGridTextBoxStyle` | No official `TextBox.xaml` equivalent | Retained as a support style based on `DefaultTextBoxStyle` | Kept as a compatibility resource for callers that reference it directly; the stock DataGrid template no longer wires it through `DataGridHelper`. |
 | `TextBoxTopHeaderMargin` / `PasswordBoxTopHeaderMargin` | No official stock template use | Retained as unused public aliases | Avoids unnecessary resource-surface churn while the official templates no longer consume header presenter resources. |
 
 ### Test Evidence
 
-- `test\ModernWpf.WinUI.Tests\CommonStyles\TextBoxPasswordBoxVisualStateTests.cs` covers the official WPF Fluent TextBox, TextBoxBase, and PasswordBox setter surfaces, template parts, trigger shapes, clear-button substitution, retained `DataGridTextBoxStyle`, and deletion of ModernWpf-specific template guesses.
+- `test\ModernWpf.WinUI.Tests\CommonStyles\TextBoxPasswordBoxVisualStateTests.cs` covers the official WPF Fluent TextBox, TextBoxBase, and PasswordBox setter surfaces, template parts, trigger shapes, clear-button substitution, retained `DataGridTextBoxStyle`, standard custom validation-template error binding, and deletion of ModernWpf-specific template guesses.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `TextBox.xaml` and `PasswordBox.xaml` as official WPF Fluent stock template files that should not use `VisualStateEx`.
 
 ## 2026-05-18 Batch 23
