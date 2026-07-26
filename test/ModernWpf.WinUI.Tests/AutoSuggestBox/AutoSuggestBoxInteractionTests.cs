@@ -52,6 +52,48 @@ public class AutoSuggestBoxInteractionTests
     }
 
     [TestMethod]
+    public void SuggestionChosenHandlerCanOverrideSelectedItemText()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var suggestion = new SuggestionItem("Friendly description");
+            var autoSuggestBox = new MuxAutoSuggestBox
+            {
+                ItemsSource = new[] { suggestion },
+                Width = 400
+            };
+
+            var suggestionChosenCount = 0;
+            autoSuggestBox.SuggestionChosen += (sender, args) =>
+            {
+                suggestionChosenCount++;
+                Assert.AreSame(suggestion, args.SelectedItem);
+                Assert.AreEqual(suggestion.ToString(), sender.Text);
+                sender.Text = ((SuggestionItem)args.SelectedItem).Description;
+            };
+
+            using var host = new TestWindowHost(autoSuggestBox, width: 520, height: 240);
+
+            var textBox = FindTemplateChild<TextBox>(autoSuggestBox, "TextBox");
+            Assert.IsTrue(textBox.Focus());
+
+            textBox.Text = "test";
+            FlushLayout(host);
+
+            Assert.IsTrue(autoSuggestBox.IsSuggestionListOpen);
+            Assert.AreNotEqual(suggestion.Description, suggestion.ToString());
+
+            var suggestionsList = FindTemplateChild<AutoSuggestBoxListView>(autoSuggestBox, "SuggestionsList");
+            suggestionsList.SelectedItem = suggestion;
+            FlushLayout(host);
+
+            Assert.AreEqual(1, suggestionChosenCount);
+            Assert.AreEqual(suggestion.Description, autoSuggestBox.Text);
+            Assert.AreEqual(suggestion.Description, textBox.Text);
+        });
+    }
+
+    [TestMethod]
     public void SuggestionItemClickSubmitsAndClosesPopup()
     {
         WpfTestHost.Run(() =>
@@ -129,6 +171,16 @@ public class AutoSuggestBoxInteractionTests
             Assert.AreEqual("dolor", submittedSuggestion);
             Assert.IsFalse(autoSuggestBox.IsSuggestionListOpen);
         });
+    }
+
+    private sealed class SuggestionItem
+    {
+        public SuggestionItem(string description)
+        {
+            Description = description;
+        }
+
+        public string Description { get; }
     }
 
     private static void FlushLayout(TestWindowHost host)
