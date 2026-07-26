@@ -1,3 +1,4 @@
 # ModernWpf v1 public resource-key contract (unshipped).
 # Format: project-relative XAML path|literal top-level x:Key
 # Template parts, visual states, implicit/type keys, and unlisted keys are not contracted.
+ModernWpfControlsResources.xaml|CommandBarMoreButtonIconData

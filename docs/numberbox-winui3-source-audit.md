@@ -104,7 +104,9 @@ options, formatter behavior, accessible name, automation IDs, and source text.
 - Input validation trims the current source whitespace set through WPF
   `String.Trim`, supports the source parser when expressions are enabled,
   handles invalid-input overwrite/disabled modes, coerces min/max/value, and
-  uses ten significant digits to suppress floating-point display artifacts.
+  uses ten significant digits for double values. Exact Single-to-Double
+  promotions use the Single's shortest round-trip representation so WPF
+  binding conversion does not expose binary precision artifacts.
 - Up/Down and PageUp/PageDown step on key down, Enter validates, Escape restores
   formatted text, mouse wheel steps only while the inner text box is focused,
   wrapping crosses between Minimum/Maximum, and the caret returns to the end.
@@ -144,6 +146,11 @@ options, formatter behavior, accessible name, automation IDs, and source text.
   account for WPF resource scope and non-FrameworkElement setter limitations.
 - The WPF formatter/parser interfaces and `DefaultNumberRounder` replace WinRT
   globalization formatter interfaces while preserving source behavior.
+- WPF bindings can promote a `Single` source into the `Value` dependency
+  property's `double` type. The display rounder recognizes values that
+  round-trip exactly through `Single` and normalizes only those values through
+  the Single `R` representation; genuine doubles retain the current WinUI 3
+  ten-significant-digit path.
 - Dark inline/popup glyph foreground derives from the resolved NumberBox
   foreground; High Contrast keeps the source system resource authoritative.
 
@@ -155,8 +162,9 @@ options, formatter behavior, accessible name, automation IDs, and source text.
   UIA Name/LabeledBy/range text, and source control defaults.
 - `NumberBoxInteractionTests` covers stepping, enabled boundaries, whitespace
   trimming, significant-digit preservation, validation modes, focus-only wheel
-  input, custom formatting, NaN event suppression, keyboard behavior,
-  expressions, automation RangeValue, and header/description lifecycle.
+  input, custom formatting, Single promotion without display artifacts, NaN
+  event suppression, keyboard behavior, expressions, automation RangeValue,
+  and header/description lifecycle.
 - `GalleryAutomationHookTests` pins all three current examples, current live
   values/names/options, formatter behavior, accessible name, sample source,
   and Inline/Compact option reaction.
@@ -164,6 +172,24 @@ options, formatter behavior, accessible name, automation IDs, and source text.
   resting and `2.0` interaction gates, and zero size tolerance for both crops.
 - `NumberBoxSourceAuditTests` pins current commits/blobs, product/template/peer/
   Gallery implementation shape, strict report values, and this audit.
+
+## 2026-07-26 Single-Precision Binding Follow-up
+
+Issue #267 supplies `10.4f` to NumberBox. WPF promotes that value to the
+dependency property's `double` type as `10.399999618530273`; the current
+ten-significant-digit rounder consequently displayed `10.39999962`.
+
+WinUI 2 commit `b4e5f2cafeae04f3a799123d48dca9516832becb` (`#7851`) addressed
+the same double/float conversion family by changing the default rounder
+globally to a `1e-6` increment. The current WinUI 3 snapshot instead uses ten
+significant digits. ModernWpf keeps that current behavior for genuine doubles
+and applies a narrower WPF binding adaptation: a value that round-trips exactly
+through `Single` is normalized through Single's shortest round-trip text before
+the configured NumberFormatter runs. `Value` itself remains unchanged.
+
+`FloatValueDisplaySuppressesBinaryPrecisionArtifacts` pins the reported
+`10.4f` display as `10.4`, verifies the inner TextBox and public `Text` agree,
+and confirms a genuine high-precision double still follows the ten-digit path.
 
 ## Live Installed-Gallery Evidence
 
@@ -184,7 +210,7 @@ accessibility match.
 
 ## Verification
 
-- The refreshed NumberBox product/source slice passes 18/18 on
+- The refreshed NumberBox product/source slice passes 19/19 on
   `net8.0-windows7.0`.
 - Focused Gallery runtime/source tests pass 2/2 on both
   `net8.0-windows7.0` and `net10.0-windows7.0`.

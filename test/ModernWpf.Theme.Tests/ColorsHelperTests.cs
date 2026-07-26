@@ -163,6 +163,53 @@ public class ColorsHelperTests
     }
 
     [TestMethod]
+    [DataRow("Light")]
+    [DataRow("Dark")]
+    public void WindowBorderTracksSystemColorPrevalence(string themeName)
+    {
+        WpfTestHost.Run(() =>
+        {
+            var themeDictionary = new ResourceDictionary
+            {
+                Source = new Uri(
+                    $"pack://application:,,,/ModernWpf;component/ThemeResources/{themeName}.xaml",
+                    UriKind.Absolute)
+            };
+            var windowBorder = (SolidColorBrush)themeDictionary["WindowBorder"];
+            var expectedColor = Color.FromRgb(0xC2, 0x39, 0xB3);
+
+            Assert.AreEqual(
+                "SystemWindowBorderColor",
+                ThemeResourceHelper.GetColorKey(windowBorder));
+
+            ColorsHelper.UpdateBrushes(
+                themeDictionary,
+                new ResourceDictionary
+                {
+                    ["SystemWindowBorderColor"] = expectedColor
+                });
+
+            Assert.AreEqual(expectedColor, windowBorder.Color);
+        });
+    }
+
+    [TestMethod]
+    public void WindowBorderColorSelectionHonorsSystemPreference()
+    {
+        var accent = Color.FromRgb(0xC2, 0x39, 0xB3);
+
+        Assert.AreEqual(
+            ColorsHelper.DefaultWindowBorderColor,
+            ColorsHelper.GetWindowBorderColor(accent, useAccentColor: false));
+        Assert.AreEqual(
+            accent,
+            ColorsHelper.GetWindowBorderColor(accent, useAccentColor: true));
+        Assert.AreEqual(
+            ColorsHelper.DefaultWindowBorderColor,
+            ColorsHelper.GetWindowBorderColor(Colors.Transparent, useAccentColor: true));
+    }
+
+    [TestMethod]
     public void TransparentSystemAccentSnapshotDoesNotReplaceDynamicColorBrush()
     {
         var palette = new ResourceDictionary();

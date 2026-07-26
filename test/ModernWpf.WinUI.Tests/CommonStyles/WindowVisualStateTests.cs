@@ -19,6 +19,89 @@ namespace ModernWpf.WinUI.Tests.CommonStyles;
 public class WindowVisualStateTests
 {
     [TestMethod]
+    public void TitleBarHeightResourceControlsRenderedAndDraggableHeight()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var window = new Window
+            {
+                Width = 420,
+                Height = 240,
+                Left = -32000,
+                Top = -32000,
+                Content = new Border(),
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            window.Resources[ModernWpf.Controls.TitleBar.HeightKey] = 56d;
+            WindowHelper.SetUseModernWindowStyle(window, true);
+
+            try
+            {
+                window.Show();
+                WpfTestHost.DoEvents();
+                window.UpdateLayout();
+                WpfTestHost.DoEvents();
+
+                var titleBar = VisualTreeTestHelper.FindDescendant<TitleBarControl>(window);
+                var chrome = WindowChrome.GetWindowChrome(window);
+
+                Assert.IsNotNull(titleBar);
+                Assert.IsNotNull(chrome);
+                Assert.AreEqual(56d, titleBar.ActualHeight, 0.1);
+                Assert.AreEqual(56d, ModernWpf.Controls.TitleBar.GetHeight(window), 0.1);
+                Assert.AreEqual(56d, chrome.CaptionHeight, 0.1);
+
+                var handle = new WindowInteropHelper(window).Handle;
+                var captionHitTests = new[] { 8d, 24d, 36d, 44d, 52d }
+                    .Select(offset =>
+                    {
+                        var point = titleBar.PointToScreen(
+                            new Point(titleBar.ActualWidth / 2, offset));
+                        return SendMessage(
+                            handle,
+                            WmNcHitTest,
+                            IntPtr.Zero,
+                            PackScreenPoint(
+                                (int)Math.Floor(point.X),
+                                (int)Math.Floor(point.Y))).ToInt32();
+                    })
+                    .ToArray();
+                CollectionAssert.AreEqual(
+                    new[] { HtCaption, HtCaption, HtCaption, HtCaption, HtCaption },
+                    captionHitTests,
+                    $"Actual hit tests: {string.Join(",", captionHitTests)}.");
+
+                window.Resources[ModernWpf.Controls.TitleBar.HeightKey] = 64d;
+                WpfTestHost.DoEvents();
+                window.UpdateLayout();
+
+                chrome = WindowChrome.GetWindowChrome(window);
+                Assert.IsNotNull(chrome);
+                Assert.AreEqual(64d, titleBar.ActualHeight, 0.1);
+                Assert.AreEqual(64d, ModernWpf.Controls.TitleBar.GetHeight(window), 0.1);
+                Assert.AreEqual(64d, chrome!.CaptionHeight, 0.1);
+
+                var replacementChrome = new ModernWindowChrome { CaptionHeight = 32d };
+                WindowChrome.SetWindowChrome(window, replacementChrome);
+                WpfTestHost.DoEvents();
+
+                var synchronizedReplacement = WindowChrome.GetWindowChrome(window);
+                Assert.IsNotNull(synchronizedReplacement);
+                Assert.AreSame(replacementChrome, synchronizedReplacement);
+                Assert.AreEqual(64d, synchronizedReplacement!.CaptionHeight, 0.1);
+            }
+            finally
+            {
+                window.Close();
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    [TestMethod]
     public void WindowStyleUsesOfficialWpfFluentResourceSurfaceWithModernWpfChrome()
     {
         WpfTestHost.Run(() =>
@@ -208,6 +291,114 @@ public class WindowVisualStateTests
     }
 
     [TestMethod]
+    public void ExtendedTitleBarInteractiveControlPreservesCaptionAndResizeGrip()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var button = new Button
+            {
+                Content = "Title bar action",
+                Width = 120,
+                Height = 32,
+                Margin = new Thickness(16, 0, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top
+            };
+            WindowChrome.SetIsHitTestVisibleInChrome(button, true);
+
+            var content = new Grid
+            {
+                Children = { button }
+            };
+            var window = new Window
+            {
+                Width = 420,
+                Height = 240,
+                Left = -30000,
+                Top = -30000,
+                Content = content,
+                ResizeMode = ResizeMode.CanResizeWithGrip,
+                ShowInTaskbar = false,
+                WindowStartupLocation = WindowStartupLocation.Manual
+            };
+            ModernWpf.Controls.TitleBar.SetExtendViewIntoTitleBar(window, true);
+            WindowHelper.SetUseModernWindowStyle(window, true);
+
+            try
+            {
+                window.Show();
+                WpfTestHost.DoEvents();
+                window.UpdateLayout();
+                WpfTestHost.DoEvents();
+
+                var titleBar = VisualTreeTestHelper.FindDescendant<TitleBarControl>(window)
+                    ?? throw new AssertFailedException("Expected the modern window title bar.");
+                var handle = new WindowInteropHelper(window).Handle;
+                var buttonCenter = button.PointToScreen(
+                    new Point(button.ActualWidth / 2, button.ActualHeight / 2));
+                var titleBarBottom = titleBar.PointToScreen(
+                    new Point(0, titleBar.ActualHeight)).Y;
+
+                Assert.IsTrue(
+                    buttonCenter.Y < titleBarBottom,
+                    "The test control must overlap the extended title-bar region.");
+                Assert.IsTrue(WindowChrome.GetIsHitTestVisibleInChrome(button));
+
+                var inputHit = window.InputHitTest(window.PointFromScreen(buttonCenter)) as DependencyObject;
+                Assert.IsNotNull(inputHit);
+                Assert.IsTrue(
+                    ReferenceEquals(button, inputHit) || button.IsAncestorOf(inputHit),
+                    $"Expected the extended title-bar button to own the WPF hit target, but found {inputHit!.GetType().Name}.");
+                Assert.AreEqual(
+                    HtClient,
+                    SendMessage(
+                        handle,
+                        WmNcHitTest,
+                        IntPtr.Zero,
+                        PackScreenPoint(
+                            (int)Math.Floor(buttonCenter.X),
+                            (int)Math.Floor(buttonCenter.Y))).ToInt32(),
+                    "An opted-in control in the extended title bar must receive client input.");
+
+                var emptyTitleBarPoint = titleBar.PointToScreen(
+                    new Point(titleBar.ActualWidth / 2, titleBar.ActualHeight / 2));
+                Assert.AreEqual(
+                    HtCaption,
+                    SendMessage(
+                        handle,
+                        WmNcHitTest,
+                        IntPtr.Zero,
+                        PackScreenPoint(
+                            (int)Math.Floor(emptyTitleBarPoint.X),
+                            (int)Math.Floor(emptyTitleBarPoint.Y))).ToInt32(),
+                    "Unmarked title-bar space must remain draggable.");
+
+                var resizeGrip = VisualTreeTestHelper.FindDescendant<ResizeGrip>(window)
+                    ?? throw new AssertFailedException("Expected the modern window resize grip.");
+                var resizeGripPoint = resizeGrip.PointToScreen(
+                    new Point(resizeGrip.ActualWidth / 2, resizeGrip.ActualHeight / 2));
+                Assert.AreEqual(
+                    HtBottomRight,
+                    SendMessage(
+                        handle,
+                        WmNcHitTest,
+                        IntPtr.Zero,
+                        PackScreenPoint(
+                            (int)Math.Floor(resizeGripPoint.X),
+                            (int)Math.Floor(resizeGripPoint.Y))).ToInt32(),
+                    "Opting in one interactive control must not disable the window resize grip.");
+            }
+            finally
+            {
+                window.Close();
+                WpfTestHost.DoEvents();
+            }
+        });
+    }
+
+    [TestMethod]
     public void ContentImmediatelyBelowTitleBarUsesClientHitTesting()
     {
         WpfTestHost.Run(() =>
@@ -306,7 +497,14 @@ public class WindowVisualStateTests
     {
         var repoRoot = FindRepoRoot();
         var stylePath = Path.Combine(repoRoot, "ModernWpf", "Styles", "Window.xaml");
+        var fixerPath = Path.Combine(
+            repoRoot,
+            "ModernWpf",
+            "Controls",
+            "Primitives",
+            "MaximizedWindowFixer.cs");
         var text = File.ReadAllText(stylePath);
+        var fixerText = File.ReadAllText(fixerPath);
 
         Assert.IsTrue(text.Contains("WindowForeground", System.StringComparison.Ordinal));
         Assert.IsTrue(text.Contains("WindowBackground", System.StringComparison.Ordinal));
@@ -320,6 +518,12 @@ public class WindowVisualStateTests
         Assert.IsFalse(text.Contains("MS.Internal", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("Fluent.Controls", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("System.Runtime", System.StringComparison.Ordinal));
+        Assert.IsTrue(fixerText.Contains(
+            "WindowMessage.WM_DWMCOLORIZATIONCOLORCHANGED",
+            System.StringComparison.Ordinal));
+        Assert.IsTrue(fixerText.Contains(
+            "ColorsHelper.Current.RefreshSystemColorValues()",
+            System.StringComparison.Ordinal));
     }
 
     private static Style AssertStyle(object resourceKey)

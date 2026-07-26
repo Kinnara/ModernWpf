@@ -25,6 +25,19 @@ namespace ModernWpf.Controls
             {
                 base.OnMouseWheel(e);
             }
+            else if (ScrollableWidth > 0 && ScrollInfo != null)
+            {
+                if (e.Delta < 0)
+                {
+                    ScrollInfo.MouseWheelRight();
+                }
+                else
+                {
+                    ScrollInfo.MouseWheelLeft();
+                }
+
+                e.Handled = true;
+            }
         }
 
         /*private bool CanScrollVerticallyInDirection(bool inPositiveDirection)

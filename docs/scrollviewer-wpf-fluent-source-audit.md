@@ -34,12 +34,22 @@ source for the stock `System.Windows.Controls.ScrollViewer` default style.
   `ComboBox`, `AutoSuggestBox`, `DatePicker`, and `NumberBox`.
 - `TextControlContentHostStyle` remains based on `DefaultScrollViewerStyle` but
   keeps its WPF text-host presenter-margin and corner-radius support.
+- The separate public `ScrollViewerEx` used by ModernWpf's custom
+  `ListView` / `GridView` family keeps vertical wheel scrolling as the first
+  choice. When there is no vertical extent but horizontal overflow exists, it
+  delegates to WPF `IScrollInfo.MouseWheelLeft` / `MouseWheelRight` so the
+  platform scroll unit and virtualizing-panel behavior remain authoritative.
+  This is a control behavior adaptation and does not alter the stock WPF
+  `ScrollViewer` template.
 
 ## Validation
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\ScrollViewerVisualStateTests.cs`
   covers the official WPF Fluent stock setter surface, template parts, removed
   default-style guesses, and retained ModernWpf text-control host support.
+- `test\ModernWpf.WinUI.Tests\ListView\ListViewApiTests.cs` covers
+  horizontal-only `GridView` overflow responding to mouse-wheel input through
+  its templated `ScrollViewerEx`.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies
   `ModernWpf\Styles\ScrollViewer.xaml` as an official WPF Fluent stock template
   file that should not use `VisualStateEx`.

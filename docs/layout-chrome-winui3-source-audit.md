@@ -62,7 +62,7 @@ layout-chrome patch is justified.
 | Grid removes combined RowSpacing/ColumnSpacing from available definition space, adds spacing to desired size, offsets each cell by index times spacing, and includes spacing within spans. Negative spacing is legal. | GridEx applies source-shaped effective definition sizes and explicit child arrangement for positive/negative gaps. Tests cover Auto/Pixel/Star tracks, row/column gaps, multi-track spans, negative desired size, and definition invalidation. |
 | StackPanel measures all children, counts Spacing only between visible children, arranges collapsed children without advancing visible spacing, and exposes regular/irregular snap points with orientation/alignment rules. | StackPanelEx matches the realized-child measure/arrange and snap-point contracts. Tests cover both orientations, negative spacing, collapsed children, Near/Center/Far points, regular/irregular errors, change notifications, and chrome. |
 | ContentPresenter owns BackgroundSizing, CornerRadius, border/padding chrome, CharacterSpacing, IsTextScaleFactorEnabled, TextWrapping, LineHeight, LineStackingStrategy, and MaxLines forwarding into its generated text child. | ContentPresenterEx owns the WPF-equivalent inherited metadata, pushes representable properties into TextBlock/AccessText, and uses a measured MaxHeight clip for MaxLines. It is now the preferred template text/chrome surface. |
-| ContentControl itself is not the normal chrome renderer; its template generally delegates to ContentPresenter. | ContentControlEx keeps API/template compatibility and transition/alignment forwarding, while migrated templates put rendering/text properties on ContentPresenterEx. |
+| ContentControl itself is not the normal chrome renderer; its template generally delegates to ContentPresenter. ContentTransitions run when content changes. | ContentControlEx keeps API/template compatibility and alignment forwarding while migrated templates put rendering/text properties on ContentPresenterEx. When its existing ContentTransitions collection contains a NavigationThemeTransition, content changes now run that transition's NavigationTransitionInfo through paired current/previous presenters. |
 
 ## WPF Substitutions
 
@@ -80,6 +80,12 @@ layout-chrome patch is justified.
   effective line height and line limit to MaxHeight/clipping. CharacterSpacing
   and per-element WinUI text-scale service behavior remain metadata/API
   compatible where WPF lacks matching glyph-spacing and OS text-scale hooks.
+- WinUI content transitions use native composition and transition storage.
+  ContentControlEx maps the already-shipped NavigationThemeTransition surface
+  to the existing WPF NavigationAnimation engine. A private previous-content
+  presenter retains outgoing content while exit and enter animations run
+  sequentially; SuppressNavigationTransitionInfo and the shared system
+  animation switch retain their existing behavior.
 - WPF has no WinUI IScrollSnapPointsInfo integration in its stock StackPanel.
   StackPanelEx exposes the source-compatible query/events for ModernWpf scroll
   consumers, backed by realized WPF child geometry.
@@ -107,12 +113,14 @@ strict comparisons already pass, including current DropDownButton Light/Dark
 consumer checks complement, but do not replace, the deterministic per-adapter
 geometry/layout tests.
 
-The focused current-source/layout slice passes 56/56. During this refresh, its
+The focused current-source/layout slice passes 57/57. During this refresh, its
 exact 96-DPI elevation regression was found to leave a manually rendered,
 windowless visual connected to WPF's render channel; that contaminated later
 live-window invalidation tests in the same process. The regression now detaches
 that visual after sampling. The paired repro and complete slice pass, including
 dynamic corner-radius clipping, StackPanel orientation/snap notifications, and
-Grid definition invalidation. This is test isolation only, not a product-pixel
-or layout change. Controls continue to build on net462/net8/net10 with zero
-warnings and zero errors.
+Grid definition invalidation. Issue #127 additionally reproduces the former
+ContentControlEx no-op as the absence of an outgoing presenter, then verifies
+outgoing/current ownership, input suppression, transition completion, and
+cleanup for a real NavigationThemeTransition. Controls continue to build on
+net462/net8/net10 with zero warnings and zero errors.

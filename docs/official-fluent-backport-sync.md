@@ -666,13 +666,13 @@ Source inspected:
 | Text-entry context menu | `DefaultControlContextMenu` for `TextBox` / `TextBoxBase`, `DefaultPasswordBoxContextMenu` for `PasswordBox` | `TextControlContextMenu` plus `TextContextMenu.UsingTextContextMenu=True` | Keeps ModernWpf's existing text-control context-menu integration. |
 | Text-entry corner radius property | `Border.CornerRadius` setters and template bindings | `Border.CornerRadius` | Older ModernWpf targets do not expose the official source property on these controls; this preserves the existing backport radius bridge. |
 | `TextBox` clear-button command | `TemplateButtonCommand` | `TextBoxHelper.IsDeleteButton` | Older target frameworks do not expose the official platform command property; the substitution keeps the official button shape and clear behavior. |
-| `TextBox` validation chrome | Official `DefaultTextBoxInvalidationStyle` | Existing `TextControlValidationErrorTemplate` plus `ValidationHelper.IsTemplateValidationAdornerSite` | Keeps ModernWpf's existing validation adorner routing. |
+| `TextBox` validation chrome | Official `DefaultTextBoxInvalidationStyle` | Existing `TextControlValidationErrorTemplate` on the TextBox itself, without internal-site redirection | Retains the existing public error-template resource while restoring standard WPF `Validation.Errors` data-context behavior; the official template's `ContentBorder` fills the TextBox, so chrome bounds are unchanged. |
 | `DataGridTextBoxStyle` | No official `TextBox.xaml` equivalent | Retained as a support style based on `DefaultTextBoxStyle` | Kept as a compatibility resource for callers that reference it directly; the stock DataGrid template no longer wires it through `DataGridHelper`. |
 | `TextBoxTopHeaderMargin` / `PasswordBoxTopHeaderMargin` | No official stock template use | Retained as unused public aliases | Avoids unnecessary resource-surface churn while the official templates no longer consume header presenter resources. |
 
 ### Test Evidence
 
-- `test\ModernWpf.WinUI.Tests\CommonStyles\TextBoxPasswordBoxVisualStateTests.cs` covers the official WPF Fluent TextBox, TextBoxBase, and PasswordBox setter surfaces, template parts, trigger shapes, clear-button substitution, retained `DataGridTextBoxStyle`, and deletion of ModernWpf-specific template guesses.
+- `test\ModernWpf.WinUI.Tests\CommonStyles\TextBoxPasswordBoxVisualStateTests.cs` covers the official WPF Fluent TextBox, TextBoxBase, and PasswordBox setter surfaces, template parts, trigger shapes, clear-button substitution, retained `DataGridTextBoxStyle`, standard custom validation-template error binding, and deletion of ModernWpf-specific template guesses.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `TextBox.xaml` and `PasswordBox.xaml` as official WPF Fluent stock template files that should not use `VisualStateEx`.
 
 ## 2026-05-18 Batch 23
@@ -982,11 +982,13 @@ Source inspected:
 | --- | --- | --- | --- |
 | Whole `Window.xaml` template | Plain content-window style with optional platform backdrop | ModernWpf custom title-bar/window-chrome style | ModernWpf owns `TitleBarControl`, attached title-bar properties, `WindowChrome`, high-contrast caption border, and `WindowHelper.FixMaximizedWindow`; copying the official file wholesale would remove those public shell features. |
 | Official backdrop guards | `MS.Internal.FrameworkAppContextSwitches.DisableFluentThemeWindowBackdrop` and `Standard.Utility.IsOSWindows11OrNewer` triggers | Not copied; ModernWpf uses `WindowBackground` directly | Those guards are tied to .NET WPF Fluent backdrop internals not present in ModernWpf. |
+| Platform-owned active window border | Native non-client chrome follows the Windows colorization preference | ModernWpf's Light/Dark client-drawn `WindowBorder` selects the system accent from DWM `ColorPrevalence`, with the existing `#707070` fallback | The custom chrome paints this border itself, so the existing system-accent palette and window-message hook mirror the platform preference without replacing application resource overrides. |
 | Title-bar back button icon surface | No equivalent in official WPF Fluent `Window.xaml` | `TitleBarBackButtonStyle` still uses `FontIconFallback` | This belongs to ModernWpf's custom title-bar chrome, not the stock content-window presenter slot. |
 
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\WindowVisualStateTests.cs` covers the official `WindowForeground` / `WindowBackground` resource surface, ModernWpf chrome retention, WPF `ContentPresenter` content host, resize grip, and source-shape substitutions.
+- `test\ModernWpf.Theme.Tests\ColorsHelperTests.cs` covers dynamic Light/Dark `WindowBorder` refresh and enabled/disabled system color-prevalence selection.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` no longer classifies `Styles\Window.xaml` as a WinUI presenter template requiring `ContentPresenterEx`.
 
 ## 2026-05-18 Batch 32

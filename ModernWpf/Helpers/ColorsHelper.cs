@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Security;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -20,14 +22,20 @@ namespace ModernWpf
         private const string AccentLight1Key = "SystemAccentColorLight1";
         private const string AccentLight2Key = "SystemAccentColorLight2";
         private const string AccentLight3Key = "SystemAccentColorLight3";
+        internal const string WindowBorderColorKey = "SystemWindowBorderColor";
+
+        private const string DwmRegistryPath = @"Software\Microsoft\Windows\DWM";
+        private const string ColorPrevalenceValueName = "ColorPrevalence";
 
         internal static readonly Color DefaultAccentColor = Color.FromRgb(0x00, 0x78, 0xD7);
+        internal static readonly Color DefaultWindowBorderColor = Color.FromRgb(0x70, 0x70, 0x70);
 
         private readonly ResourceDictionary _colors = new ResourceDictionary();
         private UISettings _uiSettings;
 
         private Color _systemBackground;
         private Color _systemAccent;
+        private bool _useAccentColorForWindowBorders;
 
         private ColorsHelper()
         {
@@ -51,6 +59,8 @@ namespace ModernWpf
 
         public event EventHandler SystemAccentColorChanged;
 
+        internal event EventHandler SystemWindowBorderPreferenceChanged;
+
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void FetchSystemAccentColors()
         {
@@ -71,6 +81,8 @@ namespace ModernWpf
             {
                 SetAccent(DefaultAccentColor);
             }
+
+            UpdateWindowBorderColor();
         }
 
         internal static bool TryApplySystemAccentPalette(
@@ -114,7 +126,32 @@ namespace ModernWpf
             Color color = accent;
             _colors[AccentKey] = color;
             UpdateShades(_colors, color);
+            UpdateWindowBorderColor();
             UpdateSystemAccentResources();
+        }
+
+        internal static Color GetWindowBorderColor(Color systemAccent, bool useAccentColor)
+        {
+            return useAccentColor && IsUsableSystemColor(systemAccent)
+                ? systemAccent
+                : DefaultWindowBorderColor;
+        }
+
+        internal void RefreshSystemColorValues()
+        {
+            if (!SystemColorsSupported)
+            {
+                return;
+            }
+
+            if (Dispatcher.CheckAccess())
+            {
+                UpdateColorValues();
+            }
+            else
+            {
+                Dispatcher.BeginInvoke(UpdateColorValues);
+            }
         }
 
         public static void UpdateShades(ResourceDictionary colors, Color accent)
@@ -245,6 +282,7 @@ namespace ModernWpf
             _systemAccent = IsUsableSystemColor(systemAccent)
                 ? systemAccent
                 : DefaultAccentColor;
+            _useAccentColorForWindowBorders = ReadUseAccentColorForWindowBorders();
             UpdateSystemAppTheme();
         }
 
@@ -257,7 +295,8 @@ namespace ModernWpf
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void OnUserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
         {
-            if (e.Category == UserPreferenceCategory.General)
+            if (e.Category == UserPreferenceCategory.Color ||
+                e.Category == UserPreferenceCategory.General)
             {
                 UpdateColorValues();
             }
@@ -267,18 +306,71 @@ namespace ModernWpf
         private void UpdateColorValues()
         {
             var background = _uiSettings.GetColorValue(UIColorType.Background).ToColor();
-            if (_systemBackground != background)
+            bool systemThemeChanged = _systemBackground != background;
+            bool systemAccentChanged = false;
+            bool windowBorderPreferenceChanged = false;
+
+            if (systemThemeChanged)
             {
                 _systemBackground = background;
                 UpdateSystemAppTheme();
-                SystemThemeChanged?.Invoke(null, EventArgs.Empty);
             }
 
             var accent = _uiSettings.GetColorValue(UIColorType.Accent).ToColor();
             if (IsUsableSystemColor(accent) && _systemAccent != accent)
             {
                 _systemAccent = accent;
+                systemAccentChanged = true;
+            }
+
+            bool useAccentColorForWindowBorders = ReadUseAccentColorForWindowBorders();
+            if (_useAccentColorForWindowBorders != useAccentColorForWindowBorders)
+            {
+                _useAccentColorForWindowBorders = useAccentColorForWindowBorders;
+                windowBorderPreferenceChanged = true;
+            }
+
+            if (systemThemeChanged)
+            {
+                SystemThemeChanged?.Invoke(null, EventArgs.Empty);
+            }
+
+            if (systemAccentChanged)
+            {
                 SystemAccentColorChanged?.Invoke(null, EventArgs.Empty);
+            }
+
+            if (windowBorderPreferenceChanged)
+            {
+                SystemWindowBorderPreferenceChanged?.Invoke(null, EventArgs.Empty);
+            }
+        }
+
+        private void UpdateWindowBorderColor()
+        {
+            _colors[WindowBorderColorKey] = GetWindowBorderColor(
+                _systemAccent,
+                _useAccentColorForWindowBorders);
+        }
+
+        private static bool ReadUseAccentColorForWindowBorders()
+        {
+            try
+            {
+                using var key = Registry.CurrentUser.OpenSubKey(DwmRegistryPath);
+                return key?.GetValue(ColorPrevalenceValueName) is int value && value != 0;
+            }
+            catch (IOException)
+            {
+                return false;
+            }
+            catch (SecurityException)
+            {
+                return false;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return false;
             }
         }
 

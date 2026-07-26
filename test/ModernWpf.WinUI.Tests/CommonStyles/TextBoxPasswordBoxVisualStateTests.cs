@@ -110,6 +110,69 @@ public class TextBoxPasswordBoxVisualStateTests
     }
 
     [TestMethod]
+    public void CustomTextBoxValidationErrorTemplateReceivesTextBoxErrors()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var errorTemplate = CreateValidationErrorsTemplate();
+            var model = new RequiredTextModel();
+            var textBox = new TextBox
+            {
+                DataContext = model,
+                Width = 240
+            };
+            textBox.Resources["TextControlValidationErrorTemplate"] = errorTemplate;
+            textBox.SetBinding(
+                TextBox.TextProperty,
+                new Binding(nameof(RequiredTextModel.Value))
+                {
+                    Mode = BindingMode.TwoWay,
+                    UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                    ValidatesOnDataErrors = true
+                });
+            WpfTestHost.DoEvents();
+
+            Assert.IsTrue(
+                Validation.GetHasError(textBox),
+                "The binding must be invalid before the TextBox template is applied.");
+
+            using var host = new TestWindowHost(textBox, width: 320, height: 160);
+            host.UpdateLayout();
+            WpfTestHost.DoEvents();
+
+            var contentBorder = GetTemplateChild<Border>(textBox, "ContentBorder");
+            var adornerLayer = AdornerLayer.GetAdornerLayer(textBox)
+                ?? throw new AssertFailedException("Expected the hosted TextBox to have an AdornerLayer.");
+            var adorners = (adornerLayer.GetAdorners(textBox) ?? System.Array.Empty<Adorner>())
+                .Concat(adornerLayer.GetAdorners(contentBorder) ?? System.Array.Empty<Adorner>())
+                .ToArray();
+            var errorAdorner = adorners
+                .SingleOrDefault(
+                    adorner => VisualTreeTestHelper.FindDescendant<ItemsControl>(adorner) != null)
+                ?? throw new AssertFailedException("Expected the custom validation error template to be displayed.");
+            var validationErrors = VisualTreeTestHelper.FindDescendant<ItemsControl>(errorAdorner)
+                ?? throw new AssertFailedException("Expected the custom validation error template to contain its ItemsControl.");
+
+            Assert.AreSame(errorTemplate, Validation.GetErrorTemplate(textBox));
+            Assert.AreSame(
+                textBox,
+                errorAdorner.AdornedElement,
+                "The standard WPF validation adorner must read errors from the TextBox that owns them.");
+            Assert.AreEqual(
+                textBox.RenderSize,
+                contentBorder.RenderSize,
+                "Adorning the TextBox must retain the same validation-chrome bounds as its full-size ContentBorder.");
+            Assert.AreEqual(1, validationErrors.Items.Count);
+            Assert.IsInstanceOfType(validationErrors.Items[0], typeof(ValidationError));
+            Assert.AreEqual(
+                "Value is required.",
+                ((ValidationError)validationErrors.Items[0]).ErrorContent);
+        });
+    }
+
+    [TestMethod]
     public void DefaultTextBoxBaseStyleUsesOfficialWpfFluentTemplateShape()
     {
         WpfTestHost.Run(() =>
@@ -235,6 +298,7 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.IsFalse(text.Contains("TemplateButtonCommand", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("ControlHelper.CornerRadius", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("DefaultControlContextMenu", System.StringComparison.Ordinal));
+        Assert.IsFalse(text.Contains("ValidationHelper.IsTemplateValidationAdornerSite", System.StringComparison.Ordinal));
     }
 
     [TestMethod]
@@ -436,7 +500,7 @@ public class TextBoxPasswordBoxVisualStateTests
         Assert.AreEqual(textBox.BorderThickness, contentBorder.BorderThickness);
         Assert.AreEqual(textBox.MinHeight, contentBorder.MinHeight);
         Assert.AreEqual(((CornerRadius)textBox.GetValue(System.Windows.Controls.Border.CornerRadiusProperty)), contentBorder.CornerRadius);
-        Assert.IsTrue(ValidationHelper.GetIsTemplateValidationAdornerSite(contentBorder));
+        Assert.IsFalse(ValidationHelper.GetIsTemplateValidationAdornerSite(contentBorder));
 
         Assert.AreEqual(textBox.BorderThickness, contentHost.Margin);
         Assert.AreEqual(textBox.Padding, contentHost.Padding);
@@ -726,6 +790,28 @@ public class TextBoxPasswordBoxVisualStateTests
     {
         return (adornerLayer.GetAdorners(textBox)?.Length ?? 0)
             + (adornerLayer.GetAdorners(contentBorder)?.Length ?? 0);
+    }
+
+    private static ControlTemplate CreateValidationErrorsTemplate()
+    {
+        const string xaml = """
+            <ControlTemplate
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                <StackPanel>
+                    <AdornedElementPlaceholder />
+                    <ItemsControl ItemsSource="{Binding}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ErrorContent}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ControlTemplate>
+            """;
+
+        return (ControlTemplate)XamlReader.Parse(xaml);
     }
 
     private static string FindRepoRoot()

@@ -5,6 +5,7 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
@@ -85,6 +86,52 @@ public class ListViewApiTests
                 Assert.AreEqual(PanningMode.Both, scrollViewer.PanningMode);
                 Assert.IsTrue(scrollViewer.IsManipulationEnabled);
             }
+        });
+    }
+
+    [TestMethod]
+    public void GridViewMouseWheelScrollsHorizontalOverflow()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var gridView = new MuxGridView
+            {
+                ItemsPanel = (ItemsPanelTemplate)XamlReader.Parse(
+                    """
+                    <ItemsPanelTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+                        <StackPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                    """)
+            };
+            ScrollViewer.SetHorizontalScrollBarVisibility(gridView, ScrollBarVisibility.Visible);
+            ScrollViewer.SetVerticalScrollBarVisibility(gridView, ScrollBarVisibility.Disabled);
+
+            for (int index = 0; index < 4; index++)
+            {
+                gridView.Items.Add(new Border { Width = 120, Height = 60 });
+            }
+
+            using var host = new TestWindowHost(gridView, width: 180, height: 120);
+            host.UpdateLayout();
+
+            var scrollViewer = FindTemplateChild<ModernWpf.Controls.ScrollViewerEx>(gridView, "ScrollViewer");
+            Assert.IsTrue(scrollViewer.ScrollableWidth > 0, "The GridView must have horizontal overflow.");
+            Assert.AreEqual(0, scrollViewer.ScrollableHeight, 0.01, "The regression requires no vertical extent.");
+
+            var args = new MouseWheelEventArgs(Mouse.PrimaryDevice, Environment.TickCount, -120)
+            {
+                RoutedEvent = UIElement.MouseWheelEvent,
+                Source = scrollViewer
+            };
+
+            scrollViewer.RaiseEvent(args);
+            host.UpdateLayout();
+
+            Assert.IsTrue(args.Handled, "The horizontal-only ScrollViewerEx should consume the wheel event.");
+            Assert.IsTrue(scrollViewer.HorizontalOffset > 0, "The mouse wheel should move horizontal overflow.");
+            Assert.AreEqual(0, scrollViewer.VerticalOffset, 0.01);
         });
     }
 

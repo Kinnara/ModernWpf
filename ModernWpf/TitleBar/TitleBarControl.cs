@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Automation.Peers;
@@ -26,6 +27,9 @@ namespace ModernWpf.Controls.Primitives
         private const string MaximizeRestoreButtonName = "PART_MaximizeRestoreButton";
         private const string LeftSystemOverlayName = "PART_LeftSystemOverlay";
         private const string RightSystemOverlayName = "PART_RightSystemOverlay";
+
+        private static readonly DependencyPropertyDescriptor WindowChromePropertyDescriptor =
+            DependencyPropertyDescriptor.FromProperty(WindowChrome.WindowChromeProperty, typeof(Window));
 
         private Window _parentWindow;
         private HwndSource _parentHwndSource;
@@ -407,6 +411,10 @@ namespace ModernWpf.Controls.Primitives
         {
             if (_parentWindow != null)
             {
+                WindowChromePropertyDescriptor.RemoveValueChanged(
+                    _parentWindow,
+                    OnWindowChromeChanged);
+
                 if (_altLeftBinding != null)
                 {
                     _parentWindow.InputBindings.Remove(_altLeftBinding);
@@ -420,6 +428,8 @@ namespace ModernWpf.Controls.Primitives
 
             if (_parentWindow != null)
             {
+                UpdateWindowChromeCaptionHeight();
+
                 _altLeftBinding = new KeyBinding(new GoBackCommand(this), Key.Left, ModifierKeys.Alt);
                 _parentWindow.InputBindings.Add(_altLeftBinding);
             }
@@ -432,6 +442,40 @@ namespace ModernWpf.Controls.Primitives
             if (TemplatedParent is Window window)
             {
                 TitleBar.SetHeight(window, sizeInfo.NewSize.Height);
+                UpdateWindowChromeCaptionHeight();
+            }
+        }
+
+        private void OnWindowChromeChanged(object sender, EventArgs e)
+        {
+            Dispatcher.BeginInvoke(new Action(UpdateWindowChromeCaptionHeight));
+        }
+
+        private void UpdateWindowChromeCaptionHeight()
+        {
+            if (_parentWindow != null &&
+                WindowChrome.GetWindowChrome(_parentWindow) is { } chrome)
+            {
+                double height = TitleBar.GetHeight(_parentWindow);
+                if (chrome.CaptionHeight != height)
+                {
+                    var valueSource = DependencyPropertyHelper.GetValueSource(
+                        _parentWindow,
+                        WindowChrome.WindowChromeProperty);
+                    if (valueSource.BaseValueSource == BaseValueSource.Local &&
+                        !valueSource.IsExpression)
+                    {
+                        chrome.CaptionHeight = height;
+                    }
+                    else
+                    {
+                        var updatedChrome = (WindowChrome)chrome.CloneCurrentValue();
+                        updatedChrome.CaptionHeight = height;
+                        _parentWindow.SetCurrentValue(
+                            WindowChrome.WindowChromeProperty,
+                            updatedChrome);
+                    }
+                }
             }
         }
 
@@ -441,6 +485,14 @@ namespace ModernWpf.Controls.Primitives
             {
                 return;
             }
+
+            WindowChromePropertyDescriptor.RemoveValueChanged(
+                _parentWindow,
+                OnWindowChromeChanged);
+            WindowChromePropertyDescriptor.AddValueChanged(
+                _parentWindow,
+                OnWindowChromeChanged);
+            UpdateWindowChromeCaptionHeight();
 
             var hwndSource = PresentationSource.FromVisual(this) as HwndSource;
             if (!ReferenceEquals(hwndSource, _parentHwndSource))
@@ -453,6 +505,13 @@ namespace ModernWpf.Controls.Primitives
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
+            if (_parentWindow != null)
+            {
+                WindowChromePropertyDescriptor.RemoveValueChanged(
+                    _parentWindow,
+                    OnWindowChromeChanged);
+            }
+
             RemoveWindowHook();
         }
 

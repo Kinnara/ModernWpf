@@ -832,6 +832,7 @@ namespace ModernWpf
 
                 ColorsHelper.Current.SystemThemeChanged += OnSystemThemeChanged;
                 ColorsHelper.Current.SystemAccentColorChanged += OnSystemAccentColorChanged;
+                ColorsHelper.Current.SystemWindowBorderPreferenceChanged += OnSystemWindowBorderPreferenceChanged;
                 appResources.MergedDictionaries.Insert(0, ColorsHelper.Current.Colors);
 
                 UpdateActualAccentColor();
@@ -861,6 +862,15 @@ namespace ModernWpf
             {
                 UpdateActualAccentColor();
             }
+            else
+            {
+                RunOnMainThread(ApplyAccentColor);
+            }
+        }
+
+        private void OnSystemWindowBorderPreferenceChanged(object sender, EventArgs e)
+        {
+            RunOnMainThread(ApplyAccentColor);
         }
 
         private void OnSystemParametersChanged(object sender, PropertyChangedEventArgs e)

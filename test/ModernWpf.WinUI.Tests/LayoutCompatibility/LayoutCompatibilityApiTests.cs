@@ -3465,6 +3465,56 @@ public class LayoutCompatibilityApiTests
     }
 
     [TestMethod]
+    public void ContentControlExRunsNavigationThemeTransitionWhenContentChanges()
+    {
+        WpfTestHost.Run(() =>
+        {
+            if (!ModernWpf.Helper.IsAnimationsEnabled)
+            {
+                Assert.Inconclusive("Content transitions follow the shared animation-enabled switch.");
+            }
+
+            var previousContent = new Border { Width = 40, Height = 20 };
+            var currentContent = new Border { Width = 50, Height = 30 };
+            var transitions = new ModernWpf.Media.Animation.TransitionCollection
+            {
+                new ModernWpf.Media.Animation.NavigationThemeTransition
+                {
+                    DefaultNavigationTransitionInfo =
+                        new ModernWpf.Media.Animation.SlideNavigationTransitionInfo()
+                }
+            };
+            var control = new ModernContentControlEx
+            {
+                Content = previousContent,
+                ContentTransitions = transitions
+            };
+
+            using var host = new TestWindowHost(control, width: 140, height: 100);
+            var currentPresenter = FindTemplateChild<ContentPresenterEx>(control, "PART_ContentPresenter");
+            var previousPresenter = FindTemplateChild<ContentPresenterEx>(control, "PART_PreviousContentPresenter");
+
+            Assert.AreEqual(Visibility.Collapsed, previousPresenter.Visibility);
+
+            control.Content = currentContent;
+
+            Assert.AreSame(previousContent, previousPresenter.Content);
+            Assert.AreEqual(Visibility.Visible, previousPresenter.Visibility);
+            Assert.AreEqual(0, currentPresenter.Opacity);
+            Assert.IsFalse(previousPresenter.IsHitTestVisible);
+            Assert.IsFalse(currentPresenter.IsHitTestVisible);
+
+            WaitForDispatcherDelay(700);
+
+            Assert.IsNull(previousPresenter.Content);
+            Assert.AreEqual(Visibility.Collapsed, previousPresenter.Visibility);
+            Assert.AreSame(currentContent, currentPresenter.Content);
+            Assert.AreEqual(1, currentPresenter.Opacity);
+            Assert.IsTrue(currentPresenter.IsHitTestVisible);
+        });
+    }
+
+    [TestMethod]
     public void ContentControlExExposesWinUIContentTemplateRoot()
     {
         WpfTestHost.Run(() =>

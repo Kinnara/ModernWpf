@@ -629,7 +629,7 @@ namespace ModernWpf.Controls
                     {
                         m_itemTemplateWrapper = new ItemTemplateWrapper(selector);
                     }
-                    else
+                    else if (newValue != null)
                     {
                         throw new ArgumentException(nameof(newValue), "ItemTemplate");
                     }

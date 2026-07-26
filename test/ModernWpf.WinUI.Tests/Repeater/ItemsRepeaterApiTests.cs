@@ -1,10 +1,12 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls;
+using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
 namespace ModernWpf.WinUI.Tests.Repeater;
@@ -131,6 +133,71 @@ public class ItemsRepeaterApiTests
         });
     }
 
+    [TestMethod]
+    public void ResourceBackedItemTemplateSurvivesOuterListViewItemReplacement()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var repeaterTemplate = (DataTemplate)XamlReader.Parse(
+                @"<DataTemplate
+                      xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
+                      xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
+                      xmlns:ui='clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls'>
+                      <StackPanel>
+                          <StackPanel.Resources>
+                              <DataTemplate x:Key='ItemsTemplate'>
+                                  <TextBlock Text='{Binding}' />
+                              </DataTemplate>
+                          </StackPanel.Resources>
+                          <ui:ItemsRepeater
+                              ItemTemplate='{StaticResource ItemsTemplate}'
+                              ItemsSource='{Binding Values}' />
+                      </StackPanel>
+                  </DataTemplate>");
+            var plainTemplate = (DataTemplate)XamlReader.Parse(
+                @"<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>
+                      <TextBlock Text='Equal' />
+                  </DataTemplate>");
+            var items = new ObservableCollection<object>
+            {
+                new object(),
+                new RepeaterValuesItem()
+            };
+            var listView = new System.Windows.Controls.ListView
+            {
+                ItemsSource = items,
+                ItemTemplateSelector = new RepeaterItemTemplateSelector
+                {
+                    PlainTemplate = plainTemplate,
+                    RepeaterTemplate = repeaterTemplate
+                }
+            };
+
+            using var host = new TestWindowHost(listView, width: 400, height: 200);
+            host.UpdateLayout();
+
+            var nestedRepeater = VisualTreeTestHelper
+                .EnumerateDescendants(listView)
+                .OfType<ItemsRepeater>()
+                .Single();
+            Assert.IsInstanceOfType<DataTemplate>(nestedRepeater.ItemTemplate);
+            Assert.IsNotNull(nestedRepeater.ItemTemplateShim);
+
+            items[1] = new object();
+            WpfTestHost.DoEvents();
+            host.UpdateLayout();
+
+            Assert.AreEqual(2, listView.Items.Count);
+            Assert.IsNotNull(listView.ItemContainerGenerator.ContainerFromIndex(1));
+            Assert.IsNull(nestedRepeater.ItemTemplate);
+            Assert.IsNull(nestedRepeater.ItemTemplateShim);
+            Assert.IsFalse(VisualTreeTestHelper
+                .EnumerateDescendants(listView)
+                .OfType<ItemsRepeater>()
+                .Any());
+        });
+    }
+
     private static TestWindowHost CreateScrollHost(ItemsRepeater repeater)
     {
         var scrollViewer = new ScrollViewer
@@ -150,5 +217,22 @@ public class ItemsRepeaterApiTests
             @"<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>
                   <TextBlock Text='{Binding}' Height='50' />
               </DataTemplate>");
+    }
+
+    private sealed class RepeaterValuesItem
+    {
+        public ObservableCollection<string> Values { get; } = new() { "one", "two" };
+    }
+
+    private sealed class RepeaterItemTemplateSelector : DataTemplateSelector
+    {
+        public DataTemplate? PlainTemplate { get; init; }
+
+        public DataTemplate? RepeaterTemplate { get; init; }
+
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            return item is RepeaterValuesItem ? RepeaterTemplate! : PlainTemplate!;
+        }
     }
 }

@@ -66,8 +66,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding Border.CornerRadius}"
-                            primitives:ValidationHelper.IsTemplateValidationAdornerSite="True" />
+                            CornerRadius="{TemplateBinding Border.CornerRadius}" />
 
                         <ScrollViewer
                             x:Name="PART_ContentHost"
@@ -158,8 +157,7 @@
                 BorderBrush="{TemplateBinding BorderBrush}"
                 BorderThickness="{TemplateBinding BorderThickness}"
                 MinHeight="{TemplateBinding MinHeight}"
-                CornerRadius="{TemplateBinding Border.CornerRadius}"
-                primitives:ValidationHelper.IsTemplateValidationAdornerSite="True" />
+                CornerRadius="{TemplateBinding Border.CornerRadius}" />
 
             <ScrollViewer
                     x:Name="PART_ContentHost"

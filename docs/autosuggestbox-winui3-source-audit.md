@@ -96,6 +96,9 @@ The current page retains two examples:
 - Up/Down previews suggestions while retaining/restoring user text; Tab,
   Escape, Enter, query-button Invoke, suggestion choice, and programmatic submit
   preserve source ordering and chosen-suggestion semantics.
+- Suggestion selection applies the default selected-item text before raising
+  `SuggestionChosen`, so an event handler can replace `Text` with an
+  application-specific value without the control overwriting it afterward.
 - Suggestion item input raises ItemClick first and then applies primary or
   secondary selection behavior across WPF Single, Multiple, and Extended
   modes, matching the relevant ListViewBase source ordering.
@@ -143,7 +146,8 @@ The current page retains two examples:
   ItemClick-before-selection ordering, WPF selection modes, query-button state
   setters, popup shadow/insets, and corner filtering.
 - `AutoSuggestBoxInteractionTests` covers choosing a suggestion by keyboard,
-  Escape restoration, and query-button submission behavior.
+  preserving handler-assigned text after `SuggestionChosen`, Escape
+  restoration, and query-button submission behavior.
 - `GalleryAutomationHookTests` pins the two current examples, headers/source,
   names/IDs, cat filtering and chosen output, search suggestions, query/details
   behavior, and current catalog integration.
@@ -175,7 +179,7 @@ state, geometry, layout, resources, and static accessibility match.
 
 ## Verification
 
-- The refreshed AutoSuggestBox product/source slice passes 12/12 on
+- The refreshed AutoSuggestBox product/source slice passes 13/13 on
   `net8.0-windows7.0`.
 - Focused Gallery runtime/source/interaction-shape tests pass 4/4 on both
   `net8.0-windows7.0` and `net10.0-windows7.0`.

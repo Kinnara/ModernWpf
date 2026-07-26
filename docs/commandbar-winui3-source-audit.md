@@ -43,6 +43,7 @@ no later CommandBar change.
 | `IsSticky` defaults to false and suppresses light dismiss and Escape dismissal while set. | Public generated `IsSticky` dependency property; a stable WPF popup plus explicit process-input light dismiss closes only non-sticky bars on outside pointer input. Escape is handled for both states, closes only when non-sticky, and restores focus to More. |
 | Overflow is aligned to the command-bar right edge and flips from below when required. | The persistent WPF popup anchors to template `ContentRoot`, uses `BottomEdgeAlignedRight`, and refreshes its native placement after disconnected bitmap rendering. The outer popup HWND aligns to the command-bar edge. |
 | More and programmatic/external open paths leave the overflow open. | `StaysOpen=true` avoids WPF's incompatible mouse-capture race; ModernWpf owns WinUI light-dismiss semantics instead. This supports current Gallery ordering `IsOpen=true` then `IsSticky=true`. |
+| The current source template hard-codes the More button's `FontIcon` glyph to `E712` and exposes no CLR icon property. | The default geometry remains source-equivalent, while the WPF resource system exposes it as the public `CommandBarMoreButtonIconData` key. A `StreamGeometry` with that key in an individual CommandBar's resources replaces the glyph without retemplating the control or changing its CLR API. |
 | Source overflow item exposes label, icon, and keyboard accelerator in a 32-DIP row. | `AppBarButton` overflow states expose Settings and `Ctrl+I`; UIA reports Button / Invoke and exact `167x32` current-Gallery geometry. |
 | `ICommandBarElement.DynamicOverflowOrder` and `CommandBar::FindMovablePrimaryCommandsFromOrderSet` move complete positive order groups lowest-first with adjacent separators, then use right-to-left order-zero fallback. `DynamicOverflowItemsChanging` fires before the transition with Adding/Removing action. | Matched. All four AppBar element types own the shared public dependency property; order changes immediately reflow from the original collections. The pre-transition event compares the previous/current moved-primary sets exactly like source, so new members report Adding and pure restoration reports Removing. |
 | Source shadow wrapper surrounds the overflow presenter. | `OverflowContentRoot` owns `SecondaryItemsControlShadowWrapper`; `ThemeShadowChrome` uses depth 32 and medium windowed-popup inset mode. |
@@ -82,12 +83,30 @@ bounds.
 - WPF has no WinUI gamepad/remote input-device service or `Popup.ActualPlacement`;
   touch/default input and measured screen placement are the documented
   substitutions.
+- Issue #262 requests More-button icon customization. Current WinUI does not
+  expose an icon property, so ModernWpf keeps the current CLR shape and uses a
+  WPF-specific resource adaptation instead. `CommandBarMoreButtonIconData` is
+  a public `Geometry` resource consumed through `DynamicResource`; its default
+  value is the unchanged source ellipsis outline.
 - ModernWpf cannot inherit the platform-only WinUI `AppBar` base. It now ports
   the feasible inherited open/sticky lifecycle and automation surface directly;
   `ClosedDisplayMode`, `LightDismissOverlayMode`, and AppBar template settings
   remain outside this CommandBar's WPF-shaped public surface because its closed
   layout and light-dismiss policy are owned directly by the CommandBar template
   and popup.
+
+An individual CommandBar can replace the More-button outline without copying
+the control template:
+
+```xaml
+<controls:CommandBar>
+    <controls:CommandBar.Resources>
+        <StreamGeometry x:Key="CommandBarMoreButtonIconData">
+            M 4,7 L 16,7 10,13 Z
+        </StreamGeometry>
+    </controls:CommandBar.Resources>
+</controls:CommandBar>
+```
 
 ## Validation
 
@@ -110,6 +129,11 @@ recordings pass. Both detect the expected Settings surface on two opens and
 produce dense-transition review sheets; maximum frame/local deltas are
 `0.524` / `54.178` and `0.098` / `10.513`.
 
-Product coverage passes 43/43. The current Gallery sample/source/visual-gate
+Product coverage passes 44/44. The current Gallery sample/source/visual-gate
 slice passes 3/3 on net8 and net10, the visual-check PowerShell parses, and
 Controls/Gallery build on net462, net8, and net10 with zero errors.
+
+`CommandBarMoreButtonIconDataCanBeOverriddenPerInstance` verifies both the
+default resource identity and a live per-CommandBar geometry replacement. The
+resource is listed in `PublicResourceKeys.Unshipped.txt`, so it enters the 1.x
+forward-compatibility contract when shipped.

@@ -111,6 +111,19 @@ WinUI API name was added. Its attached window state, icon handling, title
 content, back/pane buttons, and WPF `WindowChrome` integration remain native to
 WPF.
 
+The retained shell's public `TitleBar.HeightKey` is a WPF-specific
+customization point. A window-scoped override now drives the rendered
+`TitleBarControl`, read-only `TitleBar.Height`, and
+`WindowChrome.CaptionHeight` together, including runtime resource changes and
+chrome replacement. Native `WM_NCHITTEST` coverage verifies that the region
+below the former 32-DIP boundary remains draggable at a larger custom height.
+
+`TitleBarButton` also retains normal WPF content-font inheritance. Its built-in
+caption and back icons use `StreamGeometry` through `FontIconFallback`, so the
+old control-wide `SymbolThemeFontFamily` setter is neither needed for those
+icons nor appropriate for arbitrary content. A nested `TextBlock` now inherits
+the host font unless the application explicitly gives it another font.
+
 `ModernWpf.Gallery\Pages\WindowingSampleFactory.cs` now mirrors all three
 current Gallery examples. The configuration code and visible preview use the
 stretch resource, `MaxWidth="580"`, and `Search...`. The new drag-region window

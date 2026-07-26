@@ -116,6 +116,7 @@ API controls are covered by the focused Gallery regression.
 | Current `NavigationView` defers `SplitView.DisplayMode` changes made by `OnApplyTemplate` until `Loaded`, using `m_fromOnApplyTemplate` and `m_updateVisualStateForDisplayModeFromOnLoaded`. | ModernWpf now ports both lifecycle guards. WPF can apply an offscreen control's template after it is already loaded, so that path queues the same completion at `DispatcherPriority.Loaded`. `UpdateIsClosedCompact` also synchronizes `PaneStateListSizeGroup` with the authoritative SplitView state when WPF reaches a closed/open value without the WinUI pane lifecycle event. This prevents `ClosedCompact` from coexisting with stale `ListSizeFull`. |
 | The WinUI Gallery default example is `nvSample5`, 745x460, with `Sample Page 1`, four symbol items, a source `BodyTextBlockStyle` paragraph, and selection-driven `Sample Page N` headers. | The generated Gallery sample preserves the exact host size, symbols/tags, source body style and foreground, and selection behavior. A one-physical-pixel WPF text-origin adapter aligns the source paragraph, header, and content offsets without changing tile geometry or hit targets. |
 | The current Gallery exposes eight independently rendered NavigationViews. At the reference viewport the first five are 745x460, footer is 592x460, hierarchy is 565x460, and API is 458x540. Data binding and hierarchy initially show `Sample Page 1`; API starts with an empty Frame and a normal-text `Pane Title`. | All eight controls now have stable `GallerySample_NavigationView_*` artifact IDs and exact reference widths. The option-bearing samples no longer arrange at 745 DIPs and get clipped by narrower columns. Data binding/hierarchy restore their source initial headers, API uses a genuinely empty Frame until selection, and `PaneTitleTextBlock` explicitly uses `ContentControlThemeFontFamily` instead of inheriting the toggle button's symbol font. |
+| `UpdateBackAndCloseButtonsVisibility` reads the back and close template-part dimensions into header padding, and the WinUI template supplies concrete dimensions. | WPF represents an Auto `Width` or `Height` as `NaN`. The port uses the template part's finite `ActualWidth` or `ActualHeight` when a custom template or resource teardown returns a dimension to Auto, preventing `GridLength(NaN)` while preserving measured button spacing. |
 | Source automation exposes the root selection provider and selected container providers. | `NavigationViewAutomationPeer` remains public and source-shaped; product tests cover provider defaults, empty selection, selected providers, item automation, expand/collapse, and pane behavior. |
 | Source applies a depth-16 compositor `ThemeShadow` to `ShadowCaster`. | `ThemeShadowChrome.Depth=16` is the documented software-rendered WPF substitute and retains the source state targets and width binding. |
 
@@ -151,6 +152,15 @@ API controls are covered by the focused Gallery regression.
   keeps an explicitly closed initial pane closed regardless of whether
   `IsPaneOpen` appears before or after `PaneDisplayMode`, while runtime display
   mode changes retain the source automatic open/close behavior.
+- WPF uses `NaN` to represent Auto template-part dimensions. Back and close
+  button padding therefore falls back to the measured dimension when the
+  specified dimension is Auto, including while dynamic resources are being
+  torn down.
+- WinUI's main content presenter explicitly template-binds only `Content`.
+  WPF does not infer the remaining inherited content aliases from that binding,
+  so the WPF presenter uses `ContentSource="Content"` to forward `Content`,
+  `ContentTemplate`, `ContentTemplateSelector`, and `ContentStringFormat`
+  together while retaining the source presenter shape.
 - WinUI `ItemsRepeater`, `SplitView`, `Flyout`, popup/XamlRoot services, focus
   movement, top overflow measurement, gamepad/access-key paths, composition
   animations, x:Bind phases, and recycle metadata use the existing documented
@@ -234,8 +244,19 @@ API controls are covered by the focused Gallery regression.
   covers issue #319 with header, footer, 24 top items, overflow, an idle-layout
   bound, and 768-to-1200-to-640 resize recovery. It also verifies that both the
   primary scroll host and top grid remain inside the NavigationView width.
-- NavigationView product/source-audit tests pass 60/60; SplitView product tests
-  pass 14/14; the focused Gallery sample/source-shape slice passes 7/7 on net8
+- `MenuItemTemplateSelectorWithMoreThanFourItemsRemainsBounded` covers issue
+  #111 with eight source items and a selector whose template root is a
+  `NavigationViewItem`. Left and Top navigation both realize and map every
+  item, stay within a bounded initial selector-call budget, and make no further
+  selector calls across five dispatcher and layout passes. This confirms that
+  the selector loop reported against 0.9 is resolved on the active 1.x
+  repeater implementation.
+- `NavigationViewContentTemplateIsAppliedToMainContent` covers issue #96 by
+  applying a custom `DataTemplate` to the inherited `ContentTemplate`
+  property, verifying that the main presenter receives that exact template,
+  and verifying the template's bound visual content.
+- NavigationView product/source-audit tests pass 63/63; SplitView product tests
+  pass 14/14; the focused Gallery sample/source-shape slice passes 8/8 on net8
   and net10. Gallery builds successfully on net462, net8, and net10 with zero
   errors; current target builds retain existing unrelated warnings.
 
