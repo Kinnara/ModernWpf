@@ -206,6 +206,38 @@ public class TitleBarApiTests
     }
 
     [TestMethod]
+    public void TitleBarButtonTextContentInheritsHostFontFamily()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var expectedFontFamily = new FontFamily("Segoe UI");
+            var textBlock = new TextBlock
+            {
+                FontSize = 10,
+                FontWeight = FontWeights.Bold,
+                Text = "aaaaaaaaa"
+            };
+            var titleBarButton = new TitleBarButton
+            {
+                Content = textBlock
+            };
+            var hostContent = new ContentControl
+            {
+                Content = titleBarButton,
+                FontFamily = expectedFontFamily
+            };
+
+            using var host = new TestWindowHost(hostContent, width: 320, height: 160);
+            host.UpdateLayout();
+
+            Assert.AreEqual(expectedFontFamily.Source, titleBarButton.FontFamily.Source);
+            Assert.AreEqual(expectedFontFamily.Source, textBlock.FontFamily.Source);
+        });
+    }
+
+    [TestMethod]
     public void ModernWindowMinimizeButtonHonorsNativeWindowStyle()
     {
         WpfTestHost.Run(() =>
