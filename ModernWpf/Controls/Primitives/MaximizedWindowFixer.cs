@@ -119,6 +119,7 @@ namespace ModernWpf.Controls.Primitives
             _hwndSource = HwndSource.FromHwnd(_hwnd);
             _hwndSource.AddHook(new HwndSourceHook(WindowFilterMessage));
 
+            ModernWpf.ColorsHelper.Current.RefreshSystemColorValues();
             UpdateWindowPadding();
         }
 
@@ -148,8 +149,12 @@ namespace ModernWpf.Controls.Primitives
             switch (message)
             {
                 case WindowMessage.WM_SETTINGCHANGE:
+                    ModernWpf.ColorsHelper.Current.RefreshSystemColorValues();
                     InvalidateMaximizedWindowBorder();
                     UpdateWindowPadding();
+                    break;
+                case WindowMessage.WM_DWMCOLORIZATIONCOLORCHANGED:
+                    ModernWpf.ColorsHelper.Current.RefreshSystemColorValues();
                     break;
                 case WindowMessage.WM_WINDOWPOSCHANGING:
                     OnWindowPosChanging(lParam);
@@ -357,6 +362,7 @@ namespace ModernWpf.Controls.Primitives
             WM_SETTINGCHANGE = 0x001A,
             WM_WINDOWPOSCHANGING = 0x0046,
             WM_WINDOWPOSCHANGED = 0x0047,
+            WM_DWMCOLORIZATIONCOLORCHANGED = 0x0320,
         }
 
         internal enum ABEdge

@@ -13,6 +13,8 @@ shell pieces as documented WPF substitutions.
 - `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\Dark.xaml`
 - `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Resources\Theme\HC.xaml`
 - [Microsoft WPF Gallery `MainWindow.xaml.cs`](https://github.com/microsoft/WPF-Samples/blob/30ee5948dd92d2a81ef6a54d25b1b921463da107/Sample%20Applications/WPFGallery/MainWindow.xaml.cs)
+- [DWM colorization overview](https://learn.microsoft.com/windows/win32/dwm/composition-ovw)
+- [Windows accent-color system information](https://learn.microsoft.com/openspecs/windows_protocols/ms-rdperp/bc6975ee-c630-4414-ba10-04eecbb6fccc)
 
 ## ModernWpf Files
 
@@ -70,6 +72,12 @@ ModernWpf now follows the compatible parts of that source shape:
   `ABS_AUTOHIDE` flag instead of treating `ABS_ALWAYSONTOP` as auto-hide.
 - `WindowStyle=None` suppresses the ModernWpf title bar, detaches the custom
   `WindowChrome`, and lets content fill the captionless client area.
+- The default Light/Dark `WindowBorder` follows the current per-user DWM
+  `ColorPrevalence` preference: it uses the system accent color while Windows'
+  "show accent color on title bars and window borders" option is enabled and
+  retains `#707070` while disabled. The built-in maximized-window hook refreshes
+  the value on Windows setting and DWM colorization messages. Application- and
+  window-scoped `WindowBorder` overrides still take precedence.
 
 ## WPF Substitutions
 
@@ -80,6 +88,7 @@ ModernWpf now follows the compatible parts of that source shape:
 | Plain `AdornerDecorator` / `ContentPresenter` content host | Same plain WPF `ContentPresenter` inside ModernWpf's title-bar grid | The content presenter is source-compatible while the surrounding custom chrome remains ModernWpf-owned. |
 | Stock `WindowTemplateKey` template swap for resize grip | Existing resize-grip trigger inside the custom shell template | Preserves ModernWpf's title bar, high-contrast border, and maximized-window handling while keeping the source `ResizeMode=CanResizeWithGrip` / `WindowState=Normal` visibility rule. |
 | Stock content window with platform-owned non-client chrome | Full-glass custom title bar with Windows 11 left, right, and bottom `NonClientFrameEdges` | Matches the Microsoft WPF Gallery shell adaptation, preserves the top client title bar and snap-layout hit testing, and prevents resize-time white flashes reported in issue #683. High Contrast and pre-Windows 11 retain `NonClientFrameEdges.None`. |
+| Platform-owned border colorization | Dynamic Light/Dark `WindowBorder` color selected from the per-user DWM `ColorPrevalence` preference | ModernWpf paints its own client border, so it must mirror the Windows preference explicitly. The existing system-accent palette and window message hook provide the WPF adaptation without adding a package dependency. |
 
 ## Intentional Differences
 
@@ -120,8 +129,13 @@ surface.
 - `WindowVisualStateTests` verifies that `WindowStyle=None` collapses the
   ModernWpf title bar, removes custom chrome/maximized-window compensation, and
   places content at the top of the client area.
+- `ColorsHelperTests` verifies that Light and Dark `WindowBorder` brushes carry
+  the dynamic system-preference color key, refresh from that key, select the
+  system accent only while the preference is enabled, and retain the fallback
+  for disabled or unusable system colors.
 - `WindowVisualStateTests` statically guards `Styles\Window.xaml` against
   `ContentPresenterEx`, `MS.Internal`, `Fluent.Controls`, and `System.Runtime`
-  source markers.
+  source markers, and guards the maximized-window hook's DWM colorization
+  refresh path.
 - `TemplateParityTests` no longer classifies `Styles\Window.xaml` as a WinUI
   presenter template that must use `ContentPresenterEx`.

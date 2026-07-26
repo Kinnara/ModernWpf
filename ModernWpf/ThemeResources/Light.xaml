@@ -1993,7 +1993,7 @@
     <!-- Resources for Window -->
     <m:StaticResource x:Key="WindowBackground" ResourceKey="SolidBackgroundFillColorBaseBrush" />
     <m:StaticResource x:Key="WindowForeground" ResourceKey="TextFillColorPrimaryBrush" />
-    <SolidColorBrush x:Key="WindowBorder" Color="#FF707070" />
+    <SolidColorBrush x:Key="WindowBorder" Color="{m:DynamicColor SystemWindowBorderColor}" />
     <SolidColorBrush x:Key="WindowBorderInactive" Color="#FFAAAAAA" />
     <m:StaticResource x:Key="FrameBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="FrameForeground" ResourceKey="TextFillColorPrimaryBrush" />
