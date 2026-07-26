@@ -156,6 +156,11 @@ API controls are covered by the focused Gallery regression.
   button padding therefore falls back to the measured dimension when the
   specified dimension is Auto, including while dynamic resources are being
   torn down.
+- WinUI's main content presenter explicitly template-binds only `Content`.
+  WPF does not infer the remaining inherited content aliases from that binding,
+  so the WPF presenter uses `ContentSource="Content"` to forward `Content`,
+  `ContentTemplate`, `ContentTemplateSelector`, and `ContentStringFormat`
+  together while retaining the source presenter shape.
 - WinUI `ItemsRepeater`, `SplitView`, `Flyout`, popup/XamlRoot services, focus
   movement, top overflow measurement, gamepad/access-key paths, composition
   animations, x:Bind phases, and recycle metadata use the existing documented
@@ -246,8 +251,12 @@ API controls are covered by the focused Gallery regression.
   selector calls across five dispatcher and layout passes. This confirms that
   the selector loop reported against 0.9 is resolved on the active 1.x
   repeater implementation.
-- NavigationView product/source-audit tests pass 62/62; SplitView product tests
-  pass 14/14; the focused Gallery sample/source-shape slice passes 7/7 on net8
+- `NavigationViewContentTemplateIsAppliedToMainContent` covers issue #96 by
+  applying a custom `DataTemplate` to the inherited `ContentTemplate`
+  property, verifying that the main presenter receives that exact template,
+  and verifying the template's bound visual content.
+- NavigationView product/source-audit tests pass 63/63; SplitView product tests
+  pass 14/14; the focused Gallery sample/source-shape slice passes 8/8 on net8
   and net10. Gallery builds successfully on net462, net8, and net10 with zero
   errors; current target builds retain existing unrelated warnings.
 
