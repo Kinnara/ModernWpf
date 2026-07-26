@@ -1,0 +1,78 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [ master, maintenance-reboot-1x ]
+  pull_request:
+    branches: [ master, maintenance-reboot-1x ]
+  schedule:
+    - cron: '30 5 * * 1'
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+concurrency:
+  group: codeql-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  analyze:
+    name: Analyze ${{ matrix.language }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+            os: ubuntu-24.04
+          - language: csharp
+            build-mode: manual
+            os: windows-2022
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup .NET
+        if: matrix.language == 'csharp'
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Verify Windows SDK metadata
+        if: matrix.language == 'csharp'
+        shell: pwsh
+        run: |
+          $programFilesX86 = [Environment]::GetFolderPath([Environment+SpecialFolder]::ProgramFilesX86)
+          $platformXml = Join-Path $programFilesX86 'Windows Kits\10\Platforms\UAP\10.0.19041.0\Platform.xml'
+          if (-not (Test-Path -LiteralPath $platformXml)) {
+            throw "Missing Windows SDK metadata file: $platformXml"
+          }
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - name: Restore
+        if: matrix.language == 'csharp'
+        run: dotnet restore ModernWpf.sln
+
+      - name: Build Release solution
+        if: matrix.language == 'csharp'
+        run: dotnet build ModernWpf.sln --configuration Release --no-restore --maxcpucount:1
+
+      - name: Analyze
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: /language:${{ matrix.language }}
