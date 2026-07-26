@@ -43,25 +43,6 @@
     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.28000.2526" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework' and $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '4.6.1'))">
-    <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.6.0" />
-    <Reference Include="Windows">
-      <HintPath>$(SolutionDir)WinMD\Windows.WinMD</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Windows.Foundation.FoundationContract">
-      <HintPath>$(SolutionDir)WinMD\Windows.Foundation.FoundationContract.winmd</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="Windows.Foundation.UniversalApiContract">
-      <HintPath>$(SolutionDir)WinMD\Windows.Foundation.UniversalApiContract.winmd</HintPath>
-      <IsWinMDFile>true</IsWinMDFile>
-      <Private>false</Private>
-    </Reference>
-  </ItemGroup>
-
   <ItemGroup Condition="!$(DefineConstants.Contains('NET47_OR_NEWER'))">
     <PackageReference Include="System.ValueTuple" Version="4.6.2" />
   </ItemGroup>

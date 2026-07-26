@@ -11,11 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Assets\**" />
-    <Compile Remove="Navigation\**" />
-    <Compile Remove="Samples\**" />
-    <Page Remove="Navigation\**" />
-    <Page Remove="Samples\**" />
     <None Remove="Assets\**" />
     <None Remove="Samples\Data\**" />
     <None Remove="Samples\SampleCode\**" />
