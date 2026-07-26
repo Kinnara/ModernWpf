@@ -50,6 +50,12 @@ ModernWpf now follows the compatible parts of that source shape:
   bit. Applications can remove that bit during `SourceInitialized` while
   retaining `WindowHelper.UseModernWindowStyle`; the custom command is then
   disabled and cannot minimize the window.
+- A window-scoped `TitleBar.HeightKey` override keeps the rendered
+  `TitleBarControl`, the read-only `TitleBar.Height` value, and
+  `WindowChrome.CaptionHeight` synchronized. The synchronization also follows
+  runtime resource changes and replacement chrome objects, so the entire
+  visible title-bar height remains draggable instead of retaining the default
+  32-DIP caption boundary.
 - Disabled custom caption buttons remain inert when Windows 11 routes their
   input through non-client messages. In particular, `ResizeMode=CanMinimize`
   keeps the disabled maximize button from invoking its command.
@@ -99,6 +105,11 @@ surface.
   `SourceInitialized` disables the ModernWpf minimize button and its routed
   command, and that the non-client click bridge cannot invoke the disabled
   maximize button when `ResizeMode=CanMinimize`.
+- `WindowVisualStateTests` scopes `TitleBar.HeightKey` to one window, verifies
+  rendered/read-only/chrome heights at 56 DIPs, sends `WM_NCHITTEST` through
+  the area below the former 32-DIP boundary, changes the resource to 64 DIPs,
+  and verifies that an explicitly replaced `WindowChrome` is synchronized
+  without replacing the caller-owned instance.
 - `WindowVisualStateTests` sends native `WM_NCHITTEST` messages across the
   first four content pixels below the title bar and verifies `HTCLIENT`, while
   separately retaining `HTCAPTION` for draggable title space and
