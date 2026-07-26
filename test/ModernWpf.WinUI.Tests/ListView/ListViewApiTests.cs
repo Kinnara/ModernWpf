@@ -70,6 +70,25 @@ public class ListViewApiTests
     }
 
     [TestMethod]
+    public void ListViewFamilyEnablesWpfTouchPanning()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            foreach (var list in new Control[] { new MuxListView(), new MuxGridView() })
+            {
+                using var host = new TestWindowHost(list, width: 260, height: 140);
+                var scrollViewer = FindTemplateChild<ScrollViewer>(list, "ScrollViewer");
+
+                Assert.AreEqual(PanningMode.Both, ScrollViewer.GetPanningMode(list));
+                Assert.AreEqual(PanningMode.Both, scrollViewer.PanningMode);
+                Assert.IsTrue(scrollViewer.IsManipulationEnabled);
+            }
+        });
+    }
+
+    [TestMethod]
     public void ListViewBaseItemDrivesWinUINamedSelectionAndMultiSelectStates()
     {
         WpfTestHost.Run(() =>

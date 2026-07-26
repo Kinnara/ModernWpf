@@ -14,6 +14,8 @@ public class ListViewSourceAuditTests
         var audit = Read(repoRoot, "docs", "listview-winui3-source-audit.md");
         var listPeer = Read(repoRoot, "ModernWpf.Controls", "ListView", "ListViewBaseAutomationPeer.cs");
         var itemPeer = Read(repoRoot, "ModernWpf.Controls", "ListView", "ListViewBaseItemAutomationPeer.cs");
+        var listStyle = Read(repoRoot, "ModernWpf.Controls", "ListView", "ListView.xaml");
+        var gridStyle = Read(repoRoot, "ModernWpf.Controls", "ListView", "GridView.xaml");
         var apiTests = Read(repoRoot, "test", "ModernWpf.WinUI.Tests", "ListView", "ListViewApiTests.cs");
         var galleryFactory = Read(repoRoot, "ModernWpf.Gallery", "Pages", "CollectionsSampleFactory.cs");
         var galleryTests = Read(repoRoot, "test", "ModernWpf.Gallery.Tests", "GalleryAutomationHookTests.cs");
@@ -56,10 +58,13 @@ public class ListViewSourceAuditTests
         StringAssert.Contains(itemPeer, "return nameof(GridViewItem);");
         StringAssert.Contains(itemPeer, "return nameof(ListViewItem);");
         StringAssert.Contains(itemPeer, "return AutomationControlType.ListItem;");
+        StringAssert.Contains(listStyle, "<Setter Property=\"ScrollViewer.PanningMode\" Value=\"Both\" />");
+        StringAssert.Contains(gridStyle, "<Setter Property=\"ScrollViewer.PanningMode\" Value=\"Both\" />");
 
         StringAssert.Contains(apiTests, "AutomationPeersMatchWinUIClassTypesAndConditionalInvokePattern");
         StringAssert.Contains(apiTests, "GridViewItemAutomationInvokeRaisesItemClick");
         StringAssert.Contains(apiTests, "ItemClickUsesOwnContainerContentAndSpaceKey");
+        StringAssert.Contains(apiTests, "ListViewFamilyEnablesWpfTouchPanning");
 
         StringAssert.Contains(galleryFactory, "Basic GridView with Simple DataTemplate");
         StringAssert.Contains(galleryFactory, "GridView with Layout Customization");
