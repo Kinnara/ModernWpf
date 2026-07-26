@@ -112,6 +112,7 @@ API controls are covered by the focused Gallery regression.
 | WinUI Gallery renders the in-app acrylic pane over its default Light/Dark page as solid sampled colors `#F2F2F2` / `#1F1F1F`; its content is `#F9F9F9` / `#272727`. | WPF has no acrylic compositor. `SystemControlPageBackgroundChromeLowBrush` and `SystemControlBackgroundChromeMediumBrush` are deterministic theme-specific solid fallbacks for the rendered pane, while `LayerFillColorDefaultBrush` supplies the exact content surface. |
 | Current item and top-item normal/hover/pressed/selected foregrounds use primary or secondary text aliases, and hover/pressed top backgrounds use subtle secondary/tertiary fills. | ModernWpf replaces the stale WinUI 2 aliases with the current primary/secondary and subtle-fill resource graph in Light, Dark, and High Contrast. |
 | The left presenter places its 3x16 selection indicator at the item background origin. Top primary presenters use the 4,2 item-button margin and arrange the 16x3 horizontal indicator at the bottom of the 48-DIP top strip. | The local-only second 4-DIP left-indicator inset is removed. Current pane-list spacing and top-grid/item margins are ported. Because WPF measures a horizontal repeater inside `ScrollViewer` with an infinite cross-axis, the top presenter has an explicit 48-DIP minimum-height adapter; the resulting Gallery item fills the strip and its indicator renders below, rather than through, the label. |
+| Top navigation measures the primary items against the width remaining after pane header, overflow, custom content, search, pane footer, and footer items, then moves excess items to overflow. | WPF's `ScrollViewer` otherwise retains the initial unconstrained repeater slot after the split collection shrinks. The named primary scroll host now receives an adaptive `MaxWidth` equal to the actual remaining top-pane width while overflow is active, and returns to an unconstrained width once every item fits. |
 | Current `NavigationView` defers `SplitView.DisplayMode` changes made by `OnApplyTemplate` until `Loaded`, using `m_fromOnApplyTemplate` and `m_updateVisualStateForDisplayModeFromOnLoaded`. | ModernWpf now ports both lifecycle guards. WPF can apply an offscreen control's template after it is already loaded, so that path queues the same completion at `DispatcherPriority.Loaded`. `UpdateIsClosedCompact` also synchronizes `PaneStateListSizeGroup` with the authoritative SplitView state when WPF reaches a closed/open value without the WinUI pane lifecycle event. This prevents `ClosedCompact` from coexisting with stale `ListSizeFull`. |
 | The WinUI Gallery default example is `nvSample5`, 745x460, with `Sample Page 1`, four symbol items, a source `BodyTextBlockStyle` paragraph, and selection-driven `Sample Page N` headers. | The generated Gallery sample preserves the exact host size, symbols/tags, source body style and foreground, and selection behavior. A one-physical-pixel WPF text-origin adapter aligns the source paragraph, header, and content offsets without changing tile geometry or hit targets. |
 | The current Gallery exposes eight independently rendered NavigationViews. At the reference viewport the first five are 745x460, footer is 592x460, hierarchy is 565x460, and API is 458x540. Data binding and hierarchy initially show `Sample Page 1`; API starts with an empty Frame and a normal-text `Pane Title`. | All eight controls now have stable `GallerySample_NavigationView_*` artifact IDs and exact reference widths. The option-bearing samples no longer arrange at 745 DIPs and get clipped by narrower columns. Data binding/hierarchy restore their source initial headers, API uses a genuinely empty Frame until selection, and `PaneTitleTextBlock` explicitly uses `ContentControlThemeFontFamily` instead of inheriting the toggle button's symbol font. |
@@ -133,6 +134,12 @@ API controls are covered by the focused Gallery regression.
   coordinates. The horizontal top repeater requires a 48-DIP presenter
   minimum because WPF's `ScrollViewer` otherwise supplies an infinite
   cross-axis and leaves content-only items at their 24-DIP desired height.
+- WPF also retains the first unconstrained horizontal repeater arrange slot
+  after top-navigation overflow changes the split collection. The primary
+  `ItemsRepeaterScrollHost` is capped to the width left by the other top-pane
+  columns so viewport cache growth follows the visible pane instead of the
+  discarded multi-item extent. The cap is recomputed during resize and removed
+  when overflow is no longer needed.
 - Unlike WinUI's page realization order, WPF can raise `Loaded` for a collapsed
   or offscreen NavigationView before applying its control template. The port
   therefore completes the source display-mode deferral through the dispatcher
@@ -223,7 +230,11 @@ API controls are covered by the focused Gallery regression.
 - The WPF initial-window-layout substitute defers SplitView's state replay when
   dispatcher processing is suspended; the existing launch-state regression
   now covers the path without a nested-dispatcher exception.
-- NavigationView product/source-audit tests pass 59/59; SplitView product tests
+- `TopNavigationWithHeaderFooterConstrainsOverflowHostAndRemainsResponsive`
+  covers issue #319 with header, footer, 24 top items, overflow, an idle-layout
+  bound, and 768-to-1200-to-640 resize recovery. It also verifies that both the
+  primary scroll host and top grid remain inside the NavigationView width.
+- NavigationView product/source-audit tests pass 60/60; SplitView product tests
   pass 14/14; the focused Gallery sample/source-shape slice passes 7/7 on net8
   and net10. Gallery builds successfully on net462, net8, and net10 with zero
   errors; current target builds retain existing unrelated warnings.

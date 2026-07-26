@@ -66,6 +66,7 @@ namespace ModernWpf.Controls
 
         // DisplayMode Top specific items
         const string c_topNavMenuItemsHost = "TopNavMenuItemsHost";
+        const string c_topNavMenuItemsScrollHost = "TopNavMenuItemsScrollHost";
         const string c_topNavFooterMenuItemsHost = "TopFooterMenuItemsHost";
         const string c_topNavOverflowButton = "TopNavOverflowButton";
         const string c_topNavMenuItemsOverflowHost = "TopNavMenuItemsOverflowHost";
@@ -183,6 +184,7 @@ namespace ModernWpf.Controls
                 m_topNavRepeaterGettingFocusHelper?.Dispose();
                 m_topNavRepeater = null;
             }
+            m_topNavMenuItemsScrollHost = null;
 
             if (m_leftNavFooterMenuRepeater != null)
             {
@@ -510,6 +512,7 @@ namespace ModernWpf.Controls
             }
 
             m_topNavGrid = GetTemplateChild(c_topNavGrid) as Grid;
+            m_topNavMenuItemsScrollHost = GetTemplateChild(c_topNavMenuItemsScrollHost) as FrameworkElement;
 
             // Change code to NOT do this if we're in top nav mode, to prevent it from being realized:
             if (GetTemplateChild(c_menuItemsHost) is ItemsRepeater leftNavRepeater)
@@ -1452,6 +1455,7 @@ namespace ModernWpf.Controls
                 {
                     // We have infinite space, so move all items to primary list
                     m_topDataProvider.MoveAllItemsToPrimaryList();
+                    UpdateTopNavigationPrimaryItemsHostMaxWidth(availableSize);
                 }
                 else
                 {
@@ -3707,6 +3711,33 @@ namespace ModernWpf.Controls
             {
                 m_topNavigationMode = TopNavigationViewLayoutState.Initialized;
             }
+
+            UpdateTopNavigationPrimaryItemsHostMaxWidth(availableSize);
+        }
+
+        void UpdateTopNavigationPrimaryItemsHostMaxWidth(Size availableSize)
+        {
+            if (m_topNavMenuItemsScrollHost is not { } primaryItemsHost)
+            {
+                return;
+            }
+
+            var maxWidth = double.PositiveInfinity;
+            if (!double.IsInfinity(availableSize.Width) &&
+                HasTopNavigationViewItemNotInPrimaryList())
+            {
+                var desiredWidth = MeasureTopNavigationViewDesiredWidth(c_infSize);
+                var currentPrimaryItemsHostWidth =
+                    LayoutUtils.MeasureAndGetDesiredWidthFor(primaryItemsHost, c_infSize);
+                var widthOutsidePrimaryItemsHost =
+                    Math.Max(0.0, desiredWidth - currentPrimaryItemsHostWidth);
+                maxWidth = Math.Max(0.0, availableSize.Width - widthOutsidePrimaryItemsHost);
+            }
+
+            if (primaryItemsHost.MaxWidth != maxWidth)
+            {
+                primaryItemsHost.SetCurrentValue(MaxWidthProperty, maxWidth);
+            }
         }
 
         void HandleTopNavigationMeasureOverrideNormal(Size availableSize)
@@ -5876,6 +5907,7 @@ namespace ModernWpf.Controls
         Button m_closeButton;
         ItemsRepeater m_leftNavRepeater;
         ItemsRepeater m_topNavRepeater;
+        FrameworkElement m_topNavMenuItemsScrollHost;
         ItemsRepeater m_leftNavFooterMenuRepeater;
         ItemsRepeater m_topNavFooterMenuRepeater;
         Button m_topNavOverflowButton;
