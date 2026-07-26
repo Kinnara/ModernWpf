@@ -98,6 +98,43 @@ public class WindowVisualStateTests
     }
 
     [TestMethod]
+    public void MaximizedWindowLeavesRevealStripForAutoHideTaskbar()
+    {
+        var monitorBounds = new Int32Rect(0, 0, 1920, 1080);
+
+        Assert.IsFalse(
+            MaximizedWindowFixer.IsTaskbarAutoHideState(0x00000000),
+            "No taskbar state flags must not be treated as auto-hide.");
+        Assert.IsFalse(
+            MaximizedWindowFixer.IsTaskbarAutoHideState(0x00000002),
+            "ABS_ALWAYSONTOP alone must not be treated as auto-hide.");
+        Assert.IsTrue(MaximizedWindowFixer.IsTaskbarAutoHideState(0x00000001));
+        Assert.IsTrue(MaximizedWindowFixer.IsTaskbarAutoHideState(0x00000003));
+
+        Assert.IsTrue(
+            MaximizedWindowFixer.TryGetTaskbarAdjustedWindowBounds(
+                monitorBounds,
+                monitorBounds,
+                MaximizedWindowFixer.ABEdge.ABE_BOTTOM,
+                out Int32Rect adjustedBounds));
+        Assert.AreEqual(
+            new Int32Rect(0, 0, 1920, 1078),
+            adjustedBounds,
+            "A monitor-sized maximized window must leave the auto-hide taskbar activation edge uncovered.");
+
+        Assert.IsTrue(
+            MaximizedWindowFixer.TryGetTaskbarAdjustedWindowBounds(
+                adjustedBounds,
+                monitorBounds,
+                MaximizedWindowFixer.ABEdge.ABE_BOTTOM,
+                out Int32Rect readjustedBounds));
+        Assert.AreEqual(
+            adjustedBounds,
+            readjustedBounds,
+            "Repeated window-position messages must not shrink the maximized window more than once.");
+    }
+
+    [TestMethod]
     public void WindowTemplateUsesWpfContentPresenterAndKeepsCustomTitleBar()
     {
         WpfTestHost.Run(() =>
