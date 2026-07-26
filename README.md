@@ -100,6 +100,32 @@ For existing 0.9.x applications, the old resource entry remains supported:
 
 5. See [the wiki](https://github.com/Kinnara/ModernWpf/wiki) for more information.
 
+### Interactive content in an extended title bar
+
+When content extends into the title bar, mark each button or other interactive
+control with WPF's `WindowChrome.IsHitTestVisibleInChrome` attached property:
+
+```xaml
+<Window
+    ...
+    xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    ui:TitleBar.ExtendViewIntoTitleBar="True"
+    ui:WindowHelper.UseModernWindowStyle="True">
+    <Grid>
+        <Button
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Content="Title bar action"
+            shell:WindowChrome.IsHitTestVisibleInChrome="True" />
+    </Grid>
+</Window>
+```
+
+Set the property only on controls that need pointer input. Unmarked title-bar
+space remains available for dragging the window, and the normal resize borders
+and `ResizeMode="CanResizeWithGrip"` grip remain active.
+
 ## Build and run the Gallery
 
 The sample application for the active 1.x line is
