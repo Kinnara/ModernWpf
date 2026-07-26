@@ -7,16 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controls\GridEx.old.cs" />
-    <Compile Remove="Controls\PanelEx.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Controls\GridEx.old.cs" />
-    <None Include="Controls\PanelEx.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\ModernWpf.Controls\ModernWpf.Controls.csproj" />
     <ProjectReference Include="..\..\ModernWpf\ModernWpf.csproj" />
   </ItemGroup>

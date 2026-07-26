@@ -647,6 +647,42 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void DesignAndSampleMediaResourcesMatchRetainedGallerySurface()
+        {
+            var expectedImageResources = new[]
+            {
+                "assets/design/cards.dark.png",
+                "assets/design/cards.light.png",
+                "assets/design/dialog.dark.png",
+                "assets/design/dialog.light.png",
+                "assets/design/geometry.dark.png",
+                "assets/design/geometry.light.png",
+                "assets/samplemedia/landscapeimage1.jpg",
+                "assets/samplemedia/landscapeimage2.jpg",
+                "assets/samplemedia/landscapeimage3.jpg",
+                "assets/samplemedia/landscapeimage4.jpg",
+                "assets/samplemedia/landscapeimage5.jpg",
+                "assets/samplemedia/landscapeimage6.jpg",
+                "assets/samplemedia/landscapeimage7.jpg",
+                "assets/samplemedia/landscapeimage8.jpg",
+                "assets/samplemedia/rainier.jpg",
+                "assets/samplemedia/shoulder-tap-static-payload.png",
+                "assets/samplemedia/slices.png",
+                "assets/samplemedia/slices2.png",
+                "assets/samplemedia/sunset.jpg"
+            };
+
+            var actualImageResources = GetGalleryResourceNames()
+                .Where(name =>
+                    name.StartsWith("assets/design/", StringComparison.OrdinalIgnoreCase) ||
+                    name.StartsWith("assets/samplemedia/", StringComparison.OrdinalIgnoreCase))
+                .OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            CollectionAssert.AreEqual(expectedImageResources, actualImageResources);
+        }
+
+        [TestMethod]
         public void WpfGalleryCatalogControlImagesMatchOfficialHashes()
         {
             var expectedAssets = new[]
