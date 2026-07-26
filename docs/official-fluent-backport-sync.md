@@ -832,7 +832,7 @@ Source inspected:
 | --- | --- | --- | --- |
 | `DefaultComboBoxTextBoxStyle`, `DefaultComboBoxToggleButtonStyle`, `DefaultComboBoxItemStyle` | Official stock WPF helper styles with WPF `ControlTemplate.Triggers`, text chevron glyphs, and plain WPF presenters | Same source shape with older-target namespace and corner-radius substitutions | `ComboBox` is a stock WPF control, so official WPF Fluent is the primary source. |
 | `DefaultComboBoxTemplate` / `EditableComboBoxTemplate` | Official stock WPF popup, trigger, text-box, and chevron layout | Same source shape under the retained `ComboBox.xaml` split dictionary | Deletes the previous WinUI-shaped `ComboBoxHelper`, `VisualStateEx`, `ContentPresenterEx`, and `FontIconFallback` guesses from the stock ComboBox path. |
-| `DefaultComboBoxStyle` / implicit stock `ComboBox` and `ComboBoxItem` styles | Official style keys and implicit style shape | Same source shape | Aligns stock WPF ComboBox behavior with official WPF Fluent rather than WinUI CommonStyles. |
+| `DefaultComboBoxStyle` / implicit stock `ComboBox` and `ComboBoxItem` styles | Official style keys and implicit style shape; the Fluent editable trigger omits the classic WPF `IsTabStop=False` setter | Same source shape plus the classic editable tab-stop setter | Aligns stock WPF ComboBox visuals with official WPF Fluent while preventing the parent ComboBox from trapping backward and Ctrl+Tab focus before redirecting it to `PART_EditableTextBox`. |
 
 ### Intentional Differences
 
@@ -846,6 +846,7 @@ Source inspected:
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\ComboBox\ComboBoxApiTests.cs` covers the official WPF Fluent ComboBox and ComboBoxItem style shape, editable TextBox style, WPF presenters, theme resource aliases, DataGrid adapter styles, and deletion of the old WinUI helper/template layer.
+- `test\ModernWpf.WinUI.Tests\ComboBox\ComboBoxKeyboardNavigationTests.cs` covers the classic WPF editable tab-stop adaptation plus backward and Ctrl+Tab traversal.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `ComboBox.xaml` as an official WPF Fluent stock template file that should not use `VisualStateEx` or `ContentPresenterEx`.
 
 ## 2026-05-18 Batch 28

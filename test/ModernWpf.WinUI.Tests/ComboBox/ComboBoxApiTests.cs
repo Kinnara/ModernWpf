@@ -466,6 +466,7 @@ public class ComboBoxApiTests
             item.Property == WpfComboBox.IsEditableProperty &&
             Equals(item.Value, true));
         AssertSetters(trigger.Setters.OfType<Setter>().ToArray(),
+            ("", "IsTabStop", false),
             ("", "Template", "EditableComboBoxTemplate"));
     }
 

@@ -26,6 +26,14 @@ official `DefaultComboBoxTextBoxStyle`, `DefaultComboBoxToggleButtonStyle`,
 `EditableComboBoxTemplate`, `DefaultComboBoxStyle`, and implicit `ComboBox` /
 `ComboBoxItem` styles.
 
+The editable trigger restores WPF's established `IsTabStop=False` adaptation
+from the classic platform themes. Official WPF Fluent omitted that setter,
+which left both the parent `ComboBox` and `PART_EditableTextBox` in the tab
+order. Backward and Ctrl+Tab traversal could then focus the parent, whose stock
+focus handler immediately redirected focus into the editable text box. Keeping
+only the text box as the tab stop restores normal traversal without changing
+the official Fluent template.
+
 ## Deleted Guessed Layer
 
 - `ModernWpf\Controls\Primitives\ComboBoxHelper.cs` was removed.
@@ -41,6 +49,7 @@ official `DefaultComboBoxTextBoxStyle`, `DefaultComboBoxToggleButtonStyle`,
 | --- | --- | --- |
 | `System.Runtime` in the XAML namespace | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
 | `Border.CornerRadius` attached setters and template bindings | `Border.CornerRadius` | Older ModernWpf targets do not expose the newer official WPF attached property. |
+| Editable trigger omits the classic WPF `IsTabStop=False` setter | Restore `IsTabStop=False` while `IsEditable=True` | Prevents the parent ComboBox from becoming a second tab stop and trapping backward or Ctrl+Tab focus in `PART_EditableTextBox`. |
 | Unified official Fluent resource layout | Existing `ModernWpf\Styles\ComboBox.xaml` split dictionary | Keeps ModernWpf's current stock-control resource entry point. |
 | No official DataGrid ComboBox adapter styles in `ComboBox.xaml` | Retained `DataGridComboBoxStyle` and `DataGridTextBlockComboBoxStyle` as WPF adapter resources based on `DefaultComboBoxStyle` | These remain compatibility resources for callers that reference them directly. The stock DataGrid template now follows official WPF Fluent and no longer wires them through `DataGridHelper`. |
 
@@ -49,6 +58,9 @@ official `DefaultComboBoxTextBoxStyle`, `DefaultComboBoxToggleButtonStyle`,
 - `ComboBoxApiTests` checks the default ComboBox and ComboBoxItem style shape,
   WPF presenter slots, editable TextBox style, theme resource aliases, DataGrid
   adapter style resolution, and deletion of the old WinUI helper/template layer.
+- `ComboBoxKeyboardNavigationTests` verifies that the editable text box is the
+  only tab stop and that backward and Ctrl+Tab traversal both leave the
+  ComboBox.
 - `TemplateParityTests` classifies `Styles\ComboBox.xaml` as an official WPF
   Fluent stock template file that should not use `VisualStateEx` or
   `ContentPresenterEx`.

@@ -602,6 +602,7 @@
         <Setter Property="Template" Value="{StaticResource DefaultComboBoxTemplate}"/>
         <Style.Triggers>
             <Trigger Property="IsEditable" Value="True">
+                <Setter Property="IsTabStop" Value="False" />
                 <Setter Property="Template" Value="{StaticResource EditableComboBoxTemplate}" />
             </Trigger>
         </Style.Triggers>
