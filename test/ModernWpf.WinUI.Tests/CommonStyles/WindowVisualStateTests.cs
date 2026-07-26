@@ -389,7 +389,14 @@ public class WindowVisualStateTests
     {
         var repoRoot = FindRepoRoot();
         var stylePath = Path.Combine(repoRoot, "ModernWpf", "Styles", "Window.xaml");
+        var fixerPath = Path.Combine(
+            repoRoot,
+            "ModernWpf",
+            "Controls",
+            "Primitives",
+            "MaximizedWindowFixer.cs");
         var text = File.ReadAllText(stylePath);
+        var fixerText = File.ReadAllText(fixerPath);
 
         Assert.IsTrue(text.Contains("WindowForeground", System.StringComparison.Ordinal));
         Assert.IsTrue(text.Contains("WindowBackground", System.StringComparison.Ordinal));
@@ -403,6 +410,12 @@ public class WindowVisualStateTests
         Assert.IsFalse(text.Contains("MS.Internal", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("Fluent.Controls", System.StringComparison.Ordinal));
         Assert.IsFalse(text.Contains("System.Runtime", System.StringComparison.Ordinal));
+        Assert.IsTrue(fixerText.Contains(
+            "WindowMessage.WM_DWMCOLORIZATIONCOLORCHANGED",
+            System.StringComparison.Ordinal));
+        Assert.IsTrue(fixerText.Contains(
+            "ColorsHelper.Current.RefreshSystemColorValues()",
+            System.StringComparison.Ordinal));
     }
 
     private static Style AssertStyle(object resourceKey)

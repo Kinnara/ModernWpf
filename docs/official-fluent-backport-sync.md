@@ -982,11 +982,13 @@ Source inspected:
 | --- | --- | --- | --- |
 | Whole `Window.xaml` template | Plain content-window style with optional platform backdrop | ModernWpf custom title-bar/window-chrome style | ModernWpf owns `TitleBarControl`, attached title-bar properties, `WindowChrome`, high-contrast caption border, and `WindowHelper.FixMaximizedWindow`; copying the official file wholesale would remove those public shell features. |
 | Official backdrop guards | `MS.Internal.FrameworkAppContextSwitches.DisableFluentThemeWindowBackdrop` and `Standard.Utility.IsOSWindows11OrNewer` triggers | Not copied; ModernWpf uses `WindowBackground` directly | Those guards are tied to .NET WPF Fluent backdrop internals not present in ModernWpf. |
+| Platform-owned active window border | Native non-client chrome follows the Windows colorization preference | ModernWpf's Light/Dark client-drawn `WindowBorder` selects the system accent from DWM `ColorPrevalence`, with the existing `#707070` fallback | The custom chrome paints this border itself, so the existing system-accent palette and window-message hook mirror the platform preference without replacing application resource overrides. |
 | Title-bar back button icon surface | No equivalent in official WPF Fluent `Window.xaml` | `TitleBarBackButtonStyle` still uses `FontIconFallback` | This belongs to ModernWpf's custom title-bar chrome, not the stock content-window presenter slot. |
 
 ### Test Evidence
 
 - `test\ModernWpf.WinUI.Tests\CommonStyles\WindowVisualStateTests.cs` covers the official `WindowForeground` / `WindowBackground` resource surface, ModernWpf chrome retention, WPF `ContentPresenter` content host, resize grip, and source-shape substitutions.
+- `test\ModernWpf.Theme.Tests\ColorsHelperTests.cs` covers dynamic Light/Dark `WindowBorder` refresh and enabled/disabled system color-prevalence selection.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` no longer classifies `Styles\Window.xaml` as a WinUI presenter template requiring `ContentPresenterEx`.
 
 ## 2026-05-18 Batch 32
