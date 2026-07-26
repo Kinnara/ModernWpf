@@ -123,6 +123,11 @@ surface.
   first four content pixels below the title bar and verifies `HTCLIENT`, while
   separately retaining `HTCAPTION` for draggable title space and
   `HTBOTTOMRIGHT` for the explicit resize grip.
+- `WindowVisualStateTests` also covers the documented extended-title-bar
+  opt-in: a control marked with
+  `WindowChrome.IsHitTestVisibleInChrome=True` receives `HTCLIENT`, unmarked
+  title-bar space remains `HTCAPTION`, and the explicit resize grip remains
+  `HTBOTTOMRIGHT`.
 - `WindowVisualStateTests` verifies that full-monitor maximized bounds are
   reduced once at the auto-hide taskbar edge and that the Win32 state parser
   distinguishes `ABS_AUTOHIDE` from `ABS_ALWAYSONTOP`.
