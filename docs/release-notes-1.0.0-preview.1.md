@@ -1,6 +1,6 @@
-# ModernWpf 1.0.0-preview.1
+# ModernWPF 1.0.0-preview.1
 
-`1.0.0-preview.1` starts the actively maintained ModernWpf 1.x line. It is the
+`1.0.0-preview.1` starts the actively maintained ModernWPF 1.x line. It is the
 first forward-compatibility baseline for the CLR APIs and public resource keys
 shipped by `ModernWpfUI`.
 
@@ -9,7 +9,7 @@ shipped by `ModernWpfUI`.
 - Targets `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0`.
 - Adds `FluentControlsResources` as the recommended resource entry.
   `net10.0-windows7.0` uses the platform WPF Fluent theme for stock controls;
-  the other targets use ModernWpf's Fluent backport.
+  the other targets use ModernWPF's Fluent backport.
 - Retains `ThemeResources` plus `XamlControlsResources` as the legacy resource
   entry for applications migrating from 0.9.x.
 - Aligns the WinUI-derived controls, layouts, templates, automation peers, and
@@ -40,7 +40,7 @@ Source and binary compatibility with 0.9.x is not promised. In particular:
 - WinRT projection and ABI implementation types are no longer public package
   API.
 
-See [Migrating from ModernWpf 0.9.x](migrating-from-0.9.md) and the
+See [Migrating from ModernWPF 0.9.x](migrating-from-0.9.md) and the
 [1.x public API contract](public-api-contract-1x.md) for the complete boundary.
 
 ## Recommended application resources
