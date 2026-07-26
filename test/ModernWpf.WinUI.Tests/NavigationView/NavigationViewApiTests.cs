@@ -104,6 +104,50 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewContentTemplateIsAppliedToMainContent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var contentTemplate = (DataTemplate)XamlReader.Parse(
+                @"<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>
+                      <Border Tag='NavigationContentTemplate'>
+                          <TextBlock Text='{Binding}' />
+                      </Border>
+                  </DataTemplate>");
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Content = "Templated content",
+                ContentTemplate = contentTemplate,
+                Width = 800,
+                Height = 500
+            };
+
+            using var host = new TestWindowHost(navView, width: 800, height: 500);
+            host.UpdateLayout();
+
+            var contentPresenter = VisualTreeTestHelper
+                .EnumerateDescendants(navView)
+                .OfType<ModernWpf.Controls.ContentPresenterEx>()
+                .Single(presenter =>
+                    ReferenceEquals(presenter.TemplatedParent, navView) &&
+                    Equals(presenter.Content, navView.Content));
+            Assert.AreSame(contentTemplate, contentPresenter.ContentTemplate);
+
+            var templatedContent = VisualTreeTestHelper
+                .EnumerateDescendants(contentPresenter)
+                .OfType<Border>()
+                .Single(border => Equals(border.Tag, "NavigationContentTemplate"));
+            var text = VisualTreeTestHelper
+                .EnumerateDescendants(templatedContent)
+                .OfType<TextBlock>()
+                .Single();
+            Assert.AreEqual(navView.Content, text.Text);
+        });
+    }
+
+    [TestMethod]
     public void VerifyValuesCoercion()
     {
         WpfTestHost.Run(() =>

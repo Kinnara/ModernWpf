@@ -1688,7 +1688,7 @@
                                             <ui:ContentPresenterEx
                                                 Grid.Row="2"
                                                 Grid.ColumnSpan="2"
-                                                Content="{TemplateBinding Content}"/>
+                                                ContentSource="Content"/>
                                         </Grid>
                                     </Border>
                                 </local:SplitView.Content>
