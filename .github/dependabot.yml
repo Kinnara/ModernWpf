@@ -31,6 +31,11 @@ updates:
       time: "06:30"
       timezone: "Europe/London"
     open-pull-requests-limit: 5
+    ignore:
+      # v2.5 treats the 19041 web installer as an ISO and fails before restore (#719).
+      - dependency-name: "GuillaumeFalourd/setup-windows10-sdk-action"
+        update-types:
+          - "version-update:semver-major"
     groups:
       github-actions:
         applies-to: "version-updates"
