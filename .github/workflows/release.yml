@@ -140,14 +140,26 @@ jobs:
     - name: Verify package and execute consumers
       shell: pwsh
       run: |
-        $package = Get-ChildItem "$env:RELEASE_ROOT\packages\ModernWpfUI.*.nupkg" | Select-Object -Single
+        $packages = @(Get-ChildItem "$env:RELEASE_ROOT\packages\ModernWpfUI.*.nupkg")
+        if ($packages.Count -ne 1) {
+          throw "Expected exactly one ModernWpfUI package, found $($packages.Count)."
+        }
+
+        $package = $packages[0]
         .\tools\release\Verify-ModernWpfPackage.ps1 -PackagePath $package.FullName
         .\tools\release\Test-ModernWpfPackageSmoke.ps1 -PackagePath $package.FullName
 
     - name: Prepare immutable release artifact
       shell: pwsh
+      env:
+        RELEASE_VERSION: ${{ steps.validate.outputs.version }}
       run: |
-        Copy-Item docs\release-notes-1.0.0-preview.1.md "$env:RELEASE_ROOT\release-notes.md"
+        $releaseNotesPath = "docs\release-notes-$env:RELEASE_VERSION.md"
+        if (-not (Test-Path -LiteralPath $releaseNotesPath -PathType Leaf)) {
+          throw "Release notes do not exist for version '$env:RELEASE_VERSION': $releaseNotesPath"
+        }
+
+        Copy-Item -LiteralPath $releaseNotesPath "$env:RELEASE_ROOT\release-notes.md"
         Copy-Item $env:TEST_RESULTS "$env:RELEASE_ROOT\test-results" -Recurse
         Compress-Archive -Path "$env:RELEASE_ROOT\test-results\*" -DestinationPath "$env:RELEASE_ROOT\test-results.zip"
 
@@ -238,7 +250,7 @@ jobs:
             --verify-tag `
             --draft `
             --prerelease `
-            --title "ModernWpf ${{ needs.build.outputs.version }}" `
+            --title "ModernWPF ${{ needs.build.outputs.version }}" `
             --notes-file release\release-notes.md
           if ($LASTEXITCODE -ne 0) {
             throw "Could not create draft GitHub prerelease."
@@ -261,7 +273,12 @@ jobs:
       env:
         NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
       run: |
-        $package = Get-ChildItem release\packages\ModernWpfUI.*.nupkg | Select-Object -Single
+        $packages = @(Get-ChildItem release\packages\ModernWpfUI.*.nupkg)
+        if ($packages.Count -ne 1) {
+          throw "Expected exactly one ModernWpfUI package, found $($packages.Count)."
+        }
+
+        $package = $packages[0]
         dotnet nuget push $package.FullName `
           --api-key $env:NUGET_API_KEY `
           --source https://api.nuget.org/v3/index.json `
