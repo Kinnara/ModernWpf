@@ -44,9 +44,8 @@ namespace ModernWpf.Controls
                     var source = (ObservableCollection<ICommandBarElement>)sender;
                     SharedHelpers.ForwardCollectionChange(source, commandBar.SecondaryCommands, args);
 
-                    // We want to ensure that any interaction with secondary items causes the CommandBarFlyout
-                    // to close, so we'll attach a Click handler to any buttons and Checked/Unchecked handlers
-                    // to any toggle buttons that we get and close the flyout when they're invoked.
+                    // We want to ensure that invoking secondary items causes the CommandBarFlyout
+                    // to close, so we'll attach a Click handler to buttons and toggle buttons.
                     // The only exception is buttons with flyouts - in that case, clicking on the button
                     // will just open the flyout rather than executing an action, so we don't want that to
                     // do anything.
@@ -59,9 +58,7 @@ namespace ModernWpf.Controls
                                 foreach (ICommandBarElement oldElement in args.OldItems)
                                 {
                                     UnhookCommandBarElementDependencyPropertyChanges(oldElement);
-                                    RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, oldElement);
-                                    RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, oldElement);
-                                    RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, oldElement);
+                                    RevokeAndRemove(m_secondaryCommandClickRevokerByElementMap, oldElement);
                                 }
 
                                 foreach (ICommandBarElement element in args.NewItems)
@@ -85,9 +82,7 @@ namespace ModernWpf.Controls
                                 foreach (ICommandBarElement element in args.OldItems)
                                 {
                                     UnhookCommandBarElementDependencyPropertyChanges(element);
-                                    RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
-                                    RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
-                                    RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
+                                    RevokeAndRemove(m_secondaryCommandClickRevokerByElementMap, element);
                                 }
                                 break;
                             }
@@ -331,9 +326,7 @@ namespace ModernWpf.Controls
 
         private void SetSecondaryCommandsToCloseWhenExecuted()
         {
-            RevokeAndClear(m_secondaryButtonClickRevokerByElementMap);
-            RevokeAndClear(m_secondaryToggleButtonCheckedRevokerByElementMap);
-            RevokeAndClear(m_secondaryToggleButtonUncheckedRevokerByElementMap);
+            RevokeAndClear(m_secondaryCommandClickRevokerByElementMap);
 
             RoutedEventHandler closeFlyoutFunc = delegate { Hide(); };
 
@@ -345,15 +338,13 @@ namespace ModernWpf.Controls
 
                 if (button != null && button.Flyout == null)
                 {
-                    m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
+                    m_secondaryCommandClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                         button, ButtonBase.ClickEvent, closeFlyoutFunc);
                 }
                 else if (toggleButton != null)
                 {
-                    m_secondaryToggleButtonCheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                        toggleButton, ToggleButton.CheckedEvent, closeFlyoutFunc);
-                    m_secondaryToggleButtonUncheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                        toggleButton, ToggleButton.UncheckedEvent, closeFlyoutFunc);
+                    m_secondaryCommandClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
+                        toggleButton, ButtonBase.ClickEvent, closeFlyoutFunc);
                 }
             }
         }
@@ -367,24 +358,18 @@ namespace ModernWpf.Controls
 
             if (button != null && button.Flyout == null)
             {
-                m_secondaryButtonClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
+                m_secondaryCommandClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
                     button, ButtonBase.ClickEvent, closeFlyoutFunc);
-                RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
-                RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
             }
             else if (toggleButton != null)
             {
-                RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
-                m_secondaryToggleButtonCheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                    toggleButton, ToggleButton.CheckedEvent, closeFlyoutFunc);
-                m_secondaryToggleButtonUncheckedRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
-                    toggleButton, ToggleButton.UncheckedEvent, closeFlyoutFunc);
+                RevokeAndRemove(m_secondaryCommandClickRevokerByElementMap, element);
+                m_secondaryCommandClickRevokerByElementMap[element] = new RoutedEventHandlerRevoker(
+                    toggleButton, ButtonBase.ClickEvent, closeFlyoutFunc);
             }
             else
             {
-                RevokeAndRemove(m_secondaryButtonClickRevokerByElementMap, element);
-                RevokeAndRemove(m_secondaryToggleButtonCheckedRevokerByElementMap, element);
-                RevokeAndRemove(m_secondaryToggleButtonUncheckedRevokerByElementMap, element);
+                RevokeAndRemove(m_secondaryCommandClickRevokerByElementMap, element);
             }
         }
 
@@ -608,11 +593,7 @@ namespace ModernWpf.Controls
 
         CommandBarFlyoutCommandBar m_commandBar;
 
-        Dictionary<ICommandBarElement, RoutedEventHandlerRevoker> m_secondaryButtonClickRevokerByElementMap =
-            new Dictionary<ICommandBarElement, RoutedEventHandlerRevoker>();
-        Dictionary<ICommandBarElement, RoutedEventHandlerRevoker> m_secondaryToggleButtonCheckedRevokerByElementMap =
-            new Dictionary<ICommandBarElement, RoutedEventHandlerRevoker>();
-        Dictionary<ICommandBarElement, RoutedEventHandlerRevoker> m_secondaryToggleButtonUncheckedRevokerByElementMap =
+        Dictionary<ICommandBarElement, RoutedEventHandlerRevoker> m_secondaryCommandClickRevokerByElementMap =
             new Dictionary<ICommandBarElement, RoutedEventHandlerRevoker>();
         Dictionary<ICommandBarElement, List<DependencyPropertyChangedRevoker>> m_propertyChangedRevokersByElementMap =
             new Dictionary<ICommandBarElement, List<DependencyPropertyChangedRevoker>>();
