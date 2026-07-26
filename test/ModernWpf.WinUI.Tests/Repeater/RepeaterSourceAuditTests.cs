@@ -16,6 +16,7 @@ public class RepeaterSourceAuditTests
         var repeater = Read(repoRoot, "ModernWpf.Controls", "Repeater", "ItemsRepeater", "ItemsRepeater.cs");
         var peer = Read(repoRoot, "ModernWpf.Controls", "Repeater", "Automation", "RepeaterAutomationPeer.cs");
         var automationTests = Read(repoRoot, "test", "ModernWpf.WinUI.Tests", "Repeater", "RepeaterAutomationPeerTests.cs");
+        var apiTests = Read(repoRoot, "test", "ModernWpf.WinUI.Tests", "Repeater", "ItemsRepeaterApiTests.cs");
         var galleryFactory = Read(repoRoot, "ModernWpf.Gallery", "Pages", "CollectionsSampleFactory.cs");
         var galleryTests = Read(repoRoot, "test", "ModernWpf.Gallery.Tests", "GalleryAutomationHookTests.cs");
         var harness = Read(repoRoot, "tools", "visual-checks", "Run-GalleryVisualChecks.ps1");
@@ -61,6 +62,9 @@ public class RepeaterSourceAuditTests
         StringAssert.Contains(repeater, "KeyboardNavigationMode.Once");
         StringAssert.Contains(repeater, "MaxStackLayoutIterations = 60");
         StringAssert.Contains(repeater, "return new RepeaterAutomationPeer(this);");
+        StringAssert.Contains(repeater, "else if (newValue != null)");
+        StringAssert.Contains(audit, "WPF clears a template-created element's resource-backed dependency properties");
+        StringAssert.Contains(apiTests, "ResourceBackedItemTemplateSurvivesOuterListViewItemReplacement");
         StringAssert.Contains(peer, "return AutomationControlType.Group;");
         StringAssert.Contains(peer, "if (virtInfo.IsRealized)");
         StringAssert.Contains(peer, "realizedPeers.OrderBy(x => x.Item1)");
