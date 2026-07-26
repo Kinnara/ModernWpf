@@ -75,7 +75,7 @@ jobs:
         global-json-file: global.json
 
     - name: Setup Windows SDK
-      uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.5
+      uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.12
       with:
         sdk-version: 19041
 
