@@ -1,10 +1,16 @@
 # ListView / GridView WinUI 3 Source Audit
 
-Date: 2026-07-18
+Date: 2026-07-25
 
 This audit treats official `microsoft-ui-xaml` commit `de3e767333c2f0717a6a70cb22bd192ced5ad885` and official WinUI Gallery commit `29f62479d5c046a0b854a5868e5a7cd484572d87` as the current sources of truth for ModernWpf's custom `ListViewBase`, `ListView`, and `GridView` family. It supersedes the 2026-07-17 audit against `3cae15f071f1ab8565f9a7592dbf27f04bafe651`.
 
 The current refresh found one real accessibility mismatch: ModernWpf's shared item peer always advertised Invoke and inherited WPF class names. Current WinUI advertises Invoke only when `IsItemClickEnabled` is true (or for the unsupported SemanticZoom zoomed-out case), and publishes `ListView`, `GridView`, `ListViewItem`, and `GridViewItem` class names. ModernWpf now matches that feasible contract. No product-template or Gallery layout change was justified: exact installed-Gallery geometry and the existing strict visual/interaction gates remain green in both themes.
+
+Issue #343 validation found a separate WPF-substrate omission: the custom
+collection styles left `ScrollViewer.PanningMode` at its `None` default, so
+their templated scroll viewers could not enter WPF's touch-manipulation
+panning path. Both custom collection styles now select the standard WPF
+`Both` mode.
 
 ## Official Revisions And History
 
@@ -76,6 +82,10 @@ ModernWpf's generated page resolves the same current content through `Collection
 - WinUI uses `ListViewItemPresenter` and platform collection panels. Under the no-new-presenter rule, ModernWpf maps the source-visible properties into explicit `Border`, `ContentPresenterEx`, selection-border, and checkbox parts.
 - WinUI can repeat visual-state names across groups. WPF namescopes reject duplicate names, so ModernWpf folds the source-feasible selected visuals into `CommonStates`.
 - WPF `ListBoxItem`, `SelectionMode`, `ItemContainerGenerator`, `ScrollViewerEx`, `VirtualizingStackPanel`, `WrapPanel`, and `ItemsWrapGrid` remain the platform substrate for selection, virtualization, scrolling, and layout.
+- `ListView` and `GridView` set WPF `ScrollViewer.PanningMode=Both`. Their
+  templated `ScrollViewerEx` instances bind that attached property from the
+  collection control, enabling WPF's native touch-manipulation scrolling while
+  the configured scrollbar visibility still determines the scrollable axes.
 - WinUI SemanticZoom, gamepad focus engagement, connected animations, native item presenters, data virtualization, and native drag/reorder providers are not available as direct WPF services. The source audit does not claim those unsupported platform paths.
 - The current native dragged-item `Reserve` call is an allocation optimization and has no observable WPF port requirement.
 - The current perf2026 dictionary's discrete setter conversion maps to the already-retained `VisualStateEx.Setters`; unsupported drag/reorder/presenter-only state machinery is not fabricated.
@@ -96,14 +106,18 @@ Fresh rendered interaction recordings also prove Invoke, selection change, and b
 
 ## Regression Coverage
 
-- `ListViewApiTests` covers both item templates and source state setters, list/grid multiselect state routing, own-container click data, Space, automated Invoke, current peer class/control types, conditional Invoke exposure, brush-typed focus resources, and selected-disabled resources.
+- `ListViewApiTests` covers both item templates and source state setters,
+  list/grid multiselect state routing, WPF touch-panning enablement,
+  own-container click data, Space, automated Invoke, current peer
+  class/control types, conditional Invoke exposure, brush-typed focus
+  resources, and selected-disabled resources.
 - `GalleryAutomationHookTests.GridViewSampleMatchesWinUIGalleryExamples` covers all three current headers/snippets, eight-item data, image dimensions/scaling/name, basic click output, List/GridView peer roles and class names, conditional Invoke, layout margins/wrapping, content-template options, selection output, flow direction, drop, and selection modes.
 - `WpfGallerySourceShapeTests.GalleryVisualChecksEnforceGridViewPixelParityThreshold` pins the required static/interaction parity gates, exact-size gate, output crop mapping, and bounded alignment helper.
 - `ListViewSourceAuditTests` pins the current revisions, authoritative product/Gallery blobs, local peer fix, Gallery content, strict artifacts, and test/harness shape.
 
 ## Validation
 
-- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj -f net8.0-windows7.0 --filter "FullyQualifiedName~ListViewApiTests|FullyQualifiedName~ListViewSourceAuditTests" --no-restore` passes 11/11.
+- `dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj -f net8.0-windows7.0 --filter "FullyQualifiedName~ListViewApiTests|FullyQualifiedName~ListViewSourceAuditTests" --no-restore` passes 12/12.
 - The focused Gallery runtime/source-shape slice passes on both `net8.0-windows7.0` and `net10.0-windows7.0`.
 - `ModernWpf.Controls` and `ModernWpf.Gallery` build for `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0` with zero errors. The focused net8 build is warning-free; net462/net10 report the 18 existing unrelated NavigationView, PersonPicture, and ItemsRepeater warnings.
 - The two fresh installed-Gallery visual runs and two rendered recordings above pass their strict required gates.
