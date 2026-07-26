@@ -1,51 +1,117 @@
-# ModernWPF UI Library
-[![Gitter](https://badges.gitter.im/ModernWpf/community.svg)](https://gitter.im/ModernWpf/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+<h1 align="center">ModernWPF</h1>
 
-Modern styles and controls for your WPF applications.
+<p align="center">
+  Modern Fluent styles and WinUI-inspired controls for Windows Presentation Foundation.
+</p>
 
-## Maintenance status
+<p align="center">
+  <a href="https://github.com/Kinnara/ModernWpf/actions/workflows/build.yml">
+    <img src="https://github.com/Kinnara/ModernWpf/actions/workflows/build.yml/badge.svg?branch=master" alt="Build status">
+  </a>
+  <a href="https://www.nuget.org/packages/ModernWpfUI">
+    <img src="https://img.shields.io/badge/NuGet-ModernWpfUI-004880?logo=nuget&logoColor=white" alt="ModernWpfUI on NuGet">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license">
+  </a>
+</p>
 
-ModernWpf is restarting active maintenance on a new 1.x line.
+<p align="center">
+  <a href="#getting-started">Get started</a>
+  <span> · </span>
+  <a href="#gallery">Gallery</a>
+  <span> · </span>
+  <a href="#documentation">Documentation</a>
+  <span> · </span>
+  <a href="https://github.com/Kinnara/ModernWpf/discussions">Discussions</a>
+</p>
 
-| Line | Status | Support |
+ModernWPF is an independent, community-maintained library that brings Fluent
+styling and modern controls to
+[Windows Presentation Foundation](https://github.com/dotnet/wpf) applications.
+It runs directly on WPF; it is not WinUI and does not replace the WPF runtime.
+
+> [!IMPORTANT]
+> ModernWPF 1.x is the active preview line. The 0.9.x line is frozen and
+> unsupported. No maintenance updates, security fixes, or new 0.9.x releases
+> are planned.
+
+> [!NOTE]
+> **ModernWPF** is the product and display name. The repository and CLR
+> namespaces continue to use `ModernWpf`, and the NuGet package remains
+> `ModernWpfUI`.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/Gallery.Dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/images/Gallery.Light.png">
+  <img
+    alt="ModernWPF Gallery home screen showing controls, samples, and navigation"
+    src="docs/images/Gallery.Light.png">
+</picture>
+
+## What ModernWPF provides
+
+- Fluent styling for stock WPF controls, including Light, Dark, High Contrast,
+  and compact-resource behavior.
+- WPF ports of modern controls such as `NavigationView`, `NumberBox`,
+  `ContentDialog`, `InfoBar`, `CommandBarFlyout`, and `ItemsRepeater`.
+- Application, window, and element-level theme APIs with a consistent surface
+  across every supported target.
+- Modern window chrome, title-bar integration, layout helpers, and resource
+  primitives for existing WPF applications.
+- Source-backed compatibility audits and automated API, resource, theme,
+  accessibility, package, and runtime tests.
+
+## Relationship to WPF and WinUI
+
+ModernWPF follows both upstream UI projects, but each has a different role:
+
+| Area | Upstream authority | ModernWPF strategy |
 | --- | --- | --- |
-| 0.9.x | Legacy | Security-only fixes for existing applications. |
-| 1.x | Active preview | New maintenance line for current WPF applications. |
+| WPF runtime, XAML, layout, and input | [dotnet/wpf](https://github.com/dotnet/wpf) | Build directly on WPF and preserve WPF behavior. |
+| Stock control styling | Official WPF Fluent resources | Use the platform Fluent theme on .NET 10 and a compatible ModernWPF backport on older supported targets. |
+| Additional modern controls | [microsoft-ui-xaml](https://github.com/microsoft/microsoft-ui-xaml) | Port current WinUI control APIs and behavior where WPF has no equivalent, documenting necessary WPF adaptations. |
 
-The NuGet package name remains `ModernWpfUI`. The first 1.x maintenance
-release candidate is `1.0.0-preview.1`.
-See the [1.x public API contract](docs/public-api-contract-1x.md) for the
-forward-compatibility boundary and the comparison with 0.9.x, current WinUI,
-and official WPF Fluent.
-Applications upgrading from 0.9.x should also read the
-[migration guide](docs/migrating-from-0.9.md) and
-[preview release notes](docs/release-notes-1.0.0-preview.1.md).
+ModernWPF is not affiliated with or endorsed by Microsoft.
 
-## Supported targets
+## Project status
 
-| Target framework | Theme source | Notes |
+| Line | Status | Policy |
 | --- | --- | --- |
-| `net462` | ModernWpf Fluent backport | Compatibility target for existing .NET Framework WPF apps. |
-| `net8.0-windows7.0` | ModernWpf Fluent backport | Current LTS target for WPF apps. |
-| `net10.0-windows7.0` | WPF platform Fluent theme plus ModernWpf controls | Uses the official `PresentationFramework.Fluent` resources for stock WPF controls. |
+| 1.x | Active preview | Current development line. `1.0.0-preview.1` establishes the forward-compatible CLR API and public resource-key baseline. |
+| 0.9.x | Frozen and unsupported | Historical packages remain available, but no updates or security fixes are planned. |
 
-## Features
-* Modern styles and new features for [the majority of the stock WPF controls](https://github.com/Kinnara/ModernWpf/wiki/Controls#styled-controls).
+Source and binary compatibility with 0.9.x is not promised. Existing
+applications should follow the
+[0.9.x migration guide](docs/migrating-from-0.9.md), which covers target
+framework changes, resource entries, renamed APIs, and the removal of the
+MahApps adapter from 1.x.
 
-* Light and dark themes that can be easily customized. A high contrast theme is also included.
+### Supported targets
 
-* [Additional controls](https://github.com/Kinnara/ModernWpf/wiki/Controls#additional-controls) to help you build modern applications. Some are ported from the [Windows UI Library](https://github.com/microsoft/microsoft-ui-xaml).
+| Target framework | Stock control theme | Intended use |
+| --- | --- | --- |
+| `net462` | ModernWPF Fluent backport | Existing .NET Framework WPF applications. |
+| `net8.0-windows7.0` | ModernWPF Fluent backport | Modern .NET WPF applications targeting .NET 8. |
+| `net10.0-windows7.0` | Official `PresentationFramework.Fluent` theme | Modern .NET WPF applications targeting .NET 10. |
 
-* Targets .NET Framework 4.6.2, .NET 8 for Windows, and .NET 10 for Windows.
+Retired `net45`, `netcoreapp3.0`, and `net5.0-windows` package assets are not
+part of the 1.x line.
 
-![Overview of controls (light theme)](docs/images/Controls.Light.png "Overview of controls (light theme)")
+## Getting started
 
-## Quick start
-1. Create a new WPF app.
+Install an explicit 1.x version so NuGet does not select a frozen 0.9.x
+package:
 
-2. Install from NuGet `Install-Package ModernWpfUI`.
+```powershell
+dotnet add package ModernWpfUI --version 1.0.0-preview.1
+```
 
-3. Edit App.xaml to use the recommended 1.x resource entry:
+If the requested preview is not yet listed on NuGet, use a validated workflow
+artifact or [build the repository from source](#build-from-source).
+
+Add the recommended 1.x resources to `App.xaml`:
+
 ```xaml
 <Application
     ...
@@ -61,130 +127,94 @@ Applications upgrading from 0.9.x should also read the
 </Application>
 ```
 
-`FluentControlsResources` uses the official WPF Fluent theme on `net10.0-windows7.0` and the ModernWpf Fluent backport on older supported targets.
-On `net10.0-windows7.0`, `ThemeManager.ApplicationTheme` and window
-`ThemeManager.RequestedTheme` are also bridged to the official WPF
-`ThemeMode` APIs. Element-level theme islands continue to use ModernWpf's
-WinUI-compatible resource dictionaries so existing per-control theme scopes keep
-working on every supported target.
+Then opt a window into ModernWPF styling and use the controls from the same
+XAML namespace:
 
-For existing 0.9.x applications, the old resource entry remains supported:
-```xaml
-<Application
-    ...
-    xmlns:ui="http://schemas.modernwpf.com/2019">
-    <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ui:ThemeResources />
-                <ui:XamlControlsResources />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Application.Resources>
-</Application>
-```
-
-4. Edit MainWindow.xaml to following:
 ```xaml
 <Window
     ...
     xmlns:ui="http://schemas.modernwpf.com/2019"
     ui:WindowHelper.UseModernWindowStyle="True">
-    <ui:StackPanelEx Margin="12" Spacing="24">
-        <TextBlock Text="My first ModernWPF app" Style="{StaticResource HeaderTextBlockStyle}" />
-        <Button Content="I am a button" />
-        <Button Content="I am an accent button" Style="{StaticResource AccentButtonStyle}" />
+    <ui:StackPanelEx Margin="24" Spacing="12">
+        <TextBlock
+            Text="ModernWPF"
+            Style="{StaticResource HeaderTextBlockStyle}" />
+        <Button Content="Standard button" />
+        <Button
+            Content="Accent button"
+            Style="{StaticResource AccentButtonStyle}" />
     </ui:StackPanelEx>
 </Window>
 ```
 
-5. See [the wiki](https://github.com/Kinnara/ModernWpf/wiki) for more information.
+`FluentControlsResources` uses official WPF Fluent resources for stock controls
+on `net10.0-windows7.0` and the ModernWPF backport on the older supported
+targets. Applications that need a staged migration may temporarily retain
+`ThemeResources` plus `XamlControlsResources`; new applications should use the
+recommended entry above.
 
-### Interactive content in an extended title bar
+## Gallery
 
-When content extends into the title bar, mark each button or other interactive
-control with WPF's `WindowChrome.IsHitTestVisibleInChrome` attached property:
+[`ModernWpf.Gallery`](ModernWpf.Gallery) is this repository's interactive
+catalog and development sample. It demonstrates ModernWPF controls, WPF stock
+controls, themes, window chrome, navigation, dialogs, flyouts, and input
+behavior. It is a project sample, not Microsoft's official WPF or WinUI
+Gallery.
 
-```xaml
-<Window
-    ...
-    xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
-    xmlns:ui="http://schemas.modernwpf.com/2019"
-    ui:TitleBar.ExtendViewIntoTitleBar="True"
-    ui:WindowHelper.UseModernWindowStyle="True">
-    <Grid>
-        <Button
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Content="Title bar action"
-            shell:WindowChrome.IsHitTestVisibleInChrome="True" />
-    </Grid>
-</Window>
-```
-
-Set the property only on controls that need pointer input. Unmarked title-bar
-space remains available for dragging the window, and the normal resize borders
-and `ResizeMode="CanResizeWithGrip"` grip remain active.
-
-## Build and run the Gallery
-
-The sample application for the active 1.x line is
-`ModernWpf.Gallery` (formerly `ModernWpf.SampleApp`). Build the Gallery project
-directly so unrelated test and integration projects are not required.
-
-On Windows, install the .NET SDK selected by [`global.json`](global.json). If
-you use Visual Studio, also install the **.NET desktop development** workload.
-Then run these commands from the repository root:
+On Windows, install the SDK selected by [`global.json`](global.json), then run:
 
 ```powershell
 dotnet restore .\ModernWpf.Gallery\ModernWpf.Gallery.csproj
-dotnet build .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --framework net10.0-windows7.0 --no-restore
-dotnet run --project .\ModernWpf.Gallery\ModernWpf.Gallery.csproj --configuration Debug --framework net10.0-windows7.0 --no-build
+dotnet run --project .\ModernWpf.Gallery\ModernWpf.Gallery.csproj `
+    --configuration Debug `
+    --framework net10.0-windows7.0 `
+    --no-restore
 ```
 
-Use `net8.0-windows7.0` instead to run that supported target. Building
-`net462` also requires the .NET Framework 4.6.2 Developer Pack. In Visual
-Studio, open `ModernWpf.sln`, set `ModernWpf.Gallery` as the startup project,
-choose a supported target framework, and start debugging.
+Use `net8.0-windows7.0` to exercise that supported target. Building `net462`
+also requires the .NET Framework 4.6.2 Developer Pack. In Visual Studio, open
+`ModernWpf.sln` and select `ModernWpf.Gallery` as the startup project.
 
-The built executable is written under
-`ModernWpf.Gallery\bin\Debug\<target-framework>\ModernWpf.Gallery.exe`.
-GitHub releases publish the library packages rather than a separate Gallery
-binary.
+## Documentation
 
-## Packages
-| NuGet Package | Latest Versions |
+| Resource | Purpose |
 | --- | --- |
-| [ModernWpfUI][NuGet] | [![latest stable version](https://img.shields.io/nuget/v/ModernWpfUI)][NuGet]<br />[![latest prerelease version](https://img.shields.io/nuget/vpre/ModernWpfUI)][NuGet.Pre] |
+| [1.0.0-preview.1 release notes](docs/release-notes-1.0.0-preview.1.md) | Package changes, intentional 0.9 breaks, recommended resources, and preview limitations. |
+| [Migrating from 0.9.x](docs/migrating-from-0.9.md) | Step-by-step application migration guidance. |
+| [1.x public API contract](docs/public-api-contract-1x.md) | Forward compatibility policy for CLR APIs and public resource keys. |
 
-## Screenshots
-![Overview of controls (dark theme)](docs/images/Controls.Dark.png "Overview of controls (dark theme)")
+## Build from source
 
-![Control palette](docs/images/ControlPalette1.png "Control palette")
+Building requires Windows, the .NET SDK selected by [`global.json`](global.json),
+and the Visual Studio **.NET desktop development** workload or equivalent build
+tools. The `net462` target also requires the .NET Framework 4.6.2 Developer
+Pack.
 
-![Easily customize colors](docs/images/Nighttime.png "Easily customize colors")
+Restore and build serially from the repository root:
 
-![NumberBox](docs/images/NumberBox.png "NumberBox")
+```powershell
+dotnet restore ModernWpf.sln
+dotnet build ModernWpf.sln --configuration Release --no-restore --maxcpucount:1
+```
 
-![ContentDialog](docs/images/ContentDialog.png "ContentDialog")
+See [release readiness](docs/release-readiness-1x.md) for the complete test,
+package verification, and executable consumer-smoke commands. Solution builds
+and test builds should not run in parallel because WPF projects can contend for
+shared intermediate files.
 
-![DataGrid](docs/images/DataGrid.png "DataGrid")
+## Contributing and feedback
 
-![ItemsRepeater](docs/images/ItemsRepeater.png "ItemsRepeater")
+- Use [Discussions](https://github.com/Kinnara/ModernWpf/discussions) for
+  questions, design ideas, and broader proposals.
+- Use [Issues](https://github.com/Kinnara/ModernWpf/issues) for reproducible
+  bugs and focused feature requests. Include the target framework, Windows
+  version, theme, and a minimal reproduction when relevant.
+- Read the related source-audit document under [`docs`](docs) before changing a
+  WinUI-derived control or stock WPF template.
+- Add focused regression coverage and run the affected test project before
+  submitting a change.
 
-![Custom title bar](docs/images/CustomTitleBar.Dark.png "Custom title bar")
+## License
 
-![Calendar](docs/images/Calendar.png "Calendar")
-
-![Menu](docs/images/Menu.png "Menu")
-
-![Progress controls](docs/images/Progress.png "Progress controls")
-
-![Color ramp](docs/images/ColorRamp.png "Color ramp")
-
-![Accent color palette](docs/images/AccentColorPalette.png "Accent color palette")
-
-![High contrast mode](docs/images/HighContrast.png "High contrast mode")
-
-[NuGet]: https://www.nuget.org/packages/ModernWpfUI/
-[NuGet.Pre]: https://www.nuget.org/packages/ModernWpfUI/absoluteLatest
+ModernWPF is licensed under the [MIT License](LICENSE). WPF and WinUI source
+references retain their respective upstream notices and licenses.

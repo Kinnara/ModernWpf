@@ -5,7 +5,8 @@ This is a public draft for the 1.x maintenance reboot. It intentionally starts s
 ## Direction
 
 - Keep `ModernWpfUI` as the package name.
-- Maintain `0.9.x` as a legacy/security-only line.
+- Keep `0.9.x` frozen as an unsupported historical line. No maintenance,
+  security, or compatibility releases are planned.
 - Use `1.x` as the active maintenance line.
 - Start the reboot with `1.0.0-preview.1`.
 - Target `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0`.
