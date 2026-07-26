@@ -84,7 +84,7 @@ CommandBarFlyout page/sample change after Gallery conversion commit
 | --- | --- |
 | Constructor sets `ShouldConstrainToRootBounds=false`, disables default open/close animations, and owns primary/secondary command vectors. | Matched with WPF observable collections and FlyoutBase properties. |
 | Primary and secondary command collection changes are mirrored into the internal command bar. | Matched with collection-forwarding tests. |
-| Secondary command execution closes the flyout, except `AppBarButton` entries with an associated flyout. | Matched with WPF routed-event revokers. |
+| Secondary command execution closes the flyout, except `AppBarButton` entries with an associated flyout. | Matched with WPF routed `Click` revokers. `AppBarToggleButton` uses `Click` rather than state-change events so late WPF binding synchronization cannot masquerade as command execution. |
 | Secondary `AppBarButton` / `AppBarToggleButton` changes to `Icon`, `Label`, and `KeyboardAcceleratorTextOverride` refresh open flyout sizing. | Matched; all three dependency properties are now tracked, including keyboard accelerator text. |
 | Adding or replacing a primary/secondary command updates that command's localized MenuItem identity without rescanning every existing command. | Behavior matched through the scoped `IsInCommandBarFlyout` flag and peer lookup: inserted commands immediately expose MenuItem / `menu item` without localized-resource rescans. A current-source regression covers live insertion after the flyout is open. |
 | `AlwaysExpanded` forces `ShowMode=Standard`, opens the command bar, and hides the overflow button. | Matched with WPF command-bar state tests. |
@@ -108,6 +108,12 @@ CommandBarFlyout page/sample change after Gallery conversion commit
 - WPF automation does not expose WinRT `AutomationEvents.MenuOpened` / `MenuClosed`. Control types, localized type names, expanded ellipsis name, app-visible behavior, and focus routing are matched and covered; only the WinRT-specific event identifiers remain a platform gap.
 - WPF AutomationProperties has no `FlowsTo` / `FlowsFrom` attached-property API. ModernWpf matches the source primary/secondary focus graph and tab-stop uniqueness, but cannot publish those two WinUI relationship properties through WPF UIA.
 - WPF template binding can lag dependency-property callbacks during measurement, so ModernWpf keeps a narrow deferred size refresh after source-tracked secondary command property changes.
+- WinUI observes secondary `AppBarToggleButton.Checked` / `Unchecked` to close
+  the flyout after invocation. WPF can raise those routed events when a binding
+  first resolves after the popup opens, even though the command was not
+  invoked. ModernWpf observes the toggle's routed `Click` event instead; mouse,
+  keyboard, and automation invocation still close the flyout, while binding
+  initialization and programmatic state synchronization do not.
 - WPF has no WinUI gamepad/remote input-mode service in this control path. ModernWpf wires the source-shaped touch/default subset through WPF key/mouse/touch events and leaves gamepad/remote selection as a platform gap.
 
 ## Current Validation
@@ -125,7 +131,7 @@ dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj -f net10.0-windows7.
 git diff --check
 ```
 
-Fresh gate-enforced Light `artifacts/visual-checks/20260719-022802-704-69300/report.md` and Dark `artifacts/visual-checks/20260719-022908-765-38068/report.md` runs both retain static primary delta `4.99` with `454x302` versus `453x302` photo crops. Expanded interaction crops are exact `229x136` matches at delta `7.05` / `8.18`, and both raw UIA command unions remain exact `217x124`. Live UIA reports Menu/MenuItem roles and `Less app bar` in both applications. The harness enforces static delta `<=6.0`, static size delta `<=2`, interaction delta `<=9.0`, and exact interaction size parity. Fresh Light/Dark OpenRepeat recordings `artifacts/gallery-recordings/20260719-023035-553/report.md` and `artifacts/gallery-recordings/20260719-023154-586/report.md` pass, detect both opens, and provide dense transition review. The refreshed focused API suite passes 29/29; focused current-source/sample/interaction/gate Gallery coverage passes 5/5 on net8 and net10; Controls and Gallery build on net462, net8, and net10 with zero errors. Controls retains the repository's 18 unrelated net462 warnings, while Gallery is warning-free.
+Fresh gate-enforced Light `artifacts/visual-checks/20260719-022802-704-69300/report.md` and Dark `artifacts/visual-checks/20260719-022908-765-38068/report.md` runs both retain static primary delta `4.99` with `454x302` versus `453x302` photo crops. Expanded interaction crops are exact `229x136` matches at delta `7.05` / `8.18`, and both raw UIA command unions remain exact `217x124`. Live UIA reports Menu/MenuItem roles and `Less app bar` in both applications. The harness enforces static delta `<=6.0`, static size delta `<=2`, interaction delta `<=9.0`, and exact interaction size parity. Fresh Light/Dark OpenRepeat recordings `artifacts/gallery-recordings/20260719-023035-553/report.md` and `artifacts/gallery-recordings/20260719-023154-586/report.md` pass, detect both opens, and provide dense transition review. The refreshed focused API suite passes 39/39, including late secondary-toggle binding initialization followed by real invocation; focused current-source/sample/interaction/gate Gallery coverage passes 5/5 on net8 and net10; Controls and Gallery build on net462, net8, and net10 with zero errors. Controls retains the repository's 18 unrelated net462 warnings, while Gallery is warning-free.
 
 ## 2026-07-21 Transition-State Follow-up
 

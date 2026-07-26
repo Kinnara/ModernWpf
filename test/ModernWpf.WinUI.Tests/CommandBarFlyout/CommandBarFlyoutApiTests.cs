@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -93,6 +94,55 @@ public class CommandBarFlyoutApiTests
             Assert.IsTrue(commandBar.IsOpen, "AlwaysExpanded must reject an overflow-collapse request while the flyout is open.");
 
             HideAndWait(commandBarFlyout);
+        });
+    }
+
+    [TestMethod]
+    public void SecondaryToggleBindingInitializationDoesNotDismissFlyout()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var toggleButton = new TestAppBarToggleButton { Label = "Auto run" };
+            toggleButton.SetBinding(
+                ToggleButton.IsCheckedProperty,
+                new Binding("IsChecked") { Mode = BindingMode.OneWay });
+
+            var commandBarFlyout = new CommandBarFlyout
+            {
+                Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft
+            };
+            commandBarFlyout.SecondaryCommands.Add(toggleButton);
+
+            var closingCount = 0;
+            commandBarFlyout.Closing += delegate { closingCount++; };
+            commandBarFlyout.Opened += delegate
+            {
+                toggleButton.DataContext = new { IsChecked = true };
+            };
+
+            var target = new System.Windows.Controls.Button
+            {
+                Content = "Show CommandBarFlyout",
+                Width = 180,
+                Height = 36
+            };
+
+            using var host = new TestWindowHost(target, width: 420, height: 260);
+
+            commandBarFlyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+
+            Assert.AreEqual(true, toggleButton.IsChecked);
+            Assert.AreEqual(0, closingCount, "Binding initialization must not invoke a secondary command.");
+            Assert.IsTrue(commandBarFlyout.IsOpen, "Binding initialization must not dismiss the CommandBarFlyout.");
+
+            toggleButton.InvokeClick();
+            WaitFor(() => !commandBarFlyout.IsOpen, "Invoking the secondary toggle did not dismiss the CommandBarFlyout.");
+
+            Assert.AreEqual(false, toggleButton.IsChecked);
+            Assert.AreEqual(1, closingCount);
         });
     }
 
@@ -1845,6 +1895,14 @@ public class CommandBarFlyoutApiTests
         for (var type = value.GetType(); type != null; type = type.BaseType)
         {
             Assert.AreNotEqual(typeName, type.Name);
+        }
+    }
+
+    private sealed class TestAppBarToggleButton : AppBarToggleButton
+    {
+        public void InvokeClick()
+        {
+            OnClick();
         }
     }
 
