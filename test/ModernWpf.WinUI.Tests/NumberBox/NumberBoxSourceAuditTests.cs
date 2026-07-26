@@ -25,6 +25,7 @@ public class NumberBoxSourceAuditTests
         StringAssert.Contains(audit, "c7e2f98d978c81c2b7b0054eb042a6f8f816ec9c");
         StringAssert.Contains(audit, "beabd047460bf5d43a41fcf8bddf7730188bd5a7");
         StringAssert.Contains(audit, "49b4d5326b4deba8c036e63a7e676715a5de4f3a");
+        StringAssert.Contains(audit, "b4e5f2cafeae04f3a799123d48dca9516832becb");
         StringAssert.Contains(audit, "29f62479d5c046a0b854a5868e5a7cd484572d87");
         StringAssert.Contains(audit, "14a4a1a2b8ddc527dc4a7d5f7e743d7c2bc97db7");
         StringAssert.Contains(audit, "4bf79c2f673991f328230e60b218df60b3cabddb");
@@ -55,6 +56,8 @@ public class NumberBoxSourceAuditTests
         StringAssert.Contains(numberBox, "ReevaluateForwardedUIAProperties();");
         StringAssert.Contains(numberBox, "spinButtonsColumn.Width = spinButtonMode == NumberBoxSpinButtonPlacementMode.Inline");
         StringAssert.Contains(generatedProperties, "if (!double.IsNaN(value) || !double.IsNaN(Value))");
+        StringAssert.Contains(rounder, "var singleValue = (float)value;");
+        StringAssert.Contains(rounder, "singleValue.ToString(\"R\", CultureInfo.InvariantCulture)");
         StringAssert.Contains(rounder, "value.ToString(\"G\" + SignificantDigits, CultureInfo.InvariantCulture)");
 
         StringAssert.Contains(template, "x:Name=\"InputEater\"");

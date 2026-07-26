@@ -143,6 +143,38 @@ public class NumberBoxInteractionTests
     }
 
     [TestMethod]
+    public void FloatValueDisplaySuppressesBinaryPrecisionArtifacts()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var floatValue = (double)10.4f;
+            Assert.AreNotEqual(10.4d, floatValue);
+
+            var numberBox = CreateNumberBox();
+            numberBox.Value = floatValue;
+
+            using var host = new TestWindowHost(numberBox, width: 320, height: 180);
+
+            var inputBox = FindTemplatePart<TextBox>(numberBox, "InputBox");
+            var expectedText = 10.4d.ToString(CultureInfo.CurrentCulture);
+
+            Assert.AreEqual(floatValue, numberBox.Value);
+            Assert.AreEqual(expectedText, numberBox.Text);
+            Assert.AreEqual(expectedText, inputBox.Text);
+
+            var doubleValue = 10.1234567890123d;
+
+            numberBox.Value = doubleValue;
+            host.UpdateLayout();
+
+            var expectedDoubleText = 10.12345679d.ToString(CultureInfo.CurrentCulture);
+            Assert.AreEqual(doubleValue, numberBox.Value);
+            Assert.AreEqual(expectedDoubleText, numberBox.Text);
+            Assert.AreEqual(expectedDoubleText, inputBox.Text);
+        });
+    }
+
+    [TestMethod]
     public void MinMaxTest()
     {
         WpfTestHost.Run(() =>
