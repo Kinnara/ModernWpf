@@ -146,6 +146,13 @@ post-May-2026 root layout (`controls/...` rather than `src/controls/...`).
   `Both`; each templated `ScrollViewerEx` binds the mode from its parent and
   enters WPF's native touch-manipulation scrolling path while scrollbar
   visibility continues to constrain the available axes.
+- 2026-07-26 GridView horizontal-wheel completion: issue #162 reproduced with
+  horizontal overflow and no vertical extent because WPF maps mouse-wheel
+  input only to its vertical scrolling path. `ScrollViewerEx` now preserves
+  vertical priority and otherwise delegates to WPF
+  `IScrollInfo.MouseWheelLeft` / `MouseWheelRight`, retaining platform scroll
+  units and virtualizing-panel behavior. The exact custom `GridView`
+  regression is locked in `ListViewApiTests`.
 - 2026-07-19 VariableSizedWrapGrid / WrapGrid / ItemsWrapGrid current-source refresh: `docs\variablesizedwrapgrid-winui3-source-audit.md` pins 17 official product blobs at commit `de3e767333c2f0717a6a70cb22bd192ced5ad885`; every blob is byte-identical across the old/current roots. Source-derived geometry tests retain first-item sizing, wrapping, spans, alignment, and finite occupancy; current Gallery has no standalone family page, while its GridView customization still consumes a live MaxItemsWrapGrid. Native recycling/cache/group/keyboard services remain explicit WPF boundaries.
 - 2026-05-18 Expander official Fluent replacement: `docs\expander-wpf-fluent-source-audit.md` maps stock WPF `Expander` to `PresentationFramework.Fluent\Styles\Expander.xaml`. The prior WinUI-shaped `VisualStateEx` / `ToggleButtonHelper` / `ContentPresenterEx` template guesses were deleted because official WPF Fluent is the primary source for stock WPF controls.
 - 2026-05-17 Repeater / ItemsRepeater layouts whole-family source audit: `docs\repeater-winui3-source-audit.md` maps `ItemsRepeater`, `ViewportManager`, layouts, item-template/recycle/source-view helpers, selection model, and upstream API tests against local WinUI 3 source. The files were already source-derived rather than guessed WPF wrappers; this slice closes the stale WinUI 2-era classification and ports the missing source `StackLayout` measure-cycle guard plus viewport `GetLayoutExtent` hook.

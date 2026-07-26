@@ -86,6 +86,13 @@ ModernWpf's generated page resolves the same current content through `Collection
   templated `ScrollViewerEx` instances bind that attached property from the
   collection control, enabling WPF's native touch-manipulation scrolling while
   the configured scrollbar visibility still determines the scrollable axes.
+- WPF's stock `ScrollViewer` maps mouse-wheel input only to its vertical
+  `IScrollInfo` path. The retained `ScrollViewerEx` gives vertical overflow
+  priority and, when no vertical extent exists, routes the wheel to
+  `IScrollInfo.MouseWheelLeft` / `MouseWheelRight`. This preserves WPF's
+  platform scroll units and virtualizing-panel behavior for horizontal-only
+  custom `GridView` layouts without introducing a separate smooth-scrolling
+  animation model.
 - WinUI SemanticZoom, gamepad focus engagement, connected animations, native item presenters, data virtualization, and native drag/reorder providers are not available as direct WPF services. The source audit does not claim those unsupported platform paths.
 - The current native dragged-item `Reserve` call is an allocation optimization and has no observable WPF port requirement.
 - The current perf2026 dictionary's discrete setter conversion maps to the already-retained `VisualStateEx.Setters`; unsupported drag/reorder/presenter-only state machinery is not fabricated.
