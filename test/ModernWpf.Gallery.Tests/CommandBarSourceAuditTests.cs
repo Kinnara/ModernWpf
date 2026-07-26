@@ -18,6 +18,8 @@ namespace ModernWpf.Gallery.Tests
             var dynamicOverflow = Read(root, "ModernWpf.Controls", "CommandBar", "CommandBarDynamicOverflow.cs");
             var peer = Read(root, "ModernWpf.Controls", "CommandBar", "CommandBarAutomationPeer.cs");
             var style = Read(root, "ModernWpf", "Styles", "CommandBar.xaml");
+            var rootResources = Read(root, "ModernWpf", "ModernWpfControlsResources.xaml");
+            var publicResourceKeys = Read(root, "ModernWpf", "PublicResourceKeys.Unshipped.txt");
             var appBarButton = Read(root, "ModernWpf.Controls", "CommandBar", "AppBarButton.xaml");
             var publicDocumentation = Read(root, "ModernWpf.Controls", "ModernWpf.Controls.xml");
             var sample = Read(root, "ModernWpf.Gallery", "Pages", "MenusToolbarsSampleFactory.cs");
@@ -43,6 +45,11 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(template, "PlacementTarget=\"{Binding ElementName=ContentRoot}\"");
             StringAssert.Contains(template, "StaysOpen=\"true\"");
             StringAssert.Contains(template, "MinWidth=\"{DynamicResource CommandBarOverflowMinWidth}\"");
+            StringAssert.Contains(template, "Data=\"{DynamicResource CommandBarMoreButtonIconData}\"");
+            StringAssert.Contains(rootResources, "x:Key=\"CommandBarMoreButtonIconData\"");
+            StringAssert.Contains(
+                publicResourceKeys,
+                "ModernWpfControlsResources.xaml|CommandBarMoreButtonIconData");
             StringAssert.Contains(control, "InputManager.Current.PreProcessInput += OnPreProcessInput");
             StringAssert.Contains(control, "TryLightDismissForTesting(inputSource)");
             StringAssert.Contains(control, "if (!IsSticky)");
@@ -70,6 +77,9 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(productTests, "CommandBarDynamicOverflowChangingEventUsesCurrentWinUIActionAndTiming");
             StringAssert.Contains(productTests, "CommandBarOpenLifecycleUsesCurrentWinUIEventAndVirtualHookOrder");
             StringAssert.Contains(productTests, "CommandBarAutomationPeerUsesCurrentWinUIAppBarPatterns");
+            StringAssert.Contains(productTests, "CommandBarMoreButtonIconDataCanBeOverriddenPerInstance");
+            StringAssert.Contains(audit, "Issue #262");
+            StringAssert.Contains(audit, "`CommandBarMoreButtonIconData`");
             StringAssert.Contains(publicDocumentation, "E:ModernWpf.Controls.CommandBar.DynamicOverflowItemsChanging");
             Assert.IsFalse(publicDocumentation.Contains("T:ModernWpf.Automation.Peers.CommandBarAutomationPeer"));
             StringAssert.Contains(style, "AppBarButtonTextLabelOnRightMargin\">8,16,13,10");
