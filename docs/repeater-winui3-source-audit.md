@@ -123,6 +123,13 @@ documented WPF-feasible `UniformGridLayout` adaptations.
 - WinUI lazily initializes the default layout state from `OnLayoutUpdated`.
   ModernWpf installs and initializes its default `StackLayout` in the
   constructor; the WPF layout-updated hook only resets the measure-cycle counter.
+- WPF clears a template-created element's resource-backed dependency properties
+  to their metadata defaults while dismantling the `FrameworkTemplate` tree.
+  `ItemsRepeater` therefore accepts a cleared `ItemTemplate` value after
+  recycling realized elements; non-null values must still be a `DataTemplate`,
+  `DataTemplateSelector`, or `IElementFactory`. The focused regression replaces
+  a `ListView` item whose old template contains a resource-backed repeater,
+  covering issue #257's exact teardown path.
 - The WPF `ScrollViewer.ChangeView` substitute clamps requested offsets, returns
   `true` only for an applied offset change, returns `false` for no-op and valid
   zoom-only requests, and rejects NaN/infinite offset or zoom values.
