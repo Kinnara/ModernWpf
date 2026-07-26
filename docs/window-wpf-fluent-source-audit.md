@@ -58,6 +58,10 @@ ModernWpf now follows the compatible parts of that source shape:
   to `CaptionHeight`. Caption-button bounds use half-open right/bottom edges,
   while title dragging, side/bottom resize borders, and explicit resize grips
   retain their native hit-test codes.
+- A maximized custom-chrome window leaves a two-device-pixel reveal strip on
+  the primary auto-hide taskbar edge, including when Windows proposes bounds
+  that already exactly match the monitor. The shell state check tests the
+  `ABS_AUTOHIDE` flag instead of treating `ABS_ALWAYSONTOP` as auto-hide.
 - `WindowStyle=None` suppresses the ModernWpf title bar, detaches the custom
   `WindowChrome`, and lets content fill the captionless client area.
 
@@ -99,6 +103,9 @@ surface.
   first four content pixels below the title bar and verifies `HTCLIENT`, while
   separately retaining `HTCAPTION` for draggable title space and
   `HTBOTTOMRIGHT` for the explicit resize grip.
+- `WindowVisualStateTests` verifies that full-monitor maximized bounds are
+  reduced once at the auto-hide taskbar edge and that the Win32 state parser
+  distinguishes `ABS_AUTOHIDE` from `ABS_ALWAYSONTOP`.
 - `WindowVisualStateTests` verifies that `WindowStyle=None` collapses the
   ModernWpf title bar, removes custom chrome/maximized-window compensation, and
   places content at the top of the client area.

@@ -183,21 +183,29 @@ namespace ModernWpf.Controls.Primitives
                         {
                             MONITORINFO info = NativeMethods.GetMonitorInfo(monitor);
                             bool primary = (info.dwFlags & MONITORINFOF_PRIMARY) != 0;
-                            if (primary)
+                            var proposedBounds = new Int32Rect(pos.x, pos.y, pos.cx, pos.cy);
+                            var monitorBounds = new Int32Rect(
+                                info.rcMonitor.Left,
+                                info.rcMonitor.Top,
+                                info.rcMonitor.Width,
+                                info.rcMonitor.Height);
+                            if (primary &&
+                                TryGetTaskbarAdjustedWindowBounds(
+                                    proposedBounds,
+                                    monitorBounds,
+                                    edge,
+                                    out Int32Rect adjustedBounds))
                             {
-                                if (pos.x < 0 &&
-                                    pos.y < 0 &&
-                                    pos.cx > info.rcMonitor.Width &&
-                                    pos.cy > info.rcMonitor.Height)
+                                if (adjustedBounds != proposedBounds)
                                 {
-                                    AdjustWindowPosForTaskbarAutoHide(ref pos, edge);
+                                    pos.x = adjustedBounds.X;
+                                    pos.y = adjustedBounds.Y;
+                                    pos.cx = adjustedBounds.Width;
+                                    pos.cy = adjustedBounds.Height;
                                     Marshal.StructureToPtr(pos, lParam, true);
-                                    windowPosAdjusted = true;
                                 }
-                                else if (pos.x == 0 && pos.y == 0)
-                                {
-                                    windowPosAdjusted = true;
-                                }
+
+                                windowPosAdjusted = true;
                             }
                         }
                     }
@@ -254,64 +262,93 @@ namespace ModernWpf.Controls.Primitives
                 APPBARDATA abd = new APPBARDATA();
                 abd.cbSize = Marshal.SizeOf(abd);
                 abd.hWnd = trayWnd;
-                SHAppBarMessage(ABMsg.ABM_GETTASKBARPOS, ref abd);
-                bool autoHide = Convert.ToBoolean(SHAppBarMessage(ABMsg.ABM_GETSTATE, ref abd));
-                edge = autoHide ? GetEdge(abd.rc) : default;
-                return autoHide;
+                bool hasTaskbarPosition =
+                    SHAppBarMessage(ABMsg.ABM_GETTASKBARPOS, ref abd) != 0;
+                bool autoHide =
+                    IsTaskbarAutoHideState(SHAppBarMessage(ABMsg.ABM_GETSTATE, ref abd));
+                bool hasKnownEdge =
+                    abd.uEdge >= (int)ABEdge.ABE_LEFT &&
+                    abd.uEdge <= (int)ABEdge.ABE_BOTTOM;
+
+                if (hasTaskbarPosition && autoHide && hasKnownEdge)
+                {
+                    edge = (ABEdge)abd.uEdge;
+                    return true;
+                }
             }
 
             edge = default;
             return false;
-
-            static ABEdge GetEdge(RECT rc)
-            {
-                if (rc.Top == rc.Left && rc.Bottom > rc.Right)
-                {
-                    return ABEdge.ABE_LEFT;
-                }
-                else if (rc.Top == rc.Left && rc.Bottom < rc.Right)
-                {
-                    return ABEdge.ABE_TOP;
-                }
-                else if (rc.Top > rc.Left)
-                {
-                    return ABEdge.ABE_BOTTOM;
-                }
-                else
-                {
-                    return ABEdge.ABE_RIGHT;
-                }
-            }
         }
 
-        private static void AdjustWindowPosForTaskbarAutoHide(ref WINDOWPOS pos, ABEdge edge)
+        internal static bool IsTaskbarAutoHideState(uint state)
         {
-            pos.cx += pos.x * 2;
-            pos.cy += pos.y * 2;
-            pos.x = 0;
-            pos.y = 0;
+            return (state & AbsAutoHide) != 0;
+        }
+
+        internal static bool TryGetTaskbarAdjustedWindowBounds(
+            Int32Rect proposedBounds,
+            Int32Rect monitorBounds,
+            ABEdge edge,
+            out Int32Rect adjustedBounds)
+        {
+            adjustedBounds = proposedBounds;
+            Int32Rect taskbarAdjustedBounds =
+                GetTaskbarAdjustedMonitorBounds(monitorBounds, edge);
+
+            if (proposedBounds == taskbarAdjustedBounds)
+            {
+                return true;
+            }
+
+            bool coversMonitor =
+                proposedBounds.X <= monitorBounds.X &&
+                proposedBounds.Y <= monitorBounds.Y &&
+                proposedBounds.X + proposedBounds.Width >=
+                    monitorBounds.X + monitorBounds.Width &&
+                proposedBounds.Y + proposedBounds.Height >=
+                    monitorBounds.Y + monitorBounds.Height;
+
+            if (coversMonitor)
+            {
+                adjustedBounds = taskbarAdjustedBounds;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static Int32Rect GetTaskbarAdjustedMonitorBounds(
+            Int32Rect monitorBounds,
+            ABEdge edge)
+        {
+            var adjustedBounds = monitorBounds;
 
             switch (edge)
             {
                 case ABEdge.ABE_LEFT:
-                    pos.x = 2;
-                    pos.cx -= 2;
+                    adjustedBounds.X += AutoHideRevealThickness;
+                    adjustedBounds.Width -= AutoHideRevealThickness;
                     break;
                 case ABEdge.ABE_TOP:
-                    pos.y = 2;
-                    pos.cy -= 2;
+                    adjustedBounds.Y += AutoHideRevealThickness;
+                    adjustedBounds.Height -= AutoHideRevealThickness;
                     break;
                 case ABEdge.ABE_RIGHT:
-                    pos.cx -= 2;
+                    adjustedBounds.Width -= AutoHideRevealThickness;
                     break;
                 case ABEdge.ABE_BOTTOM:
-                    pos.cy -= 2;
+                    adjustedBounds.Height -= AutoHideRevealThickness;
                     break;
             }
+
+            return adjustedBounds;
         }
 
         #region Win32 Interop
 
+        private const uint AbsAutoHide = 0x00000001;
+        private const int AutoHideRevealThickness = 2;
         private const int MONITOR_DEFAULTTONEAREST = 0x00000002;
         private const int MONITORINFOF_PRIMARY = 0x00000001;
 
@@ -322,7 +359,7 @@ namespace ModernWpf.Controls.Primitives
             WM_WINDOWPOSCHANGED = 0x0047,
         }
 
-        private enum ABEdge
+        internal enum ABEdge
         {
             ABE_LEFT = 0,
             ABE_TOP = 1,
@@ -344,7 +381,7 @@ namespace ModernWpf.Controls.Primitives
             public int uCallbackMessage;
             public int uEdge;
             public RECT rc;
-            public bool lParam;
+            public IntPtr lParam;
         }
 
         [DllImport("shell32", CallingConvention = CallingConvention.StdCall)]
