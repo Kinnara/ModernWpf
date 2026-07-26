@@ -4753,7 +4753,7 @@ namespace ModernWpf.Controls
 
                 if (useLeftPaddingForBackOrCloseButton && backButtonVisibility == Visibility.Visible)
                 {
-                    leftPaddingForBackOrCloseButton += backButton.Width;
+                    leftPaddingForBackOrCloseButton += GetEffectiveButtonSize(backButton.Width, backButton.ActualWidth);
                 }
             }
 
@@ -4765,11 +4765,13 @@ namespace ModernWpf.Controls
 
                 if (closeButtonVisibility == Visibility.Visible)
                 {
-                    paneHeaderContentBorderRowMinHeight = Math.Max(paneHeaderContentBorderRowMinHeight, closeButton.Height);
+                    paneHeaderContentBorderRowMinHeight = Math.Max(
+                        paneHeaderContentBorderRowMinHeight,
+                        GetEffectiveButtonSize(closeButton.Height, closeButton.ActualHeight));
 
                     if (useLeftPaddingForBackOrCloseButton)
                     {
-                        paneHeaderPaddingForCloseButton = closeButton.Width;
+                        paneHeaderPaddingForCloseButton = GetEffectiveButtonSize(closeButton.Width, closeButton.ActualWidth);
                         leftPaddingForBackOrCloseButton += paneHeaderPaddingForCloseButton;
                     }
                 }
@@ -4834,6 +4836,14 @@ namespace ModernWpf.Controls
                 VisualStateManager.GoToState(this, shouldShowBackButton ? "BackButtonVisible" : "BackButtonCollapsed", false /*useTransitions*/);
             }
             UpdateTitleBarPadding();
+        }
+
+        static double GetEffectiveButtonSize(double specifiedSize, double actualSize)
+        {
+            // WPF represents an Auto Width or Height as NaN. WinUI's template
+            // parts use concrete dimensions, but WPF custom templates and
+            // resource teardown can leave these button dimensions on Auto.
+            return double.IsNaN(specifiedSize) ? actualSize : specifiedSize;
         }
 
         void UpdatePaneTitleMargins()

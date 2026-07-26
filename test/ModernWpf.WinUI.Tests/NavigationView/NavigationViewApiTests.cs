@@ -1986,6 +1986,69 @@ public class NavigationViewApiTests
     }
 
     [TestMethod]
+    public void NavigationViewAutoSizedBackAndCloseButtonsUseActualDimensions()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                IsBackButtonVisible = ModernWpf.Controls.NavigationViewBackButtonVisible.Visible,
+                IsPaneOpen = true,
+                IsPaneToggleButtonVisible = false,
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.LeftMinimal,
+                MenuItems =
+                {
+                    new ModernWpf.Controls.NavigationViewItem
+                    {
+                        Content = "Home"
+                    }
+                }
+            };
+
+            using var host = new TestWindowHost(navView);
+            navView.IsPaneOpen = true;
+            host.UpdateLayout();
+
+            var backButton = FindNamedDescendant<Button>(navView, "NavigationViewBackButton");
+            var closeButton = FindNamedDescendant<Button>(navView, "NavigationViewCloseButton");
+            var contentLeftPadding = FindNamedDescendant<FrameworkElement>(navView, "ContentLeftPadding");
+            var closeButtonColumn = navView.Template.FindName("PaneHeaderCloseButtonColumn", navView) as ColumnDefinition;
+            var paneHeaderRow = navView.Template.FindName("PaneHeaderContentBorderRow", navView) as RowDefinition;
+
+            Assert.IsNotNull(closeButtonColumn);
+            Assert.IsNotNull(paneHeaderRow);
+
+            closeButton.Width = double.NaN;
+            closeButton.Height = double.NaN;
+            host.UpdateLayout();
+            navView.IsBackButtonVisible = ModernWpf.Controls.NavigationViewBackButtonVisible.Collapsed;
+            navView.IsBackButtonVisible = ModernWpf.Controls.NavigationViewBackButtonVisible.Visible;
+            host.UpdateLayout();
+
+            Assert.AreEqual(Visibility.Visible, closeButton.Visibility);
+            Assert.AreEqual(closeButton.ActualWidth, contentLeftPadding.Width, 0.001);
+            Assert.AreEqual(closeButton.ActualWidth, closeButtonColumn!.Width.Value, 0.001);
+            Assert.AreEqual(closeButton.ActualHeight, paneHeaderRow!.MinHeight, 0.001);
+
+            navView.IsPaneOpen = false;
+            host.UpdateLayout();
+
+            Assert.AreEqual(Visibility.Visible, backButton.Visibility);
+            backButton.Width = double.NaN;
+            host.UpdateLayout();
+
+            var expectedBackButtonWidth = backButton.ActualWidth;
+            navView.IsPaneToggleButtonVisible = true;
+            navView.IsPaneToggleButtonVisible = false;
+
+            Assert.AreEqual(expectedBackButtonWidth, contentLeftPadding.Width, 0.001);
+            Assert.AreEqual(new GridLength(0), closeButtonColumn.Width);
+        });
+    }
+
+    [TestMethod]
     public void NavigationViewPaneCollapsedStateUsesWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>
