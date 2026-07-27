@@ -35,7 +35,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '5.0'))">
-    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="1.6.4" />
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="1.6.5" />
   </ItemGroup>
 
   <ItemGroup Condition="('$(TargetFrameworkIdentifier)' == '.NETCoreApp' and $([MSBuild]::VersionGreaterThanOrEquals($(TargetFrameworkVersion), '3.0')) and $([MSBuild]::VersionLessThan($(TargetFrameworkVersion), '5.0'))) or
