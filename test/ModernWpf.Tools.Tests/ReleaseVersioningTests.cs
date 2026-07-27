@@ -188,6 +188,9 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(
                 workflow,
                 "--title \"ModernWPF ${{ needs.build.outputs.version }}\"");
+            StringAssert.Contains(
+                workflow,
+                "GH_REPO: ${{ github.repository }}");
             Assert.IsFalse(
                 workflow.Contains(
                     "Copy-Item docs\\release-notes-1.0.0-preview.1.md",

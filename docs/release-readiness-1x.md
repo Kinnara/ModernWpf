@@ -97,7 +97,12 @@ targets. It treats assembly-conflict warning `MSB3277` as an error.
 `.github/workflows/build.yml` performs validation only. Publication uses the
 manually dispatched `.github/workflows/release.yml`, which accepts an existing
 annotated `v<Version>` tag on `master`. The tag version must match
-`Directory.Build.props`.
+`Directory.Build.props`. Dispatch the workflow from that same tag ref; for
+example:
+
+```powershell
+gh workflow run release.yml --ref v1.0.0-preview.1 -f tag=v1.0.0-preview.1
+```
 
 The workflow builds and tests the tag once, retains the packages, symbols, TRX
 results, release notes, and `SHA256SUMS`, then pauses at the protected
