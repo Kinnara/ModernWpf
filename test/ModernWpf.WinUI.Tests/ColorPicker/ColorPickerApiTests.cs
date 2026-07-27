@@ -12,12 +12,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 using ColorPickerControl = ModernWpf.Controls.ColorPicker;
 using ColorPickerSlider = ModernWpf.Controls.Primitives.ColorPickerSlider;
-using ColorPickerSliderAutomationPeer = ModernWpf.Controls.Primitives.ColorPickerSliderAutomationPeer;
+using ColorPickerSliderAutomationPeer = ModernWpf.Automation.Peers.ColorPickerSliderAutomationPeer;
 using ColorSpectrum = ModernWpf.Controls.Primitives.ColorSpectrum;
 
 namespace ModernWpf.WinUI.Tests.ColorPicker;

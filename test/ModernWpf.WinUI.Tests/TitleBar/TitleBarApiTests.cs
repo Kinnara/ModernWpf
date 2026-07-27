@@ -10,6 +10,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Automation.Peers;
 using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.WinUI.TestApp;
@@ -32,57 +33,57 @@ public class TitleBarApiTests
                 var foreground = Brushes.Blue;
                 var inactiveBackground = Brushes.Green;
                 var inactiveForeground = Brushes.Gray;
-                var titleBarStyle = new Style(typeof(TitleBarControl));
+                var titleBarStyle = new Style(typeof(WindowTitleBarControl));
                 var buttonStyle = new Style(typeof(TitleBarButton));
                 var backButtonStyle = new Style(typeof(TitleBarButton));
                 var command = new RoutedCommand();
                 var commandTarget = new Button();
                 var commandParameter = new object();
 
-                Assert.IsNull(ModernWpf.Controls.TitleBar.GetBackground(window));
-                Assert.IsNull(ModernWpf.Controls.TitleBar.GetForeground(window));
-                Assert.IsNull(ModernWpf.Controls.TitleBar.GetInactiveBackground(window));
-                Assert.IsNull(ModernWpf.Controls.TitleBar.GetInactiveForeground(window));
-                Assert.IsNull(ModernWpf.Controls.TitleBar.GetStyle(window));
-                Assert.IsNull(ModernWpf.Controls.TitleBar.GetButtonStyle(window));
-                Assert.IsNull(ModernWpf.Controls.TitleBar.GetBackButtonStyle(window));
-                Assert.IsFalse(ModernWpf.Controls.TitleBar.GetIsIconVisible(window));
-                Assert.IsFalse(ModernWpf.Controls.TitleBar.GetIsBackButtonVisible(window));
-                Assert.IsTrue(ModernWpf.Controls.TitleBar.GetIsBackEnabled(window));
-                Assert.IsFalse(ModernWpf.Controls.TitleBar.GetExtendViewIntoTitleBar(window));
-                Assert.AreEqual(32.0, ModernWpf.Controls.TitleBar.GetHeight(window));
-                Assert.AreEqual(0.0, ModernWpf.Controls.TitleBar.GetSystemOverlayLeftInset(window));
-                Assert.AreEqual(0.0, ModernWpf.Controls.TitleBar.GetSystemOverlayRightInset(window));
+                Assert.IsNull(ModernWpf.Controls.WindowTitleBar.GetBackground(window));
+                Assert.IsNull(ModernWpf.Controls.WindowTitleBar.GetForeground(window));
+                Assert.IsNull(ModernWpf.Controls.WindowTitleBar.GetInactiveBackground(window));
+                Assert.IsNull(ModernWpf.Controls.WindowTitleBar.GetInactiveForeground(window));
+                Assert.IsNull(ModernWpf.Controls.WindowTitleBar.GetStyle(window));
+                Assert.IsNull(ModernWpf.Controls.WindowTitleBar.GetButtonStyle(window));
+                Assert.IsNull(ModernWpf.Controls.WindowTitleBar.GetBackButtonStyle(window));
+                Assert.IsFalse(ModernWpf.Controls.WindowTitleBar.GetIsIconVisible(window));
+                Assert.IsFalse(ModernWpf.Controls.WindowTitleBar.GetIsBackButtonVisible(window));
+                Assert.IsTrue(ModernWpf.Controls.WindowTitleBar.GetIsBackEnabled(window));
+                Assert.IsFalse(ModernWpf.Controls.WindowTitleBar.GetExtendsContentIntoTitleBar(window));
+                Assert.AreEqual(32.0, ModernWpf.Controls.WindowTitleBar.GetHeight(window));
+                Assert.AreEqual(0.0, ModernWpf.Controls.WindowTitleBar.GetSystemOverlayLeftInset(window));
+                Assert.AreEqual(0.0, ModernWpf.Controls.WindowTitleBar.GetSystemOverlayRightInset(window));
 
-                ModernWpf.Controls.TitleBar.SetBackground(window, background);
-                ModernWpf.Controls.TitleBar.SetForeground(window, foreground);
-                ModernWpf.Controls.TitleBar.SetInactiveBackground(window, inactiveBackground);
-                ModernWpf.Controls.TitleBar.SetInactiveForeground(window, inactiveForeground);
-                ModernWpf.Controls.TitleBar.SetStyle(window, titleBarStyle);
-                ModernWpf.Controls.TitleBar.SetButtonStyle(window, buttonStyle);
-                ModernWpf.Controls.TitleBar.SetBackButtonStyle(window, backButtonStyle);
-                ModernWpf.Controls.TitleBar.SetIsIconVisible(window, true);
-                ModernWpf.Controls.TitleBar.SetIsBackButtonVisible(window, true);
-                ModernWpf.Controls.TitleBar.SetIsBackEnabled(window, false);
-                ModernWpf.Controls.TitleBar.SetBackButtonCommand(window, command);
-                ModernWpf.Controls.TitleBar.SetBackButtonCommandParameter(window, commandParameter);
-                ModernWpf.Controls.TitleBar.SetBackButtonCommandTarget(window, commandTarget);
-                ModernWpf.Controls.TitleBar.SetExtendViewIntoTitleBar(window, true);
+                ModernWpf.Controls.WindowTitleBar.SetBackground(window, background);
+                ModernWpf.Controls.WindowTitleBar.SetForeground(window, foreground);
+                ModernWpf.Controls.WindowTitleBar.SetInactiveBackground(window, inactiveBackground);
+                ModernWpf.Controls.WindowTitleBar.SetInactiveForeground(window, inactiveForeground);
+                ModernWpf.Controls.WindowTitleBar.SetStyle(window, titleBarStyle);
+                ModernWpf.Controls.WindowTitleBar.SetButtonStyle(window, buttonStyle);
+                ModernWpf.Controls.WindowTitleBar.SetBackButtonStyle(window, backButtonStyle);
+                ModernWpf.Controls.WindowTitleBar.SetIsIconVisible(window, true);
+                ModernWpf.Controls.WindowTitleBar.SetIsBackButtonVisible(window, true);
+                ModernWpf.Controls.WindowTitleBar.SetIsBackEnabled(window, false);
+                ModernWpf.Controls.WindowTitleBar.SetBackButtonCommand(window, command);
+                ModernWpf.Controls.WindowTitleBar.SetBackButtonCommandParameter(window, commandParameter);
+                ModernWpf.Controls.WindowTitleBar.SetBackButtonCommandTarget(window, commandTarget);
+                ModernWpf.Controls.WindowTitleBar.SetExtendsContentIntoTitleBar(window, true);
 
-                Assert.AreSame(background, ModernWpf.Controls.TitleBar.GetBackground(window));
-                Assert.AreSame(foreground, ModernWpf.Controls.TitleBar.GetForeground(window));
-                Assert.AreSame(inactiveBackground, ModernWpf.Controls.TitleBar.GetInactiveBackground(window));
-                Assert.AreSame(inactiveForeground, ModernWpf.Controls.TitleBar.GetInactiveForeground(window));
-                Assert.AreSame(titleBarStyle, ModernWpf.Controls.TitleBar.GetStyle(window));
-                Assert.AreSame(buttonStyle, ModernWpf.Controls.TitleBar.GetButtonStyle(window));
-                Assert.AreSame(backButtonStyle, ModernWpf.Controls.TitleBar.GetBackButtonStyle(window));
-                Assert.IsTrue(ModernWpf.Controls.TitleBar.GetIsIconVisible(window));
-                Assert.IsTrue(ModernWpf.Controls.TitleBar.GetIsBackButtonVisible(window));
-                Assert.IsFalse(ModernWpf.Controls.TitleBar.GetIsBackEnabled(window));
-                Assert.AreSame(command, ModernWpf.Controls.TitleBar.GetBackButtonCommand(window));
-                Assert.AreSame(commandParameter, ModernWpf.Controls.TitleBar.GetBackButtonCommandParameter(window));
-                Assert.AreSame(commandTarget, ModernWpf.Controls.TitleBar.GetBackButtonCommandTarget(window));
-                Assert.IsTrue(ModernWpf.Controls.TitleBar.GetExtendViewIntoTitleBar(window));
+                Assert.AreSame(background, ModernWpf.Controls.WindowTitleBar.GetBackground(window));
+                Assert.AreSame(foreground, ModernWpf.Controls.WindowTitleBar.GetForeground(window));
+                Assert.AreSame(inactiveBackground, ModernWpf.Controls.WindowTitleBar.GetInactiveBackground(window));
+                Assert.AreSame(inactiveForeground, ModernWpf.Controls.WindowTitleBar.GetInactiveForeground(window));
+                Assert.AreSame(titleBarStyle, ModernWpf.Controls.WindowTitleBar.GetStyle(window));
+                Assert.AreSame(buttonStyle, ModernWpf.Controls.WindowTitleBar.GetButtonStyle(window));
+                Assert.AreSame(backButtonStyle, ModernWpf.Controls.WindowTitleBar.GetBackButtonStyle(window));
+                Assert.IsTrue(ModernWpf.Controls.WindowTitleBar.GetIsIconVisible(window));
+                Assert.IsTrue(ModernWpf.Controls.WindowTitleBar.GetIsBackButtonVisible(window));
+                Assert.IsFalse(ModernWpf.Controls.WindowTitleBar.GetIsBackEnabled(window));
+                Assert.AreSame(command, ModernWpf.Controls.WindowTitleBar.GetBackButtonCommand(window));
+                Assert.AreSame(commandParameter, ModernWpf.Controls.WindowTitleBar.GetBackButtonCommandParameter(window));
+                Assert.AreSame(commandTarget, ModernWpf.Controls.WindowTitleBar.GetBackButtonCommandTarget(window));
+                Assert.IsTrue(ModernWpf.Controls.WindowTitleBar.GetExtendsContentIntoTitleBar(window));
             }
             finally
             {
@@ -106,19 +107,19 @@ public class TitleBarApiTests
 
             coreTitleBar.LayoutMetricsChanged += (_, _) => layoutMetricsChangedCount++;
             coreTitleBar.IsVisibleChanged += (_, _) => isVisibleChangedCount++;
-            var initialLeftInset = ModernWpf.Controls.TitleBar.GetSystemOverlayLeftInset(window);
-            var initialRightInset = ModernWpf.Controls.TitleBar.GetSystemOverlayRightInset(window);
+            var initialLeftInset = ModernWpf.Controls.WindowTitleBar.GetSystemOverlayLeftInset(window);
+            var initialRightInset = ModernWpf.Controls.WindowTitleBar.GetSystemOverlayRightInset(window);
 
             Assert.IsFalse(coreTitleBar.ExtendViewIntoTitleBar);
             Assert.IsTrue(coreTitleBar.IsVisible);
-            Assert.AreEqual(ModernWpf.Controls.TitleBar.GetHeight(window), coreTitleBar.Height);
+            Assert.AreEqual(ModernWpf.Controls.WindowTitleBar.GetHeight(window), coreTitleBar.Height);
             Assert.AreEqual(initialLeftInset, coreTitleBar.SystemOverlayLeftInset);
             Assert.AreEqual(initialRightInset, coreTitleBar.SystemOverlayRightInset);
 
             coreTitleBar.ExtendViewIntoTitleBar = true;
-            ModernWpf.Controls.TitleBar.SetHeight(window, 48.0);
-            ModernWpf.Controls.TitleBar.SetSystemOverlayLeftInset(window, initialLeftInset + 12.0);
-            ModernWpf.Controls.TitleBar.SetSystemOverlayRightInset(window, initialRightInset + 24.0);
+            ModernWpf.Controls.WindowTitleBar.SetHeight(window, 48.0);
+            ModernWpf.Controls.WindowTitleBar.SetSystemOverlayLeftInset(window, initialLeftInset + 12.0);
+            ModernWpf.Controls.WindowTitleBar.SetSystemOverlayRightInset(window, initialRightInset + 24.0);
             WpfTestHost.DoEvents();
 
             Assert.IsTrue(coreTitleBar.ExtendViewIntoTitleBar);
@@ -143,10 +144,10 @@ public class TitleBarApiTests
                 var eventCount = 0;
                 object? eventSource = null;
 
-                ModernWpf.Controls.TitleBar.AddBackRequestedHandler(window, OnBackRequested);
-                ModernWpf.Controls.TitleBar.RaiseBackRequested(window);
-                ModernWpf.Controls.TitleBar.RemoveBackRequestedHandler(window, OnBackRequested);
-                ModernWpf.Controls.TitleBar.RaiseBackRequested(window);
+                ModernWpf.Controls.WindowTitleBar.AddBackRequestedHandler(window, OnBackRequested);
+                ModernWpf.Controls.WindowTitleBar.RaiseBackRequested(window);
+                ModernWpf.Controls.WindowTitleBar.RemoveBackRequestedHandler(window, OnBackRequested);
+                ModernWpf.Controls.WindowTitleBar.RaiseBackRequested(window);
 
                 Assert.AreEqual(1, eventCount);
                 Assert.AreSame(window, eventSource);
@@ -165,13 +166,13 @@ public class TitleBarApiTests
     }
 
     [TestMethod]
-    public void VerifyTitleBarControlDefaultStyleAndTemplate()
+    public void VerifyWindowTitleBarControlDefaultStyleAndTemplate()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
-            var titleBarControl = new TitleBarControl
+            var titleBarControl = new WindowTitleBarControl
             {
                 Title = "ModernWpf Test Title",
                 IsActive = true,
@@ -184,7 +185,7 @@ public class TitleBarApiTests
 
             Assert.AreEqual(32.0, titleBarControl.Height);
             Assert.IsFalse(titleBarControl.IsTabStop);
-            Assert.IsTrue(TitleBarControl.GetInsideTitleBar(titleBarControl));
+            Assert.IsTrue(WindowTitleBarControl.GetInsideTitleBar(titleBarControl));
 
             var layoutRoot = FindNamedDescendant<Grid>(titleBarControl, "LayoutRoot");
             AssertBrushEquals(titleBarControl.Background, layoutRoot.Background);
@@ -271,7 +272,7 @@ public class TitleBarApiTests
                 WpfTestHost.DoEvents();
 
                 var titleBarControl = VisualTreeTestHelper.EnumerateDescendants(window)
-                    .OfType<TitleBarControl>()
+                    .OfType<WindowTitleBarControl>()
                     .Single();
                 var minimizeButton = FindNamedDescendant<TitleBarButton>(
                     titleBarControl,
@@ -319,7 +320,7 @@ public class TitleBarApiTests
                 WpfTestHost.DoEvents();
 
                 var titleBarControl = VisualTreeTestHelper.EnumerateDescendants(window)
-                    .OfType<TitleBarControl>()
+                    .OfType<WindowTitleBarControl>()
                     .Single();
                 var maximizeButton = FindNamedDescendant<TitleBarButton>(
                     titleBarControl,
@@ -340,13 +341,13 @@ public class TitleBarApiTests
     }
 
     [TestMethod]
-    public void VerifyTitleBarControlAutomationPeerMatchesCurrentWinUI()
+    public void VerifyWindowTitleBarControlAutomationPeerMatchesCurrentWinUI()
     {
         WpfTestHost.Run(() =>
         {
             TestApplication.EnsureInitialized();
 
-            var titleBarControl = new TitleBarControl
+            var titleBarControl = new WindowTitleBarControl
             {
                 Title = "ModernWpf Test Title"
             };
@@ -356,7 +357,7 @@ public class TitleBarApiTests
 
             var peer = UIElementAutomationPeer.CreatePeerForElement(titleBarControl);
             Assert.IsNotNull(peer);
-            Assert.IsInstanceOfType(peer, typeof(TitleBarControlAutomationPeer));
+            Assert.IsInstanceOfType(peer, typeof(WindowTitleBarControlAutomationPeer));
             Assert.AreEqual(AutomationControlType.TitleBar, peer.GetAutomationControlType());
             Assert.AreEqual("TitleBar", peer.GetClassName());
             Assert.AreEqual("ModernWpf Test Title", peer.GetName());
@@ -367,7 +368,7 @@ public class TitleBarApiTests
     }
 
     [TestMethod]
-    public void VerifyTitleBarControlUsesWinUIVisualStateSetters()
+    public void VerifyWindowTitleBarControlUsesWinUIVisualStateSetters()
     {
         WpfTestHost.Run(() =>
         {
@@ -375,7 +376,7 @@ public class TitleBarApiTests
 
             var inactiveBackground = Brushes.Green;
             var inactiveForeground = Brushes.Gray;
-            var titleBarControl = new TitleBarControl
+            var titleBarControl = new WindowTitleBarControl
             {
                 Title = "ModernWpf Test Title",
                 IsActive = true,
@@ -406,7 +407,7 @@ public class TitleBarApiTests
                 "Title.Margin");
             AssertStateSetter(layoutRoot, "TitleTextVisibilityGroup", "TitleTextVisible", "Title.Visibility");
             AssertStateSetter(layoutRoot, "TitleTextVisibilityGroup", "TitleTextCollapsed", "Title.Visibility");
-            AssertStateSetter(layoutRoot, "ExtendViewIntoTitleBarStates", "TitleContentCollapsed",
+            AssertStateSetter(layoutRoot, "ExtendsContentIntoTitleBarStates", "TitleContentCollapsed",
                 "LayoutRoot.Background",
                 "IconTitlePanel.Visibility");
 
@@ -437,10 +438,10 @@ public class TitleBarApiTests
             Assert.AreEqual(new Thickness(12, 0, 12, 0), title.Margin);
             Assert.AreEqual(Visibility.Collapsed, title.Visibility);
 
-            titleBarControl.ExtendViewIntoTitleBar = true;
+            titleBarControl.ExtendsContentIntoTitleBar = true;
             WpfTestHost.DoEvents();
 
-            Assert.AreEqual("TitleContentCollapsed", FindVisualStateGroup(layoutRoot, "ExtendViewIntoTitleBarStates").CurrentState?.Name);
+            Assert.AreEqual("TitleContentCollapsed", FindVisualStateGroup(layoutRoot, "ExtendsContentIntoTitleBarStates").CurrentState?.Name);
             Assert.IsNull(layoutRoot.Background);
             Assert.AreEqual(Visibility.Collapsed, FindNamedDescendant<StackPanel>(titleBarControl, "IconTitlePanel").Visibility);
         });
@@ -456,7 +457,7 @@ public class TitleBarApiTests
             var resources = (ResourceDictionary)Application.LoadComponent(
                 new Uri("/ModernWpf;component/Styles/Window.xaml", UriKind.Relative));
 
-            var titleBarControl = new TitleBarControl
+            var titleBarControl = new WindowTitleBarControl
             {
                 IsBackButtonVisible = true,
                 IsBackEnabled = true,

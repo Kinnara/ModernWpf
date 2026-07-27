@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace ModernWpf.Markup
 {
-    [TypeConverter(typeof(ThemeResouceExtensionConverter))]
+    [TypeConverter(typeof(ThemeResourceExtensionConverter))]
     public class ThemeResourceExtension : DynamicResourceExtension
     {
         public ThemeResourceExtension()
@@ -68,7 +68,7 @@ namespace ModernWpf.Markup
         }
     }
 
-    public class ThemeResouceExtensionConverter : TypeConverter
+    public class ThemeResourceExtensionConverter : TypeConverter
     {
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {

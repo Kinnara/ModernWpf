@@ -5,7 +5,7 @@
     xmlns:local="clr-namespace:PowerShellSample"
     Height="450"
     Width="800"
-    ui:TitleBar.ExtendViewIntoTitleBar="True">
+    ui:WindowTitleBar.ExtendsContentIntoTitleBar="True">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

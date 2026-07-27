@@ -429,8 +429,8 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                     "TitleBar drag regions sample",
                     900,
                     640);
-                Mux.TitleBar.SetExtendViewIntoTitleBar(window, true);
-                Mux.TitleBar.SetIsIconVisible(window, false);
+                Mux.WindowTitleBar.SetExtendsContentIntoTitleBar(window, true);
+                Mux.WindowTitleBar.SetIsIconVisible(window, false);
                 window.Content = CreateTitleBarDragRegionsWindowBody(window);
                 window.Show();
             };
@@ -690,9 +690,9 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             showWindowButton.Click += delegate
             {
                 var window = CreateModernWindow((FrameworkElement)showWindowButton, "TitleBarWindow", 760, 520);
-                Mux.TitleBar.SetExtendViewIntoTitleBar(window, true);
-                Mux.TitleBar.SetIsBackButtonVisible(window, true);
-                Mux.TitleBar.SetIsBackEnabled(window, false);
+                Mux.WindowTitleBar.SetExtendsContentIntoTitleBar(window, true);
+                Mux.WindowTitleBar.SetIsBackButtonVisible(window, true);
+                Mux.WindowTitleBar.SetIsBackEnabled(window, false);
                 window.Content = CreateTitleBarWindowBody();
                 window.Show();
             };
@@ -777,7 +777,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             }
             ThemeManager.SetIsThemeAware(window, true);
             WindowHelper.SetUseModernWindowStyle(window, true);
-            Mux.TitleBar.SetIsIconVisible(window, true);
+            Mux.WindowTitleBar.SetIsIconVisible(window, true);
             return window;
         }
 

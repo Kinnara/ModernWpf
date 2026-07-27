@@ -31,7 +31,7 @@ namespace ModernWpf.Controls
         }
 
         /// <summary>
-        /// Initialzies a new instance of the Frame class.
+        /// Initializes a new instance of the Frame class.
         /// </summary>
         public Frame() : base()
         {

@@ -3,6 +3,7 @@ ModernWpf.ApplicationTheme
 ModernWpf.ApplicationTheme.Dark = 1 -> ModernWpf.ApplicationTheme
 ModernWpf.ApplicationTheme.Light = 0 -> ModernWpf.ApplicationTheme
 ModernWpf.Automation.Peers.ProgressBarAutomationPeer
+ModernWpf.Automation.Peers.WindowTitleBarControlAutomationPeer
 ModernWpf.ColorPaletteResources
 ModernWpf.ColorPaletteResources.Accent.get -> System.Windows.Media.Color?
 ModernWpf.ColorPaletteResources.Accent.set -> void
@@ -64,10 +65,10 @@ ModernWpf.ColorPaletteResources.ListMedium.set -> void
 ModernWpf.ColorPaletteResources.TargetTheme.get -> ModernWpf.ApplicationTheme?
 ModernWpf.ColorPaletteResources.TargetTheme.set -> void
 ModernWpf.Controls.AnimatedIcon
+ModernWpf.Controls.BackRequestedEventArgs
 ModernWpf.Controls.BackgroundSizing
 ModernWpf.Controls.BackgroundSizing.InnerBorderEdge = 0 -> ModernWpf.Controls.BackgroundSizing
 ModernWpf.Controls.BackgroundSizing.OuterBorderEdge = 1 -> ModernWpf.Controls.BackgroundSizing
-ModernWpf.Controls.BackRequestedEventArgs
 ModernWpf.Controls.BitmapIcon
 ModernWpf.Controls.BitmapIcon.BitmapIcon() -> void
 ModernWpf.Controls.BitmapIcon.ShowAsMonochrome.get -> bool
@@ -232,9 +233,9 @@ ModernWpf.Controls.ItemsWrapGrid.GroupPadding.get -> System.Windows.Thickness
 ModernWpf.Controls.ItemsWrapGrid.GroupPadding.set -> void
 ModernWpf.Controls.ItemsWrapGrid.ItemHeight.get -> double
 ModernWpf.Controls.ItemsWrapGrid.ItemHeight.set -> void
-ModernWpf.Controls.ItemsWrapGrid.ItemsWrapGrid() -> void
 ModernWpf.Controls.ItemsWrapGrid.ItemWidth.get -> double
 ModernWpf.Controls.ItemsWrapGrid.ItemWidth.set -> void
+ModernWpf.Controls.ItemsWrapGrid.ItemsWrapGrid() -> void
 ModernWpf.Controls.ItemsWrapGrid.LastCacheIndex.get -> int
 ModernWpf.Controls.ItemsWrapGrid.LastVisibleIndex.get -> int
 ModernWpf.Controls.ItemsWrapGrid.MaximumRowsOrColumns.get -> int
@@ -366,24 +367,22 @@ ModernWpf.Controls.Primitives.ThemeShadowChromeWindowedPopupInsetMode.Small = 1 
 ModernWpf.Controls.Primitives.TitleBarButton
 ModernWpf.Controls.Primitives.TitleBarButton.IsActive.get -> bool
 ModernWpf.Controls.Primitives.TitleBarButton.IsActive.set -> void
-ModernWpf.Controls.Primitives.TitleBarButton.IsMouseReallyOver.get -> bool
-ModernWpf.Controls.Primitives.TitleBarButton.IsReallyPressed.get -> bool
 ModernWpf.Controls.Primitives.TitleBarButton.TitleBarButton() -> void
-ModernWpf.Controls.Primitives.TitleBarControl
-ModernWpf.Controls.Primitives.TitleBarControl.ExtendViewIntoTitleBar.get -> bool
-ModernWpf.Controls.Primitives.TitleBarControl.ExtendViewIntoTitleBar.set -> void
-ModernWpf.Controls.Primitives.TitleBarControl.IsActive.get -> bool
-ModernWpf.Controls.Primitives.TitleBarControl.IsActive.set -> void
-ModernWpf.Controls.Primitives.TitleBarControl.IsBackButtonVisible.get -> bool
-ModernWpf.Controls.Primitives.TitleBarControl.IsBackButtonVisible.set -> void
-ModernWpf.Controls.Primitives.TitleBarControl.IsBackEnabled.get -> bool
-ModernWpf.Controls.Primitives.TitleBarControl.IsBackEnabled.set -> void
-ModernWpf.Controls.Primitives.TitleBarControl.IsIconVisible.get -> bool
-ModernWpf.Controls.Primitives.TitleBarControl.IsIconVisible.set -> void
-ModernWpf.Controls.Primitives.TitleBarControl.TitleBarControl() -> void
-ModernWpf.Controls.Primitives.TitleBarControlAutomationPeer
 ModernWpf.Controls.Primitives.ToggleButtonHelper
 ModernWpf.Controls.Primitives.ValidationHelper
+ModernWpf.Controls.Primitives.WindowHelper
+ModernWpf.Controls.Primitives.WindowTitleBarControl
+ModernWpf.Controls.Primitives.WindowTitleBarControl.ExtendsContentIntoTitleBar.get -> bool
+ModernWpf.Controls.Primitives.WindowTitleBarControl.ExtendsContentIntoTitleBar.set -> void
+ModernWpf.Controls.Primitives.WindowTitleBarControl.IsActive.get -> bool
+ModernWpf.Controls.Primitives.WindowTitleBarControl.IsActive.set -> void
+ModernWpf.Controls.Primitives.WindowTitleBarControl.IsBackButtonVisible.get -> bool
+ModernWpf.Controls.Primitives.WindowTitleBarControl.IsBackButtonVisible.set -> void
+ModernWpf.Controls.Primitives.WindowTitleBarControl.IsBackEnabled.get -> bool
+ModernWpf.Controls.Primitives.WindowTitleBarControl.IsBackEnabled.set -> void
+ModernWpf.Controls.Primitives.WindowTitleBarControl.IsIconVisible.get -> bool
+ModernWpf.Controls.Primitives.WindowTitleBarControl.IsIconVisible.set -> void
+ModernWpf.Controls.Primitives.WindowTitleBarControl.WindowTitleBarControl() -> void
 ModernWpf.Controls.Primitives.WindowedPopup
 ModernWpf.Controls.Primitives.WindowedPopup.ActualPlacement.get -> ModernWpf.Controls.Primitives.PopupPlacementMode
 ModernWpf.Controls.Primitives.WindowedPopup.ActualPlacementChanged -> System.EventHandler<object>
@@ -398,7 +397,6 @@ ModernWpf.Controls.Primitives.WindowedPopup.Opened -> System.EventHandler
 ModernWpf.Controls.Primitives.WindowedPopup.VerticalOffset.get -> double
 ModernWpf.Controls.Primitives.WindowedPopup.VerticalOffset.set -> void
 ModernWpf.Controls.Primitives.WindowedPopup.WindowedPopup() -> void
-ModernWpf.Controls.Primitives.WindowHelper
 ModernWpf.Controls.ProgressBar
 ModernWpf.Controls.ProgressBar.CornerRadius.get -> System.Windows.CornerRadius
 ModernWpf.Controls.ProgressBar.CornerRadius.set -> void
@@ -479,8 +477,8 @@ ModernWpf.Controls.Symbol.Character = 57700 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Clear = 57606 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.ClearSelection = 57797 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Clock = 57633 -> ModernWpf.Controls.Symbol
-ModernWpf.Controls.Symbol.ClosedCaption = 57744 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.ClosePane = 57639 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ClosedCaption = 57744 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Comment = 57652 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Contact = 57661 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Contact2 = 57735 -> ModernWpf.Controls.Symbol
@@ -582,6 +580,7 @@ ModernWpf.Controls.Symbol.Previous = 57600 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Print = 59209 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Priority = 57730 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.ProtectedDocument = 57649 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.ReShare = 57802 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Read = 57702 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Redo = 57613 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Refresh = 57673 -> ModernWpf.Controls.Symbol
@@ -592,7 +591,6 @@ ModernWpf.Controls.Symbol.Repair = 57694 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.RepeatAll = 57805 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.RepeatOne = 57804 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.ReportHacked = 57822 -> ModernWpf.Controls.Symbol
-ModernWpf.Controls.Symbol.ReShare = 57802 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Rotate = 57674 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.RotateCamera = 57636 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Save = 57605 -> ModernWpf.Controls.Symbol
@@ -625,11 +623,11 @@ ModernWpf.Controls.Symbol.TouchPointer = 57827 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Trim = 57644 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.TwoBars = 57831 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.TwoPage = 57630 -> ModernWpf.Controls.Symbol
-ModernWpf.Controls.Symbol.Underline = 57754 -> ModernWpf.Controls.Symbol
-ModernWpf.Controls.Symbol.Undo = 57614 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.UnFavorite = 57749 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.UnPin = 57750 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.UnSyncFolder = 57821 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Underline = 57754 -> ModernWpf.Controls.Symbol
+ModernWpf.Controls.Symbol.Undo = 57614 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Up = 57616 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Upload = 57628 -> ModernWpf.Controls.Symbol
 ModernWpf.Controls.Symbol.Video = 57622 -> ModernWpf.Controls.Symbol
@@ -655,7 +653,6 @@ ModernWpf.Controls.SymbolIconSource.Symbol.set -> void
 ModernWpf.Controls.SymbolIconSource.SymbolIconSource() -> void
 ModernWpf.Controls.TextContextMenu
 ModernWpf.Controls.TextContextMenu.TextContextMenu() -> void
-ModernWpf.Controls.TitleBar
 ModernWpf.Controls.VariableSizedWrapGrid
 ModernWpf.Controls.VariableSizedWrapGrid.HorizontalChildrenAlignment.get -> System.Windows.HorizontalAlignment
 ModernWpf.Controls.VariableSizedWrapGrid.HorizontalChildrenAlignment.set -> void
@@ -670,6 +667,7 @@ ModernWpf.Controls.VariableSizedWrapGrid.Orientation.set -> void
 ModernWpf.Controls.VariableSizedWrapGrid.VariableSizedWrapGrid() -> void
 ModernWpf.Controls.VariableSizedWrapGrid.VerticalChildrenAlignment.get -> System.Windows.VerticalAlignment
 ModernWpf.Controls.VariableSizedWrapGrid.VerticalChildrenAlignment.set -> void
+ModernWpf.Controls.WindowTitleBar
 ModernWpf.Controls.WrapGrid
 ModernWpf.Controls.WrapGrid.WrapGrid() -> void
 ModernWpf.Controls.XamlControlsResources
@@ -700,10 +698,10 @@ ModernWpf.Markup.StaticResourceExtension
 ModernWpf.Markup.StaticResourceExtension.StaticResourceExtension() -> void
 ModernWpf.Markup.TextContextMenuExtension
 ModernWpf.Markup.TextContextMenuExtension.TextContextMenuExtension() -> void
-ModernWpf.Markup.ThemeResouceExtensionConverter
-ModernWpf.Markup.ThemeResouceExtensionConverter.ThemeResouceExtensionConverter() -> void
 ModernWpf.Markup.ThemeResourceExtension
 ModernWpf.Markup.ThemeResourceExtension.ThemeResourceExtension() -> void
+ModernWpf.Markup.ThemeResourceExtensionConverter
+ModernWpf.Markup.ThemeResourceExtensionConverter.ThemeResourceExtensionConverter() -> void
 ModernWpf.Media.Animation.CubicBezierEase
 ModernWpf.Media.Animation.CubicBezierEase.ControlPoint1.get -> System.Windows.Point
 ModernWpf.Media.Animation.CubicBezierEase.ControlPoint1.set -> void
@@ -735,7 +733,7 @@ ModernWpf.Media.Animation.SuppressNavigationTransitionInfo.SuppressNavigationTra
 ModernWpf.Media.Animation.Transition
 ModernWpf.Media.Animation.TransitionCollection
 ModernWpf.Media.Animation.TransitionCollection.TransitionCollection() -> void
-ModernWpf.Navigation.Extensions
+ModernWpf.Navigation.NavigationEventArgsExtensions
 ModernWpf.OpticalMarginAlignment
 ModernWpf.OpticalMarginAlignment.None = 0 -> ModernWpf.OpticalMarginAlignment
 ModernWpf.OpticalMarginAlignment.TrimSideBearings = 1 -> ModernWpf.OpticalMarginAlignment
@@ -775,6 +773,7 @@ ModernWpf.VisualStateSetter
 ModernWpf.VisualStateSetter.VisualStateSetter() -> void
 ModernWpf.VisualTree
 override ModernWpf.Automation.Peers.ProgressBarAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
+override ModernWpf.Automation.Peers.WindowTitleBarControlAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Controls.ContentControlEx.OnApplyTemplate() -> void
 override ModernWpf.Controls.ContentPresenterEx.ArrangeOverride(System.Windows.Size arrangeSize) -> System.Windows.Size
 override ModernWpf.Controls.ContentPresenterEx.MeasureOverride(System.Windows.Size constraint) -> System.Windows.Size
@@ -793,8 +792,7 @@ override ModernWpf.Controls.Primitives.ThemeShadowChrome.OnDpiChanged(System.Win
 override ModernWpf.Controls.Primitives.ThemeShadowChrome.VisualChildrenCount.get -> int
 override ModernWpf.Controls.Primitives.TitleBarButton.OnApplyTemplate() -> void
 override ModernWpf.Controls.Primitives.TitleBarButton.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs e) -> void
-override ModernWpf.Controls.Primitives.TitleBarControl.OnApplyTemplate() -> void
-override ModernWpf.Controls.Primitives.TitleBarControlAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
+override ModernWpf.Controls.Primitives.WindowTitleBarControl.OnApplyTemplate() -> void
 override ModernWpf.Controls.Primitives.WindowedPopup.ArrangeOverride(System.Windows.Size finalSize) -> System.Windows.Size
 override ModernWpf.Controls.Primitives.WindowedPopup.MeasureOverride(System.Windows.Size availableSize) -> System.Windows.Size
 override ModernWpf.Controls.ProgressBar.OnApplyTemplate() -> void
@@ -815,6 +813,7 @@ override ModernWpf.Controls.VariableSizedWrapGrid.MeasureOverride(System.Windows
 override ModernWpf.Media.Animation.CubicBezierEase.EaseInCore(double normalizedTime) -> double
 override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~ModernWpf.Automation.Peers.ProgressBarAutomationPeer.ProgressBarAutomationPeer(ModernWpf.Controls.ProgressBar owner) -> void
+~ModernWpf.Automation.Peers.WindowTitleBarControlAutomationPeer.WindowTitleBarControlAutomationPeer(ModernWpf.Controls.Primitives.WindowTitleBarControl owner) -> void
 ~ModernWpf.Controls.BitmapIcon.UriSource.get -> System.Uri
 ~ModernWpf.Controls.BitmapIcon.UriSource.set -> void
 ~ModernWpf.Controls.BitmapIconSource.UriSource.get -> System.Uri
@@ -907,26 +906,25 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~ModernWpf.Controls.Primitives.TitleBarButton.PressedBackground.set -> void
 ~ModernWpf.Controls.Primitives.TitleBarButton.PressedForeground.get -> System.Windows.Media.Brush
 ~ModernWpf.Controls.Primitives.TitleBarButton.PressedForeground.set -> void
-~ModernWpf.Controls.Primitives.TitleBarControl.ActualIcon.get -> System.Windows.Media.ImageSource
-~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommand.get -> System.Windows.Input.ICommand
-~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommand.set -> void
-~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandParameter.get -> object
-~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandParameter.set -> void
-~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandTarget.get -> System.Windows.IInputElement
-~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandTarget.set -> void
-~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonStyle.get -> System.Windows.Style
-~ModernWpf.Controls.Primitives.TitleBarControl.BackButtonStyle.set -> void
-~ModernWpf.Controls.Primitives.TitleBarControl.ButtonStyle.get -> System.Windows.Style
-~ModernWpf.Controls.Primitives.TitleBarControl.ButtonStyle.set -> void
-~ModernWpf.Controls.Primitives.TitleBarControl.Icon.get -> System.Windows.Media.ImageSource
-~ModernWpf.Controls.Primitives.TitleBarControl.Icon.set -> void
-~ModernWpf.Controls.Primitives.TitleBarControl.InactiveBackground.get -> System.Windows.Media.Brush
-~ModernWpf.Controls.Primitives.TitleBarControl.InactiveBackground.set -> void
-~ModernWpf.Controls.Primitives.TitleBarControl.InactiveForeground.get -> System.Windows.Media.Brush
-~ModernWpf.Controls.Primitives.TitleBarControl.InactiveForeground.set -> void
-~ModernWpf.Controls.Primitives.TitleBarControl.Title.get -> string
-~ModernWpf.Controls.Primitives.TitleBarControl.Title.set -> void
-~ModernWpf.Controls.Primitives.TitleBarControlAutomationPeer.TitleBarControlAutomationPeer(ModernWpf.Controls.Primitives.TitleBarControl owner) -> void
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.ActualIcon.get -> System.Windows.Media.ImageSource
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.BackButtonCommand.get -> System.Windows.Input.ICommand
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.BackButtonCommand.set -> void
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.BackButtonCommandParameter.get -> object
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.BackButtonCommandParameter.set -> void
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.BackButtonCommandTarget.get -> System.Windows.IInputElement
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.BackButtonCommandTarget.set -> void
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.BackButtonStyle.get -> System.Windows.Style
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.BackButtonStyle.set -> void
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.ButtonStyle.get -> System.Windows.Style
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.ButtonStyle.set -> void
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.Icon.get -> System.Windows.Media.ImageSource
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.Icon.set -> void
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.InactiveBackground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.InactiveBackground.set -> void
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.InactiveForeground.get -> System.Windows.Media.Brush
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.InactiveForeground.set -> void
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.Title.get -> string
+~ModernWpf.Controls.Primitives.WindowTitleBarControl.Title.set -> void
 ~ModernWpf.Controls.Primitives.WindowedPopup.Child.get -> System.Windows.UIElement
 ~ModernWpf.Controls.Primitives.WindowedPopup.Child.set -> void
 ~ModernWpf.Controls.Primitives.WindowedPopup.PlacementTarget.get -> System.Windows.FrameworkElement
@@ -986,6 +984,8 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~override ModernWpf.Automation.Peers.ProgressBarAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Automation.Peers.ProgressBarAutomationPeer.GetNameCore() -> string
 ~override ModernWpf.Automation.Peers.ProgressBarAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
+~override ModernWpf.Automation.Peers.WindowTitleBarControlAutomationPeer.GetClassNameCore() -> string
+~override ModernWpf.Automation.Peers.WindowTitleBarControlAutomationPeer.GetNameCore() -> string
 ~override ModernWpf.Controls.BitmapIconSource.CreateIconElementCore() -> ModernWpf.Controls.IconElement
 ~override ModernWpf.Controls.BitmapIconSource.GetIconElementPropertyCore(System.Windows.DependencyProperty sourceProperty) -> System.Windows.DependencyProperty
 ~override ModernWpf.Controls.BorderEx.GetLayoutClip(System.Windows.Size layoutSlotSize) -> System.Windows.Media.Geometry
@@ -1025,12 +1025,10 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~override ModernWpf.Controls.Primitives.ThemeShadowChrome.OnInitialized(System.EventArgs e) -> void
 ~override ModernWpf.Controls.Primitives.ThemeShadowChrome.OnVisualChildrenChanged(System.Windows.DependencyObject visualAdded, System.Windows.DependencyObject visualRemoved) -> void
 ~override ModernWpf.Controls.Primitives.ThemeShadowChrome.OnVisualParentChanged(System.Windows.DependencyObject oldParent) -> void
-~override ModernWpf.Controls.Primitives.TitleBarControl.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
-~override ModernWpf.Controls.Primitives.TitleBarControl.OnInitialized(System.EventArgs e) -> void
-~override ModernWpf.Controls.Primitives.TitleBarControl.OnRenderSizeChanged(System.Windows.SizeChangedInfo sizeInfo) -> void
-~override ModernWpf.Controls.Primitives.TitleBarControl.OnVisualParentChanged(System.Windows.DependencyObject oldParent) -> void
-~override ModernWpf.Controls.Primitives.TitleBarControlAutomationPeer.GetClassNameCore() -> string
-~override ModernWpf.Controls.Primitives.TitleBarControlAutomationPeer.GetNameCore() -> string
+~override ModernWpf.Controls.Primitives.WindowTitleBarControl.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
+~override ModernWpf.Controls.Primitives.WindowTitleBarControl.OnInitialized(System.EventArgs e) -> void
+~override ModernWpf.Controls.Primitives.WindowTitleBarControl.OnRenderSizeChanged(System.Windows.SizeChangedInfo sizeInfo) -> void
+~override ModernWpf.Controls.Primitives.WindowTitleBarControl.OnVisualParentChanged(System.Windows.DependencyObject oldParent) -> void
 ~override ModernWpf.Controls.ProgressBar.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
 ~override ModernWpf.Controls.RatingItemFontInfo.CreateInstanceCore() -> System.Windows.Freezable
 ~override ModernWpf.Controls.RatingItemInfo.CreateInstanceCore() -> System.Windows.Freezable
@@ -1055,9 +1053,9 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~override ModernWpf.Markup.KeyTimeExtension.ProvideValue(System.IServiceProvider serviceProvider) -> object
 ~override ModernWpf.Markup.StaticColorExtension.ProvideValue(System.IServiceProvider serviceProvider) -> object
 ~override ModernWpf.Markup.TextContextMenuExtension.ProvideValue(System.IServiceProvider serviceProvider) -> object
-~override ModernWpf.Markup.ThemeResouceExtensionConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) -> bool
-~override ModernWpf.Markup.ThemeResouceExtensionConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) -> object
 ~override ModernWpf.Markup.ThemeResourceExtension.ProvideValue(System.IServiceProvider serviceProvider) -> object
+~override ModernWpf.Markup.ThemeResourceExtensionConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Type destinationType) -> bool
+~override ModernWpf.Markup.ThemeResourceExtensionConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, System.Type destinationType) -> object
 ~override ModernWpf.Media.Animation.CubicBezierEase.CreateInstanceCore() -> System.Windows.Freezable
 ~override ModernWpf.SimpleVisualStateManager.GoToStateCore(System.Windows.FrameworkElement control, System.Windows.FrameworkElement stateGroupsRoot, string stateName, System.Windows.VisualStateGroup group, System.Windows.VisualState state, bool useTransitions) -> bool
 ~override ModernWpf.VisualStateManagerEx.GoToStateCore(System.Windows.FrameworkElement control, System.Windows.FrameworkElement stateGroupsRoot, string stateName, System.Windows.VisualStateGroup group, System.Windows.VisualState state, bool useTransitions) -> bool
@@ -1117,8 +1115,8 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~static ModernWpf.Controls.Primitives.FocusVisualHelper.SetIsSystemFocusVisual(System.Windows.Controls.Control control, bool value) -> void
 ~static ModernWpf.Controls.Primitives.FocusVisualHelper.SetIsTemplateFocusTarget(System.Windows.FrameworkElement element, bool value) -> void
 ~static ModernWpf.Controls.Primitives.FocusVisualHelper.SetUseSystemFocusVisuals(System.Windows.Controls.Control control, bool value) -> void
-~static ModernWpf.Controls.Primitives.HyperlinkHelper.GetIsPressed(System.Windows.Documents.Hyperlink hyperlink) -> bool
 ~static ModernWpf.Controls.Primitives.HyperlinkHelper.GetIsPressEnabled(System.Windows.Documents.Hyperlink hyperlink) -> bool
+~static ModernWpf.Controls.Primitives.HyperlinkHelper.GetIsPressed(System.Windows.Documents.Hyperlink hyperlink) -> bool
 ~static ModernWpf.Controls.Primitives.HyperlinkHelper.SetIsPressEnabled(System.Windows.Documents.Hyperlink hyperlink, bool value) -> void
 ~static ModernWpf.Controls.Primitives.MenuItemHelper.GetVisualStateSettersEnabled(System.Windows.Controls.MenuItem menuItem) -> bool
 ~static ModernWpf.Controls.Primitives.MenuItemHelper.SetVisualStateSettersEnabled(System.Windows.Controls.MenuItem menuItem, bool value) -> void
@@ -1191,50 +1189,50 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~static ModernWpf.Controls.RelativePanel.SetRightOf(System.Windows.UIElement element, object value) -> void
 ~static ModernWpf.Controls.TextContextMenu.GetUsingTextContextMenu(System.Windows.Controls.Control textControl) -> bool
 ~static ModernWpf.Controls.TextContextMenu.SetUsingTextContextMenu(System.Windows.Controls.Control textControl, bool value) -> void
-~static ModernWpf.Controls.TitleBar.AddBackRequestedHandler(System.Windows.Window window, System.EventHandler<ModernWpf.Controls.BackRequestedEventArgs> handler) -> void
-~static ModernWpf.Controls.TitleBar.GetBackButtonCommand(System.Windows.Window window) -> System.Windows.Input.ICommand
-~static ModernWpf.Controls.TitleBar.GetBackButtonCommandParameter(System.Windows.Window window) -> object
-~static ModernWpf.Controls.TitleBar.GetBackButtonCommandTarget(System.Windows.Window window) -> System.Windows.IInputElement
-~static ModernWpf.Controls.TitleBar.GetBackButtonStyle(System.Windows.Window window) -> System.Windows.Style
-~static ModernWpf.Controls.TitleBar.GetBackground(System.Windows.Window window) -> System.Windows.Media.Brush
-~static ModernWpf.Controls.TitleBar.GetButtonStyle(System.Windows.Window window) -> System.Windows.Style
-~static ModernWpf.Controls.TitleBar.GetExtendViewIntoTitleBar(System.Windows.Window window) -> bool
-~static ModernWpf.Controls.TitleBar.GetForeground(System.Windows.Window window) -> System.Windows.Media.Brush
-~static ModernWpf.Controls.TitleBar.GetHeight(System.Windows.Window window) -> double
-~static ModernWpf.Controls.TitleBar.GetInactiveBackground(System.Windows.Window window) -> System.Windows.Media.Brush
-~static ModernWpf.Controls.TitleBar.GetInactiveForeground(System.Windows.Window window) -> System.Windows.Media.Brush
-~static ModernWpf.Controls.TitleBar.GetIsBackButtonVisible(System.Windows.Window window) -> bool
-~static ModernWpf.Controls.TitleBar.GetIsBackEnabled(System.Windows.Window window) -> bool
-~static ModernWpf.Controls.TitleBar.GetIsIconVisible(System.Windows.Window window) -> bool
-~static ModernWpf.Controls.TitleBar.GetStyle(System.Windows.Window window) -> System.Windows.Style
-~static ModernWpf.Controls.TitleBar.GetSystemOverlayLeftInset(System.Windows.Window window) -> double
-~static ModernWpf.Controls.TitleBar.GetSystemOverlayRightInset(System.Windows.Window window) -> double
-~static ModernWpf.Controls.TitleBar.HeightKey.get -> System.Windows.ComponentResourceKey
-~static ModernWpf.Controls.TitleBar.RemoveBackRequestedHandler(System.Windows.Window window, System.EventHandler<ModernWpf.Controls.BackRequestedEventArgs> handler) -> void
-~static ModernWpf.Controls.TitleBar.SetBackButtonCommand(System.Windows.Window window, System.Windows.Input.ICommand value) -> void
-~static ModernWpf.Controls.TitleBar.SetBackButtonCommandParameter(System.Windows.Window window, object value) -> void
-~static ModernWpf.Controls.TitleBar.SetBackButtonCommandTarget(System.Windows.Window window, System.Windows.IInputElement value) -> void
-~static ModernWpf.Controls.TitleBar.SetBackButtonStyle(System.Windows.Window window, System.Windows.Style value) -> void
-~static ModernWpf.Controls.TitleBar.SetBackground(System.Windows.Window window, System.Windows.Media.Brush value) -> void
-~static ModernWpf.Controls.TitleBar.SetButtonStyle(System.Windows.Window window, System.Windows.Style value) -> void
-~static ModernWpf.Controls.TitleBar.SetExtendViewIntoTitleBar(System.Windows.Window window, bool value) -> void
-~static ModernWpf.Controls.TitleBar.SetForeground(System.Windows.Window window, System.Windows.Media.Brush value) -> void
-~static ModernWpf.Controls.TitleBar.SetInactiveBackground(System.Windows.Window window, System.Windows.Media.Brush value) -> void
-~static ModernWpf.Controls.TitleBar.SetInactiveForeground(System.Windows.Window window, System.Windows.Media.Brush value) -> void
-~static ModernWpf.Controls.TitleBar.SetIsBackButtonVisible(System.Windows.Window window, bool value) -> void
-~static ModernWpf.Controls.TitleBar.SetIsBackEnabled(System.Windows.Window window, bool value) -> void
-~static ModernWpf.Controls.TitleBar.SetIsIconVisible(System.Windows.Window window, bool value) -> void
-~static ModernWpf.Controls.TitleBar.SetStyle(System.Windows.Window window, System.Windows.Style value) -> void
 ~static ModernWpf.Controls.VariableSizedWrapGrid.GetColumnSpan(System.Windows.UIElement element) -> int
 ~static ModernWpf.Controls.VariableSizedWrapGrid.GetRowSpan(System.Windows.UIElement element) -> int
 ~static ModernWpf.Controls.VariableSizedWrapGrid.SetColumnSpan(System.Windows.UIElement element, int value) -> void
 ~static ModernWpf.Controls.VariableSizedWrapGrid.SetRowSpan(System.Windows.UIElement element, int value) -> void
+~static ModernWpf.Controls.WindowTitleBar.AddBackRequestedHandler(System.Windows.Window window, System.EventHandler<ModernWpf.Controls.BackRequestedEventArgs> handler) -> void
+~static ModernWpf.Controls.WindowTitleBar.GetBackButtonCommand(System.Windows.Window window) -> System.Windows.Input.ICommand
+~static ModernWpf.Controls.WindowTitleBar.GetBackButtonCommandParameter(System.Windows.Window window) -> object
+~static ModernWpf.Controls.WindowTitleBar.GetBackButtonCommandTarget(System.Windows.Window window) -> System.Windows.IInputElement
+~static ModernWpf.Controls.WindowTitleBar.GetBackButtonStyle(System.Windows.Window window) -> System.Windows.Style
+~static ModernWpf.Controls.WindowTitleBar.GetBackground(System.Windows.Window window) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.WindowTitleBar.GetButtonStyle(System.Windows.Window window) -> System.Windows.Style
+~static ModernWpf.Controls.WindowTitleBar.GetExtendsContentIntoTitleBar(System.Windows.Window window) -> bool
+~static ModernWpf.Controls.WindowTitleBar.GetForeground(System.Windows.Window window) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.WindowTitleBar.GetHeight(System.Windows.Window window) -> double
+~static ModernWpf.Controls.WindowTitleBar.GetInactiveBackground(System.Windows.Window window) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.WindowTitleBar.GetInactiveForeground(System.Windows.Window window) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.WindowTitleBar.GetIsBackButtonVisible(System.Windows.Window window) -> bool
+~static ModernWpf.Controls.WindowTitleBar.GetIsBackEnabled(System.Windows.Window window) -> bool
+~static ModernWpf.Controls.WindowTitleBar.GetIsIconVisible(System.Windows.Window window) -> bool
+~static ModernWpf.Controls.WindowTitleBar.GetStyle(System.Windows.Window window) -> System.Windows.Style
+~static ModernWpf.Controls.WindowTitleBar.GetSystemOverlayLeftInset(System.Windows.Window window) -> double
+~static ModernWpf.Controls.WindowTitleBar.GetSystemOverlayRightInset(System.Windows.Window window) -> double
+~static ModernWpf.Controls.WindowTitleBar.HeightKey.get -> System.Windows.ComponentResourceKey
+~static ModernWpf.Controls.WindowTitleBar.RemoveBackRequestedHandler(System.Windows.Window window, System.EventHandler<ModernWpf.Controls.BackRequestedEventArgs> handler) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetBackButtonCommand(System.Windows.Window window, System.Windows.Input.ICommand value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetBackButtonCommandParameter(System.Windows.Window window, object value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetBackButtonCommandTarget(System.Windows.Window window, System.Windows.IInputElement value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetBackButtonStyle(System.Windows.Window window, System.Windows.Style value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetBackground(System.Windows.Window window, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetButtonStyle(System.Windows.Window window, System.Windows.Style value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetExtendsContentIntoTitleBar(System.Windows.Window window, bool value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetForeground(System.Windows.Window window, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetInactiveBackground(System.Windows.Window window, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetInactiveForeground(System.Windows.Window window, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetIsBackButtonVisible(System.Windows.Window window, bool value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetIsBackEnabled(System.Windows.Window window, bool value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetIsIconVisible(System.Windows.Window window, bool value) -> void
+~static ModernWpf.Controls.WindowTitleBar.SetStyle(System.Windows.Window window, System.Windows.Style value) -> void
 ~static ModernWpf.DesignTime.Design.GetRequestedTheme(System.Windows.FrameworkElement element) -> ModernWpf.ElementTheme
 ~static ModernWpf.DesignTime.Design.SetRequestedTheme(System.Windows.FrameworkElement element, ModernWpf.ElementTheme value) -> void
-~static ModernWpf.Navigation.Extensions.Parameter(this System.Windows.Navigation.NavigatingCancelEventArgs e) -> object
-~static ModernWpf.Navigation.Extensions.Parameter(this System.Windows.Navigation.NavigationEventArgs e) -> object
-~static ModernWpf.Navigation.Extensions.SourcePageType(this System.Windows.Navigation.NavigatingCancelEventArgs e) -> System.Type
-~static ModernWpf.Navigation.Extensions.SourcePageType(this System.Windows.Navigation.NavigationEventArgs e) -> System.Type
+~static ModernWpf.Navigation.NavigationEventArgsExtensions.GetParameter(this System.Windows.Navigation.NavigatingCancelEventArgs e) -> object
+~static ModernWpf.Navigation.NavigationEventArgsExtensions.GetParameter(this System.Windows.Navigation.NavigationEventArgs e) -> object
+~static ModernWpf.Navigation.NavigationEventArgsExtensions.GetSourcePageType(this System.Windows.Navigation.NavigatingCancelEventArgs e) -> System.Type
+~static ModernWpf.Navigation.NavigationEventArgsExtensions.GetSourcePageType(this System.Windows.Navigation.NavigationEventArgs e) -> System.Type
 ~static ModernWpf.ThemeDictionary.SetKey(System.Windows.ResourceDictionary themeDictionary, string key) -> void
 ~static ModernWpf.ThemeManager.AddActualThemeChangedHandler(System.Windows.FrameworkElement element, System.Windows.RoutedEventHandler handler) -> void
 ~static ModernWpf.ThemeManager.Current.get -> ModernWpf.ThemeManager
@@ -1420,27 +1418,27 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~static readonly ModernWpf.Controls.Primitives.TitleBarButton.InactiveBackgroundProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.TitleBarButton.InactiveForegroundProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.TitleBarButton.IsActiveProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarButton.IsMouseReallyOverProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarButton.IsReallyPressedProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.TitleBarButton.PressedBackgroundProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.TitleBarButton.PressedForegroundProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.ActualIconProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandParameterProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.BackButtonCommandTargetProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.BackButtonStyleProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.ButtonStyleProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.ExtendViewIntoTitleBarProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.IconProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.InactiveBackgroundProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.InactiveForegroundProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.IsActiveProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.IsBackButtonVisibleProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.IsBackEnabledProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.IsIconVisibleProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.TitleBarControl.TitleProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.ToggleButtonHelper.VisualStateSettersEnabledProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.ValidationHelper.IsTemplateValidationAdornerSiteProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowHelper.FixMaximizedWindowProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowHelper.UseModernWindowStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.ActualIconProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.BackButtonCommandParameterProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.BackButtonCommandProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.BackButtonCommandTargetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.BackButtonStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.ButtonStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.ExtendsContentIntoTitleBarProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.IconProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.InactiveBackgroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.InactiveForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.IsActiveProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.IsBackButtonVisibleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.IsBackEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.IsIconVisibleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.WindowTitleBarControl.TitleProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.WindowedPopup.ActualPlacementProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.WindowedPopup.ChildProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.WindowedPopup.DesiredPlacementProperty -> System.Windows.DependencyProperty
@@ -1448,8 +1446,6 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~static readonly ModernWpf.Controls.Primitives.WindowedPopup.IsOpenProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.WindowedPopup.PlacementTargetProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.WindowedPopup.VerticalOffsetProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.WindowHelper.FixMaximizedWindowProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.WindowHelper.UseModernWindowStyleProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.ProgressBar.CornerRadiusProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.ProgressBar.IsIndeterminateProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.ProgressBar.ShowErrorProperty -> System.Windows.DependencyProperty
@@ -1497,24 +1493,6 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~static readonly ModernWpf.Controls.SymbolIcon.SymbolProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.SymbolIconSource.SymbolProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TextContextMenu.UsingTextContextMenuProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.BackButtonCommandParameterProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.BackButtonCommandProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.BackButtonCommandTargetProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.BackButtonStyleProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.BackgroundProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.BackRequestedEvent -> System.Windows.RoutedEvent
-~static readonly ModernWpf.Controls.TitleBar.ButtonStyleProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.ExtendViewIntoTitleBarProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.ForegroundProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.HeightProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.InactiveBackgroundProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.InactiveForegroundProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.IsBackButtonVisibleProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.IsBackEnabledProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.IsIconVisibleProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.StyleProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.SystemOverlayLeftInsetProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.TitleBar.SystemOverlayRightInsetProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.VariableSizedWrapGrid.BackgroundTransitionProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.VariableSizedWrapGrid.ChildrenTransitionsProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.VariableSizedWrapGrid.ColumnSpanProperty -> System.Windows.DependencyProperty
@@ -1525,6 +1503,24 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~static readonly ModernWpf.Controls.VariableSizedWrapGrid.OrientationProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.VariableSizedWrapGrid.RowSpanProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.VariableSizedWrapGrid.VerticalChildrenAlignmentProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.BackButtonCommandParameterProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.BackButtonCommandProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.BackButtonCommandTargetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.BackButtonStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.BackRequestedEvent -> System.Windows.RoutedEvent
+~static readonly ModernWpf.Controls.WindowTitleBar.BackgroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.ButtonStyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.ExtendsContentIntoTitleBarProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.ForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.HeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.InactiveBackgroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.InactiveForegroundProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.IsBackButtonVisibleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.IsBackEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.IsIconVisibleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.StyleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.SystemOverlayLeftInsetProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowTitleBar.SystemOverlayRightInsetProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.DesignTime.Design.RequestedThemeProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Media.Animation.CubicBezierEase.ControlPoint1Property -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Media.Animation.CubicBezierEase.ControlPoint2Property -> System.Windows.DependencyProperty

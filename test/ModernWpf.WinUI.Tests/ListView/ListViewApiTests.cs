@@ -9,6 +9,7 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf;
+using ModernWpf.Automation.Peers;
 using ModernWpf.WinUI.TestApp;
 using ModernWpf.WinUI.TestInfra;
 
@@ -276,8 +277,8 @@ public class ListViewApiTests
             TestApplication.EnsureInitialized();
 
             var listView = new MuxListView();
-            var listPeer = new ModernWpf.Controls.ListViewBaseAutomationPeer(listView);
-            var listItemPeer = new ModernWpf.Controls.ListViewBaseItemAutomationPeer(
+            var listPeer = new ListViewBaseAutomationPeer(listView);
+            var listItemPeer = new ListViewBaseItemAutomationPeer(
                 new MuxListViewItem { Content = "List item" },
                 listPeer);
             Assert.AreEqual("ListView", listPeer.GetClassName());
@@ -287,8 +288,8 @@ public class ListViewApiTests
             Assert.IsNull(listItemPeer.GetPattern(PatternInterface.Invoke));
 
             var gridView = new MuxGridView();
-            var gridPeer = new ModernWpf.Controls.ListViewBaseAutomationPeer(gridView);
-            var gridItemPeer = new ModernWpf.Controls.ListViewBaseItemAutomationPeer(
+            var gridPeer = new ListViewBaseAutomationPeer(gridView);
+            var gridItemPeer = new ListViewBaseItemAutomationPeer(
                 new MuxGridViewItem { Content = "Grid item" },
                 gridPeer);
             Assert.AreEqual("GridView", gridPeer.GetClassName());

@@ -259,7 +259,7 @@ namespace ModernWpf.Controls
             }
 
             if (e.OriginalSource is UIElement originalElement &&
-                TitleBarControl.GetInsideTitleBar(originalElement))
+                WindowTitleBarControl.GetInsideTitleBar(originalElement))
             {
                 return;
             }

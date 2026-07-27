@@ -106,22 +106,14 @@ public class RepeaterLayoutTests
             var layout = new StackLayout();
 
             Assert.IsTrue(layout.IsVirtualizationEnabled);
-            Assert.IsFalse(layout.DisableVirtualization);
 
             layout.IsVirtualizationEnabled = false;
 
             Assert.IsFalse(layout.IsVirtualizationEnabled);
-            Assert.IsTrue(layout.DisableVirtualization);
 
-            layout.DisableVirtualization = false;
+            layout.SetValue(StackLayout.IsVirtualizationEnabledProperty, true);
 
             Assert.IsTrue(layout.IsVirtualizationEnabled);
-            Assert.IsFalse(layout.DisableVirtualization);
-
-            layout.SetValue(StackLayout.DisableVirtualizationProperty, true);
-
-            Assert.IsFalse(layout.IsVirtualizationEnabled);
-            Assert.IsTrue(layout.DisableVirtualization);
         });
     }
 

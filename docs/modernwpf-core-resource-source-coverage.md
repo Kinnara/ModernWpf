@@ -38,7 +38,7 @@ shell resources retained as documented WPF substitutions.
 | `Themes/ListViewHeaderItem.xaml` | ModernWpf compatibility resource | `docs\groupitem-wpf-fluent-source-audit.md`, `docs\winui3-source-parity.md` |
 | `Themes/TextContextMenu.xaml` | ModernWpf compatibility resource | `docs\textbox-passwordbox-wpf-fluent-source-audit.md`, `docs\richtextbox-wpf-fluent-source-audit.md` |
 | `TitleBar/TitleBarButton.xaml` | Official WPF Fluent shell substitution | `docs\window-wpf-fluent-source-audit.md`, `docs\winui-visualstate-setters-audit.md` |
-| `TitleBar/TitleBarControl.xaml` | Official WPF Fluent shell substitution | `docs\window-wpf-fluent-source-audit.md`, `docs\winui-visualstate-setters-audit.md` |
+| `TitleBar/WindowTitleBarControl.xaml` | Official WPF Fluent shell substitution | `docs\window-wpf-fluent-source-audit.md`, `docs\winui-visualstate-setters-audit.md` |
 
 ## Dynamic System Colors
 

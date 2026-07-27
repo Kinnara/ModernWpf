@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace System.Windows
 {
-    [TypeConverter(typeof(ThemeResouceExtensionConverter))]
+    [TypeConverter(typeof(ThemeResourceExtensionConverter))]
     public class ThemeResourceExtension : ModernWpf.Markup.ThemeResourceExtension
     {
         public ThemeResourceExtension()
@@ -16,7 +16,7 @@ namespace System.Windows
         }
     }
 
-    public class ThemeResouceExtensionConverter : TypeConverter
+    public class ThemeResourceExtensionConverter : TypeConverter
     {
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {

@@ -12,10 +12,10 @@ public class TitleBarSourceAuditTests
     {
         var repoRoot = FindRepoRoot();
         var audit = Read(repoRoot, "docs", "titlebar-winui3-gallery-parity.md");
-        var control = Read(repoRoot, "ModernWpf", "TitleBar", "TitleBarControl.cs");
-        var controlTemplate = Read(repoRoot, "ModernWpf", "TitleBar", "TitleBarControl.xaml");
+        var control = Read(repoRoot, "ModernWpf", "TitleBar", "WindowTitleBarControl.cs");
+        var controlTemplate = Read(repoRoot, "ModernWpf", "TitleBar", "WindowTitleBarControl.xaml");
         var buttonStyle = Read(repoRoot, "ModernWpf", "TitleBar", "TitleBarButton.xaml");
-        var peer = Read(repoRoot, "ModernWpf", "TitleBar", "TitleBarControlAutomationPeer.cs");
+        var peer = Read(repoRoot, "ModernWpf", "TitleBar", "WindowTitleBarControlAutomationPeer.cs");
         var titleBarTests = Read(
             repoRoot,
             "test",
@@ -60,19 +60,19 @@ public class TitleBarSourceAuditTests
         StringAssert.Contains(audit, "`6.819` local delta");
         StringAssert.Contains(audit, "`7.897` local delta");
         StringAssert.Contains(audit, "controls\\dev\\TitleBar\\TitleBar.cpp");
-        StringAssert.Contains(audit, "TitleBar.HeightKey");
+        StringAssert.Contains(audit, "WindowTitleBar.HeightKey");
         StringAssert.Contains(audit, "WindowChrome.CaptionHeight");
         StringAssert.Contains(audit, "WM_NCHITTEST");
         StringAssert.Contains(audit, "normal WPF content-font inheritance");
         Assert.IsFalse(audit.Contains("`src\\controls\\dev\\TitleBar", StringComparison.Ordinal));
 
-        StringAssert.Contains(control, "return new TitleBarControlAutomationPeer(this);");
+        StringAssert.Contains(control, "return new WindowTitleBarControlAutomationPeer(this);");
         StringAssert.Contains(control, "UpdateWindowChromeCaptionHeight");
         StringAssert.Contains(control, "WindowChrome.WindowChromeProperty");
         StringAssert.Contains(control, "CloneCurrentValue");
         StringAssert.Contains(peer, "return AutomationControlType.TitleBar;");
         StringAssert.Contains(peer, "return \"TitleBar\";");
-        StringAssert.Contains(peer, "name = ((TitleBarControl)Owner).Title;");
+        StringAssert.Contains(peer, "name = ((WindowTitleBarControl)Owner).Title;");
         StringAssert.Contains(controlTemplate, "<StreamGeometry x:Key=\"ChromeClose\">");
         StringAssert.Contains(controlTemplate, "<local:FontIconFallback Data=\"{Binding}\" />");
         Assert.IsFalse(
@@ -92,7 +92,7 @@ public class TitleBarSourceAuditTests
         StringAssert.Contains(galleryFactory, "TitleBarDragRegionsXaml");
         StringAssert.Contains(galleryFactory, "CreateTitleBarDragRegionsWindowBody");
         StringAssert.Contains(galleryFactory, "GalleryAutomation.SampleElementId(\"TitleBar\", \"DragRegionsShowWindowButton\")");
-        StringAssert.Contains(galleryFactory, "Mux.TitleBar.SetExtendViewIntoTitleBar(window, true);");
+        StringAssert.Contains(galleryFactory, "Mux.WindowTitleBar.SetExtendsContentIntoTitleBar(window, true);");
         StringAssert.Contains(galleryFactory, "WPF updates its live drag/input tree automatically.");
 
         StringAssert.Contains(harness, "\"TitleBar\" { return 1.0 }");

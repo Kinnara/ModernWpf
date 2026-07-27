@@ -309,14 +309,14 @@ namespace MUXControlsTestApp
         {
             //CoreApplicationViewTitleBar titleBar = CoreApplication.GetCurrentView().TitleBar;
             //titleBar.ExtendViewIntoTitleBar = false;
-            TitleBar.SetExtendViewIntoTitleBar(Application.Current.MainWindow, false);
+            WindowTitleBar.SetExtendsContentIntoTitleBar(Application.Current.MainWindow, false);
         }
 
         private void TitleBarCheckbox_Unchecked(object sender, RoutedEventArgs e)
         {
             //CoreApplicationViewTitleBar titleBar = CoreApplication.GetCurrentView().TitleBar;
             //titleBar.ExtendViewIntoTitleBar = true;
-            TitleBar.SetExtendViewIntoTitleBar(Application.Current.MainWindow, true);
+            WindowTitleBar.SetExtendsContentIntoTitleBar(Application.Current.MainWindow, true);
         }
 
         private void TestFrameCheckbox_Checked(object sender, RoutedEventArgs e)

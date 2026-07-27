@@ -9,17 +9,6 @@ namespace ModernWpf.Controls
 {
     public partial class StackLayout
     {
-        #region DisableVirtualization
-
-        public static readonly DependencyProperty DisableVirtualizationProperty =
-            DependencyProperty.Register(
-                nameof(DisableVirtualization),
-                typeof(bool),
-                typeof(StackLayout),
-                new PropertyMetadata(false, OnPropertyChanged));
-
-        #endregion
-
         #region IsVirtualizationEnabled
 
         public static readonly DependencyProperty IsVirtualizationEnabledProperty =

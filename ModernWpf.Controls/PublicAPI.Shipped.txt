@@ -8,12 +8,19 @@ ModernWpf.Automation.Peers.AutoSuggestBoxAutomationPeer
 ModernWpf.Automation.Peers.AutoSuggestBoxAutomationPeer.Invoke() -> void
 ModernWpf.Automation.Peers.BreadcrumbBarItemAutomationPeer
 ModernWpf.Automation.Peers.BreadcrumbBarItemAutomationPeer.Invoke() -> void
+ModernWpf.Automation.Peers.ColorPickerSliderAutomationPeer
+ModernWpf.Automation.Peers.ColorPickerSliderAutomationPeer.IsReadOnly.get -> bool
+ModernWpf.Automation.Peers.ColorSpectrumAutomationPeer
+ModernWpf.Automation.Peers.ColorSpectrumAutomationPeer.IsReadOnly.get -> bool
 ModernWpf.Automation.Peers.DropDownButtonAutomationPeer
 ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.Collapse() -> void
 ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.Expand() -> void
 ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.ExpandCollapseState.get -> System.Windows.Automation.ExpandCollapseState
 ModernWpf.Automation.Peers.HyperlinkButtonAutomationPeer
 ModernWpf.Automation.Peers.InfoBarAutomationPeer
+ModernWpf.Automation.Peers.ListViewBaseAutomationPeer
+ModernWpf.Automation.Peers.ListViewBaseItemAutomationPeer
+ModernWpf.Automation.Peers.ListViewBaseItemAutomationPeer.Invoke() -> void
 ModernWpf.Automation.Peers.MenuBarAutomationPeer
 ModernWpf.Automation.Peers.MenuBarItemAutomationPeer
 ModernWpf.Automation.Peers.MenuBarItemAutomationPeer.Collapse() -> void
@@ -87,8 +94,8 @@ ModernWpf.Controls.AnnotatedScrollBar.IsScrollingWithMouse.get -> bool
 ModernWpf.Controls.AnnotatedScrollBar.IsScrollingWithMouseChanged -> ModernWpf.TypedEventHandler<ModernWpf.Controls.Primitives.IScrollController, object>
 ModernWpf.Controls.AnnotatedScrollBar.NotifyRequestedScrollCompleted(int correlationId) -> void
 ModernWpf.Controls.AnnotatedScrollBar.ScrollByRequested -> ModernWpf.TypedEventHandler<ModernWpf.Controls.Primitives.IScrollController, ModernWpf.Controls.Primitives.ScrollControllerScrollByRequestedEventArgs>
-ModernWpf.Controls.AnnotatedScrollBar.Scrolling -> ModernWpf.TypedEventHandler<ModernWpf.Controls.AnnotatedScrollBar, ModernWpf.Controls.AnnotatedScrollBarScrollingEventArgs>
 ModernWpf.Controls.AnnotatedScrollBar.ScrollToRequested -> ModernWpf.TypedEventHandler<ModernWpf.Controls.Primitives.IScrollController, ModernWpf.Controls.Primitives.ScrollControllerScrollToRequestedEventArgs>
+ModernWpf.Controls.AnnotatedScrollBar.Scrolling -> ModernWpf.TypedEventHandler<ModernWpf.Controls.AnnotatedScrollBar, ModernWpf.Controls.AnnotatedScrollBarScrollingEventArgs>
 ModernWpf.Controls.AnnotatedScrollBar.SetIsScrollable(bool isScrollable) -> void
 ModernWpf.Controls.AnnotatedScrollBar.SetValues(double minOffset, double maxOffset, double offset, double viewportLength) -> void
 ModernWpf.Controls.AnnotatedScrollBar.SmallChange.get -> double
@@ -100,8 +107,8 @@ ModernWpf.Controls.AnnotatedScrollBarLabel.ScrollOffset.get -> double
 ModernWpf.Controls.AnnotatedScrollBarScrollingEventArgs
 ModernWpf.Controls.AnnotatedScrollBarScrollingEventArgs.Cancel.get -> bool
 ModernWpf.Controls.AnnotatedScrollBarScrollingEventArgs.Cancel.set -> void
-ModernWpf.Controls.AnnotatedScrollBarScrollingEventArgs.ScrollingEventKind.get -> ModernWpf.Controls.AnnotatedScrollBarScrollingEventKind
 ModernWpf.Controls.AnnotatedScrollBarScrollingEventArgs.ScrollOffset.get -> double
+ModernWpf.Controls.AnnotatedScrollBarScrollingEventArgs.ScrollingEventKind.get -> ModernWpf.Controls.AnnotatedScrollBarScrollingEventKind
 ModernWpf.Controls.AnnotatedScrollBarScrollingEventKind
 ModernWpf.Controls.AnnotatedScrollBarScrollingEventKind.Click = 0 -> ModernWpf.Controls.AnnotatedScrollBarScrollingEventKind
 ModernWpf.Controls.AnnotatedScrollBarScrollingEventKind.DecrementButton = 3 -> ModernWpf.Controls.AnnotatedScrollBarScrollingEventKind
@@ -254,8 +261,6 @@ ModernWpf.Controls.ColorPickerHsvChannel.Alpha = 3 -> ModernWpf.Controls.ColorPi
 ModernWpf.Controls.ColorPickerHsvChannel.Hue = 0 -> ModernWpf.Controls.ColorPickerHsvChannel
 ModernWpf.Controls.ColorPickerHsvChannel.Saturation = 1 -> ModernWpf.Controls.ColorPickerHsvChannel
 ModernWpf.Controls.ColorPickerHsvChannel.Value = 2 -> ModernWpf.Controls.ColorPickerHsvChannel
-ModernWpf.Controls.ColorSpectrumAutomationPeer
-ModernWpf.Controls.ColorSpectrumAutomationPeer.IsReadOnly.get -> bool
 ModernWpf.Controls.ColorSpectrumComponents
 ModernWpf.Controls.ColorSpectrumComponents.HueSaturation = 2 -> ModernWpf.Controls.ColorSpectrumComponents
 ModernWpf.Controls.ColorSpectrumComponents.HueValue = 0 -> ModernWpf.Controls.ColorSpectrumComponents
@@ -439,6 +444,8 @@ ModernWpf.Controls.ICommandBarElement.IsCompact.set -> void
 ModernWpf.Controls.ICommandBarElement.IsInOverflow.get -> bool
 ModernWpf.Controls.IElementFactory
 ModernWpf.Controls.IKeyIndexMapping
+ModernWpf.Controls.INumberBoxNumberFormatter
+ModernWpf.Controls.IScrollAnchorProvider
 ModernWpf.Controls.IndexBasedLayoutOrientation
 ModernWpf.Controls.IndexBasedLayoutOrientation.LeftToRight = 2 -> ModernWpf.Controls.IndexBasedLayoutOrientation
 ModernWpf.Controls.IndexBasedLayoutOrientation.None = 0 -> ModernWpf.Controls.IndexBasedLayoutOrientation
@@ -472,11 +479,11 @@ ModernWpf.Controls.InfoBar.IsOpen.set -> void
 ModernWpf.Controls.InfoBar.Opened -> System.EventHandler<ModernWpf.Controls.InfoBarOpenedEventArgs>
 ModernWpf.Controls.InfoBar.Severity.get -> ModernWpf.Controls.InfoBarSeverity
 ModernWpf.Controls.InfoBar.Severity.set -> void
-ModernWpf.Controls.InfoBarClosedEventArgs
-ModernWpf.Controls.InfoBarClosedEventArgs.Reason.get -> ModernWpf.Controls.InfoBarCloseReason
 ModernWpf.Controls.InfoBarCloseReason
 ModernWpf.Controls.InfoBarCloseReason.CloseButton = 0 -> ModernWpf.Controls.InfoBarCloseReason
 ModernWpf.Controls.InfoBarCloseReason.Programmatic = 1 -> ModernWpf.Controls.InfoBarCloseReason
+ModernWpf.Controls.InfoBarClosedEventArgs
+ModernWpf.Controls.InfoBarClosedEventArgs.Reason.get -> ModernWpf.Controls.InfoBarCloseReason
 ModernWpf.Controls.InfoBarClosingEventArgs
 ModernWpf.Controls.InfoBarClosingEventArgs.Cancel.get -> bool
 ModernWpf.Controls.InfoBarClosingEventArgs.Cancel.set -> void
@@ -489,8 +496,6 @@ ModernWpf.Controls.InfoBarSeverity.Success = 1 -> ModernWpf.Controls.InfoBarSeve
 ModernWpf.Controls.InfoBarSeverity.Warning = 2 -> ModernWpf.Controls.InfoBarSeverity
 ModernWpf.Controls.InfoBarTemplateSettings
 ModernWpf.Controls.InfoBarTemplateSettings.InfoBarTemplateSettings() -> void
-ModernWpf.Controls.INumberBoxNumberFormatter
-ModernWpf.Controls.IScrollAnchorProvider
 ModernWpf.Controls.ItemClickEventArgs
 ModernWpf.Controls.ItemClickEventArgs.ItemClickEventArgs() -> void
 ModernWpf.Controls.ItemClickEventHandler
@@ -560,7 +565,6 @@ ModernWpf.Controls.ListViewBase.ItemClick -> ModernWpf.Controls.ItemClickEventHa
 ModernWpf.Controls.ListViewBase.ListViewBase() -> void
 ModernWpf.Controls.ListViewBase.UseSystemFocusVisuals.get -> bool
 ModernWpf.Controls.ListViewBase.UseSystemFocusVisuals.set -> void
-ModernWpf.Controls.ListViewBaseAutomationPeer
 ModernWpf.Controls.ListViewBaseItem
 ModernWpf.Controls.ListViewBaseItem.CornerRadius.get -> System.Windows.CornerRadius
 ModernWpf.Controls.ListViewBaseItem.CornerRadius.set -> void
@@ -573,8 +577,6 @@ ModernWpf.Controls.ListViewBaseItem.FocusVisualSecondaryThickness.set -> void
 ModernWpf.Controls.ListViewBaseItem.ListViewBaseItem() -> void
 ModernWpf.Controls.ListViewBaseItem.UseSystemFocusVisuals.get -> bool
 ModernWpf.Controls.ListViewBaseItem.UseSystemFocusVisuals.set -> void
-ModernWpf.Controls.ListViewBaseItemAutomationPeer
-ModernWpf.Controls.ListViewBaseItemAutomationPeer.Invoke() -> void
 ModernWpf.Controls.ListViewItem
 ModernWpf.Controls.ListViewItem.ListViewItem() -> void
 ModernWpf.Controls.MenuBar
@@ -805,8 +807,6 @@ ModernWpf.Controls.Primitives.ColorPickerSlider
 ModernWpf.Controls.Primitives.ColorPickerSlider.ColorChannel.get -> ModernWpf.Controls.ColorPickerHsvChannel
 ModernWpf.Controls.Primitives.ColorPickerSlider.ColorChannel.set -> void
 ModernWpf.Controls.Primitives.ColorPickerSlider.ColorPickerSlider() -> void
-ModernWpf.Controls.Primitives.ColorPickerSliderAutomationPeer
-ModernWpf.Controls.Primitives.ColorPickerSliderAutomationPeer.IsReadOnly.get -> bool
 ModernWpf.Controls.Primitives.ColorSpectrum
 ModernWpf.Controls.Primitives.ColorSpectrum.Color.get -> System.Windows.Media.Color
 ModernWpf.Controls.Primitives.ColorSpectrum.Color.set -> void
@@ -864,11 +864,11 @@ ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandD
 ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandDownAnimationHoldPosition.get -> double
 ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandDownAnimationStartPosition.get -> double
 ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandDownOverflowVerticalPosition.get -> double
-ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandedWidth.get -> double
 ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandUpAnimationEndPosition.get -> double
 ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandUpAnimationHoldPosition.get -> double
 ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandUpAnimationStartPosition.get -> double
 ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandUpOverflowVerticalPosition.get -> double
+ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandedWidth.get -> double
 ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.OpenAnimationEndPosition.get -> double
 ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.OpenAnimationStartPosition.get -> double
 ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.OverflowContentClipRect.get -> System.Windows.Rect
@@ -892,8 +892,8 @@ ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentHiddenYT
 ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentHorizontalOffset.get -> double
 ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentMaxHeight.get -> double
 ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentMaxWidth.get -> double
-ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentMinimalYTranslation.get -> double
 ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentMinWidth.get -> double
+ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentMinimalYTranslation.get -> double
 ModernWpf.Controls.Primitives.FlyoutBase
 ModernWpf.Controls.Primitives.FlyoutBase.AreOpenCloseAnimationsEnabled.get -> bool
 ModernWpf.Controls.Primitives.FlyoutBase.AreOpenCloseAnimationsEnabled.set -> void
@@ -945,12 +945,6 @@ ModernWpf.Controls.Primitives.FlyoutShowOptions.Position.get -> System.Windows.P
 ModernWpf.Controls.Primitives.FlyoutShowOptions.Position.set -> void
 ModernWpf.Controls.Primitives.FlyoutShowOptions.ShowMode.get -> ModernWpf.Controls.Primitives.FlyoutShowMode
 ModernWpf.Controls.Primitives.FlyoutShowOptions.ShowMode.set -> void
-ModernWpf.Controls.Primitives.InfoBarPanel
-ModernWpf.Controls.Primitives.InfoBarPanel.HorizontalOrientationPadding.get -> System.Windows.Thickness
-ModernWpf.Controls.Primitives.InfoBarPanel.HorizontalOrientationPadding.set -> void
-ModernWpf.Controls.Primitives.InfoBarPanel.InfoBarPanel() -> void
-ModernWpf.Controls.Primitives.InfoBarPanel.VerticalOrientationPadding.get -> System.Windows.Thickness
-ModernWpf.Controls.Primitives.InfoBarPanel.VerticalOrientationPadding.set -> void
 ModernWpf.Controls.Primitives.IScrollController
 ModernWpf.Controls.Primitives.IScrollController.AddScrollVelocityRequested -> ModernWpf.TypedEventHandler<ModernWpf.Controls.Primitives.IScrollController, ModernWpf.Controls.Primitives.ScrollControllerAddScrollVelocityRequestedEventArgs>
 ModernWpf.Controls.Primitives.IScrollController.CanScroll.get -> bool
@@ -967,6 +961,12 @@ ModernWpf.Controls.Primitives.IScrollControllerPanningInfo.Changed -> ModernWpf.
 ModernWpf.Controls.Primitives.IScrollControllerPanningInfo.IsRailEnabled.get -> bool
 ModernWpf.Controls.Primitives.IScrollControllerPanningInfo.PanOrientation.get -> System.Windows.Controls.Orientation
 ModernWpf.Controls.Primitives.IScrollControllerPanningInfo.PanRequested -> ModernWpf.TypedEventHandler<ModernWpf.Controls.Primitives.IScrollControllerPanningInfo, ModernWpf.Controls.Primitives.ScrollControllerPanRequestedEventArgs>
+ModernWpf.Controls.Primitives.InfoBarPanel
+ModernWpf.Controls.Primitives.InfoBarPanel.HorizontalOrientationPadding.get -> System.Windows.Thickness
+ModernWpf.Controls.Primitives.InfoBarPanel.HorizontalOrientationPadding.set -> void
+ModernWpf.Controls.Primitives.InfoBarPanel.InfoBarPanel() -> void
+ModernWpf.Controls.Primitives.InfoBarPanel.VerticalOrientationPadding.get -> System.Windows.Thickness
+ModernWpf.Controls.Primitives.InfoBarPanel.VerticalOrientationPadding.set -> void
 ModernWpf.Controls.Primitives.NavigationViewItemPresenter
 ModernWpf.Controls.Primitives.NavigationViewItemPresenter.CornerRadius.get -> System.Windows.CornerRadius
 ModernWpf.Controls.Primitives.NavigationViewItemPresenter.CornerRadius.set -> void
@@ -1077,6 +1077,7 @@ ModernWpf.Controls.RecyclePool.RecyclePool() -> void
 ModernWpf.Controls.RecyclingElementFactory
 ModernWpf.Controls.RecyclingElementFactory.RecyclingElementFactory() -> void
 ModernWpf.Controls.RecyclingElementFactory.SelectTemplateKey -> ModernWpf.TypedEventHandler<ModernWpf.Controls.RecyclingElementFactory, ModernWpf.Controls.SelectTemplateEventArgs>
+ModernWpf.Controls.SelectTemplateEventArgs
 ModernWpf.Controls.SelectionModel
 ModernWpf.Controls.SelectionModel.ChildrenRequested -> ModernWpf.TypedEventHandler<ModernWpf.Controls.SelectionModel, ModernWpf.Controls.SelectionModelChildrenRequestedEventArgs>
 ModernWpf.Controls.SelectionModel.ClearSelection() -> void
@@ -1090,10 +1091,10 @@ ModernWpf.Controls.SelectionModel.PropertyChanged -> System.ComponentModel.Prope
 ModernWpf.Controls.SelectionModel.Select(int groupIndex, int itemIndex) -> void
 ModernWpf.Controls.SelectionModel.Select(int index) -> void
 ModernWpf.Controls.SelectionModel.SelectAll() -> void
-ModernWpf.Controls.SelectionModel.SelectionChanged -> ModernWpf.TypedEventHandler<ModernWpf.Controls.SelectionModel, ModernWpf.Controls.SelectionModelSelectionChangedEventArgs>
-ModernWpf.Controls.SelectionModel.SelectionModel() -> void
 ModernWpf.Controls.SelectionModel.SelectRangeFromAnchor(int groupIndex, int itemIndex) -> void
 ModernWpf.Controls.SelectionModel.SelectRangeFromAnchor(int index) -> void
+ModernWpf.Controls.SelectionModel.SelectionChanged -> ModernWpf.TypedEventHandler<ModernWpf.Controls.SelectionModel, ModernWpf.Controls.SelectionModelSelectionChangedEventArgs>
+ModernWpf.Controls.SelectionModel.SelectionModel() -> void
 ModernWpf.Controls.SelectionModel.SetAnchorIndex(int groupIndex, int itemIndex) -> void
 ModernWpf.Controls.SelectionModel.SetAnchorIndex(int index) -> void
 ModernWpf.Controls.SelectionModel.SingleSelect.get -> bool
@@ -1120,7 +1121,6 @@ ModernWpf.Controls.SelectorBarItem.SelectorBarItem() -> void
 ModernWpf.Controls.SelectorBarItem.UseSystemFocusVisuals.get -> bool
 ModernWpf.Controls.SelectorBarItem.UseSystemFocusVisuals.set -> void
 ModernWpf.Controls.SelectorBarSelectionChangedEventArgs
-ModernWpf.Controls.SelectTemplateEventArgs
 ModernWpf.Controls.SplitButton
 ModernWpf.Controls.SplitButton.Click -> ModernWpf.TypedEventHandler<ModernWpf.Controls.SplitButton, ModernWpf.Controls.SplitButtonClickEventArgs>
 ModernWpf.Controls.SplitButton.CornerRadius.get -> System.Windows.CornerRadius
@@ -1162,8 +1162,6 @@ ModernWpf.Controls.SplitViewPanePlacement
 ModernWpf.Controls.SplitViewPanePlacement.Left = 0 -> ModernWpf.Controls.SplitViewPanePlacement
 ModernWpf.Controls.SplitViewPanePlacement.Right = 1 -> ModernWpf.Controls.SplitViewPanePlacement
 ModernWpf.Controls.StackLayout
-ModernWpf.Controls.StackLayout.DisableVirtualization.get -> bool
-ModernWpf.Controls.StackLayout.DisableVirtualization.set -> void
 ModernWpf.Controls.StackLayout.IsVirtualizationEnabled.get -> bool
 ModernWpf.Controls.StackLayout.IsVirtualizationEnabled.set -> void
 ModernWpf.Controls.StackLayout.Orientation.get -> System.Windows.Controls.Orientation
@@ -1196,12 +1194,12 @@ ModernWpf.Controls.TeachingTip.ShouldConstrainToRootBounds.set -> void
 ModernWpf.Controls.TeachingTip.TailVisibility.get -> ModernWpf.Controls.TeachingTipTailVisibility
 ModernWpf.Controls.TeachingTip.TailVisibility.set -> void
 ModernWpf.Controls.TeachingTip.TeachingTip() -> void
-ModernWpf.Controls.TeachingTipClosedEventArgs
-ModernWpf.Controls.TeachingTipClosedEventArgs.Reason.get -> ModernWpf.Controls.TeachingTipCloseReason
 ModernWpf.Controls.TeachingTipCloseReason
 ModernWpf.Controls.TeachingTipCloseReason.CloseButton = 0 -> ModernWpf.Controls.TeachingTipCloseReason
 ModernWpf.Controls.TeachingTipCloseReason.LightDismiss = 1 -> ModernWpf.Controls.TeachingTipCloseReason
 ModernWpf.Controls.TeachingTipCloseReason.Programmatic = 2 -> ModernWpf.Controls.TeachingTipCloseReason
+ModernWpf.Controls.TeachingTipClosedEventArgs
+ModernWpf.Controls.TeachingTipClosedEventArgs.Reason.get -> ModernWpf.Controls.TeachingTipCloseReason
 ModernWpf.Controls.TeachingTipClosingDeferral
 ModernWpf.Controls.TeachingTipClosingDeferral.Complete() -> void
 ModernWpf.Controls.TeachingTipClosingEventArgs
@@ -1252,8 +1250,8 @@ ModernWpf.Controls.ToggleSwitch.HeaderPlacement.get -> ModernWpf.Controls.Contro
 ModernWpf.Controls.ToggleSwitch.HeaderPlacement.set -> void
 ModernWpf.Controls.ToggleSwitch.IsOn.get -> bool
 ModernWpf.Controls.ToggleSwitch.IsOn.set -> void
-ModernWpf.Controls.ToggleSwitch.Toggled -> System.Windows.RoutedEventHandler
 ModernWpf.Controls.ToggleSwitch.ToggleSwitch() -> void
+ModernWpf.Controls.ToggleSwitch.Toggled -> System.Windows.RoutedEventHandler
 ModernWpf.Controls.ToggleSwitch.UseSystemFocusVisuals.get -> bool
 ModernWpf.Controls.ToggleSwitch.UseSystemFocusVisuals.set -> void
 ModernWpf.Controls.UniformGridLayout
@@ -1319,10 +1317,13 @@ override ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer.IsKeyboardF
 override ModernWpf.Automation.Peers.BreadcrumbBarItemAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.BreadcrumbBarItemAutomationPeer.IsContentElementCore() -> bool
 override ModernWpf.Automation.Peers.BreadcrumbBarItemAutomationPeer.IsControlElementCore() -> bool
+override ModernWpf.Automation.Peers.ColorSpectrumAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.HyperlinkButtonAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.HyperlinkButtonAutomationPeer.IsControlElementCore() -> bool
 override ModernWpf.Automation.Peers.InfoBarAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.InfoBarAutomationPeer.IsControlElementCore() -> bool
+override ModernWpf.Automation.Peers.ListViewBaseAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
+override ModernWpf.Automation.Peers.ListViewBaseItemAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.MenuBarAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.MenuBarItemAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.NavigationViewItemAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
@@ -1356,7 +1357,6 @@ override ModernWpf.Controls.BreadcrumbBar.OnPropertyChanged(System.Windows.Depen
 override ModernWpf.Controls.BreadcrumbBarItem.OnApplyTemplate() -> void
 override ModernWpf.Controls.BreadcrumbBarItem.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs e) -> void
 override ModernWpf.Controls.ColorPicker.OnApplyTemplate() -> void
-override ModernWpf.Controls.ColorSpectrumAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Controls.CommandBar.MeasureOverride(System.Windows.Size constraint) -> System.Windows.Size
 override ModernWpf.Controls.CommandBar.OnApplyTemplate() -> void
 override ModernWpf.Controls.CommandBarFlyout.OnPresenterReleased() -> void
@@ -1374,10 +1374,8 @@ override ModernWpf.Controls.ItemsRepeater.ArrangeOverride(System.Windows.Size fi
 override ModernWpf.Controls.ItemsRepeater.MeasureOverride(System.Windows.Size availableSize) -> System.Windows.Size
 override ModernWpf.Controls.LayoutPanel.ArrangeOverride(System.Windows.Size finalSize) -> System.Windows.Size
 override ModernWpf.Controls.LayoutPanel.MeasureOverride(System.Windows.Size availableSize) -> System.Windows.Size
-override ModernWpf.Controls.ListViewBaseAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Controls.ListViewBaseItem.OnApplyTemplate() -> void
 override ModernWpf.Controls.ListViewBaseItem.OnPropertyChanged(System.Windows.DependencyPropertyChangedEventArgs e) -> void
-override ModernWpf.Controls.ListViewBaseItemAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Controls.MenuBar.OnApplyTemplate() -> void
 override ModernWpf.Controls.MenuBarItem.OnApplyTemplate() -> void
 override ModernWpf.Controls.NavigationView.ArrangeOverride(System.Windows.Size arrangeBounds) -> System.Windows.Size
@@ -1431,9 +1429,19 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~ModernWpf.Automation.Peers.AppBarToggleButtonAutomationPeer.AppBarToggleButtonAutomationPeer(ModernWpf.Controls.AppBarToggleButton owner) -> void
 ~ModernWpf.Automation.Peers.AutoSuggestBoxAutomationPeer.AutoSuggestBoxAutomationPeer(ModernWpf.Controls.AutoSuggestBox owner) -> void
 ~ModernWpf.Automation.Peers.BreadcrumbBarItemAutomationPeer.BreadcrumbBarItemAutomationPeer(ModernWpf.Controls.BreadcrumbBarItem owner) -> void
+~ModernWpf.Automation.Peers.ColorPickerSliderAutomationPeer.ColorPickerSliderAutomationPeer(ModernWpf.Controls.Primitives.ColorPickerSlider owner) -> void
+~ModernWpf.Automation.Peers.ColorPickerSliderAutomationPeer.Owner.get -> ModernWpf.Controls.Primitives.ColorPickerSlider
+~ModernWpf.Automation.Peers.ColorPickerSliderAutomationPeer.SetValue(string value) -> void
+~ModernWpf.Automation.Peers.ColorPickerSliderAutomationPeer.Value.get -> string
+~ModernWpf.Automation.Peers.ColorSpectrumAutomationPeer.ColorSpectrumAutomationPeer(ModernWpf.Controls.Primitives.ColorSpectrum owner) -> void
+~ModernWpf.Automation.Peers.ColorSpectrumAutomationPeer.Owner.get -> ModernWpf.Controls.Primitives.ColorSpectrum
+~ModernWpf.Automation.Peers.ColorSpectrumAutomationPeer.SetValue(string value) -> void
+~ModernWpf.Automation.Peers.ColorSpectrumAutomationPeer.Value.get -> string
 ~ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.DropDownButtonAutomationPeer(ModernWpf.Controls.DropDownButton owner) -> void
 ~ModernWpf.Automation.Peers.HyperlinkButtonAutomationPeer.HyperlinkButtonAutomationPeer(ModernWpf.Controls.HyperlinkButton owner) -> void
 ~ModernWpf.Automation.Peers.InfoBarAutomationPeer.InfoBarAutomationPeer(ModernWpf.Controls.InfoBar owner) -> void
+~ModernWpf.Automation.Peers.ListViewBaseAutomationPeer.ListViewBaseAutomationPeer(ModernWpf.Controls.ListViewBase owner) -> void
+~ModernWpf.Automation.Peers.ListViewBaseItemAutomationPeer.ListViewBaseItemAutomationPeer(object item, ModernWpf.Automation.Peers.ListViewBaseAutomationPeer selectorAutomationPeer) -> void
 ~ModernWpf.Automation.Peers.MenuBarAutomationPeer.MenuBarAutomationPeer(ModernWpf.Controls.MenuBar owner) -> void
 ~ModernWpf.Automation.Peers.MenuBarItemAutomationPeer.MenuBarItemAutomationPeer(ModernWpf.Controls.MenuBarItem owner) -> void
 ~ModernWpf.Automation.Peers.NavigationViewAutomationPeer.GetSelection() -> System.Windows.Automation.Provider.IRawElementProviderSimple[]
@@ -1457,10 +1465,10 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~ModernWpf.Controls.AnnotatedScrollBar.DetailLabelTemplate.get -> System.Windows.DataTemplate
 ~ModernWpf.Controls.AnnotatedScrollBar.DetailLabelTemplate.set -> void
 ~ModernWpf.Controls.AnnotatedScrollBar.GetScrollAnimation(int correlationId, System.Windows.Point startPosition, System.Windows.Point endPosition, object defaultAnimation) -> object
-~ModernWpf.Controls.AnnotatedScrollBar.Labels.get -> System.Collections.Generic.IList<ModernWpf.Controls.AnnotatedScrollBarLabel>
-~ModernWpf.Controls.AnnotatedScrollBar.Labels.set -> void
 ~ModernWpf.Controls.AnnotatedScrollBar.LabelTemplate.get -> System.Windows.DataTemplate
 ~ModernWpf.Controls.AnnotatedScrollBar.LabelTemplate.set -> void
+~ModernWpf.Controls.AnnotatedScrollBar.Labels.get -> System.Collections.Generic.IList<ModernWpf.Controls.AnnotatedScrollBarLabel>
+~ModernWpf.Controls.AnnotatedScrollBar.Labels.set -> void
 ~ModernWpf.Controls.AnnotatedScrollBar.PanningInfo.get -> ModernWpf.Controls.Primitives.IScrollControllerPanningInfo
 ~ModernWpf.Controls.AnnotatedScrollBar.ScrollController.get -> ModernWpf.Controls.Primitives.IScrollController
 ~ModernWpf.Controls.AnnotatedScrollBarDetailLabelRequestedEventArgs.Content.get -> object
@@ -1506,17 +1514,13 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~ModernWpf.Controls.AutoSuggestBoxQuerySubmittedEventArgs.ChosenSuggestion.get -> object
 ~ModernWpf.Controls.AutoSuggestBoxQuerySubmittedEventArgs.QueryText.get -> string
 ~ModernWpf.Controls.AutoSuggestBoxSuggestionChosenEventArgs.SelectedItem.get -> object
-~ModernWpf.Controls.BreadcrumbBar.ItemsSource.get -> object
-~ModernWpf.Controls.BreadcrumbBar.ItemsSource.set -> void
 ~ModernWpf.Controls.BreadcrumbBar.ItemTemplate.get -> System.Windows.DataTemplate
 ~ModernWpf.Controls.BreadcrumbBar.ItemTemplate.set -> void
+~ModernWpf.Controls.BreadcrumbBar.ItemsSource.get -> object
+~ModernWpf.Controls.BreadcrumbBar.ItemsSource.set -> void
 ~ModernWpf.Controls.BreadcrumbBarItem.ContentTransitions.get -> ModernWpf.Media.Animation.TransitionCollection
 ~ModernWpf.Controls.BreadcrumbBarItem.ContentTransitions.set -> void
 ~ModernWpf.Controls.BreadcrumbBarItemClickedEventArgs.Item.get -> object
-~ModernWpf.Controls.ColorSpectrumAutomationPeer.ColorSpectrumAutomationPeer(ModernWpf.Controls.Primitives.ColorSpectrum owner) -> void
-~ModernWpf.Controls.ColorSpectrumAutomationPeer.Owner.get -> ModernWpf.Controls.Primitives.ColorSpectrum
-~ModernWpf.Controls.ColorSpectrumAutomationPeer.SetValue(string value) -> void
-~ModernWpf.Controls.ColorSpectrumAutomationPeer.Value.get -> string
 ~ModernWpf.Controls.CommandBar.CommandBarOverflowPresenterStyle.get -> System.Windows.Style
 ~ModernWpf.Controls.CommandBar.CommandBarOverflowPresenterStyle.set -> void
 ~ModernWpf.Controls.CommandBar.CommandBarTemplateSettings.get -> ModernWpf.Controls.Primitives.CommandBarTemplateSettings
@@ -1588,6 +1592,11 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~ModernWpf.Controls.IElementFactory.RecycleElement(ModernWpf.Controls.ElementFactoryRecycleArgs args) -> void
 ~ModernWpf.Controls.IKeyIndexMapping.IndexFromKey(string key) -> int
 ~ModernWpf.Controls.IKeyIndexMapping.KeyFromIndex(int index) -> string
+~ModernWpf.Controls.INumberBoxNumberFormatter.FormatDouble(double value) -> string
+~ModernWpf.Controls.INumberBoxNumberFormatter.ParseDouble(string text) -> double?
+~ModernWpf.Controls.IScrollAnchorProvider.CurrentAnchor.get -> System.Windows.UIElement
+~ModernWpf.Controls.IScrollAnchorProvider.RegisterAnchorCandidate(System.Windows.UIElement element) -> void
+~ModernWpf.Controls.IScrollAnchorProvider.UnregisterAnchorCandidate(System.Windows.UIElement element) -> void
 ~ModernWpf.Controls.IndexPath.CompareTo(ModernWpf.Controls.IndexPath other) -> int
 ~ModernWpf.Controls.IndexPath.IndexPath(System.Collections.Generic.IList<int> indices) -> void
 ~ModernWpf.Controls.InfoBadge.IconSource.get -> ModernWpf.Controls.IconSource
@@ -1614,19 +1623,14 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~ModernWpf.Controls.InfoBar.Title.get -> string
 ~ModernWpf.Controls.InfoBar.Title.set -> void
 ~ModernWpf.Controls.InfoBarTemplateSettings.IconElement.get -> ModernWpf.Controls.IconElement
-~ModernWpf.Controls.INumberBoxNumberFormatter.FormatDouble(double value) -> string
-~ModernWpf.Controls.INumberBoxNumberFormatter.ParseDouble(string text) -> double?
-~ModernWpf.Controls.IScrollAnchorProvider.CurrentAnchor.get -> System.Windows.UIElement
-~ModernWpf.Controls.IScrollAnchorProvider.RegisterAnchorCandidate(System.Windows.UIElement element) -> void
-~ModernWpf.Controls.IScrollAnchorProvider.UnregisterAnchorCandidate(System.Windows.UIElement element) -> void
 ~ModernWpf.Controls.ItemClickEventArgs.ClickedItem.get -> object
 ~ModernWpf.Controls.ItemsRepeater.GetElementIndex(System.Windows.UIElement element) -> int
 ~ModernWpf.Controls.ItemsRepeater.GetOrCreateElement(int index) -> System.Windows.UIElement
+~ModernWpf.Controls.ItemsRepeater.ItemTemplate.get -> object
+~ModernWpf.Controls.ItemsRepeater.ItemTemplate.set -> void
 ~ModernWpf.Controls.ItemsRepeater.ItemsSource.get -> object
 ~ModernWpf.Controls.ItemsRepeater.ItemsSource.set -> void
 ~ModernWpf.Controls.ItemsRepeater.ItemsSourceView.get -> ModernWpf.Controls.ItemsSourceView
-~ModernWpf.Controls.ItemsRepeater.ItemTemplate.get -> object
-~ModernWpf.Controls.ItemsRepeater.ItemTemplate.set -> void
 ~ModernWpf.Controls.ItemsRepeater.Layout.get -> ModernWpf.Controls.Layout
 ~ModernWpf.Controls.ItemsRepeater.Layout.set -> void
 ~ModernWpf.Controls.ItemsRepeater.TryGetElement(int index) -> System.Windows.UIElement
@@ -1653,12 +1657,10 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~ModernWpf.Controls.LayoutPanel.BorderBrush.set -> void
 ~ModernWpf.Controls.LayoutPanel.Layout.get -> ModernWpf.Controls.Layout
 ~ModernWpf.Controls.LayoutPanel.Layout.set -> void
-~ModernWpf.Controls.ListViewBaseAutomationPeer.ListViewBaseAutomationPeer(ModernWpf.Controls.ListViewBase owner) -> void
 ~ModernWpf.Controls.ListViewBaseItem.FocusVisualPrimaryBrush.get -> System.Windows.Media.Brush
 ~ModernWpf.Controls.ListViewBaseItem.FocusVisualPrimaryBrush.set -> void
 ~ModernWpf.Controls.ListViewBaseItem.FocusVisualSecondaryBrush.get -> System.Windows.Media.Brush
 ~ModernWpf.Controls.ListViewBaseItem.FocusVisualSecondaryBrush.set -> void
-~ModernWpf.Controls.ListViewBaseItemAutomationPeer.ListViewBaseItemAutomationPeer(object item, ModernWpf.Controls.ListViewBaseAutomationPeer selectorAutomationPeer) -> void
 ~ModernWpf.Controls.MenuBar.Items.get -> System.Collections.ObjectModel.ObservableCollection<ModernWpf.Controls.MenuBarItem>
 ~ModernWpf.Controls.MenuBarItem.Items.get -> System.Collections.ObjectModel.ObservableCollection<object>
 ~ModernWpf.Controls.MenuBarItem.Title.get -> string
@@ -1681,13 +1683,13 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~ModernWpf.Controls.NavigationView.MenuItemContainerStyle.set -> void
 ~ModernWpf.Controls.NavigationView.MenuItemContainerStyleSelector.get -> System.Windows.Controls.StyleSelector
 ~ModernWpf.Controls.NavigationView.MenuItemContainerStyleSelector.set -> void
-~ModernWpf.Controls.NavigationView.MenuItems.get -> System.Collections.IList
-~ModernWpf.Controls.NavigationView.MenuItemsSource.get -> object
-~ModernWpf.Controls.NavigationView.MenuItemsSource.set -> void
 ~ModernWpf.Controls.NavigationView.MenuItemTemplate.get -> System.Windows.DataTemplate
 ~ModernWpf.Controls.NavigationView.MenuItemTemplate.set -> void
 ~ModernWpf.Controls.NavigationView.MenuItemTemplateSelector.get -> System.Windows.Controls.DataTemplateSelector
 ~ModernWpf.Controls.NavigationView.MenuItemTemplateSelector.set -> void
+~ModernWpf.Controls.NavigationView.MenuItems.get -> System.Collections.IList
+~ModernWpf.Controls.NavigationView.MenuItemsSource.get -> object
+~ModernWpf.Controls.NavigationView.MenuItemsSource.set -> void
 ~ModernWpf.Controls.NavigationView.PaneCustomContent.get -> System.Windows.UIElement
 ~ModernWpf.Controls.NavigationView.PaneCustomContent.set -> void
 ~ModernWpf.Controls.NavigationView.PaneFooter.get -> System.Windows.UIElement
@@ -1774,10 +1776,6 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~ModernWpf.Controls.PersonPicture.TemplateSettings.get -> ModernWpf.Controls.PersonPictureTemplateSettings
 ~ModernWpf.Controls.PersonPictureTemplateSettings.ActualImageBrush.get -> System.Windows.Media.ImageBrush
 ~ModernWpf.Controls.PersonPictureTemplateSettings.ActualInitials.get -> string
-~ModernWpf.Controls.Primitives.ColorPickerSliderAutomationPeer.ColorPickerSliderAutomationPeer(ModernWpf.Controls.Primitives.ColorPickerSlider owner) -> void
-~ModernWpf.Controls.Primitives.ColorPickerSliderAutomationPeer.Owner.get -> ModernWpf.Controls.Primitives.ColorPickerSlider
-~ModernWpf.Controls.Primitives.ColorPickerSliderAutomationPeer.SetValue(string value) -> void
-~ModernWpf.Controls.Primitives.ColorPickerSliderAutomationPeer.Value.get -> string
 ~ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBar.CommandBarOverflowPresenterStyle.get -> System.Windows.Style
 ~ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBar.CommandBarOverflowPresenterStyle.set -> void
 ~ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBar.FlyoutTemplateSettings.get -> ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings
@@ -1812,11 +1810,11 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~ModernWpf.Controls.RadioButtons.Header.set -> void
 ~ModernWpf.Controls.RadioButtons.HeaderTemplate.get -> System.Windows.DataTemplate
 ~ModernWpf.Controls.RadioButtons.HeaderTemplate.set -> void
+~ModernWpf.Controls.RadioButtons.ItemTemplate.get -> object
+~ModernWpf.Controls.RadioButtons.ItemTemplate.set -> void
 ~ModernWpf.Controls.RadioButtons.Items.get -> System.Collections.IList
 ~ModernWpf.Controls.RadioButtons.ItemsSource.get -> System.Collections.IEnumerable
 ~ModernWpf.Controls.RadioButtons.ItemsSource.set -> void
-~ModernWpf.Controls.RadioButtons.ItemTemplate.get -> object
-~ModernWpf.Controls.RadioButtons.ItemTemplate.set -> void
 ~ModernWpf.Controls.RadioButtons.SelectedItem.get -> object
 ~ModernWpf.Controls.RadioButtons.SelectedItem.set -> void
 ~ModernWpf.Controls.RadioMenuItem.GroupName.get -> string
@@ -1845,6 +1843,10 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~ModernWpf.Controls.RecyclingElementFactory.RecyclePool.set -> void
 ~ModernWpf.Controls.RecyclingElementFactory.Templates.get -> System.Collections.Generic.Dictionary<string, System.Windows.DataTemplate>
 ~ModernWpf.Controls.RecyclingElementFactory.Templates.set -> void
+~ModernWpf.Controls.SelectTemplateEventArgs.DataContext.get -> object
+~ModernWpf.Controls.SelectTemplateEventArgs.Owner.get -> System.Windows.UIElement
+~ModernWpf.Controls.SelectTemplateEventArgs.TemplateKey.get -> string
+~ModernWpf.Controls.SelectTemplateEventArgs.TemplateKey.set -> void
 ~ModernWpf.Controls.SelectionModel.AnchorIndex.get -> ModernWpf.Controls.IndexPath
 ~ModernWpf.Controls.SelectionModel.AnchorIndex.set -> void
 ~ModernWpf.Controls.SelectionModel.DeselectAt(ModernWpf.Controls.IndexPath index) -> void
@@ -1853,13 +1855,13 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~ModernWpf.Controls.SelectionModel.IsSelectedAt(ModernWpf.Controls.IndexPath index) -> bool?
 ~ModernWpf.Controls.SelectionModel.OnPropertyChanged(string propertyName) -> void
 ~ModernWpf.Controls.SelectionModel.SelectAt(ModernWpf.Controls.IndexPath index) -> void
+~ModernWpf.Controls.SelectionModel.SelectRange(ModernWpf.Controls.IndexPath start, ModernWpf.Controls.IndexPath end) -> void
+~ModernWpf.Controls.SelectionModel.SelectRangeFromAnchorTo(ModernWpf.Controls.IndexPath index) -> void
 ~ModernWpf.Controls.SelectionModel.SelectedIndex.get -> ModernWpf.Controls.IndexPath
 ~ModernWpf.Controls.SelectionModel.SelectedIndex.set -> void
 ~ModernWpf.Controls.SelectionModel.SelectedIndices.get -> System.Collections.Generic.IReadOnlyList<ModernWpf.Controls.IndexPath>
 ~ModernWpf.Controls.SelectionModel.SelectedItem.get -> object
 ~ModernWpf.Controls.SelectionModel.SelectedItems.get -> System.Collections.Generic.IReadOnlyList<object>
-~ModernWpf.Controls.SelectionModel.SelectRange(ModernWpf.Controls.IndexPath start, ModernWpf.Controls.IndexPath end) -> void
-~ModernWpf.Controls.SelectionModel.SelectRangeFromAnchorTo(ModernWpf.Controls.IndexPath index) -> void
 ~ModernWpf.Controls.SelectionModel.Source.get -> object
 ~ModernWpf.Controls.SelectionModel.Source.set -> void
 ~ModernWpf.Controls.SelectionModelChildrenRequestedEventArgs.Children.get -> object
@@ -1875,10 +1877,6 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~ModernWpf.Controls.SelectorBarItem.Icon.set -> void
 ~ModernWpf.Controls.SelectorBarItem.Text.get -> string
 ~ModernWpf.Controls.SelectorBarItem.Text.set -> void
-~ModernWpf.Controls.SelectTemplateEventArgs.DataContext.get -> object
-~ModernWpf.Controls.SelectTemplateEventArgs.Owner.get -> System.Windows.UIElement
-~ModernWpf.Controls.SelectTemplateEventArgs.TemplateKey.get -> string
-~ModernWpf.Controls.SelectTemplateEventArgs.TemplateKey.set -> void
 ~ModernWpf.Controls.SplitButton.Command.get -> System.Windows.Input.ICommand
 ~ModernWpf.Controls.SplitButton.Command.set -> void
 ~ModernWpf.Controls.SplitButton.CommandParameter.get -> object
@@ -1958,11 +1956,21 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~override ModernWpf.Automation.Peers.BreadcrumbBarItemAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Automation.Peers.BreadcrumbBarItemAutomationPeer.GetLocalizedControlTypeCore() -> string
 ~override ModernWpf.Automation.Peers.BreadcrumbBarItemAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
+~override ModernWpf.Automation.Peers.ColorPickerSliderAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
+~override ModernWpf.Automation.Peers.ColorSpectrumAutomationPeer.GetClassNameCore() -> string
+~override ModernWpf.Automation.Peers.ColorSpectrumAutomationPeer.GetHelpTextCore() -> string
+~override ModernWpf.Automation.Peers.ColorSpectrumAutomationPeer.GetLocalizedControlTypeCore() -> string
+~override ModernWpf.Automation.Peers.ColorSpectrumAutomationPeer.GetNameCore() -> string
+~override ModernWpf.Automation.Peers.ColorSpectrumAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
 ~override ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Automation.Peers.DropDownButtonAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
 ~override ModernWpf.Automation.Peers.HyperlinkButtonAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Automation.Peers.HyperlinkButtonAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
 ~override ModernWpf.Automation.Peers.InfoBarAutomationPeer.GetClassNameCore() -> string
+~override ModernWpf.Automation.Peers.ListViewBaseAutomationPeer.CreateItemAutomationPeer(object item) -> System.Windows.Automation.Peers.ItemAutomationPeer
+~override ModernWpf.Automation.Peers.ListViewBaseAutomationPeer.GetClassNameCore() -> string
+~override ModernWpf.Automation.Peers.ListViewBaseItemAutomationPeer.GetClassNameCore() -> string
+~override ModernWpf.Automation.Peers.ListViewBaseItemAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
 ~override ModernWpf.Automation.Peers.MenuBarAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Automation.Peers.MenuBarItemAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Automation.Peers.MenuBarItemAutomationPeer.GetNameCore() -> string
@@ -2021,11 +2029,6 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~override ModernWpf.Controls.BreadcrumbBarItem.OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e) -> void
 ~override ModernWpf.Controls.BreadcrumbBarItem.OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e) -> void
 ~override ModernWpf.Controls.BreadcrumbBarItem.OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e) -> void
-~override ModernWpf.Controls.ColorSpectrumAutomationPeer.GetClassNameCore() -> string
-~override ModernWpf.Controls.ColorSpectrumAutomationPeer.GetHelpTextCore() -> string
-~override ModernWpf.Controls.ColorSpectrumAutomationPeer.GetLocalizedControlTypeCore() -> string
-~override ModernWpf.Controls.ColorSpectrumAutomationPeer.GetNameCore() -> string
-~override ModernWpf.Controls.ColorSpectrumAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
 ~override ModernWpf.Controls.CommandBar.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
 ~override ModernWpf.Controls.CommandBar.OnKeyDown(System.Windows.Input.KeyEventArgs e) -> void
 ~override ModernWpf.Controls.CommandBar.OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e) -> void
@@ -2059,8 +2062,6 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~override ModernWpf.Controls.ListViewBase.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
 ~override ModernWpf.Controls.ListViewBase.OnSelectionChanged(System.Windows.Controls.SelectionChangedEventArgs e) -> void
 ~override ModernWpf.Controls.ListViewBase.PrepareContainerForItemOverride(System.Windows.DependencyObject element, object item) -> void
-~override ModernWpf.Controls.ListViewBaseAutomationPeer.CreateItemAutomationPeer(object item) -> System.Windows.Automation.Peers.ItemAutomationPeer
-~override ModernWpf.Controls.ListViewBaseAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Controls.ListViewBaseItem.OnKeyDown(System.Windows.Input.KeyEventArgs e) -> void
 ~override ModernWpf.Controls.ListViewBaseItem.OnKeyUp(System.Windows.Input.KeyEventArgs e) -> void
 ~override ModernWpf.Controls.ListViewBaseItem.OnMouseEnter(System.Windows.Input.MouseEventArgs e) -> void
@@ -2069,8 +2070,6 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~override ModernWpf.Controls.ListViewBaseItem.OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e) -> void
 ~override ModernWpf.Controls.ListViewBaseItem.OnSelected(System.Windows.RoutedEventArgs e) -> void
 ~override ModernWpf.Controls.ListViewBaseItem.OnUnselected(System.Windows.RoutedEventArgs e) -> void
-~override ModernWpf.Controls.ListViewBaseItemAutomationPeer.GetClassNameCore() -> string
-~override ModernWpf.Controls.ListViewBaseItemAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
 ~override ModernWpf.Controls.MenuBar.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
 ~override ModernWpf.Controls.MenuBarItem.OnAccessKey(System.Windows.Input.AccessKeyEventArgs e) -> void
 ~override ModernWpf.Controls.MenuBarItem.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
@@ -2098,7 +2097,6 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~override ModernWpf.Controls.Primitives.ColorPickerSlider.OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e) -> void
 ~override ModernWpf.Controls.Primitives.ColorPickerSlider.OnKeyDown(System.Windows.Input.KeyEventArgs e) -> void
 ~override ModernWpf.Controls.Primitives.ColorPickerSlider.OnLostKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e) -> void
-~override ModernWpf.Controls.Primitives.ColorPickerSliderAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
 ~override ModernWpf.Controls.Primitives.ColorSpectrum.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
 ~override ModernWpf.Controls.Primitives.ColorSpectrum.OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e) -> void
 ~override ModernWpf.Controls.Primitives.ColorSpectrum.OnKeyDown(System.Windows.Input.KeyEventArgs e) -> void
@@ -2177,8 +2175,8 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~static ModernWpf.Controls.RecyclePool.GetPoolInstance(System.Windows.DataTemplate dataTemplate) -> ModernWpf.Controls.RecyclePool
 ~static ModernWpf.Controls.RecyclePool.SetPoolInstance(System.Windows.DataTemplate dataTemplate, ModernWpf.Controls.RecyclePool value) -> void
 ~static readonly ModernWpf.Controls.AnnotatedScrollBar.DetailLabelTemplateProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.AnnotatedScrollBar.LabelsProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.AnnotatedScrollBar.LabelTemplateProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.AnnotatedScrollBar.LabelsProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.AnnotatedScrollBar.SmallChangeProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.AppBarButton.BackgroundSizingProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.AppBarButton.CornerRadiusProperty -> System.Windows.DependencyProperty
@@ -2229,8 +2227,8 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~static readonly ModernWpf.Controls.AutoSuggestBox.TextProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.AutoSuggestBox.UpdateTextOnSelectProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.AutoSuggestBox.UseSystemFocusVisualsProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.BreadcrumbBar.ItemsSourceProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.BreadcrumbBar.ItemTemplateProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.BreadcrumbBar.ItemsSourceProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.BreadcrumbBarItem.ContentTransitionsProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.BreadcrumbBarItem.CornerRadiusProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.BreadcrumbBarItem.FocusVisualMarginProperty -> System.Windows.DependencyProperty
@@ -2335,8 +2333,8 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~static readonly ModernWpf.Controls.InfoBarTemplateSettings.IconElementProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.ItemsRepeater.AnimatorProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.ItemsRepeater.HorizontalCacheLengthProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.ItemsRepeater.ItemsSourceProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.ItemsRepeater.ItemTemplateProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsRepeater.ItemsSourceProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.ItemsRepeater.LayoutProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.ItemsRepeater.VerticalCacheLengthProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.LayoutPanel.BorderBrushProperty -> System.Windows.DependencyProperty
@@ -2384,9 +2382,9 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~static readonly ModernWpf.Controls.NavigationView.IsTitleBarAutoPaddingEnabledProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.NavigationView.MenuItemContainerStyleProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.NavigationView.MenuItemContainerStyleSelectorProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.NavigationView.MenuItemsSourceProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.NavigationView.MenuItemTemplateProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.NavigationView.MenuItemTemplateSelectorProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.NavigationView.MenuItemsSourceProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.NavigationView.OpenPaneLengthProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.NavigationView.OverflowLabelModeProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.NavigationView.PaneCustomContentProperty -> System.Windows.DependencyProperty
@@ -2507,11 +2505,11 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~static readonly ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandDownAnimationHoldPositionProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandDownAnimationStartPositionProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandDownOverflowVerticalPositionProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandedWidthProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandUpAnimationEndPositionProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandUpAnimationHoldPositionProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandUpAnimationStartPositionProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandUpOverflowVerticalPositionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.ExpandedWidthProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.OpenAnimationEndPositionProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.OpenAnimationStartPositionProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.CommandBarFlyoutCommandBarTemplateSettings.OverflowContentClipRectProperty -> System.Windows.DependencyProperty
@@ -2531,8 +2529,8 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~static readonly ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentHorizontalOffsetProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentMaxHeightProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentMaxWidthProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentMinimalYTranslationProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentMinWidthProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Primitives.CommandBarTemplateSettings.OverflowContentMinimalYTranslationProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.FlyoutBase.AreOpenCloseAnimationsEnabledProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.FlyoutBase.AttachedFlyoutProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.FlyoutBase.IsOpenProperty -> System.Windows.DependencyProperty
@@ -2576,9 +2574,9 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~static readonly ModernWpf.Controls.ProgressRing.ValueProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.RadioButtons.HeaderProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.RadioButtons.HeaderTemplateProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.RadioButtons.ItemTemplateProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.RadioButtons.ItemsProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.RadioButtons.ItemsSourceProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.RadioButtons.ItemTemplateProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.RadioButtons.MaxColumnsProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.RadioButtons.SelectedIndexProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.RadioButtons.SelectedItemProperty -> System.Windows.DependencyProperty
@@ -2631,7 +2629,6 @@ virtual ModernWpf.Controls.VirtualizingLayoutContext.VisibleRectCore() -> System
 ~static readonly ModernWpf.Controls.SplitView.PanePlacementProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.SplitView.PaneProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.SplitView.TemplateSettingsProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.StackLayout.DisableVirtualizationProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.StackLayout.IsVirtualizationEnabledProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.StackLayout.OrientationProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.StackLayout.SpacingProperty -> System.Windows.DependencyProperty

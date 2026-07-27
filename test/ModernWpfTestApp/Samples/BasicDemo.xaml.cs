@@ -21,7 +21,7 @@ namespace MUXControlsTestApp.Samples
             goBackButton.Click += delegate { Frame.GoBack(); };
             repeater.ItemTemplate = Resources["elementFactory"];
             var stack = repeater.Layout as StackLayout;
-            int numItems = (stack != null && stack.DisableVirtualization) ? 10 : 10000;
+            int numItems = (stack != null && !stack.IsVirtualizationEnabled) ? 10 : 10000;
             repeater.ItemsSource = Enumerable.Range(0, numItems).Select(x => x.ToString());
         }
 

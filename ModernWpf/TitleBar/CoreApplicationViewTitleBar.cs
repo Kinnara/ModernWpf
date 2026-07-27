@@ -14,17 +14,17 @@ namespace ModernWpf
 
         public bool ExtendViewIntoTitleBar
         {
-            get => TitleBar.GetExtendViewIntoTitleBar(_owner);
-            set => TitleBar.SetExtendViewIntoTitleBar(_owner, value);
+            get => WindowTitleBar.GetExtendsContentIntoTitleBar(_owner);
+            set => WindowTitleBar.SetExtendsContentIntoTitleBar(_owner, value);
         }
 
-        public double Height => TitleBar.GetHeight(_owner);
+        public double Height => WindowTitleBar.GetHeight(_owner);
 
         public bool IsVisible => true;
 
-        public double SystemOverlayLeftInset => TitleBar.GetSystemOverlayLeftInset(_owner);
+        public double SystemOverlayLeftInset => WindowTitleBar.GetSystemOverlayLeftInset(_owner);
 
-        public double SystemOverlayRightInset => TitleBar.GetSystemOverlayRightInset(_owner);
+        public double SystemOverlayRightInset => WindowTitleBar.GetSystemOverlayRightInset(_owner);
 
         public event TypedEventHandler<CoreApplicationViewTitleBar, object> IsVisibleChanged;
         public event TypedEventHandler<CoreApplicationViewTitleBar, object> LayoutMetricsChanged;
@@ -86,13 +86,13 @@ namespace ModernWpf
 
                 var window = _owner._owner;
                 BindingOperations.SetBinding(this, ExtendViewIntoTitleBarProperty,
-                    new Binding { Path = new PropertyPath(TitleBar.ExtendViewIntoTitleBarProperty), Source = window });
+                    new Binding { Path = new PropertyPath(WindowTitleBar.ExtendsContentIntoTitleBarProperty), Source = window });
                 BindingOperations.SetBinding(this, HeightProperty,
-                    new Binding { Path = new PropertyPath(TitleBar.HeightProperty), Source = window });
+                    new Binding { Path = new PropertyPath(WindowTitleBar.HeightProperty), Source = window });
                 BindingOperations.SetBinding(this, SystemOverlayLeftInsetProperty,
-                    new Binding { Path = new PropertyPath(TitleBar.SystemOverlayLeftInsetProperty), Source = window });
+                    new Binding { Path = new PropertyPath(WindowTitleBar.SystemOverlayLeftInsetProperty), Source = window });
                 BindingOperations.SetBinding(this, SystemOverlayRightInsetProperty,
-                    new Binding { Path = new PropertyPath(TitleBar.SystemOverlayRightInsetProperty), Source = window });
+                    new Binding { Path = new PropertyPath(WindowTitleBar.SystemOverlayRightInsetProperty), Source = window });
             }
 
             #region ExtendViewIntoTitleBar

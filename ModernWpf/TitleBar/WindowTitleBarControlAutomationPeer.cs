@@ -1,10 +1,11 @@
 using System.Windows.Automation.Peers;
+using ModernWpf.Controls.Primitives;
 
-namespace ModernWpf.Controls.Primitives
+namespace ModernWpf.Automation.Peers
 {
-    public class TitleBarControlAutomationPeer : FrameworkElementAutomationPeer
+    public class WindowTitleBarControlAutomationPeer : FrameworkElementAutomationPeer
     {
-        public TitleBarControlAutomationPeer(TitleBarControl owner)
+        public WindowTitleBarControlAutomationPeer(WindowTitleBarControl owner)
             : base(owner)
         {
         }
@@ -24,7 +25,7 @@ namespace ModernWpf.Controls.Primitives
             var name = base.GetNameCore();
             if (string.IsNullOrEmpty(name))
             {
-                name = ((TitleBarControl)Owner).Title;
+                name = ((WindowTitleBarControl)Owner).Title;
             }
 
             return name;

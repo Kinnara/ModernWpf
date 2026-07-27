@@ -2,8 +2,9 @@ using System;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
+using ModernWpf.Controls;
 
-namespace ModernWpf.Controls
+namespace ModernWpf.Automation.Peers
 {
     public class ListViewBaseItemAutomationPeer : ListBoxItemAutomationPeer, IInvokeProvider
     {

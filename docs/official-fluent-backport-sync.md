@@ -951,7 +951,7 @@ Source inspected:
 | `system` namespace assembly | `System.Runtime` in several official style files | `mscorlib` | Keeps copied resources compatible with ModernWpf's older target frameworks. |
 | `TextBlock.xaml` file name | Official file is `TextBlock.xaml` | ModernWpf keeps `TextStyles.xaml` | Preserve the existing merge path and public resource naming. |
 | `HeaderTextBlockStyle` / `SubheaderTextBlockStyle` | Not present in official WPF Fluent | Retained as legacy aliases | Avoids unnecessary resource-surface churn while the core text styles follow official WPF Fluent. |
-| `Window.xaml` | Official plain WPF window content/backdrop style | ModernWpf custom title-bar/window-chrome style is retained | ModernWpf owns custom `TitleBarControl`, `WindowChrome`, and maximized-window behavior; replacing it needs a separate shell audit. |
+| `Window.xaml` | Official plain WPF window content/backdrop style | ModernWpf custom title-bar/window-chrome style is retained | ModernWpf owns custom `WindowTitleBarControl`, `WindowChrome`, and maximized-window behavior; replacing it needs a separate shell audit. |
 
 ### Test Evidence
 
@@ -980,7 +980,7 @@ Source inspected:
 
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
-| Whole `Window.xaml` template | Plain content-window style with optional platform backdrop | ModernWpf custom title-bar/window-chrome style | ModernWpf owns `TitleBarControl`, attached title-bar properties, `WindowChrome`, high-contrast caption border, and `WindowHelper.FixMaximizedWindow`; copying the official file wholesale would remove those public shell features. |
+| Whole `Window.xaml` template | Plain content-window style with optional platform backdrop | ModernWpf custom title-bar/window-chrome style | ModernWpf owns `WindowTitleBarControl`, attached title-bar properties, `WindowChrome`, high-contrast caption border, and `WindowHelper.FixMaximizedWindow`; copying the official file wholesale would remove those public shell features. |
 | Official backdrop guards | `MS.Internal.FrameworkAppContextSwitches.DisableFluentThemeWindowBackdrop` and `Standard.Utility.IsOSWindows11OrNewer` triggers | Not copied; ModernWpf uses `WindowBackground` directly | Those guards are tied to .NET WPF Fluent backdrop internals not present in ModernWpf. |
 | Platform-owned active window border | Native non-client chrome follows the Windows colorization preference | ModernWpf's Light/Dark client-drawn `WindowBorder` selects the system accent from DWM `ColorPrevalence`, with the existing `#707070` fallback | The custom chrome paints this border itself, so the existing system-accent palette and window-message hook mirror the platform preference without replacing application resource overrides. |
 | Title-bar back button icon surface | No equivalent in official WPF Fluent `Window.xaml` | `TitleBarBackButtonStyle` still uses `FontIconFallback` | This belongs to ModernWpf's custom title-bar chrome, not the stock content-window presenter slot. |
