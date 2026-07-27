@@ -3,6 +3,7 @@
     <Version>1.0.0-preview.2</Version>
     <!-- Immutable after the first 1.x package is published. -->
     <ModernWpfCompatibilityBaselineVersion>1.0.0-preview.1</ModernWpfCompatibilityBaselineVersion>
+    <ModernWpfPublicApiAnalyzersVersion>5.6.0</ModernWpfPublicApiAnalyzersVersion>
     <ModernWpfSystemValueTupleVersion>4.6.2</ModernWpfSystemValueTupleVersion>
     <ModernWpfWindowsSdkContractsVersion>10.0.28000.2526</ModernWpfWindowsSdkContractsVersion>
     <Authors>Yimeng Wu</Authors>

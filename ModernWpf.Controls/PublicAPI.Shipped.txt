@@ -499,6 +499,7 @@ ModernWpf.Controls.InfoBarTemplateSettings.InfoBarTemplateSettings() -> void
 ModernWpf.Controls.ItemClickEventArgs
 ModernWpf.Controls.ItemClickEventArgs.ItemClickEventArgs() -> void
 ModernWpf.Controls.ItemClickEventHandler
+~virtual ModernWpf.Controls.ItemClickEventHandler.Invoke(object sender, ModernWpf.Controls.ItemClickEventArgs e) -> void
 ModernWpf.Controls.ItemsRepeater
 ModernWpf.Controls.ItemsRepeater.ElementClearing -> ModernWpf.TypedEventHandler<ModernWpf.Controls.ItemsRepeater, ModernWpf.Controls.ItemsRepeaterElementClearingEventArgs>
 ModernWpf.Controls.ItemsRepeater.ElementIndexChanged -> ModernWpf.TypedEventHandler<ModernWpf.Controls.ItemsRepeater, ModernWpf.Controls.ItemsRepeaterElementIndexChangedEventArgs>
