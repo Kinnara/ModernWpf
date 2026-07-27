@@ -232,7 +232,7 @@ namespace ModernWpf.Tests.MUXControls.ApiTests.RepeaterTests
             {
                 var repeater = new ItemsRepeater();
                 var stackLayout = new StackLayout();
-                stackLayout.DisableVirtualization = true;
+                stackLayout.IsVirtualizationEnabled = false;
                 repeater.Layout = stackLayout;
                 repeater.ItemsSource = Enumerable.Range(0, 10);
                 repeater.ItemTemplate = (DataTemplate)XamlReader.Parse(

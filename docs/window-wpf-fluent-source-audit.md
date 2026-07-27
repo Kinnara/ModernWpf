@@ -52,8 +52,8 @@ ModernWpf now follows the compatible parts of that source shape:
   bit. Applications can remove that bit during `SourceInitialized` while
   retaining `WindowHelper.UseModernWindowStyle`; the custom command is then
   disabled and cannot minimize the window.
-- A window-scoped `TitleBar.HeightKey` override keeps the rendered
-  `TitleBarControl`, the read-only `TitleBar.Height` value, and
+- A window-scoped `WindowTitleBar.HeightKey` override keeps the rendered
+  `WindowTitleBarControl`, the read-only `WindowTitleBar.Height` value, and
   `WindowChrome.CaptionHeight` synchronized. The synchronization also follows
   runtime resource changes and replacement chrome objects, so the entire
   visible title-bar height remains draggable instead of retaining the default
@@ -61,7 +61,7 @@ ModernWpf now follows the compatible parts of that source shape:
 - Disabled custom caption buttons remain inert when Windows 11 routes their
   input through non-client messages. In particular, `ResizeMode=CanMinimize`
   keeps the disabled maximize button from invoking its command.
-- The rendered client area immediately below `TitleBarControl` is explicitly
+- The rendered client area immediately below `WindowTitleBarControl` is explicitly
   returned as `HTCLIENT`, avoiding WPF `WindowChrome`'s resize-border addition
   to `CaptionHeight`. Caption-button bounds use half-open right/bottom edges,
   while title dragging, side/bottom resize borders, and explicit resize grips
@@ -93,7 +93,7 @@ ModernWpf now follows the compatible parts of that source shape:
 ## Intentional Differences
 
 ModernWpf does not copy official `Window.xaml` wholesale. Doing so would remove
-the ModernWpf `TitleBarControl`, `WindowChrome`, attached title-bar properties,
+the ModernWpf `WindowTitleBarControl`, `WindowChrome`, attached title-bar properties,
 high-contrast caption border, and `WindowHelper.FixMaximizedWindow`. Those are
 custom WPF shell features rather than guessed control internals.
 
@@ -106,7 +106,7 @@ surface.
 - `WindowVisualStateTests` verifies that `BaseWindowStyle` resolves
   `WindowForeground`, `WindowBackground`, `DefaultWindowChrome`, and
   `WindowHelper.FixMaximizedWindow`, and that the applied window template keeps
-  `TitleBarControl`, `ResizeGrip`, and a plain WPF content presenter.
+  `WindowTitleBarControl`, `ResizeGrip`, and a plain WPF content presenter.
 - `WindowVisualStateTests` verifies the guarded Windows 11 resize-edge policy,
   the legacy and High Contrast fallbacks, the complete-glass requirement, and
   the High Contrast chrome-resource override.
@@ -114,7 +114,7 @@ surface.
   `SourceInitialized` disables the ModernWpf minimize button and its routed
   command, and that the non-client click bridge cannot invoke the disabled
   maximize button when `ResizeMode=CanMinimize`.
-- `WindowVisualStateTests` scopes `TitleBar.HeightKey` to one window, verifies
+- `WindowVisualStateTests` scopes `WindowTitleBar.HeightKey` to one window, verifies
   rendered/read-only/chrome heights at 56 DIPs, sends `WM_NCHITTEST` through
   the area below the former 32-DIP boundary, changes the resource to 64 DIPs,
   and verifies that an explicitly replaced `WindowChrome` is synchronized

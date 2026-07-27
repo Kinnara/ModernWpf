@@ -27,7 +27,7 @@
     <primitives:ModernWindowChrome
         x:Key="DefaultWindowChrome"
         x:Shared="False"
-        CaptionHeight="{DynamicResource {x:Static local:TitleBar.HeightKey}}"
+        CaptionHeight="{DynamicResource {x:Static local:WindowTitleBar.HeightKey}}"
         CornerRadius="0"
         GlassFrameThickness="{x:Static WindowChrome.GlassFrameCompleteThickness}"
         UseAeroCaptionButtons="False" />
@@ -35,7 +35,7 @@
     <primitives:ModernWindowChrome
         x:Key="HighContrastWindowChrome"
         x:Shared="False"
-        CaptionHeight="{DynamicResource {x:Static local:TitleBar.HeightKey}}"
+        CaptionHeight="{DynamicResource {x:Static local:WindowTitleBar.HeightKey}}"
         CornerRadius="0"
         GlassFrameThickness="{x:Static WindowChrome.GlassFrameCompleteThickness}"
         NonClientFrameEdges="None"
@@ -51,11 +51,11 @@
         <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="WindowChrome.WindowChrome" Value="{DynamicResource DefaultWindowChrome}" />
         <Setter Property="root:ThemeManager.IsThemeAware" Value="True" />
-        <Setter Property="local:TitleBar.Background" Value="Transparent" />
-        <Setter Property="local:TitleBar.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
-        <Setter Property="local:TitleBar.InactiveBackground" Value="Transparent" />
-        <Setter Property="local:TitleBar.InactiveForeground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
-        <Setter Property="local:TitleBar.BackButtonStyle" Value="{StaticResource TitleBarBackButtonStyle}" />
+        <Setter Property="local:WindowTitleBar.Background" Value="Transparent" />
+        <Setter Property="local:WindowTitleBar.Foreground" Value="{DynamicResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="local:WindowTitleBar.InactiveBackground" Value="Transparent" />
+        <Setter Property="local:WindowTitleBar.InactiveForeground" Value="{DynamicResource SystemControlDisabledBaseMediumLowBrush}" />
+        <Setter Property="local:WindowTitleBar.BackButtonStyle" Value="{StaticResource TitleBarBackButtonStyle}" />
         <Setter Property="primitives:WindowHelper.FixMaximizedWindow" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
@@ -74,25 +74,25 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
 
-                                <primitives:TitleBarControl
+                                <primitives:WindowTitleBarControl
                                     x:Name="TitleBarControl"
                                     Icon="{TemplateBinding Icon}"
                                     Title="{TemplateBinding Title}"
                                     IsActive="{TemplateBinding IsActive}"
-                                    Background="{TemplateBinding local:TitleBar.Background}"
-                                    Foreground="{TemplateBinding local:TitleBar.Foreground}"
-                                    InactiveBackground="{TemplateBinding local:TitleBar.InactiveBackground}"
-                                    InactiveForeground="{TemplateBinding local:TitleBar.InactiveForeground}"
-                                    Style="{TemplateBinding local:TitleBar.Style}"
-                                    ButtonStyle="{TemplateBinding local:TitleBar.ButtonStyle}"
-                                    IsIconVisible="{TemplateBinding local:TitleBar.IsIconVisible}"
-                                    IsBackButtonVisible="{TemplateBinding local:TitleBar.IsBackButtonVisible}"
-                                    IsBackEnabled="{TemplateBinding local:TitleBar.IsBackEnabled}"
-                                    BackButtonCommand="{TemplateBinding local:TitleBar.BackButtonCommand}"
-                                    BackButtonCommandParameter="{TemplateBinding local:TitleBar.BackButtonCommandParameter}"
-                                    BackButtonCommandTarget="{TemplateBinding local:TitleBar.BackButtonCommandTarget}"
-                                    BackButtonStyle="{TemplateBinding local:TitleBar.BackButtonStyle}"
-                                    ExtendViewIntoTitleBar="{TemplateBinding local:TitleBar.ExtendViewIntoTitleBar}"
+                                    Background="{TemplateBinding local:WindowTitleBar.Background}"
+                                    Foreground="{TemplateBinding local:WindowTitleBar.Foreground}"
+                                    InactiveBackground="{TemplateBinding local:WindowTitleBar.InactiveBackground}"
+                                    InactiveForeground="{TemplateBinding local:WindowTitleBar.InactiveForeground}"
+                                    Style="{TemplateBinding local:WindowTitleBar.Style}"
+                                    ButtonStyle="{TemplateBinding local:WindowTitleBar.ButtonStyle}"
+                                    IsIconVisible="{TemplateBinding local:WindowTitleBar.IsIconVisible}"
+                                    IsBackButtonVisible="{TemplateBinding local:WindowTitleBar.IsBackButtonVisible}"
+                                    IsBackEnabled="{TemplateBinding local:WindowTitleBar.IsBackEnabled}"
+                                    BackButtonCommand="{TemplateBinding local:WindowTitleBar.BackButtonCommand}"
+                                    BackButtonCommandParameter="{TemplateBinding local:WindowTitleBar.BackButtonCommandParameter}"
+                                    BackButtonCommandTarget="{TemplateBinding local:WindowTitleBar.BackButtonCommandTarget}"
+                                    BackButtonStyle="{TemplateBinding local:WindowTitleBar.BackButtonStyle}"
+                                    ExtendsContentIntoTitleBar="{TemplateBinding local:WindowTitleBar.ExtendsContentIntoTitleBar}"
                                     Panel.ZIndex="1"
                                     SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
 
@@ -137,7 +137,7 @@
                         <Trigger Property="WindowStyle" Value="None">
                             <Setter TargetName="TitleBarControl" Property="Visibility" Value="Collapsed" />
                         </Trigger>
-                        <Trigger Property="local:TitleBar.ExtendViewIntoTitleBar" Value="True">
+                        <Trigger Property="local:WindowTitleBar.ExtendsContentIntoTitleBar" Value="True">
                             <Setter TargetName="AdornerDecorator" Property="Grid.Row" Value="0" />
                             <Setter TargetName="AdornerDecorator" Property="Grid.RowSpan" Value="2" />
                         </Trigger>

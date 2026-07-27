@@ -89,7 +89,7 @@ public class TemplateParityTests
             Path.Combine("ModernWpf", "ProgressBar", "ProgressBar.xaml"),
             Path.Combine("ModernWpf", "Styles", "AutoSuggestBox.xaml"),
             Path.Combine("ModernWpf", "Styles", "NavigationBackButton.xaml"),
-            Path.Combine("ModernWpf", "TitleBar", "TitleBarControl.xaml"),
+            Path.Combine("ModernWpf", "TitleBar", "WindowTitleBarControl.xaml"),
             Path.Combine("ModernWpf.Controls", "BreadcrumbBar", "BreadcrumbBar.xaml"),
             Path.Combine("ModernWpf.Controls", "ColorPicker", "ColorPicker.xaml"),
             Path.Combine("ModernWpf.Controls", "ContentDialog", "ContentDialog.xaml"),
@@ -698,7 +698,7 @@ public class TemplateParityTests
 
         AssertCoverageStatus(rows, "ProgressBar/ProgressBar.xaml", "WinUI 3 source-backed WPF port");
         AssertCoverageStatus(rows, "Themes/ContentControlEx.xaml", "WinUI 3 source-backed WPF compatibility layer");
-        AssertCoverageStatus(rows, "TitleBar/TitleBarControl.xaml", "Official WPF Fluent shell substitution");
+        AssertCoverageStatus(rows, "TitleBar/WindowTitleBarControl.xaml", "Official WPF Fluent shell substitution");
     }
 
     [TestMethod]

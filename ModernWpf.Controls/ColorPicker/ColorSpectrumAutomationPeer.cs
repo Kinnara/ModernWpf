@@ -5,9 +5,10 @@ using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Media;
+using ModernWpf.Controls;
 using ModernWpf.Controls.Primitives;
 
-namespace ModernWpf.Controls
+namespace ModernWpf.Automation.Peers
 {
     public class ColorSpectrumAutomationPeer : FrameworkElementAutomationPeer, IValueProvider
     {

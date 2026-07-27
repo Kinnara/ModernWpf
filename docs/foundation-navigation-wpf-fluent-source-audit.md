@@ -110,7 +110,7 @@ implementation.
 ModernWpf's `Styles\Window.xaml` is not replaced in this slice. The official
 WPF Fluent `Window.xaml` is a plain content-window style with platform backdrop
 guards; ModernWpf's `Window` style owns custom title-bar chrome,
-`WindowChrome`, `TitleBarControl`, and `WindowHelper.FixMaximizedWindow`.
+`WindowChrome`, `WindowTitleBarControl`, and `WindowHelper.FixMaximizedWindow`.
 That deliberate shell feature is covered separately by
 `docs\window-wpf-fluent-source-audit.md`.
 

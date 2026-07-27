@@ -3,7 +3,7 @@ using System.Windows.Navigation;
 
 namespace ModernWpf.Navigation
 {
-    public static class Extensions
+    public static class NavigationEventArgsExtensions
     {
         /// <summary>
         /// Gets the data type of the source page.
@@ -12,7 +12,7 @@ namespace ModernWpf.Navigation
         /// The data type of the source page, represented as *namespace*.*type* or simply
         /// *type*.
         /// </returns>
-        public static Type SourcePageType(this NavigatingCancelEventArgs e)
+        public static Type GetSourcePageType(this NavigatingCancelEventArgs e)
         {
             return e.Content?.GetType();
         }
@@ -24,7 +24,7 @@ namespace ModernWpf.Navigation
         /// The data type of the source page, represented as *namespace*.*type* or simply
         /// *type*.
         /// </returns>
-        public static Type SourcePageType(this NavigationEventArgs e)
+        public static Type GetSourcePageType(this NavigationEventArgs e)
         {
             return e.Content?.GetType();
         }
@@ -36,7 +36,7 @@ namespace ModernWpf.Navigation
         /// An object that potentially passes parameters to the navigation target. May be
         /// null.
         /// </returns>
-        public static object Parameter(this NavigatingCancelEventArgs e)
+        public static object GetParameter(this NavigatingCancelEventArgs e)
         {
             return e.ExtraData;
         }
@@ -48,7 +48,7 @@ namespace ModernWpf.Navigation
         /// An object that potentially passes parameters to the navigation target. May be
         /// null.
         /// </returns>
-        public static object Parameter(this NavigationEventArgs e)
+        public static object GetParameter(this NavigationEventArgs e)
         {
             return e.ExtraData;
         }

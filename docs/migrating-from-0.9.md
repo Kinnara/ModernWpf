@@ -48,6 +48,14 @@ Do not merge both control-resource entries into the same application scope.
 | --- | --- |
 | `SimpleStackPanel` | Use `StackPanelEx`; its spacing and layout surface is the supported WinUI-compatible contract. |
 | `IElementFactoryShim` | Implement or consume `IElementFactory`. |
+| Static `TitleBar` facade | Use `WindowTitleBar`. |
+| `TitleBarControl` | Use `WindowTitleBarControl`. |
+| `TitleBar.ExtendViewIntoTitleBar` or the shell-control equivalent | Use `WindowTitleBar.ExtendsContentIntoTitleBar` or `WindowTitleBarControl.ExtendsContentIntoTitleBar`. The UWP-shaped `CoreApplicationViewTitleBar.ExtendViewIntoTitleBar` member is unchanged. |
+| `StackLayout.DisableVirtualization` | Set `StackLayout.IsVirtualizationEnabled` to `false`. |
+| `ModernWpf.Navigation.Extensions.Parameter(...)` | Use `NavigationEventArgsExtensions.GetParameter(...)`. |
+| `ModernWpf.Navigation.Extensions.SourcePageType(...)` | Use `NavigationEventArgsExtensions.GetSourcePageType(...)`. |
+| Automation peers under control or primitive namespaces | Import the peer from `ModernWpf.Automation.Peers`. |
+| `ThemeResouceExtensionConverter` | Use the corrected `ThemeResourceExtensionConverter` name. |
 | Template-only public primitive types | Remove direct references and customize through supported control APIs, templates, and documented resource keys. |
 | Public `ABI.*` or WinRT projection types | Remove references; these are implementation details. |
 

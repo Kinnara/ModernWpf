@@ -10,13 +10,6 @@
   },
   "properties": [
     {
-      "name": "DisableVirtualization",
-      "type": "bool",
-      "default": "false",
-      "changed": "OnPropertyChanged",
-      "generateWrapper": false
-    },
-    {
       "name": "IsVirtualizationEnabled",
       "type": "bool",
       "default": "true",

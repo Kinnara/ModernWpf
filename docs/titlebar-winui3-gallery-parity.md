@@ -72,9 +72,9 @@ the current classic and Performance2026 resource values.
 
 The current peer reports `AutomationControlType.TitleBar`, class name
 `TitleBar`, and uses the control `Title` as its accessible name when no
-explicit automation name is supplied. `TitleBarControlAutomationPeer` now
+explicit automation name is supplied. `WindowTitleBarControlAutomationPeer` now
 provides the same contract for ModernWpf's retained WPF shell control, and
-`TitleBarControl.OnCreateAutomationPeer` exposes it.
+`WindowTitleBarControl.OnCreateAutomationPeer` exposes it.
 
 ## Current WinUI Gallery inventory
 
@@ -103,17 +103,19 @@ these paths at the current Gallery pin.
 
 ## ModernWpf mapping and platform boundary
 
-ModernWpf predates the current WinUI control and already reserves
-`ModernWpf.Controls.TitleBar` for its static attached-property facade.
-`ModernWpf.Controls.Primitives.TitleBarControl` is therefore the retained WPF
-window-shell substitution, not a claim that a new class with the colliding
-WinUI API name was added. Its attached window state, icon handling, title
-content, back/pane buttons, and WPF `WindowChrome` integration remain native to
-WPF.
+ModernWpf predates the current WinUI control. Its WPF-specific attached-property
+facade is named `ModernWpf.Controls.WindowTitleBar`, leaving `TitleBar`
+available for a future port of the current WinUI control.
+`ModernWpf.Controls.Primitives.WindowTitleBarControl` is the retained WPF
+window-shell substitution. Its attached window state, icon handling, title
+content, back/pane buttons, and WPF `WindowChrome` integration remain native
+to WPF. The facade's `ExtendsContentIntoTitleBar` name follows the current
+Windows app-window terminology; `CoreApplicationViewTitleBar` retains the
+legacy UWP-shaped `ExtendViewIntoTitleBar` member.
 
-The retained shell's public `TitleBar.HeightKey` is a WPF-specific
+The retained shell's public `WindowTitleBar.HeightKey` is a WPF-specific
 customization point. A window-scoped override now drives the rendered
-`TitleBarControl`, read-only `TitleBar.Height`, and
+`WindowTitleBarControl`, read-only `WindowTitleBar.Height`, and
 `WindowChrome.CaptionHeight` together, including runtime resource changes and
 chrome replacement. Native `WM_NCHITTEST` coverage verifies that the region
 below the former 32-DIP boundary remains draggable at a larger custom height.

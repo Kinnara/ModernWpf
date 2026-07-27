@@ -136,7 +136,7 @@ namespace MUXControlsTestApp
             var topNavGrid = FindVisualChildByName(NavView, "TopNavGrid") as FrameworkElement;
             var topNavHeight = topNavGrid.Height;
             //CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
-            TitleBar.SetExtendViewIntoTitleBar(Application.Current.MainWindow, false);
+            WindowTitleBar.SetExtendsContentIntoTitleBar(Application.Current.MainWindow, false);
 
             if (ContentScrollViewer.ActualHeight == 200)
             {
@@ -164,11 +164,11 @@ namespace MUXControlsTestApp
 
             var testFrame = WindowEx.Current.Content as TestFrame;
 
-            if (TitleBar.GetExtendViewIntoTitleBar(Application.Current.MainWindow))
+            if (WindowTitleBar.GetExtendsContentIntoTitleBar(Application.Current.MainWindow))
             {
                 //AppTitleBar
                 testFrame.ChangeBarVisibility(Visibility.Visible);
-                TitleBar.SetExtendViewIntoTitleBar(Application.Current.MainWindow, false);
+                WindowTitleBar.SetExtendsContentIntoTitleBar(Application.Current.MainWindow, false);
                 
                 // Reset values
                 Grid.SetRow(topNavArea, 0);
@@ -181,7 +181,7 @@ namespace MUXControlsTestApp
             {
                 //AppTitleBar
                 testFrame.ChangeBarVisibility(Visibility.Collapsed);
-                TitleBar.SetExtendViewIntoTitleBar(Application.Current.MainWindow, true);
+                WindowTitleBar.SetExtendsContentIntoTitleBar(Application.Current.MainWindow, true);
                 
                 Grid.SetRow(topNavArea, 1);
                 ContentScrollViewer.Height = 200;

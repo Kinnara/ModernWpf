@@ -44,7 +44,7 @@ namespace MUXControlsTestApp
 
             //CoreApplicationViewTitleBar titleBar = CoreApplication.GetCurrentView().TitleBar;
             //titleBar.ExtendViewIntoTitleBar = true;
-            TitleBar.SetExtendViewIntoTitleBar(Application.Current.MainWindow, true);
+            WindowTitleBar.SetExtendsContentIntoTitleBar(Application.Current.MainWindow, true);
 
             NavView.IsBackButtonVisible = NavigationViewBackButtonVisible.Visible;
             NavView.IsBackEnabled = true;
@@ -54,7 +54,7 @@ namespace MUXControlsTestApp
             ChangeTestFrameVisibility(Visibility.Visible);
             // Show titlebar to reenable clicking the buttons in the test frame
             //CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
-            TitleBar.SetExtendViewIntoTitleBar(Application.Current.MainWindow, false);
+            WindowTitleBar.SetExtendsContentIntoTitleBar(Application.Current.MainWindow, false);
         }
 
         private void TestFrameCheckbox_Unchecked(object sender, RoutedEventArgs e)
@@ -62,7 +62,7 @@ namespace MUXControlsTestApp
             ChangeTestFrameVisibility(Visibility.Collapsed);
             // Hide titlebar again in case we hid it before
             //CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-            TitleBar.SetExtendViewIntoTitleBar(Application.Current.MainWindow, true);
+            WindowTitleBar.SetExtendsContentIntoTitleBar(Application.Current.MainWindow, true);
         }
 
         private void ChangeTestFrameVisibility(Visibility visibility)

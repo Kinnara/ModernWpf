@@ -19,12 +19,6 @@ namespace ModernWpf.Controls
 
         #region Properties
 
-        public bool DisableVirtualization
-        {
-            get => !IsVirtualizationEnabled;
-            set => IsVirtualizationEnabled = !value;
-        }
-
         private static void OnPropertyChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             ((StackLayout)sender).PrivateOnPropertyChanged(args);
@@ -318,11 +312,6 @@ namespace ModernWpf.Controls
             {
                 m_itemSpacing = (double)args.NewValue;
             }
-            else if (property == DisableVirtualizationProperty)
-            {
-                IsVirtualizationEnabled = !(bool)args.NewValue;
-            }
-
             InvalidateLayout();
         }
 

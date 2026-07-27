@@ -6,16 +6,16 @@ using System.Windows.Media;
 
 namespace ModernWpf.Controls
 {
-    [StyleTypedProperty(Property = StylePropertyName, StyleTargetType = typeof(TitleBarControl))]
+    [StyleTypedProperty(Property = StylePropertyName, StyleTargetType = typeof(WindowTitleBarControl))]
     [StyleTypedProperty(Property = ButtonStylePropertyName, StyleTargetType = typeof(TitleBarButton))]
     [StyleTypedProperty(Property = BackButtonStylePropertyName, StyleTargetType = typeof(TitleBarButton))]
-    public static class TitleBar
+    public static class WindowTitleBar
     {
         private const string StylePropertyName = "Style";
         private const string ButtonStylePropertyName = "ButtonStyle";
         private const string BackButtonStylePropertyName = "BackButtonStyle";
 
-        public static ComponentResourceKey HeightKey { get; } = new ComponentResourceKey(typeof(TitleBar), nameof(HeightKey));
+        public static ComponentResourceKey HeightKey { get; } = new ComponentResourceKey(typeof(WindowTitleBar), nameof(HeightKey));
 
         #region Background
 
@@ -23,7 +23,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 "Background",
                 typeof(Brush),
-                typeof(TitleBar));
+                typeof(WindowTitleBar));
 
         public static Brush GetBackground(Window window)
         {
@@ -43,7 +43,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 "Foreground",
                 typeof(Brush),
-                typeof(TitleBar));
+                typeof(WindowTitleBar));
 
         public static Brush GetForeground(Window window)
         {
@@ -63,7 +63,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 "InactiveBackground",
                 typeof(Brush),
-                typeof(TitleBar));
+                typeof(WindowTitleBar));
 
         public static Brush GetInactiveBackground(Window window)
         {
@@ -83,7 +83,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 "InactiveForeground",
                 typeof(Brush),
-                typeof(TitleBar));
+                typeof(WindowTitleBar));
 
         public static Brush GetInactiveForeground(Window window)
         {
@@ -103,7 +103,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 StylePropertyName,
                 typeof(Style),
-                typeof(TitleBar));
+                typeof(WindowTitleBar));
 
         public static Style GetStyle(Window window)
         {
@@ -123,7 +123,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 ButtonStylePropertyName,
                 typeof(Style),
-                typeof(TitleBar));
+                typeof(WindowTitleBar));
 
         public static Style GetButtonStyle(Window window)
         {
@@ -143,7 +143,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 "IsIconVisible",
                 typeof(bool),
-                typeof(TitleBar),
+                typeof(WindowTitleBar),
                 new PropertyMetadata(false));
 
         public static bool GetIsIconVisible(Window window)
@@ -164,7 +164,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 "IsBackButtonVisible",
                 typeof(bool),
-                typeof(TitleBar));
+                typeof(WindowTitleBar));
 
         public static bool GetIsBackButtonVisible(Window window)
         {
@@ -187,7 +187,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 "IsBackEnabled",
                 typeof(bool),
-                typeof(TitleBar),
+                typeof(WindowTitleBar),
                 new PropertyMetadata(true));
 
         /// <summary>
@@ -218,7 +218,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 "BackButtonCommand",
                 typeof(ICommand),
-                typeof(TitleBar));
+                typeof(WindowTitleBar));
 
         public static ICommand GetBackButtonCommand(Window window)
         {
@@ -238,7 +238,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 "BackButtonCommandParameter",
                 typeof(object),
-                typeof(TitleBar));
+                typeof(WindowTitleBar));
 
         public static object GetBackButtonCommandParameter(Window window)
         {
@@ -258,7 +258,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 "BackButtonCommandTarget",
                 typeof(IInputElement),
-                typeof(TitleBar));
+                typeof(WindowTitleBar));
 
         public static IInputElement GetBackButtonCommandTarget(Window window)
         {
@@ -278,7 +278,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttached(
                 BackButtonStylePropertyName,
                 typeof(Style),
-                typeof(TitleBar));
+                typeof(WindowTitleBar));
 
         public static Style GetBackButtonStyle(Window window)
         {
@@ -292,23 +292,23 @@ namespace ModernWpf.Controls
 
         #endregion
 
-        #region ExtendViewIntoTitleBar
+        #region ExtendsContentIntoTitleBar
 
-        public static readonly DependencyProperty ExtendViewIntoTitleBarProperty =
+        public static readonly DependencyProperty ExtendsContentIntoTitleBarProperty =
             DependencyProperty.RegisterAttached(
-                "ExtendViewIntoTitleBar",
+                "ExtendsContentIntoTitleBar",
                 typeof(bool),
-                typeof(TitleBar),
+                typeof(WindowTitleBar),
                 new PropertyMetadata(false));
 
-        public static bool GetExtendViewIntoTitleBar(Window window)
+        public static bool GetExtendsContentIntoTitleBar(Window window)
         {
-            return (bool)window.GetValue(ExtendViewIntoTitleBarProperty);
+            return (bool)window.GetValue(ExtendsContentIntoTitleBarProperty);
         }
 
-        public static void SetExtendViewIntoTitleBar(Window window, bool value)
+        public static void SetExtendsContentIntoTitleBar(Window window, bool value)
         {
-            window.SetValue(ExtendViewIntoTitleBarProperty, value);
+            window.SetValue(ExtendsContentIntoTitleBarProperty, value);
         }
 
         #endregion
@@ -319,7 +319,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttachedReadOnly(
                 "SystemOverlayLeftInset",
                 typeof(double),
-                typeof(TitleBar),
+                typeof(WindowTitleBar),
                 new PropertyMetadata(0d));
 
         public static readonly DependencyProperty SystemOverlayLeftInsetProperty =
@@ -343,7 +343,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttachedReadOnly(
                 "SystemOverlayRightInset",
                 typeof(double),
-                typeof(TitleBar),
+                typeof(WindowTitleBar),
                 new PropertyMetadata(0d));
 
         public static readonly DependencyProperty SystemOverlayRightInsetProperty =
@@ -367,7 +367,7 @@ namespace ModernWpf.Controls
             DependencyProperty.RegisterAttachedReadOnly(
                 "Height",
                 typeof(double),
-                typeof(TitleBar),
+                typeof(WindowTitleBar),
                 new PropertyMetadata(32d));
 
         public static readonly DependencyProperty HeightProperty =
@@ -395,7 +395,7 @@ namespace ModernWpf.Controls
                 "BackRequested",
                 RoutingStrategy.Bubble,
                 typeof(EventHandler<BackRequestedEventArgs>),
-                typeof(TitleBar));
+                typeof(WindowTitleBar));
 
         public static void AddBackRequestedHandler(Window window, EventHandler<BackRequestedEventArgs> handler)
         {

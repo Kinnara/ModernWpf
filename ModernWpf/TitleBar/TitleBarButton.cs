@@ -158,9 +158,9 @@ namespace ModernWpf.Controls.Primitives
                 typeof(TitleBarButton),
                 new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsMouseReallyOverProperty = IsMouseReallyOverPropertyKey.DependencyProperty;
+        internal static readonly DependencyProperty IsMouseReallyOverProperty = IsMouseReallyOverPropertyKey.DependencyProperty;
 
-        public bool IsMouseReallyOver
+        internal bool IsMouseReallyOver
         {
             get => (bool)GetValue(IsMouseReallyOverProperty);
             private set => SetValue(IsMouseReallyOverPropertyKey, value);
@@ -182,9 +182,9 @@ namespace ModernWpf.Controls.Primitives
                 typeof(TitleBarButton),
                 new PropertyMetadata(false));
 
-        public static readonly DependencyProperty IsReallyPressedProperty = IsReallyPressedPropertyKey.DependencyProperty;
+        internal static readonly DependencyProperty IsReallyPressedProperty = IsReallyPressedPropertyKey.DependencyProperty;
 
-        public bool IsReallyPressed
+        internal bool IsReallyPressed
         {
             get => (bool)GetValue(IsReallyPressedProperty);
             private set => SetValue(IsReallyPressedPropertyKey, value);

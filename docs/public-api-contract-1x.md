@@ -29,8 +29,8 @@ The contract applies to all supported package targets:
 | Current WinUI | Primary naming, control-shape, event, sealing, and versionability authority for WinUI-derived ModernWpf controls. | Follow current WinUI unless WPF requires a documented adaptation. Audited product source is [`microsoft-ui-xaml` commit `de3e7673`](https://github.com/microsoft/microsoft-ui-xaml/commit/de3e767333c2f0717a6a70cb22bd192ced5ad885). |
 | Official WPF Fluent | Primary styling and behavior authority for stock WPF controls, and the platform Fluent implementation used on .NET 10. | Complements WinUI; it does not rename ModernWpf custom-control CLR APIs. Audited source is [`dotnet/wpf` commit `7f005faa`](https://github.com/dotnet/wpf/commit/7f005faa89e79b0b1fa1cb2c21283bab7916c092). |
 
-The current checked-in CLR baseline contains 1,550 API entries for
-`ModernWpf.dll` and 2,721 for `ModernWpf.Controls.dll`. The packaged .NET 8
+The current checked-in CLR baseline contains 1,546 API entries for
+`ModernWpf.dll` and 2,718 for `ModernWpf.Controls.dll`. The packaged .NET 8
 assemblies expose 122 and 225 supported top-level types respectively. WPF's
 generated `GeneratedInternalTypeHelper` is compiler infrastructure and is not
 a supported ModernWpf API.
@@ -53,6 +53,12 @@ baseline:
   `TypedEventHandler<CommandBar, DynamicOverflowItemsChangingEventArgs>`.
 - Stale repeater animator APIs are implementation-only because the animator
   property is not a public current-WinUI surface.
+- Public automation peers live consistently under
+  `ModernWpf.Automation.Peers`.
+- Caption-button pointer/pressed bookkeeping remains internal to the WPF
+  window-shell template rather than package API.
+- `StackLayout` exposes current WinUI's positive
+  `IsVirtualizationEnabled` property without the obsolete inverse alias.
 - Template-only converters, panels, proxies, visual helpers, and private
   automation peers are internal.
 - WinUI runtimeclasses are sealed or unsealed to match current source unless a
@@ -62,6 +68,9 @@ Notable 0.9 migration changes include:
 
 - `SimpleStackPanel` is replaced by the current `StackPanelEx` surface.
 - `IElementFactoryShim` consumers should implement `IElementFactory`.
+- The WPF window-shell facade and control are named `WindowTitleBar` and
+  `WindowTitleBarControl`, leaving `TitleBar` available for a future port of
+  the current WinUI control.
 - Types under `ModernWpf.Controls.Primitives` that existed only to service
   templates are no longer public.
 
@@ -71,6 +80,8 @@ These public names or shapes are not accidental WinUI drift:
 
 | ModernWpf API | Reason |
 | --- | --- |
+| `StackPanelEx` | Avoids colliding with WPF's stock `StackPanel` while adding WinUI spacing and scroll-snap behavior. |
+| `WindowTitleBar` and `WindowTitleBarControl` | WPF window-chrome adapter distinct from current WinUI's content-oriented `TitleBar` control. |
 | `ContextFlyoutService` and `FlyoutService` | WPF attached-property adapters for WinUI flyout ownership. |
 | `INumberBoxNumberFormatter` | WPF-friendly formatting contract in place of WinRT number-formatting interfaces. |
 | `ListViewBaseItem` and its automation peer | WPF realization of platform/XamlOM list-item primitives used by the WinUI control family. |

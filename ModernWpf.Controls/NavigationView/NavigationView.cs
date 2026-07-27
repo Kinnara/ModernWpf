@@ -524,7 +524,7 @@ namespace ModernWpf.Controls
                 if (leftNavRepeater.Layout is StackLayout stackLayout)
                 {
                     var stackLayoutImpl = stackLayout;
-                    stackLayoutImpl.DisableVirtualization = true;
+                    stackLayoutImpl.IsVirtualizationEnabled = false;
                 }
 
                 leftNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
@@ -547,7 +547,7 @@ namespace ModernWpf.Controls
                 if (topNavRepeater.Layout is StackLayout stackLayout)
                 {
                     var stackLayoutImpl = stackLayout;
-                    stackLayoutImpl.DisableVirtualization = true;
+                    stackLayoutImpl.IsVirtualizationEnabled = false;
                 }
 
                 topNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
@@ -571,7 +571,7 @@ namespace ModernWpf.Controls
                 if (topNavListOverflowRepeater.Layout is StackLayout stackLayout)
                 {
                     var stackLayoutImpl = stackLayout;
-                    stackLayoutImpl.DisableVirtualization = true;
+                    stackLayoutImpl.IsVirtualizationEnabled = false;
                 }
 
                 topNavListOverflowRepeater.ElementPrepared += OnRepeaterElementPrepared;
@@ -622,7 +622,7 @@ namespace ModernWpf.Controls
                 if (leftFooterMenuNavRepeater.Layout is StackLayout stackLayout)
                 {
                     var stackLayoutImpl = stackLayout;
-                    stackLayoutImpl.DisableVirtualization = true;
+                    stackLayoutImpl.IsVirtualizationEnabled = false;
                 }
 
                 leftFooterMenuNavRepeater.ElementPrepared += OnRepeaterElementPrepared;
@@ -646,7 +646,7 @@ namespace ModernWpf.Controls
                 if (topFooterMenuNavRepeater.Layout is StackLayout stackLayout)
                 {
                     var stackLayoutImpl = stackLayout;
-                    stackLayoutImpl.DisableVirtualization = true;
+                    stackLayoutImpl.IsVirtualizationEnabled = false;
                 }
 
                 topFooterMenuNavRepeater.ElementPrepared += OnRepeaterElementPrepared;

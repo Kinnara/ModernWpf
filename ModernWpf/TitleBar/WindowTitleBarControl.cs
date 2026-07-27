@@ -10,6 +10,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
+using ModernWpf.Automation.Peers;
 using Standard;
 using static Windows.Win32.PInvoke;
 
@@ -21,7 +22,7 @@ namespace ModernWpf.Controls.Primitives
     [TemplatePart(Name = RightSystemOverlayName, Type = typeof(FrameworkElement))]
     [StyleTypedProperty(Property = nameof(ButtonStyle), StyleTargetType = typeof(TitleBarButton))]
     [StyleTypedProperty(Property = nameof(BackButtonStyle), StyleTargetType = typeof(TitleBarButton))]
-    public class TitleBarControl : Control
+    public class WindowTitleBarControl : Control
     {
         private const string BackButtonName = "PART_BackButton";
         private const string MaximizeRestoreButtonName = "PART_MaximizeRestoreButton";
@@ -35,13 +36,13 @@ namespace ModernWpf.Controls.Primitives
         private HwndSource _parentHwndSource;
         private KeyBinding _altLeftBinding;
 
-        static TitleBarControl()
+        static WindowTitleBarControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TitleBarControl),
-                new FrameworkPropertyMetadata(typeof(TitleBarControl)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(WindowTitleBarControl),
+                new FrameworkPropertyMetadata(typeof(WindowTitleBarControl)));
         }
 
-        public TitleBarControl()
+        public WindowTitleBarControl()
         {
             CommandBindings.Add(new CommandBinding(
                 SystemCommands.MinimizeWindowCommand,
@@ -63,7 +64,7 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.Register(
                 nameof(IsActive),
                 typeof(bool),
-                typeof(TitleBarControl),
+                typeof(WindowTitleBarControl),
                 new PropertyMetadata(false, OnVisualStatePropertyChanged));
 
         public bool IsActive
@@ -77,7 +78,7 @@ namespace ModernWpf.Controls.Primitives
         #region InactiveBackground
 
         public static readonly DependencyProperty InactiveBackgroundProperty =
-            TitleBar.InactiveBackgroundProperty.AddOwner(typeof(TitleBarControl));
+            WindowTitleBar.InactiveBackgroundProperty.AddOwner(typeof(WindowTitleBarControl));
 
         public Brush InactiveBackground
         {
@@ -90,7 +91,7 @@ namespace ModernWpf.Controls.Primitives
         #region InactiveForeground
 
         public static readonly DependencyProperty InactiveForegroundProperty =
-            TitleBar.InactiveForegroundProperty.AddOwner(typeof(TitleBarControl));
+            WindowTitleBar.InactiveForegroundProperty.AddOwner(typeof(WindowTitleBarControl));
 
         public Brush InactiveForeground
         {
@@ -103,7 +104,7 @@ namespace ModernWpf.Controls.Primitives
         #region ButtonStyle
 
         public static readonly DependencyProperty ButtonStyleProperty =
-            TitleBar.ButtonStyleProperty.AddOwner(typeof(TitleBarControl));
+            WindowTitleBar.ButtonStyleProperty.AddOwner(typeof(WindowTitleBarControl));
 
         public Style ButtonStyle
         {
@@ -119,7 +120,7 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.Register(
                 nameof(Title),
                 typeof(string),
-                typeof(TitleBarControl),
+                typeof(WindowTitleBarControl),
                 new PropertyMetadata(string.Empty, OnVisualStatePropertyChanged));
 
         public string Title
@@ -136,7 +137,7 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.Register(
                 nameof(Icon),
                 typeof(ImageSource),
-                typeof(TitleBarControl),
+                typeof(WindowTitleBarControl),
                 new PropertyMetadata(OnIconChanged));
 
         public ImageSource Icon
@@ -147,7 +148,7 @@ namespace ModernWpf.Controls.Primitives
 
         private static void OnIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((TitleBarControl)d).UpdateActualIcon();
+            ((WindowTitleBarControl)d).UpdateActualIcon();
         }
 
         #endregion
@@ -158,7 +159,7 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.RegisterReadOnly(
                 nameof(ActualIcon),
                 typeof(ImageSource),
-                typeof(TitleBarControl),
+                typeof(WindowTitleBarControl),
                 null);
 
         public static readonly DependencyProperty ActualIconProperty =
@@ -204,8 +205,8 @@ namespace ModernWpf.Controls.Primitives
         #region IsIconVisible
 
         public static readonly DependencyProperty IsIconVisibleProperty =
-            TitleBar.IsIconVisibleProperty.AddOwner(
-                typeof(TitleBarControl),
+            WindowTitleBar.IsIconVisibleProperty.AddOwner(
+                typeof(WindowTitleBarControl),
                 new PropertyMetadata(false, OnVisualStatePropertyChanged));
 
         public bool IsIconVisible
@@ -219,8 +220,8 @@ namespace ModernWpf.Controls.Primitives
         #region IsBackButtonVisible
 
         public static readonly DependencyProperty IsBackButtonVisibleProperty =
-            TitleBar.IsBackButtonVisibleProperty.AddOwner(
-                typeof(TitleBarControl),
+            WindowTitleBar.IsBackButtonVisibleProperty.AddOwner(
+                typeof(WindowTitleBarControl),
                 new PropertyMetadata(false, OnVisualStatePropertyChanged));
 
         public bool IsBackButtonVisible
@@ -237,7 +238,7 @@ namespace ModernWpf.Controls.Primitives
         /// Identifies the IsBackEnabled attached property.
         /// </summary>
         public static readonly DependencyProperty IsBackEnabledProperty =
-            TitleBar.IsBackEnabledProperty.AddOwner(typeof(TitleBarControl));
+            WindowTitleBar.IsBackEnabledProperty.AddOwner(typeof(WindowTitleBarControl));
 
         /// <summary>
         /// Gets or sets a value that indicates whether the back button is enabled or disabled.
@@ -254,7 +255,7 @@ namespace ModernWpf.Controls.Primitives
         #region BackButtonCommand
 
         public static readonly DependencyProperty BackButtonCommandProperty =
-            TitleBar.BackButtonCommandProperty.AddOwner(typeof(TitleBarControl));
+            WindowTitleBar.BackButtonCommandProperty.AddOwner(typeof(WindowTitleBarControl));
 
         public ICommand BackButtonCommand
         {
@@ -267,7 +268,7 @@ namespace ModernWpf.Controls.Primitives
         #region BackButtonCommandParameter
 
         public static readonly DependencyProperty BackButtonCommandParameterProperty =
-            TitleBar.BackButtonCommandParameterProperty.AddOwner(typeof(TitleBarControl));
+            WindowTitleBar.BackButtonCommandParameterProperty.AddOwner(typeof(WindowTitleBarControl));
 
         public object BackButtonCommandParameter
         {
@@ -280,7 +281,7 @@ namespace ModernWpf.Controls.Primitives
         #region BackButtonCommandTarget
 
         public static readonly DependencyProperty BackButtonCommandTargetProperty =
-            TitleBar.BackButtonCommandTargetProperty.AddOwner(typeof(TitleBarControl));
+            WindowTitleBar.BackButtonCommandTargetProperty.AddOwner(typeof(WindowTitleBarControl));
 
         public IInputElement BackButtonCommandTarget
         {
@@ -293,7 +294,7 @@ namespace ModernWpf.Controls.Primitives
         #region BackButtonStyle
 
         public static readonly DependencyProperty BackButtonStyleProperty =
-            TitleBar.BackButtonStyleProperty.AddOwner(typeof(TitleBarControl));
+            WindowTitleBar.BackButtonStyleProperty.AddOwner(typeof(WindowTitleBarControl));
 
         public Style BackButtonStyle
         {
@@ -303,17 +304,17 @@ namespace ModernWpf.Controls.Primitives
 
         #endregion
 
-        #region ExtendViewIntoTitleBar
+        #region ExtendsContentIntoTitleBar
 
-        public static readonly DependencyProperty ExtendViewIntoTitleBarProperty =
-            TitleBar.ExtendViewIntoTitleBarProperty.AddOwner(
-                typeof(TitleBarControl),
+        public static readonly DependencyProperty ExtendsContentIntoTitleBarProperty =
+            WindowTitleBar.ExtendsContentIntoTitleBarProperty.AddOwner(
+                typeof(WindowTitleBarControl),
                 new PropertyMetadata(false, OnVisualStatePropertyChanged));
 
-        public bool ExtendViewIntoTitleBar
+        public bool ExtendsContentIntoTitleBar
         {
-            get => (bool)GetValue(ExtendViewIntoTitleBarProperty);
-            set => SetValue(ExtendViewIntoTitleBarProperty, value);
+            get => (bool)GetValue(ExtendsContentIntoTitleBarProperty);
+            set => SetValue(ExtendsContentIntoTitleBarProperty, value);
         }
 
         #endregion
@@ -324,7 +325,7 @@ namespace ModernWpf.Controls.Primitives
             DependencyProperty.RegisterAttached(
                 "InsideTitleBar",
                 typeof(bool),
-                typeof(TitleBarControl),
+                typeof(WindowTitleBarControl),
                 new FrameworkPropertyMetadata(false, FrameworkPropertyMetadataOptions.Inherits));
 
         internal static bool GetInsideTitleBar(UIElement element)
@@ -404,7 +405,7 @@ namespace ModernWpf.Controls.Primitives
 
         protected override AutomationPeer OnCreateAutomationPeer()
         {
-            return new TitleBarControlAutomationPeer(this);
+            return new WindowTitleBarControlAutomationPeer(this);
         }
 
         protected override void OnVisualParentChanged(DependencyObject oldParent)
@@ -441,7 +442,7 @@ namespace ModernWpf.Controls.Primitives
 
             if (TemplatedParent is Window window)
             {
-                TitleBar.SetHeight(window, sizeInfo.NewSize.Height);
+                WindowTitleBar.SetHeight(window, sizeInfo.NewSize.Height);
                 UpdateWindowChromeCaptionHeight();
             }
         }
@@ -456,7 +457,7 @@ namespace ModernWpf.Controls.Primitives
             if (_parentWindow != null &&
                 WindowChrome.GetWindowChrome(_parentWindow) is { } chrome)
             {
-                double height = TitleBar.GetHeight(_parentWindow);
+                double height = WindowTitleBar.GetHeight(_parentWindow);
                 if (chrome.CaptionHeight != height)
                 {
                     var valueSource = DependencyPropertyHelper.GetValueSource(
@@ -559,7 +560,7 @@ namespace ModernWpf.Controls.Primitives
         {
             if (TemplatedParent is Window window)
             {
-                TitleBar.RaiseBackRequested(window);
+                WindowTitleBar.RaiseBackRequested(window);
             }
         }
 
@@ -577,7 +578,7 @@ namespace ModernWpf.Controls.Primitives
         {
             if (TemplatedParent is Window window)
             {
-                TitleBar.SetSystemOverlayLeftInset(window, value);
+                WindowTitleBar.SetSystemOverlayLeftInset(window, value);
             }
         }
 
@@ -585,13 +586,13 @@ namespace ModernWpf.Controls.Primitives
         {
             if (TemplatedParent is Window window)
             {
-                TitleBar.SetSystemOverlayRightInset(window, value);
+                WindowTitleBar.SetSystemOverlayRightInset(window, value);
             }
         }
 
         private static void OnVisualStatePropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            ((TitleBarControl)d).UpdateVisualStates(false);
+            ((WindowTitleBarControl)d).UpdateVisualStates(false);
         }
 
         private void UpdateVisualStates(bool useTransitions)
@@ -600,7 +601,7 @@ namespace ModernWpf.Controls.Primitives
             VisualStateManager.GoToState(this, IsBackButtonVisible ? "BackButtonVisible" : "BackButtonCollapsed", useTransitions);
             VisualStateManager.GoToState(this, IsIconVisible ? "IconVisible" : "IconCollapsed", useTransitions);
             VisualStateManager.GoToState(this, string.IsNullOrEmpty(Title) ? "TitleTextCollapsed" : "TitleTextVisible", useTransitions);
-            VisualStateManager.GoToState(this, ExtendViewIntoTitleBar ? "TitleContentCollapsed" : "TitleContentVisible", useTransitions);
+            VisualStateManager.GoToState(this, ExtendsContentIntoTitleBar ? "TitleContentCollapsed" : "TitleContentVisible", useTransitions);
         }
 
         private void MinimizeWindow(object sender, ExecutedRoutedEventArgs e)
@@ -686,9 +687,9 @@ namespace ModernWpf.Controls.Primitives
 
         private class GoBackCommand : ICommand
         {
-            private readonly TitleBarControl _owner;
+            private readonly WindowTitleBarControl _owner;
 
-            public GoBackCommand(TitleBarControl owner)
+            public GoBackCommand(WindowTitleBarControl owner)
             {
                 _owner = owner;
             }

@@ -57,7 +57,7 @@ namespace ModernWpf.Controls
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ContentDialog),
                 new FrameworkPropertyMetadata(typeof(ContentDialog)));
 
-            EventManager.RegisterClassHandler(typeof(Window), TitleBar.BackRequestedEvent,
+            EventManager.RegisterClassHandler(typeof(Window), WindowTitleBar.BackRequestedEvent,
                 new EventHandler<BackRequestedEventArgs>(OnBackRequested));
         }
 

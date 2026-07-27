@@ -35,7 +35,7 @@ public class WindowVisualStateTests
                 ShowInTaskbar = false,
                 WindowStartupLocation = WindowStartupLocation.Manual
             };
-            window.Resources[ModernWpf.Controls.TitleBar.HeightKey] = 56d;
+            window.Resources[ModernWpf.Controls.WindowTitleBar.HeightKey] = 56d;
             WindowHelper.SetUseModernWindowStyle(window, true);
 
             try
@@ -45,13 +45,13 @@ public class WindowVisualStateTests
                 window.UpdateLayout();
                 WpfTestHost.DoEvents();
 
-                var titleBar = VisualTreeTestHelper.FindDescendant<TitleBarControl>(window);
+                var titleBar = VisualTreeTestHelper.FindDescendant<WindowTitleBarControl>(window);
                 var chrome = WindowChrome.GetWindowChrome(window);
 
                 Assert.IsNotNull(titleBar);
                 Assert.IsNotNull(chrome);
                 Assert.AreEqual(56d, titleBar.ActualHeight, 0.1);
-                Assert.AreEqual(56d, ModernWpf.Controls.TitleBar.GetHeight(window), 0.1);
+                Assert.AreEqual(56d, ModernWpf.Controls.WindowTitleBar.GetHeight(window), 0.1);
                 Assert.AreEqual(56d, chrome.CaptionHeight, 0.1);
 
                 var handle = new WindowInteropHelper(window).Handle;
@@ -74,14 +74,14 @@ public class WindowVisualStateTests
                     captionHitTests,
                     $"Actual hit tests: {string.Join(",", captionHitTests)}.");
 
-                window.Resources[ModernWpf.Controls.TitleBar.HeightKey] = 64d;
+                window.Resources[ModernWpf.Controls.WindowTitleBar.HeightKey] = 64d;
                 WpfTestHost.DoEvents();
                 window.UpdateLayout();
 
                 chrome = WindowChrome.GetWindowChrome(window);
                 Assert.IsNotNull(chrome);
                 Assert.AreEqual(64d, titleBar.ActualHeight, 0.1);
-                Assert.AreEqual(64d, ModernWpf.Controls.TitleBar.GetHeight(window), 0.1);
+                Assert.AreEqual(64d, ModernWpf.Controls.WindowTitleBar.GetHeight(window), 0.1);
                 Assert.AreEqual(64d, chrome!.CaptionHeight, 0.1);
 
                 var replacementChrome = new ModernWindowChrome { CaptionHeight = 32d };
@@ -234,7 +234,7 @@ public class WindowVisualStateTests
             Assert.IsNotNull(WindowChrome.GetWindowChrome(window));
             Assert.IsTrue(WindowHelper.GetFixMaximizedWindow(window));
 
-            Assert.IsNotNull(VisualTreeTestHelper.FindDescendant<TitleBarControl>(window));
+            Assert.IsNotNull(VisualTreeTestHelper.FindDescendant<WindowTitleBarControl>(window));
             Assert.IsNotNull(VisualTreeTestHelper.FindDescendant<ResizeGrip>(window));
 
             var presenter = VisualTreeTestHelper.EnumerateDescendants(window)
@@ -275,7 +275,7 @@ public class WindowVisualStateTests
                 window.UpdateLayout();
                 WpfTestHost.DoEvents();
 
-                var titleBar = VisualTreeTestHelper.FindDescendant<TitleBarControl>(window);
+                var titleBar = VisualTreeTestHelper.FindDescendant<WindowTitleBarControl>(window);
                 Assert.IsNotNull(titleBar);
                 Assert.AreEqual(Visibility.Collapsed, titleBar!.Visibility);
                 Assert.IsNull(WindowChrome.GetWindowChrome(window));
@@ -323,7 +323,7 @@ public class WindowVisualStateTests
                 ShowInTaskbar = false,
                 WindowStartupLocation = WindowStartupLocation.Manual
             };
-            ModernWpf.Controls.TitleBar.SetExtendViewIntoTitleBar(window, true);
+            ModernWpf.Controls.WindowTitleBar.SetExtendsContentIntoTitleBar(window, true);
             WindowHelper.SetUseModernWindowStyle(window, true);
 
             try
@@ -333,7 +333,7 @@ public class WindowVisualStateTests
                 window.UpdateLayout();
                 WpfTestHost.DoEvents();
 
-                var titleBar = VisualTreeTestHelper.FindDescendant<TitleBarControl>(window)
+                var titleBar = VisualTreeTestHelper.FindDescendant<WindowTitleBarControl>(window)
                     ?? throw new AssertFailedException("Expected the modern window title bar.");
                 var handle = new WindowInteropHelper(window).Handle;
                 var buttonCenter = button.PointToScreen(
@@ -454,7 +454,7 @@ public class WindowVisualStateTests
                     $"chrome={WindowChrome.GetWindowChrome(window)?.CaptionHeight}, " +
                     $"resize={WindowChrome.GetWindowChrome(window)?.ResizeBorderThickness.Top}.");
 
-                var titleBar = VisualTreeTestHelper.FindDescendant<TitleBarControl>(window)
+                var titleBar = VisualTreeTestHelper.FindDescendant<WindowTitleBarControl>(window)
                     ?? throw new AssertFailedException("Expected the modern window title bar.");
                 var titleBarPoint = titleBar.PointToScreen(
                     new Point(titleBar.ActualWidth / 2, titleBar.ActualHeight / 2));
@@ -509,7 +509,7 @@ public class WindowVisualStateTests
         Assert.IsTrue(text.Contains("WindowForeground", System.StringComparison.Ordinal));
         Assert.IsTrue(text.Contains("WindowBackground", System.StringComparison.Ordinal));
         Assert.IsTrue(text.Contains("<ContentPresenter x:Name=\"ContentPresenter\"", System.StringComparison.Ordinal));
-        Assert.IsTrue(text.Contains("TitleBarControl", System.StringComparison.Ordinal));
+        Assert.IsTrue(text.Contains("WindowTitleBarControl", System.StringComparison.Ordinal));
         Assert.IsTrue(text.Contains("WindowChrome.WindowChrome", System.StringComparison.Ordinal));
         Assert.IsTrue(text.Contains("WindowHelper.FixMaximizedWindow", System.StringComparison.Ordinal));
         Assert.IsTrue(text.Contains("Path=(SystemParameters.HighContrast)", System.StringComparison.Ordinal));
