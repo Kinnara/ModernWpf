@@ -47,6 +47,7 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(productTests, "WidePrimaryCommandStripMovesExcessCommandsIntoOverflowLikeWinUISource");
             StringAssert.Contains(productTests, "DynamicallyInsertedCommandsKeepCurrentFlyoutMenuItemAutomationRoles");
             StringAssert.Contains(productTests, "AlwaysExpanded must reject an overflow-collapse request");
+            StringAssert.Contains(productTests, "HighContrastRestBackgroundMatchesCurrentWinUISource");
             StringAssert.Contains(publicDocumentation, "P:ModernWpf.Controls.CommandBarFlyout.AlwaysExpanded");
 
             StringAssert.Contains(sample, "CreateCommandBarFlyoutExamples(sampleSnippets)");

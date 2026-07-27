@@ -29,7 +29,7 @@ The contract applies to all supported package targets:
 | Current WinUI | Primary naming, control-shape, event, sealing, and versionability authority for WinUI-derived ModernWpf controls. | Follow current WinUI unless WPF requires a documented adaptation. Audited product source is [`microsoft-ui-xaml` commit `de3e7673`](https://github.com/microsoft/microsoft-ui-xaml/commit/de3e767333c2f0717a6a70cb22bd192ced5ad885). |
 | Official WPF Fluent | Primary styling and behavior authority for stock WPF controls, and the platform Fluent implementation used on .NET 10. | Complements WinUI; it does not rename ModernWpf custom-control CLR APIs. Audited source is [`dotnet/wpf` commit `7f005faa`](https://github.com/dotnet/wpf/commit/7f005faa89e79b0b1fa1cb2c21283bab7916c092). |
 
-The current checked-in CLR baseline contains 1,546 API entries for
+The current checked-in CLR baseline contains 1,558 API entries for
 `ModernWpf.dll` and 2,718 for `ModernWpf.Controls.dll`. The packaged .NET 8
 assemblies expose 122 and 225 supported top-level types respectively. WPF's
 generated `GeneratedInternalTypeHelper` is compiler infrastructure and is not
@@ -146,10 +146,13 @@ existing manifest and add newly chosen public keys to the unshipped file.
    `tools/api-contracts/Update-PublicResourceKeyContract.ps1` and review the
    unshipped resource entries.
 4. Build every target framework and run the theme/resource tests.
-5. Pack the NuGet package. Package validation compares compatible target
+5. Before publishing a new compatibility baseline, promote every accepted
+   entry to the corresponding shipped inventory. Baseline builds require all
+   unshipped inventories to be empty.
+6. Pack the NuGet package. Package validation compares compatible target
    frameworks and, after preview 1, compares with the published
    `1.0.0-preview.1` baseline.
-6. Run `tools/release/Verify-ModernWpfPackage.ps1`. It rejects namespace leaks,
+7. Run `tools/release/Verify-ModernWpfPackage.ps1`. It rejects namespace leaks,
    cross-target top-level type drift, stale XML documentation, and malformed
    package assets.
 

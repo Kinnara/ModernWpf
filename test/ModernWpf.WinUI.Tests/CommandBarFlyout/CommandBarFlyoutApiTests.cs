@@ -1392,6 +1392,33 @@ public class CommandBarFlyoutApiTests
     }
 
     [TestMethod]
+    public void HighContrastRestBackgroundMatchesCurrentWinUISource()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var themeDictionary = ThemeResources.Current.GetThemeDictionary("HighContrast");
+            var background = themeDictionary["CommandBarFlyoutAppBarButtonBackground"] as SolidColorBrush
+                ?? throw new AssertFailedException(
+                    "HighContrast:CommandBarFlyoutAppBarButtonBackground should be a SolidColorBrush.");
+
+            Assert.AreEqual(
+                0d,
+                background.Opacity,
+                "Resting CommandBarFlyout commands must not paint over their High Contrast foreground.");
+            Assert.AreEqual(
+                (Color)themeDictionary["SystemColorHighlightColor"],
+                background.Color,
+                "The transparent rest brush should retain WinUI's system-highlight color source.");
+            Assert.AreNotSame(
+                themeDictionary["SystemControlForegroundTransparentBrush"],
+                background,
+                "SystemControlForegroundTransparentBrush is opaque in WPF High Contrast resources.");
+        });
+    }
+
+    [TestMethod]
     public void VerifyCommandBarFlyoutStyleAndWinUI2Resources()
     {
         WpfTestHost.Run(() =>

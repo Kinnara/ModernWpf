@@ -16,6 +16,18 @@ $ErrorActionPreference = "Stop"
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 Add-Type -AssemblyName System.Reflection.Metadata
 
+$centralPropsPath = Join-Path $PSScriptRoot "..\..\Directory.Build.props"
+[xml]$centralProps = Get-Content -LiteralPath $centralPropsPath -Raw
+$systemValueTupleVersion = $centralProps.SelectSingleNode(
+    "/*[local-name()='Project']/*[local-name()='PropertyGroup']/*[local-name()='ModernWpfSystemValueTupleVersion']").InnerText
+$windowsSdkContractsVersion = $centralProps.SelectSingleNode(
+    "/*[local-name()='Project']/*[local-name()='PropertyGroup']/*[local-name()='ModernWpfWindowsSdkContractsVersion']").InnerText
+
+if ([string]::IsNullOrWhiteSpace($systemValueTupleVersion) -or
+    [string]::IsNullOrWhiteSpace($windowsSdkContractsVersion)) {
+    throw "Directory.Build.props must define the package dependency versions."
+}
+
 $resolvedPackagePath = (Resolve-Path $PackagePath).Path
 $symbolPackageCandidate = if ($SymbolPackagePath) {
     $SymbolPackagePath
@@ -361,6 +373,35 @@ try {
 
         if ($dependencyGroups -notcontains $dependencyGroup) {
             throw "Package '$resolvedPackagePath' has no dependency group for '$dependencyGroup'."
+        }
+    }
+
+    $net462DependencyGroup = $metadata.SelectSingleNode(
+        "*[local-name()='dependencies']/*[local-name()='group'][@targetFramework='.NETFramework4.6.2']")
+    if ($null -eq $net462DependencyGroup) {
+        throw "Package '$resolvedPackagePath' has no net462 dependency group."
+    }
+
+    $expectedNet462Dependencies = @{
+        "System.ValueTuple" = $systemValueTupleVersion
+        "Microsoft.Windows.SDK.Contracts" = $windowsSdkContractsVersion
+    }
+    $net462Dependencies = @($net462DependencyGroup.SelectNodes("*[local-name()='dependency']"))
+
+    if ($net462Dependencies.Count -ne $expectedNet462Dependencies.Count) {
+        throw "Package '$resolvedPackagePath' must declare exactly the centrally versioned net462 dependencies."
+    }
+
+    foreach ($dependency in $net462Dependencies) {
+        $dependencyId = $dependency.GetAttribute("id")
+        if (-not $expectedNet462Dependencies.ContainsKey($dependencyId)) {
+            throw "Package '$resolvedPackagePath' has unexpected net462 dependency '$dependencyId'."
+        }
+
+        $expectedVersion = $expectedNet462Dependencies[$dependencyId]
+        $actualVersion = $dependency.GetAttribute("version")
+        if ($actualVersion -ne $expectedVersion) {
+            throw "Package '$resolvedPackagePath' dependency '$dependencyId' uses '$actualVersion'; expected '$expectedVersion'."
         }
     }
 

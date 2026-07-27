@@ -93,6 +93,7 @@ CommandBarFlyout page/sample change after Gallery conversion commit
 | Current WinUI source prefers `OpeningOpacityStoryboard` / `ClosingOpacityStoryboard` for outer flyout open/close and only falls back to the older clip `OpeningStoryboard` / `ClosingStoryboard` resources when opacity resources are absent. | Matched. ModernWpf uses opacity-only outer open/close storyboards and keeps a fallback lookup for custom templates still using the legacy resource names. Tag checks show this source behavior is present in the WinUI 1.6 line and later, absent from WinUI 1.5. |
 | `CommandBarFlyoutCommandBar` owns template settings, open/close animation state, overflow placement visual states, command focus routing, and tab-stop uniqueness. | Matched with WPF template settings, visual states, and focused API coverage. |
 | Current primary AppBar styles use `Width=NaN` and no fixed height; the content root has `MinWidth=40` but no fixed `MinHeight`. The primary panel is 40px high with `3,3,0,3` margin, while `HasPrimaryLabels` changes it to `MinHeight=52` and `Height=NaN`. | Matched. The stale fixed 60px width, 55px item height, content-root minimum height, and command-bar height were removed. The Gallery example measures 60x52 primary buttons from content, not template constants. |
+| High Contrast uses a system-highlight-colored rest brush with zero opacity for flyout AppBar buttons. | Matched. ModernWpf keeps the source color binding and explicit zero opacity instead of aliasing the misleadingly named, but opaque in WPF, `SystemControlForegroundTransparentBrush`. A resource regression prevents primary and overflow commands from becoming solid foreground-colored blocks. |
 | The flyout ellipsis is 36x54 and the overflow presenter has `MinWidth=136`. | Matched by `CommandBarFlyoutEllipsisButtonStyle` and the source-shaped overflow template. The live expanded surface measures 229x136 including shadow in both apps; the raw command union is exactly 217x124. |
 | Primary commands that exceed the 440-DIP flyout maximum move from right to left into the secondary presenter, followed by an automatic separator before declared secondary commands. | Matched. ModernWpf reserves the 36-DIP ellipsis, 3-DIP grid spacer, and primary-panel margin before measuring source-order commands. The official 20-primary/5-secondary case now produces exactly 9 primary children and 17 overflow children: 11 moved commands, one generated separator, and five secondary commands. |
 | The flyout command bar avoids the WPF `ToolBar` secondary panel path. | Matched by deleting `CommandBarFlyoutToolBar` and using `CommandBarFlyoutOverflowPanel`. |
@@ -131,7 +132,7 @@ dotnet build .\ModernWpf.Controls\ModernWpf.Controls.csproj -f net10.0-windows7.
 git diff --check
 ```
 
-Fresh gate-enforced Light `artifacts/visual-checks/20260719-022802-704-69300/report.md` and Dark `artifacts/visual-checks/20260719-022908-765-38068/report.md` runs both retain static primary delta `4.99` with `454x302` versus `453x302` photo crops. Expanded interaction crops are exact `229x136` matches at delta `7.05` / `8.18`, and both raw UIA command unions remain exact `217x124`. Live UIA reports Menu/MenuItem roles and `Less app bar` in both applications. The harness enforces static delta `<=6.0`, static size delta `<=2`, interaction delta `<=9.0`, and exact interaction size parity. Fresh Light/Dark OpenRepeat recordings `artifacts/gallery-recordings/20260719-023035-553/report.md` and `artifacts/gallery-recordings/20260719-023154-586/report.md` pass, detect both opens, and provide dense transition review. The refreshed focused API suite passes 39/39, including late secondary-toggle binding initialization followed by real invocation; focused current-source/sample/interaction/gate Gallery coverage passes 5/5 on net8 and net10; Controls and Gallery build on net462, net8, and net10 with zero errors. Controls retains the repository's 18 unrelated net462 warnings, while Gallery is warning-free.
+Fresh gate-enforced Light `artifacts/visual-checks/20260719-022802-704-69300/report.md` and Dark `artifacts/visual-checks/20260719-022908-765-38068/report.md` runs both retain static primary delta `4.99` with `454x302` versus `453x302` photo crops. Expanded interaction crops are exact `229x136` matches at delta `7.05` / `8.18`, and both raw UIA command unions remain exact `217x124`. Live UIA reports Menu/MenuItem roles and `Less app bar` in both applications. The harness enforces static delta `<=6.0`, static size delta `<=2`, interaction delta `<=9.0`, and exact interaction size parity. Fresh Light/Dark OpenRepeat recordings `artifacts/gallery-recordings/20260719-023035-553/report.md` and `artifacts/gallery-recordings/20260719-023154-586/report.md` pass, detect both opens, and provide dense transition review. The refreshed focused API suite passes 40/40, including late secondary-toggle binding initialization followed by real invocation; focused current-source/sample/interaction/gate Gallery coverage passes 5/5 on net8 and net10. The current Release solution build covers Controls and Gallery on net462, net8, and net10 with zero warnings and zero errors.
 
 ## 2026-07-21 Transition-State Follow-up
 
@@ -156,3 +157,21 @@ runs pass all ten states. Collapsed surfaces are exactly `228x66`; expanded
 surfaces are exactly `229x136` in both applications. Pointer-over and pressed
 states are also required to differ visibly from rest in each application, so a
 future hit-test regression cannot pass on static geometry alone.
+
+## 2026-07-27 Real High Contrast Follow-up
+
+A real Windows Night sky Contrast theme check exposed a WPF resource-adaptation
+error that Light and Dark source-comparison captures could not reveal.
+`SystemControlForegroundTransparentBrush` is an opaque system-foreground brush
+in the WPF High Contrast dictionary despite its WinUI-derived name. Aliasing it
+for `CommandBarFlyoutAppBarButtonBackground` painted every resting primary and
+overflow item with the same colour as its icon and label.
+
+ModernWpf now matches the current WinUI source directly: the rest background is
+a `SystemColorHighlightColor` brush with zero opacity. The focused
+CommandBarFlyout suite passes 40/40 and a source-audit guard pins the regression.
+After a warning-free Release solution build, the expanded right-click surface
+was manually checked under the real Night sky theme on `net462`,
+`net8.0-windows7.0`, and `net10.0-windows7.0`; Share, Save, Delete, Resize, Move,
+and the ellipsis are all visible with the expected system contrast. The system
+Contrast theme was then restored to `None`.

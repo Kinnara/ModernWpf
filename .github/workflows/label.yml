@@ -2,11 +2,19 @@ name: Label issues
 on:
   issues:
     types: [opened]
+
+permissions:
+  issues: write
+
 jobs:
   label_issues:
     runs-on: ubuntu-latest
     steps:
-      - name: Label issues
-        uses: andymckay/labeler@master
-        with:
-          add-labels: "needs-triage"
+      - name: Label issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: >-
+          gh issue edit "$ISSUE_NUMBER"
+          --repo "${{ github.repository }}"
+          --add-label "needs-triage"

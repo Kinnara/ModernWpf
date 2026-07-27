@@ -154,7 +154,8 @@ public partial class App : Application
             --configuration $Configuration `
             --framework $targetFramework `
             --no-restore `
-            --maxcpucount:1
+            --maxcpucount:1 `
+            --warnaserror:MSB3277
         if ($LASTEXITCODE -ne 0) {
             throw "Package smoke build failed for '$resourceType' on '$targetFramework'."
         }

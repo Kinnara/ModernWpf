@@ -888,7 +888,7 @@
     <m:StaticResource x:Key="CommandBarFlyoutSystemBackdrop" ResourceKey="SystemControlBackgroundBaseLowBrush"/>
     <m:StaticResource x:Key="CommandBarFlyoutForeground" ResourceKey="SystemControlForegroundBaseHighBrush"/>
     <m:StaticResource x:Key="CommandBarFlyoutBorderBrush" ResourceKey="SystemControlForegroundTransparentBrush"/>
-    <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackground" ResourceKey="SystemControlForegroundTransparentBrush"/>
+    <SolidColorBrush x:Key="CommandBarFlyoutAppBarButtonBackground" Opacity="0" Color="{m:ThemeResource SystemColorHighlightColor}" />
     <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush"/>
     <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush"/>
     <m:StaticResource x:Key="CommandBarFlyoutAppBarButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush"/>

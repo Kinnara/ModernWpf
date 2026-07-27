@@ -25,9 +25,10 @@ The package no longer contains assets for:
 - `netcoreapp3.0`
 - `net5.0-windows`
 
-The 0.9.x `ModernWpfUI.MahApps` adapter is not part of the 1.x line. MahApps
-applications can continue using the 0.9.x adapter or migrate their integration
-locally; the core `ModernWpfUI` package does not reference MahApps.
+The 0.9.x `ModernWpfUI.MahApps` adapter is not part of the 1.x line. Its
+historical package is frozen and unsupported. MahApps applications must own
+their integration locally when moving to 1.x; the core `ModernWpfUI` package
+does not reference MahApps.
 
 ## Intentional 0.9 API changes
 
@@ -35,6 +36,8 @@ Source and binary compatibility with 0.9.x is not promised. In particular:
 
 - Replace `SimpleStackPanel` with `StackPanelEx`.
 - Replace `IElementFactoryShim` implementations with `IElementFactory`.
+- Replace the old WPF window-shell `TitleBar` facade and control names with
+  `WindowTitleBar` and `WindowTitleBarControl`.
 - Template-only types previously exposed from
   `ModernWpf.Controls.Primitives` are internal in 1.x.
 - WinRT projection and ABI implementation types are no longer public package
