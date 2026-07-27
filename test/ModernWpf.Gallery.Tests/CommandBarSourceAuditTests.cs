@@ -19,7 +19,7 @@ namespace ModernWpf.Gallery.Tests
             var peer = Read(root, "ModernWpf.Controls", "CommandBar", "CommandBarAutomationPeer.cs");
             var style = Read(root, "ModernWpf", "Styles", "CommandBar.xaml");
             var rootResources = Read(root, "ModernWpf", "ModernWpfControlsResources.xaml");
-            var publicResourceKeys = Read(root, "ModernWpf", "PublicResourceKeys.Unshipped.txt");
+            var publicResourceKeys = Read(root, "ModernWpf", "PublicResourceKeys.Shipped.txt");
             var appBarButton = Read(root, "ModernWpf.Controls", "CommandBar", "AppBarButton.xaml");
             var publicDocumentation = Read(root, "ModernWpf.Controls", "ModernWpf.Controls.xml");
             var sample = Read(root, "ModernWpf.Gallery", "Pages", "MenusToolbarsSampleFactory.cs");

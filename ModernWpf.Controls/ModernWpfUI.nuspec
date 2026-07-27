@@ -15,8 +15,8 @@
     <tags>$tags$</tags>
     <dependencies>
       <group targetFramework="net462">
-        <dependency id="System.ValueTuple" version="4.5.0" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Windows.SDK.Contracts" version="10.0.19041.1" exclude="Build,Analyzers" />
+        <dependency id="System.ValueTuple" version="$systemValueTupleVersion$" exclude="Build,Analyzers" />
+        <dependency id="Microsoft.Windows.SDK.Contracts" version="$windowsSdkContractsVersion$" exclude="Build,Analyzers" />
       </group>
       <group targetFramework="net8.0-windows7.0" />
       <group targetFramework="net10.0-windows7.0" />

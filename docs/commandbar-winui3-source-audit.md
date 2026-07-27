@@ -135,5 +135,5 @@ Controls/Gallery build on net462, net8, and net10 with zero errors.
 
 `CommandBarMoreButtonIconDataCanBeOverriddenPerInstance` verifies both the
 default resource identity and a live per-CommandBar geometry replacement. The
-resource is listed in `PublicResourceKeys.Unshipped.txt`, so it enters the 1.x
-forward-compatibility contract when shipped.
+resource is listed in `PublicResourceKeys.Shipped.txt` and is part of the
+preview-1 forward-compatibility contract.

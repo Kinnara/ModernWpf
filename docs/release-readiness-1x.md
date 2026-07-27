@@ -28,7 +28,8 @@ portable SourceLinked PDBs for both assemblies on every target. Package
 metadata must declare `readme.md`, the Git repository URL and exact commit,
 dependency groups for all supported target frameworks, and WPF
 framework-reference groups for the modern .NET targets. NuGet normalizes the
-`net462` dependency group to `.NETFramework4.6.2` in the generated nuspec.
+`net462` dependency group to `.NETFramework4.6.2` in the generated nuspec. Its
+dependency versions must match the central values in `Directory.Build.props`.
 
 ## Forward contract gate
 
@@ -46,6 +47,8 @@ The release gate enforces:
 - The source-qualified public resource-key inventories in
   `ModernWpf/PublicResourceKeys.Shipped.txt` and
   `ModernWpf/PublicResourceKeys.Unshipped.txt`.
+- When the current package version equals the compatibility baseline, every
+  unshipped CLR and resource-key inventory must contain no contract entries.
 - Package export checks. Public top-level types must be in `ModernWpf`
   namespaces, apart from WPF's compiler-generated
   `XamlGeneratedNamespace.GeneratedInternalTypeHelper`, and the supported
@@ -87,7 +90,7 @@ Restore treats every moderate-or-higher NuGet audit finding as an error.
 
 The smoke script builds and executes applications from the actual `.nupkg`
 using both `FluentControlsResources` and `XamlControlsResources` on all three
-targets.
+targets. It treats assembly-conflict warning `MSB3277` as an error.
 
 ## Publication
 

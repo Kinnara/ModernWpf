@@ -5,8 +5,8 @@ exists below the directory being changed.
 
 ## Product direction
 
-- Work against the active ModernWpf 1.x line. Treat 0.9.x as a legacy,
-  security-only input rather than a compatibility baseline.
+- Work against the active ModernWpf 1.x line. Treat 0.9.x as frozen,
+  unsupported historical input rather than a compatibility baseline.
 - Preserve the supported package targets:
   - `net462`
   - `net8.0-windows7.0`

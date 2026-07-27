@@ -33,7 +33,7 @@ ModernWpf backport on older supported targets. `ThemeManager` continues to
 control ModernWpf resources and bridges application/window theme preferences
 to WPF `ThemeMode` on .NET 10.
 
-For a staged migration, the 0.9 resource entry remains supported:
+For a staged migration, 1.x retains the legacy control-resource entry:
 
 ```xaml
 <ui:ThemeResources />
@@ -67,7 +67,9 @@ forward baseline. They do not assert compatibility with 0.9.x.
 `ModernWpfUI.MahApps` remains on the legacy 0.9.x line and is not produced for
 1.x. Remove that package before upgrading the core package. Recreate only the
 application-specific MahApps resource integration that is still required, or
-remain on 0.9.x until that dependency can be removed.
+remain on the frozen, unsupported 0.9.x packages at your own risk until that
+dependency can be removed. The 0.9.x line receives no updates, including
+security fixes.
 
 ## 5. Validate behavior
 

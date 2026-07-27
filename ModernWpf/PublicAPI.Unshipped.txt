@@ -1,13 +1,1 @@
 #nullable enable
-ModernWpf.Navigation.NavigationCacheMode
-ModernWpf.Navigation.NavigationCacheMode.Disabled = 0 -> ModernWpf.Navigation.NavigationCacheMode
-ModernWpf.Navigation.NavigationCacheMode.Enabled = 2 -> ModernWpf.Navigation.NavigationCacheMode
-ModernWpf.Navigation.NavigationCacheMode.Required = 1 -> ModernWpf.Navigation.NavigationCacheMode
-ModernWpf.Controls.Frame.CacheSize.get -> int
-ModernWpf.Controls.Frame.CacheSize.set -> void
-~ModernWpf.Controls.Frame.Navigate(object content, ModernWpf.Media.Animation.NavigationTransitionInfo infoOverride) -> bool
-~ModernWpf.Controls.Frame.Navigate(object content, object extraData, ModernWpf.Media.Animation.NavigationTransitionInfo infoOverride) -> bool
-ModernWpf.Controls.Page.NavigationCacheMode.get -> ModernWpf.Navigation.NavigationCacheMode
-ModernWpf.Controls.Page.NavigationCacheMode.set -> void
-~static readonly ModernWpf.Controls.Frame.CacheSizeProperty -> System.Windows.DependencyProperty
-~static readonly ModernWpf.Controls.Page.NavigationCacheModeProperty -> System.Windows.DependencyProperty

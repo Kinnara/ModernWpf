@@ -7,6 +7,7 @@
     <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);GetDocumentationFile</TargetsForTfmSpecificBuildOutput>
     <NuspecFile>$(MSBuildThisFileDirectory)ModernWpfUI.nuspec</NuspecFile>
     <PackageId>ModernWpfUI</PackageId>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <!-- WPF's pass-2 project is an intermediate assembly with compiler-only
@@ -30,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="!$(DefineConstants.Contains('NET47_OR_NEWER'))">
-    <PackageReference Include="System.ValueTuple" Version="4.6.2" />
+    <PackageReference Include="System.ValueTuple" Version="$(ModernWpfSystemValueTupleVersion)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -51,6 +52,7 @@
     <None Update="ModernWpf.Controls.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="readme.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <Target Name="GetDocumentationFile">
@@ -77,6 +79,8 @@
       <NuspecProperties>$(NuspecProperties);repositoryType=$(RepositoryType)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);repositoryUrl=$(RepositoryUrl)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);repositoryCommit=$(RepositoryCommit)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);systemValueTupleVersion=$(ModernWpfSystemValueTupleVersion)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);windowsSdkContractsVersion=$(ModernWpfWindowsSdkContractsVersion)</NuspecProperties>
     </PropertyGroup>
   </Target>
 

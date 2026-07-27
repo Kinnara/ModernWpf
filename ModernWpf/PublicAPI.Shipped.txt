@@ -173,6 +173,8 @@ ModernWpf.Controls.FontIconSource.MirroredWhenRightToLeft.get -> bool
 ModernWpf.Controls.FontIconSource.MirroredWhenRightToLeft.set -> void
 ModernWpf.Controls.Frame
 ModernWpf.Controls.Frame.BackStackDepth.get -> int
+ModernWpf.Controls.Frame.CacheSize.get -> int
+ModernWpf.Controls.Frame.CacheSize.set -> void
 ModernWpf.Controls.Frame.Frame() -> void
 ModernWpf.Controls.GridEx
 ModernWpf.Controls.GridEx.BackgroundSizing.get -> ModernWpf.Controls.BackgroundSizing
@@ -251,6 +253,8 @@ ModernWpf.Controls.ListViewBaseHeaderItem.UseSystemFocusVisuals.set -> void
 ModernWpf.Controls.ListViewHeaderItem
 ModernWpf.Controls.ListViewHeaderItem.ListViewHeaderItem() -> void
 ModernWpf.Controls.Page
+ModernWpf.Controls.Page.NavigationCacheMode.get -> ModernWpf.Navigation.NavigationCacheMode
+ModernWpf.Controls.Page.NavigationCacheMode.set -> void
 ModernWpf.Controls.Page.Page() -> void
 ModernWpf.Controls.PanelScrollingDirection
 ModernWpf.Controls.PanelScrollingDirection.Backward = 2 -> ModernWpf.Controls.PanelScrollingDirection
@@ -733,6 +737,10 @@ ModernWpf.Media.Animation.SuppressNavigationTransitionInfo.SuppressNavigationTra
 ModernWpf.Media.Animation.Transition
 ModernWpf.Media.Animation.TransitionCollection
 ModernWpf.Media.Animation.TransitionCollection.TransitionCollection() -> void
+ModernWpf.Navigation.NavigationCacheMode
+ModernWpf.Navigation.NavigationCacheMode.Disabled = 0 -> ModernWpf.Navigation.NavigationCacheMode
+ModernWpf.Navigation.NavigationCacheMode.Enabled = 2 -> ModernWpf.Navigation.NavigationCacheMode
+ModernWpf.Navigation.NavigationCacheMode.Required = 1 -> ModernWpf.Navigation.NavigationCacheMode
 ModernWpf.Navigation.NavigationEventArgsExtensions
 ModernWpf.OpticalMarginAlignment
 ModernWpf.OpticalMarginAlignment.None = 0 -> ModernWpf.OpticalMarginAlignment
@@ -861,6 +869,8 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~ModernWpf.Controls.Frame.Navigate(System.Type sourcePageType, object parameter) -> bool
 ~ModernWpf.Controls.Frame.Navigate(System.Type sourcePageType, object parameter, ModernWpf.Media.Animation.NavigationTransitionInfo infoOverride) -> bool
 ~ModernWpf.Controls.Frame.Navigate(System.Uri source, object extraData, ModernWpf.Media.Animation.NavigationTransitionInfo infoOverride) -> bool
+~ModernWpf.Controls.Frame.Navigate(object content, ModernWpf.Media.Animation.NavigationTransitionInfo infoOverride) -> bool
+~ModernWpf.Controls.Frame.Navigate(object content, object extraData, ModernWpf.Media.Animation.NavigationTransitionInfo infoOverride) -> bool
 ~ModernWpf.Controls.Frame.SourcePageType.get -> System.Type
 ~ModernWpf.Controls.Frame.SourcePageType.set -> void
 ~ModernWpf.Controls.GridEx.BackgroundTransition.get -> ModernWpf.Controls.BrushTransition
@@ -1314,6 +1324,7 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~static readonly ModernWpf.Controls.FontIconSource.IsTextScaleFactorEnabledProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.FontIconSource.MirroredWhenRightToLeftProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Frame.BackStackDepthProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Frame.CacheSizeProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Frame.ContentTransitionsProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Frame.CurrentSourcePageTypeProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Frame.SourcePageTypeProperty -> System.Windows.DependencyProperty
@@ -1347,6 +1358,7 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~static readonly ModernWpf.Controls.ListViewBaseHeaderItem.CornerRadiusProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.ListViewBaseHeaderItem.UseSystemFocusVisualsProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Page.FrameProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.Page.NavigationCacheModeProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.PathIcon.DataProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.PathIconSource.DataProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.Primitives.BindingProxy.ValueProperty -> System.Windows.DependencyProperty
