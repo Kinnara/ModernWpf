@@ -185,6 +185,8 @@ jobs:
   publish:
     needs: build
     runs-on: windows-2022
+    env:
+      GH_REPO: ${{ github.repository }}
     environment:
       name: nuget-production
       url: https://github.com/Kinnara/ModernWpf/releases/tag/${{ inputs.tag }}
