@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <Version>1.0.0-preview.1</Version>
+    <Version>1.0.0-preview.2</Version>
     <!-- Immutable after the first 1.x package is published. -->
     <ModernWpfCompatibilityBaselineVersion>1.0.0-preview.1</ModernWpfCompatibilityBaselineVersion>
     <ModernWpfSystemValueTupleVersion>4.6.2</ModernWpfSystemValueTupleVersion>
