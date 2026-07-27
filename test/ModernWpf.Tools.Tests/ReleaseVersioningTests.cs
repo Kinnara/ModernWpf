@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -184,7 +185,19 @@ namespace ModernWpf.Tools.Tests
                 "Test-Path -LiteralPath $releaseNotesPath -PathType Leaf");
             StringAssert.Contains(
                 workflow,
-                "Copy-Item -LiteralPath $releaseNotesPath");
+                "<!-- RELEASE-NOTES: DRAFT -->");
+            StringAssert.Contains(
+                workflow,
+                "are still marked as a draft");
+            StringAssert.Contains(
+                workflow,
+                @".\tools\release\Prepare-GitHubReleaseNotes.ps1");
+            StringAssert.Contains(
+                workflow,
+                "-Repository $env:GITHUB_REPOSITORY");
+            StringAssert.Contains(
+                workflow,
+                "-Tag $env:RELEASE_TAG");
             StringAssert.Contains(
                 workflow,
                 "--title \"ModernWPF ${{ needs.build.outputs.version }}\"");
@@ -204,6 +217,92 @@ namespace ModernWpf.Tools.Tests
                 CountOccurrences(
                     workflow,
                     "Expected exactly one ModernWpfUI package, found $($packages.Count)."));
+        }
+
+        [TestMethod]
+        public void GitHubReleaseNotesUseTagPinnedDocumentationLinks()
+        {
+            var repoRoot = FindRepoRoot();
+            var props = XDocument.Load(Path.Combine(repoRoot, "Directory.Build.props"));
+            var version = GetPropertyValue(props, "Version");
+            var releaseNotesPath = Path.Combine(
+                repoRoot,
+                "docs",
+                $"release-notes-{version}.md");
+            var scriptPath = Path.Combine(
+                repoRoot,
+                "tools",
+                "release",
+                "Prepare-GitHubReleaseNotes.ps1");
+            var outputPath = Path.Combine(
+                Path.GetTempPath(),
+                $"modernwpf-release-notes-{Guid.NewGuid():N}.md");
+
+            try
+            {
+                var startInfo = new ProcessStartInfo
+                {
+                    FileName = "pwsh",
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                    WorkingDirectory = repoRoot
+                };
+                foreach (var argument in new[]
+                {
+                    "-NoProfile",
+                    "-NonInteractive",
+                    "-File",
+                    scriptPath,
+                    "-SourcePath",
+                    releaseNotesPath,
+                    "-DestinationPath",
+                    outputPath,
+                    "-Repository",
+                    "Kinnara/ModernWpf",
+                    "-Tag",
+                    $"v{version}",
+                    "-RepositoryRoot",
+                    repoRoot
+                })
+                {
+                    startInfo.ArgumentList.Add(argument);
+                }
+
+                using var process = Process.Start(startInfo);
+                Assert.IsNotNull(process);
+                var standardOutput = process.StandardOutput.ReadToEnd();
+                var standardError = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+
+                Assert.AreEqual(
+                    0,
+                    process.ExitCode,
+                    $"Release-note preparation failed.{Environment.NewLine}" +
+                    $"{standardOutput}{Environment.NewLine}{standardError}");
+
+                var preparedReleaseNotes = File.ReadAllText(outputPath);
+                var tagUrlPrefix =
+                    $"https://github.com/Kinnara/ModernWpf/blob/v{version}/docs/";
+                StringAssert.Contains(
+                    preparedReleaseNotes,
+                    $"{tagUrlPrefix}migrating-from-0.9.md");
+                StringAssert.Contains(
+                    preparedReleaseNotes,
+                    $"{tagUrlPrefix}public-api-contract-1x.md");
+                Assert.IsFalse(
+                    preparedReleaseNotes.Contains(
+                        "](migrating-from-0.9.md)",
+                        StringComparison.Ordinal));
+                Assert.IsFalse(
+                    preparedReleaseNotes.Contains(
+                        "](public-api-contract-1x.md)",
+                        StringComparison.Ordinal));
+            }
+            finally
+            {
+                File.Delete(outputPath);
+            }
         }
 
         [TestMethod]

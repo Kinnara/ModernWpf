@@ -1,6 +1,6 @@
 # ModernWpf 1.x Release Readiness
 
-This document defines the release gate for the `1.0.0-preview.1` maintenance line.
+This document defines the release gate for the active ModernWPF 1.x preview line.
 
 ## Supported package shape
 
@@ -101,7 +101,7 @@ annotated `v<Version>` tag on `master`. The tag version must match
 example:
 
 ```powershell
-gh workflow run release.yml --ref v1.0.0-preview.1 -f tag=v1.0.0-preview.1
+gh workflow run release.yml --ref v1.0.0-preview.2 -f tag=v1.0.0-preview.2
 ```
 
 The workflow builds and tests the tag once, retains the packages, symbols, TRX
@@ -109,6 +109,14 @@ results, release notes, and `SHA256SUMS`, then pauses at the protected
 `nuget-production` environment. The publication job verifies the downloaded
 artifact, prepares a draft GitHub prerelease, publishes the exact `.nupkg` to
 NuGet, and only then publishes the GitHub prerelease.
+
+Active-development notes carry a `RELEASE-NOTES: DRAFT` marker. The release
+workflow refuses to create an artifact until that marker is removed.
+
+When preparing the retained artifact, the workflow converts documentation links
+that are relative to the checked-in release-notes file into immutable,
+tag-pinned GitHub URLs. Keep those links relative in source so they also work
+when the notes are read under `docs/`.
 
 NuGet publication uses Trusted Publishing rather than a stored API key. The
 nuget.org policy is owned by the `kinnara` account and accepts OIDC identities

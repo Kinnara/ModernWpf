@@ -158,8 +158,17 @@ jobs:
         if (-not (Test-Path -LiteralPath $releaseNotesPath -PathType Leaf)) {
           throw "Release notes do not exist for version '$env:RELEASE_VERSION': $releaseNotesPath"
         }
+        $releaseNotes = Get-Content -LiteralPath $releaseNotesPath -Raw
+        if ($releaseNotes.Contains('<!-- RELEASE-NOTES: DRAFT -->')) {
+          throw "Release notes for '$env:RELEASE_VERSION' are still marked as a draft."
+        }
 
-        Copy-Item -LiteralPath $releaseNotesPath "$env:RELEASE_ROOT\release-notes.md"
+        .\tools\release\Prepare-GitHubReleaseNotes.ps1 `
+          -SourcePath $releaseNotesPath `
+          -DestinationPath "$env:RELEASE_ROOT\release-notes.md" `
+          -Repository $env:GITHUB_REPOSITORY `
+          -Tag $env:RELEASE_TAG `
+          -RepositoryRoot (Get-Location).Path
         Copy-Item $env:TEST_RESULTS "$env:RELEASE_ROOT\test-results" -Recurse
         Compress-Archive -Path "$env:RELEASE_ROOT\test-results\*" -DestinationPath "$env:RELEASE_ROOT\test-results.zip"
 
