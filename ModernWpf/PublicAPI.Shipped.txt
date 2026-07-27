@@ -773,6 +773,7 @@ ModernWpf.ThemeResources.RequestedTheme.get -> ModernWpf.ApplicationTheme?
 ModernWpf.ThemeResources.RequestedTheme.set -> void
 ModernWpf.ThemeResources.ThemeResources() -> void
 ModernWpf.TypedEventHandler<TSender, TResult>
+virtual ModernWpf.TypedEventHandler<TSender, TResult>.Invoke(TSender sender, TResult args) -> void
 ModernWpf.VisualStateEx
 ModernWpf.VisualStateEx.VisualStateEx() -> void
 ModernWpf.VisualStateManagerEx
