@@ -77,6 +77,49 @@ public static class WpfTestHost
         Dispatcher.PushFrame(frame);
     }
 
+    public static void DrainDeferredIdleWork()
+    {
+        if (!Dispatcher.CurrentDispatcher.CheckAccess())
+        {
+            throw new InvalidOperationException("WPF deferred-work cleanup must run on the host dispatcher.");
+        }
+
+        var frame = new DispatcherFrame();
+        var drainComplete = Dispatcher.CurrentDispatcher.BeginInvoke(
+            DispatcherPriority.ApplicationIdle,
+            new DispatcherOperationCallback(_ =>
+            {
+                frame.Continue = false;
+                return null;
+            }),
+            null);
+        var timeout = new DispatcherTimer(
+            DispatcherPriority.Send,
+            Dispatcher.CurrentDispatcher)
+        {
+            Interval = TimeSpan.FromMilliseconds(100)
+        };
+
+        EventHandler stopFrame = (_, _) => frame.Continue = false;
+        timeout.Tick += stopFrame;
+        timeout.Start();
+
+        try
+        {
+            Dispatcher.PushFrame(frame);
+        }
+        finally
+        {
+            timeout.Stop();
+            timeout.Tick -= stopFrame;
+
+            if (drainComplete.Status == DispatcherOperationStatus.Pending)
+            {
+                drainComplete.Abort();
+            }
+        }
+    }
+
     public static void Shutdown()
     {
         var currentDispatcher = dispatcher;
@@ -126,6 +169,14 @@ public static class WpfTestHost
         }
 
         app.MainWindow = null;
+        DoEvents();
+
+        // Several product paths intentionally defer layout, popup placement,
+        // and navigation work below Background priority. Give work already
+        // queued by this test one bounded idle pass after its windows are gone
+        // so it cannot run against a later test's UI. The timeout prevents
+        // animations or recurring layout producers from starving cleanup.
+        DrainDeferredIdleWork();
         DoEvents();
     }
 
