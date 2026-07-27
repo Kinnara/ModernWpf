@@ -110,6 +110,19 @@ results, release notes, and `SHA256SUMS`, then pauses at the protected
 artifact, prepares a draft GitHub prerelease, publishes the exact `.nupkg` to
 NuGet, and only then publishes the GitHub prerelease.
 
+NuGet publication uses Trusted Publishing rather than a stored API key. The
+nuget.org policy is owned by the `kinnara` account and accepts OIDC identities
+only from:
+
+- repository owner `Kinnara`
+- repository `ModernWpf`
+- workflow `release.yml`
+- environment `nuget-production`
+
+The publication job requests its short-lived key immediately before the NuGet
+push. Keep `id-token: write` scoped to that job, and do not add a long-lived
+`NUGET_API_KEY` secret.
+
 When adding an explicitly supported resource key, run:
 
 ```powershell

@@ -192,6 +192,7 @@ jobs:
       url: https://github.com/Kinnara/ModernWpf/releases/tag/${{ inputs.tag }}
     permissions:
       contents: write
+      id-token: write
 
     steps:
     - name: Download exact build artifact
@@ -270,10 +271,16 @@ jobs:
           throw "Could not attach the retained release artifacts."
         }
 
+    - name: Request short-lived NuGet API key
+      id: nuget-login
+      uses: NuGet/login@v1
+      with:
+        user: kinnara
+
     - name: Publish exact NuGet package
       shell: pwsh
       env:
-        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
       run: |
         $packages = @(Get-ChildItem release\packages\ModernWpfUI.*.nupkg)
         if ($packages.Count -ne 1) {

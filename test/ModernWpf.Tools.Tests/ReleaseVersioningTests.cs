@@ -206,6 +206,25 @@ namespace ModernWpf.Tools.Tests
                     "Expected exactly one ModernWpfUI package, found $($packages.Count)."));
         }
 
+        [TestMethod]
+        public void ReleaseWorkflowUsesNuGetTrustedPublishing()
+        {
+            var repoRoot = FindRepoRoot();
+            var workflow = File.ReadAllText(
+                Path.Combine(repoRoot, ".github", "workflows", "release.yml"));
+
+            StringAssert.Contains(workflow, "id-token: write");
+            StringAssert.Contains(workflow, "uses: NuGet/login@v1");
+            StringAssert.Contains(workflow, "user: kinnara");
+            StringAssert.Contains(
+                workflow,
+                "NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}");
+            Assert.IsFalse(
+                workflow.Contains(
+                    "secrets.NUGET_API_KEY",
+                    StringComparison.Ordinal));
+        }
+
         private static string GetPropertyValue(XDocument props, string name)
         {
             return props
