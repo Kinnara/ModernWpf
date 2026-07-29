@@ -118,6 +118,7 @@
     <Style x:Key="{x:Static ToolBar.TextBoxStyleKey}" TargetType="{x:Type TextBox}">
         <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource TextControlForeground}" />
         <Setter Property="AllowDrop" Value="True" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="OverridesDefaultStyle" Value="True" />

@@ -52,6 +52,7 @@ public class AutoSuggestBoxApiTests
             AssertDynamicResourceSetter(textBoxStyle, FrameworkElement.MinWidthProperty, "TextControlThemeMinWidth");
             AssertDynamicResourceSetter(textBoxStyle, FrameworkElement.MinHeightProperty, "TextControlThemeMinHeight");
             AssertDynamicResourceSetter(textBoxStyle, Control.ForegroundProperty, "TextControlForeground");
+            AssertDynamicResourceSetter(textBoxStyle, TextBoxBase.CaretBrushProperty, "TextControlForeground");
             AssertDynamicResourceSetter(textBoxStyle, Control.BackgroundProperty, "TextControlBackground");
             AssertDynamicResourceSetter(textBoxStyle, Control.BorderBrushProperty, "TextControlBorderBrush");
             AssertDynamicResourceSetter(textBoxStyle, TextBoxBase.SelectionBrushProperty, "TextControlSelectionHighlightColor");
@@ -134,6 +135,7 @@ public class AutoSuggestBoxApiTests
             Assert.AreEqual(textBox.TryFindResource("TextControlThemeMinWidth"), textBox.MinWidth);
             Assert.AreEqual(textBox.TryFindResource("TextControlThemeMinHeight"), textBox.MinHeight);
             AssertBrushEquals(autoSuggestBox.Foreground, textBox.Foreground);
+            AssertBrushEquals((Brush)textBox.TryFindResource("TextControlForeground"), textBox.CaretBrush);
             AssertBrushEquals(autoSuggestBox.Background, textBox.Background);
             AssertBrushEquals(autoSuggestBox.BorderBrush, textBox.BorderBrush);
             AssertBrushEquals((Brush)textBox.TryFindResource("TextControlSelectionHighlightColor"), textBox.SelectionBrush);
