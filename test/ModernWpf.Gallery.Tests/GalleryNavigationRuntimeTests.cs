@@ -752,6 +752,52 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void MainWindowSearchCaretUsesDarkThemeForeground()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var previousTheme = ThemeManager.Current.ApplicationTheme;
+                MainWindow window = null;
+
+                try
+                {
+                    ThemeManager.Current.ApplicationTheme = ApplicationTheme.Dark;
+                    WpfTestHost.DoEvents();
+
+                    window = new MainWindow
+                    {
+                        Left = -32000,
+                        Top = -32000,
+                        ShowInTaskbar = false,
+                        WindowStartupLocation = WindowStartupLocation.Manual
+                    };
+                    window.Show();
+                    WpfTestHost.DoEvents();
+                    window.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    var searchBox = (AutoSuggestBox)window.FindName("ControlsSearchBox");
+                    var textBox = FindVisualChildren<TextBox>(searchBox)
+                        .Single(element => string.Equals(element.Name, "TextBox", StringComparison.Ordinal));
+                    var expectedCaret = (Brush)textBox.TryFindResource("TextControlForeground");
+
+                    Assert.IsNotNull(expectedCaret);
+                    Assert.AreSame(expectedCaret, textBox.CaretBrush);
+                    Assert.IsInstanceOfType(textBox.CaretBrush, typeof(SolidColorBrush));
+                    Assert.IsTrue(
+                        ((SolidColorBrush)textBox.CaretBrush).Color.R > 0xC0,
+                        "The dark-theme search caret should use a light foreground brush.");
+                }
+                finally
+                {
+                    window?.Close();
+                    ThemeManager.Current.ApplicationTheme = previousTheme;
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void MainWindowViewModelOfficialCommandHandlersDriveShellActions()
         {
             var backCount = 0;

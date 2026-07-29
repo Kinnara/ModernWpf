@@ -134,6 +134,10 @@ The current page retains two examples:
 - Input-validation context/command and IME candidate positioning are not
   available on WPF TextBox. The shared inner TextBox also retains WPF triggers
   and `FontIconFallback` in place of native perf setters/AnimatedIcon paths.
+- The dedicated WPF inner-TextBox style explicitly maps `CaretBrush` to
+  `TextControlForeground`. WPF otherwise falls back to its system-background
+  caret calculation, which produces a dark caret over the Gallery title-bar
+  search box in Dark theme.
 - HeaderPlacement is exposed for API parity, while the shared WPF text-control
   header helper remains top-only pending a broader text-control port.
 - WPF mouse buttons/modifiers and `ListView.SelectedItems` represent WinUI
@@ -142,9 +146,10 @@ The current page retains two examples:
 ## Regression Coverage
 
 - `AutoSuggestBoxApiTests` covers source defaults/resources/template parts,
-  delayed counter semantics, automation Invoke and no-chosen-suggestion query,
-  ItemClick-before-selection ordering, WPF selection modes, query-button state
-  setters, popup shadow/insets, and corner filtering.
+  the theme-aware inner-TextBox caret, delayed counter semantics, automation
+  Invoke and no-chosen-suggestion query, ItemClick-before-selection ordering,
+  WPF selection modes, query-button state setters, popup shadow/insets, and
+  corner filtering.
 - `AutoSuggestBoxInteractionTests` covers choosing a suggestion by keyboard,
   preserving handler-assigned text after `SuggestionChosen`, Escape
   restoration, and query-button submission behavior.

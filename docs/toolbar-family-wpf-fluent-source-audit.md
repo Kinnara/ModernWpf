@@ -43,8 +43,12 @@ This is a stock WPF control-family port, so official WPF Fluent is the primary s
 - Official WPF Fluent's generic `Thumb` uses `Border.CornerRadius`; ModernWpf uses `Border.CornerRadius` for older target compatibility, matching the existing stock-control backport pattern.
 - Official WPF Fluent's generated monolithic dictionary can resolve `ToolBar.xaml` `StaticResource BasedOn` references from sibling style sections. ModernWpf loads style files as split dictionaries, so `ToolBar.xaml` locally merges the stock style dependencies it needs.
 - Official `ToolBar.xaml` references `MenuBorderColorDefaultBrush`, but the local official theme resource files do not define that exact key. ModernWpf exposes it as an alias to the same flyout border concept used by the menu/context menu family.
+- ModernWpf maps the toolbar TextBox `CaretBrush` to
+  `TextControlForeground`. The official style leaves the WPF caret fallback in
+  place, which derives from the system window background and can render a dark
+  caret over a transparent toolbar in Dark theme.
 
 ## Validation
 
-- `test\ModernWpf.WinUI.Tests\CommonStyles\ToolBarFamilyVisualStateTests.cs` verifies the official separator, thumb, toolbar, toolbar item-style keys, theme aliases, and absence of ModernWpf-specific template guesses.
+- `test\ModernWpf.WinUI.Tests\CommonStyles\ToolBarFamilyVisualStateTests.cs` verifies the official separator, thumb, toolbar, toolbar item-style keys, the theme-aware TextBox caret adaptation, theme aliases, and absence of ModernWpf-specific template guesses.
 - `test\ModernWpf.WinUI.Tests\TemplateParityTests.cs` classifies `Separator.xaml`, `Thumb.xaml`, and `ToolBar.xaml` as official WPF Fluent stock templates that should not use `VisualStateEx`.

@@ -138,6 +138,10 @@ public class ToolBarFamilyVisualStateTests
 
             var textBoxStyle = (Style)Application.Current.FindResource(ToolBar.TextBoxStyleKey);
             Assert.AreEqual(typeof(TextBox), textBoxStyle.TargetType);
+            AssertDynamicResourceSetter(
+                textBoxStyle.Setters.OfType<Setter>().ToArray(),
+                TextBoxBase.CaretBrushProperty,
+                "TextControlForeground");
             Assert.IsTrue(textBoxStyle.Setters.OfType<Setter>()
                 .Any(item => item.Property == Control.TemplateProperty));
 
