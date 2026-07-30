@@ -11,6 +11,8 @@
          but this project's generated P/Invoke surface contains none; package
          smoke tests execute every supported target instead. -->
     <NoWarn>1701;1702;1573;1591;RS0041;SYSLIB0021;SYSLIB0051;CA2256;CS9191;PInvoke009</NoWarn>
+    <!-- These diagnostics guard the checked-in accepted API snapshot. A
+         deliberate preview-era WinUI break updates that snapshot explicitly. -->
     <WarningsAsErrors>$(WarningsAsErrors);RS0016;RS0017;RS0024;RS0025</WarningsAsErrors>
   </PropertyGroup>
 

@@ -43,6 +43,50 @@ public class RepeaterLayoutTests
     }
 
     [TestMethod]
+    public void NonVirtualItemsSourceReplacementRecyclesWithoutStaleOwner()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var factory = new RecyclingElementFactory
+            {
+                RecyclePool = new RecyclePool(),
+                Templates = { { "item", CreateButtonTemplate(height: 32) } }
+            };
+            var firstRepeater = new ItemsRepeater
+            {
+                Layout = new NonVirtualStackLayout(),
+                ItemsSource = new[] { "first" },
+                ItemTemplate = factory
+            };
+            var secondRepeater = new ItemsRepeater
+            {
+                Layout = new NonVirtualStackLayout(),
+                ItemsSource = Array.Empty<string>(),
+                ItemTemplate = factory
+            };
+            var root = new StackPanel();
+            root.Children.Add(firstRepeater);
+            root.Children.Add(secondRepeater);
+
+            using var host = new TestWindowHost(root, width: 240, height: 160);
+            host.UpdateLayout();
+
+            var recycledElement = firstRepeater.TryGetElement(0);
+            Assert.IsNotNull(recycledElement);
+
+            firstRepeater.ItemsSource = Array.Empty<string>();
+            host.UpdateLayout();
+            Assert.AreEqual(0, firstRepeater.Children.Count);
+
+            secondRepeater.ItemsSource = new[] { "second" };
+            host.UpdateLayout();
+
+            Assert.AreSame(recycledElement, secondRepeater.TryGetElement(0));
+            Assert.AreSame(secondRepeater, ((FrameworkElement)recycledElement!).Parent);
+        });
+    }
+
+    [TestMethod]
     public void ValidateStackLayoutDoesNotRetainIncorrectMinorWidth()
     {
         WpfTestHost.Run(() =>
@@ -260,6 +304,43 @@ public class RepeaterLayoutTests
             AssertLayoutSlot((FrameworkElement)repeater.TryGetElement(1)!, new Rect(110, 0, 100, 50));
             AssertLayoutSlot((FrameworkElement)repeater.TryGetElement(2)!, new Rect(0, 55, 100, 50));
             AssertLayoutSlot((FrameworkElement)repeater.TryGetElement(3)!, new Rect(110, 55, 100, 50));
+        });
+    }
+
+    [TestMethod]
+    public void UniformGridLayoutFloorsNarrowAvailableWidthAtOneItemPerLine()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var repeater = new ItemsRepeater
+            {
+                Layout = new UniformGridLayout
+                {
+                    MinItemWidth = 100,
+                    MinItemHeight = 50,
+                    MinColumnSpacing = 10,
+                    MinRowSpacing = 5
+                },
+                ItemsSource = Enumerable.Range(0, 3),
+                ItemTemplate = CreateButtonTemplate()
+            };
+            var scrollViewer = new ScrollViewer
+            {
+                Width = 50,
+                Height = 160,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                Content = repeater
+            };
+
+            using var host = new TestWindowHost(scrollViewer, width: 110, height: 220);
+            host.UpdateLayout();
+
+            AssertLayoutSlot((FrameworkElement)repeater.TryGetElement(0)!, new Rect(0, 0, 100, 50));
+            AssertLayoutSlot((FrameworkElement)repeater.TryGetElement(1)!, new Rect(0, 55, 100, 50));
+            AssertLayoutSlot((FrameworkElement)repeater.TryGetElement(2)!, new Rect(0, 110, 100, 50));
+            Assert.IsFalse(double.IsNaN(repeater.DesiredSize.Width));
+            Assert.IsFalse(double.IsInfinity(repeater.DesiredSize.Width));
         });
     }
 

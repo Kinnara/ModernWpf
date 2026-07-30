@@ -1,0 +1,85 @@
+{
+  "generatedAt": "2026-07-30T12:34:56Z",
+  "stableTagPages": [
+    {
+      "repository": "winui-product",
+      "track": "stable",
+      "tags": [
+        {
+          "name": "winui3/release/1.8.10",
+          "commit": {
+            "sha": "3333333333333333333333333333333333333333"
+          },
+          "published_at": "2026-07-29T12:00:00Z"
+        }
+      ]
+    },
+    {
+      "repository": "winui-product",
+      "track": "stable",
+      "tags": [
+        {
+          "name": "winui3/release/2.3.1",
+          "commit": {
+            "sha": "a97562621a1d1ea397a38a3f512c9eef99db52d8"
+          },
+          "published_at": "2026-07-17T12:00:00Z"
+        }
+      ]
+    }
+  ],
+  "observedHeads": [
+    {
+      "repository": "winui-product",
+      "track": "stable",
+      "revision": "a97562621a1d1ea397a38a3f512c9eef99db52d8",
+      "label": "winui3/release/2.3.1"
+    },
+    {
+      "repository": "winui-product",
+      "track": "main",
+      "revision": "eb75504a1978df0d37a3ad4574d6f72bf4d21583",
+      "label": "winui3/main"
+    },
+    {
+      "repository": "winui-gallery",
+      "track": "main",
+      "revision": "f4dc3eb367f4bcecac1793829d9a221e924e5bfb",
+      "label": "main"
+    }
+  ],
+  "comparisons": [
+    {
+      "repository": "winui-product",
+      "base": "de3e767333c2f0717a6a70cb22bd192ced5ad885",
+      "head": "eb75504a1978df0d37a3ad4574d6f72bf4d21583",
+      "status": "ahead",
+      "aheadBy": 36,
+      "behindBy": 0,
+      "totalCommits": 36,
+      "isComplete": true,
+      "files": [
+        {
+          "filename": "controls/dev/CommonStyles/CommandBar_themeresources.xaml",
+          "status": "modified"
+        }
+      ]
+    },
+    {
+      "repository": "winui-gallery",
+      "base": "29f62479d5c046a0b854a5868e5a7cd484572d87",
+      "head": "f4dc3eb367f4bcecac1793829d9a221e924e5bfb",
+      "status": "ahead",
+      "aheadBy": 1,
+      "behindBy": 0,
+      "totalCommits": 1,
+      "isComplete": true,
+      "files": [
+        {
+          "filename": "eng/Versions.props",
+          "status": "modified"
+        }
+      ]
+    }
+  ]
+}

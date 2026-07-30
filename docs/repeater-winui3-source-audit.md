@@ -1,6 +1,7 @@
 # Repeater WinUI 3 Source Audit
 
 Date: 2026-07-18
+Updated: 2026-07-30
 
 ModernWpf `ItemsRepeater`, its layout family, item/source/recycle helpers, and
 selection model are tracked as a source-backed WPF port of official
@@ -10,6 +11,12 @@ contract is pinned to WinUI Gallery commit
 `29f62479d5c046a0b854a5868e5a7cd484572d87` (2026-07-13). Live comparison uses
 the installed WinUI 3 Controls Gallery `2.9.3.0` with Windows App Runtime
 `2.2.3.0.0`.
+
+The central synchronization epoch in `docs/winui3-sync-2026-07-29.md`
+reconciles this detailed baseline with stable `winui3/release/2.3.1`
+`a97562621a1d1ea397a38a3f512c9eef99db52d8`, product `winui3/main`
+`eb75504a1978df0d37a3ad4574d6f72bf4d21583`, and Gallery
+`f4dc3eb367f4bcecac1793829d9a221e924e5bfb`.
 
 ## Product Source Baseline
 
@@ -91,6 +98,20 @@ documented WPF-feasible `UniformGridLayout` adaptations.
 - `FlowLayout` and `UniformGridLayout` ignore collection forwarding when their
   context has no correctly typed layout state, and always invalidate layout,
   matching `9018b87d...`.
+- Stable commit `bfc240e263b935e645b00f1b50de97284f4954bf`
+  clears realized children during a nonvirtualizing source replacement without
+  assigning the soon-to-be-cleared repeater as their recycle owner.
+  `ItemsRepeater` scopes the same ownerless-recycle mode with `try/finally`;
+  `ViewManager` passes a null factory parent, and the WPF `RecyclePool`
+  adaptation suppresses its normal visual-parent inference only for that
+  explicit three-argument null-owner call. The existing two-argument WPF
+  convenience overload continues to infer and detach an actual parent.
+- Stable commit `fce9db16349395cd9617ed8dc08ab40df1f46415`
+  floors UniformGrid's calculated items per line at one when the available
+  minor size is narrower than an item. ModernWpf already carries that
+  source-equivalent floor as its unconditional default. WinAppSDK's
+  containment/KIR rollout switch is platform servicing machinery and is not
+  ported; the epoch adds a narrow-width regression guard.
 - `StackLayout`, `FlowLayout`, and `UniformGridLayout` retain source layout
   properties and WPF-feasible virtualization, spacing, wrapping, uniform-slot,
   and orientation algorithms.
@@ -152,6 +173,13 @@ documented WPF-feasible `UniformGridLayout` adaptations.
   descendants. Only the three correct peers remain, in data-index order.
 - `RepeaterLayoutTests.FlowLayoutsIgnoreCollectionChangesWhenContextStateIsUnavailableLikeCurrentWinUI`
   covers the current null-state collection-change contract.
+- `RepeaterLayoutTests.NonVirtualItemsSourceReplacementRecyclesWithoutStaleOwner`
+  uses two repeaters sharing one factory and pool. It clears the first
+  nonvirtualizing owner, realizes through the second, and proves the exact
+  element can be reused without attempting removal from the stale owner.
+- `RepeaterLayoutTests.UniformGridLayoutFloorsNarrowAvailableWidthAtOneItemPerLine`
+  measures a 100-DIP item family in a 50-DIP viewport and proves layout retains
+  one item per line without a zero divisor.
 - `GalleryAutomationHookTests.ItemsRepeaterSampleMatchesWinUIGalleryExamples`
   covers all six examples, snippets, source names, add/remove behavior, layout
   switching, filtering/sorting, and Low chrome.
@@ -172,8 +200,10 @@ documented WPF-feasible `UniformGridLayout` adaptations.
   recording `artifacts/gallery-recordings/20260718-203249-206/report.md` passes
   with `6.231` / `11.4`. Both record local scroll evidence and finish after
   `1.5s` of the six-second maximum window.
-- The complete Repeater product/source/accessibility slice passes 69/69 on
-  `net8.0-windows7.0`.
+- The prior detailed-baseline Repeater product/source/accessibility slice
+  passed 69/69 on `net8.0-windows7.0`. The epoch adds the ownerless-recycle and
+  narrow-width regressions; the final serialized epoch gate reruns the complete
+  project.
 - The ItemsRepeater Gallery sample/crop slice passes 2/2 on
   `net8.0-windows7.0` and `net10.0-windows7.0`.
 - `ModernWpf.Gallery` builds for net462, net8, and net10 with zero warnings and

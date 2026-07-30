@@ -2,18 +2,35 @@
 
 ModernWpf parity work now uses official WPF Fluent as the primary source for stock WPF controls, and WinUI 3 source behavior for existing ModernWpf controls that are not covered by official WPF Fluent.
 
-Current source of truth: official `winui3/main` commit
-`de3e767333c2f0717a6a70cb22bd192ced5ad885` (2026-07-17). The local clone is
-used as a full-source mirror:
+The adopted synchronization epoch is official `winui3/main` commit
+`eb75504a1978df0d37a3ad4574d6f72bf4d21583`, latest stable
+`winui3/release/2.3.1` commit
+`a97562621a1d1ea397a38a3f512c9eef99db52d8`, and WinUI Gallery `main` commit
+`f4dc3eb367f4bcecac1793829d9a221e924e5bfb`. The complete reconciliation from
+the prior detailed-audit pins is recorded in
+`docs/winui3-sync-2026-07-29.md`.
+
+The detailed family audits retain their exact blob and history evidence at
+product commit `de3e767333c2f0717a6a70cb22bd192ced5ad885` and Gallery commit
+`29f62479d5c046a0b854a5868e5a7cd484572d87`; the central epoch record closes
+the bounded delta from those pins. The machine-readable authority, including
+the stable/main/Gallery tracks and every family path mapping, is
+`tools/upstream/upstream-sync.json`. A scheduled read-only report compares
+each adopted epoch target with its moving upstream head and requires every
+changed file to be mapped, explicitly ignored with a justification, or
+reported as unmapped action-required drift.
+
+The local clone remains a full-source mirror:
 
 ```text
 c70471c511a0168b61dcca13af9556465f26b673
 reference/winui3-current
 ```
 
-Current audits query the official repository for changes after that local
-mirror before making latest-source claims. Current repository paths use the
-post-May-2026 root layout (`controls/...` rather than `src/controls/...`).
+Current audits query the official repository before making latest-source
+claims. Current repository paths use the post-May-2026 root layout
+(`controls/...` rather than `src/controls/...`); the stable track's leading
+`src/` is normalized by the drift reporter.
 
 ## Rules
 

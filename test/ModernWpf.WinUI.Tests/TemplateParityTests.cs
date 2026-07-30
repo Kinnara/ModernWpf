@@ -622,23 +622,78 @@ public class TemplateParityTests
     }
 
     [TestMethod]
-    public void WinUI3SourceAuditDocumentsPinCurrentProductAuthority()
+    public void WinUI3SourceAuthorityUsesAdoptedEpochManifest()
     {
-        const string currentProductCommit = "de3e767333c2f0717a6a70cb22bd192ced5ad885";
+        const string currentProductCommit = "eb75504a1978df0d37a3ad4574d6f72bf4d21583";
+        const string currentStableCommit = "a97562621a1d1ea397a38a3f512c9eef99db52d8";
+        const string currentGalleryCommit = "f4dc3eb367f4bcecac1793829d9a221e924e5bfb";
         var repoRoot = FindRepoRoot();
         var docsDirectory = Path.Combine(repoRoot, "docs");
-        var auditFiles = Directory.GetFiles(docsDirectory, "*winui3-source-audit.md");
-        var staleAudits = auditFiles
-            .Where(path => !File.ReadAllText(path).Contains(currentProductCommit, StringComparison.Ordinal))
-            .Select(Path.GetFileName)
-            .OrderBy(name => name, StringComparer.Ordinal)
+        using var manifest = JsonDocument.Parse(File.ReadAllText(Path.Combine(
+            repoRoot,
+            "tools",
+            "upstream",
+            "upstream-sync.json")));
+        var repositories = manifest.RootElement
+            .GetProperty("repositories")
+            .EnumerateArray()
+            .ToArray();
+        var product = repositories.Single(repository =>
+            repository.GetProperty("id").GetString() == "winui-product");
+        var productTracks = product.GetProperty("tracks")
+            .EnumerateArray()
+            .ToArray();
+        var productMain = productTracks.Single(track =>
+            track.GetProperty("id").GetString() == "main");
+        var productStable = productTracks.Single(track =>
+            track.GetProperty("id").GetString() == "stable");
+        var gallery = repositories.Single(repository =>
+            repository.GetProperty("id").GetString() == "winui-gallery");
+        var galleryMain = gallery.GetProperty("tracks")
+            .EnumerateArray()
+            .Single(track => track.GetProperty("id").GetString() == "main");
+
+        Assert.AreEqual(
+            currentProductCommit,
+            productMain.GetProperty("epochTarget").GetProperty("revision").GetString());
+        Assert.AreEqual(
+            currentStableCommit,
+            productStable.GetProperty("epochTarget").GetProperty("revision").GetString());
+        Assert.AreEqual(
+            currentGalleryCommit,
+            galleryMain.GetProperty("epochTarget").GetProperty("revision").GetString());
+
+        var manifestAudits = manifest.RootElement
+            .GetProperty("families")
+            .EnumerateArray()
+            .SelectMany(family => family
+                .GetProperty("auditDocuments")
+                .EnumerateArray())
+            .Select(document => document.GetString() ?? string.Empty)
+            .Where(path => Path.GetFileName(path).EndsWith(
+                "winui3-source-audit.md",
+                StringComparison.Ordinal))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+        var auditFiles = Directory
+            .GetFiles(docsDirectory, "*winui3-source-audit.md")
+            .Select(path => Path.GetRelativePath(repoRoot, path).Replace('\\', '/'))
+            .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
 
         Assert.IsTrue(auditFiles.Length >= 30,
             "The current WinUI source-audit inventory unexpectedly shrank.");
-        Assert.IsFalse(staleAudits.Any(),
-            $"WinUI 3 source audits missing current product authority {currentProductCommit}: " +
-            string.Join("; ", staleAudits));
+        CollectionAssert.AreEqual(
+            auditFiles,
+            manifestAudits,
+            "Every current WinUI source audit must map exactly once in the upstream manifest.");
+
+        var epochDocument = File.ReadAllText(Path.Combine(
+            docsDirectory,
+            "winui3-sync-2026-07-29.md"));
+        StringAssert.Contains(epochDocument, currentProductCommit);
+        StringAssert.Contains(epochDocument, currentStableCommit);
+        StringAssert.Contains(epochDocument, currentGalleryCommit);
     }
 
     [TestMethod]

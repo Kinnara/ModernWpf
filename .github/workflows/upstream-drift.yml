@@ -1,0 +1,74 @@
+name: Monitor WinUI upstream drift
+
+on:
+  schedule:
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: upstream-drift-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  report:
+    name: Classify upstream source drift
+    runs-on: windows-2022
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Generate drift report
+        id: drift
+        continue-on-error: true
+        shell: pwsh
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          $reportDirectory = Join-Path $env:RUNNER_TEMP 'modernwpf-upstream-drift'
+          New-Item -ItemType Directory -Path $reportDirectory -Force | Out-Null
+          .\tools\upstream\Get-UpstreamDriftReport.ps1 `
+            -OutputPath (Join-Path $reportDirectory 'upstream-drift.md') `
+            -JsonOutputPath (Join-Path $reportDirectory 'upstream-drift.json') `
+            -FailOnObservedDrift `
+            -FailOnIncompleteComparison
+
+      - name: Publish job summary
+        if: always()
+        shell: pwsh
+        run: |
+          $reportPath = Join-Path $env:RUNNER_TEMP 'modernwpf-upstream-drift\upstream-drift.md'
+          if (Test-Path -LiteralPath $reportPath -PathType Leaf) {
+            Get-Content -LiteralPath $reportPath -Raw |
+              Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
+          }
+          else {
+            'The upstream drift report could not be generated.' |
+              Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
+          }
+
+      - name: Upload drift report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: upstream-drift
+          path: ${{ runner.temp }}/modernwpf-upstream-drift
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Enforce monitoring result
+        if: always()
+        shell: pwsh
+        env:
+          DRIFT_STEP_OUTCOME: ${{ steps.drift.outcome }}
+        run: |
+          if ($env:DRIFT_STEP_OUTCOME -ne 'success') {
+            throw 'Upstream drift monitoring failed. Review the job summary and report artifact.'
+          }

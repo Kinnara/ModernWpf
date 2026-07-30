@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
+using System.Windows.Markup;
 using System.Windows.Media;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ModernWpf.Controls.Primitives;
@@ -188,6 +189,120 @@ public class WindowedPopupApiTests
 
                 Assert.AreEqual(PopupPlacementMode.TopEdgeAlignedLeft, popup.ActualPlacement);
                 Assert.IsTrue(actualPlacements.Contains(PopupPlacementMode.TopEdgeAlignedLeft));
+            }
+            finally
+            {
+                popup.IsOpen = false;
+            }
+        });
+    }
+
+    [TestMethod]
+    public void XamlReaderIsOpenBeforeChildDefersUntilLoaded()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var (root, popup, child) = ParsePendingPopup(isOpenBeforeChild: true);
+            var openedCount = 0;
+            popup.Opened += (_, _) => openedCount++;
+
+            Assert.IsTrue(popup.IsOpen);
+            Assert.IsNull(PresentationSource.FromVisual(child));
+
+            using var host = CreateVisibleHost(root, width: 320, height: 220);
+
+            try
+            {
+                Assert.IsTrue(popup.IsOpen);
+                Assert.AreEqual(1, openedCount);
+                Assert.IsNotNull(PresentationSource.FromVisual(child));
+                Assert.AreEqual(100.0, child.ActualWidth);
+                Assert.AreEqual(100.0, child.ActualHeight);
+            }
+            finally
+            {
+                popup.IsOpen = false;
+            }
+        });
+    }
+
+    [TestMethod]
+    public void XamlReaderChildBeforeIsOpenDefersUntilLoaded()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var (root, popup, child) = ParsePendingPopup(isOpenBeforeChild: false);
+            var openedCount = 0;
+            popup.Opened += (_, _) => openedCount++;
+
+            Assert.IsTrue(popup.IsOpen);
+            Assert.IsNull(PresentationSource.FromVisual(child));
+
+            using var host = CreateVisibleHost(root, width: 320, height: 220);
+
+            try
+            {
+                Assert.IsTrue(popup.IsOpen);
+                Assert.AreEqual(1, openedCount);
+                Assert.IsNotNull(PresentationSource.FromVisual(child));
+                Assert.AreEqual(100.0, child.ActualWidth);
+                Assert.AreEqual(100.0, child.ActualHeight);
+            }
+            finally
+            {
+                popup.IsOpen = false;
+            }
+        });
+    }
+
+    [TestMethod]
+    public void ClosingPendingXamlPopupBeforeLoadedCancelsDeferredOpen()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var (root, popup, child) = ParsePendingPopup(isOpenBeforeChild: true);
+            var openedCount = 0;
+            var closedCount = 0;
+            popup.Opened += (_, _) => openedCount++;
+            popup.Closed += (_, _) => closedCount++;
+
+            Assert.IsTrue(popup.IsOpen);
+            popup.IsOpen = false;
+
+            Assert.IsFalse(popup.IsOpen);
+            Assert.IsNull(PresentationSource.FromVisual(child));
+
+            using var host = CreateVisibleHost(root, width: 320, height: 220);
+
+            Assert.IsFalse(popup.IsOpen);
+            Assert.AreEqual(0, openedCount);
+            Assert.AreEqual(0, closedCount);
+            Assert.IsNull(PresentationSource.FromVisual(child));
+        });
+    }
+
+    [TestMethod]
+    public void ParentlessProgrammaticAutoPopupStillOpensImmediately()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var child = CreatePopupChild(width: 90, height: 42);
+            var popup = new WindowedPopup
+            {
+                Child = child,
+                HorizontalOffset = 20,
+                VerticalOffset = 20
+            };
+            var openedCount = 0;
+            popup.Opened += (_, _) => openedCount++;
+
+            try
+            {
+                popup.IsOpen = true;
+
+                Assert.IsTrue(popup.IsOpen);
+                Assert.AreEqual(1, openedCount);
+                Assert.IsNotNull(PresentationSource.FromVisual(child));
             }
             finally
             {
@@ -581,6 +696,32 @@ public class WindowedPopupApiTests
             Height = height,
             Background = Brushes.Transparent
         };
+    }
+
+    private static (Grid Root, WindowedPopup Popup, Border Child) ParsePendingPopup(bool isOpenBeforeChild)
+    {
+        var popupXaml = isOpenBeforeChild
+            ? @"
+                <primitives:WindowedPopup IsOpen='True'>
+                    <Border Width='100' Height='100' Background='Red' />
+                </primitives:WindowedPopup>"
+            : @"
+                <primitives:WindowedPopup>
+                    <primitives:WindowedPopup.Child>
+                        <Border Width='100' Height='100' Background='Red' />
+                    </primitives:WindowedPopup.Child>
+                    <primitives:WindowedPopup.IsOpen>True</primitives:WindowedPopup.IsOpen>
+                </primitives:WindowedPopup>";
+        var root = (Grid)XamlReader.Parse(
+            $@"
+                <Grid
+                    xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
+                    xmlns:primitives='clr-namespace:ModernWpf.Controls.Primitives;assembly=ModernWpf'>
+                    {popupXaml}
+                </Grid>");
+        var popup = (WindowedPopup)root.Children[0];
+        var child = (Border)popup.Child;
+        return (root, popup, child);
     }
 
     private static Grid CreateRoot(params UIElement[] children)

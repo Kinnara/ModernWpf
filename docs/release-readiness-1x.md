@@ -31,23 +31,42 @@ framework-reference groups for the modern .NET targets. NuGet normalizes the
 `net462` dependency group to `.NETFramework4.6.2` in the generated nuspec. Its
 dependency versions must match the central values in `Directory.Build.props`.
 
-## Forward contract gate
+## Preview governance and stable contract gate
 
-`1.0.0-preview.1` is the first forward-compatibility baseline. Compatibility
-with 0.9.x is not a release requirement.
+`1.0.0-preview.1` is the first audit and migration baseline. It records the
+public surface users received, but it does not freeze later 1.0 previews to that
+exact API. Compatibility with 0.9.x is not a release requirement.
+
+During the 1.0 preview series, current applicable WinUI API shape remains
+authoritative for WinUI-derived controls. A deliberate upstream parity change
+may break an earlier preview only when the source audit, WPF adaptation,
+inventory rebaseline, focused tests, and `## Breaking changes` migration notes
+land together. When the active package baseline advances, that section must
+contain `Preview compatibility baseline: <old> → <new>`, at least one
+breaking-change bullet, and explicit `**Migration:**` guidance; a no-change
+placeholder cannot satisfy the gate. Stable `1.0.0` establishes the SemVer
+baseline; later 1.x releases must preserve it or defer an upstream break to the
+next major version.
 
 The release gate enforces:
 
 - The shipped CLR inventories in `ModernWpf/PublicAPI.Shipped.txt` and
-  `ModernWpf.Controls/PublicAPI.Shipped.txt`. New APIs go in the corresponding
-  `PublicAPI.Unshipped.txt`; removals and signature changes fail the build.
+  `ModernWpf.Controls/PublicAPI.Shipped.txt`. New APIs normally go in the
+  corresponding `PublicAPI.Unshipped.txt`; removals and signature changes fail
+  until an accepted preview break deliberately updates the inventories.
 - NuGet package validation, including strict validation between compatible
-  target frameworks. Releases after preview 1 automatically use
-  `1.0.0-preview.1` as their package-validation baseline.
+  target frameworks. `ModernWpfPackageValidationBaselineVersion` selects the
+  active published-package comparison. During previews it may advance to the
+  current development version only as part of the audited breaking-change
+  workflow; equality disables the unavailable previous-package comparison
+  while the inventories remain authoritative. The immutable
+  `ModernWpfPreviewAuditBaselineVersion` identifies the published
+  `1.0.0-preview.1` package for explicit historical migration audits; it is
+  informational and is not the active NuGet compatibility gate.
 - The source-qualified public resource-key inventories in
   `ModernWpf/PublicResourceKeys.Shipped.txt` and
   `ModernWpf/PublicResourceKeys.Unshipped.txt`.
-- When the current package version equals the compatibility baseline, every
+- When the current package version equals the active package baseline, every
   unshipped CLR and resource-key inventory must contain no contract entries.
 - Package export checks. Public top-level types must be in `ModernWpf`
   namespaces, apart from WPF's compiler-generated
@@ -57,7 +76,7 @@ The release gate enforces:
 
 Template parts, visual states, implicit/type resource keys, and unlisted style
 or template resources are intentionally outside this contract. See
-`docs/public-api-contract-1x.md` for the complete boundary.
+`docs/public-api-contract-1x.md` for the complete governance policy.
 
 ## Local release gate
 
@@ -172,4 +191,8 @@ Some WinUI behavior is intentionally adapted rather than copied:
 - WinUI visual baseline and raw pixel parity are tracked through focused gallery visual checks, not the package gate.
 - Official WPF Fluent remains an input to stock-control styling, but ModernWpf still owns WinUI-compatible resource dictionaries, element theme islands, and ModernWpf-specific controls.
 
-Broader per-control parity status stays in `docs/winui2-2.8.7-sync.md`; this file defines the release gate for packaging and consumption.
+Current per-control parity policy and status live in
+`docs/winui3-source-parity.md` and
+`docs/winui3-control-source-coverage.md`. The WinUI 2.8.7 matrix is retained
+only as a historical migration snapshot; it is not an active release authority.
+This file defines the release gate for packaging and consumption.

@@ -20,8 +20,44 @@ public class RepeaterSourceAuditTests
         var galleryFactory = Read(repoRoot, "ModernWpf.Gallery", "Pages", "CollectionsSampleFactory.cs");
         var galleryTests = Read(repoRoot, "test", "ModernWpf.Gallery.Tests", "GalleryAutomationHookTests.cs");
         var harness = Read(repoRoot, "tools", "visual-checks", "Run-GalleryVisualChecks.ps1");
+        var uniformGridState = Read(
+            repoRoot,
+            "ModernWpf.Controls",
+            "Repeater",
+            "Layouts",
+            "UniformGridLayout",
+            "UniformGridLayoutState.cs");
+        var layoutTests = Read(
+            repoRoot,
+            "test",
+            "ModernWpf.WinUI.Tests",
+            "Repeater",
+            "RepeaterLayoutTests.cs");
+        var itemsRepeater = Read(
+            repoRoot,
+            "ModernWpf.Controls",
+            "Repeater",
+            "ItemsRepeater",
+            "ItemsRepeater.cs");
+        var viewManager = Read(
+            repoRoot,
+            "ModernWpf.Controls",
+            "Repeater",
+            "ItemsRepeater",
+            "ViewManager.cs");
+        var recyclePool = Read(
+            repoRoot,
+            "ModernWpf.Controls",
+            "Repeater",
+            "ItemsRepeater",
+            "ItemTemplate",
+            "RecyclePool.cs");
 
         StringAssert.Contains(audit, "de3e767333c2f0717a6a70cb22bd192ced5ad885");
+        StringAssert.Contains(audit, "eb75504a1978df0d37a3ad4574d6f72bf4d21583");
+        StringAssert.Contains(audit, "a97562621a1d1ea397a38a3f512c9eef99db52d8");
+        StringAssert.Contains(audit, "bfc240e263b935e645b00f1b50de97284f4954bf");
+        StringAssert.Contains(audit, "fce9db16349395cd9617ed8dc08ab40df1f46415");
         StringAssert.Contains(audit, "c70471c511a0168b61dcca13af9556465f26b673");
         StringAssert.Contains(audit, "8463f45162149de0ec3ad7df752596893fe3e13e");
         StringAssert.Contains(audit, "262cf0f1f5dcbaf366ac2cb426713e4a961fc7be");
@@ -71,6 +107,13 @@ public class RepeaterSourceAuditTests
         StringAssert.Contains(automationTests, "AutomationPeerReportsOnlyRealizedChildrenInItemIndexOrderLikeWinUI");
         StringAssert.Contains(automationTests, "context.RecycleElement(element1);");
         StringAssert.Contains(automationTests, "Assert.AreSame(group.Children[1], owners[2]);");
+        StringAssert.Contains(uniformGridState, "(uint)Math.Max(1.0, availableSizeMinor /");
+        StringAssert.Contains(layoutTests, "UniformGridLayoutFloorsNarrowAvailableWidthAtOneItemPerLine");
+        StringAssert.Contains(layoutTests, "NonVirtualItemsSourceReplacementRecyclesWithoutStaleOwner");
+        StringAssert.Contains(itemsRepeater, "ViewManager.RecycleWithoutOwner(true);");
+        StringAssert.Contains(itemsRepeater, "ViewManager.RecycleWithoutOwner(false);");
+        StringAssert.Contains(viewManager, "context.Parent = m_recycleWithoutOwner ? null : m_owner;");
+        StringAssert.Contains(recyclePool, "m_suppressParentInference = owner == null;");
 
         StringAssert.Contains(galleryFactory, "Basic, non-interactive items laid out by ItemsRepeater");
         StringAssert.Contains(galleryFactory, "Virtualized, Content-Heavy Layout with Filtering and Sorting");

@@ -14,12 +14,14 @@
          public glue. Analyze the final, shipped compilation instead. -->
     <RunAnalyzers Condition="'$(_TargetAssemblyProjectName)' != ''">false</RunAnalyzers>
     <NoWarn>$(NoWarn);RS0036;RS0041</NoWarn>
+    <!-- These diagnostics guard the checked-in accepted API snapshot. A
+         deliberate preview-era WinUI break updates that snapshot explicitly. -->
     <WarningsAsErrors>$(WarningsAsErrors);RS0016;RS0017;RS0024;RS0025</WarningsAsErrors>
     <EnablePackageValidation>true</EnablePackageValidation>
     <EnableStrictModeForCompatibleFrameworksInPackage>true</EnableStrictModeForCompatibleFrameworksInPackage>
     <EnableStrictModeForBaselineValidation>true</EnableStrictModeForBaselineValidation>
     <PackageValidationBaselineVersion
-      Condition="'$(Version)' != '$(ModernWpfCompatibilityBaselineVersion)' and '$(PackageValidationBaselineVersion)' == ''">$(ModernWpfCompatibilityBaselineVersion)</PackageValidationBaselineVersion>
+      Condition="'$(Version)' != '$(ModernWpfPackageValidationBaselineVersion)' and '$(PackageValidationBaselineVersion)' == ''">$(ModernWpfPackageValidationBaselineVersion)</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -78,7 +78,7 @@ ModernWPF is not affiliated with or endorsed by Microsoft.
 
 | Line | Status | Policy |
 | --- | --- | --- |
-| 1.x | Active preview | Current development line. `1.0.0-preview.1` establishes the forward-compatible CLR API and public resource-key baseline. |
+| 1.x | Active preview | Current development line. `1.0.0-preview.1` records the first API/resource audit and migration baseline; later previews follow current applicable WinUI API shape, with deliberate breaks documented before stable `1.0.0` establishes the SemVer boundary. |
 | 0.9.x | Frozen and unsupported | Historical packages remain available, but no updates or security fixes are planned. |
 
 Source and binary compatibility with 0.9.x is not promised. Existing
@@ -181,7 +181,8 @@ also requires the .NET Framework 4.6.2 Developer Pack. In Visual Studio, open
 | --- | --- |
 | [1.0.0-preview.1 release notes](docs/release-notes-1.0.0-preview.1.md) | Package changes, intentional 0.9 breaks, recommended resources, and preview limitations. |
 | [Migrating from 0.9.x](docs/migrating-from-0.9.md) | Step-by-step application migration guidance. |
-| [1.x public API contract](docs/public-api-contract-1x.md) | Forward compatibility policy for CLR APIs and public resource keys. |
+| [1.x public API contract](docs/public-api-contract-1x.md) | Preview governance and stable compatibility policy for CLR APIs and public resource keys. |
+| [WinUI 3 synchronization epoch](docs/winui3-sync-2026-07-29.md) | Stable/main/Gallery pins, complete upstream dispositions, WPF adaptations, and continuous drift-monitoring policy. |
 
 ## Build from source
 

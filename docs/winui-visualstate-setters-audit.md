@@ -1,10 +1,12 @@
 # WinUI VisualState.Setters Audit
 
 This tracks WinUI `VisualState.Setters` parity for ModernWpf 1.x. The primary
-source is the local final WinUI 2.8.7 checkout:
-`D:\repos\microsoft-ui-xaml-v2.8.7\dev`. The current WinUI 3 checkout at
-`D:\repos\microsoft-ui-xaml\src\controls\dev` was also counted to identify
-newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
+authority is current applicable WinUI 3 source as pinned by
+`docs/winui3-source-parity.md` and the related per-control source audits.
+The WinUI 2.8.7 paths and setter counts below are retained only as the
+historical enumeration that started this conversion audit; they do not define
+current behavior, API shape, exclusions, or completion. Refresh decisions
+against current WinUI 3 source before changing a mapped control.
 
 ## Status Legend
 
@@ -24,7 +26,7 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 
 ## Current Conversions
 
-| WinUI 2.8.7 source | Setter blocks | ModernWpf file | Status | Notes |
+| Historical WinUI 2.8.7 source label | Setter blocks | ModernWpf file | Status | Notes |
 | --- | ---: | --- | --- | --- |
 | `dev\ProgressBar\ProgressBar.xaml` | 4 | `ModernWpf\ProgressBar\ProgressBar.xaml` | Converted | Direct opacity setters and the `UpdatingError` nested brush-color setter now use `VisualStateEx.Setters`; `VisualStateManagerEx` resolves WinUI-style nested target paths such as `(Shape.Fill).(SolidColorBrush.Color)`. Transition storyboards remain for animated progress movement and color transitions. |
 | `dev\CommonStyles\AppBarSeparator_themeresources.xaml` | 2 | `ModernWpf.Controls\CommandBar\AppBarSeparator.xaml` | Converted | Compact and overflow layout states now use `VisualStateEx.Setters` instead of a `VisualStateGroupListener` trigger bridge. |
@@ -42,9 +44,9 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 | `dev\CommonStyles\ToggleSwitch_themeresources.xaml` | 1 | `ModernWpf.Controls\ToggleSwitch\ToggleSwitch.xaml` | Converted | WinUI's pressed knob alignment setters are represented in ModernWpf's active `Dragging` state, because this WPF port routes thumb interaction through that state instead of `CommonStates.Pressed`. |
 | `dev\MenuBar\MenuBarItem.xaml` | 3 | `ModernWpf.Controls\MenuBar\MenuBar.xaml` | Converted | MenuBarItem common/selected state setters now use `VisualStateEx.Setters` in the source-backed MenuBar template; the old WPF `Menu` / `MenuItem` mapping has been deleted. |
 
-## Relevant Mapped WinUI 2.8.7 Sources
+## Historical Source Enumeration And Current Mappings
 
-| WinUI 2.8.7 source | Setter blocks | ModernWpf mapping | Status | Main blocker or next action |
+| Historical WinUI 2.8.7 source label | Setter blocks | ModernWpf mapping | Status | Main blocker or next action |
 | --- | ---: | --- | --- | --- |
 | `dev\AutoSuggestBox\AutoSuggestBox_themeresources.xaml` | 2 | `ModernWpf\Styles\AutoSuggestBox.xaml` | Converted | Query-button pointer-over and pressed `AnimatedIcon.State` setters now use `VisualStateEx.Setters` on the static `ContentPresenterEx` fallback while preserving the existing WPF trigger chrome. |
 | `dev\Breadcrumb\BreadcrumbBar.xaml` | 16 | `ModernWpf.Controls\BreadcrumbBar\BreadcrumbBar.xaml` | Converted | Inline item, last item, ellipsis, ellipsis dropdown layout/focus, dropdown common states, and nested item-button common states now use `VisualStateEx.Setters` driven by `BreadcrumbBarItem`. WinUI `Control.IsTemplateFocusTarget` and `FocusVisualMargin` setter targets are represented by `FocusVisualHelper` on WPF template parts. |
@@ -77,7 +79,7 @@ newer deltas, but the repo-wide sync matrix is still anchored on WinUI 2.8.7.
 
 ## Excluded Or Non-Product Sources
 
-| WinUI 2.8.7 source | Setter blocks | Reason |
+| Historical WinUI 2.8.7 source label | Setter blocks | Reason |
 | --- | ---: | --- |
 | `dev\AnimatedIcon\TestUI\AnimatedIconPage.xaml` | 12 | TestUI sample only; `AnimatedIcon` itself is excluded from ModernWpf core. |
 | `dev\CommonStyles\InkToolbar_themeresources.xaml` | 112 | InkToolbar is not carried as a ModernWpf control. |

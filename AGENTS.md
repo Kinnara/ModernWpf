@@ -22,8 +22,20 @@ exists below the directory being changed.
 
 ## Compatibility contract
 
-- `1.0.0-preview.1` is the forward-compatibility baseline. Do not remove or
-  change shipped public CLR APIs or explicitly shipped public resource keys.
+- `1.0.0-preview.1` is the first audit and migration baseline, not an
+  immutable API freeze across later previews.
+- During the 1.0 preview series, current applicable WinUI API shape remains
+  authoritative for WinUI-derived controls. A source-audited parity change may
+  deliberately add, change, or remove a Preview 1 CLR API or public resource
+  key when the same change updates the checked-in inventories, documents any
+  WPF adaptation, adds migration guidance, and includes focused tests.
+- Treat the checked-in inventories and NuGet package baseline as drift gates.
+  Unexpected changes fail; an intentional preview-era break must explicitly
+  rebaseline them in the reviewed change.
+- Stable `1.0.0` establishes the SemVer compatibility baseline. After that
+  release, preserve public CLR APIs and explicitly shipped public resource keys
+  throughout 1.x; adopt an upstream breaking change through a compatible
+  adaptation or in the next ModernWpf major version.
 - Public API inventories live in:
   - `ModernWpf/PublicAPI.Shipped.txt`
   - `ModernWpf/PublicAPI.Unshipped.txt`
@@ -34,15 +46,17 @@ exists below the directory being changed.
   files.
 - Prefer internal implementation types. Do not expose template helpers,
   converters, automation details, or WinRT projection types as package API.
-- Do not add members to an already shipped public interface. Add a new
-  capability interface or an extensible base-class member instead.
+- For ModernWpf-originated additions, do not add members to an already shipped
+  public interface; add a capability interface or extensible base-class member.
+  During previews, mirror a source-audited WinUI interface change when parity
+  requires it and record the resulting migration.
 - When adding a deliberate public resource key, run:
 
   ```powershell
   .\tools\api-contracts\Update-PublicResourceKeyContract.ps1
   ```
 
-- Consult `docs/public-api-contract-1x.md` for the complete boundary and
+- Consult `docs/public-api-contract-1x.md` for the complete governance policy and
   `docs/migrating-from-0.9.md` for intentional legacy breaks.
 
 ## Implementation rules

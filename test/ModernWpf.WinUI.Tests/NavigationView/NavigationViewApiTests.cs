@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Automation.Peers;
@@ -144,6 +145,74 @@ public class NavigationViewApiTests
                 .OfType<TextBlock>()
                 .Single();
             Assert.AreEqual(navView.Content, text.Text);
+        });
+    }
+
+    [TestMethod]
+    public void NavigationViewItemAltSpaceRemainsUnhandledForSystemMenuLikeCurrentWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var item = new ModernWpf.Controls.NavigationViewItem
+            {
+                Content = "Home"
+            };
+            var navView = new ModernWpf.Controls.NavigationView
+            {
+                Width = 640,
+                Height = 360,
+                PaneDisplayMode = ModernWpf.Controls.NavigationViewPaneDisplayMode.Left
+            };
+            navView.MenuItems.Add(item);
+
+            var invokedCount = 0;
+            navView.ItemInvoked += (_, _) => invokedCount++;
+
+            using var host = new TestWindowHost(navView, width: 640, height: 360);
+            host.UpdateLayout();
+
+            var source = PresentationSource.FromVisual(item)
+                ?? throw new AssertFailedException("Expected the navigation item to have a presentation source.");
+
+            var systemSpace = new KeyEventArgs(
+                Keyboard.PrimaryDevice,
+                source,
+                Environment.TickCount,
+                Key.Space)
+            {
+                RoutedEvent = Keyboard.KeyDownEvent,
+                Source = item
+            };
+            var markSystem = typeof(KeyEventArgs).GetMethod(
+                "MarkSystem",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.IsNotNull(markSystem);
+            markSystem!.Invoke(systemSpace, null);
+
+            Assert.AreEqual(Key.System, systemSpace.Key);
+            Assert.AreEqual(Key.Space, systemSpace.SystemKey);
+
+            item.RaiseEvent(systemSpace);
+
+            Assert.IsFalse(systemSpace.Handled);
+            Assert.AreEqual(0, invokedCount);
+
+            var plainSpace = new KeyEventArgs(
+                Keyboard.PrimaryDevice,
+                source,
+                Environment.TickCount + 1,
+                Key.Space)
+            {
+                RoutedEvent = Keyboard.KeyDownEvent,
+                Source = item
+            };
+
+            item.RaiseEvent(plainSpace);
+
+            Assert.IsTrue(plainSpace.Handled);
+            Assert.AreEqual(1, invokedCount);
         });
     }
 
