@@ -1,0 +1,45 @@
+{
+  "generatedAt": "2026-07-30T12:34:56Z",
+  "stableTags": [
+    {
+      "repository": "winui-product",
+      "track": "stable",
+      "name": "winui3/release/2.3.1",
+      "revision": "a97562621a1d1ea397a38a3f512c9eef99db52d8",
+      "published_at": "2026-07-17T12:00:00Z"
+    }
+  ],
+  "observedHeads": [
+    {
+      "repository": "winui-product",
+      "track": "stable",
+      "revision": "a97562621a1d1ea397a38a3f512c9eef99db52d8",
+      "label": "winui3/release/2.3.1"
+    },
+    {
+      "repository": "winui-product",
+      "track": "main",
+      "revision": "1111111111111111111111111111111111111111",
+      "label": "winui3/main"
+    },
+    {
+      "repository": "winui-gallery",
+      "track": "main",
+      "revision": "f4dc3eb367f4bcecac1793829d9a221e924e5bfb",
+      "label": "main"
+    }
+  ],
+  "comparisons": [
+    {
+      "repository": "winui-product",
+      "base": "eb75504a1978df0d37a3ad4574d6f72bf4d21583",
+      "head": "1111111111111111111111111111111111111111",
+      "status": "ahead",
+      "aheadBy": 1,
+      "behindBy": 0,
+      "totalCommits": 1,
+      "isComplete": false,
+      "files": []
+    }
+  ]
+}

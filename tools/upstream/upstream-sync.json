@@ -1,0 +1,1177 @@
+{
+  "$schema": "./upstream-sync.schema.json",
+  "schemaVersion": 1,
+  "repositories": [
+    {
+      "id": "winui-product",
+      "owner": "microsoft",
+      "name": "microsoft-ui-xaml",
+      "ignorePaths": [
+        {
+          "path": ".devcontainer/**",
+          "justification": "Development-container configuration does not define shipped WinUI control behavior or API."
+        },
+        {
+          "path": ".github/**",
+          "justification": "Upstream GitHub automation and repository metadata do not define shipped WinUI control behavior or API."
+        },
+        {
+          "path": ".pipelines/**",
+          "justification": "Upstream pipeline configuration does not define shipped WinUI control behavior or API."
+        },
+        {
+          "path": ".gitattributes",
+          "justification": "Repository text-normalization metadata is not a WinUI control source input."
+        },
+        {
+          "path": ".gitignore",
+          "justification": "Repository ignore metadata is not a WinUI control source input."
+        },
+        {
+          "path": "CODE_OF_CONDUCT.md",
+          "justification": "Community policy is not a WinUI control source input."
+        },
+        {
+          "path": "CONTRIBUTING.md",
+          "justification": "Contributor guidance is not a WinUI control source input."
+        },
+        {
+          "path": "LICENSE",
+          "justification": "The repository license file is not a WinUI control source input."
+        },
+        {
+          "path": "README.md",
+          "justification": "The repository landing page is not a WinUI control source input."
+        },
+        {
+          "path": "SECURITY.md",
+          "justification": "Security-reporting policy is not a WinUI control source input."
+        },
+        {
+          "path": "SUPPORT.md",
+          "justification": "Support policy is not a WinUI control source input."
+        }
+      ],
+      "tracks": [
+        {
+          "id": "stable",
+          "channel": "stable",
+          "reviewedBaseline": {
+            "revision": "a97562621a1d1ea397a38a3f512c9eef99db52d8",
+            "label": "winui3/release/2.3.1"
+          },
+          "epochTarget": {
+            "revision": "a97562621a1d1ea397a38a3f512c9eef99db52d8",
+            "label": "winui3/release/2.3.1"
+          },
+          "epochAdoption": {
+            "status": "adopted",
+            "dispositionDocument": "docs/winui3-sync-2026-07-29.md"
+          },
+          "latestStableAtEpoch": {
+            "tag": "winui3/release/2.3.1",
+            "revision": "a97562621a1d1ea397a38a3f512c9eef99db52d8"
+          },
+          "observedHead": {
+            "kind": "latestStableRelease",
+            "tagPattern": "^winui3/release/[0-9]+\\.[0-9]+\\.[0-9]+$"
+          }
+        },
+        {
+          "id": "main",
+          "channel": "main",
+          "reviewedBaseline": {
+            "revision": "de3e767333c2f0717a6a70cb22bd192ced5ad885",
+            "label": "reviewed 2026-07-17 winui3/main"
+          },
+          "epochTarget": {
+            "revision": "eb75504a1978df0d37a3ad4574d6f72bf4d21583",
+            "label": "sync epoch 2026-07-30 winui3/main"
+          },
+          "epochAdoption": {
+            "status": "adopted",
+            "dispositionDocument": "docs/winui3-sync-2026-07-29.md"
+          },
+          "observedHead": {
+            "kind": "ref",
+            "ref": "winui3/main"
+          }
+        }
+      ]
+    },
+    {
+      "id": "winui-gallery",
+      "owner": "microsoft",
+      "name": "WinUI-Gallery",
+      "ignorePaths": [
+        {
+          "path": ".devcontainer/**",
+          "justification": "Development-container configuration does not define Gallery control examples."
+        },
+        {
+          "path": ".github/**",
+          "justification": "Upstream GitHub automation and repository metadata do not define Gallery control examples."
+        },
+        {
+          "path": ".pipelines/**",
+          "justification": "Upstream pipeline configuration does not define Gallery control examples."
+        },
+        {
+          "path": ".gitattributes",
+          "justification": "Repository text-normalization metadata is not a Gallery source input."
+        },
+        {
+          "path": ".gitignore",
+          "justification": "Repository ignore metadata is not a Gallery source input."
+        },
+        {
+          "path": "CODE_OF_CONDUCT.md",
+          "justification": "Community policy is not a Gallery source input."
+        },
+        {
+          "path": "CONTRIBUTING.md",
+          "justification": "Contributor guidance is not a Gallery source input."
+        },
+        {
+          "path": "LICENSE",
+          "justification": "The repository license file is not a Gallery source input."
+        },
+        {
+          "path": "README.md",
+          "justification": "The repository landing page is not a Gallery source input."
+        },
+        {
+          "path": "SECURITY.md",
+          "justification": "Security-reporting policy is not a Gallery source input."
+        },
+        {
+          "path": "SUPPORT.md",
+          "justification": "Support policy is not a Gallery source input."
+        },
+        {
+          "path": "tests/WinUIGallery.UITests/WinUIGallery.UITests.csproj",
+          "justification": "The Gallery UI-test project dependency set does not define shipped control pages, snippets, option surfaces, or behavior."
+        }
+      ],
+      "tracks": [
+        {
+          "id": "main",
+          "channel": "main",
+          "reviewedBaseline": {
+            "revision": "29f62479d5c046a0b854a5868e5a7cd484572d87",
+            "label": "reviewed 2026-07-13 main"
+          },
+          "epochTarget": {
+            "revision": "f4dc3eb367f4bcecac1793829d9a221e924e5bfb",
+            "label": "sync epoch 2026-07-30 main"
+          },
+          "epochAdoption": {
+            "status": "adopted",
+            "dispositionDocument": "docs/winui3-sync-2026-07-29.md"
+          },
+          "observedHead": {
+            "kind": "ref",
+            "ref": "main"
+          }
+        }
+      ]
+    }
+  ],
+  "families": [
+    {
+      "id": "annotated-scrollbar",
+      "displayName": "AnnotatedScrollBar",
+      "auditDocuments": [
+        "docs/annotatedscrollbar-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/AnnotatedScrollBar/**",
+            "controls/dev/Generated/AnnotatedScrollBar*",
+            "controls/dev/ScrollPresenter/ScrollPresenterPrimitives.idl"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/AnnotatedScrollBar/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "app-bar-elements",
+      "displayName": "AppBar element family",
+      "auditDocuments": [
+        "docs/appbarbutton-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/CommonStyles/AppBarButton*",
+            "controls/dev/CommonStyles/AppBarToggleButton*",
+            "controls/dev/CommonStyles/AppBarSeparator*",
+            "dxaml/xcp/dxaml/lib/AppBarButton*",
+            "dxaml/xcp/dxaml/lib/AppBarToggleButton*",
+            "dxaml/xcp/dxaml/lib/AppBarSeparator*",
+            "dxaml/xcp/dxaml/lib/AppBarElementContainer*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/AppBarButton/**",
+            "WinUIGallery/Samples/AppBarToggleButton/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "auto-suggest-box",
+      "displayName": "AutoSuggestBox",
+      "auditDocuments": [
+        "docs/autosuggestbox-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/AutoSuggestBox/**",
+            "controls/dev/Generated/AutoSuggestBox*",
+            "controls/test/MUXControlsTestApp/verification/AutoSuggestBox.xml",
+            "dxaml/test/native/external/controls/autosuggestbox/**",
+            "dxaml/xcp/dxaml/lib/AutoSuggestBox*",
+            "dxaml/xcp/tools/XCPTypesAutoGen/Modules/AutoSuggestBox/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/AutoSuggestBox/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "breadcrumb-bar",
+      "displayName": "BreadcrumbBar",
+      "auditDocuments": [
+        "docs/breadcrumbbar-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Breadcrumb/**",
+            "controls/dev/Generated/Breadcrumb*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/BreadcrumbBar/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "color-picker",
+      "displayName": "ColorPicker",
+      "auditDocuments": [
+        "docs/colorpicker-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/ColorPicker/**",
+            "controls/dev/Generated/ColorPicker*",
+            "controls/dev/Generated/ColorSpectrum*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/ColorPicker/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "command-bar",
+      "displayName": "CommandBar",
+      "auditDocuments": [
+        "docs/commandbar-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/CommonStyles/CommandBar*",
+            "controls/dev/CommonStyles/AppBarElementContainer*",
+            "dxaml/test/native/external/controls/commandbar/**",
+            "dxaml/xcp/dxaml/lib/AppBar_Partial*",
+            "dxaml/xcp/dxaml/lib/AppBarAutomationPeer*",
+            "dxaml/xcp/dxaml/lib/CommandBar*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/CommandBar/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "command-bar-flyout",
+      "displayName": "CommandBarFlyout",
+      "auditDocuments": [
+        "docs/commandbarflyout-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/CommandBarFlyout/**",
+            "controls/dev/Generated/CommandBarFlyout*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/CommandBarFlyout/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "content-dialog",
+      "displayName": "ContentDialog",
+      "auditDocuments": [
+        "docs/contentdialog-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/CommonStyles/ContentDialog*",
+            "dxaml/test/native/external/controls/contentdialog/**",
+            "dxaml/xcp/dxaml/lib/ContentDialog*",
+            "dxaml/xcp/tools/XCPTypesAutoGen/Modules/ContentDialog/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/ContentDialog/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "drop-down-button",
+      "displayName": "DropDownButton",
+      "auditDocuments": [
+        "docs/dropdownbutton-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/DropDownButton/**",
+            "controls/dev/Generated/DropDownButton*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/DropDownButton/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "flyout-base",
+      "displayName": "Flyout base and presenter",
+      "auditDocuments": [
+        "docs/flyoutbase-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/CommonStyles/FlyoutPresenter*",
+            "dxaml/xcp/dxaml/lib/FlyoutBase*",
+            "dxaml/xcp/dxaml/lib/FlyoutPresenter*",
+            "dxaml/xcp/dxaml/lib/Flyout_Partial*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/Flyout/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hyperlink-button",
+      "displayName": "HyperlinkButton",
+      "auditDocuments": [
+        "docs/hyperlinkbutton-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/CommonStyles/HyperlinkButton*",
+            "dxaml/xcp/dxaml/lib/HyperLinkButton*",
+            "dxaml/xcp/tools/XCPTypesAutoGen/Modules/HyperlinkButton/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/HyperlinkButton/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "icon-element",
+      "displayName": "IconElement family",
+      "auditDocuments": [
+        "docs/iconelement-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/CommonStyles/BitmapIcon*",
+            "controls/dev/CommonStyles/FontIcon*",
+            "controls/dev/CommonStyles/IconElement*",
+            "controls/dev/CommonStyles/PathIcon*",
+            "controls/dev/CommonStyles/SymbolIcon*",
+            "dxaml/xcp/dxaml/lib/BitmapIcon*",
+            "dxaml/xcp/dxaml/lib/FontIcon*",
+            "dxaml/xcp/dxaml/lib/IconElement*",
+            "dxaml/xcp/dxaml/lib/PathIcon*",
+            "dxaml/xcp/dxaml/lib/SymbolIcon*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/IconElement/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "icon-source-image-icon",
+      "displayName": "IconSource and ImageIcon",
+      "auditDocuments": [
+        "docs/iconsource-imageicon-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/*IconSource*",
+            "controls/dev/Generated/ImageIcon*",
+            "controls/dev/IconSource/**",
+            "controls/dev/ImageIcon/**",
+            "dxaml/xcp/dxaml/lib/*IconSource*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/IconElement/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "info-badge",
+      "displayName": "InfoBadge",
+      "auditDocuments": [
+        "docs/infobadge-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/InfoBadge*",
+            "controls/dev/InfoBadge/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/InfoBadge/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "info-bar",
+      "displayName": "InfoBar",
+      "auditDocuments": [
+        "docs/infobar-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/InfoBar*",
+            "controls/dev/InfoBar/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/InfoBar/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "layout-chrome",
+      "displayName": "Layout chrome",
+      "auditDocuments": [
+        "docs/layout-chrome-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "dxaml/xcp/core/core/elements/Border.*",
+            "dxaml/xcp/core/core/elements/ContentPresenter.*",
+            "dxaml/xcp/core/core/elements/Grid.*",
+            "dxaml/xcp/core/core/elements/StackPanel.*",
+            "dxaml/xcp/core/core/elements/framework.*",
+            "dxaml/xcp/tools/XCPTypesAutoGen/XamlOM/Model/Microsoft.UI.Xaml.Controls.cs"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "layout-panel",
+      "displayName": "LayoutPanel",
+      "auditDocuments": [
+        "docs/layoutpanel-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/LayoutPanel*",
+            "controls/dev/LayoutPanel/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/LayoutPanel/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "list-view-grid-view",
+      "displayName": "ListView and GridView",
+      "auditDocuments": [
+        "docs/listview-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/CommonStyles/GridViewItem*",
+            "controls/dev/CommonStyles/ListViewItem*",
+            "dxaml/test/native/external/controls/listviewbaseitem/**",
+            "dxaml/test/native/external/enterprise/GridView/**",
+            "dxaml/test/native/external/enterprise/ListView/**",
+            "dxaml/xcp/dxaml/lib/GridView*",
+            "dxaml/xcp/dxaml/lib/ItemInvokeAdapter*",
+            "dxaml/xcp/dxaml/lib/ListView*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/GridView/**",
+            "WinUIGallery/Samples/ListView/**",
+            "WinUIGallery/Styles/GridViewItem.xaml"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "menu-bar",
+      "displayName": "MenuBar",
+      "auditDocuments": [
+        "docs/menubar-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/MenuBar*",
+            "controls/dev/MenuBar/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/MenuBar/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "menu-flyout",
+      "displayName": "MenuFlyout family",
+      "auditDocuments": [
+        "docs/menuflyout-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/CommonStyles/MenuFlyout*",
+            "dxaml/xcp/dxaml/lib/MenuFlyout*",
+            "dxaml/xcp/dxaml/lib/ToggleMenuFlyoutItem*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/MenuFlyout/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "navigation-view",
+      "displayName": "NavigationView",
+      "auditDocuments": [
+        "docs/navigationview-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/NavigationView*",
+            "controls/dev/NavigationView/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/NavigationView/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "number-box",
+      "displayName": "NumberBox",
+      "auditDocuments": [
+        "docs/numberbox-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/NumberBox*",
+            "controls/dev/NumberBox/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/NumberBox/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pager-control",
+      "displayName": "PagerControl",
+      "auditDocuments": [
+        "docs/pagercontrol-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/PagerControl*",
+            "controls/dev/PagerControl/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/PagerControl/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "person-picture",
+      "displayName": "PersonPicture",
+      "auditDocuments": [
+        "docs/personpicture-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/PersonPicture*",
+            "controls/dev/PersonPicture/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/PersonPicture/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "progress-bar",
+      "displayName": "ProgressBar",
+      "auditDocuments": [
+        "docs/progressbar-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/ProgressBar*",
+            "controls/dev/ProgressBar/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/ProgressBar/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "progress-ring",
+      "displayName": "ProgressRing",
+      "auditDocuments": [
+        "docs/progressring-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/ProgressRing*",
+            "controls/dev/ProgressRing/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/ProgressRing/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "radio-buttons",
+      "displayName": "RadioButtons",
+      "auditDocuments": [
+        "docs/radiobuttons-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/RadioButtons*",
+            "controls/dev/RadioButtons/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/RadioButtons/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "radio-menu-flyout-item",
+      "displayName": "RadioMenuFlyoutItem",
+      "auditDocuments": [
+        "docs/radiomenuflyoutitem-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/RadioMenuFlyoutItem*",
+            "controls/dev/RadioMenuFlyoutItem/**",
+            "dxaml/xcp/dxaml/lib/MenuFlyoutItemAutomationPeer*",
+            "dxaml/xcp/dxaml/lib/ToggleMenuFlyoutItemAutomationPeer*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/MenuFlyout/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rating-control",
+      "displayName": "RatingControl",
+      "auditDocuments": [
+        "docs/ratingcontrol-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/RatingControl*",
+            "controls/dev/RatingControl/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/RatingControl/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "repeater",
+      "displayName": "ItemsRepeater",
+      "auditDocuments": [
+        "docs/repeater-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/ItemsRepeater*",
+            "controls/dev/Generated/Repeater*",
+            "controls/dev/Repeater/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/ItemsRepeater/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "selector-bar",
+      "displayName": "SelectorBar",
+      "auditDocuments": [
+        "docs/selectorbar-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/SelectorBar*",
+            "controls/dev/ItemContainer/**",
+            "controls/dev/ItemsView/**",
+            "controls/dev/SelectorBar/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/SelectorBar/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "split-button",
+      "displayName": "SplitButton family",
+      "auditDocuments": [
+        "docs/splitbutton-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/SplitButton*",
+            "controls/dev/Generated/ToggleSplitButton*",
+            "controls/dev/SplitButton/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/SplitButton/**",
+            "WinUIGallery/Samples/ToggleSplitButton/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "split-view",
+      "displayName": "SplitView",
+      "auditDocuments": [
+        "docs/splitview-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/SplitView/**",
+            "dxaml/xcp/dxaml/lib/SplitView*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/SplitView/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "teaching-tip",
+      "displayName": "TeachingTip",
+      "auditDocuments": [
+        "docs/teachingtip-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/TeachingTip*",
+            "controls/dev/TeachingTip/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/TeachingTip/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "toggle-switch",
+      "displayName": "ToggleSwitch",
+      "auditDocuments": [
+        "docs/toggleswitch-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/CommonStyles/ToggleSwitch*",
+            "dxaml/xcp/dxaml/lib/ToggleSwitch*",
+            "dxaml/xcp/tools/XCPTypesAutoGen/Modules/ToggleSwitch/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/ToggleSwitch/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "variable-sized-wrap-grid",
+      "displayName": "VariableSizedWrapGrid and wrap-grid family",
+      "auditDocuments": [
+        "docs/variablesizedwrapgrid-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "dxaml/xcp/dxaml/lib/ItemsWrapGrid*",
+            "dxaml/xcp/dxaml/lib/VariableSizedWrapGrid*",
+            "dxaml/xcp/dxaml/lib/WrapGrid*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/GridView/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wrap-panel",
+      "displayName": "WrapPanel",
+      "auditDocuments": [
+        "docs/wrappanel-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/WrapPanel*",
+            "controls/dev/WrapPanel/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/WrapPanel/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "frame-page-navigation",
+      "displayName": "Frame and Page navigation",
+      "auditDocuments": [
+        "docs/winui3-source-parity.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "dxaml/xcp/core/core/elements/Frame.*",
+            "dxaml/xcp/core/core/elements/Frame_*",
+            "dxaml/xcp/dxaml/lib/Frame.*",
+            "dxaml/xcp/dxaml/lib/Frame_*",
+            "dxaml/xcp/dxaml/lib/FrameAutomationPeer*",
+            "dxaml/xcp/dxaml/lib/FrameNavigation*",
+            "dxaml/xcp/dxaml/lib/Navigation*",
+            "dxaml/xcp/dxaml/lib/Page*",
+            "dxaml/xcp/tools/XCPTypesAutoGen/Modules/Navigation/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/Frame/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "popup-gallery",
+      "displayName": "Popup platform primitive and Gallery sample",
+      "auditDocuments": [
+        "docs/custom-popup-source-findings.md",
+        "docs/popup-winui-gallery-source-audit.md",
+        "docs/winui3-source-parity.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/CommonStyles/Popup*",
+            "dxaml/xcp/core/core/elements/Popup*",
+            "dxaml/xcp/core/inc/Popup*",
+            "dxaml/xcp/dxaml/lib/Popup*",
+            "dxaml/xcp/dxaml/lib/winrtgeneratedclasses/Popup*",
+            "dxaml/xcp/tools/XCPTypesAutoGen/Modules/Popup/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/Popup/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "theme-shadow",
+      "displayName": "ThemeShadow",
+      "auditDocuments": [
+        "docs/theme-shadow-winui3-parity.md",
+        "docs/theme-shadow-source-coverage.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/CommonStyles/Common_themeresources.xaml",
+            "dxaml/test/native/external/foundation/graphics/rendering/ThemeShadowTests.cpp",
+            "dxaml/test/resources/masters/*ThemeShadow*",
+            "dxaml/xcp/components/graphics/ProjectedShadowManager*",
+            "dxaml/xcp/components/graphics/ThemeShadow*",
+            "dxaml/xcp/core/core/elements/Popup.cpp",
+            "dxaml/xcp/dxaml/lib/ElevationHelper*",
+            "dxaml/xcp/dxaml/lib/ThemeShadow*"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/ThemeShadow/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "title-bar",
+      "displayName": "TitleBar",
+      "auditDocuments": [
+        "docs/titlebar-winui3-gallery-parity.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/TitleBar*",
+            "controls/dev/TitleBar/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/SampleSupport/SamplePages/TitleBar*",
+            "WinUIGallery/Samples/TitleBar/**"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "xaml-core-api-surface",
+      "displayName": "Shared XAML core API surface",
+      "auditDocuments": [
+        "docs/winui3-source-parity.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "dxaml/xcp/core/core/elements/*FrameworkElement*",
+            "dxaml/xcp/core/core/elements/framework.*",
+            "dxaml/xcp/core/inc/*FrameworkElement*",
+            "dxaml/xcp/core/inc/framework.*",
+            "dxaml/xcp/dxaml/idl/**/Microsoft.UI.Xaml*.idl",
+            "dxaml/xcp/dxaml/lib/*FrameworkElement*",
+            "dxaml/xcp/dxaml/lib/winrtgeneratedclasses/*FrameworkElement*",
+            "dxaml/xcp/tools/XCPTypesAutoGen/Modules/FrameworkElement*",
+            "dxaml/xcp/tools/XCPTypesAutoGen/Modules/FrameworkElement/**",
+            "dxaml/xcp/tools/XCPTypesAutoGen/XamlOM/Model/Microsoft.UI.Xaml*.cs"
+          ]
+        }
+      ]
+    }
+  ]
+}

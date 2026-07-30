@@ -29,6 +29,10 @@ namespace ModernWpf.Gallery.Tests
             var recorder = Read(root, "tools", "visual-checks", "Record-GalleryControlInteractions.ps1");
 
             StringAssert.Contains(audit, "de3e767333c2f0717a6a70cb22bd192ced5ad885");
+            StringAssert.Contains(audit, "eb75504a1978df0d37a3ad4574d6f72bf4d21583");
+            StringAssert.Contains(audit, "a97562621a1d1ea397a38a3f512c9eef99db52d8");
+            StringAssert.Contains(audit, "f4dc3eb367f4bcecac1793829d9a221e924e5bfb");
+            StringAssert.Contains(audit, "8dca4cd76468ac49cd2aa31cafa2e320835cb17b");
             StringAssert.Contains(audit, "f524c6d543ea735b7b4e833294891eec448b8b5f");
             StringAssert.Contains(audit, "ecf554e134db0793668a5993f87f8c80e487ef04");
             StringAssert.Contains(audit, "3089af2b982481552e3f713ddfccd1edab1b5bc2");
@@ -55,6 +59,8 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(control, "if (!IsSticky)");
             StringAssert.Contains(control, "RefreshOverflowPopupPosition()");
             StringAssert.Contains(control, "CustomPlacementMode.BottomEdgeAlignedRight");
+            StringAssert.Contains(control, "IsCompactHeightDifferenceSignificant(");
+            StringAssert.Contains(control, "0.5 / rasterizationScale");
             StringAssert.Contains(control, "public event EventHandler<object> Opening");
             StringAssert.Contains(control, "public event EventHandler<object> Closing");
             StringAssert.Contains(control, "public event TypedEventHandler<CommandBar, DynamicOverflowItemsChangingEventArgs> DynamicOverflowItemsChanging");
@@ -78,6 +84,8 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(productTests, "CommandBarOpenLifecycleUsesCurrentWinUIEventAndVirtualHookOrder");
             StringAssert.Contains(productTests, "CommandBarAutomationPeerUsesCurrentWinUIAppBarPatterns");
             StringAssert.Contains(productTests, "CommandBarMoreButtonIconDataCanBeOverriddenPerInstance");
+            StringAssert.Contains(productTests, "CommandBarAutoOverflowButtonUsesPhysicalPixelCompactHeightThreshold");
+            StringAssert.Contains(productTests, "CommandBarCompactHeightThresholdUsesFractionalRasterizationScale");
             StringAssert.Contains(audit, "Issue #262");
             StringAssert.Contains(audit, "`CommandBarMoreButtonIconData`");
             StringAssert.Contains(publicDocumentation, "E:ModernWpf.Controls.CommandBar.DynamicOverflowItemsChanging");

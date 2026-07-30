@@ -738,7 +738,8 @@ namespace ModernWpf.Controls
             settings.OverflowContentMaxHeight = CalculateOverflowContentMaxHeight();
             settings.OverflowContentMinWidth = GetDoubleResource("CommandBarOverflowMinWidth", 160);
             settings.OverflowContentMaxWidth = GetDoubleResource("CommandBarOverflowMaxWidth", 480);
-            settings.EffectiveOverflowButtonVisibility = CalculateEffectiveOverflowButtonVisibility();
+            settings.EffectiveOverflowButtonVisibility =
+                CalculateEffectiveOverflowButtonVisibility(contentHeight);
             settings.OverflowContentHorizontalOffset = 0;
 
             Size overflowContentSize = new();
@@ -756,14 +757,17 @@ namespace ModernWpf.Controls
             settings.OverflowContentHiddenYTranslation = -contentHeight;
         }
 
-        private Visibility CalculateEffectiveOverflowButtonVisibility()
+        private Visibility CalculateEffectiveOverflowButtonVisibility(double contentHeight)
         {
             bool visible = true;
 
             switch (OverflowButtonVisibility)
             {
                 case CommandBarOverflowButtonVisibility.Auto:
-                    visible = m_dynamicSecondaryCommands.Count > 0 || HasVisiblePrimaryCommandWithBottomLabel();
+                    visible =
+                        m_dynamicSecondaryCommands.Count > 0 ||
+                        HasVisiblePrimaryCommandWithBottomLabel() ||
+                        ContentDiffersFromCompactHeight(contentHeight);
                     break;
                 case CommandBarOverflowButtonVisibility.Collapsed:
                     visible = false;
@@ -771,6 +775,26 @@ namespace ModernWpf.Controls
             }
 
             return visible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private bool ContentDiffersFromCompactHeight(double contentHeight)
+        {
+            double compactHeight = GetDoubleResource("AppBarThemeCompactHeight", 48);
+            double compactVerticalDelta = contentHeight - compactHeight;
+            double rasterizationScale = VisualTreeHelper.GetDpi(this).DpiScaleY;
+
+            return IsCompactHeightDifferenceSignificant(
+                compactVerticalDelta,
+                rasterizationScale);
+        }
+
+        internal static bool IsCompactHeightDifferenceSignificant(
+            double compactVerticalDelta,
+            double rasterizationScale)
+        {
+            return rasterizationScale > 0 && !double.IsNaN(rasterizationScale)
+                ? Math.Abs(compactVerticalDelta) >= 0.5 / rasterizationScale
+                : compactVerticalDelta != 0;
         }
 
         private double GetDoubleResource(string key, double fallback)

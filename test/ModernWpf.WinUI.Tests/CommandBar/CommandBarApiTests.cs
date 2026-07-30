@@ -1794,6 +1794,59 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void CommandBarAutoOverflowButtonUsesPhysicalPixelCompactHeightThreshold()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                IsDynamicOverflowEnabled = false,
+                UseLayoutRounding = false
+            };
+
+            using var host = new TestWindowHost(commandBar, width: 240, height: 120);
+            host.UpdateLayout();
+
+            var compactHeight = (double)commandBar.TryFindResource("AppBarThemeCompactHeight");
+            var rasterizationScale = VisualTreeHelper.GetDpi(commandBar).DpiScaleY;
+            var halfPhysicalPixel = 0.5 / rasterizationScale;
+
+            commandBar.Height = compactHeight + halfPhysicalPixel * 0.75;
+            host.UpdateLayout();
+
+            Assert.AreEqual(
+                Visibility.Collapsed,
+                commandBar.CommandBarTemplateSettings.EffectiveOverflowButtonVisibility);
+
+            commandBar.Height = compactHeight + halfPhysicalPixel * 1.25;
+            host.UpdateLayout();
+
+            Assert.AreEqual(
+                Visibility.Visible,
+                commandBar.CommandBarTemplateSettings.EffectiveOverflowButtonVisibility);
+        });
+    }
+
+    [TestMethod]
+    public void CommandBarCompactHeightThresholdUsesFractionalRasterizationScale()
+    {
+        const double rasterizationScale = 1.25;
+        double halfPhysicalPixel = 0.5 / rasterizationScale;
+
+        Assert.IsFalse(ModernWpf.Controls.CommandBar.IsCompactHeightDifferenceSignificant(
+            halfPhysicalPixel * 0.75,
+            rasterizationScale));
+        Assert.IsTrue(ModernWpf.Controls.CommandBar.IsCompactHeightDifferenceSignificant(
+            halfPhysicalPixel,
+            rasterizationScale));
+        Assert.IsTrue(ModernWpf.Controls.CommandBar.IsCompactHeightDifferenceSignificant(
+            -halfPhysicalPixel,
+            rasterizationScale));
+    }
+
+    [TestMethod]
     public void CommandBarAutoOverflowButtonTreatsEmptyAppBarLabelsAsPresent()
     {
         WpfTestHost.Run(() =>

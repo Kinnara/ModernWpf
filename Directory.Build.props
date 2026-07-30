@@ -1,8 +1,14 @@
 ﻿<Project>
   <PropertyGroup>
     <Version>1.0.0-preview.2</Version>
-    <!-- Immutable after the first 1.x package is published. -->
-    <ModernWpfCompatibilityBaselineVersion>1.0.0-preview.1</ModernWpfCompatibilityBaselineVersion>
+    <!-- Immutable identifier for the published historical audit/migration
+         package. It is informational and is not the active NuGet gate. -->
+    <ModernWpfPreviewAuditBaselineVersion>1.0.0-preview.1</ModernWpfPreviewAuditBaselineVersion>
+    <!-- Review-controlled NuGet comparison baseline. During previews, advance
+         this only in the same change as an accepted breaking-change audit,
+         inventory rebaseline, focused tests, and release-note migration entry.
+         Once stable 1.0.0 ships, this becomes the SemVer baseline for 1.x. -->
+    <ModernWpfPackageValidationBaselineVersion>1.0.0-preview.1</ModernWpfPackageValidationBaselineVersion>
     <ModernWpfPublicApiAnalyzersVersion>5.6.0</ModernWpfPublicApiAnalyzersVersion>
     <ModernWpfSystemValueTupleVersion>4.6.2</ModernWpfSystemValueTupleVersion>
     <ModernWpfWindowsSdkContractsVersion>10.0.28000.2526</ModernWpfWindowsSdkContractsVersion>

@@ -1,0 +1,135 @@
+{
+  "generatedAt": "2026-07-30T12:34:56Z",
+  "stableTags": [
+    {
+      "repository": "winui-product",
+      "track": "stable",
+      "name": "winui3/release/1.8.10",
+      "revision": "3333333333333333333333333333333333333333",
+      "published_at": "2026-07-30T12:00:00Z"
+    },
+    {
+      "repository": "winui-product",
+      "track": "stable",
+      "name": "winui3/release/2.3.2",
+      "revision": "2222222222222222222222222222222222222222",
+      "published_at": "2026-07-01T12:00:00Z"
+    }
+  ],
+  "observedHeads": [
+    {
+      "repository": "winui-product",
+      "track": "stable",
+      "revision": "2222222222222222222222222222222222222222",
+      "label": "winui3/release/2.3.2"
+    },
+    {
+      "repository": "winui-product",
+      "track": "main",
+      "revision": "1111111111111111111111111111111111111111",
+      "label": "winui3/main"
+    },
+    {
+      "repository": "winui-gallery",
+      "track": "main",
+      "revision": "f4dc3eb367f4bcecac1793829d9a221e924e5bfb",
+      "label": "main"
+    }
+  ],
+  "comparisons": [
+    {
+      "repository": "winui-product",
+      "base": "de3e767333c2f0717a6a70cb22bd192ced5ad885",
+      "head": "eb75504a1978df0d37a3ad4574d6f72bf4d21583",
+      "status": "ahead",
+      "aheadBy": 36,
+      "behindBy": 0,
+      "totalCommits": 36,
+      "isComplete": true,
+      "files": [
+        {
+          "filename": "controls/dev/CommonStyles/CommandBar_themeresources.xaml",
+          "status": "modified"
+        },
+        {
+          "filename": "dxaml/xcp/tools/XCPTypesAutoGen/XamlOM/Model/Microsoft.UI.Xaml.cs",
+          "status": "modified"
+        },
+        {
+          "filename": "dxaml/xcp/dxaml/lib/FrameworkElement_Partial.cpp",
+          "status": "modified"
+        },
+        {
+          "filename": "dxaml/xcp/core/core/elements/Popup.cpp",
+          "status": "modified"
+        },
+        {
+          "filename": "controls/dev/NewControl/NewControl.idl",
+          "status": "added"
+        },
+        {
+          "filename": ".github/workflows/moved.yml",
+          "previous_filename": "controls/dev/NewControl/OldControl.idl",
+          "status": "renamed"
+        },
+        {
+          "filename": ".github/workflows/build.yml",
+          "status": "modified"
+        }
+      ]
+    },
+    {
+      "repository": "winui-product",
+      "base": "a97562621a1d1ea397a38a3f512c9eef99db52d8",
+      "head": "2222222222222222222222222222222222222222",
+      "status": "ahead",
+      "aheadBy": 1,
+      "behindBy": 0,
+      "totalCommits": 1,
+      "isComplete": true,
+      "files": [
+        {
+          "filename": "src/controls/dev/NumberBox/NumberBox.cpp",
+          "status": "modified"
+        }
+      ]
+    },
+    {
+      "repository": "winui-product",
+      "base": "eb75504a1978df0d37a3ad4574d6f72bf4d21583",
+      "head": "1111111111111111111111111111111111111111",
+      "status": "ahead",
+      "aheadBy": 1,
+      "behindBy": 0,
+      "totalCommits": 1,
+      "isComplete": true,
+      "files": [
+        {
+          "filename": "controls/dev/NumberBox/NumberBox.cpp",
+          "status": "modified"
+        },
+        {
+          "filename": "controls/dev/FutureControl/FutureControl.idl",
+          "status": "added"
+        }
+      ]
+    },
+    {
+      "repository": "winui-gallery",
+      "base": "29f62479d5c046a0b854a5868e5a7cd484572d87",
+      "head": "f4dc3eb367f4bcecac1793829d9a221e924e5bfb",
+      "status": "ahead",
+      "aheadBy": 1,
+      "behindBy": 0,
+      "totalCommits": 1,
+      "isComplete": true,
+      "files": [
+        {
+          "filename": "WinUIGallery/Samples/CommandBar/CommandBarPage.xaml",
+          "previous_filename": "WinUIGallery/Samples/ControlPages/CommandBarPage.xaml",
+          "status": "renamed"
+        }
+      ]
+    }
+  ]
+}

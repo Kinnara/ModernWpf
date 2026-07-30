@@ -18,8 +18,20 @@ public class NavigationViewSourceAuditTests
         var template = File.ReadAllText(Path.Combine(repoRoot, "ModernWpf.Controls", "NavigationView", "NavigationView.xaml"));
         var navigationView = File.ReadAllText(Path.Combine(repoRoot, "ModernWpf.Controls", "NavigationView", "NavigationView.cs"));
         var navigationViewItem = File.ReadAllText(Path.Combine(repoRoot, "ModernWpf.Controls", "NavigationView", "NavigationViewItem.cs"));
+        var apiTests = File.ReadAllText(
+            Path.Combine(
+                repoRoot,
+                "test",
+                "ModernWpf.WinUI.Tests",
+                "NavigationView",
+                "NavigationViewApiTests.cs"));
 
         StringAssert.Contains(audit, "de3e767333c2f0717a6a70cb22bd192ced5ad885");
+        StringAssert.Contains(audit, "eb75504a1978df0d37a3ad4574d6f72bf4d21583");
+        StringAssert.Contains(audit, "a97562621a1d1ea397a38a3f512c9eef99db52d8");
+        StringAssert.Contains(audit, "e5d2c481b35a62e3a2a7b3818f896e6470a25514");
+        StringAssert.Contains(audit, "72e7be771aea8288ff8d2ae7916ea4257da4cbbc");
+        StringAssert.Contains(audit, "a4d23ee1161d5dacd221f8b8dfb730fcc2f27e73");
         StringAssert.Contains(audit, "29f62479d5c046a0b854a5868e5a7cd484572d87");
         StringAssert.Contains(audit, "b6e31de9b2bdf825b894cc831581439ecfaf4579");
         StringAssert.Contains(audit, "834625ee535b767ca8ab3e381468e52ebed6aeb5");
@@ -45,6 +57,9 @@ public class NavigationViewSourceAuditTests
         StringAssert.Contains(navigationViewItem, "IsExpanded &&");
         StringAssert.Contains(navigationViewItem, "ShouldRepeaterShowInFlyout() &&");
         StringAssert.Contains(navigationViewItem, "FlyoutBase.GetAttachedFlyout(m_rootGrid) != null");
+        StringAssert.Contains(apiTests, "NavigationViewItemAltSpaceRemainsUnhandledForSystemMenuLikeCurrentWinUI");
+        StringAssert.Contains(apiTests, "Assert.AreEqual(Key.System, systemSpace.Key);");
+        StringAssert.Contains(apiTests, "Assert.AreEqual(Key.Space, systemSpace.SystemKey);");
     }
 
     private static string FindRepoRoot()

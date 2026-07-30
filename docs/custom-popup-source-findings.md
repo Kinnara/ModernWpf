@@ -1,6 +1,7 @@
 # Custom Popup Source Findings
 
 Date: 2026-06-07
+Updated: 2026-07-30
 
 This note captures the source pass for replacing WPF `Popup` usage in ModernWpf flyout surfaces that need WinUI-like placement. The immediate motivator is CommandBarFlyout, but the primitive should be reusable.
 
@@ -15,6 +16,12 @@ This note captures the source pass for replacing WPF `Popup` usage in ModernWpf 
   - `D:\repos\microsoft-ui-xaml\src\dxaml\xcp\dxaml\idl\winrt\core\microsoft.ui.xaml.coretypes.idl`
   - `D:\repos\microsoft-ui-xaml\specs\Popup-AdditionalLayoutProperties-Spec.md`
   - `D:\repos\microsoft-ui-xaml\src\controls\dev\CommandBarFlyout\CommandBarFlyoutCommandBar.cpp`
+- Current WinUI pending-open fix:
+  - `microsoft-ui-xaml` commit
+    `ce96a1586e0fc7826f4e1ed0a39f33e01ab59768`
+  - `dxaml\xcp\core\core\elements\Popup.cpp`
+  - `dxaml\xcp\core\inc\Popup.h`
+  - `dxaml\test\native\external\controls\primitives\popup\PopupIntegrationTests.cpp`
 
 ## WPF Popup Behavior To Avoid
 
@@ -44,6 +51,10 @@ Important source points:
 - If the desired placement is out of bounds, WinUI flips the major placement or justification, recalculates, and reports the final `ActualPlacement`.
 - `ActualPlacementChanged` is raised when the calculated placement changes, before the screen refresh path completes.
 - CommandBarFlyout uses `PlacementTarget = PrimaryItemsRoot`, `DesiredPlacement = BottomEdgeAlignedLeft`, and `ActualPlacement` to choose expanded-up versus expanded-down visual states.
+- Current WinUI keeps `IsOpen=true` when XAML parsing applies it before a
+  popup root is available. `CPopup` records a pending open from both
+  `SetValue(IsOpen)` and `SetChild`, completes it after the element enters the
+  live tree, and clears the pending request when the popup closes.
 
 ## Design Consequences
 
@@ -60,6 +71,20 @@ Required first version:
 - Raise `ActualPlacementChanged` before showing/moving the HWND for the frame.
 - For `ThemeShadowChrome`, distinguish host bounds from content-placement bounds so reserved shadow space expands the HWND but does not move the visible content edge.
 - Reposition on placement target layout changes, child size changes, DPI/source changes, offsets, and desired placement changes.
+- Preserve an `IsOpen=true` request made during XAML initialization when the
+  child or live anchor is not ready. Retry after `Child`, popup `Loaded`, or
+  placement-target `Loaded` becomes available, and cancel the request on
+  `IsOpen=false`.
+
+WPF adaptation for the pending-open path:
+
+- Loose and compiled WPF XAML drive `ISupportInitialize.BeginInit` /
+  `EndInit`; `WindowedPopup` uses that public lifecycle to distinguish parser
+  initialization from an intentionally parentless programmatic `Auto` popup.
+- WPF `Loaded` is the equivalent point at which the popup's presentation
+  source is available. The deferred HWND is created there, while a
+  programmatic `Auto` popup with an existing child retains its immediate,
+  parentless open behavior.
 
 Explicit non-goals for the first version:
 
@@ -88,6 +113,10 @@ Added coverage in `test\ModernWpf.WinUI.Tests\Popup\WindowedPopupApiTests.cs`:
 - Placement target unload cleanup.
 - Child resize while open, including HWND size tracking.
 - Child replacement while open.
+- XAML initialization with `IsOpen=True` before `Child`.
+- XAML property-element initialization with `Child` before `IsOpen=True`.
+- Cancellation of a pending XAML open before `Loaded`.
+- Immediate parentless programmatic `Auto` opening.
 - ThemeShadowChrome reserved placement bounds.
 - Out-of-bounds placement flip before show.
 - `WM_MOUSEACTIVATE` returns `MA_NOACTIVATE`.

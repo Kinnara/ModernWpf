@@ -538,12 +538,20 @@ namespace ModernWpf.Controls
                     {
                         // Walk through all the elements and make sure they are cleared for
                         // non-virtualizing layouts.
-                        foreach (UIElement element in Children)
+                        ViewManager.RecycleWithoutOwner(true);
+                        try
                         {
-                            if (GetVirtualizationInfo(element).IsRealized)
+                            foreach (UIElement element in Children)
                             {
-                                ClearElementImpl(element);
+                                if (GetVirtualizationInfo(element).IsRealized)
+                                {
+                                    ClearElementImpl(element);
+                                }
                             }
+                        }
+                        finally
+                        {
+                            ViewManager.RecycleWithoutOwner(false);
                         }
 
                         Children.Clear();

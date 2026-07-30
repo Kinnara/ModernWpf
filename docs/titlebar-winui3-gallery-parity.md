@@ -1,12 +1,15 @@
 # TitleBar current WinUI 3 and Gallery parity audit
 
 Date: 2026-07-18
+Updated: 2026-07-30
 
 ## Pinned upstream snapshots
 
 | Source | Commit | Purpose |
 | --- | --- | --- |
-| microsoft-ui-xaml | `de3e767333c2f0717a6a70cb22bd192ced5ad885` | Current `winui3/main` product source audited here. |
+| microsoft-ui-xaml | `de3e767333c2f0717a6a70cb22bd192ced5ad885` | Detailed `winui3/main` product/template snapshot audited here. |
+| microsoft-ui-xaml | `eb75504a1978df0d37a3ad4574d6f72bf4d21583` | Current-source epoch target; its TitleBar API-status delta is disposed below. |
+| microsoft-ui-xaml | `a97562621a1d1ea397a38a3f512c9eef99db52d8` | Latest stable `winui3/release/2.3.1` snapshot content-reconciled with the main epoch. |
 | microsoft-ui-xaml | `8463f45162149de0ec3ad7df752596893fe3e13e` | 2026-05-30 root-layout move from `src\controls` to `controls`; no TitleBar behavior or template change. |
 | WinUI Gallery | `29f62479d5c046a0b854a5868e5a7cd484572d87` | Current Gallery source and installed-app comparison target. |
 | WinUI Gallery | `14a4a1a2b8ddc527dc4a7d5f7e743d7c2bc97db7` | Gallery sample-folder conversion baseline. |
@@ -20,6 +23,24 @@ changing from `const auto` to `const auto&` in `UpdateDragRegion`, avoiding a
 copy without changing behavior. The Performance2026 theme dictionary was also
 added and expresses the same resources, geometry, and visual states with
 setter-style assignments.
+
+### 2026-07-29 epoch reconciliation
+
+Main-line commit `54c81dcacb9d6e01a30da7c5299bfd4bf661d43e`
+changes `AutoRefreshDragRegions`, nullable attached `IsDragRegion`, and
+`RecomputeDragRegions` in `TitleBar.idl` from `MUX_PREVIEW` to
+`MUX_PUBLIC_V11`. These are current public V11 APIs, not preview APIs. The
+change is API-status metadata only; it does not change TitleBar runtime,
+template, resources, or Gallery behavior.
+
+ModernWpf does not currently ship a WinUI `TitleBar` clone. Its
+`WindowTitleBar` attached-property surface and `WindowTitleBarControl` remain a
+documented WPF window-shell facade that adapts title content, buttons, drag
+behavior, and `WindowChrome`. Promoting WinUI's APIs therefore corrects the
+authority/status record but does not add those members to the differently
+scoped facade. A future source-shaped `TitleBar` port can use the unclaimed
+`TitleBar` name and must treat these V11 members as public API from its first
+preview.
 
 ## Current WinUI product inventory
 
@@ -52,7 +73,7 @@ The following Git blob IDs pin the exact product inputs:
 The current control surface contains `Title`, `Subtitle`, `IconSource`,
 `LeftHeader`, `Content`, `RightHeader`, `IsBackButtonVisible`,
 `IsBackButtonEnabled`, `IsPaneToggleButtonVisible`, `TemplateSettings`,
-`BackRequested`, and `PaneToggleRequested`. Preview APIs add
+`BackRequested`, and `PaneToggleRequested`. Public V11 APIs add
 `AutoRefreshDragRegions`, nullable attached `IsDragRegion`, and
 `RecomputeDragRegions`.
 

@@ -1,8 +1,10 @@
 # Migrating from ModernWpf 0.9.x
 
-ModernWpf 1.x is a new forward-compatible line, not a binary-compatible update
-to 0.9.x. Migrate in a branch and compile every application target before
-replacing a production package reference.
+ModernWpf 1.x is a new product line, not a binary-compatible update to 0.9.x.
+The 1.0 previews may deliberately change to follow current applicable WinUI API
+shape; stable `1.0.0` establishes the SemVer compatibility boundary. Migrate in
+a branch and compile every application target before replacing a production
+package reference.
 
 ## 1. Retarget the application
 
@@ -59,8 +61,11 @@ Do not merge both control-resource entries into the same application scope.
 | Template-only public primitive types | Remove direct references and customize through supported control APIs, templates, and documented resource keys. |
 | Public `ABI.*` or WinRT projection types | Remove references; these are implementation details. |
 
-The checked-in shipped API and resource inventories define the preview-1
-forward baseline. They do not assert compatibility with 0.9.x.
+The checked-in shipped API and resource inventories record the Preview 1 audit
+and migration baseline. During the 1.0 preview series they remain drift gates,
+but an accepted WinUI parity change may deliberately rebaseline them with
+focused tests and migration guidance. They do not assert compatibility with
+0.9.x.
 
 ## 4. Migrate MahApps integration
 

@@ -1,17 +1,26 @@
 # ModernWpf 1.x Public API Contract
 
-This document defines the compatibility boundary beginning with
-`1.0.0-preview.1`.
+This document defines preview-era API governance and the stable 1.x
+compatibility boundary. `1.0.0-preview.1` records the first public audit and
+migration baseline; it does not freeze later 1.0 previews to that exact shape.
 
 ## Compatibility policy
 
-- `1.0.0-preview.1` is the first forward-stable baseline.
+- `1.0.0-preview.1` is the first audit, migration, and package-comparison
+  baseline.
 - Source and binary compatibility with 0.9.x is intentionally not promised.
-- After preview 1, shipped public CLR APIs and explicitly listed public
-  resource keys must remain compatible. A deliberate break requires a new
-  major-version decision, not an incidental source or template change.
-- Additive APIs remain possible. Add members to base classes or new interfaces
-  instead of extending an already shipped interface.
+- During the 1.0 preview series, current applicable WinUI API shape is
+  authoritative for WinUI-derived controls. Source-audited additions, changes,
+  and removals may deliberately break an earlier preview when the same change
+  updates the checked-in inventories, documents WPF adaptations, supplies
+  migration guidance, and adds focused tests.
+- Checked-in API/resource inventories and package validation are drift
+  detectors. They reject accidental changes; they are deliberately rebaselined
+  when an accepted preview-era parity change alters the public contract.
+- Stable `1.0.0` establishes the SemVer compatibility baseline. Within the
+  stable 1.x line, additions remain possible, but an upstream breaking change
+  must use a compatible ModernWpf adaptation or wait for the next ModernWpf
+  major version.
 
 The contract applies to all supported package targets:
 
@@ -23,10 +32,10 @@ The contract applies to all supported package targets:
 
 | Surface | Role in ModernWpf 1.x | Compatibility decision |
 | --- | --- | --- |
-| Current ModernWpf | The API that ships in `ModernWpf.dll` and `ModernWpf.Controls.dll`. | Frozen forward from `1.0.0-preview.1` by checked-in API inventories and package validation. |
+| Current ModernWpf | The API that ships in `ModernWpf.dll` and `ModernWpf.Controls.dll`. | Audited against `1.0.0-preview.1` and later accepted package baselines. Preview changes may be deliberately rebaselined; stable 1.x changes follow SemVer. |
 | `0.9.7-preview.2` | Last public prerelease and historical migration input. | Not a compatibility baseline. It has 263 ModernWpf top-level public types; the v1 candidate has 347. The v1 set adds 117 and removes 33 relative to this release. |
 | `0.9.6` | Last stable public release and historical migration input. | Not a compatibility baseline. It has 261 ModernWpf top-level public types; v1 adds 119 and removes 33 relative to it. |
-| Current WinUI | Primary naming, control-shape, event, sealing, and versionability authority for WinUI-derived ModernWpf controls. | Follow current WinUI unless WPF requires a documented adaptation. Audited product source is [`microsoft-ui-xaml` commit `de3e7673`](https://github.com/microsoft/microsoft-ui-xaml/commit/de3e767333c2f0717a6a70cb22bd192ced5ad885). |
+| Current WinUI | Primary naming, control-shape, event, sealing, and versionability authority for WinUI-derived ModernWpf controls. | Follow current applicable WinUI, including API changes during previews, unless WPF requires a documented adaptation. The adopted product epoch is [`microsoft-ui-xaml` commit `eb75504a`](https://github.com/microsoft/microsoft-ui-xaml/commit/eb75504a1978df0d37a3ad4574d6f72bf4d21583), reconciled with stable `winui3/release/2.3.1` and Gallery in `docs/winui3-sync-2026-07-29.md`; moving selectors and family mappings live in `tools/upstream/upstream-sync.json`. |
 | Official WPF Fluent | Primary styling and behavior authority for stock WPF controls, and the platform Fluent implementation used on .NET 10. | Complements WinUI; it does not rename ModernWpf custom-control CLR APIs. Audited source is [`dotnet/wpf` commit `7f005faa`](https://github.com/dotnet/wpf/commit/7f005faa89e79b0b1fa1cb2c21283bab7916c092). |
 
 The current checked-in CLR baseline contains 1,558 API entries for
@@ -35,10 +44,10 @@ assemblies expose 122 and 225 supported top-level types respectively. WPF's
 generated `GeneratedInternalTypeHelper` is compiler infrastructure and is not
 a supported ModernWpf API.
 
-## v1 surface decisions
+## Preview 1 surface record
 
-The prerelease cleanup made these versionability decisions before freezing the
-baseline:
+Preview 1 recorded these versionability decisions. They remain the migration
+starting point and are re-evaluated when current WinUI changes:
 
 - WinRT projection implementation types are internal. `ABI.*`, embedded WinRT
   contract markers, and other generated projection namespaces must never
@@ -92,9 +101,9 @@ These public names or shapes are not accidental WinUI drift:
 | `ToggleSwitch` | Remains inheritable to preserve its WPF protected customization hooks. |
 | `NavigationViewItemAutomationPeer` set-position overrides | Exist only on WPF target frameworks whose base automation peer exposes those virtual methods; package validation tracks the per-target shape. |
 
-## Interface stability
+## Interface versioning
 
-The shipped public interfaces are:
+The Preview 1 public interfaces are:
 
 - `ICommandBarElement`
 - `IElementFactory`
@@ -105,8 +114,12 @@ The shipped public interfaces are:
 - `IScrollControllerPanningInfo`
 - `IScrollSnapPointsInfo`
 
-Do not add members to these interfaces after preview 1. Add a new capability
-interface or an extensible base class instead.
+For a ModernWpf-originated capability, add a new interface or an extensible
+base-class member instead of changing one of these interfaces. During previews,
+however, a current WinUI change to the corresponding interface is authoritative:
+mirror the feasible source shape, update the inventories, and document the
+consumer migration. After stable 1.0, preserve the shipped interface throughout
+1.x or defer the upstream break to the next major version.
 
 ## Resource-key contract
 
@@ -115,9 +128,9 @@ Only entries in these files are public XAML resource contracts:
 - `ModernWpf/PublicResourceKeys.Shipped.txt`
 - `ModernWpf/PublicResourceKeys.Unshipped.txt`
 
-Each entry identifies a literal, top-level `x:Key` and the dictionary in which
-it must continue to exist. The preview-1 baseline contains 5,320
-source-qualified entries from:
+Each entry identifies a literal, top-level `x:Key` and the dictionary that
+owned it in the accepted public snapshot. The Preview 1 audit baseline contains
+5,320 source-qualified entries from:
 
 - `ThemeResources/Light.xaml`
 - `ThemeResources/Dark.xaml`
@@ -125,7 +138,12 @@ source-qualified entries from:
 - `ModernWpfControlsResources.xaml`
 - `DensityStyles/Compact.xaml`
 
-The following are not forward contracts unless later added to an explicit
+During previews, an upstream-driven change may deliberately add, move, rename,
+or remove an inventoried key under the same audit, migration, and rebaseline
+rules as a CLR API change. After stable 1.0, these keys are part of the SemVer
+contract for the stable 1.x line.
+
+The following are not public contract entries unless later added to an explicit
 manifest:
 
 - Template parts
@@ -140,23 +158,40 @@ existing manifest and add newly chosen public keys to the unshipped file.
 ## Enforcement and release workflow
 
 1. Make the API change.
-2. For a CLR addition, run `dotnet format` with diagnostic `RS0016`, include
-   generated source, and review the new `PublicAPI.Unshipped.txt` entries.
-3. For a supported resource-key addition, run
+2. Classify it as additive, a deliberate current-WinUI parity change, a
+   documented WPF adaptation, or an accidental change. A deliberate preview
+   break must cite the upstream source audit and add a `## Breaking changes`
+   migration entry to the current release notes.
+3. For a CLR addition or replacement, run `dotnet format` with diagnostic
+   `RS0016`, include generated source, and review the new
+   `PublicAPI.Unshipped.txt` entries. Remove obsolete shipped entries only for
+   an accepted preview break.
+4. For a supported resource-key addition, run
    `tools/api-contracts/Update-PublicResourceKeyContract.ps1` and review the
-   unshipped resource entries.
-4. Build every target framework and run the theme/resource tests.
-5. Before publishing a new compatibility baseline, promote every accepted
-   entry to the corresponding shipped inventory. Baseline builds require all
-   unshipped inventories to be empty.
-6. Pack the NuGet package. Package validation compares compatible target
-   frameworks and, after preview 1, compares with the published
-   `1.0.0-preview.1` baseline.
-7. Run `tools/release/Verify-ModernWpfPackage.ps1`. It rejects namespace leaks,
+   unshipped resource entries. Update or remove an existing entry only under
+   the deliberate-break rule.
+5. Build every target framework and run the theme/resource tests.
+6. Before publishing an accepted package baseline, promote every accepted
+   entry to the corresponding shipped inventory. A build whose version equals
+   the active package baseline requires all unshipped inventories to be empty.
+7. Pack the NuGet package. Strict cross-target validation always applies. When
+   the current version differs from
+   `ModernWpfPackageValidationBaselineVersion`, NuGet also compares with that
+   published package. To accept a deliberate break during previews, advance
+   that property to the current development version in the same change as the
+   source audit, inventory updates, tests, and release-note migration entry.
+   `ModernWpfPreviewAuditBaselineVersion` remains fixed at
+   `1.0.0-preview.1` as the machine-readable identifier of the published
+   historical package. It is available for explicit migration audits, but it
+   is intentionally not the active NuGet compatibility gate.
+8. Run `tools/release/Verify-ModernWpfPackage.ps1`. It rejects namespace leaks,
    cross-target top-level type drift, stale XML documentation, and malformed
    package assets.
 
-The analyzer treats API removals, signature changes, and accidental public
-members as build errors. Nullable annotations are not yet a v1 contract
-because the existing codebase is nullable-oblivious; they can be introduced as
-a separately reviewed contract improvement.
+The analyzer treats differences from the checked-in accepted API inventories
+as build errors; an intentional preview change updates those inventories rather
+than suppressing the analyzer. Once stable `1.0.0` is published, do not advance
+the active package baseline within 1.x to hide an incompatibility. Nullable
+annotations are not yet a v1 contract because the existing codebase is
+nullable-oblivious; they can be introduced as a separately reviewed contract
+improvement.

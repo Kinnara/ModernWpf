@@ -47,14 +47,15 @@ public class WebView2OptionalTests
     }
 
     [TestMethod]
-    public void SyncMatrixDocumentsWebView2AsOptional()
+    public void HistoricalSyncMatrixDocumentsWebView2Exclusion()
     {
         var repoRoot = FindRepoRoot();
         var matrixPath = Path.Combine(repoRoot, "docs", "winui2-2.8.7-sync.md");
 
-        Assert.IsTrue(File.Exists(matrixPath), "Missing WinUI 2.8.7 sync matrix.");
+        Assert.IsTrue(File.Exists(matrixPath), "Missing historical WinUI 2.8.7 sync matrix.");
 
         var matrix = File.ReadAllText(matrixPath);
+        StringAssert.Contains(matrix, "Historical snapshot only");
         StringAssert.Contains(matrix, "| WebView2 | Core excluded; gallery page pruned | No ModernWpf-owned control |");
         StringAssert.Contains(matrix, "WebView2 is not a ModernWpf-implemented WinUI control surface in this gallery scope");
     }

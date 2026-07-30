@@ -1,6 +1,7 @@
 # NavigationView WinUI 3 Source Audit
 
 Date: 2026-07-19
+Updated: 2026-07-30
 
 This audit refreshes ModernWpf's existing source-shaped `NavigationView` port
 against official `winui3/main` commit
@@ -18,6 +19,28 @@ allocation/performance cleanups plus two substantive current fixes. Commit
 footer subtraction. Commit `834625ee535b767ca8ab3e381468e52ebed6aeb5`
 revalidates expansion, flyout mode, template root, and attached flyout before a
 deferred child-flyout show. Both fixes are now ported and regression-tested.
+
+### 2026-07-29 epoch reconciliation
+
+The repository-wide current-source epoch advances `winui3/main` through
+`eb75504a1978df0d37a3ad4574d6f72bf4d21583` and content-reconciles the latest
+stable `winui3/release/2.3.1` snapshot
+`a97562621a1d1ea397a38a3f512c9eef99db52d8`. Stable commit
+`e5d2c481b35a62e3a2a7b3818f896e6470a25514` first changed
+NavigationView-item Space handling so Alt+Space remains available to the
+window system menu. That change was reverted by
+`72e7be771aea8288ff8d2ae7916ea4257da4cbbc` and then restored in the final
+stable lineage by `a4d23ee1161d5dacd221f8b8dfb730fcc2f27e73`.
+
+ModernWpf is already behaviorally equivalent through WPF's key projection.
+An Alt+Space key-down is represented as `Key.System` with
+`SystemKey=Key.Space`; the item invocation path switches on `KeyEventArgs.Key`
+and handles only a plain `Key.Space`. It therefore neither invokes the item nor
+marks Alt+Space handled, while ordinary Space remains handled and invokes the
+item. No product-code delta is required.
+`NavigationViewItemAltSpaceRemainsUnhandledForSystemMenuLikeCurrentWinUI`
+constructs that exact system-marked WPF event and guards both halves of the
+contract.
 
 ## Current WinUI 3 Source Inputs
 
@@ -108,6 +131,7 @@ API controls are covered by the focused Gallery regression.
 | `NavigationView` owns pane/display-mode state, menu/footer collections, selection, top-navigation data, template parts, and item hierarchy. | The existing WPF control family retains that source-shaped ownership, including the root split view, pane/header/footer hosts, repeaters, overflow host, selection model, item factory, and display-mode updates. |
 | Current `UpdatePaneLayout` compares `menuItemsActualHeight` with half the available height and only subtracts an otherwise-unresolved footer repeater when the subtraction cannot be negative. | ModernWpf ports both conditions directly. `PaneLayoutNeverAssignsNegativeScrollViewerMaxHeight` supplies stale desired/actual menu geometry and an oversized footer to prove both menu and footer `ScrollViewer.MaxHeight` values remain non-negative. |
 | Current `NavigationViewItem::ShowHideChildren` revalidates expansion, flyout mode, root-grid lifetime, and the attached flyout inside its queued render callback. | The WPF composition-render callback applies the same four gates before `ShowAttachedFlyout`. `DeferredChildFlyoutShowSkipsCollapsedItem` proves an expand-then-collapse race stays closed and that a still-expanded item continues to open normally. |
+| Current stable NavigationView item handling leaves Alt+Space unhandled so the system window menu can open, while plain Space invokes the item. | WPF projects Alt+Space as `Key.System` with `SystemKey=Key.Space`. ModernWpf's source-shaped item handler switches on `KeyEventArgs.Key`, so only plain `Key.Space` enters the invoke-and-handle branch. |
 | The current Light/Dark theme dictionaries use `AcrylicInAppFillColorDefaultBrush` for the default pane, transparent expanded/top pane colors, `LayerFillColorDefaultBrush` for content, primary/secondary text aliases for item states, transparent icon background, secondary header foreground, and `CardStrokeColorDefaultBrush` for the content border. | Light/Dark dictionaries now carry the current aliases and the previously missing icon, header, and content-border keys. High Contrast uses the current system brush mappings. The template consumes all three missing keys. |
 | WinUI Gallery renders the in-app acrylic pane over its default Light/Dark page as solid sampled colors `#F2F2F2` / `#1F1F1F`; its content is `#F9F9F9` / `#272727`. | WPF has no acrylic compositor. `SystemControlPageBackgroundChromeLowBrush` and `SystemControlBackgroundChromeMediumBrush` are deterministic theme-specific solid fallbacks for the rendered pane, while `LayerFillColorDefaultBrush` supplies the exact content surface. |
 | Current item and top-item normal/hover/pressed/selected foregrounds use primary or secondary text aliases, and hover/pressed top backgrounds use subtle secondary/tertiary fills. | ModernWpf replaces the stale WinUI 2 aliases with the current primary/secondary and subtle-fill resource graph in Light, Dark, and High Contrast. |
@@ -255,10 +279,15 @@ API controls are covered by the focused Gallery regression.
   applying a custom `DataTemplate` to the inherited `ContentTemplate`
   property, verifying that the main presenter receives that exact template,
   and verifying the template's bound visual content.
-- NavigationView product/source-audit tests pass 63/63; SplitView product tests
-  pass 14/14; the focused Gallery sample/source-shape slice passes 8/8 on net8
-  and net10. Gallery builds successfully on net462, net8, and net10 with zero
-  errors; current target builds retain existing unrelated warnings.
+- `NavigationViewItemAltSpaceRemainsUnhandledForSystemMenuLikeCurrentWinUI`
+  guards the current stable system-menu shortcut while proving ordinary Space
+  still invokes and handles the item.
+- The prior detailed-baseline NavigationView product/source-audit slice passed
+  63/63. The epoch adds the Alt+Space guard; the final serialized epoch gate
+  reruns the complete project. SplitView product tests passed 14/14; the
+  focused Gallery sample/source-shape slice passed 8/8 on net8 and net10.
+  Gallery built successfully on net462, net8, and net10 with zero errors;
+  current target builds retained existing unrelated warnings.
 
 ```powershell
 dotnet test .\test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj --no-restore --filter FullyQualifiedName~NavigationView

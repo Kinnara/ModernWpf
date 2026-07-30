@@ -32,6 +32,9 @@ public class TitleBarSourceAuditTests
         var harness = Read(repoRoot, "tools", "visual-checks", "Run-GalleryVisualChecks.ps1");
 
         StringAssert.Contains(audit, "de3e767333c2f0717a6a70cb22bd192ced5ad885");
+        StringAssert.Contains(audit, "eb75504a1978df0d37a3ad4574d6f72bf4d21583");
+        StringAssert.Contains(audit, "a97562621a1d1ea397a38a3f512c9eef99db52d8");
+        StringAssert.Contains(audit, "54c81dcacb9d6e01a30da7c5299bfd4bf661d43e");
         StringAssert.Contains(audit, "8463f45162149de0ec3ad7df752596893fe3e13e");
         StringAssert.Contains(audit, "29f62479d5c046a0b854a5868e5a7cd484572d87");
         StringAssert.Contains(audit, "14a4a1a2b8ddc527dc4a7d5f7e743d7c2bc97db7");
@@ -64,6 +67,10 @@ public class TitleBarSourceAuditTests
         StringAssert.Contains(audit, "WindowChrome.CaptionHeight");
         StringAssert.Contains(audit, "WM_NCHITTEST");
         StringAssert.Contains(audit, "normal WPF content-font inheritance");
+        StringAssert.Contains(audit, "public V11");
+        StringAssert.Contains(audit, "`MUX_PUBLIC_V11`");
+        StringAssert.Contains(audit, "does not currently ship a WinUI `TitleBar` clone");
+        Assert.IsFalse(audit.Contains("Preview APIs add", StringComparison.Ordinal));
         Assert.IsFalse(audit.Contains("`src\\controls\\dev\\TitleBar", StringComparison.Ordinal));
 
         StringAssert.Contains(control, "return new WindowTitleBarControlAutomationPeer(this);");

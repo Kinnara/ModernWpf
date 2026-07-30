@@ -98,6 +98,11 @@ namespace ModernWpf.Controls
             }
         }
 
+        public void RecycleWithoutOwner(bool recycleWithoutOwner)
+        {
+            m_recycleWithoutOwner = recycleWithoutOwner;
+        }
+
         // We need to clear the datacontext to prevent crashes from happening,
         //  however we only do that if we were the ones setting it.
         // That is when one of the following is the case (numbering taken from line ~642):
@@ -133,7 +138,7 @@ namespace ModernWpf.Controls
 
                 var context = m_ElementFactoryRecycleArgs;
                 context.Element = element;
-                context.Parent = m_owner;
+                context.Parent = m_recycleWithoutOwner ? null : m_owner;
 
                 m_owner.ItemTemplateShim.RecycleElement(context);
 
@@ -913,6 +918,7 @@ namespace ModernWpf.Controls
         // It has to be an element we own (i.e. a direct child).
         private UIElement m_lastFocusedElement;
         private bool m_isDataSourceStableResetPending;
+        private bool m_recycleWithoutOwner;
 
         // Event tokens
         private bool m_gotFocus;

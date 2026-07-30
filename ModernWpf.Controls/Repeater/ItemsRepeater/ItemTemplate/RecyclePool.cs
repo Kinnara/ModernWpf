@@ -23,7 +23,16 @@ namespace ModernWpf.Controls
             string key,
             UIElement owner)
         {
-            PutElementCore(element, key, owner);
+            bool oldSuppressParentInference = m_suppressParentInference;
+            m_suppressParentInference = owner == null;
+            try
+            {
+                PutElementCore(element, key, owner);
+            }
+            finally
+            {
+                m_suppressParentInference = oldSuppressParentInference;
+            }
         }
 
         public UIElement TryGetElement(
@@ -47,7 +56,7 @@ namespace ModernWpf.Controls
             var winrtKey = key;
             var winrtOwner = owner;
             var winrtOwnerAsPanel = EnsureOwnerIsPanelOrNull(winrtOwner);
-            if (winrtOwnerAsPanel == null)
+            if (winrtOwnerAsPanel == null && !m_suppressParentInference)
             {
                 winrtOwnerAsPanel = (element as FrameworkElement)?.Parent as Panel;
             }
@@ -175,5 +184,6 @@ namespace ModernWpf.Controls
         }
 
         private readonly Dictionary<string, List<ElementInfo>> m_elements = new Dictionary<string, List<ElementInfo>>();
+        private bool m_suppressParentInference;
     }
 }

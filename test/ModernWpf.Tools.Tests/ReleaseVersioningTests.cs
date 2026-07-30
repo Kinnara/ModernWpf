@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -11,14 +12,14 @@ namespace ModernWpf.Tools.Tests
     public class ReleaseVersioningTests
     {
         [TestMethod]
-        public void PreviewBaselineShipsEveryPublicContractEntry()
+        public void ActivePackageBaselineShipsEveryPublicContractEntry()
         {
             var repoRoot = FindRepoRoot();
             var props = XDocument.Load(Path.Combine(repoRoot, "Directory.Build.props"));
             var version = GetPropertyValue(props, "Version");
             var baseline = GetPropertyValue(
                 props,
-                "ModernWpfCompatibilityBaselineVersion");
+                "ModernWpfPackageValidationBaselineVersion");
 
             if (!string.Equals(version, baseline, StringComparison.Ordinal))
             {
@@ -55,25 +56,119 @@ namespace ModernWpf.Tools.Tests
         }
 
         [TestMethod]
-        public void PackageValidationUsesCentralCompatibilityBaseline()
+        public void PackageValidationSeparatesHistoricalAuditFromActiveBaseline()
         {
             var repoRoot = FindRepoRoot();
             var props = XDocument.Load(Path.Combine(repoRoot, "Directory.Build.props"));
-            var baseline = props
-                .Descendants("ModernWpfCompatibilityBaselineVersion")
-                .Select(element => element.Value)
-                .SingleOrDefault() ?? string.Empty;
+            var auditBaseline = GetPropertyValue(
+                props,
+                "ModernWpfPreviewAuditBaselineVersion");
+            var packageBaseline = GetPropertyValue(
+                props,
+                "ModernWpfPackageValidationBaselineVersion");
             var packageProject = File.ReadAllText(
                 Path.Combine(repoRoot, "ModernWpf.Controls", "ModernWpf.Controls.csproj"));
 
-            Assert.IsFalse(string.IsNullOrWhiteSpace(baseline));
+            Assert.AreEqual("1.0.0-preview.1", auditBaseline);
+            Assert.IsFalse(string.IsNullOrWhiteSpace(packageBaseline));
             StringAssert.Contains(
                 packageProject,
-                "'$(Version)' != '$(ModernWpfCompatibilityBaselineVersion)'");
+                "'$(Version)' != '$(ModernWpfPackageValidationBaselineVersion)'");
             StringAssert.Contains(
                 packageProject,
-                ">$(ModernWpfCompatibilityBaselineVersion)</PackageValidationBaselineVersion>");
-            Assert.IsFalse(packageProject.Contains(baseline, StringComparison.Ordinal));
+                ">$(ModernWpfPackageValidationBaselineVersion)</PackageValidationBaselineVersion>");
+            Assert.IsFalse(packageProject.Contains(
+                "ModernWpfPreviewAuditBaselineVersion",
+                StringComparison.Ordinal));
+            Assert.IsFalse(packageProject.Contains(packageBaseline, StringComparison.Ordinal));
+        }
+
+        [TestMethod]
+        public void PreviewRebaselineRequiresBreakingChangeMigrationNotes()
+        {
+            var repoRoot = FindRepoRoot();
+            var props = XDocument.Load(Path.Combine(repoRoot, "Directory.Build.props"));
+            var version = GetPropertyValue(props, "Version");
+            var auditBaseline = GetPropertyValue(
+                props,
+                "ModernWpfPreviewAuditBaselineVersion");
+            var packageBaseline = GetPropertyValue(
+                props,
+                "ModernWpfPackageValidationBaselineVersion");
+
+            if (!version.Contains("-", StringComparison.Ordinal) ||
+                string.Equals(packageBaseline, auditBaseline, StringComparison.Ordinal) ||
+                !string.Equals(packageBaseline, version, StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            var releaseNotesPath = Path.Combine(
+                repoRoot,
+                "docs",
+                $"release-notes-{version}.md");
+            Assert.IsTrue(
+                File.Exists(releaseNotesPath),
+                $"Release notes are missing for preview rebaseline '{version}'.");
+
+            var releaseNotes = File.ReadAllText(releaseNotesPath);
+            Assert.IsTrue(
+                HasSubstantivePreviewRebaselineNotes(
+                    releaseNotes,
+                    auditBaseline,
+                    packageBaseline),
+                "An intentional preview rebaseline must identify the old and new " +
+                "compatibility baselines and include a breaking-change bullet with " +
+                "explicit consumer migration guidance.");
+        }
+
+        [TestMethod]
+        public void PreviewRebaselineMigrationValidatorRejectsNoChangePlaceholder()
+        {
+            const string oldBaseline = "1.0.0-preview.1";
+            const string newBaseline = "1.0.0-preview.2";
+            const string placeholder = """
+                ## Breaking changes
+
+                This release requires no public CLR or resource-key change, so
+                there is no consumer migration.
+                """;
+            const string substantive = """
+                ## Breaking changes
+
+                Preview compatibility baseline: `1.0.0-preview.1` → `1.0.0-preview.2`
+
+                - `OldMember` was replaced by `NewMember`.
+                  **Migration:** Replace calls to `OldMember` with `NewMember`.
+                """;
+
+            Assert.IsFalse(HasSubstantivePreviewRebaselineNotes(
+                placeholder,
+                oldBaseline,
+                newBaseline));
+            Assert.IsTrue(HasSubstantivePreviewRebaselineNotes(
+                substantive,
+                oldBaseline,
+                newBaseline));
+        }
+
+        [TestMethod]
+        public void StableOneXKeepsTheOneZeroSemVerBaseline()
+        {
+            var repoRoot = FindRepoRoot();
+            var props = XDocument.Load(Path.Combine(repoRoot, "Directory.Build.props"));
+            var version = GetPropertyValue(props, "Version");
+
+            if (version.Contains("-", StringComparison.Ordinal) ||
+                !version.StartsWith("1.", StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            Assert.AreEqual(
+                "1.0.0",
+                GetPropertyValue(props, "ModernWpfPackageValidationBaselineVersion"),
+                "Stable 1.x must not advance its package baseline to hide a breaking change.");
         }
 
         [TestMethod]
@@ -330,6 +425,30 @@ namespace ModernWpf.Tools.Tests
                 .Descendants(name)
                 .Select(element => element.Value)
                 .Single();
+        }
+
+        private static bool HasSubstantivePreviewRebaselineNotes(
+            string releaseNotes,
+            string oldBaseline,
+            string newBaseline)
+        {
+            var section = Regex.Match(
+                releaseNotes,
+                @"(?ms)^## Breaking changes\s*(?<body>.*?)(?=^## |\z)");
+            if (!section.Success)
+            {
+                return false;
+            }
+
+            var body = section.Groups["body"].Value;
+            var baselineMarker =
+                $"Preview compatibility baseline: `{oldBaseline}` → `{newBaseline}`";
+            return body.Contains(baselineMarker, StringComparison.Ordinal) &&
+                Regex.IsMatch(body, @"(?m)^\s*[-*]\s+\S") &&
+                body.Contains("**Migration:**", StringComparison.Ordinal) &&
+                !Regex.IsMatch(
+                    body,
+                    @"(?i)\bno\s+public\s+(?:CLR|API|resource)|\bno\s+consumer\s+migration\b");
         }
 
         private static int CountOccurrences(string text, string value)

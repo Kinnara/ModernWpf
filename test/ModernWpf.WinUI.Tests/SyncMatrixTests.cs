@@ -8,14 +8,18 @@ namespace ModernWpf.WinUI.Tests;
 public class SyncMatrixTests
 {
     [TestMethod]
-    public void WinUI287SyncMatrixDocumentsSourceAndTestPolicy()
+    public void WinUI287SyncMatrixIsAPinnedHistoricalSnapshot()
     {
         var repoRoot = FindRepoRoot();
         var matrixPath = Path.Combine(repoRoot, "docs", "winui2-2.8.7-sync.md");
 
-        Assert.IsTrue(File.Exists(matrixPath), "Missing WinUI 2.8.7 sync matrix.");
+        Assert.IsTrue(File.Exists(matrixPath), "Missing historical WinUI 2.8.7 sync matrix.");
 
         var matrix = File.ReadAllText(matrixPath);
+        StringAssert.Contains(matrix, "Historical snapshot only");
+        StringAssert.Contains(matrix, "must not be used as the current behavior, API-shape, resource,");
+        StringAssert.Contains(matrix, "docs/winui3-source-parity.md");
+        StringAssert.Contains(matrix, "docs/winui3-control-source-coverage.md");
         StringAssert.Contains(matrix, "v2.8.7");
         StringAssert.Contains(matrix, "232a16e5ddfc22c9a1b79a2c51abeb9a39a94494");
         StringAssert.Contains(matrix, "ModernWpf.WinUI.Tests");
@@ -46,6 +50,23 @@ public class SyncMatrixTests
         AssertControlStatus(matrix, "NavigationView", "Source-backed WPF port");
         AssertControlStatus(matrix, "Repeater / ItemsRepeater layouts", "Source-backed WPF port");
         AssertControlStatus(matrix, "Expander", "Official WPF Fluent-backed stock control");
+    }
+
+    [TestMethod]
+    public void PreviewApiPolicyTreatsWinUIAsAuthorityWithoutFreezingPreviewOne()
+    {
+        var repoRoot = FindRepoRoot();
+        var contractPath = Path.Combine(repoRoot, "docs", "public-api-contract-1x.md");
+
+        Assert.IsTrue(File.Exists(contractPath), "Missing 1.x public API contract.");
+
+        var contract = File.ReadAllText(contractPath);
+        StringAssert.Contains(contract, "first audit, migration, and package-comparison");
+        StringAssert.Contains(contract, "does not freeze later 1.0 previews");
+        StringAssert.Contains(contract, "current applicable WinUI API shape is");
+        StringAssert.Contains(contract, "Stable `1.0.0` establishes the SemVer compatibility baseline");
+        StringAssert.Contains(contract, "ModernWpfPackageValidationBaselineVersion");
+        StringAssert.Contains(contract, "ModernWpfPreviewAuditBaselineVersion");
     }
 
     public TestContext? TestContext { get; set; }

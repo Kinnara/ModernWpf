@@ -1,8 +1,10 @@
 # ModernWPF 1.0.0-preview.1
 
 `1.0.0-preview.1` starts the actively maintained ModernWPF 1.x line. It is the
-first forward-compatibility baseline for the CLR APIs and public resource keys
-shipped by `ModernWpfUI`.
+first audit and migration baseline for the CLR APIs and public resource keys
+shipped by `ModernWpfUI`. It records the Preview 1 package shape rather than
+freezing later previews: current WinUI parity may require documented breaking
+changes before stable 1.0.
 
 ## Highlights
 

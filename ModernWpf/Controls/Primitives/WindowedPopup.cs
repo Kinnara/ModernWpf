@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,7 +10,7 @@ using System.Windows.Media;
 namespace ModernWpf.Controls.Primitives
 {
     [ContentProperty(nameof(Child))]
-    public class WindowedPopup : FrameworkElement, IAddChild
+    public class WindowedPopup : FrameworkElement, IAddChild, ISupportInitialize
     {
         public static readonly DependencyProperty ChildProperty =
             DependencyProperty.Register(
@@ -145,6 +146,19 @@ namespace ModernWpf.Controls.Primitives
             }
         }
 
+        void ISupportInitialize.BeginInit()
+        {
+            base.BeginInit();
+            _isInitializing = true;
+        }
+
+        void ISupportInitialize.EndInit()
+        {
+            base.EndInit();
+            _isInitializing = false;
+            RetryPendingOpen();
+        }
+
         protected override Size MeasureOverride(Size availableSize)
         {
             return new Size();
@@ -180,7 +194,14 @@ namespace ModernWpf.Controls.Primitives
                 newChild.AddHandler(SizeChangedEvent, _childSizeChangedHandler);
             }
 
-            Reposition();
+            if (_isOpenPending)
+            {
+                RetryPendingOpen();
+            }
+            else
+            {
+                Reposition();
+            }
         }
 
         private static void OnIsOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -208,32 +229,48 @@ namespace ModernWpf.Controls.Primitives
                 UpdatePlacementTargetHandlers();
             }
 
-            Reposition();
+            if (_isOpenPending)
+            {
+                RetryPendingOpen();
+            }
+            else
+            {
+                Reposition();
+            }
         }
 
         private void Open()
         {
             if (_source != null)
             {
+                ClearPendingOpen();
                 Reposition();
                 return;
             }
 
             if (Child == null)
             {
-                SetCurrentValue(IsOpenProperty, false);
+                DeferOpen(untilLoaded: _isInitializing);
                 return;
             }
 
-            if (PlacementTarget != null &&
-                DesiredPlacement != PopupPlacementMode.Auto &&
-                !IsConnectedToPresentationSource(PlacementTarget))
+            if (_isInitializing ||
+                (_deferOpenUntilLoaded && !IsConnectedToPresentationSource(this)))
             {
-                SetCurrentValue(IsOpenProperty, false);
+                DeferOpen(untilLoaded: true);
                 return;
             }
 
             UpdatePlacementTargetHandlers();
+            if (PlacementTarget != null &&
+                DesiredPlacement != PopupPlacementMode.Auto &&
+                !IsConnectedToPresentationSource(PlacementTarget))
+            {
+                DeferOpen(untilLoaded: false);
+                return;
+            }
+
+            ClearPendingOpen();
             var placement = CalculatePlacement();
 
             _root = new WindowedPopupRoot { Child = Child };
@@ -247,6 +284,7 @@ namespace ModernWpf.Controls.Primitives
 
         private void Close()
         {
+            ClearPendingOpen();
             ClearPlacementTargetHandlers();
 
             if (_root != null)
@@ -267,6 +305,27 @@ namespace ModernWpf.Controls.Primitives
                 }
 
                 Closed?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        private void DeferOpen(bool untilLoaded)
+        {
+            _isOpenPending = true;
+            _deferOpenUntilLoaded |= untilLoaded;
+            UpdatePlacementTargetHandlers();
+        }
+
+        private void ClearPendingOpen()
+        {
+            _isOpenPending = false;
+            _deferOpenUntilLoaded = false;
+        }
+
+        private void RetryPendingOpen()
+        {
+            if (_isOpenPending && IsOpen && _source == null)
+            {
+                Open();
             }
         }
 
@@ -450,6 +509,7 @@ namespace ModernWpf.Controls.Primitives
             _trackedPlacementTarget = placementTarget;
             if (_trackedPlacementTarget != null)
             {
+                _trackedPlacementTarget.Loaded += OnPlacementTargetLoaded;
                 _trackedPlacementTarget.LayoutUpdated += OnPlacementTargetLayoutUpdated;
                 _trackedPlacementTarget.Unloaded += OnPlacementTargetUnloaded;
             }
@@ -459,15 +519,33 @@ namespace ModernWpf.Controls.Primitives
         {
             if (_trackedPlacementTarget != null)
             {
+                _trackedPlacementTarget.Loaded -= OnPlacementTargetLoaded;
                 _trackedPlacementTarget.LayoutUpdated -= OnPlacementTargetLayoutUpdated;
                 _trackedPlacementTarget.Unloaded -= OnPlacementTargetUnloaded;
                 _trackedPlacementTarget = null;
             }
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            RetryPendingOpen();
+        }
+
+        private void OnPlacementTargetLoaded(object sender, RoutedEventArgs e)
+        {
+            RetryPendingOpen();
+        }
+
         private void OnPlacementTargetLayoutUpdated(object sender, EventArgs e)
         {
-            Reposition();
+            if (_isOpenPending)
+            {
+                RetryPendingOpen();
+            }
+            else
+            {
+                Reposition();
+            }
         }
 
         private void OnPlacementTargetUnloaded(object sender, RoutedEventArgs e)
@@ -999,6 +1077,9 @@ namespace ModernWpf.Controls.Primitives
         private HwndSource _source;
         private WindowedPopupRoot _root;
         private FrameworkElement _trackedPlacementTarget;
+        private bool _isInitializing;
+        private bool _isOpenPending;
+        private bool _deferOpenUntilLoaded;
         private const int WS_POPUP = unchecked((int)0x80000000);
         private const int WS_CLIPSIBLINGS = 0x04000000;
         private const int WS_EX_TOOLWINDOW = 0x00000080;
@@ -1014,6 +1095,7 @@ namespace ModernWpf.Controls.Primitives
         public WindowedPopup()
         {
             _childSizeChangedHandler = OnChildSizeChanged;
+            Loaded += OnLoaded;
         }
 
         [DllImport("user32.dll", SetLastError = true)]

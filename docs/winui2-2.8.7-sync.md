@@ -1,8 +1,13 @@
 # WinUI 2.8.7 Sync Matrix
 
-This is now a legacy/reference matrix. Current parity work targets WinUI 3 source behavior for existing ModernWpf controls; see `docs/winui3-source-parity.md`.
+> Historical snapshot only. This matrix records the completed WinUI 2.8.7
+> migration and must not be used as the current behavior, API-shape, resource,
+> or exclusion authority.
 
-Source of truth: `D:\repos\microsoft-ui-xaml-v2.8.7`, a detached worktree at tag `v2.8.7`
+Current parity work targets applicable WinUI 3 source behavior for existing
+ModernWpf controls; see `docs/winui3-source-parity.md` and
+`docs/winui3-control-source-coverage.md`. The recorded historical snapshot came
+from `D:\repos\microsoft-ui-xaml-v2.8.7`, a detached worktree at tag `v2.8.7`.
 
 Verified tag:
 
@@ -12,7 +17,8 @@ Verified tag:
 Merged PR 12217986: WebView2 test fixes and update TSA options area path
 ```
 
-This file tracks the ModernWpf parity plan against final WinUI 2.8.7. Every upstream area should end in one of these states:
+This file records the former ModernWpf parity plan against final WinUI 2.8.7.
+The statuses below describe that historical migration only:
 
 - `Parity`: implemented in ModernWpf with the core WinUI user semantics and upstream-derived tests.
 - `WPF-equivalent`: covered by an existing WPF or ModernWpf equivalent with tests.
