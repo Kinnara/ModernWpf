@@ -12,9 +12,10 @@
     <ModernWpfPublicApiAnalyzersVersion>5.6.0</ModernWpfPublicApiAnalyzersVersion>
     <ModernWpfSystemValueTupleVersion>4.6.2</ModernWpfSystemValueTupleVersion>
     <ModernWpfWindowsSdkContractsVersion>10.0.28000.2526</ModernWpfWindowsSdkContractsVersion>
+    <ModernWpfDisplayName>ModernWPF</ModernWpfDisplayName>
     <Authors>Yimeng Wu</Authors>
     <Copyright>Copyright © 2019–2026 Yimeng Wu</Copyright>
-    <Product>ModernWPF UI Library</Product>
+    <Product>$(ModernWpfDisplayName)</Product>
     <LangVersion>12.0</LangVersion>
     <RepositoryUrl>https://github.com/Kinnara/ModernWpf</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

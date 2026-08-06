@@ -1,6 +1,8 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +15,7 @@ namespace ModernWpf.Gallery.Tests
 {
     internal static class WpfTestHost
     {
+        private static readonly IntPtr DpiAwarenessContextUnaware = new IntPtr(-1);
         private static readonly object Gate = new object();
         private static Thread _thread;
         private static Dispatcher _dispatcher;
@@ -183,27 +186,53 @@ namespace ModernWpf.Gallery.Tests
 
         private static void RunDispatcher()
         {
+            IntPtr previousDpiAwarenessContext = IntPtr.Zero;
+
             try
             {
-                var app = new App();
-                app.InitializeComponent();
-                app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                try
+                {
+                    // Rendering assertions compare exact WPF device-independent geometry and
+                    // off-screen bitmaps. Keep those results independent of the runner's monitor
+                    // and scaling configuration by initializing the test dispatcher at 96 DPI.
+                    previousDpiAwarenessContext = SetThreadDpiAwarenessContext(DpiAwarenessContextUnaware);
+                    if (previousDpiAwarenessContext == IntPtr.Zero)
+                    {
+                        throw new Win32Exception(
+                            Marshal.GetLastWin32Error(),
+                            "Could not configure the Gallery test dispatcher for deterministic 96-DPI rendering.");
+                    }
 
-                _dispatcher = Dispatcher.CurrentDispatcher;
-            }
-            catch (Exception ex)
-            {
-                _startupException = ex;
+                    var app = new App();
+                    app.InitializeComponent();
+                    app.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+                    _dispatcher = Dispatcher.CurrentDispatcher;
+                }
+                catch (Exception ex)
+                {
+                    _startupException = ex;
+                }
+                finally
+                {
+                    _ready.Set();
+                }
+
+                if (_startupException == null)
+                {
+                    Dispatcher.Run();
+                }
             }
             finally
             {
-                _ready.Set();
-            }
-
-            if (_startupException == null)
-            {
-                Dispatcher.Run();
+                if (previousDpiAwarenessContext != IntPtr.Zero)
+                {
+                    SetThreadDpiAwarenessContext(previousDpiAwarenessContext);
+                }
             }
         }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr SetThreadDpiAwarenessContext(IntPtr dpiContext);
     }
 }

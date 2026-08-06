@@ -32,9 +32,9 @@
                     </local:HeaderTile.Source>
                 </local:HeaderTile>
                 <local:HeaderTile
-                                Title="Controls reference"
-                                Description="Browse styled and additional controls."
-                                Link="{x:Static gallery:GalleryBranding.ControlsReferenceUrl}">
+                                Title="Documentation"
+                                Description="Read setup, migration, and compatibility guidance."
+                                Link="{x:Static gallery:GalleryBranding.DocumentationUrl}">
                     <local:HeaderTile.Source>
                         <Viewbox Width="48" Height="48">
                             <TextBlock
@@ -69,8 +69,8 @@
                 </local:HeaderTile>
                 <local:HeaderTile
                                 Title="Report an issue"
-                                Description="Report bugs, request features, and review known issues."
-                                Link="{x:Static gallery:GalleryBranding.IssuesUrl}">
+                                Description="Report a reproducible problem in a ModernWPF preview."
+                                Link="{x:Static gallery:GalleryBranding.NewIssueUrl}">
                     <local:HeaderTile.Source>
                         <Viewbox Width="48" Height="48">
                             <TextBlock

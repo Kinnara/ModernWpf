@@ -9,13 +9,11 @@ namespace ModernWpf.Gallery
 
         public const string RepositoryUrl = "https://github.com/Kinnara/ModernWpf";
 
-        public const string QuickStartUrl = RepositoryUrl + "#quick-start";
+        public const string QuickStartUrl = RepositoryUrl + "#getting-started";
 
-        public const string ControlsReferenceUrl = RepositoryUrl + "/wiki/Controls";
+        public const string DocumentationUrl = RepositoryUrl + "#documentation";
 
-        public const string IssuesUrl = RepositoryUrl + "/issues";
-
-        public const string NewIssueUrl = RepositoryUrl + "/issues/new";
+        public const string NewIssueUrl = RepositoryUrl + "/issues/new?template=preview-bug.yml";
 
         public const string LicenseUrl = RepositoryUrl + "/blob/master/LICENSE";
 

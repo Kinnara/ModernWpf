@@ -2486,8 +2486,8 @@ namespace ModernWpf.Gallery.Tests
 
             AssertContainsInOrder(
                 project,
-                "<GalleryDisplayName>ModernWPF Gallery</GalleryDisplayName>",
-                "<AssemblyTitle>$(GalleryDisplayName)</AssemblyTitle>");
+                "<AssemblyTitle>$(ModernWpfDisplayName)</AssemblyTitle>",
+                "<Description>Control gallery for ModernWPF.</Description>");
             Assert.IsFalse(
                 project.Contains("WPFGallery", StringComparison.OrdinalIgnoreCase),
                 "The Gallery project must not use the official WPF Gallery icon.");
@@ -7540,9 +7540,9 @@ namespace ModernWpf.Gallery.Tests
                 "<Image Source=\"{StaticResource ModernWpfLogoImage}\" />");
             AssertContainsInOrder(
                 xaml,
-                "Title=\"Controls reference\"",
-                "Description=\"Browse styled and additional controls.\"",
-                "Link=\"{x:Static gallery:GalleryBranding.ControlsReferenceUrl}\">",
+                "Title=\"Documentation\"",
+                "Description=\"Read setup, migration, and compatibility guidance.\"",
+                "Link=\"{x:Static gallery:GalleryBranding.DocumentationUrl}\">",
                 "<Viewbox Width=\"48\" Height=\"48\">",
                 "Text=\"&#xE8F1;\" />");
             AssertContainsInOrder(
@@ -7558,8 +7558,8 @@ namespace ModernWpf.Gallery.Tests
                 "<Viewbox Width=\"48\" Height=\"48\">",
                 "Text=\"&#xE7B8;\" />",
                 "Title=\"Report an issue\"",
-                "Description=\"Report bugs, request features, and review known issues.\"",
-                "Link=\"{x:Static gallery:GalleryBranding.IssuesUrl}\">",
+                "Description=\"Report a reproducible problem in a ModernWPF preview.\"",
+                "Link=\"{x:Static gallery:GalleryBranding.NewIssueUrl}\">",
                 "<Viewbox Width=\"48\" Height=\"48\">",
                 "Text=\"&#xEBE8;\" />");
             AssertContainsInOrder(
@@ -8053,7 +8053,7 @@ namespace ModernWpf.Gallery.Tests
                 "<TextBox Grid.Column=\"2\" Style=\"{StaticResource SelectionTextBox}\" Text=\"{StaticResource GalleryCloneCommand}\" Focusable=\"False\"/>");
             StringAssert.Contains(
                 xaml,
-                "<Button AutomationProperties.Name=\"Open Issues\" Grid.Column=\"2\" Padding=\"8\" FocusManager.IsFocusScope=\"True\" Click=\"Open_Issues\">");
+                "<Button AutomationProperties.Name=\"Report a preview bug\" Grid.Column=\"2\" Padding=\"8\" FocusManager.IsFocusScope=\"True\" Click=\"Open_Issues\">");
             StringAssert.Contains(
                 xaml,
                 "<TextBlock FontFamily=\"{StaticResource SymbolThemeFontFamily}\" Text=\"&#xe8a7;\" />");
@@ -8062,7 +8062,7 @@ namespace ModernWpf.Gallery.Tests
                 "<GroupBox Grid.Row=\"2\" AutomationProperties.Name=\"Components and dependency\" BorderThickness=\"0\">");
             StringAssert.Contains(
                 xaml,
-                "<Hyperlink Click=\"Open_Repository\">ModernWPF UI Library</Hyperlink>");
+                "<Hyperlink Click=\"Open_Repository\"><Run Text=\"{StaticResource GalleryDisplayName}\" /></Hyperlink>");
             StringAssert.Contains(
                 xaml,
                 "<Hyperlink Click=\"Open_BehaviorsInformation\" AutomationProperties.Name=\"Link to Microsoft XAML Behaviors WPF NuGet package\">Microsoft.Xaml.Behaviors.Wpf</Hyperlink>");

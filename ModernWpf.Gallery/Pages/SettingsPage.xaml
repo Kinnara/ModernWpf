@@ -141,8 +141,8 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="File a bug or request a new sample" />
-                                    <Button AutomationProperties.Name="Open Issues" Grid.Column="2" Padding="8" FocusManager.IsFocusScope="True" Click="Open_Issues">
+                                    <TextBlock Grid.Column="0" Text="Report a reproducible preview bug" />
+                                    <Button AutomationProperties.Name="Report a preview bug" Grid.Column="2" Padding="8" FocusManager.IsFocusScope="True" Click="Open_Issues">
                                         <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xe8a7;" />
                                     </Button>
                                 </Grid>
@@ -153,7 +153,7 @@
                                     <StackPanel Margin="48,0,16,0" Orientation="Vertical">
                                         <TextBlock Margin="0,0,0,12" Text="Components and dependency" />
                                         <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink Click="Open_Repository">ModernWPF UI Library</Hyperlink>
+                                            <Hyperlink Click="Open_Repository"><Run Text="{StaticResource GalleryDisplayName}" /></Hyperlink>
                                         </TextBlock>
                                         <TextBlock Style="{StaticResource LinkTextBlockStyle}">
                                             <Hyperlink Click="Open_Repository">ModernWPF Controls</Hyperlink>

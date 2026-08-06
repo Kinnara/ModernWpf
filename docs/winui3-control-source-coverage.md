@@ -11,10 +11,10 @@ but each shipped resource dictionary still gets its own row so a new or renamed
 control resource cannot bypass source-parity review.
 
 Current authority is the adopted epoch recorded in
-`docs/winui3-sync-2026-07-29.md`: product `winui3/main`
-`eb75504a1978df0d37a3ad4574d6f72bf4d21583`, latest stable
+`docs/winui3-sync-2026-08-06.md`: product `winui3/main`
+`d5bdbb190cdba0b7f1baec4b3981208a9685a360`, latest stable
 `a97562621a1d1ea397a38a3f512c9eef99db52d8`, and Gallery `main`
-`f4dc3eb367f4bcecac1793829d9a221e924e5bfb`. Detailed family audits retain
+`3669519356c67f1376152c33ed8ea45003a91f3a`. Detailed family audits retain
 their prior blob-level pins; the central epoch record reconciles every change
 after those pins.
 

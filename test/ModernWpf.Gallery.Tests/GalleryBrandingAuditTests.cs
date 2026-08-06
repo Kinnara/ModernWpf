@@ -117,6 +117,41 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(File.Exists(Path.Combine(assetsRoot, "CopyLinkTeachingTip.png")));
         }
 
+        [TestMethod]
+        public void GalleryLinksUseMaintainedRepositorySurfaces()
+        {
+            var galleryRoot = Path.Combine(GetRepoRoot(), "ModernWpf.Gallery");
+            var brandingSource = File.ReadAllText(
+                Path.Combine(galleryRoot, "GalleryBranding.cs"));
+            StringAssert.Contains(
+                brandingSource,
+                "QuickStartUrl = RepositoryUrl + \"#getting-started\"");
+            StringAssert.Contains(
+                brandingSource,
+                "DocumentationUrl = RepositoryUrl + \"#documentation\"");
+            StringAssert.Contains(
+                brandingSource,
+                "NewIssueUrl = RepositoryUrl + \"/issues/new?template=preview-bug.yml\"");
+
+            foreach (var sourceFile in Directory.GetFiles(
+                galleryRoot,
+                "*",
+                SearchOption.AllDirectories).Where(path =>
+                    !HasDirectorySegment(path, "bin") &&
+                    !HasDirectorySegment(path, "obj") &&
+                    new[] { ".cs", ".xaml" }.Contains(
+                        Path.GetExtension(path),
+                        StringComparer.OrdinalIgnoreCase)))
+            {
+                var source = File.ReadAllText(sourceFile);
+                Assert.IsFalse(
+                    source.Contains(
+                        "github.com/Kinnara/ModernWpf/wiki",
+                        StringComparison.OrdinalIgnoreCase),
+                    $"{GetRelativePath(galleryRoot, sourceFile)} links to the retired GitHub wiki.");
+            }
+        }
+
         private static bool HasDirectorySegment(string path, string segment)
         {
             var marker = Path.DirectorySeparatorChar + segment + Path.DirectorySeparatorChar;

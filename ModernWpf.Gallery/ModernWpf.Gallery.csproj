@@ -4,9 +4,8 @@
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net462;net8.0-windows7.0;net10.0-windows7.0</TargetFrameworks>
     <UseWPF>true</UseWPF>
-    <GalleryDisplayName>ModernWPF Gallery</GalleryDisplayName>
-    <AssemblyTitle>$(GalleryDisplayName)</AssemblyTitle>
-    <Description>Control gallery for the ModernWPF UI Library.</Description>
+    <AssemblyTitle>$(ModernWpfDisplayName)</AssemblyTitle>
+    <Description>Control gallery for ModernWPF.</Description>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 

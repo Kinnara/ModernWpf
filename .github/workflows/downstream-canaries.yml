@@ -1,0 +1,147 @@
+name: Downstream canaries
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: downstream-canaries-${{ github.sha }}
+  cancel-in-progress: false
+
+env:
+  CI: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED: false
+
+jobs:
+  package:
+    name: Build candidate package
+    runs-on: windows-2022
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout exact candidate commit
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Setup Windows SDK
+        uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.12
+        with:
+          sdk-version: 19041
+
+      - name: Restore candidate sources
+        run: dotnet restore ModernWpf.Controls\ModernWpf.Controls.csproj
+
+      - name: Build candidate sources
+        run: >-
+          dotnet build ModernWpf.Controls\ModernWpf.Controls.csproj
+          --configuration Release --no-restore --maxcpucount:1
+
+      - name: Pack candidate once
+        run: >-
+          dotnet pack ModernWpf.Controls\ModernWpf.Controls.csproj
+          --configuration Release --no-build --no-restore
+          --output artifacts\downstream-canary-package
+
+      - name: Retain exact candidate package
+        uses: actions/upload-artifact@v7
+        with:
+          name: downstream-canary-package-${{ github.sha }}
+          path: artifacts/downstream-canary-package/ModernWpfUI.*.nupkg
+          if-no-files-found: error
+          retention-days: 30
+
+  canary:
+    name: ${{ matrix.id }}
+    needs: package
+    runs-on: windows-2022
+    timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      matrix:
+        id:
+          - bilibili-live-record-downloader
+          - bililive-recorder
+          - openkh-kh2-object-editor
+
+    steps:
+      - name: Checkout canary tooling only
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Download exact candidate package
+        uses: actions/download-artifact@v8
+        with:
+          name: downstream-canary-package-${{ github.sha }}
+          path: candidate-package
+
+      - name: Build unchanged baseline and local candidate
+        id: run-canary
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $packages = @(Get-ChildItem candidate-package -Filter 'ModernWpfUI.*.nupkg' -File)
+          if ($packages.Count -ne 1) {
+            throw "Expected exactly one candidate .nupkg; found $($packages.Count)."
+          }
+
+          .\tools\downstream-canaries\Invoke-DownstreamCanary.ps1 `
+            -CanaryId '${{ matrix.id }}' `
+            -CandidatePackagePath $packages[0].FullName `
+            -WorkPath (Join-Path $env:RUNNER_TEMP 'modernwpf-downstream-work') `
+            -OutputPath (Join-Path $env:RUNNER_TEMP 'modernwpf-downstream-result')
+
+      - name: Publish canary summary
+        if: always()
+        shell: pwsh
+        run: |
+          $report = Join-Path $env:RUNNER_TEMP 'modernwpf-downstream-result\result.md'
+          if (Test-Path -LiteralPath $report -PathType Leaf) {
+            Get-Content -LiteralPath $report -Raw |
+              Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
+          }
+          else {
+            'The downstream canary report could not be generated.' |
+              Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
+          }
+
+      - name: Retain canary report and logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: downstream-canary-${{ matrix.id }}-${{ github.sha }}
+          path: ${{ runner.temp }}/modernwpf-downstream-result
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Enforce canary result
+        if: always()
+        shell: pwsh
+        env:
+          CANARY_OUTCOME: ${{ steps.run-canary.outcome }}
+        run: |
+          if ($env:CANARY_OUTCOME -ne 'success') {
+            throw 'Downstream canary failed. Review its classification, logs, and generated migration patch.'
+          }

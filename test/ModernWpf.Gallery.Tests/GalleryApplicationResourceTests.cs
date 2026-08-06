@@ -62,7 +62,7 @@ namespace ModernWpf.Gallery.Tests
                 var app = Application.Current;
                 Assert.IsNotNull(app);
 
-                Assert.AreEqual("ModernWPF Gallery", GalleryBranding.DisplayName);
+                Assert.AreEqual("ModernWPF", GalleryBranding.DisplayName);
                 Assert.AreEqual(GalleryBranding.DisplayName, app.FindResource("GalleryDisplayName"));
                 Assert.AreEqual(GalleryBranding.PreviewDisplayName, app.FindResource("GalleryPreviewDisplayName"));
                 Assert.AreEqual(GalleryBranding.VersionDisplay, app.FindResource("GalleryVersionDisplay"));
@@ -377,26 +377,26 @@ namespace ModernWpf.Gallery.Tests
                     }
 
                     CollectionAssert.AreEqual(
-                        new[] { "Getting started", "Controls reference", "GitHub repository", "NuGet package", "Report an issue" },
+                        new[] { "Getting started", "Documentation", "GitHub repository", "NuGet package", "Report an issue" },
                         tiles.Select(GetHeaderTileAutomationName).ToArray());
                     CollectionAssert.AreEqual(
                         new[]
                         {
                             "Install ModernWpfUI and add the recommended resources.",
-                            "Browse styled and additional controls.",
+                            "Read setup, migration, and compatibility guidance.",
                             "Explore source code and project development.",
                             "Install ModernWpfUI or review available versions.",
-                            "Report bugs, request features, and review known issues."
+                            "Report a reproducible problem in a ModernWPF preview."
                         },
                         tiles.Select(tile => tile.Description).ToArray());
                     CollectionAssert.AreEqual(
                         new[]
                         {
-                            "https://github.com/Kinnara/ModernWpf#quick-start",
-                            "https://github.com/Kinnara/ModernWpf/wiki/Controls",
+                            "https://github.com/Kinnara/ModernWpf#getting-started",
+                            "https://github.com/Kinnara/ModernWpf#documentation",
                             "https://github.com/Kinnara/ModernWpf",
                             "https://www.nuget.org/packages/ModernWpfUI/",
-                            "https://github.com/Kinnara/ModernWpf/issues"
+                            "https://github.com/Kinnara/ModernWpf/issues/new?template=preview-bug.yml"
                         },
                         tiles.Select(tile => tile.Link).ToArray());
 

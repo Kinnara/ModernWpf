@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,15 +15,15 @@ namespace ModernWpf.Tools.Tests
     public class UpstreamDriftTests
     {
         private const string ProductReviewedRevision =
-            "de3e767333c2f0717a6a70cb22bd192ced5ad885";
-        private const string ProductEpochRevision =
             "eb75504a1978df0d37a3ad4574d6f72bf4d21583";
+        private const string ProductEpochRevision =
+            "d5bdbb190cdba0b7f1baec4b3981208a9685a360";
         private const string StableEpochRevision =
             "a97562621a1d1ea397a38a3f512c9eef99db52d8";
         private const string GalleryReviewedRevision =
-            "29f62479d5c046a0b854a5868e5a7cd484572d87";
-        private const string GalleryEpochRevision =
             "f4dc3eb367f4bcecac1793829d9a221e924e5bfb";
+        private const string GalleryEpochRevision =
+            "3669519356c67f1376152c33ed8ea45003a91f3a";
 
         [TestMethod]
         public void ManifestSchemaCoversAuditedFamiliesAndGenericResources()
@@ -57,6 +58,15 @@ namespace ModernWpf.Tools.Tests
                     .GetProperty("status")
                     .GetProperty("const")
                     .GetString());
+            var epochAdoptionRequired = schema.RootElement
+                .GetProperty("$defs")
+                .GetProperty("epochAdoption")
+                .GetProperty("required")
+                .EnumerateArray()
+                .Select(item => item.GetString() ?? string.Empty)
+                .ToArray();
+            CollectionAssert.Contains(epochAdoptionRequired, "milestone");
+            CollectionAssert.Contains(epochAdoptionRequired, "cutoffDate");
 
             using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
             var root = manifest.RootElement;
@@ -104,6 +114,12 @@ namespace ModernWpf.Tools.Tests
                     Assert.AreEqual(
                         "adopted",
                         RequiredString(epochAdoption, "status"));
+                    Assert.AreEqual(
+                        "1.0.0-preview.2",
+                        RequiredString(epochAdoption, "milestone"));
+                    Assert.AreEqual(
+                        "2026-08-06",
+                        RequiredString(epochAdoption, "cutoffDate"));
                     var dispositionDocument = RequiredString(
                         epochAdoption,
                         "dispositionDocument");
@@ -117,6 +133,21 @@ namespace ModernWpf.Tools.Tests
             }
 
             var product = GetRepository(root, "winui-product");
+            var productIgnorePaths = product.GetProperty("ignorePaths")
+                .EnumerateArray()
+                .Select(ignorePath => RequiredString(ignorePath, "path"))
+                .ToArray();
+            CollectionAssert.Contains(productIgnorePaths, "src/XamlCompiler/**");
+            CollectionAssert.Contains(productIgnorePaths, "XamlCompilerPublic.csproj");
+            CollectionAssert.Contains(productIgnorePaths, "build/**");
+            CollectionAssert.Contains(productIgnorePaths, "scripts/**");
+            CollectionAssert.Contains(productIgnorePaths, "eng/**");
+            CollectionAssert.Contains(productIgnorePaths, "packaging/**");
+            CollectionAssert.Contains(productIgnorePaths, "BuildTransportPackage.ps1");
+            CollectionAssert.Contains(
+                productIgnorePaths,
+                "BuildTransportPackageCmdWrapper.cmd");
+            CollectionAssert.Contains(productIgnorePaths, "buildsamples.cmd");
             var stable = GetTrack(product, "stable");
             AssertRevision(stable, "reviewedBaseline", StableEpochRevision);
             AssertRevision(stable, "epochTarget", StableEpochRevision);
@@ -290,6 +321,8 @@ namespace ModernWpf.Tools.Tests
                 "$encodedBase...${encodedHead}?per_page=100",
                 "The compare URI must delimit encodedHead because '?' is valid in a PowerShell variable name.");
             StringAssert.Contains(script, "Sort-Object -Property version -Descending");
+            StringAssert.Contains(script, "$script:GitHubCompareFileLimit = 300");
+            StringAssert.Contains(script, "$files.Count -ge $script:GitHubCompareFileLimit");
             Assert.IsFalse(script.Contains(
                 "Sort-Object -Property published_at",
                 StringComparison.Ordinal));
@@ -364,7 +397,7 @@ namespace ModernWpf.Tools.Tests
             Assert.IsTrue(root.GetProperty("hasObservedUnmappedDrift").GetBoolean());
             Assert.IsFalse(root.GetProperty("hasIncompleteComparison").GetBoolean());
             Assert.AreEqual(
-                DateTimeOffset.Parse("2026-07-30T12:34:56Z"),
+                DateTimeOffset.Parse("2026-08-06T12:34:56Z"),
                 DateTimeOffset.Parse(RequiredString(root, "generatedAt")));
 
             var stable = GetReportTrack(root, "winui-product", "stable");
@@ -392,7 +425,7 @@ namespace ModernWpf.Tools.Tests
                 "adopted",
                 RequiredString(productMain.GetProperty("epochAdoption"), "status"));
             Assert.AreEqual(
-                "docs/winui3-sync-2026-07-29.md",
+                "docs/winui3-sync-2026-08-06.md",
                 RequiredString(
                     productMain.GetProperty("epochAdoption"),
                     "dispositionDocument"));
@@ -482,7 +515,7 @@ namespace ModernWpf.Tools.Tests
                 "does not port, merge, or advance any baseline");
             StringAssert.Contains(
                 result.Markdown,
-                "Epoch adoption: `adopted`; disposition `docs/winui3-sync-2026-07-29.md`.");
+                "Epoch adoption: `adopted` for `1.0.0-preview.2` at cutoff date `2026-08-06`; disposition `docs/winui3-sync-2026-08-06.md`.");
         }
 
         [TestMethod]
@@ -569,6 +602,78 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(
                 result.StandardError,
                 "At least one upstream comparison was incomplete.");
+        }
+
+        [TestMethod]
+        public void ComparisonAtGitHubFileLimitFailsClosedEvenWhenMarkedComplete()
+        {
+            var repoRoot = FindRepoRoot();
+            var sourceFixturePath = Path.Combine(
+                repoRoot,
+                "test",
+                "ModernWpf.Tools.Tests",
+                "Fixtures",
+                "Upstream",
+                "upstream-incomplete.fixture.json");
+            var fixture = JsonNode.Parse(File.ReadAllText(sourceFixturePath))!
+                .AsObject();
+            var comparison = fixture["comparisons"]!
+                .AsArray()[0]!
+                .AsObject();
+            comparison["isComplete"] = true;
+            var files = new JsonArray();
+            for (var index = 0; index < 300; index++)
+            {
+                files.Add(new JsonObject
+                {
+                    ["filename"] = $"unmapped/file-{index:D3}.txt",
+                    ["status"] = "modified"
+                });
+            }
+            comparison["files"] = files;
+
+            var temporaryDirectory = Path.Combine(
+                Path.GetTempPath(),
+                $"modernwpf-upstream-cap-{Guid.NewGuid():N}");
+            Directory.CreateDirectory(temporaryDirectory);
+            var fixturePath = Path.Combine(temporaryDirectory, "fixture.json");
+            File.WriteAllText(fixturePath, fixture.ToJsonString());
+
+            try
+            {
+                var result = RunReport(
+                    repoRoot,
+                    fixturePath,
+                    "-FailOnIncompleteComparison");
+
+                Assert.AreEqual(3, result.ExitCode);
+                using var report = JsonDocument.Parse(result.Json);
+                var observed = GetReportTrack(
+                        report.RootElement,
+                        "winui-product",
+                        "main")
+                    .GetProperty("observed")
+                    .GetProperty("comparison");
+                Assert.IsFalse(observed.GetProperty("isComplete").GetBoolean());
+                Assert.IsTrue(observed.GetProperty("fileLimitReached").GetBoolean());
+                Assert.AreEqual(300, observed.GetProperty("fileLimit").GetInt32());
+                Assert.AreEqual(300, observed.GetProperty("returnedFileCount").GetInt32());
+                Assert.AreEqual(300, observed.GetProperty("unmappedChangedFileCount").GetInt32());
+                StringAssert.Contains(result.Markdown, "**Partial classification:**");
+                StringAssert.Contains(
+                    result.Markdown,
+                    "This is not a complete changed-path inventory.");
+                StringAssert.Contains(
+                    result.Markdown,
+                    "GitHub returned its 300-file comparison limit");
+                StringAssert.Contains(
+                    result.StandardError,
+                    "At least one upstream comparison was incomplete.");
+            }
+            finally
+            {
+                Directory.Delete(temporaryDirectory, recursive: true);
+            }
         }
 
         [TestMethod]

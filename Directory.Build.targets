@@ -2,7 +2,7 @@
   <PropertyGroup Condition="'$(PackageId)' != ''">
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/Kinnara/ModernWpf</PackageProjectUrl>
-    <PackageTags>WPF XAML UI Theme Controls Fluent Modern Metro WinUI</PackageTags>
+    <PackageTags>WPF XAML Fluent WinUI Windows Desktop Theme Controls ModernWPF</PackageTags>
     <PackageOutputPath>$(MSBuildThisFileDirectory)artifacts</PackageOutputPath>
   </PropertyGroup>
 

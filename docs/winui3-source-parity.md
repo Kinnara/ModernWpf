@@ -3,12 +3,13 @@
 ModernWpf parity work now uses official WPF Fluent as the primary source for stock WPF controls, and WinUI 3 source behavior for existing ModernWpf controls that are not covered by official WPF Fluent.
 
 The adopted synchronization epoch is official `winui3/main` commit
-`eb75504a1978df0d37a3ad4574d6f72bf4d21583`, latest stable
+`d5bdbb190cdba0b7f1baec4b3981208a9685a360`, latest stable
 `winui3/release/2.3.1` commit
 `a97562621a1d1ea397a38a3f512c9eef99db52d8`, and WinUI Gallery `main` commit
-`f4dc3eb367f4bcecac1793829d9a221e924e5bfb`. The complete reconciliation from
+`3669519356c67f1376152c33ed8ea45003a91f3a`. The complete reconciliation from
 the prior detailed-audit pins is recorded in
-`docs/winui3-sync-2026-07-29.md`.
+`docs/winui3-sync-2026-07-29.md` and the finite Preview 2 cutoff record
+`docs/winui3-sync-2026-08-06.md`.
 
 The detailed family audits retain their exact blob and history evidence at
 product commit `de3e767333c2f0717a6a70cb22bd192ced5ad885` and Gallery commit

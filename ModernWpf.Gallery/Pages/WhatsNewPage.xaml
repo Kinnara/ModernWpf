@@ -69,7 +69,7 @@
                         </StackPanel>
                         <TextBlock
                             Margin="0,12,0,0"
-                            Text="ModernWPF is restarting active maintenance on a new 1.x line. The package name remains ModernWpfUI, so existing apps can move forward without changing package identity."
+                            Text="ModernWPF is actively maintained on the 1.x preview line. The package name remains ModernWpfUI, so existing apps can move forward without changing package identity."
                             TextWrapping="Wrap" />
                     </StackPanel>
                 </Border>

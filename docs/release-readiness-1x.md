@@ -78,6 +78,22 @@ Template parts, visual states, implicit/type resource keys, and unlisted style
 or template resources are intentionally outside this contract. See
 `docs/public-api-contract-1x.md` for the complete governance policy.
 
+## Finite upstream milestone cutoff
+
+Moving WinUI branches are monitored continuously, but a release candidate must
+have a finite, reviewable source boundary. At the start of each preview
+milestone, record the exact observed product stable, product main, and WinUI
+Gallery SHAs. Classify every changed path through those cutoffs in the
+milestone's dated synchronization disposition. Port applicable changes and
+record an explicit reason for every excluded or deferred change before
+advancing the accepted epoch.
+
+Commits arriving after the frozen cutoff open the next review interval and do
+not invalidate an otherwise complete candidate. The exception is a newly
+observed change that indicates an applicable security, data-loss, startup,
+crash, or equivalently critical defect in a surface shipped by the candidate.
+The release notes must identify the accepted cutoff record.
+
 ## Local release gate
 
 Run these commands from the repository root:
@@ -110,6 +126,57 @@ Restore treats every moderate-or-higher NuGet audit finding as an error.
 The smoke script builds and executes applications from the actual `.nupkg`
 using both `FluentControlsResources` and `XamlControlsResources` on all three
 targets. It treats assembly-conflict warning `MSB3277` as an error.
+
+## Visual and manual Gallery gate
+
+Every preview, release candidate, and stable release must use the final clean
+tip to capture and review the Gallery in Light, Dark, and a real OS High
+Contrast theme. Simulating High Contrast through an application theme switch
+does not satisfy this check. Retain the accepted screenshots or visual-audit
+report with the release evidence.
+
+Manually exercise Gallery startup, theme switching, window chrome, navigation,
+menus, `ContentDialog`, `CommandBarFlyout`, keyboard focus, and mouse dismissal
+on `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0`. Record the tested
+Windows build, target framework, resource entry, and outcome. A release does
+not pass this gate while a visual or interaction failure remains unexplained.
+
+## Downstream compatibility canaries
+
+Before an RC or stable release, run the manually dispatched downstream-canary
+workflow against the exact candidate package. The workflow builds pinned,
+unchanged baselines and then applies only the reviewed 0.9-to-1.0 migration
+transformations before rebuilding from the candidate's local package feed. It
+must not launch third-party applications, receive repository secrets, write to
+the source repositories, or restore the candidate package from nuget.org.
+
+The accepted result set must contain three green migrated builds covering:
+
+- BililiveRecorder on .NET Framework 4.7.2;
+- OpenKh on .NET 8;
+- BilibiliLiveRecordDownLoader on .NET 10.
+
+Every failure must be classified as a baseline/environment failure, a
+documented migration requirement, or a ModernWPF regression. RC evidence must
+include at least two successful, documented 0.9-to-1.0 migrations. See
+`docs/downstream-canaries.md` for the pinned inputs, isolation model, report
+format, and invocation instructions.
+
+## RC and stable graduation
+
+`1.0.0-rc.1` freezes the intended stable CLR API and explicitly shipped public
+resource-key surface. Before publishing it, rerun the complete gate and the
+visual/manual Gallery gate from the exact tag candidate across all supported
+target frameworks.
+
+The 14-day soak begins only after the RC artifact, downstream-canary report,
+and visual/manual evidence are accepted. During the soak there may be no
+unresolved security, data-loss, startup/crash, core-input, or equivalent P0/P1
+release blocker. Any CLR API or public resource-key change requires a new RC
+and restarts the soak. Stable `1.0.0` must otherwise differ from the accepted RC
+only in version and release documentation. Download counts are informational
+and never satisfy or block this gate. The complete milestone sequence is in
+`docs/roadmap-1.0.md`.
 
 ## Publication
 
@@ -149,6 +216,23 @@ only from:
 The publication job requests its short-lived key immediately before the NuGet
 push. Keep `id-token: write` scoped to that job, and do not add a long-lived
 `NUGET_API_KEY` secret.
+
+After publication:
+
+1. Confirm NuGet has indexed the exact version, then install it from nuget.org
+   into clean `net462`, `net8.0-windows7.0`, and `net10.0-windows7.0`
+   applications. Start each application with the recommended
+   `FluentControlsResources` entry; retain the tagged package-smoke evidence for
+   the legacy `XamlControlsResources` path.
+2. Verify the annotated tag SHA, package repository commit, `.nupkg`, `.snupkg`,
+   `SHA256SUMS`, GitHub prerelease, and rendered release notes all identify the
+   same commit and version.
+3. For Preview 2, mark every listed 0.9.x version as **Legacy** while keeping it
+   listed and restorable. The deprecation message must link to the migration
+   guide and state that 0.9.x is frozen and unsupported.
+4. Land a small follow-up change that advances development to
+   `1.0.0-preview.3` and makes `1.0.0-preview.2` the active package-validation
+   baseline. Do not combine that bump with the tagged Preview 2 tree.
 
 When adding an explicitly supported resource key, run:
 

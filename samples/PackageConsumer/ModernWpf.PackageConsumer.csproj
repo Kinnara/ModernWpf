@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net462;net8.0-windows7.0;net10.0-windows7.0</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+    <ModernWpfPackageVersion Condition="'$(ModernWpfPackageVersion)' == ''">$(ModernWpfPackageValidationBaselineVersion)</ModernWpfPackageVersion>
+    <RestoreSources Condition="'$(ModernWpfPackageSource)' != ''">$(ModernWpfPackageSource);https://api.nuget.org/v3/index.json</RestoreSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ModernWpfUI" Version="$(ModernWpfPackageVersion)" />
+  </ItemGroup>
+
+</Project>
