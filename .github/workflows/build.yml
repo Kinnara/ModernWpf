@@ -1,6 +1,7 @@
 name: Build
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master, maintenance-reboot-1x ]
   pull_request:

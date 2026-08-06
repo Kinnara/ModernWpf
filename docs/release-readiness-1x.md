@@ -180,11 +180,16 @@ and never satisfy or block this gate. The complete milestone sequence is in
 
 ## Publication
 
-`.github/workflows/build.yml` performs validation only. Publication uses the
-manually dispatched `.github/workflows/release.yml`, which accepts an existing
-annotated `v<Version>` tag on `master`. The tag version must match
-`Directory.Build.props`. Dispatch the workflow from that same tag ref; for
-example:
+`.github/workflows/build.yml` performs validation only and supports manual
+dispatch so an exact branch tip can be validated if a pull-request event is
+delayed or dropped. This is a diagnostic fallback only: tagged publication
+still requires a successful Build run whose event is a push to `master`, so a
+manual run cannot satisfy the release gate.
+
+Publication uses the manually dispatched `.github/workflows/release.yml`, which
+accepts an existing annotated `v<Version>` tag on `master`. The tag version must
+match `Directory.Build.props`. Dispatch the workflow from that same tag ref;
+for example:
 
 ```powershell
 gh workflow run release.yml --ref v1.0.0-preview.2 -f tag=v1.0.0-preview.2
