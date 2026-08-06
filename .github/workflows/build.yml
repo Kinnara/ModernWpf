@@ -121,7 +121,10 @@ jobs:
       shell: pwsh
       run: |
         $package = Get-ChildItem artifacts\ModernWpfUI.*.nupkg | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-        .\tools\release\Verify-ModernWpfPackage.ps1 -PackagePath $package.FullName
+        $headCommit = git rev-parse HEAD
+        .\tools\release\Verify-ModernWpfPackage.ps1 `
+          -PackagePath $package.FullName `
+          -ExpectedRepositoryCommit $headCommit
 
     - name: Execute packaged consumers
       shell: pwsh

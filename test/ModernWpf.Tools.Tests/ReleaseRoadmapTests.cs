@@ -79,6 +79,7 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(workflow, "foreach ($run in 1..3)");
             StringAssert.Contains(workflow, "winui-net8-run$run.trx");
             StringAssert.Contains(workflow, "if ($LASTEXITCODE -ne 0)");
+            StringAssert.Contains(workflow, "-ExpectedRepositoryCommit $headCommit");
         }
 
         private static string FindRepoRoot()

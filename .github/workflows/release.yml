@@ -16,6 +16,7 @@ env:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   build:
@@ -68,6 +69,31 @@ jobs:
 
         "version=$projectVersion" >> $env:GITHUB_OUTPUT
         "artifact-name=modernwpf-$projectVersion" >> $env:GITHUB_OUTPUT
+
+    - name: Require successful master release gate
+      shell: pwsh
+      env:
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        $headCommit = git rev-parse HEAD
+        $runsJson = gh api `
+          "repos/$env:GITHUB_REPOSITORY/actions/workflows/build.yml/runs?branch=master&event=push&status=success&per_page=100"
+        if ($LASTEXITCODE -ne 0) {
+          throw "Could not inspect Build workflow runs for '$headCommit'."
+        }
+
+        $runs = $runsJson | ConvertFrom-Json
+        $matchingRuns = @($runs.workflow_runs | Where-Object {
+          $_.head_sha -eq $headCommit -and
+          $_.head_branch -eq 'master' -and
+          $_.event -eq 'push' -and
+          $_.conclusion -eq 'success'
+        })
+        if ($matchingRuns.Count -eq 0) {
+          throw "Commit '$headCommit' has no successful Build workflow run from a master push."
+        }
+
+        Write-Host "Validated master release gate: $($matchingRuns[0].html_url)"
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v6
@@ -146,7 +172,10 @@ jobs:
         }
 
         $package = $packages[0]
-        .\tools\release\Verify-ModernWpfPackage.ps1 -PackagePath $package.FullName
+        $headCommit = git rev-parse HEAD
+        .\tools\release\Verify-ModernWpfPackage.ps1 `
+          -PackagePath $package.FullName `
+          -ExpectedRepositoryCommit $headCommit
         .\tools\release\Test-ModernWpfPackageSmoke.ps1 -PackagePath $package.FullName
 
     - name: Prepare immutable release artifact
@@ -299,8 +328,7 @@ jobs:
         $package = $packages[0]
         dotnet nuget push $package.FullName `
           --api-key $env:NUGET_API_KEY `
-          --source https://api.nuget.org/v3/index.json `
-          --skip-duplicate
+          --source https://api.nuget.org/v3/index.json
         if ($LASTEXITCODE -ne 0) {
           throw "NuGet publication failed."
         }

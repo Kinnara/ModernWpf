@@ -327,7 +327,10 @@ namespace ModernWpf.Tools.Tests
                 "Assert-PackageEntry \"icon.png\"",
                 "Package icon.png must be exactly 128x128",
                 "release notes must be pinned to its version tag",
-                "Package readme.md is missing required content"
+                "Package readme.md is missing required content",
+                "$ExpectedRepositoryCommit",
+                "does not match checked-out commit",
+                "SourceLink does not identify expected commit"
             })
             {
                 StringAssert.Contains(verifier, verifierGuard);
@@ -407,11 +410,17 @@ namespace ModernWpf.Tools.Tests
             var buildWorkflow = File.ReadAllText(
                     Path.Combine(repoRoot, ".github", "workflows", "build.yml"))
                 .Replace("\r\n", "\n", StringComparison.Ordinal);
+            var releaseWorkflow = File.ReadAllText(
+                    Path.Combine(repoRoot, ".github", "workflows", "release.yml"))
+                .Replace("\r\n", "\n", StringComparison.Ordinal);
             var labelWorkflow = File.ReadAllText(
                     Path.Combine(repoRoot, ".github", "workflows", "label.yml"))
                 .Replace("\r\n", "\n", StringComparison.Ordinal);
 
             StringAssert.Contains(buildWorkflow, "permissions:\n  contents: read");
+            StringAssert.Contains(
+                releaseWorkflow,
+                "permissions:\n  contents: read\n  actions: read");
             StringAssert.Contains(labelWorkflow, "permissions:\n  issues: write");
             StringAssert.Contains(labelWorkflow, "GH_TOKEN: ${{ github.token }}");
             StringAssert.Contains(labelWorkflow, "gh issue edit");
@@ -470,6 +479,21 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(
                 workflow,
                 "GH_REPO: ${{ github.repository }}");
+            StringAssert.Contains(workflow, "$headCommit = git rev-parse HEAD");
+            StringAssert.Contains(workflow, "-ExpectedRepositoryCommit $headCommit");
+            StringAssert.Contains(
+                workflow,
+                "name: Require successful master release gate");
+            StringAssert.Contains(
+                workflow,
+                "actions/workflows/build.yml/runs?branch=master&event=push&status=success");
+            StringAssert.Contains(workflow, "$_.head_sha -eq $headCommit");
+            StringAssert.Contains(workflow, "$_.head_branch -eq 'master'");
+            StringAssert.Contains(workflow, "$_.event -eq 'push'");
+            StringAssert.Contains(workflow, "$_.conclusion -eq 'success'");
+            StringAssert.Contains(workflow, "name: Test complete WinUI suite");
+            Assert.IsFalse(
+                workflow.Contains("--skip-duplicate", StringComparison.Ordinal));
             Assert.IsFalse(
                 workflow.Contains(
                     "Copy-Item docs\\release-notes-1.0.0-preview.1.md",

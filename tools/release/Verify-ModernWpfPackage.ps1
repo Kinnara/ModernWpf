@@ -4,6 +4,8 @@ param(
 
     [string]$SymbolPackagePath,
 
+    [string]$ExpectedRepositoryCommit,
+
     [string[]]$TargetFrameworks = @(
         "net462",
         "net8.0-windows7.0",
@@ -12,6 +14,11 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+
+if (-not [string]::IsNullOrWhiteSpace($ExpectedRepositoryCommit) -and
+    $ExpectedRepositoryCommit -notmatch "^[0-9a-fA-F]{40}$") {
+    throw "Expected repository commit must be a full Git SHA: '$ExpectedRepositoryCommit'."
+}
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 Add-Type -AssemblyName System.Reflection.Metadata
@@ -123,6 +130,21 @@ try {
                 if ($null -eq $sourceLink.documents -or
                     @($sourceLink.documents.PSObject.Properties).Count -eq 0) {
                     throw "Portable PDB '$Path' has an empty SourceLink document map."
+                }
+
+                if (-not [string]::IsNullOrWhiteSpace($ExpectedRepositoryCommit)) {
+                    $mismatchedDocuments = @(
+                        $sourceLink.documents.PSObject.Properties |
+                            Where-Object {
+                                ([string]$_.Value).IndexOf(
+                                    $ExpectedRepositoryCommit,
+                                    [StringComparison]::OrdinalIgnoreCase) -lt 0
+                            } |
+                            ForEach-Object { $_.Name }
+                    )
+                    if ($mismatchedDocuments.Count -ne 0) {
+                        throw "Portable PDB '$Path' SourceLink does not identify expected commit '$ExpectedRepositoryCommit'."
+                    }
                 }
             }
             finally {
@@ -304,6 +326,38 @@ try {
         throw "Symbol package '$resolvedSymbolPackagePath' contains unexpected entries: $($unexpectedSymbolEntries -join ', ')"
     }
 
+    $symbolNuspecEntry = $symbolZip.Entries |
+        Where-Object { $_.FullName -match "(^|/)ModernWpfUI\.nuspec$" } |
+        Select-Object -First 1
+    if ($null -eq $symbolNuspecEntry) {
+        throw "Symbol package '$resolvedSymbolPackagePath' has no nuspec entry."
+    }
+
+    $symbolNuspecReader = [System.IO.StreamReader]::new($symbolNuspecEntry.Open())
+    try {
+        [xml]$symbolNuspec = $symbolNuspecReader.ReadToEnd()
+    }
+    finally {
+        $symbolNuspecReader.Dispose()
+    }
+
+    $symbolRepository = $symbolNuspec.SelectSingleNode(
+        "/*[local-name()='package']/*[local-name()='metadata']/*[local-name()='repository']")
+    if ($null -eq $symbolRepository) {
+        throw "Symbol package '$resolvedSymbolPackagePath' has no repository metadata."
+    }
+
+    $symbolRepositoryCommit = $symbolRepository.GetAttribute("commit")
+    if ($symbolRepositoryCommit -notmatch "^[0-9a-fA-F]{40}$") {
+        throw "Symbol package '$resolvedSymbolPackagePath' repository commit must be a full Git SHA."
+    }
+    if (-not [string]::IsNullOrWhiteSpace($ExpectedRepositoryCommit) -and
+        -not $symbolRepositoryCommit.Equals(
+            $ExpectedRepositoryCommit,
+            [StringComparison]::OrdinalIgnoreCase)) {
+        throw "Symbol package repository commit '$symbolRepositoryCommit' does not match checked-out commit '$ExpectedRepositoryCommit'."
+    }
+
     foreach ($assemblyName in @("ModernWpf", "ModernWpf.Controls")) {
         $referenceFramework = $TargetFrameworks[0]
         $referenceSurface = @($publicTypeSurfaces["$referenceFramework|$assemblyName"])
@@ -474,6 +528,13 @@ try {
     $repositoryCommit = $repository.GetAttribute("commit")
     if ($repositoryCommit -notmatch "^[0-9a-fA-F]{40}$") {
         throw "Package '$resolvedPackagePath' repository commit must be a full Git SHA."
+    }
+    if (-not [string]::IsNullOrWhiteSpace($ExpectedRepositoryCommit)) {
+        if (-not $repositoryCommit.Equals(
+            $ExpectedRepositoryCommit,
+            [StringComparison]::OrdinalIgnoreCase)) {
+            throw "Package repository commit '$repositoryCommit' does not match checked-out commit '$ExpectedRepositoryCommit'."
+        }
     }
 
     $dependencyGroups = @($metadata.SelectNodes("*[local-name()='dependencies']/*[local-name()='group']") | ForEach-Object {
