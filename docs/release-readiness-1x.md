@@ -190,11 +190,40 @@ example:
 gh workflow run release.yml --ref v1.0.0-preview.2 -f tag=v1.0.0-preview.2
 ```
 
+Stable publication also names the accepted RC explicitly:
+
+```powershell
+gh workflow run release.yml --ref v1.0.0 `
+  -f tag=v1.0.0 `
+  -f accepted_rc_tag=v1.0.0-rc.1
+```
+
 The workflow builds and tests the tag once, retains the packages, symbols, TRX
 results, release notes, and `SHA256SUMS`, then pauses at the protected
 `nuget-production` environment. The publication job verifies the downloaded
-artifact, prepares a draft GitHub prerelease, publishes the exact `.nupkg` to
-NuGet, and only then publishes the GitHub prerelease.
+artifact, prepares a draft GitHub release, publishes the exact `.nupkg` to
+NuGet, and only then publishes the GitHub release. Preview and RC versions are
+marked as prereleases; a stable SemVer tag is not.
+
+For a stable tag, supply `accepted_rc_tag=v<Version>-rc.N`. It must identify an
+annotated ancestor tag whose package version matches the RC tag and whose
+GitHub release is a published, non-draft prerelease. The tag commit must also
+have a successful `release.yml` run dispatched from that exact tag, proving the
+trusted publication workflow completed. Production approval for an RC must
+happen only after its downstream-canary and visual/manual evidence is accepted,
+because the stable workflow measures the 14-day soak from that RC's GitHub
+publication time.
+
+The stable tree may contain only added or modified version/release-document
+paths from the accepted RC. Renames, deletions, product/source changes, and
+public-contract inventory changes fail. Within `Directory.Build.props`, only
+`Version` and `ModernWpfPackageValidationBaselineVersion` may differ, and the
+stable baseline must equal the accepted RC version. The exact path and property
+checks live in `tools/release/Assert-StableReleaseLineage.ps1`.
+
+Every release dispatch, including previews and RCs, must use the release tag as
+both `--ref` and the `tag` input. The workflow rejects a branch dispatch or any
+ref, input, checkout, and commit mismatch.
 
 Active-development notes carry a `RELEASE-NOTES: DRAFT` marker. The release
 workflow refuses to create an artifact until that marker is removed.
@@ -222,6 +251,11 @@ version is a hard failure because NuGet versions are immutable and the workflow
 must never accept an unverified package merely because its ID and version
 already exist. Do not bypass that failure or publish the GitHub prerelease from
 the failed run.
+
+Before publication, the workflow resets an existing draft's title and notes
+from the retained artifact, removes every existing draft asset, and uploads the
+exact verified asset set again. A stale or manually prepared draft therefore
+cannot supply release text or files to the published release.
 
 If NuGet accepted the package but a later GitHub-release step failed, keep the
 GitHub release as a draft and recover manually from the retained workflow

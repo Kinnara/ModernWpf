@@ -457,6 +457,18 @@ namespace ModernWpf.Tools.Tests
                 "RELEASE_VERSION: ${{ steps.validate.outputs.version }}");
             StringAssert.Contains(
                 workflow,
+                "is-prerelease: ${{ steps.validate.outputs.is-prerelease }}");
+            StringAssert.Contains(
+                workflow,
+                "$env:GITHUB_REF_NAME -ne $env:RELEASE_TAG");
+            StringAssert.Contains(
+                workflow,
+                "$env:GITHUB_SHA -ne $tagCommit");
+            StringAssert.Contains(
+                workflow,
+                "must be dispatched from the same tag supplied in the tag input");
+            StringAssert.Contains(
+                workflow,
                 "$releaseNotesPath = \"docs\\release-notes-$env:RELEASE_VERSION.md\"");
             StringAssert.Contains(
                 workflow,
@@ -478,7 +490,7 @@ namespace ModernWpf.Tools.Tests
                 "-Tag $env:RELEASE_TAG");
             StringAssert.Contains(
                 workflow,
-                "--title \"ModernWPF ${{ needs.build.outputs.version }}\"");
+                "'ModernWPF ${{ needs.build.outputs.version }}'");
             StringAssert.Contains(
                 workflow,
                 "GH_REPO: ${{ github.repository }}");
@@ -495,8 +507,52 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(workflow, "$_.event -eq 'push'");
             StringAssert.Contains(workflow, "$_.conclusion -eq 'success'");
             StringAssert.Contains(workflow, "name: Test complete WinUI suite");
+            StringAssert.Contains(
+                workflow,
+                "ACCEPTED_RC_TAG: ${{ inputs.accepted_rc_tag }}");
+            StringAssert.Contains(
+                workflow,
+                "--json tagName,isDraft,isPrerelease,publishedAt");
+            StringAssert.Contains(
+                workflow,
+                "$rcRelease.tagName -ne $env:ACCEPTED_RC_TAG");
+            StringAssert.Contains(workflow, "$rcRelease.isDraft -or");
+            StringAssert.Contains(workflow, "-not $rcRelease.isPrerelease -or");
+            StringAssert.Contains(
+                workflow,
+                "IsNullOrWhiteSpace([string]$rcRelease.publishedAt)");
+            StringAssert.Contains(
+                workflow,
+                "Accepted RC must be a published, non-draft GitHub prerelease");
+            StringAssert.Contains(
+                workflow,
+                "actions/workflows/release.yml/runs?event=workflow_dispatch&status=success");
+            StringAssert.Contains(workflow, "$_.head_sha -eq $rcCommit");
+            StringAssert.Contains(
+                workflow,
+                "$_.head_branch -eq $env:ACCEPTED_RC_TAG");
+            StringAssert.Contains(
+                workflow,
+                "Accepted RC has no successful release workflow run");
+            StringAssert.Contains(
+                workflow,
+                @".\tools\release\Assert-StableReleaseLineage.ps1");
+            StringAssert.Contains(
+                workflow,
+                "$expectedPrerelease = [bool]::Parse('${{ needs.build.outputs.is-prerelease }}')");
+            StringAssert.Contains(
+                workflow,
+                "$release.isPrerelease -ne $expectedPrerelease");
+            StringAssert.Contains(workflow, "$releaseArguments += '--prerelease'");
+            StringAssert.Contains(
+                workflow,
+                "--notes-file release\\release-notes.md");
+            StringAssert.Contains(workflow, "gh release delete-asset");
+            StringAssert.Contains(workflow, "Could not remove stale draft asset");
             Assert.IsFalse(
                 workflow.Contains("--skip-duplicate", StringComparison.Ordinal));
+            Assert.IsFalse(
+                workflow.Contains("--prerelease=true", StringComparison.Ordinal));
             Assert.IsFalse(
                 workflow.Contains(
                     "Copy-Item docs\\release-notes-1.0.0-preview.1.md",

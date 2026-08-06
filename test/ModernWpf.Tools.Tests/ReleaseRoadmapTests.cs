@@ -58,6 +58,10 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(readiness, "## RC and stable graduation");
             StringAssert.Contains(readiness, "Any CLR API or public resource-key change");
             StringAssert.Contains(readiness, "Download counts are informational");
+            StringAssert.Contains(readiness, "supply `accepted_rc_tag=v<Version>-rc.N`");
+            StringAssert.Contains(readiness, "publication time");
+            StringAssert.Contains(readiness, "Renames, deletions");
+            StringAssert.Contains(readiness, "stable SemVer tag is not");
             StringAssert.Contains(readiness, "does not use `--skip-duplicate`");
             StringAssert.Contains(readiness, "version is a hard failure because NuGet versions are immutable");
             StringAssert.Contains(readiness, "GitHub release as a draft and recover manually");

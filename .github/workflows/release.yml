@@ -7,6 +7,10 @@ on:
         description: Existing annotated v<Version> tag to publish
         required: true
         type: string
+      accepted_rc_tag:
+        description: Published accepted v<Version>-rc.N tag; required for a stable release
+        required: false
+        type: string
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -23,6 +27,7 @@ jobs:
     runs-on: windows-2022
     outputs:
       artifact-name: ${{ steps.validate.outputs.artifact-name }}
+      is-prerelease: ${{ steps.validate.outputs.is-prerelease }}
       version: ${{ steps.validate.outputs.version }}
 
     steps:
@@ -34,11 +39,19 @@ jobs:
     - name: Validate immutable release tag
       id: validate
       shell: pwsh
+      env:
+        ACCEPTED_RC_TAG: ${{ inputs.accepted_rc_tag }}
+        GH_TOKEN: ${{ github.token }}
       run: |
         if ($env:RELEASE_TAG -notmatch '^v(?<version>[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?)$') {
           throw "Release tag must have the form v<Version>."
         }
         $tagVersion = $Matches.version
+
+        if ($env:GITHUB_REF_TYPE -ne 'tag' -or
+            $env:GITHUB_REF_NAME -ne $env:RELEASE_TAG) {
+          throw "Release workflow must be dispatched from the same tag supplied in the tag input."
+        }
 
         git fetch origin refs/heads/master:refs/remotes/origin/master --tags --force
         if ($LASTEXITCODE -ne 0) {
@@ -55,6 +68,9 @@ jobs:
         if ($tagCommit -ne $headCommit) {
           throw "Checkout HEAD '$headCommit' does not match tag commit '$tagCommit'."
         }
+        if ($env:GITHUB_SHA -ne $tagCommit) {
+          throw "Workflow dispatch SHA '$env:GITHUB_SHA' does not match tag commit '$tagCommit'."
+        }
 
         git merge-base --is-ancestor $tagCommit origin/master
         if ($LASTEXITCODE -ne 0) {
@@ -67,8 +83,69 @@ jobs:
           throw "Tag version '$tagVersion' does not match Directory.Build.props version '$projectVersion'."
         }
 
+        $isPrerelease = $projectVersion.Contains('-')
+        if ($isPrerelease) {
+          if (-not [string]::IsNullOrWhiteSpace($env:ACCEPTED_RC_TAG)) {
+            throw "accepted_rc_tag is valid only for a stable release."
+          }
+        }
+        else {
+          if ([string]::IsNullOrWhiteSpace($env:ACCEPTED_RC_TAG)) {
+            throw "Stable version '$projectVersion' requires accepted_rc_tag."
+          }
+
+          $escapedProjectVersion = [regex]::Escape($projectVersion)
+          if ($env:ACCEPTED_RC_TAG -notmatch "^v$escapedProjectVersion-rc\.[1-9][0-9]*$") {
+            throw "accepted_rc_tag must have the form 'v$projectVersion-rc.<positive integer>'."
+          }
+
+          $rcReleaseJson = gh release view `
+            $env:ACCEPTED_RC_TAG `
+            --repo $env:GITHUB_REPOSITORY `
+            --json tagName,isDraft,isPrerelease,publishedAt
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not read accepted RC release '$env:ACCEPTED_RC_TAG'."
+          }
+
+          $rcRelease = $rcReleaseJson | ConvertFrom-Json
+          if ($rcRelease.tagName -ne $env:ACCEPTED_RC_TAG -or
+              $rcRelease.isDraft -or
+              -not $rcRelease.isPrerelease -or
+              [string]::IsNullOrWhiteSpace([string]$rcRelease.publishedAt)) {
+            throw "Accepted RC must be a published, non-draft GitHub prerelease for '$env:ACCEPTED_RC_TAG'."
+          }
+
+          $rcCommit = git rev-list -n 1 "refs/tags/$env:ACCEPTED_RC_TAG"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not resolve accepted RC tag '$env:ACCEPTED_RC_TAG'."
+          }
+
+          $releaseRunsJson = gh api `
+            "repos/$env:GITHUB_REPOSITORY/actions/workflows/release.yml/runs?event=workflow_dispatch&status=success&per_page=100"
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not inspect release workflow runs for accepted RC '$env:ACCEPTED_RC_TAG'."
+          }
+
+          $releaseRuns = $releaseRunsJson | ConvertFrom-Json
+          $matchingRcRuns = @($releaseRuns.workflow_runs | Where-Object {
+            $_.head_sha -eq $rcCommit -and
+            $_.head_branch -eq $env:ACCEPTED_RC_TAG -and
+            $_.event -eq 'workflow_dispatch' -and
+            $_.conclusion -eq 'success'
+          })
+          if ($matchingRcRuns.Count -eq 0) {
+            throw "Accepted RC has no successful release workflow run at tag '$env:ACCEPTED_RC_TAG' and commit '$rcCommit'."
+          }
+
+          .\tools\release\Assert-StableReleaseLineage.ps1 `
+            -StableTag $env:RELEASE_TAG `
+            -AcceptedRcTag $env:ACCEPTED_RC_TAG `
+            -AcceptedRcPublishedAt ([string]$rcRelease.publishedAt)
+        }
+
         "version=$projectVersion" >> $env:GITHUB_OUTPUT
         "artifact-name=modernwpf-$projectVersion" >> $env:GITHUB_OUTPUT
+        "is-prerelease=$($isPrerelease.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
 
     - name: Require successful master release gate
       shell: pwsh
@@ -275,26 +352,67 @@ jobs:
           throw "Downloaded artifact contents do not match SHA256SUMS."
         }
 
-    - name: Create draft prerelease and attach artifacts
+    - name: Create draft release and attach artifacts
       shell: pwsh
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
-        $isDraft = gh release view $env:RELEASE_TAG --json isDraft --jq .isDraft 2>$null
+        $expectedPrerelease = [bool]::Parse('${{ needs.build.outputs.is-prerelease }}')
+        $releaseJson = gh release view `
+          $env:RELEASE_TAG `
+          --json isDraft,isPrerelease `
+          2>$null
         if ($LASTEXITCODE -eq 0) {
-          if ($isDraft -ne 'true') {
+          $release = $releaseJson | ConvertFrom-Json
+          if (-not $release.isDraft) {
             throw "GitHub release '$env:RELEASE_TAG' already exists and is not a draft."
+          }
+          if ($release.isPrerelease -ne $expectedPrerelease) {
+            throw "Existing draft release '$env:RELEASE_TAG' has the wrong prerelease state."
           }
         }
         else {
-          gh release create $env:RELEASE_TAG `
-            --verify-tag `
-            --draft `
-            --prerelease `
-            --title "ModernWPF ${{ needs.build.outputs.version }}" `
-            --notes-file release\release-notes.md
+          $releaseArguments = @(
+            'release',
+            'create',
+            $env:RELEASE_TAG,
+            '--verify-tag',
+            '--draft',
+            '--title',
+            'ModernWPF ${{ needs.build.outputs.version }}',
+            '--notes-file',
+            'release\release-notes.md'
+          )
+          if ($expectedPrerelease) {
+            $releaseArguments += '--prerelease'
+          }
+
+          & gh @releaseArguments
           if ($LASTEXITCODE -ne 0) {
-            throw "Could not create draft GitHub prerelease."
+            throw "Could not create draft GitHub release."
+          }
+        }
+
+        gh release edit `
+          $env:RELEASE_TAG `
+          --title 'ModernWPF ${{ needs.build.outputs.version }}' `
+          --notes-file release\release-notes.md
+        if ($LASTEXITCODE -ne 0) {
+          throw "Could not reset draft GitHub release metadata."
+        }
+
+        $existingAssetsJson = gh release view $env:RELEASE_TAG --json assets
+        if ($LASTEXITCODE -ne 0) {
+          throw "Could not inspect existing draft release assets."
+        }
+        $existingAssets = @(($existingAssetsJson | ConvertFrom-Json).assets)
+        foreach ($existingAsset in $existingAssets) {
+          gh release delete-asset `
+            $env:RELEASE_TAG `
+            $existingAsset.name `
+            --yes
+          if ($LASTEXITCODE -ne 0) {
+            throw "Could not remove stale draft asset '$($existingAsset.name)'."
           }
         }
 
@@ -333,12 +451,12 @@ jobs:
           throw "NuGet publication failed."
         }
 
-    - name: Publish GitHub prerelease
+    - name: Publish GitHub release
       shell: pwsh
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
-        gh release edit $env:RELEASE_TAG --draft=false --prerelease=true
+        gh release edit $env:RELEASE_TAG --draft=false
         if ($LASTEXITCODE -ne 0) {
-          throw "Could not publish GitHub prerelease '$env:RELEASE_TAG'."
+          throw "Could not publish GitHub release '$env:RELEASE_TAG'."
         }
