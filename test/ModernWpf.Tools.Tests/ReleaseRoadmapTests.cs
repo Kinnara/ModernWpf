@@ -65,6 +65,22 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(readme, "[1.0 roadmap](docs/roadmap-1.0.md)");
         }
 
+        [TestMethod]
+        public void BuildWorkflowEnforcesThreeConsecutiveFullWinUIRuns()
+        {
+            var repoRoot = FindRepoRoot();
+            var workflow = File.ReadAllText(
+                    Path.Combine(repoRoot, ".github", "workflows", "build.yml"))
+                .Replace("\r\n", "\n", StringComparison.Ordinal);
+
+            StringAssert.Contains(
+                workflow,
+                "name: Test complete WinUI suite three consecutive times");
+            StringAssert.Contains(workflow, "foreach ($run in 1..3)");
+            StringAssert.Contains(workflow, "winui-net8-run$run.trx");
+            StringAssert.Contains(workflow, "if ($LASTEXITCODE -ne 0)");
+        }
+
         private static string FindRepoRoot()
         {
             var directory = new DirectoryInfo(AppContext.BaseDirectory);
