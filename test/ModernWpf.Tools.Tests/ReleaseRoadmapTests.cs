@@ -58,6 +58,11 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(readiness, "## RC and stable graduation");
             StringAssert.Contains(readiness, "Any CLR API or public resource-key change");
             StringAssert.Contains(readiness, "Download counts are informational");
+            StringAssert.Contains(readiness, "does not use `--skip-duplicate`");
+            StringAssert.Contains(readiness, "version is a hard failure because NuGet versions are immutable");
+            StringAssert.Contains(readiness, "GitHub release as a draft and recover manually");
+            StringAssert.Contains(readiness, "allowing only NuGet's added");
+            StringAssert.Contains(readiness, "`.signature.p7s` entry to differ");
             StringAssert.Contains(readiness, "After publication:");
             StringAssert.Contains(readiness, "mark every listed 0.9.x version as **Legacy**");
             StringAssert.Contains(readiness, "`1.0.0-preview.3`");

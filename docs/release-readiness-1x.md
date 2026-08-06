@@ -217,6 +217,23 @@ The publication job requests its short-lived key immediately before the NuGet
 push. Keep `id-token: write` scoped to that job, and do not add a long-lived
 `NUGET_API_KEY` secret.
 
+The NuGet push intentionally does not use `--skip-duplicate`. A duplicate
+version is a hard failure because NuGet versions are immutable and the workflow
+must never accept an unverified package merely because its ID and version
+already exist. Do not bypass that failure or publish the GitHub prerelease from
+the failed run.
+
+If NuGet accepted the package but a later GitHub-release step failed, keep the
+GitHub release as a draft and recover manually from the retained workflow
+artifact. Wait for indexing, download the package from nuget.org, verify its
+repository signature, ID, version, repository commit, API/resource surface,
+and every ZIP entry against the retained `.nupkg`, allowing only NuGet's added
+`.signature.p7s` entry to differ. Reverify the draft assets against the retained
+`SHA256SUMS`. Only after that equivalence is proven may the existing draft
+prerelease be published without another NuGet push. If equivalence cannot be
+proven, leave the draft unpublished, treat the immutable version as an incident,
+and prepare a new version; never overwrite or silently accept it.
+
 After publication:
 
 1. Confirm NuGet has indexed the exact version, then install it from nuget.org

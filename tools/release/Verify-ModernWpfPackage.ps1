@@ -326,12 +326,14 @@ try {
         throw "Symbol package '$resolvedSymbolPackagePath' contains unexpected entries: $($unexpectedSymbolEntries -join ', ')"
     }
 
-    $symbolNuspecEntry = $symbolZip.Entries |
-        Where-Object { $_.FullName -match "(^|/)ModernWpfUI\.nuspec$" } |
-        Select-Object -First 1
-    if ($null -eq $symbolNuspecEntry) {
-        throw "Symbol package '$resolvedSymbolPackagePath' has no nuspec entry."
+    $symbolNuspecEntries = @(
+        $symbolZip.Entries |
+            Where-Object { $_.FullName -match "(^|/)ModernWpfUI\.nuspec$" }
+    )
+    if ($symbolNuspecEntries.Count -ne 1) {
+        throw "Symbol package '$resolvedSymbolPackagePath' must contain exactly one nuspec entry."
     }
+    $symbolNuspecEntry = $symbolNuspecEntries[0]
 
     $symbolNuspecReader = [System.IO.StreamReader]::new($symbolNuspecEntry.Open())
     try {
@@ -341,10 +343,33 @@ try {
         $symbolNuspecReader.Dispose()
     }
 
-    $symbolRepository = $symbolNuspec.SelectSingleNode(
-        "/*[local-name()='package']/*[local-name()='metadata']/*[local-name()='repository']")
+    $symbolMetadata = $symbolNuspec.SelectSingleNode(
+        "/*[local-name()='package']/*[local-name()='metadata']")
+    if ($null -eq $symbolMetadata) {
+        throw "Symbol package '$resolvedSymbolPackagePath' has no nuspec metadata."
+    }
+
+    $symbolId = $symbolMetadata.SelectSingleNode("*[local-name()='id']").InnerText
+    if ($symbolId -ne "ModernWpfUI") {
+        throw "Symbol package '$resolvedSymbolPackagePath' must use package ID 'ModernWpfUI'."
+    }
+
+    $symbolVersion = $symbolMetadata.SelectSingleNode("*[local-name()='version']").InnerText
+    if ([string]::IsNullOrWhiteSpace($symbolVersion)) {
+        throw "Symbol package '$resolvedSymbolPackagePath' has no version metadata."
+    }
+
+    $symbolRepository = $symbolMetadata.SelectSingleNode("*[local-name()='repository']")
     if ($null -eq $symbolRepository) {
         throw "Symbol package '$resolvedSymbolPackagePath' has no repository metadata."
+    }
+
+    if ($symbolRepository.GetAttribute("type") -ne "git") {
+        throw "Symbol package '$resolvedSymbolPackagePath' repository type must be 'git'."
+    }
+
+    if ($symbolRepository.GetAttribute("url") -ne "https://github.com/Kinnara/ModernWpf") {
+        throw "Symbol package '$resolvedSymbolPackagePath' has an unexpected repository URL."
     }
 
     $symbolRepositoryCommit = $symbolRepository.GetAttribute("commit")
@@ -414,6 +439,9 @@ try {
     $version = $metadata.SelectSingleNode("*[local-name()='version']").InnerText
     if ([string]::IsNullOrWhiteSpace($version)) {
         throw "Package '$resolvedPackagePath' has no version metadata."
+    }
+    if ($symbolVersion -ne $version) {
+        throw "Symbol package version '$symbolVersion' does not match main package version '$version'."
     }
 
     $title = $metadata.SelectSingleNode("*[local-name()='title']").InnerText

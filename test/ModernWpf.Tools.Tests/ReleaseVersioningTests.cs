@@ -330,7 +330,10 @@ namespace ModernWpf.Tools.Tests
                 "Package readme.md is missing required content",
                 "$ExpectedRepositoryCommit",
                 "does not match checked-out commit",
-                "SourceLink does not identify expected commit"
+                "SourceLink does not identify expected commit",
+                "must contain exactly one nuspec entry",
+                "must use package ID 'ModernWpfUI'",
+                "does not match main package version"
             })
             {
                 StringAssert.Contains(verifier, verifierGuard);
