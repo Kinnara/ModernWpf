@@ -344,6 +344,8 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(runner, "credential.helper=");
             StringAssert.Contains(runner, "--no-hardlinks");
             StringAssert.Contains(runner, "'modernwpf-canary'");
+            StringAssert.Contains(runner, "'-b'");
+            Assert.IsFalse(runner.Contains("'--branch'", StringComparison.Ordinal));
             Assert.IsFalse(runner.Contains("'--detach'", StringComparison.Ordinal));
             StringAssert.Contains(runner, "baseline-submodules");
             StringAssert.Contains(runner, "candidate-submodules");

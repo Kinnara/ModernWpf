@@ -826,7 +826,7 @@ try {
                 '-C',
                 $baselineRoot,
                 'checkout',
-                '--branch',
+                '-b',
                 'modernwpf-canary',
                 $canary.commit) `
             -WorkingDirectory $runRoot -LogDirectory $logDirectory `
