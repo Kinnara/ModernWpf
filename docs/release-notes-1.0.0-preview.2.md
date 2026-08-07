@@ -1,12 +1,11 @@
 # ModernWPF 1.0.0-preview.2
 
-<!-- RELEASE-NOTES: DRAFT -->
+`1.0.0-preview.2` completes the existing-control WinUI synchronization
+milestone and improves package discovery, migration guidance, samples,
+feedback, and downstream compatibility validation for the actively maintained
+ModernWPF 1.x line.
 
-`1.0.0-preview.2` is the active development version following the first
-ModernWPF 1.x preview. This file will accumulate user-facing changes before
-the version is tagged.
-
-## Development baseline
+## Preview compatibility
 
 - `1.0.0-preview.1` remains the immutable historical audit and migration
   comparison, not an API freeze across later previews.
@@ -41,6 +40,12 @@ and stable compatibility policy.
   local package feed and do not add Preview 2 downloads on nuget.org; unchanged
   0.9.x baseline restores can still add historical traffic. See
   [Downstream compatibility canaries](downstream-canaries.md).
+- A [successful Preview 2 master candidate run](https://github.com/Kinnara/ModernWpf/actions/runs/31148484772)
+  at commit `c5b4806a622cdee0b62b7df0c0c493548816a579` classified all three
+  pinned canaries as `migrated`: each unchanged 0.9.x baseline and its
+  documented, minimally migrated 1.x candidate built successfully for
+  BilibiliLiveRecordDownLoader on .NET 10, BililiveRecorder on .NET Framework
+  4.7.2, and OpenKh on .NET 8. Tagged-release validation runs separately.
 
 ## Road to stable 1.0
 
