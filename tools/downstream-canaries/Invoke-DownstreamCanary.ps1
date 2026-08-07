@@ -83,10 +83,15 @@ function Test-Manifest {
         foreach ($textMigration in @($repository.migrations | Where-Object {
             $_.kind -eq 'text-replacement'
         })) {
-            if ($textMigration.from -ne 'SimpleStackPanel' -or
-                $textMigration.to -ne 'StackPanelEx') {
+            $isStackPanelRename =
+                $textMigration.from -eq 'SimpleStackPanel' -and
+                $textMigration.to -eq 'StackPanelEx'
+            $isTitleBarRename =
+                $textMigration.from -eq 'TitleBar.' -and
+                $textMigration.to -eq 'WindowTitleBar.'
+            if (-not $isStackPanelRename -and -not $isTitleBarRename) {
                 throw "Canary '$($repository.id)' contains a text migration that is not " +
-                    'the documented SimpleStackPanel to StackPanelEx rename.'
+                    'a reviewed rename from the 0.9 migration guide.'
             }
         }
     }

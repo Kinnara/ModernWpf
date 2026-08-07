@@ -41,9 +41,10 @@ source to ModernWPF.
    metadata paths below the legacy WPF markup compiler's path limit.
 4. A second pristine checkout receives only reviewed migrations from the 0.9
    guide: replace the `ModernWpfUI` package version and, where the pinned source
-   uses it, rename `SimpleStackPanel` to `StackPanelEx`. Exact file paths and
-   occurrence counts are manifest-locked. The existing `XamlControlsResources`
-   entry remains in place as the documented staged migration path.
+   uses them, rename `SimpleStackPanel` to `StackPanelEx` and the old `TitleBar`
+   facade to `WindowTitleBar`. Exact file paths and occurrence counts are
+   manifest-locked. The existing `XamlControlsResources` entry remains in place
+   as the documented staged migration path.
 5. The candidate restores through package-source mapping that maps the exact
    `ModernWpfUI` ID to the downloaded local feed. Other dependencies may come
    from nuget.org; the candidate package cannot.

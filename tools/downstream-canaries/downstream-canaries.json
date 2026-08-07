@@ -94,6 +94,13 @@
           "from": "SimpleStackPanel",
           "to": "StackPanelEx",
           "expectedOccurrences": 2
+        },
+        {
+          "kind": "text-replacement",
+          "path": "BililiveRecorder.WPF/NewMainWindow.xaml",
+          "from": "TitleBar.",
+          "to": "WindowTitleBar.",
+          "expectedOccurrences": 3
         }
       ]
     },

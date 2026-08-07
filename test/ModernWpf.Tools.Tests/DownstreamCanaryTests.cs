@@ -61,7 +61,7 @@ namespace ModernWpf.Tools.Tests
                 Array.Empty<string>(),
                 "0.9.4",
                 "GPL-3.0",
-                3);
+                4);
             AssertCanary(
                 repositories,
                 "openkh-kh2-object-editor",
@@ -117,6 +117,11 @@ namespace ModernWpf.Tools.Tests
                 "bililive-recorder",
                 "BililiveRecorder.WPF/Pages/SettingsPage.xaml",
                 2);
+            AssertTitleBarMigration(
+                repositories,
+                "bililive-recorder",
+                "BililiveRecorder.WPF/NewMainWindow.xaml",
+                3);
         }
 
         [TestMethod]
@@ -428,6 +433,25 @@ namespace ModernWpf.Tools.Tests
                     RequiredString(item, "path") == path);
             Assert.AreEqual("SimpleStackPanel", RequiredString(migration, "from"));
             Assert.AreEqual("StackPanelEx", RequiredString(migration, "to"));
+            Assert.AreEqual(
+                expectedOccurrences,
+                migration.GetProperty("expectedOccurrences").GetInt32());
+        }
+
+        private static void AssertTitleBarMigration(
+            JsonElement[] repositories,
+            string id,
+            string path,
+            int expectedOccurrences)
+        {
+            var canary = repositories.Single(item => RequiredString(item, "id") == id);
+            var migration = canary.GetProperty("migrations")
+                .EnumerateArray()
+                .Single(item =>
+                    RequiredString(item, "kind") == "text-replacement" &&
+                    RequiredString(item, "path") == path);
+            Assert.AreEqual("TitleBar.", RequiredString(migration, "from"));
+            Assert.AreEqual("WindowTitleBar.", RequiredString(migration, "to"));
             Assert.AreEqual(
                 expectedOccurrences,
                 migration.GetProperty("expectedOccurrences").GetInt32());
