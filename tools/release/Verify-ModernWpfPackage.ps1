@@ -493,6 +493,22 @@ try {
         $iconBuffer.Dispose()
     }
 
+    $canonicalIconPath = Join-Path $PSScriptRoot "..\..\ModernWpf.Controls\icon.png"
+    [byte[]]$canonicalIconBytes = [IO.File]::ReadAllBytes(
+        (Resolve-Path -LiteralPath $canonicalIconPath -ErrorAction Stop).Path)
+    $iconMatchesCanonicalAsset = $iconBytes.Length -eq $canonicalIconBytes.Length
+    if ($iconMatchesCanonicalAsset) {
+        for ($index = 0; $index -lt $iconBytes.Length; $index++) {
+            if ($iconBytes[$index] -ne $canonicalIconBytes[$index]) {
+                $iconMatchesCanonicalAsset = $false
+                break
+            }
+        }
+    }
+    if (-not $iconMatchesCanonicalAsset) {
+        throw "Package icon.png does not match the checked-in ModernWPF logo."
+    }
+
     [byte[]]$pngSignature = 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
     if ($iconBytes.Length -lt 24) {
         throw "Package icon.png is truncated."

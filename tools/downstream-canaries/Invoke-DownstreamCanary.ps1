@@ -8,6 +8,10 @@ param(
 
     [string]$WorkPath,
 
+    [string]$MSBuildDotNetRoot,
+
+    [string]$MSBuildSdkVersion,
+
     [string]$ManifestPath = (Join-Path $PSScriptRoot 'downstream-canaries.json'),
 
     [string]$SchemaPath = (Join-Path $PSScriptRoot 'downstream-canaries.schema.json'),
@@ -79,10 +83,15 @@ function Test-Manifest {
         foreach ($textMigration in @($repository.migrations | Where-Object {
             $_.kind -eq 'text-replacement'
         })) {
-            if ($textMigration.from -ne 'SimpleStackPanel' -or
-                $textMigration.to -ne 'StackPanelEx') {
+            $isStackPanelRename =
+                $textMigration.from -eq 'SimpleStackPanel' -and
+                $textMigration.to -eq 'StackPanelEx'
+            $isTitleBarRename =
+                $textMigration.from -eq 'TitleBar.' -and
+                $textMigration.to -eq 'WindowTitleBar.'
+            if (-not $isStackPanelRename -and -not $isTitleBarRename) {
                 throw "Canary '$($repository.id)' contains a text migration that is not " +
-                    'the documented SimpleStackPanel to StackPanelEx rename.'
+                    'a reviewed rename from the 0.9 migration guide.'
             }
         }
     }
@@ -398,6 +407,72 @@ function Add-Stage {
     })
 }
 
+function Get-MSBuildSdkResolverEnvironment {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$DotNetRoot,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Version,
+
+        [Parameter(Mandatory = $true)]
+        [string]$LogDirectory,
+
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyCollection()]
+        [Collections.Generic.List[object]]$Stages
+    )
+
+    $environment = @{}
+    $exitCode = 1
+    $message = ''
+    try {
+        $cliDirectory = [IO.Path]::GetFullPath($DotNetRoot)
+        $sdkRoot = Join-Path $cliDirectory 'sdk'
+        $installedSdks = @(
+            Get-ChildItem -LiteralPath $sdkRoot -Directory -ErrorAction Stop |
+                Select-Object -ExpandProperty Name
+        )
+        if ($installedSdks.Count -ne 1 -or $installedSdks[0] -ne $Version) {
+            throw "The isolated .NET root must contain only SDK $Version."
+        }
+
+        $sdksDirectory = Join-Path (Join-Path $sdkRoot $Version) 'Sdks'
+        if (-not (Test-Path -LiteralPath $sdksDirectory -PathType Container) -or
+            -not (Test-Path -LiteralPath (Join-Path $cliDirectory 'dotnet.exe') -PathType Leaf)) {
+            throw "The isolated .NET root does not contain SDK $Version and its CLI."
+        }
+
+        $environment = @{
+            DOTNET_MULTILEVEL_LOOKUP = '0'
+            DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR = $cliDirectory
+            DOTNET_MSBUILD_SDK_RESOLVER_SDKS_DIR = $sdksDirectory
+            DOTNET_MSBUILD_SDK_RESOLVER_SDKS_VER = $Version
+        }
+        $message = "Pinned full MSBuild to .NET SDK $Version at $sdksDirectory."
+        $exitCode = 0
+    }
+    catch {
+        $message = $_.Exception.Message
+    }
+
+    [IO.File]::WriteAllText(
+        (Join-Path $LogDirectory 'msbuild-sdk-selection.log'),
+        $message,
+        [Text.UTF8Encoding]::new($false))
+    Add-Stage -List $Stages -Stage ([pscustomobject]@{
+        name = 'msbuild-sdk-selection'
+        outcome = if ($exitCode -eq 0) { 'passed' } else { 'failed' }
+        exitCode = $exitCode
+        log = 'logs/msbuild-sdk-selection.log'
+    })
+
+    return [pscustomobject]@{
+        ExitCode = $exitCode
+        Environment = $environment
+    }
+}
+
 function Test-LocalPackageSource {
     param(
         [Parameter(Mandatory = $true)]
@@ -487,12 +562,17 @@ function Invoke-RestoreAndBuild {
 
         [string]$CandidatePackageVersion,
 
-        [string]$ExpectedLocalFeed
+        [string]$ExpectedLocalFeed,
+
+        [hashtable]$BuildEnvironment = @{}
     )
 
     $projectPath = Resolve-ChildPath -Root $SourceRoot `
         -RelativePath $Canary.project -MustExist
     $environment = New-IsolatedEnvironment -Root $PhaseRoot
+    foreach ($entry in $BuildEnvironment.GetEnumerator()) {
+        $environment[$entry.Key] = [string]$entry.Value
+    }
     if ($Canary.buildTool -eq 'dotnet') {
         $restoreArguments = @(
             'restore',
@@ -641,6 +721,11 @@ if ($canaryMatches.Count -ne 1) {
     throw "Unknown downstream canary '$CanaryId'."
 }
 $canary = $canaryMatches[0]
+if ($canary.buildTool -eq 'msbuild' -and
+    ([string]::IsNullOrWhiteSpace($MSBuildDotNetRoot) -or
+        $MSBuildSdkVersion -notmatch '^\d+\.\d+\.\d+$')) {
+    throw '-MSBuildDotNetRoot and an exact stable -MSBuildSdkVersion are required for an MSBuild canary.'
+}
 $package = Get-PackageIdentity -Path $CandidatePackagePath
 if ($package.Id -ne $manifest.packageId) {
     throw "Expected candidate package '$($manifest.packageId)', found '$($package.Id)'."
@@ -657,8 +742,8 @@ New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
 if ([string]::IsNullOrWhiteSpace($WorkPath)) {
     $WorkPath = Join-Path ([IO.Path]::GetTempPath()) 'modernwpf-downstream-canaries'
 }
-$runRoot = Join-Path ([IO.Path]::GetFullPath($WorkPath)) `
-    "$($canary.id)-$([Guid]::NewGuid().ToString('N'))"
+$runId = [Guid]::NewGuid().ToString('N').Substring(0, 8)
+$runRoot = Join-Path ([IO.Path]::GetFullPath($WorkPath)) "c-$runId"
 New-Item -ItemType Directory -Path $runRoot -ErrorAction Stop | Out-Null
 $baselineRoot = Join-Path $runRoot 'baseline'
 $candidateRoot = Join-Path $runRoot 'candidate'
@@ -680,6 +765,7 @@ $result = [pscustomobject]@{
         commit = $canary.commit
         project = $canary.project
         targetFramework = $canary.targetFramework
+        fetchDepth = $canary.fetchDepth
         license = $canary.license
     }
     package = [pscustomobject]@{
@@ -720,17 +806,22 @@ try {
         throw 'Could not configure the public canary remote.'
     }
 
+    $cloneFetchArguments = @(
+        '-c',
+        'credential.helper=',
+        '-C',
+        $baselineRoot,
+        'fetch')
+    if ($canary.fetchDepth -eq 0) {
+        $cloneFetchArguments += '--tags'
+    }
+    else {
+        $cloneFetchArguments += "--depth=$($canary.fetchDepth)"
+        $cloneFetchArguments += '--no-tags'
+    }
+    $cloneFetchArguments += @('origin', $canary.commit)
     $cloneFetch = Invoke-LoggedCommand -Name 'clone-fetch' -FileName 'git' `
-        -Arguments @(
-            '-c',
-            'credential.helper=',
-            '-C',
-            $baselineRoot,
-            'fetch',
-            '--depth=1',
-            '--no-tags',
-            'origin',
-            $canary.commit) `
+        -Arguments $cloneFetchArguments `
         -WorkingDirectory $runRoot -LogDirectory $logDirectory `
         -Environment $cloneEnvironment
     Add-Stage -List $stages -Stage $cloneFetch
@@ -742,7 +833,13 @@ try {
 
     if ($exitCode -eq -1) {
         $cloneCheckout = Invoke-LoggedCommand -Name 'clone-checkout' -FileName 'git' `
-            -Arguments @('-C', $baselineRoot, 'checkout', '--detach', $canary.commit) `
+            -Arguments @(
+                '-C',
+                $baselineRoot,
+                'checkout',
+                '-b',
+                'modernwpf-canary',
+                $canary.commit) `
             -WorkingDirectory $runRoot -LogDirectory $logDirectory `
             -Environment $cloneEnvironment
         Add-Stage -List $stages -Stage $cloneCheckout
@@ -774,10 +871,95 @@ try {
             throw 'Could not create the isolated candidate worktree.'
         }
 
+        if (@($canary.submodules).Count -gt 0) {
+            foreach ($submoduleWorktree in @(
+                [pscustomobject]@{ Name = 'baseline-submodules'; Root = $baselineRoot },
+                [pscustomobject]@{ Name = 'candidate-submodules'; Root = $candidateRoot }
+            )) {
+                $submodulePaths = @($canary.submodules | ForEach-Object { [string]$_ })
+                $submoduleArguments = @(
+                    '-c',
+                    'credential.helper=',
+                    '-C',
+                    $submoduleWorktree.Root,
+                    'submodule',
+                    'update',
+                    '--init',
+                    '--recursive',
+                    '--depth=1',
+                    '--jobs=1',
+                    '--') + $submodulePaths
+                $submoduleUpdate = Invoke-LoggedCommand `
+                    -Name $submoduleWorktree.Name -FileName 'git' `
+                    -Arguments $submoduleArguments `
+                    -WorkingDirectory $runRoot -LogDirectory $logDirectory `
+                    -Environment $cloneEnvironment
+                Add-Stage -List $stages -Stage $submoduleUpdate
+                if ($submoduleUpdate.exitCode -ne 0) {
+                    if (Test-EnvironmentalFailure -Stage $submoduleUpdate) {
+                        $result.classification = 'environmental'
+                        $result.summary = 'A reviewed public submodule could not be fetched because of an environmental failure.'
+                        $exitCode = 3
+                    }
+                    else {
+                        $result.classification = 'infrastructure-failure'
+                        $result.summary = 'A reviewed public submodule could not be initialized at its pinned commit.'
+                        $exitCode = 5
+                    }
+                    break
+                }
+
+                $submoduleStatus = Invoke-LoggedCommand `
+                    -Name "$($submoduleWorktree.Name)-status" -FileName 'git' `
+                    -Arguments (@(
+                        '-C',
+                        $submoduleWorktree.Root,
+                        'submodule',
+                        'status',
+                        '--recursive',
+                        '--') + $submodulePaths) `
+                    -WorkingDirectory $runRoot -LogDirectory $logDirectory `
+                    -Environment $cloneEnvironment
+                if ($submoduleStatus.exitCode -eq 0 -and
+                    $submoduleStatus.StandardOutput -match '(?m)^[\-+U]') {
+                    $submoduleStatus.exitCode = 1
+                    $submoduleStatus.outcome = 'failed'
+                }
+                Add-Stage -List $stages -Stage $submoduleStatus
+                if ($submoduleStatus.exitCode -ne 0 -or
+                    [string]::IsNullOrWhiteSpace($submoduleStatus.StandardOutput)) {
+                    $result.classification = 'infrastructure-failure'
+                    $result.summary = 'A reviewed public submodule is not checked out at its pinned gitlink.'
+                    $exitCode = 5
+                    break
+                }
+            }
+        }
+    }
+
+    if ($exitCode -eq -1) {
+        $buildEnvironment = @{}
+        if ($canary.buildTool -eq 'msbuild') {
+            $sdkResolver = Get-MSBuildSdkResolverEnvironment `
+                -DotNetRoot $MSBuildDotNetRoot -Version $MSBuildSdkVersion `
+                -LogDirectory $logDirectory -Stages $stages
+            if ($sdkResolver.ExitCode -ne 0) {
+                $result.classification = 'infrastructure-failure'
+                $result.summary = 'The pinned .NET SDK for full MSBuild could not be selected.'
+                $exitCode = 5
+            }
+            else {
+                $buildEnvironment = $sdkResolver.Environment
+            }
+        }
+    }
+
+    if ($exitCode -eq -1) {
         $baseline = Invoke-RestoreAndBuild -Canary $canary `
             -SourceRoot $baselineRoot -ConfigPath $baselineConfig `
             -PhaseRoot (Join-Path $runRoot 'baseline-state') `
-            -PhaseName 'baseline' -LogDirectory $logDirectory -Stages $stages
+            -PhaseName 'baseline' -LogDirectory $logDirectory -Stages $stages `
+            -BuildEnvironment $buildEnvironment
         if ($baseline.Restore.exitCode -eq -1) {
             $result.classification = 'infrastructure-failure'
             $result.summary = 'The configured baseline build tool could not be started.'
@@ -890,7 +1072,8 @@ try {
             -PhaseName 'candidate' -LogDirectory $logDirectory -Stages $stages `
             -CandidatePackageId $package.Id `
             -CandidatePackageVersion $package.Version `
-            -ExpectedLocalFeed (Split-Path -Parent $package.Path)
+            -ExpectedLocalFeed (Split-Path -Parent $package.Path) `
+            -BuildEnvironment $buildEnvironment
         if ($candidateBuild.Restore.exitCode -eq -1) {
             $result.classification = 'infrastructure-failure'
             $result.summary = 'The configured candidate build tool could not be started.'

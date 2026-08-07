@@ -44,6 +44,8 @@ namespace ModernWpf.Tools.Tests
                 "BilibiliLiveRecordDownLoader/BilibiliLiveRecordDownLoader.csproj",
                 "net10.0-windows10.0.26100.0",
                 "dotnet",
+                1,
+                Array.Empty<string>(),
                 "0.9.6",
                 "GPL-3.0",
                 4);
@@ -55,9 +57,11 @@ namespace ModernWpf.Tools.Tests
                 "BililiveRecorder.WPF/BililiveRecorder.WPF.csproj",
                 "net472",
                 "msbuild",
+                0,
+                Array.Empty<string>(),
                 "0.9.4",
                 "GPL-3.0",
-                3);
+                4);
             AssertCanary(
                 repositories,
                 "openkh-kh2-object-editor",
@@ -66,6 +70,14 @@ namespace ModernWpf.Tools.Tests
                 "OpenKh.Tools.Kh2ObjectEditor/OpenKh.Tools.Kh2ObjectEditor.csproj",
                 "net8.0-windows",
                 "dotnet",
+                1,
+                new[]
+                {
+                    "ModelingToolkit",
+                    "Simple3DViewport",
+                    "XeEngine.Tools.Public",
+                    "nQuant"
+                },
                 "0.9.6",
                 "Apache-2.0",
                 0);
@@ -105,6 +117,11 @@ namespace ModernWpf.Tools.Tests
                 "bililive-recorder",
                 "BililiveRecorder.WPF/Pages/SettingsPage.xaml",
                 2);
+            AssertTitleBarMigration(
+                repositories,
+                "bililive-recorder",
+                "BililiveRecorder.WPF/NewMainWindow.xaml",
+                3);
         }
 
         [TestMethod]
@@ -269,6 +286,37 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(workflow, "permissions:\n  contents: read");
             StringAssert.Contains(workflow, "runs-on: windows-2022");
             StringAssert.Contains(workflow, "fail-fast: false");
+            StringAssert.Contains(workflow, "DOWNSTREAM_MSBUILD_SDK_VERSION: 8.0.423");
+            StringAssert.Contains(workflow, "Setup isolated .NET SDK for full MSBuild");
+            StringAssert.Contains(
+                workflow,
+                "DOTNET_INSTALL_DIR: ${{ runner.temp }}\\dotnet-msbuild");
+            StringAssert.Contains(workflow, "global-json-file: global.json");
+            StringAssert.Contains(
+                workflow,
+                "dotnet-version: ${{ env.DOWNSTREAM_MSBUILD_SDK_VERSION }}");
+            StringAssert.Contains(
+                workflow,
+                "-MSBuildSdkVersion $env:DOWNSTREAM_MSBUILD_SDK_VERSION");
+            StringAssert.Contains(
+                workflow,
+                "-MSBuildDotNetRoot (Join-Path $env:RUNNER_TEMP 'dotnet-msbuild')");
+            StringAssert.Contains(
+                workflow,
+                "-WorkPath (Join-Path $env:RUNNER_TEMP 'mw')");
+            var canaryJobStart = workflow.IndexOf("\n  canary:\n", StringComparison.Ordinal);
+            Assert.IsTrue(canaryJobStart > 0);
+            var packageJob = workflow[..canaryJobStart];
+            var canaryJob = workflow[canaryJobStart..];
+            Assert.IsFalse(
+                packageJob.Contains(
+                    "Setup isolated .NET SDK for full MSBuild",
+                    StringComparison.Ordinal));
+            Assert.IsTrue(
+                canaryJob.IndexOf(
+                    "Setup isolated .NET SDK for full MSBuild",
+                    StringComparison.Ordinal) <
+                canaryJob.IndexOf("\n      - name: Setup .NET\n", StringComparison.Ordinal));
             StringAssert.Contains(workflow, "persist-credentials: false");
             StringAssert.Contains(workflow, "continue-on-error: true");
             StringAssert.Contains(workflow, "if: always()");
@@ -290,6 +338,10 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(runner, ".nupkg.metadata");
             StringAssert.Contains(runner, "Verified local candidate source");
             StringAssert.Contains(runner, "NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED");
+            StringAssert.Contains(runner, "DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR");
+            StringAssert.Contains(runner, "DOTNET_MSBUILD_SDK_RESOLVER_SDKS_DIR");
+            StringAssert.Contains(runner, "DOTNET_MSBUILD_SDK_RESOLVER_SDKS_VER");
+            StringAssert.Contains(runner, "DOTNET_MULTILEVEL_LOOKUP = '0'");
             StringAssert.Contains(runner, "$startInfo.Environment.Clear()");
             StringAssert.Contains(runner, "New-CleanProcessEnvironment");
             StringAssert.Contains(runner, "GIT_CONFIG_KEY_0 = 'credential.helper'");
@@ -302,11 +354,114 @@ namespace ModernWpf.Tools.Tests
             Assert.IsFalse(runner.Contains("'ACTIONS_RUNTIME_TOKEN'", StringComparison.Ordinal));
             StringAssert.Contains(runner, "credential.helper=");
             StringAssert.Contains(runner, "--no-hardlinks");
+            StringAssert.Contains(runner, "'modernwpf-canary'");
+            StringAssert.Contains(runner, "'-b'");
+            StringAssert.Contains(runner, "$canary.fetchDepth -eq 0");
+            StringAssert.Contains(runner, "$cloneFetchArguments += '--tags'");
+            StringAssert.Contains(runner, "$cloneFetchArguments += '--no-tags'");
+            StringAssert.Contains(runner, ".Substring(0, 8)");
+            StringAssert.Contains(runner, "\"c-$runId\"");
+            Assert.IsFalse(runner.Contains("'--branch'", StringComparison.Ordinal));
+            Assert.IsFalse(runner.Contains("'--detach'", StringComparison.Ordinal));
+            StringAssert.Contains(runner, "baseline-submodules");
+            StringAssert.Contains(runner, "candidate-submodules");
+            StringAssert.Contains(runner, "--jobs=1");
+            StringAssert.Contains(runner, "submoduleWorktree.Name)-status");
+            StringAssert.Contains(runner, "'status'");
             StringAssert.Contains(runner, "migration.patch");
             StringAssert.Contains(runner, "Set-DownstreamCanaryTextReplacement.ps1");
             Assert.IsFalse(runner.Contains("dotnet run", StringComparison.OrdinalIgnoreCase));
             Assert.IsFalse(runner.Contains("Start-Process", StringComparison.OrdinalIgnoreCase));
             Assert.IsFalse(runner.Contains("gh pr", StringComparison.OrdinalIgnoreCase));
+        }
+
+        [TestMethod]
+        public void ChildProcessesReceiveOnlyReviewedEnvironmentVariables()
+        {
+            var repoRoot = FindRepoRoot();
+            var runner = File.ReadAllText(Path.Combine(
+                repoRoot,
+                "tools",
+                "downstream-canaries",
+                "Invoke-DownstreamCanary.ps1"));
+            const string declaration = "$allowedChildEnvironmentVariables = @(";
+            var declarationStart = runner.IndexOf(declaration, StringComparison.Ordinal);
+            Assert.IsTrue(declarationStart >= 0);
+            var declarationEnd = runner.IndexOf(
+                "\n)",
+                declarationStart,
+                StringComparison.Ordinal);
+            Assert.IsTrue(declarationEnd > declarationStart);
+
+            var allowedVariables = runner[declarationStart..declarationEnd]
+                .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(line => line.Trim().TrimEnd(','))
+                .Where(line =>
+                    line.StartsWith("'", StringComparison.Ordinal) &&
+                    line.EndsWith("'", StringComparison.Ordinal))
+                .Select(line => line[1..^1])
+                .ToArray();
+            CollectionAssert.AreEqual(
+                new[]
+                {
+                    "APPDATA",
+                    "CommonProgramFiles",
+                    "CommonProgramFiles(x86)",
+                    "CommonProgramW6432",
+                    "ComSpec",
+                    "HOMEDRIVE",
+                    "HOMEPATH",
+                    "LOCALAPPDATA",
+                    "NUMBER_OF_PROCESSORS",
+                    "OS",
+                    "Path",
+                    "PATHEXT",
+                    "PROCESSOR_ARCHITECTURE",
+                    "ProgramData",
+                    "ProgramFiles",
+                    "ProgramFiles(x86)",
+                    "ProgramW6432",
+                    "SystemDrive",
+                    "SystemRoot",
+                    "USERNAME",
+                    "USERPROFILE",
+                    "windir"
+                },
+                allowedVariables);
+
+            Assert.AreEqual(
+                1,
+                runner.Split(
+                    "[Environment]::GetEnvironmentVariable(",
+                    StringSplitOptions.None).Length - 1);
+            Assert.IsFalse(
+                runner.Contains(
+                    "[Environment]::GetEnvironmentVariables(",
+                    StringComparison.Ordinal));
+            StringAssert.Contains(runner, "$startInfo.Environment.Clear()");
+            StringAssert.Contains(
+                runner,
+                "$childEnvironment = New-CleanProcessEnvironment -Overrides $Environment");
+
+            var forbiddenVariables = new[]
+            {
+                "ACTIONS_ID_TOKEN_REQUEST_TOKEN",
+                "ACTIONS_RUNTIME_TOKEN",
+                "AZURE_DEVOPS_EXT_PAT",
+                "GH_TOKEN",
+                "GITHUB_TOKEN",
+                "NUGET_AUTH_TOKEN",
+                "SYSTEM_ACCESSTOKEN",
+                "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS"
+            };
+            foreach (var forbiddenVariable in forbiddenVariables)
+            {
+                Assert.IsFalse(
+                    allowedVariables.Contains(
+                        forbiddenVariable,
+                        StringComparer.OrdinalIgnoreCase),
+                    $"'{forbiddenVariable}' must not enter downstream child processes.");
+            }
         }
 
         private static void AssertCanary(
@@ -317,6 +472,8 @@ namespace ModernWpf.Tools.Tests
             string project,
             string targetFramework,
             string buildTool,
+            int fetchDepth,
+            string[] submodules,
             string baselineVersion,
             string license,
             int expectedTextMigrations)
@@ -329,6 +486,13 @@ namespace ModernWpf.Tools.Tests
             Assert.AreEqual(targetFramework, RequiredString(canary, "targetFramework"));
             Assert.AreEqual(buildTool, RequiredString(canary, "buildTool"));
             Assert.AreEqual("Debug", RequiredString(canary, "configuration"));
+            Assert.AreEqual(fetchDepth, canary.GetProperty("fetchDepth").GetInt32());
+            CollectionAssert.AreEqual(
+                submodules,
+                canary.GetProperty("submodules")
+                    .EnumerateArray()
+                    .Select(item => item.GetString()!)
+                    .ToArray());
             Assert.AreEqual(baselineVersion, RequiredString(canary, "baselinePackageVersion"));
             Assert.AreEqual("XamlControlsResources", RequiredString(canary, "resourceEntry"));
             Assert.AreEqual(license, RequiredString(canary, "license"));
@@ -358,6 +522,25 @@ namespace ModernWpf.Tools.Tests
                     RequiredString(item, "path") == path);
             Assert.AreEqual("SimpleStackPanel", RequiredString(migration, "from"));
             Assert.AreEqual("StackPanelEx", RequiredString(migration, "to"));
+            Assert.AreEqual(
+                expectedOccurrences,
+                migration.GetProperty("expectedOccurrences").GetInt32());
+        }
+
+        private static void AssertTitleBarMigration(
+            JsonElement[] repositories,
+            string id,
+            string path,
+            int expectedOccurrences)
+        {
+            var canary = repositories.Single(item => RequiredString(item, "id") == id);
+            var migration = canary.GetProperty("migrations")
+                .EnumerateArray()
+                .Single(item =>
+                    RequiredString(item, "kind") == "text-replacement" &&
+                    RequiredString(item, "path") == path);
+            Assert.AreEqual("TitleBar.", RequiredString(migration, "from"));
+            Assert.AreEqual("WindowTitleBar.", RequiredString(migration, "to"));
             Assert.AreEqual(
                 expectedOccurrences,
                 migration.GetProperty("expectedOccurrences").GetInt32());

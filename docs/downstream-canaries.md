@@ -19,20 +19,32 @@ historical NuGet download traffic.
 The reviewed manifest and its schema are under `tools/downstream-canaries/`.
 Changing a repository, commit, project, build tool, or migration requires a
 normal reviewed repository change. Moving branches are never used.
+OpenKh's four reviewed gitlink paths are also manifest-locked; the workflow
+checks out those exact submodule commits transiently without committing their
+source to ModernWPF.
 
 ## What the workflow does
 
 1. It builds one candidate `.nupkg` from the exact manually selected ModernWPF
    commit and retains that package as a workflow artifact.
 2. A separate disposable `windows-2022` matrix job anonymously fetches each
-   exact downstream commit.
+   exact downstream commit and attaches it to a synthetic local branch. The
+   local branch gives versioning tools a branch name without consulting or
+   trusting a moving upstream branch. BililiveRecorder alone fetches the
+   pinned commit's full ancestry and tags because its build runs GitVersion;
+   the other consumers retain depth-one, tag-free fetches.
 3. The unchanged project restores and builds in `Debug` with an isolated NuGet
-   cache and an explicit nuget.org-only configuration.
+   cache and an explicit nuget.org-only configuration. The full-MSBuild
+   .NET Framework canary pins an isolated .NET 8-only SDK resolver so its
+   upstream `latestMajor` policy cannot select an SDK that Visual Studio 2022
+   MSBuild cannot load. Compact temporary roots also keep restored Windows
+   metadata paths below the legacy WPF markup compiler's path limit.
 4. A second pristine checkout receives only reviewed migrations from the 0.9
    guide: replace the `ModernWpfUI` package version and, where the pinned source
-   uses it, rename `SimpleStackPanel` to `StackPanelEx`. Exact file paths and
-   occurrence counts are manifest-locked. The existing `XamlControlsResources`
-   entry remains in place as the documented staged migration path.
+   uses them, rename `SimpleStackPanel` to `StackPanelEx` and the old `TitleBar`
+   facade to `WindowTitleBar`. Exact file paths and occurrence counts are
+   manifest-locked. The existing `XamlControlsResources` entry remains in place
+   as the documented staged migration path.
 5. The candidate restores through package-source mapping that maps the exact
    `ModernWpfUI` ID to the downloaded local feed. Other dependencies may come
    from nuget.org; the candidate package cannot.
@@ -52,6 +64,11 @@ validation.
 The workflow is `workflow_dispatch` only and grants `contents: read`. Checkout
 does not persist credentials, no OIDC permission or repository secret is
 available, NuGet credential caching is disabled, and every job has a timeout.
+Every Git, .NET, and MSBuild child process starts with an empty environment and
+receives only a reviewed OS/tool-discovery allowlist plus runner-created cache
+and SDK overrides. GitHub Actions variables, tokens, feed credentials, and
+ambient credential-provider environment variables are not copied into
+downstream processes.
 Third-party MSBuild targets still execute as part of compilation, so every
 consumer runs alone on a disposable hosted runner and never in release or pull
 request jobs.

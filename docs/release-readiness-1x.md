@@ -116,6 +116,8 @@ $package = Get-ChildItem .\artifacts\ModernWpfUI.*.nupkg | Sort-Object LastWrite
 ```
 
 Build and test are intentionally serialized. Running solution build and test builds in parallel can create shared `obj` file locks in WPF projects.
+Package verification also requires the packaged `icon.png` bytes to match the
+reviewed, checked-in ModernWPF logo exactly.
 
 The WinUI run above is the complete suite. Before merge, run it three
 consecutive times from the final clean tip without retries. The retained

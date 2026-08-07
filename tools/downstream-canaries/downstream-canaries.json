@@ -12,6 +12,8 @@
       "targetFramework": "net10.0-windows10.0.26100.0",
       "buildTool": "dotnet",
       "configuration": "Debug",
+      "fetchDepth": 1,
+      "submodules": [],
       "baselinePackageVersion": "0.9.6",
       "resourceEntry": "XamlControlsResources",
       "license": "GPL-3.0",
@@ -60,6 +62,8 @@
       "targetFramework": "net472",
       "buildTool": "msbuild",
       "configuration": "Debug",
+      "fetchDepth": 0,
+      "submodules": [],
       "baselinePackageVersion": "0.9.4",
       "resourceEntry": "XamlControlsResources",
       "license": "GPL-3.0",
@@ -90,6 +94,13 @@
           "from": "SimpleStackPanel",
           "to": "StackPanelEx",
           "expectedOccurrences": 2
+        },
+        {
+          "kind": "text-replacement",
+          "path": "BililiveRecorder.WPF/NewMainWindow.xaml",
+          "from": "TitleBar.",
+          "to": "WindowTitleBar.",
+          "expectedOccurrences": 3
         }
       ]
     },
@@ -101,6 +112,13 @@
       "targetFramework": "net8.0-windows",
       "buildTool": "dotnet",
       "configuration": "Debug",
+      "fetchDepth": 1,
+      "submodules": [
+        "ModelingToolkit",
+        "Simple3DViewport",
+        "XeEngine.Tools.Public",
+        "nQuant"
+      ],
       "baselinePackageVersion": "0.9.6",
       "resourceEntry": "XamlControlsResources",
       "license": "Apache-2.0",

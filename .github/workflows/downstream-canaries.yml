@@ -13,6 +13,7 @@ concurrency:
 env:
   CI: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOWNSTREAM_MSBUILD_SDK_VERSION: 8.0.423
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED: false
 
@@ -83,10 +84,18 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
+      - name: Setup isolated .NET SDK for full MSBuild
+        uses: actions/setup-dotnet@v6
+        env:
+          DOTNET_INSTALL_DIR: ${{ runner.temp }}\dotnet-msbuild
+        with:
+          dotnet-version: ${{ env.DOWNSTREAM_MSBUILD_SDK_VERSION }}
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
           global-json-file: global.json
+          dotnet-version: ${{ env.DOWNSTREAM_MSBUILD_SDK_VERSION }}
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
@@ -110,7 +119,9 @@ jobs:
           .\tools\downstream-canaries\Invoke-DownstreamCanary.ps1 `
             -CanaryId '${{ matrix.id }}' `
             -CandidatePackagePath $packages[0].FullName `
-            -WorkPath (Join-Path $env:RUNNER_TEMP 'modernwpf-downstream-work') `
+            -MSBuildDotNetRoot (Join-Path $env:RUNNER_TEMP 'dotnet-msbuild') `
+            -MSBuildSdkVersion $env:DOWNSTREAM_MSBUILD_SDK_VERSION `
+            -WorkPath (Join-Path $env:RUNNER_TEMP 'mw') `
             -OutputPath (Join-Path $env:RUNNER_TEMP 'modernwpf-downstream-result')
 
       - name: Publish canary summary
