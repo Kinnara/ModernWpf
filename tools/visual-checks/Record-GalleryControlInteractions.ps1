@@ -90,6 +90,9 @@ public static class GalleryRecordingNative
     private static extern bool ShowWindow(IntPtr hWnd, int command);
 
     [DllImport("user32.dll")]
+    private static extern bool IsWindowVisible(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
     private static extern bool SetForegroundWindow(IntPtr hWnd);
 
     [DllImport("user32.dll")]
@@ -216,6 +219,11 @@ public static class GalleryRecordingNative
     {
         ShowWindow(hWnd, SW_RESTORE);
         SetForegroundWindow(hWnd);
+    }
+
+    public static bool IsVisible(IntPtr hWnd)
+    {
+        return hWnd != IntPtr.Zero && IsWindowVisible(hWnd);
     }
 
     public static void SetTopMost(IntPtr hWnd, bool topMost)
@@ -2086,9 +2094,9 @@ function Invoke-ShellNavigationInteraction($window, $navigationView) {
     }
 
     return [ordered]@{
-        Invoked = $designExpandedClick.Clicked -and $samplesExpandedClick.Clicked -and $designCollapsedClick.Clicked -and $samplesCollapsedClick.Clicked
+        Invoked = $designExpandedClick.Clicked -and $basicInputExpandedClick.Clicked -and $designCollapsedClick.Clicked -and $basicInputCollapsedClick.Clicked
         HomeVisible = Test-ElementVisible $homeItem
-        Clicks = @($designExpandedClick, $samplesExpandedClick, $designCollapsedClick, $samplesCollapsedClick)
+        Clicks = @($designExpandedClick, $basicInputExpandedClick, $designCollapsedClick, $basicInputCollapsedClick)
         Steps = $steps.ToArray()
         ShellNavigationChanged = $failures.Count -eq 0
         Failures = $failures.ToArray()
@@ -3065,31 +3073,33 @@ function Wait-ForOpenInteractionElementGone($window, $element, [string[]]$openNa
 
     $deadline = (Get-Date).AddMilliseconds($timeoutMilliseconds)
     do {
-        $visualCloseResult = Test-OpenRepeatVisualClosed $window $visualCloseContext
-        if ($null -ne $visualCloseResult -and $visualCloseResult.Checked) {
-            if ($visualCloseResult.Closed) {
+        if ($null -ne $visualCloseContext -and
+            $visualCloseContext.Contains("OpenWindowHandle") -and
+            [int64]$visualCloseContext.OpenWindowHandle -ne 0) {
+            $popupWindowVisible = [GalleryRecordingNative]::IsVisible([IntPtr][int64]$visualCloseContext.OpenWindowHandle)
+            $visualCloseContext["LastCloseNativeWindowChecked"] = $true
+            $visualCloseContext["LastCloseNativeWindowHidden"] = !$popupWindowVisible
+            if (!$popupWindowVisible) {
+                [void](Test-OpenRepeatVisualClosed $window $visualCloseContext)
                 return $true
             }
-
-            Start-Sleep -Milliseconds 100
-            continue
         }
 
-        $openElement = if ($control -eq "Flyout" -or
-            $control -eq "ContentDialog" -or
-            $control -eq "Popup" -or
-            $control -eq "MenuFlyout" -or
-            $control -eq "CommandBar" -or
-            $control -eq "CommandBarFlyout") {
-            Find-ElementByNameInProcess $window.Current.ProcessId $openNames
+        if ((Get-ExpandCollapseStateName $element) -eq "Collapsed") {
+            if ($null -ne $visualCloseContext) {
+                $visualCloseContext["LastCloseExpandCollapseCollapsed"] = $true
+            }
+            [void](Test-OpenRepeatVisualClosed $window $visualCloseContext)
+            return $true
         }
-        else {
-            Find-OpenInteractionElement $window $element $openNames $control
-        }
+
+        $openElement = Find-OpenInteractionElement $window $element $openNames $control
         if ($null -eq $openElement) {
-            if ($null -eq $visualCloseResult -or !$visualCloseResult.Checked -or $visualCloseResult.Closed) {
-                return $true
+            if ($null -ne $visualCloseContext) {
+                $visualCloseContext["LastCloseUiaElementGone"] = $true
             }
+            [void](Test-OpenRepeatVisualClosed $window $visualCloseContext)
+            return $true
         }
 
         Start-Sleep -Milliseconds 100
@@ -3136,7 +3146,13 @@ function Invoke-SampleOptionCloseAttempt($window, $button, [string]$method) {
         return $false
     }
 
-    [GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)
+    $buttonWindowHandle = Get-ElementNativeWindowHandle $button
+    $buttonUsesDetachedWindow = $buttonWindowHandle -ne [IntPtr]::Zero -and
+        [int64]$buttonWindowHandle -ne [int64]$window.Current.NativeWindowHandle -and
+        $null -ne (Find-TopLevelElementByNativeWindowHandleInProcess $window.Current.ProcessId ([int]$buttonWindowHandle))
+    if (!$buttonUsesDetachedWindow) {
+        [GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)
+    }
     Start-Sleep -Milliseconds 80
 
     if ($method -eq "Invoke") {
@@ -3184,7 +3200,13 @@ function Close-WithVerifiedSampleOption($window, $sampleElement, $trigger, [stri
         }
     }
 
-    foreach ($method in @("Invoke", "FocusSpace", "Click", "Fallback")) {
+    $methods = if ($control -eq "MenuFlyout" -or $control -eq "MenuBar" -or $control -eq "Menu") {
+        @("Click", "FocusSpace", "Invoke")
+    }
+    else {
+        @("Invoke", "FocusSpace", "Click", "Fallback")
+    }
+    foreach ($method in $methods) {
         if (Invoke-SampleOptionCloseAttempt $window $button $method) {
             Start-Sleep -Milliseconds 700
             if (Wait-ForOpenInteractionElementGone $window $trigger $openNames $control 1200 $visualCloseContext) {
@@ -3444,7 +3466,22 @@ function Close-OpenInteractionElement($window, [string]$control, $trigger, [stri
     if ($control -eq "MenuFlyout") {
         $sampleClose = Close-WithVerifiedSampleOption $window $sampleElement $trigger $openNames $control "By rating" "LeafMenuItem" $visualCloseContext
         if ($sampleClose.Closed) {
-            return $sampleClose
+            return [ordered]@{
+                Closed = $true
+                Method = $sampleClose.Method
+                MenuFlyoutItemSelectionClosed = $true
+                MenuFlyoutPointerSelectionClosed = $sampleClose.Method -eq "LeafMenuItem:Click"
+            }
+        }
+
+        $collapseClose = Close-WithVerifiedCollapsePattern $window $trigger $openNames $control $visualCloseContext
+        if ($collapseClose.Closed) {
+            return [ordered]@{
+                Closed = $true
+                Method = "MenuFlyoutCollapse"
+                MenuFlyoutItemSelectionClosed = $false
+                MenuFlyoutPointerSelectionClosed = $false
+            }
         }
     }
 
@@ -4004,6 +4041,19 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
         Start-Sleep -Milliseconds 450
         $firstOpenVisualSeconds = Get-RecordingElapsedSeconds
     }
+    $firstOpenWindowHandle = Get-ElementNativeWindowHandle $firstOpenElement
+    $firstOpenWindowHandleValue = [int64]$firstOpenWindowHandle
+    $firstOpenWindowIsTopLevel = $false
+    if ($firstOpenWindowHandleValue -ne 0 -and
+        $firstOpenWindowHandleValue -ne [int64]$window.Current.NativeWindowHandle) {
+        $firstOpenWindow = Find-TopLevelElementByNativeWindowHandleInProcess `
+            $window.Current.ProcessId `
+            ([int]$firstOpenWindowHandle)
+        $firstOpenWindowIsTopLevel = $null -ne $firstOpenWindow
+        if ($null -ne $visualCloseContext -and $firstOpenWindowIsTopLevel) {
+            $visualCloseContext["OpenWindowHandle"] = $firstOpenWindowHandleValue
+        }
+    }
     if ($null -eq $firstOpenVisualSeconds) {
         $firstOpenVisualSeconds = Get-RecordingElapsedSeconds
     }
@@ -4020,15 +4070,40 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
     $closedVisualSeconds = Get-RecordingElapsedSeconds
     $closedToggleState = Get-ToggleStateName $trigger
     $closedElementGone = $closeResult.Closed
+    $menuFlyoutOutputMatched = $control -ne "MenuFlyout" -or
+        $null -ne (Find-ElementByNameInProcess $window.Current.ProcessId @("Sort by: rating"))
+    $menuFlyoutItemSelectionClosed = $control -ne "MenuFlyout" -or
+        ($closeResult.Contains("MenuFlyoutItemSelectionClosed") -and $closeResult.MenuFlyoutItemSelectionClosed)
+    $menuFlyoutPointerSelectionClosed = $control -eq "MenuFlyout" -and
+        $closeResult.Contains("MenuFlyoutPointerSelectionClosed") -and
+        $closeResult.MenuFlyoutPointerSelectionClosed
     $closeVisualChecked = $false
     $closeVisualClosed = $false
     $closeVisualDelta = $null
     $closeVisualSnapshot = ""
+    $closeNativeWindowChecked = $false
+    $closeNativeWindowHidden = $false
+    $closeExpandCollapseCollapsed = $false
+    $closeUiaElementGone = $false
     if ($null -ne $visualCloseContext -and $visualCloseContext.Contains("LastCloseVisualChecked")) {
         $closeVisualChecked = $visualCloseContext.LastCloseVisualChecked
         $closeVisualClosed = $visualCloseContext.LastCloseVisualClosed
         $closeVisualDelta = $visualCloseContext.LastCloseVisualDelta
         $closeVisualSnapshot = $visualCloseContext.LastCloseVisualSnapshot
+    }
+    if ($null -ne $visualCloseContext) {
+        if ($visualCloseContext.Contains("LastCloseNativeWindowChecked")) {
+            $closeNativeWindowChecked = $visualCloseContext.LastCloseNativeWindowChecked
+        }
+        if ($visualCloseContext.Contains("LastCloseNativeWindowHidden")) {
+            $closeNativeWindowHidden = $visualCloseContext.LastCloseNativeWindowHidden
+        }
+        if ($visualCloseContext.Contains("LastCloseExpandCollapseCollapsed")) {
+            $closeExpandCollapseCollapsed = $visualCloseContext.LastCloseExpandCollapseCollapsed
+        }
+        if ($visualCloseContext.Contains("LastCloseUiaElementGone")) {
+            $closeUiaElementGone = $visualCloseContext.LastCloseUiaElementGone
+        }
     }
     $secondTrigger = Get-OpenInteractionTriggerElement $window $control $sampleElement
     if ($null -eq $secondTrigger) {
@@ -4080,7 +4155,7 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
         $firstCommandBarFlyoutSecondaryExpanded -and $secondCommandBarFlyoutSecondaryExpanded)
 
     return [ordered]@{
-        Invoked = $firstOpen -and $secondOpen -and $firstOpenElementFound -and $secondOpenElementFound -and $firstOpenElementAnchored -and $secondOpenElementAnchored -and $closedElementGone -and $commandBarFlyoutSecondaryExpanded
+        Invoked = $firstOpen -and $secondOpen -and $firstOpenElementFound -and $secondOpenElementFound -and $firstOpenElementAnchored -and $secondOpenElementAnchored -and $closedElementGone -and $commandBarFlyoutSecondaryExpanded -and $menuFlyoutOutputMatched -and $menuFlyoutItemSelectionClosed
         FirstOpen = $firstOpen
         Closed = $closedElementGone
         CloseMethod = $closeResult.Method
@@ -4088,6 +4163,15 @@ function Invoke-OpenRepeatInteraction($window, [string]$control, $sampleElement)
         FirstOpenElementFound = $firstOpenElementFound
         SecondOpenElementFound = $secondOpenElementFound
         ClosedElementGone = $closedElementGone
+        FirstOpenWindowHandle = $firstOpenWindowHandleValue
+        FirstOpenWindowIsTopLevel = $firstOpenWindowIsTopLevel
+        CloseNativeWindowChecked = $closeNativeWindowChecked
+        CloseNativeWindowHidden = $closeNativeWindowHidden
+        CloseExpandCollapseCollapsed = $closeExpandCollapseCollapsed
+        CloseUiaElementGone = $closeUiaElementGone
+        MenuFlyoutOutputMatched = $menuFlyoutOutputMatched
+        MenuFlyoutItemSelectionClosed = $menuFlyoutItemSelectionClosed
+        MenuFlyoutPointerSelectionClosed = $menuFlyoutPointerSelectionClosed
         CloseVisualChecked = $closeVisualChecked
         CloseVisualClosed = $closeVisualClosed
         CloseVisualDelta = $closeVisualDelta
@@ -5856,10 +5940,13 @@ function Save-WindowVisualSnapshot($window, [string]$name, $captureRect = $null)
     if (![string]::IsNullOrWhiteSpace($liveFramePath)) {
         try {
             Copy-Item -LiteralPath $liveFramePath -Destination $path -Force
-            return [ordered]@{
-                Path = $path
-                Rect = Format-CaptureRectangle $captureRect
-                CaptureRect = $captureRect
+            $stats = Get-ImageStats $path
+            if ($null -ne $stats -and $stats.NonBlank) {
+                return [ordered]@{
+                    Path = $path
+                    Rect = Format-CaptureRectangle $captureRect
+                    CaptureRect = $captureRect
+                }
             }
         }
         catch {
@@ -5880,6 +5967,11 @@ function Save-WindowVisualSnapshot($window, [string]$name, $captureRect = $null)
         $bitmap.Dispose()
     }
 
+    $stats = Get-ImageStats $path
+    if ($null -eq $stats -or !$stats.NonBlank) {
+        return $null
+    }
+
     return [ordered]@{
         Path = $path
         Rect = Format-CaptureRectangle $captureRect
@@ -5897,6 +5989,11 @@ function New-OpenRepeatVisualCloseContext($window, [string]$control) {
         return [ordered]@{
             Generated = $false
             Reason = "Baseline live snapshot could not be captured."
+            OpenWindowHandle = 0
+            LastCloseNativeWindowChecked = $false
+            LastCloseNativeWindowHidden = $false
+            LastCloseExpandCollapseCollapsed = $false
+            LastCloseUiaElementGone = $false
         }
     }
 
@@ -5906,10 +6003,15 @@ function New-OpenRepeatVisualCloseContext($window, [string]$control) {
         CaptureRect = $baseline.Rect
         CaptureRectValue = $baseline.CaptureRect
         Bounds = ""
+        OpenWindowHandle = 0
         LastCloseVisualChecked = $false
         LastCloseVisualClosed = $false
         LastCloseVisualDelta = $null
         LastCloseVisualSnapshot = ""
+        LastCloseNativeWindowChecked = $false
+        LastCloseNativeWindowHidden = $false
+        LastCloseExpandCollapseCollapsed = $false
+        LastCloseUiaElementGone = $false
     }
 }
 
@@ -5921,7 +6023,7 @@ function Test-OpenRepeatVisualClosed($window, $visualCloseContext) {
     if (!$visualCloseContext.Contains("Generated") -or !$visualCloseContext.Generated) {
         return [ordered]@{
             Checked = $false
-            Closed = $true
+            Closed = $false
             Reason = if ($visualCloseContext.Contains("Reason")) { $visualCloseContext.Reason } else { "Visual close context was not generated." }
         }
     }
@@ -5929,7 +6031,7 @@ function Test-OpenRepeatVisualClosed($window, $visualCloseContext) {
     if (!$visualCloseContext.Contains("Bounds") -or [string]::IsNullOrWhiteSpace($visualCloseContext.Bounds)) {
         return [ordered]@{
             Checked = $false
-            Closed = $true
+            Closed = $false
             Reason = "Open-repeat bounds are not available."
         }
     }
@@ -5938,7 +6040,7 @@ function Test-OpenRepeatVisualClosed($window, $visualCloseContext) {
     if ($null -eq $snapshot) {
         return [ordered]@{
             Checked = $false
-            Closed = $true
+            Closed = $false
             Reason = "Live close snapshot could not be captured."
         }
     }
@@ -7905,6 +8007,16 @@ foreach ($control in $Controls) {
         if ($null -ne $interactionResult -and $interactionResult.Contains("Invoked") -and !$interactionResult.Invoked -and !$openRepeatClosedFailed -and !$openRepeatGeometryFailed -and !$visualOpenRepeatEvidenceAccepted) {
             $status = "Failed"
             $notes.Add("Interaction could not be invoked.")
+        }
+
+        if ($control -eq "MenuFlyout" -and
+            ($null -eq $interactionResult -or
+                !$interactionResult.Contains("MenuFlyoutItemSelectionClosed") -or
+                !$interactionResult.MenuFlyoutItemSelectionClosed -or
+                !$interactionResult.Contains("MenuFlyoutOutputMatched") -or
+                !$interactionResult.MenuFlyoutOutputMatched)) {
+            $status = "Failed"
+            $notes.Add("MenuFlyout leaf selection did not both produce the expected output and dismiss the flyout; cleanup close does not satisfy this gate.")
         }
 
         if ($control -eq "CommandBarFlyout" -and
