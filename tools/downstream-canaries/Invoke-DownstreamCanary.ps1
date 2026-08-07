@@ -737,8 +737,8 @@ New-Item -ItemType Directory -Path $logDirectory -Force | Out-Null
 if ([string]::IsNullOrWhiteSpace($WorkPath)) {
     $WorkPath = Join-Path ([IO.Path]::GetTempPath()) 'modernwpf-downstream-canaries'
 }
-$runRoot = Join-Path ([IO.Path]::GetFullPath($WorkPath)) `
-    "$($canary.id)-$([Guid]::NewGuid().ToString('N'))"
+$runId = [Guid]::NewGuid().ToString('N').Substring(0, 8)
+$runRoot = Join-Path ([IO.Path]::GetFullPath($WorkPath)) "c-$runId"
 New-Item -ItemType Directory -Path $runRoot -ErrorAction Stop | Out-Null
 $baselineRoot = Join-Path $runRoot 'baseline'
 $candidateRoot = Join-Path $runRoot 'candidate'

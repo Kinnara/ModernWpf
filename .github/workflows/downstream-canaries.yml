@@ -121,7 +121,7 @@ jobs:
             -CandidatePackagePath $packages[0].FullName `
             -MSBuildDotNetRoot (Join-Path $env:RUNNER_TEMP 'dotnet-msbuild') `
             -MSBuildSdkVersion $env:DOWNSTREAM_MSBUILD_SDK_VERSION `
-            -WorkPath (Join-Path $env:RUNNER_TEMP 'modernwpf-downstream-work') `
+            -WorkPath (Join-Path $env:RUNNER_TEMP 'mw') `
             -OutputPath (Join-Path $env:RUNNER_TEMP 'modernwpf-downstream-result')
 
       - name: Publish canary summary

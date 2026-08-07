@@ -296,6 +296,9 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(
                 workflow,
                 "-MSBuildDotNetRoot (Join-Path $env:RUNNER_TEMP 'dotnet-msbuild')");
+            StringAssert.Contains(
+                workflow,
+                "-WorkPath (Join-Path $env:RUNNER_TEMP 'mw')");
             var canaryJobStart = workflow.IndexOf("\n  canary:\n", StringComparison.Ordinal);
             Assert.IsTrue(canaryJobStart > 0);
             var packageJob = workflow[..canaryJobStart];
@@ -351,6 +354,8 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(runner, "$canary.fetchDepth -eq 0");
             StringAssert.Contains(runner, "$cloneFetchArguments += '--tags'");
             StringAssert.Contains(runner, "$cloneFetchArguments += '--no-tags'");
+            StringAssert.Contains(runner, ".Substring(0, 8)");
+            StringAssert.Contains(runner, "\"c-$runId\"");
             Assert.IsFalse(runner.Contains("'--branch'", StringComparison.Ordinal));
             Assert.IsFalse(runner.Contains("'--detach'", StringComparison.Ordinal));
             StringAssert.Contains(runner, "baseline-submodules");

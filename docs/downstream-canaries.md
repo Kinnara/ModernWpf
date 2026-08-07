@@ -37,7 +37,8 @@ source to ModernWPF.
    cache and an explicit nuget.org-only configuration. The full-MSBuild
    .NET Framework canary pins an isolated .NET 8-only SDK resolver so its
    upstream `latestMajor` policy cannot select an SDK that Visual Studio 2022
-   MSBuild cannot load.
+   MSBuild cannot load. Compact temporary roots also keep restored Windows
+   metadata paths below the legacy WPF markup compiler's path limit.
 4. A second pristine checkout receives only reviewed migrations from the 0.9
    guide: replace the `ModernWpfUI` package version and, where the pinned source
    uses it, rename `SimpleStackPanel` to `StackPanelEx`. Exact file paths and
