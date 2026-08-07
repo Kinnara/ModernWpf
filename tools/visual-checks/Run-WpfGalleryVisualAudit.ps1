@@ -1965,6 +1965,7 @@ function Capture-ModernWpf($case, [string]$caseDir) {
         if (($null -eq $contentCrop -or !$contentCrop.NonBlank) -and $windowNonBlank) {
             $contentCrop = Save-ModernContentCrop $window $screenshot $contentCropPath $case
         }
+        $contentNonBlank = $null -ne $contentCrop -and [bool]$contentCrop.NonBlank
 
         $statusFile = Read-ModernWpfStatusFile $artifactDir
         $lastException = if ($null -ne $statusFile) { $statusFile.LastException } else { Get-AutomationText $window "GalleryVisualTestLastException" }
@@ -1972,20 +1973,22 @@ function Capture-ModernWpf($case, [string]$caseDir) {
             $lastException = Get-AutomationText $window "GalleryVisualTestLastException"
         }
         if ([string]::IsNullOrWhiteSpace($lastException) -and
-            ($null -eq $contentCrop -or !$contentCrop.NonBlank) -and
+            !$contentNonBlank -and
             !$capture.Succeeded) {
             $lastException = $capture.LastException
         }
         if ([string]::IsNullOrWhiteSpace($lastException)) {
             $lastException = Test-ModernShellNavigationState $window $case
         }
-
+        if ([string]::IsNullOrWhiteSpace($lastException) -and !$contentNonBlank) {
+            $lastException = "ModernWpf rendered content was unavailable or blank."
+        }
         return [ordered]@{
             App = "ModernWpf"
             Case = $case.Id
             Route = $case.ModernRoute
             ReadyRoute = $case.ReadyRoute
-            Status = $(if (($windowNonBlank -or $contentCrop.NonBlank) -and $contentCrop.NonBlank -and [string]::IsNullOrWhiteSpace($lastException)) { "Passed" } else { "Failed" })
+            Status = $(if ($contentNonBlank -and [string]::IsNullOrWhiteSpace($lastException)) { "Passed" } else { "Failed" })
             Screenshot = $screenshot
             ContentCrop = $contentCrop
             WindowNonBlank = $windowNonBlank

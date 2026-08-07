@@ -5765,6 +5765,13 @@ namespace ModernWpf.Gallery.Tests
                 "pointer disclosure click expected",
                 "if ($click.UsedAutomationFallback)",
                 "used automation fallback for {1}; pointer disclosure proof is required.");
+            AssertContainsInOrder(
+                source,
+                "return [ordered]@{",
+                "Invoked = $designExpandedClick.Clicked -and $basicInputExpandedClick.Clicked -and $designCollapsedClick.Clicked -and $basicInputCollapsedClick.Clicked",
+                "Clicks = @($designExpandedClick, $basicInputExpandedClick, $designCollapsedClick, $basicInputCollapsedClick)");
+            Assert.IsFalse(source.Contains("$samplesExpandedClick", StringComparison.Ordinal));
+            Assert.IsFalse(source.Contains("$samplesCollapsedClick", StringComparison.Ordinal));
         }
 
         [TestMethod]
@@ -5845,16 +5852,45 @@ namespace ModernWpf.Gallery.Tests
                 "$firstOpenElementBoundsHint = if ($firstOpen) { Get-FastOpenRepeatPopupBounds $trigger $control } else { \"\" }",
                 "$firstOpenElement = if ($openNames.Count -eq 0 -or ![string]::IsNullOrWhiteSpace($firstOpenElementBoundsHint)) { $null } else { Wait-ForOpenInteractionElement $window $trigger $openNames $control $openElementTimeoutMilliseconds }",
                 "$firstOpenElementAnchored = $openNames.Count -eq 0 -or (Test-ControlAllowsDetachedOpenRepeatElement $control) -or (Test-OpenInteractionElementAnchored $trigger $firstOpenElement) -or (Test-BoundingRectangleStringAnchored $trigger $firstOpenElementBoundsHint)",
+                "$firstOpenWindowHandle = Get-ElementNativeWindowHandle $firstOpenElement",
+                "$firstOpenWindow = Find-TopLevelElementByNativeWindowHandleInProcess",
+                "$firstOpenWindowIsTopLevel = $null -ne $firstOpenWindow",
+                "if ($null -ne $visualCloseContext -and $firstOpenWindowIsTopLevel)",
+                "$visualCloseContext[\"OpenWindowHandle\"] = $firstOpenWindowHandleValue",
                 "$visualCloseContext[\"Bounds\"] = $firstOpenElementBounds",
                 "$closeResult = Close-OpenInteractionElement $window $control $trigger $openNames $sampleElement $visualCloseContext $firstOpenElementBounds",
                 "$secondOpenElementBoundsHint = if ($secondOpen) { Get-FastOpenRepeatPopupBounds $secondTrigger $control } else { \"\" }",
                 "$secondOpenElementAnchored = $openNames.Count -eq 0 -or (Test-ControlAllowsDetachedOpenRepeatElement $control) -or (Test-OpenInteractionElementAnchored $secondTrigger $secondOpenElement) -or (Test-BoundingRectangleStringAnchored $secondTrigger $secondOpenElementBoundsHint)",
+                "FirstOpenWindowHandle = $firstOpenWindowHandleValue",
+                "FirstOpenWindowIsTopLevel = $firstOpenWindowIsTopLevel",
+                "CloseNativeWindowChecked = $closeNativeWindowChecked",
+                "CloseNativeWindowHidden = $closeNativeWindowHidden",
+                "CloseExpandCollapseCollapsed = $closeExpandCollapseCollapsed",
+                "CloseUiaElementGone = $closeUiaElementGone",
+                "MenuFlyoutOutputMatched = $menuFlyoutOutputMatched",
+                "MenuFlyoutItemSelectionClosed = $menuFlyoutItemSelectionClosed",
+                "MenuFlyoutPointerSelectionClosed = $menuFlyoutPointerSelectionClosed",
                 "CloseVisualChecked = $closeVisualChecked",
                 "FirstOpenElementAnchored = $firstOpenElementAnchored",
                 "SecondOpenElementAnchored = $secondOpenElementAnchored",
                 "TriggerBounds = $triggerBounds",
                 "FirstOpenElementBounds = $firstOpenElementBounds",
                 "SecondOpenElementBounds = $secondOpenElementBounds");
+            AssertContainsInOrder(
+                source,
+                "function Invoke-SampleOptionCloseAttempt($window, $button, [string]$method)",
+                "$buttonWindowHandle = Get-ElementNativeWindowHandle $button",
+                "$buttonUsesDetachedWindow = $buttonWindowHandle -ne [IntPtr]::Zero",
+                "Find-TopLevelElementByNativeWindowHandleInProcess",
+                "if (!$buttonUsesDetachedWindow)",
+                "[GalleryRecordingNative]::Activate([IntPtr]$window.Current.NativeWindowHandle)",
+                "if ($method -eq \"Invoke\")");
+            AssertContainsInOrder(
+                source,
+                "function Close-WithVerifiedSampleOption($window, $sampleElement, $trigger, [string[]]$openNames, [string]$control, [string]$name, [string]$methodName, $visualCloseContext = $null)",
+                "$methods = if ($control -eq \"MenuFlyout\" -or $control -eq \"MenuBar\" -or $control -eq \"Menu\")",
+                "@(\"Click\", \"FocusSpace\", \"Invoke\")",
+                "foreach ($method in $methods)");
             AssertContainsInOrder(
                 source,
                 "function Get-OpenRepeatCloseOptionName([string]$control)",
@@ -5905,14 +5941,33 @@ namespace ModernWpf.Gallery.Tests
                 "Close-WithVerifiedSampleOption $window $sampleElement $trigger $openNames $control $openRepeatCloseOptionName \"LeafCloseItem\" $visualCloseContext",
                 "if (Test-ControlSupportsTriggerToggleClose $control)",
                 "Method = \"TriggerToggle\"");
+            var closeStart = source.IndexOf(
+                "function Wait-ForOpenInteractionElementGone",
+                StringComparison.Ordinal);
+            var closeEnd = source.IndexOf(
+                "function Click-OpenInteractionDismissPoint",
+                closeStart,
+                StringComparison.Ordinal);
+            Assert.IsTrue(closeStart >= 0 && closeEnd > closeStart);
+            var closeSource = source.Substring(closeStart, closeEnd - closeStart);
             AssertContainsInOrder(
-                source,
-                "function Wait-ForOpenInteractionElementGone($window, $element, [string[]]$openNames, [string]$control, [int]$timeoutMilliseconds, $visualCloseContext = $null)",
-                "$visualCloseResult = Test-OpenRepeatVisualClosed $window $visualCloseContext",
-                "if ($null -ne $visualCloseResult -and $visualCloseResult.Checked)",
-                "if ($visualCloseResult.Closed)",
+                closeSource,
+                "$visualCloseContext.Contains(\"OpenWindowHandle\")",
+                "[GalleryRecordingNative]::IsVisible",
+                "if (!$popupWindowVisible)",
+                "[void](Test-OpenRepeatVisualClosed $window $visualCloseContext)",
                 "return $true",
-                "if ($null -eq $openElement)");
+                "if ((Get-ExpandCollapseStateName $element) -eq \"Collapsed\")",
+                "$visualCloseContext[\"LastCloseExpandCollapseCollapsed\"] = $true",
+                "[void](Test-OpenRepeatVisualClosed $window $visualCloseContext)",
+                "return $true",
+                "$openElement = Find-OpenInteractionElement $window $element $openNames $control",
+                "if ($null -eq $openElement)",
+                "$visualCloseContext[\"LastCloseUiaElementGone\"] = $true",
+                "[void](Test-OpenRepeatVisualClosed $window $visualCloseContext)",
+                "return $true");
+            Assert.IsFalse(closeSource.Contains("$visualCloseResult", StringComparison.Ordinal));
+            Assert.IsFalse(closeSource.Contains("if ($visualCloseResult.Closed)", StringComparison.Ordinal));
             AssertContainsInOrder(
                 source,
                 "function Close-OpenInteractionElement($window, [string]$control, $trigger, [string[]]$openNames, $sampleElement, $visualCloseContext = $null, [string]$openedBoundsHint = \"\")",
@@ -5920,16 +5975,58 @@ namespace ModernWpf.Gallery.Tests
                 "Close-WithVerifiedSampleOption $window $sampleElement $trigger $openNames $control \"Cancel\" \"DialogCancelButton\" $visualCloseContext");
             AssertContainsInOrder(
                 source,
+                "if ($control -eq \"MenuFlyout\")",
+                "Close-WithVerifiedSampleOption $window $sampleElement $trigger $openNames $control \"By rating\" \"LeafMenuItem\" $visualCloseContext",
+                "MenuFlyoutItemSelectionClosed = $true",
+                "MenuFlyoutPointerSelectionClosed = $sampleClose.Method -eq \"LeafMenuItem:Click\"",
+                "$collapseClose = Close-WithVerifiedCollapsePattern $window $trigger $openNames $control $visualCloseContext",
+                "Method = \"MenuFlyoutCollapse\"",
+                "MenuFlyoutItemSelectionClosed = $false",
+                "MenuFlyoutPointerSelectionClosed = $false",
+                "$menuFlyoutOutputMatched = $control -ne \"MenuFlyout\" -or",
+                "@(\"Sort by: rating\")",
+                "$menuFlyoutItemSelectionClosed = $control -ne \"MenuFlyout\" -or",
+                "-and $menuFlyoutOutputMatched -and $menuFlyoutItemSelectionClosed");
+            AssertContainsInOrder(
+                source,
+                "if ($control -eq \"MenuFlyout\" -and",
+                "!$interactionResult.Contains(\"MenuFlyoutItemSelectionClosed\") -or",
+                "!$interactionResult.MenuFlyoutItemSelectionClosed",
+                "!$interactionResult.Contains(\"MenuFlyoutOutputMatched\") -or",
+                "!$interactionResult.MenuFlyoutOutputMatched",
+                "$status = \"Failed\"",
+                "$notes.Add(\"MenuFlyout leaf selection did not both produce the expected output and dismiss the flyout; cleanup close does not satisfy this gate.\")");
+            AssertContainsInOrder(
+                source,
                 "function Test-ControlRequiresLiveVisualClose([string]$control)",
                 "return $control -eq \"TeachingTip\" -or",
                 "$control -eq \"ComboBox\" -or",
                 "$control -eq \"DatePicker\" -or",
                 "$control -eq \"ContentDialog\" -or",
+                "function Save-WindowVisualSnapshot($window, [string]$name, $captureRect = $null)",
+                "Copy-Item -LiteralPath $liveFramePath -Destination $path -Force",
+                "$stats = Get-ImageStats $path",
+                "if ($null -ne $stats -and $stats.NonBlank)",
+                "$stats = Get-ImageStats $path",
+                "if ($null -eq $stats -or !$stats.NonBlank)",
+                "return $null",
                 "function New-OpenRepeatVisualCloseContext($window, [string]$control)",
                 "BaselinePath = $baseline.Path",
                 "function Test-OpenRepeatVisualClosed($window, $visualCloseContext)",
                 "$closed = $null -ne $delta -and [double]$delta -le 1.0",
                 "$visualCloseContext[\"LastCloseVisualChecked\"] = $true");
+            var visualCloseStart = source.IndexOf(
+                "function Test-OpenRepeatVisualClosed",
+                StringComparison.Ordinal);
+            var visualCloseEnd = source.IndexOf(
+                "function Get-PosterFrameIntervalSeconds",
+                visualCloseStart,
+                StringComparison.Ordinal);
+            Assert.IsTrue(visualCloseStart >= 0 && visualCloseEnd > visualCloseStart);
+            var visualCloseSource = source.Substring(
+                visualCloseStart,
+                visualCloseEnd - visualCloseStart);
+            Assert.IsFalse(visualCloseSource.Contains("Closed = $true", StringComparison.Ordinal));
             AssertContainsInOrder(
                 source,
                 "function Get-OpenRepeatOpenThreshold([string]$control)",
@@ -6943,11 +7040,28 @@ namespace ModernWpf.Gallery.Tests
                 "[void](Invoke-Element $lastItem)",
                 "$case.Id -ne \"ShellClickDesignGuidanceCollapse\"",
                 "Wait-ModernWpfRouteReady");
+            var captureStart = source.IndexOf(
+                "function Capture-ModernWpf",
+                StringComparison.Ordinal);
+            var captureEnd = source.IndexOf(
+                "function Capture-OfficialWpfGalleryDirectHost",
+                captureStart,
+                StringComparison.Ordinal);
+            Assert.IsTrue(captureStart >= 0 && captureEnd > captureStart);
+            var captureSource = source.Substring(captureStart, captureEnd - captureStart);
             AssertContainsInOrder(
-                source,
+                captureSource,
+                "$contentNonBlank = $null -ne $contentCrop -and [bool]$contentCrop.NonBlank",
+                "if ([string]::IsNullOrWhiteSpace($lastException) -and",
+                "!$contentNonBlank -and",
                 "if ([string]::IsNullOrWhiteSpace($lastException)) {",
                 "$lastException = Test-ModernShellNavigationState $window $case",
-                "Status = $(if (($windowNonBlank -or $contentCrop.NonBlank) -and $contentCrop.NonBlank -and [string]::IsNullOrWhiteSpace($lastException)) { \"Passed\" } else { \"Failed\" })");
+                "if ([string]::IsNullOrWhiteSpace($lastException) -and !$contentNonBlank)",
+                "$lastException = \"ModernWpf rendered content was unavailable or blank.\"",
+                "Status = $(if ($contentNonBlank -and [string]::IsNullOrWhiteSpace($lastException)) { \"Passed\" } else { \"Failed\" })");
+            Assert.IsFalse(captureSource.Contains(
+                "Status = $(if (($windowNonBlank -or $contentCrop.NonBlank)",
+                StringComparison.Ordinal));
         }
 
         [TestMethod]
