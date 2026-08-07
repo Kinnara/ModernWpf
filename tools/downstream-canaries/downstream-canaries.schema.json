@@ -44,6 +44,7 @@
         "targetFramework",
         "buildTool",
         "configuration",
+        "submodules",
         "baselinePackageVersion",
         "resourceEntry",
         "license",
@@ -77,6 +78,14 @@
         },
         "configuration": {
           "const": "Debug"
+        },
+        "submodules": {
+          "type": "array",
+          "maxItems": 8,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/submodulePath"
+          }
         },
         "baselinePackageVersion": {
           "type": "string",
@@ -174,6 +183,11 @@
       "type": "string",
       "minLength": 1,
       "pattern": "^(?![A-Za-z]:)(?![/\\\\])(?!.*(?:^|[/\\\\])\\.\\.(?:[/\\\\]|$)).+\\.xaml$"
+    },
+    "submodulePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?![/\\\\])(?!.*(?:^|[/\\\\])\\.{1,2}(?:[/\\\\]|$))[A-Za-z0-9_.-]+(?:[/\\\\][A-Za-z0-9_.-]+)*$"
     }
   }
 }

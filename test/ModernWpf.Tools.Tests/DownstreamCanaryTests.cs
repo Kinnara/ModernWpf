@@ -44,6 +44,7 @@ namespace ModernWpf.Tools.Tests
                 "BilibiliLiveRecordDownLoader/BilibiliLiveRecordDownLoader.csproj",
                 "net10.0-windows10.0.26100.0",
                 "dotnet",
+                Array.Empty<string>(),
                 "0.9.6",
                 "GPL-3.0",
                 4);
@@ -55,6 +56,7 @@ namespace ModernWpf.Tools.Tests
                 "BililiveRecorder.WPF/BililiveRecorder.WPF.csproj",
                 "net472",
                 "msbuild",
+                Array.Empty<string>(),
                 "0.9.4",
                 "GPL-3.0",
                 3);
@@ -66,6 +68,13 @@ namespace ModernWpf.Tools.Tests
                 "OpenKh.Tools.Kh2ObjectEditor/OpenKh.Tools.Kh2ObjectEditor.csproj",
                 "net8.0-windows",
                 "dotnet",
+                new[]
+                {
+                    "ModelingToolkit",
+                    "Simple3DViewport",
+                    "XeEngine.Tools.Public",
+                    "nQuant"
+                },
                 "0.9.6",
                 "Apache-2.0",
                 0);
@@ -269,6 +278,34 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(workflow, "permissions:\n  contents: read");
             StringAssert.Contains(workflow, "runs-on: windows-2022");
             StringAssert.Contains(workflow, "fail-fast: false");
+            StringAssert.Contains(workflow, "DOWNSTREAM_MSBUILD_SDK_VERSION: 8.0.423");
+            StringAssert.Contains(workflow, "Setup isolated .NET SDK for full MSBuild");
+            StringAssert.Contains(
+                workflow,
+                "DOTNET_INSTALL_DIR: ${{ runner.temp }}\\dotnet-msbuild");
+            StringAssert.Contains(workflow, "global-json-file: global.json");
+            StringAssert.Contains(
+                workflow,
+                "dotnet-version: ${{ env.DOWNSTREAM_MSBUILD_SDK_VERSION }}");
+            StringAssert.Contains(
+                workflow,
+                "-MSBuildSdkVersion $env:DOWNSTREAM_MSBUILD_SDK_VERSION");
+            StringAssert.Contains(
+                workflow,
+                "-MSBuildDotNetRoot (Join-Path $env:RUNNER_TEMP 'dotnet-msbuild')");
+            var canaryJobStart = workflow.IndexOf("\n  canary:\n", StringComparison.Ordinal);
+            Assert.IsTrue(canaryJobStart > 0);
+            var packageJob = workflow[..canaryJobStart];
+            var canaryJob = workflow[canaryJobStart..];
+            Assert.IsFalse(
+                packageJob.Contains(
+                    "Setup isolated .NET SDK for full MSBuild",
+                    StringComparison.Ordinal));
+            Assert.IsTrue(
+                canaryJob.IndexOf(
+                    "Setup isolated .NET SDK for full MSBuild",
+                    StringComparison.Ordinal) <
+                canaryJob.IndexOf("\n      - name: Setup .NET\n", StringComparison.Ordinal));
             StringAssert.Contains(workflow, "persist-credentials: false");
             StringAssert.Contains(workflow, "continue-on-error: true");
             StringAssert.Contains(workflow, "if: always()");
@@ -290,6 +327,10 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(runner, ".nupkg.metadata");
             StringAssert.Contains(runner, "Verified local candidate source");
             StringAssert.Contains(runner, "NUGET_CREDENTIALPROVIDER_SESSIONTOKENCACHE_ENABLED");
+            StringAssert.Contains(runner, "DOTNET_MSBUILD_SDK_RESOLVER_CLI_DIR");
+            StringAssert.Contains(runner, "DOTNET_MSBUILD_SDK_RESOLVER_SDKS_DIR");
+            StringAssert.Contains(runner, "DOTNET_MSBUILD_SDK_RESOLVER_SDKS_VER");
+            StringAssert.Contains(runner, "DOTNET_MULTILEVEL_LOOKUP = '0'");
             StringAssert.Contains(runner, "$startInfo.Environment.Clear()");
             StringAssert.Contains(runner, "New-CleanProcessEnvironment");
             StringAssert.Contains(runner, "GIT_CONFIG_KEY_0 = 'credential.helper'");
@@ -302,6 +343,11 @@ namespace ModernWpf.Tools.Tests
             Assert.IsFalse(runner.Contains("'ACTIONS_RUNTIME_TOKEN'", StringComparison.Ordinal));
             StringAssert.Contains(runner, "credential.helper=");
             StringAssert.Contains(runner, "--no-hardlinks");
+            StringAssert.Contains(runner, "baseline-submodules");
+            StringAssert.Contains(runner, "candidate-submodules");
+            StringAssert.Contains(runner, "--jobs=1");
+            StringAssert.Contains(runner, "submoduleWorktree.Name)-status");
+            StringAssert.Contains(runner, "'status'");
             StringAssert.Contains(runner, "migration.patch");
             StringAssert.Contains(runner, "Set-DownstreamCanaryTextReplacement.ps1");
             Assert.IsFalse(runner.Contains("dotnet run", StringComparison.OrdinalIgnoreCase));
@@ -317,6 +363,7 @@ namespace ModernWpf.Tools.Tests
             string project,
             string targetFramework,
             string buildTool,
+            string[] submodules,
             string baselineVersion,
             string license,
             int expectedTextMigrations)
@@ -329,6 +376,12 @@ namespace ModernWpf.Tools.Tests
             Assert.AreEqual(targetFramework, RequiredString(canary, "targetFramework"));
             Assert.AreEqual(buildTool, RequiredString(canary, "buildTool"));
             Assert.AreEqual("Debug", RequiredString(canary, "configuration"));
+            CollectionAssert.AreEqual(
+                submodules,
+                canary.GetProperty("submodules")
+                    .EnumerateArray()
+                    .Select(item => item.GetString()!)
+                    .ToArray());
             Assert.AreEqual(baselineVersion, RequiredString(canary, "baselinePackageVersion"));
             Assert.AreEqual("XamlControlsResources", RequiredString(canary, "resourceEntry"));
             Assert.AreEqual(license, RequiredString(canary, "license"));

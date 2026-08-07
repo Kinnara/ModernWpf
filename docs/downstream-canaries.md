@@ -19,6 +19,9 @@ historical NuGet download traffic.
 The reviewed manifest and its schema are under `tools/downstream-canaries/`.
 Changing a repository, commit, project, build tool, or migration requires a
 normal reviewed repository change. Moving branches are never used.
+OpenKh's four reviewed gitlink paths are also manifest-locked; the workflow
+checks out those exact submodule commits transiently without committing their
+source to ModernWPF.
 
 ## What the workflow does
 
@@ -27,7 +30,10 @@ normal reviewed repository change. Moving branches are never used.
 2. A separate disposable `windows-2022` matrix job anonymously fetches each
    exact downstream commit.
 3. The unchanged project restores and builds in `Debug` with an isolated NuGet
-   cache and an explicit nuget.org-only configuration.
+   cache and an explicit nuget.org-only configuration. The full-MSBuild
+   .NET Framework canary pins an isolated .NET 8-only SDK resolver so its
+   upstream `latestMajor` policy cannot select an SDK that Visual Studio 2022
+   MSBuild cannot load.
 4. A second pristine checkout receives only reviewed migrations from the 0.9
    guide: replace the `ModernWpfUI` package version and, where the pinned source
    uses it, rename `SimpleStackPanel` to `StackPanelEx`. Exact file paths and

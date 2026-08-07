@@ -12,6 +12,7 @@
       "targetFramework": "net10.0-windows10.0.26100.0",
       "buildTool": "dotnet",
       "configuration": "Debug",
+      "submodules": [],
       "baselinePackageVersion": "0.9.6",
       "resourceEntry": "XamlControlsResources",
       "license": "GPL-3.0",
@@ -60,6 +61,7 @@
       "targetFramework": "net472",
       "buildTool": "msbuild",
       "configuration": "Debug",
+      "submodules": [],
       "baselinePackageVersion": "0.9.4",
       "resourceEntry": "XamlControlsResources",
       "license": "GPL-3.0",
@@ -101,6 +103,12 @@
       "targetFramework": "net8.0-windows",
       "buildTool": "dotnet",
       "configuration": "Debug",
+      "submodules": [
+        "ModelingToolkit",
+        "Simple3DViewport",
+        "XeEngine.Tools.Public",
+        "nQuant"
+      ],
       "baselinePackageVersion": "0.9.6",
       "resourceEntry": "XamlControlsResources",
       "license": "Apache-2.0",
