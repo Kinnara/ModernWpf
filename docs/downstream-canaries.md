@@ -64,6 +64,11 @@ validation.
 The workflow is `workflow_dispatch` only and grants `contents: read`. Checkout
 does not persist credentials, no OIDC permission or repository secret is
 available, NuGet credential caching is disabled, and every job has a timeout.
+Every Git, .NET, and MSBuild child process starts with an empty environment and
+receives only a reviewed OS/tool-discovery allowlist plus runner-created cache
+and SDK overrides. GitHub Actions variables, tokens, feed credentials, and
+ambient credential-provider environment variables are not copied into
+downstream processes.
 Third-party MSBuild targets still execute as part of compilation, so every
 consumer runs alone on a disposable hosted runner and never in release or pull
 request jobs.

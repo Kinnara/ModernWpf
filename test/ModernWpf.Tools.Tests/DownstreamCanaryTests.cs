@@ -375,6 +375,95 @@ namespace ModernWpf.Tools.Tests
             Assert.IsFalse(runner.Contains("gh pr", StringComparison.OrdinalIgnoreCase));
         }
 
+        [TestMethod]
+        public void ChildProcessesReceiveOnlyReviewedEnvironmentVariables()
+        {
+            var repoRoot = FindRepoRoot();
+            var runner = File.ReadAllText(Path.Combine(
+                repoRoot,
+                "tools",
+                "downstream-canaries",
+                "Invoke-DownstreamCanary.ps1"));
+            const string declaration = "$allowedChildEnvironmentVariables = @(";
+            var declarationStart = runner.IndexOf(declaration, StringComparison.Ordinal);
+            Assert.IsTrue(declarationStart >= 0);
+            var declarationEnd = runner.IndexOf(
+                "\n)",
+                declarationStart,
+                StringComparison.Ordinal);
+            Assert.IsTrue(declarationEnd > declarationStart);
+
+            var allowedVariables = runner[declarationStart..declarationEnd]
+                .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(line => line.Trim().TrimEnd(','))
+                .Where(line =>
+                    line.StartsWith("'", StringComparison.Ordinal) &&
+                    line.EndsWith("'", StringComparison.Ordinal))
+                .Select(line => line[1..^1])
+                .ToArray();
+            CollectionAssert.AreEqual(
+                new[]
+                {
+                    "APPDATA",
+                    "CommonProgramFiles",
+                    "CommonProgramFiles(x86)",
+                    "CommonProgramW6432",
+                    "ComSpec",
+                    "HOMEDRIVE",
+                    "HOMEPATH",
+                    "LOCALAPPDATA",
+                    "NUMBER_OF_PROCESSORS",
+                    "OS",
+                    "Path",
+                    "PATHEXT",
+                    "PROCESSOR_ARCHITECTURE",
+                    "ProgramData",
+                    "ProgramFiles",
+                    "ProgramFiles(x86)",
+                    "ProgramW6432",
+                    "SystemDrive",
+                    "SystemRoot",
+                    "USERNAME",
+                    "USERPROFILE",
+                    "windir"
+                },
+                allowedVariables);
+
+            Assert.AreEqual(
+                1,
+                runner.Split(
+                    "[Environment]::GetEnvironmentVariable(",
+                    StringSplitOptions.None).Length - 1);
+            Assert.IsFalse(
+                runner.Contains(
+                    "[Environment]::GetEnvironmentVariables(",
+                    StringComparison.Ordinal));
+            StringAssert.Contains(runner, "$startInfo.Environment.Clear()");
+            StringAssert.Contains(
+                runner,
+                "$childEnvironment = New-CleanProcessEnvironment -Overrides $Environment");
+
+            var forbiddenVariables = new[]
+            {
+                "ACTIONS_ID_TOKEN_REQUEST_TOKEN",
+                "ACTIONS_RUNTIME_TOKEN",
+                "AZURE_DEVOPS_EXT_PAT",
+                "GH_TOKEN",
+                "GITHUB_TOKEN",
+                "NUGET_AUTH_TOKEN",
+                "SYSTEM_ACCESSTOKEN",
+                "VSS_NUGET_EXTERNAL_FEED_ENDPOINTS"
+            };
+            foreach (var forbiddenVariable in forbiddenVariables)
+            {
+                Assert.IsFalse(
+                    allowedVariables.Contains(
+                        forbiddenVariable,
+                        StringComparer.OrdinalIgnoreCase),
+                    $"'{forbiddenVariable}' must not enter downstream child processes.");
+            }
+        }
+
         private static void AssertCanary(
             JsonElement[] repositories,
             string id,
