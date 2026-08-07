@@ -44,6 +44,7 @@ namespace ModernWpf.Tools.Tests
                 "BilibiliLiveRecordDownLoader/BilibiliLiveRecordDownLoader.csproj",
                 "net10.0-windows10.0.26100.0",
                 "dotnet",
+                1,
                 Array.Empty<string>(),
                 "0.9.6",
                 "GPL-3.0",
@@ -56,6 +57,7 @@ namespace ModernWpf.Tools.Tests
                 "BililiveRecorder.WPF/BililiveRecorder.WPF.csproj",
                 "net472",
                 "msbuild",
+                0,
                 Array.Empty<string>(),
                 "0.9.4",
                 "GPL-3.0",
@@ -68,6 +70,7 @@ namespace ModernWpf.Tools.Tests
                 "OpenKh.Tools.Kh2ObjectEditor/OpenKh.Tools.Kh2ObjectEditor.csproj",
                 "net8.0-windows",
                 "dotnet",
+                1,
                 new[]
                 {
                     "ModelingToolkit",
@@ -345,6 +348,9 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(runner, "--no-hardlinks");
             StringAssert.Contains(runner, "'modernwpf-canary'");
             StringAssert.Contains(runner, "'-b'");
+            StringAssert.Contains(runner, "$canary.fetchDepth -eq 0");
+            StringAssert.Contains(runner, "$cloneFetchArguments += '--tags'");
+            StringAssert.Contains(runner, "$cloneFetchArguments += '--no-tags'");
             Assert.IsFalse(runner.Contains("'--branch'", StringComparison.Ordinal));
             Assert.IsFalse(runner.Contains("'--detach'", StringComparison.Ordinal));
             StringAssert.Contains(runner, "baseline-submodules");
@@ -367,6 +373,7 @@ namespace ModernWpf.Tools.Tests
             string project,
             string targetFramework,
             string buildTool,
+            int fetchDepth,
             string[] submodules,
             string baselineVersion,
             string license,
@@ -380,6 +387,7 @@ namespace ModernWpf.Tools.Tests
             Assert.AreEqual(targetFramework, RequiredString(canary, "targetFramework"));
             Assert.AreEqual(buildTool, RequiredString(canary, "buildTool"));
             Assert.AreEqual("Debug", RequiredString(canary, "configuration"));
+            Assert.AreEqual(fetchDepth, canary.GetProperty("fetchDepth").GetInt32());
             CollectionAssert.AreEqual(
                 submodules,
                 canary.GetProperty("submodules")

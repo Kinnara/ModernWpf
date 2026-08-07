@@ -760,6 +760,7 @@ $result = [pscustomobject]@{
         commit = $canary.commit
         project = $canary.project
         targetFramework = $canary.targetFramework
+        fetchDepth = $canary.fetchDepth
         license = $canary.license
     }
     package = [pscustomobject]@{
@@ -800,17 +801,22 @@ try {
         throw 'Could not configure the public canary remote.'
     }
 
+    $cloneFetchArguments = @(
+        '-c',
+        'credential.helper=',
+        '-C',
+        $baselineRoot,
+        'fetch')
+    if ($canary.fetchDepth -eq 0) {
+        $cloneFetchArguments += '--tags'
+    }
+    else {
+        $cloneFetchArguments += "--depth=$($canary.fetchDepth)"
+        $cloneFetchArguments += '--no-tags'
+    }
+    $cloneFetchArguments += @('origin', $canary.commit)
     $cloneFetch = Invoke-LoggedCommand -Name 'clone-fetch' -FileName 'git' `
-        -Arguments @(
-            '-c',
-            'credential.helper=',
-            '-C',
-            $baselineRoot,
-            'fetch',
-            '--depth=1',
-            '--no-tags',
-            'origin',
-            $canary.commit) `
+        -Arguments $cloneFetchArguments `
         -WorkingDirectory $runRoot -LogDirectory $logDirectory `
         -Environment $cloneEnvironment
     Add-Stage -List $stages -Stage $cloneFetch

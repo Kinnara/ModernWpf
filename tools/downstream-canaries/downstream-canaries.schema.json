@@ -44,6 +44,7 @@
         "targetFramework",
         "buildTool",
         "configuration",
+        "fetchDepth",
         "submodules",
         "baselinePackageVersion",
         "resourceEntry",
@@ -78,6 +79,12 @@
         },
         "configuration": {
           "const": "Debug"
+        },
+        "fetchDepth": {
+          "enum": [
+            0,
+            1
+          ]
         },
         "submodules": {
           "type": "array",

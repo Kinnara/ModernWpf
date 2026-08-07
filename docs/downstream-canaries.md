@@ -30,7 +30,9 @@ source to ModernWPF.
 2. A separate disposable `windows-2022` matrix job anonymously fetches each
    exact downstream commit and attaches it to a synthetic local branch. The
    local branch gives versioning tools a branch name without consulting or
-   trusting a moving upstream branch.
+   trusting a moving upstream branch. BililiveRecorder alone fetches the
+   pinned commit's full ancestry and tags because its build runs GitVersion;
+   the other consumers retain depth-one, tag-free fetches.
 3. The unchanged project restores and builds in `Debug` with an isolated NuGet
    cache and an explicit nuget.org-only configuration. The full-MSBuild
    .NET Framework canary pins an isolated .NET 8-only SDK resolver so its
