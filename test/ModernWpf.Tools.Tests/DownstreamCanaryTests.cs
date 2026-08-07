@@ -343,6 +343,8 @@ namespace ModernWpf.Tools.Tests
             Assert.IsFalse(runner.Contains("'ACTIONS_RUNTIME_TOKEN'", StringComparison.Ordinal));
             StringAssert.Contains(runner, "credential.helper=");
             StringAssert.Contains(runner, "--no-hardlinks");
+            StringAssert.Contains(runner, "'modernwpf-canary'");
+            Assert.IsFalse(runner.Contains("'--detach'", StringComparison.Ordinal));
             StringAssert.Contains(runner, "baseline-submodules");
             StringAssert.Contains(runner, "candidate-submodules");
             StringAssert.Contains(runner, "--jobs=1");

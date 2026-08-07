@@ -822,7 +822,13 @@ try {
 
     if ($exitCode -eq -1) {
         $cloneCheckout = Invoke-LoggedCommand -Name 'clone-checkout' -FileName 'git' `
-            -Arguments @('-C', $baselineRoot, 'checkout', '--detach', $canary.commit) `
+            -Arguments @(
+                '-C',
+                $baselineRoot,
+                'checkout',
+                '--branch',
+                'modernwpf-canary',
+                $canary.commit) `
             -WorkingDirectory $runRoot -LogDirectory $logDirectory `
             -Environment $cloneEnvironment
         Add-Stage -List $stages -Stage $cloneCheckout

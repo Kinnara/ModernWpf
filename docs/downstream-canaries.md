@@ -28,7 +28,9 @@ source to ModernWPF.
 1. It builds one candidate `.nupkg` from the exact manually selected ModernWPF
    commit and retains that package as a workflow artifact.
 2. A separate disposable `windows-2022` matrix job anonymously fetches each
-   exact downstream commit.
+   exact downstream commit and attaches it to a synthetic local branch. The
+   local branch gives versioning tools a branch name without consulting or
+   trusting a moving upstream branch.
 3. The unchanged project restores and builds in `Debug` with an isolated NuGet
    cache and an explicit nuget.org-only configuration. The full-MSBuild
    .NET Framework canary pins an isolated .NET 8-only SDK resolver so its
