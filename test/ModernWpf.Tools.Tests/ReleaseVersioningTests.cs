@@ -299,6 +299,9 @@ namespace ModernWpf.Tools.Tests
                 iconBytes.Take(8).ToArray());
             Assert.AreEqual(128, ReadBigEndianInt32(iconBytes, 16));
             Assert.AreEqual(128, ReadBigEndianInt32(iconBytes, 20));
+            Assert.AreEqual(
+                "9D53A8A54CB8C436665E8C7764700F035CA78275790DF7CE47881D2A6409ECF0",
+                Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(iconBytes)));
             StringAssert.Contains(iconExporter, "ModernWpf.Gallery\\App.xaml");
             StringAssert.Contains(iconExporter, "ModernWpfLogoImage");
             StringAssert.Contains(iconExporter, "$pixelSize = 128");
@@ -326,6 +329,7 @@ namespace ModernWpf.Tools.Tests
             {
                 "Assert-PackageEntry \"icon.png\"",
                 "Package icon.png must be exactly 128x128",
+                "Package icon.png does not match the checked-in ModernWPF logo",
                 "release notes must be pinned to its version tag",
                 "Package readme.md is missing required content",
                 "$ExpectedRepositoryCommit",
