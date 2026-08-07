@@ -3,7 +3,7 @@
   <metadata>
     <id>$id$</id>
     <version>$version$</version>
-    <title>ModernWPF UI Library</title>
+    <title>$displayName$</title>
     <authors>$authors$</authors>
     <owners>$authors$</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -11,7 +11,9 @@
     <projectUrl>$projectUrl$</projectUrl>
     <repository type="$repositoryType$" url="$repositoryUrl$" commit="$repositoryCommit$" />
     <readme>readme.md</readme>
-    <description>Modern styles and controls for your WPF applications.</description>
+    <icon>icon.png</icon>
+    <description>Fluent styles and WinUI-inspired controls for WPF, supporting .NET Framework 4.6.2, .NET 8, and .NET 10.</description>
+    <releaseNotes>https://github.com/Kinnara/ModernWpf/blob/v$version$/docs/release-notes-$version$.md</releaseNotes>
     <tags>$tags$</tags>
     <dependencies>
       <group targetFramework="net462">
@@ -35,5 +37,6 @@
     <file src="bin\$configuration$\**\ModernWpf*.pdb" target="lib" />
     <file src="bin\$configuration$\**\ModernWpf*.xml" target="lib" />
     <file src="readme.md" target="" />
+    <file src="icon.png" target="" />
   </files>
 </package>

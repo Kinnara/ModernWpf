@@ -28,6 +28,42 @@
           "justification": "Repository ignore metadata is not a WinUI control source input."
         },
         {
+          "path": "src/XamlCompiler/**",
+          "justification": "WinUI's XAML compiler and its test corpus are not consumed by ModernWpf; WPF owns the XAML build pipeline."
+        },
+        {
+          "path": "XamlCompilerPublic.csproj",
+          "justification": "The WinUI XAML compiler build entry point is not consumed by ModernWpf; WPF owns the XAML build pipeline."
+        },
+        {
+          "path": "build/**",
+          "justification": "Upstream build, pipeline, and package-authoring infrastructure does not define shipped ModernWpf control behavior or API."
+        },
+        {
+          "path": "scripts/**",
+          "justification": "Upstream repository, mirroring, dependency, and build scripts are not consumed by the ModernWpf libraries."
+        },
+        {
+          "path": "eng/**",
+          "justification": "Upstream dependency and engineering metadata is not consumed by the ModernWpf libraries and does not define shipped control behavior or API."
+        },
+        {
+          "path": "packaging/**",
+          "justification": "Upstream WinUI package-authoring inputs are not consumed by ModernWpf and do not define shipped control behavior or API."
+        },
+        {
+          "path": "BuildTransportPackage.ps1",
+          "justification": "The upstream transport-package build entry point is not consumed by ModernWpf."
+        },
+        {
+          "path": "BuildTransportPackageCmdWrapper.cmd",
+          "justification": "The upstream transport-package command wrapper is not consumed by ModernWpf."
+        },
+        {
+          "path": "buildsamples.cmd",
+          "justification": "The upstream sample-build entry point is not consumed by ModernWpf."
+        },
+        {
           "path": "CODE_OF_CONDUCT.md",
           "justification": "Community policy is not a WinUI control source input."
         },
@@ -66,7 +102,9 @@
           },
           "epochAdoption": {
             "status": "adopted",
-            "dispositionDocument": "docs/winui3-sync-2026-07-29.md"
+            "milestone": "1.0.0-preview.2",
+            "cutoffDate": "2026-08-06",
+            "dispositionDocument": "docs/winui3-sync-2026-08-06.md"
           },
           "latestStableAtEpoch": {
             "tag": "winui3/release/2.3.1",
@@ -81,16 +119,18 @@
           "id": "main",
           "channel": "main",
           "reviewedBaseline": {
-            "revision": "de3e767333c2f0717a6a70cb22bd192ced5ad885",
-            "label": "reviewed 2026-07-17 winui3/main"
+            "revision": "eb75504a1978df0d37a3ad4574d6f72bf4d21583",
+            "label": "adopted epoch 2026-07-30 winui3/main"
           },
           "epochTarget": {
-            "revision": "eb75504a1978df0d37a3ad4574d6f72bf4d21583",
-            "label": "sync epoch 2026-07-30 winui3/main"
+            "revision": "d5bdbb190cdba0b7f1baec4b3981208a9685a360",
+            "label": "Preview 2 cutoff 2026-08-06 winui3/main"
           },
           "epochAdoption": {
             "status": "adopted",
-            "dispositionDocument": "docs/winui3-sync-2026-07-29.md"
+            "milestone": "1.0.0-preview.2",
+            "cutoffDate": "2026-08-06",
+            "dispositionDocument": "docs/winui3-sync-2026-08-06.md"
           },
           "observedHead": {
             "kind": "ref",
@@ -158,16 +198,18 @@
           "id": "main",
           "channel": "main",
           "reviewedBaseline": {
-            "revision": "29f62479d5c046a0b854a5868e5a7cd484572d87",
-            "label": "reviewed 2026-07-13 main"
+            "revision": "f4dc3eb367f4bcecac1793829d9a221e924e5bfb",
+            "label": "adopted epoch 2026-07-30 main"
           },
           "epochTarget": {
-            "revision": "f4dc3eb367f4bcecac1793829d9a221e924e5bfb",
-            "label": "sync epoch 2026-07-30 main"
+            "revision": "3669519356c67f1376152c33ed8ea45003a91f3a",
+            "label": "Preview 2 cutoff 2026-08-06 main"
           },
           "epochAdoption": {
             "status": "adopted",
-            "dispositionDocument": "docs/winui3-sync-2026-07-29.md"
+            "milestone": "1.0.0-preview.2",
+            "cutoffDate": "2026-08-06",
+            "dispositionDocument": "docs/winui3-sync-2026-08-06.md"
           },
           "observedHead": {
             "kind": "ref",

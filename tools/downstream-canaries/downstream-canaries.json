@@ -1,0 +1,117 @@
+{
+  "$schema": "downstream-canaries.schema.json",
+  "schemaVersion": 1,
+  "packageId": "ModernWpfUI",
+  "migrationGuidePath": "docs/migrating-from-0.9.md",
+  "repositories": [
+    {
+      "id": "bilibili-live-record-downloader",
+      "repository": "HMBSbige/BilibiliLiveRecordDownLoader",
+      "commit": "77113a04d631715abc48368da450ed4c4205ae32",
+      "project": "BilibiliLiveRecordDownLoader/BilibiliLiveRecordDownLoader.csproj",
+      "targetFramework": "net10.0-windows10.0.26100.0",
+      "buildTool": "dotnet",
+      "configuration": "Debug",
+      "baselinePackageVersion": "0.9.6",
+      "resourceEntry": "XamlControlsResources",
+      "license": "GPL-3.0",
+      "migrations": [
+        {
+          "kind": "package-version",
+          "path": "BilibiliLiveRecordDownLoader/BilibiliLiveRecordDownLoader.csproj",
+          "packageId": "ModernWpfUI",
+          "fromVersion": "0.9.6"
+        },
+        {
+          "kind": "text-replacement",
+          "path": "BilibiliLiveRecordDownLoader/Views/Dialogs/RoomDialog.xaml",
+          "from": "SimpleStackPanel",
+          "to": "StackPanelEx",
+          "expectedOccurrences": 4
+        },
+        {
+          "kind": "text-replacement",
+          "path": "BilibiliLiveRecordDownLoader/Views/FFmpegCommandView.xaml",
+          "from": "SimpleStackPanel",
+          "to": "StackPanelEx",
+          "expectedOccurrences": 8
+        },
+        {
+          "kind": "text-replacement",
+          "path": "BilibiliLiveRecordDownLoader/Views/SettingView.xaml",
+          "from": "SimpleStackPanel",
+          "to": "StackPanelEx",
+          "expectedOccurrences": 6
+        },
+        {
+          "kind": "text-replacement",
+          "path": "BilibiliLiveRecordDownLoader/Views/UserSettingsView.xaml",
+          "from": "SimpleStackPanel",
+          "to": "StackPanelEx",
+          "expectedOccurrences": 6
+        }
+      ]
+    },
+    {
+      "id": "bililive-recorder",
+      "repository": "BililiveRecorder/BililiveRecorder",
+      "commit": "d263506c9ae97370e88f27620014cddb6e8c3e58",
+      "project": "BililiveRecorder.WPF/BililiveRecorder.WPF.csproj",
+      "targetFramework": "net472",
+      "buildTool": "msbuild",
+      "configuration": "Debug",
+      "baselinePackageVersion": "0.9.4",
+      "resourceEntry": "XamlControlsResources",
+      "license": "GPL-3.0",
+      "migrations": [
+        {
+          "kind": "package-version",
+          "path": "BililiveRecorder.WPF/BililiveRecorder.WPF.csproj",
+          "packageId": "ModernWpfUI",
+          "fromVersion": "0.9.4"
+        },
+        {
+          "kind": "text-replacement",
+          "path": "BililiveRecorder.WPF/Controls/PerRoomSettingsDialog.xaml",
+          "from": "SimpleStackPanel",
+          "to": "StackPanelEx",
+          "expectedOccurrences": 2
+        },
+        {
+          "kind": "text-replacement",
+          "path": "BililiveRecorder.WPF/Pages/AdvancedSettingsPage.xaml",
+          "from": "SimpleStackPanel",
+          "to": "StackPanelEx",
+          "expectedOccurrences": 8
+        },
+        {
+          "kind": "text-replacement",
+          "path": "BililiveRecorder.WPF/Pages/SettingsPage.xaml",
+          "from": "SimpleStackPanel",
+          "to": "StackPanelEx",
+          "expectedOccurrences": 2
+        }
+      ]
+    },
+    {
+      "id": "openkh-kh2-object-editor",
+      "repository": "OpenKH/OpenKh",
+      "commit": "5153c6752e0855444aca88572068f73ad349de29",
+      "project": "OpenKh.Tools.Kh2ObjectEditor/OpenKh.Tools.Kh2ObjectEditor.csproj",
+      "targetFramework": "net8.0-windows",
+      "buildTool": "dotnet",
+      "configuration": "Debug",
+      "baselinePackageVersion": "0.9.6",
+      "resourceEntry": "XamlControlsResources",
+      "license": "Apache-2.0",
+      "migrations": [
+        {
+          "kind": "package-version",
+          "path": "OpenKh.Tools.Kh2ObjectEditor/OpenKh.Tools.Kh2ObjectEditor.csproj",
+          "packageId": "ModernWpfUI",
+          "fromVersion": "0.9.6"
+        }
+      ]
+    }
+  ]
+}

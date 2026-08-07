@@ -4,6 +4,8 @@ param(
 
     [string]$SymbolPackagePath,
 
+    [string]$ExpectedRepositoryCommit,
+
     [string[]]$TargetFrameworks = @(
         "net462",
         "net8.0-windows7.0",
@@ -12,6 +14,11 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+
+if (-not [string]::IsNullOrWhiteSpace($ExpectedRepositoryCommit) -and
+    $ExpectedRepositoryCommit -notmatch "^[0-9a-fA-F]{40}$") {
+    throw "Expected repository commit must be a full Git SHA: '$ExpectedRepositoryCommit'."
+}
 
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 Add-Type -AssemblyName System.Reflection.Metadata
@@ -49,6 +56,25 @@ try {
 
         if ($entries -notcontains $Path) {
             throw "Package '$resolvedPackagePath' is missing '$Path'."
+        }
+    }
+
+    function Get-PackageEntryText {
+        param([string]$Path)
+
+        $entry = $zip.Entries |
+            Where-Object { $_.FullName -eq $Path } |
+            Select-Object -First 1
+        if ($null -eq $entry) {
+            throw "Package '$resolvedPackagePath' is missing '$Path'."
+        }
+
+        $reader = [System.IO.StreamReader]::new($entry.Open())
+        try {
+            return $reader.ReadToEnd()
+        }
+        finally {
+            $reader.Dispose()
         }
     }
 
@@ -104,6 +130,21 @@ try {
                 if ($null -eq $sourceLink.documents -or
                     @($sourceLink.documents.PSObject.Properties).Count -eq 0) {
                     throw "Portable PDB '$Path' has an empty SourceLink document map."
+                }
+
+                if (-not [string]::IsNullOrWhiteSpace($ExpectedRepositoryCommit)) {
+                    $mismatchedDocuments = @(
+                        $sourceLink.documents.PSObject.Properties |
+                            Where-Object {
+                                ([string]$_.Value).IndexOf(
+                                    $ExpectedRepositoryCommit,
+                                    [StringComparison]::OrdinalIgnoreCase) -lt 0
+                            } |
+                            ForEach-Object { $_.Name }
+                    )
+                    if ($mismatchedDocuments.Count -ne 0) {
+                        throw "Portable PDB '$Path' SourceLink does not identify expected commit '$ExpectedRepositoryCommit'."
+                    }
                 }
             }
             finally {
@@ -252,6 +293,7 @@ try {
 
     Assert-PackageEntry "ModernWpfUI.nuspec"
     Assert-PackageEntry "readme.md"
+    Assert-PackageEntry "icon.png"
 
     foreach ($targetFramework in $TargetFrameworks) {
         Assert-PackageEntry "lib/$targetFramework/ModernWpf.dll"
@@ -282,6 +324,63 @@ try {
     )
     if ($unexpectedSymbolEntries.Count -ne 0) {
         throw "Symbol package '$resolvedSymbolPackagePath' contains unexpected entries: $($unexpectedSymbolEntries -join ', ')"
+    }
+
+    $symbolNuspecEntries = @(
+        $symbolZip.Entries |
+            Where-Object { $_.FullName -match "(^|/)ModernWpfUI\.nuspec$" }
+    )
+    if ($symbolNuspecEntries.Count -ne 1) {
+        throw "Symbol package '$resolvedSymbolPackagePath' must contain exactly one nuspec entry."
+    }
+    $symbolNuspecEntry = $symbolNuspecEntries[0]
+
+    $symbolNuspecReader = [System.IO.StreamReader]::new($symbolNuspecEntry.Open())
+    try {
+        [xml]$symbolNuspec = $symbolNuspecReader.ReadToEnd()
+    }
+    finally {
+        $symbolNuspecReader.Dispose()
+    }
+
+    $symbolMetadata = $symbolNuspec.SelectSingleNode(
+        "/*[local-name()='package']/*[local-name()='metadata']")
+    if ($null -eq $symbolMetadata) {
+        throw "Symbol package '$resolvedSymbolPackagePath' has no nuspec metadata."
+    }
+
+    $symbolId = $symbolMetadata.SelectSingleNode("*[local-name()='id']").InnerText
+    if ($symbolId -ne "ModernWpfUI") {
+        throw "Symbol package '$resolvedSymbolPackagePath' must use package ID 'ModernWpfUI'."
+    }
+
+    $symbolVersion = $symbolMetadata.SelectSingleNode("*[local-name()='version']").InnerText
+    if ([string]::IsNullOrWhiteSpace($symbolVersion)) {
+        throw "Symbol package '$resolvedSymbolPackagePath' has no version metadata."
+    }
+
+    $symbolRepository = $symbolMetadata.SelectSingleNode("*[local-name()='repository']")
+    if ($null -eq $symbolRepository) {
+        throw "Symbol package '$resolvedSymbolPackagePath' has no repository metadata."
+    }
+
+    if ($symbolRepository.GetAttribute("type") -ne "git") {
+        throw "Symbol package '$resolvedSymbolPackagePath' repository type must be 'git'."
+    }
+
+    if ($symbolRepository.GetAttribute("url") -ne "https://github.com/Kinnara/ModernWpf") {
+        throw "Symbol package '$resolvedSymbolPackagePath' has an unexpected repository URL."
+    }
+
+    $symbolRepositoryCommit = $symbolRepository.GetAttribute("commit")
+    if ($symbolRepositoryCommit -notmatch "^[0-9a-fA-F]{40}$") {
+        throw "Symbol package '$resolvedSymbolPackagePath' repository commit must be a full Git SHA."
+    }
+    if (-not [string]::IsNullOrWhiteSpace($ExpectedRepositoryCommit) -and
+        -not $symbolRepositoryCommit.Equals(
+            $ExpectedRepositoryCommit,
+            [StringComparison]::OrdinalIgnoreCase)) {
+        throw "Symbol package repository commit '$symbolRepositoryCommit' does not match checked-out commit '$ExpectedRepositoryCommit'."
     }
 
     foreach ($assemblyName in @("ModernWpf", "ModernWpf.Controls")) {
@@ -337,6 +436,110 @@ try {
         throw "Package '$resolvedPackagePath' must declare readme.md in nuspec metadata."
     }
 
+    $version = $metadata.SelectSingleNode("*[local-name()='version']").InnerText
+    if ([string]::IsNullOrWhiteSpace($version)) {
+        throw "Package '$resolvedPackagePath' has no version metadata."
+    }
+    if ($symbolVersion -ne $version) {
+        throw "Symbol package version '$symbolVersion' does not match main package version '$version'."
+    }
+
+    $title = $metadata.SelectSingleNode("*[local-name()='title']").InnerText
+    if ($title -ne "ModernWPF") {
+        throw "Package '$resolvedPackagePath' must use the ModernWPF display name."
+    }
+
+    $icon = $metadata.SelectSingleNode("*[local-name()='icon']")
+    if ($null -eq $icon -or $icon.InnerText -ne "icon.png") {
+        throw "Package '$resolvedPackagePath' must declare icon.png in nuspec metadata."
+    }
+
+    $expectedDescription =
+        "Fluent styles and WinUI-inspired controls for WPF, supporting .NET Framework 4.6.2, .NET 8, and .NET 10."
+    $description = $metadata.SelectSingleNode("*[local-name()='description']").InnerText
+    if ($description -ne $expectedDescription) {
+        throw "Package '$resolvedPackagePath' has stale or unexpected description metadata."
+    }
+
+    $expectedReleaseNotes =
+        "https://github.com/Kinnara/ModernWpf/blob/v$version/docs/release-notes-$version.md"
+    $releaseNotes = $metadata.SelectSingleNode("*[local-name()='releaseNotes']").InnerText
+    if ($releaseNotes -ne $expectedReleaseNotes) {
+        throw "Package '$resolvedPackagePath' release notes must be pinned to its version tag."
+    }
+
+    $expectedTags = "WPF XAML Fluent WinUI Windows Desktop Theme Controls ModernWPF"
+    $tags = $metadata.SelectSingleNode("*[local-name()='tags']").InnerText
+    if ($tags -ne $expectedTags) {
+        throw "Package '$resolvedPackagePath' has stale or unexpected tags."
+    }
+
+    $projectUrl = $metadata.SelectSingleNode("*[local-name()='projectUrl']").InnerText
+    if ($projectUrl -ne "https://github.com/Kinnara/ModernWpf") {
+        throw "Package '$resolvedPackagePath' has an unexpected project URL."
+    }
+
+    $iconEntry = $zip.Entries |
+        Where-Object { $_.FullName -eq "icon.png" } |
+        Select-Object -First 1
+    $iconStream = $iconEntry.Open()
+    $iconBuffer = [System.IO.MemoryStream]::new()
+    try {
+        $iconStream.CopyTo($iconBuffer)
+        [byte[]]$iconBytes = $iconBuffer.ToArray()
+    }
+    finally {
+        $iconStream.Dispose()
+        $iconBuffer.Dispose()
+    }
+
+    [byte[]]$pngSignature = 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A
+    if ($iconBytes.Length -lt 24) {
+        throw "Package icon.png is truncated."
+    }
+
+    for ($index = 0; $index -lt $pngSignature.Length; $index++) {
+        if ($iconBytes[$index] -ne $pngSignature[$index]) {
+            throw "Package icon.png is not a PNG image."
+        }
+    }
+
+    $iconWidth =
+        ($iconBytes[16] -shl 24) -bor
+        ($iconBytes[17] -shl 16) -bor
+        ($iconBytes[18] -shl 8) -bor
+        $iconBytes[19]
+    $iconHeight =
+        ($iconBytes[20] -shl 24) -bor
+        ($iconBytes[21] -shl 16) -bor
+        ($iconBytes[22] -shl 8) -bor
+        $iconBytes[23]
+    if ($iconWidth -ne 128 -or $iconHeight -ne 128) {
+        throw "Package icon.png must be exactly 128x128; found ${iconWidth}x${iconHeight}."
+    }
+
+    $packageReadme = Get-PackageEntryText "readme.md"
+    $expectedReadmeFragments = @(
+        "https://raw.githubusercontent.com/Kinnara/ModernWpf/v$version/docs/images/Gallery.Light.png",
+        "dotnet add package ModernWpfUI --version $version",
+        '| `net462` |',
+        '| `net8.0-windows7.0` |',
+        '| `net10.0-windows7.0` |',
+        '<ui:ThemeResources />',
+        '<ui:FluentControlsResources UseCompactResources="False" />',
+        '<ui:XamlControlsResources />',
+        $expectedReleaseNotes,
+        "https://github.com/Kinnara/ModernWpf/blob/v$version/docs/migrating-from-0.9.md",
+        "https://github.com/Kinnara/ModernWpf/issues/new?template=preview-bug.yml",
+        "https://github.com/Kinnara/ModernWpf#documentation",
+        "frozen and unsupported"
+    )
+    foreach ($fragment in $expectedReadmeFragments) {
+        if (-not $packageReadme.Contains($fragment, [System.StringComparison]::Ordinal)) {
+            throw "Package readme.md is missing required content: $fragment"
+        }
+    }
+
     $repository = $metadata.SelectSingleNode("*[local-name()='repository']")
     if ($null -eq $repository) {
         throw "Package '$resolvedPackagePath' has no repository metadata."
@@ -353,6 +556,13 @@ try {
     $repositoryCommit = $repository.GetAttribute("commit")
     if ($repositoryCommit -notmatch "^[0-9a-fA-F]{40}$") {
         throw "Package '$resolvedPackagePath' repository commit must be a full Git SHA."
+    }
+    if (-not [string]::IsNullOrWhiteSpace($ExpectedRepositoryCommit)) {
+        if (-not $repositoryCommit.Equals(
+            $ExpectedRepositoryCommit,
+            [StringComparison]::OrdinalIgnoreCase)) {
+            throw "Package repository commit '$repositoryCommit' does not match checked-out commit '$ExpectedRepositoryCommit'."
+        }
     }
 
     $dependencyGroups = @($metadata.SelectNodes("*[local-name()='dependencies']/*[local-name()='group']") | ForEach-Object {

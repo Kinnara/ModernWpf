@@ -14,6 +14,9 @@ exists below the directory being changed.
 - Do not reintroduce retired `net45`, `netcoreapp3.0`, or
   `net5.0-windows` assets.
 - `ModernWpfUI.MahApps` is not part of the 1.x product.
+- Follow `docs/roadmap-1.0.md` for the fixed Preview 2 through Preview 7,
+  release-candidate, and stable sequence. Do not compress or renumber those
+  milestones; `PipsPager` is deferred to 1.1.
 - For WinUI-derived controls, current WinUI is the behavioral and API-shape
   authority unless WPF needs a documented adaptation. For stock WPF controls,
   official WPF Fluent is the styling and behavior authority.

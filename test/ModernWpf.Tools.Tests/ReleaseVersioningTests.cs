@@ -209,7 +209,13 @@ namespace ModernWpf.Tools.Tests
                 "<PackageReadmeFile>readme.md</PackageReadmeFile>");
             StringAssert.Contains(
                 controlsProject,
+                "<PackageIcon>icon.png</PackageIcon>");
+            StringAssert.Contains(
+                controlsProject,
                 "<None Update=\"readme.md\" Pack=\"true\" PackagePath=\"\" />");
+            StringAssert.Contains(
+                controlsProject,
+                "<None Update=\"icon.png\" Pack=\"true\" PackagePath=\"\" />");
             StringAssert.Contains(
                 controlsProject,
                 "systemValueTupleVersion=$(ModernWpfSystemValueTupleVersion)");
@@ -230,17 +236,194 @@ namespace ModernWpf.Tools.Tests
         }
 
         [TestMethod]
+        public void PackagePresentationAndConsumerSampleAreReleaseGated()
+        {
+            var repoRoot = FindRepoRoot();
+            var props = XDocument.Load(Path.Combine(repoRoot, "Directory.Build.props"));
+            var version = GetPropertyValue(props, "Version");
+            var displayName = GetPropertyValue(props, "ModernWpfDisplayName");
+            var packageProject = File.ReadAllText(
+                Path.Combine(repoRoot, "ModernWpf.Controls", "ModernWpf.Controls.csproj"));
+            var nuspec = File.ReadAllText(
+                Path.Combine(repoRoot, "ModernWpf.Controls", "ModernWpfUI.nuspec"));
+            var packageReadme = File.ReadAllText(
+                Path.Combine(repoRoot, "ModernWpf.Controls", "readme.md"));
+            var targets = File.ReadAllText(
+                Path.Combine(repoRoot, "Directory.Build.targets"));
+            var verifier = File.ReadAllText(
+                Path.Combine(repoRoot, "tools", "release", "Verify-ModernWpfPackage.ps1"));
+            var smoke = File.ReadAllText(
+                Path.Combine(repoRoot, "tools", "release", "Test-ModernWpfPackageSmoke.ps1"));
+            var iconExporter = File.ReadAllText(
+                Path.Combine(repoRoot, "tools", "package-assets", "Export-ModernWpfPackageIcon.ps1"));
+            var issueForm = File.ReadAllText(
+                Path.Combine(repoRoot, ".github", "ISSUE_TEMPLATE", "preview-bug.yml"));
+            var consumerRoot = Path.Combine(repoRoot, "samples", "PackageConsumer");
+            var consumerProject = File.ReadAllText(
+                Path.Combine(consumerRoot, "ModernWpf.PackageConsumer.csproj"));
+            var consumerApp = File.ReadAllText(Path.Combine(consumerRoot, "App.xaml"));
+            var consumerReadme = File.ReadAllText(Path.Combine(consumerRoot, "README.md"));
+            var solution = File.ReadAllText(Path.Combine(repoRoot, "ModernWpf.sln"));
+            var galleryProject = File.ReadAllText(
+                Path.Combine(repoRoot, "ModernWpf.Gallery", "ModernWpf.Gallery.csproj"));
+
+            Assert.AreEqual("ModernWPF", displayName);
+            Assert.AreEqual("$(ModernWpfDisplayName)", GetPropertyValue(props, "Product"));
+            StringAssert.Contains(packageProject, "<PackageIcon>icon.png</PackageIcon>");
+            StringAssert.Contains(
+                packageProject,
+                "displayName=$(ModernWpfDisplayName)");
+            StringAssert.Contains(nuspec, "<title>$displayName$</title>");
+            StringAssert.Contains(
+                galleryProject,
+                "<AssemblyTitle>$(ModernWpfDisplayName)</AssemblyTitle>");
+            Assert.IsFalse(galleryProject.Contains("GalleryDisplayName", StringComparison.Ordinal));
+            StringAssert.Contains(nuspec, "<icon>icon.png</icon>");
+            StringAssert.Contains(nuspec, "<file src=\"icon.png\" target=\"\" />");
+            StringAssert.Contains(
+                nuspec,
+                "Fluent styles and WinUI-inspired controls for WPF, supporting .NET Framework 4.6.2, .NET 8, and .NET 10.");
+            StringAssert.Contains(
+                nuspec,
+                "https://github.com/Kinnara/ModernWpf/blob/v$version$/docs/release-notes-$version$.md");
+            StringAssert.Contains(
+                targets,
+                "WPF XAML Fluent WinUI Windows Desktop Theme Controls ModernWPF");
+            Assert.IsFalse(targets.Contains("Metro", StringComparison.OrdinalIgnoreCase));
+
+            var iconPath = Path.Combine(repoRoot, "ModernWpf.Controls", "icon.png");
+            Assert.IsTrue(File.Exists(iconPath));
+            var iconBytes = File.ReadAllBytes(iconPath);
+            CollectionAssert.AreEqual(
+                new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A },
+                iconBytes.Take(8).ToArray());
+            Assert.AreEqual(128, ReadBigEndianInt32(iconBytes, 16));
+            Assert.AreEqual(128, ReadBigEndianInt32(iconBytes, 20));
+            StringAssert.Contains(iconExporter, "ModernWpf.Gallery\\App.xaml");
+            StringAssert.Contains(iconExporter, "ModernWpfLogoImage");
+            StringAssert.Contains(iconExporter, "$pixelSize = 128");
+
+            foreach (var expectedReadmeContent in new[]
+            {
+                $"https://raw.githubusercontent.com/Kinnara/ModernWpf/v{version}/docs/images/Gallery.Light.png",
+                $"dotnet add package ModernWpfUI --version {version}",
+                "| `net462` |",
+                "| `net8.0-windows7.0` |",
+                "| `net10.0-windows7.0` |",
+                "<ui:FluentControlsResources UseCompactResources=\"False\" />",
+                "<ui:XamlControlsResources />",
+                $"https://github.com/Kinnara/ModernWpf/blob/v{version}/docs/release-notes-{version}.md",
+                $"https://github.com/Kinnara/ModernWpf/blob/v{version}/docs/migrating-from-0.9.md",
+                "https://github.com/Kinnara/ModernWpf/issues/new?template=preview-bug.yml",
+                "https://github.com/Kinnara/ModernWpf#documentation",
+                "frozen and unsupported"
+            })
+            {
+                StringAssert.Contains(packageReadme, expectedReadmeContent);
+            }
+
+            foreach (var verifierGuard in new[]
+            {
+                "Assert-PackageEntry \"icon.png\"",
+                "Package icon.png must be exactly 128x128",
+                "release notes must be pinned to its version tag",
+                "Package readme.md is missing required content",
+                "$ExpectedRepositoryCommit",
+                "does not match checked-out commit",
+                "SourceLink does not identify expected commit",
+                "must contain exactly one nuspec entry",
+                "must use package ID 'ModernWpfUI'",
+                "does not match main package version"
+            })
+            {
+                StringAssert.Contains(verifier, verifierGuard);
+            }
+
+            foreach (var formField in new[]
+            {
+                "id: package-version",
+                "id: target-framework",
+                "id: windows-version",
+                "id: resource-entry",
+                "id: theme",
+                "id: steps",
+                "id: expected",
+                "id: actual",
+                "id: reproduction",
+                "id: logs",
+                "id: sensitive-data"
+            })
+            {
+                StringAssert.Contains(issueForm, formField);
+            }
+            StringAssert.Contains(issueForm, "required: true");
+
+            StringAssert.Contains(
+                consumerProject,
+                "$(ModernWpfPackageValidationBaselineVersion)");
+            StringAssert.Contains(
+                consumerProject,
+                "Version=\"$(ModernWpfPackageVersion)\"");
+            StringAssert.Contains(consumerProject, "'$(ModernWpfPackageSource)' != ''");
+            StringAssert.Contains(
+                consumerProject,
+                "$(ModernWpfPackageSource);https://api.nuget.org/v3/index.json");
+            Assert.IsFalse(consumerProject.Contains("ProjectReference", StringComparison.Ordinal));
+            StringAssert.Contains(consumerApp, "<ui:FluentControlsResources");
+            Assert.IsFalse(consumerApp.Contains("XamlControlsResources", StringComparison.Ordinal));
+            StringAssert.Contains(consumerReadme, "-p:ModernWpfPackageVersion=");
+            StringAssert.Contains(consumerReadme, "-p:ModernWpfPackageSource=");
+            Assert.IsFalse(solution.Contains("PackageConsumer", StringComparison.OrdinalIgnoreCase));
+            StringAssert.Contains(
+                smoke,
+                "samples\\PackageConsumer\\ModernWpf.PackageConsumer.csproj");
+            StringAssert.Contains(smoke, "-p:ModernWpfPackageVersion=$packageVersion");
+            StringAssert.Contains(smoke, "-p:ModernWpfPackageSource=$packageDirectory");
+            StringAssert.Contains(smoke, "Assert-CandidateRestoredFromLocalFeed");
+            StringAssert.Contains(smoke, ".nupkg.metadata");
+            StringAssert.Contains(smoke, "--packages $legacyPackages");
+            StringAssert.Contains(smoke, "& $checkedInExecutable --smoke-test");
+            StringAssert.Contains(smoke, "foreach ($resourceType in @(\"XamlControlsResources\"))");
+        }
+
+        [TestMethod]
+        public void PublicSamplesUseRecommendedFluentResourceEntry()
+        {
+            var repoRoot = FindRepoRoot();
+            foreach (var relativePath in new[]
+            {
+                Path.Combine("samples", "FluentWPFSample", "App.xaml"),
+                Path.Combine("samples", "MultiThreadingSample", "App.xaml"),
+                Path.Combine("samples", "FluentRibbonSample", "App.xaml"),
+                Path.Combine("samples", "DragablzSample", "App.xaml")
+            })
+            {
+                var source = File.ReadAllText(Path.Combine(repoRoot, relativePath));
+                StringAssert.Contains(source, "<ui:FluentControlsResources");
+                Assert.IsFalse(
+                    source.Contains("XamlControlsResources", StringComparison.Ordinal),
+                    $"{relativePath} still advertises the legacy resource entry.");
+            }
+        }
+
+        [TestMethod]
         public void WorkflowsDeclareLeastPrivilegePermissions()
         {
             var repoRoot = FindRepoRoot();
             var buildWorkflow = File.ReadAllText(
                     Path.Combine(repoRoot, ".github", "workflows", "build.yml"))
                 .Replace("\r\n", "\n", StringComparison.Ordinal);
+            var releaseWorkflow = File.ReadAllText(
+                    Path.Combine(repoRoot, ".github", "workflows", "release.yml"))
+                .Replace("\r\n", "\n", StringComparison.Ordinal);
             var labelWorkflow = File.ReadAllText(
                     Path.Combine(repoRoot, ".github", "workflows", "label.yml"))
                 .Replace("\r\n", "\n", StringComparison.Ordinal);
 
             StringAssert.Contains(buildWorkflow, "permissions:\n  contents: read");
+            StringAssert.Contains(
+                releaseWorkflow,
+                "permissions:\n  contents: read\n  actions: read");
             StringAssert.Contains(labelWorkflow, "permissions:\n  issues: write");
             StringAssert.Contains(labelWorkflow, "GH_TOKEN: ${{ github.token }}");
             StringAssert.Contains(labelWorkflow, "gh issue edit");
@@ -274,6 +457,18 @@ namespace ModernWpf.Tools.Tests
                 "RELEASE_VERSION: ${{ steps.validate.outputs.version }}");
             StringAssert.Contains(
                 workflow,
+                "is-prerelease: ${{ steps.validate.outputs.is-prerelease }}");
+            StringAssert.Contains(
+                workflow,
+                "$env:GITHUB_REF_NAME -ne $env:RELEASE_TAG");
+            StringAssert.Contains(
+                workflow,
+                "$env:GITHUB_SHA -ne $tagCommit");
+            StringAssert.Contains(
+                workflow,
+                "must be dispatched from the same tag supplied in the tag input");
+            StringAssert.Contains(
+                workflow,
                 "$releaseNotesPath = \"docs\\release-notes-$env:RELEASE_VERSION.md\"");
             StringAssert.Contains(
                 workflow,
@@ -295,10 +490,69 @@ namespace ModernWpf.Tools.Tests
                 "-Tag $env:RELEASE_TAG");
             StringAssert.Contains(
                 workflow,
-                "--title \"ModernWPF ${{ needs.build.outputs.version }}\"");
+                "'ModernWPF ${{ needs.build.outputs.version }}'");
             StringAssert.Contains(
                 workflow,
                 "GH_REPO: ${{ github.repository }}");
+            StringAssert.Contains(workflow, "$headCommit = git rev-parse HEAD");
+            StringAssert.Contains(workflow, "-ExpectedRepositoryCommit $headCommit");
+            StringAssert.Contains(
+                workflow,
+                "name: Require successful master release gate");
+            StringAssert.Contains(
+                workflow,
+                "actions/workflows/build.yml/runs?branch=master&event=push&status=success");
+            StringAssert.Contains(workflow, "$_.head_sha -eq $headCommit");
+            StringAssert.Contains(workflow, "$_.head_branch -eq 'master'");
+            StringAssert.Contains(workflow, "$_.event -eq 'push'");
+            StringAssert.Contains(workflow, "$_.conclusion -eq 'success'");
+            StringAssert.Contains(workflow, "name: Test complete WinUI suite");
+            StringAssert.Contains(
+                workflow,
+                "ACCEPTED_RC_TAG: ${{ inputs.accepted_rc_tag }}");
+            StringAssert.Contains(
+                workflow,
+                "--json tagName,isDraft,isPrerelease,publishedAt");
+            StringAssert.Contains(
+                workflow,
+                "$rcRelease.tagName -ne $env:ACCEPTED_RC_TAG");
+            StringAssert.Contains(workflow, "$rcRelease.isDraft -or");
+            StringAssert.Contains(workflow, "-not $rcRelease.isPrerelease -or");
+            StringAssert.Contains(
+                workflow,
+                "IsNullOrWhiteSpace([string]$rcRelease.publishedAt)");
+            StringAssert.Contains(
+                workflow,
+                "Accepted RC must be a published, non-draft GitHub prerelease");
+            StringAssert.Contains(
+                workflow,
+                "actions/workflows/release.yml/runs?event=workflow_dispatch&status=success");
+            StringAssert.Contains(workflow, "$_.head_sha -eq $rcCommit");
+            StringAssert.Contains(
+                workflow,
+                "$_.head_branch -eq $env:ACCEPTED_RC_TAG");
+            StringAssert.Contains(
+                workflow,
+                "Accepted RC has no successful release workflow run");
+            StringAssert.Contains(
+                workflow,
+                @".\tools\release\Assert-StableReleaseLineage.ps1");
+            StringAssert.Contains(
+                workflow,
+                "$expectedPrerelease = [bool]::Parse('${{ needs.build.outputs.is-prerelease }}')");
+            StringAssert.Contains(
+                workflow,
+                "$release.isPrerelease -ne $expectedPrerelease");
+            StringAssert.Contains(workflow, "$releaseArguments += '--prerelease'");
+            StringAssert.Contains(
+                workflow,
+                "--notes-file release\\release-notes.md");
+            StringAssert.Contains(workflow, "gh release delete-asset");
+            StringAssert.Contains(workflow, "Could not remove stale draft asset");
+            Assert.IsFalse(
+                workflow.Contains("--skip-duplicate", StringComparison.Ordinal));
+            Assert.IsFalse(
+                workflow.Contains("--prerelease=true", StringComparison.Ordinal));
             Assert.IsFalse(
                 workflow.Contains(
                     "Copy-Item docs\\release-notes-1.0.0-preview.1.md",
@@ -463,6 +717,15 @@ namespace ModernWpf.Tools.Tests
             }
 
             return count;
+        }
+
+        private static int ReadBigEndianInt32(byte[] bytes, int offset)
+        {
+            Assert.IsTrue(bytes.Length >= offset + 4);
+            return (bytes[offset] << 24) |
+                (bytes[offset + 1] << 16) |
+                (bytes[offset + 2] << 8) |
+                bytes[offset + 3];
         }
 
         private static string FindRepoRoot()

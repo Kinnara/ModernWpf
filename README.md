@@ -9,7 +9,7 @@
     <img src="https://github.com/Kinnara/ModernWpf/actions/workflows/build.yml/badge.svg?branch=master" alt="Build status">
   </a>
   <a href="https://www.nuget.org/packages/ModernWpfUI">
-    <img src="https://img.shields.io/badge/NuGet-ModernWpfUI-004880?logo=nuget&logoColor=white" alt="ModernWpfUI on NuGet">
+    <img src="https://img.shields.io/nuget/vpre/ModernWpfUI?label=NuGet&amp;color=004880&amp;logo=nuget&amp;logoColor=white" alt="Latest ModernWpfUI package version">
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="MIT license">
@@ -78,7 +78,7 @@ ModernWPF is not affiliated with or endorsed by Microsoft.
 
 | Line | Status | Policy |
 | --- | --- | --- |
-| 1.x | Active preview | Current development line. `1.0.0-preview.1` records the first API/resource audit and migration baseline; later previews follow current applicable WinUI API shape, with deliberate breaks documented before stable `1.0.0` establishes the SemVer boundary. |
+| 1.x | Active preview | Current development line. `1.0.0-preview.1` records the first API/resource audit and migration baseline; the [1.0 roadmap](docs/roadmap-1.0.md) carries source-audited feature previews through an API-frozen release candidate before stable `1.0.0` establishes the SemVer boundary. |
 | 0.9.x | Frozen and unsupported | Historical packages remain available, but no updates or security fixes are planned. |
 
 Source and binary compatibility with 0.9.x is not promised. Existing
@@ -104,7 +104,7 @@ Install an explicit 1.x version so NuGet does not select a frozen 0.9.x
 package:
 
 ```powershell
-dotnet add package ModernWpfUI --version 1.0.0-preview.1
+dotnet add package ModernWpfUI --version 1.0.0-preview.2
 ```
 
 If the requested preview is not yet listed on NuGet, use a validated workflow
@@ -179,10 +179,12 @@ also requires the .NET Framework 4.6.2 Developer Pack. In Visual Studio, open
 
 | Resource | Purpose |
 | --- | --- |
+| [1.0 roadmap](docs/roadmap-1.0.md) | Planned feature previews, the API-frozen release candidate, downstream evidence, and stable graduation rules. |
+| [1.0.0-preview.2 release notes](docs/release-notes-1.0.0-preview.2.md) | Current synchronization, packaging, migration, and known-preview information. |
 | [1.0.0-preview.1 release notes](docs/release-notes-1.0.0-preview.1.md) | Package changes, intentional 0.9 breaks, recommended resources, and preview limitations. |
 | [Migrating from 0.9.x](docs/migrating-from-0.9.md) | Step-by-step application migration guidance. |
 | [1.x public API contract](docs/public-api-contract-1x.md) | Preview governance and stable compatibility policy for CLR APIs and public resource keys. |
-| [WinUI 3 synchronization epoch](docs/winui3-sync-2026-07-29.md) | Stable/main/Gallery pins, complete upstream dispositions, WPF adaptations, and continuous drift-monitoring policy. |
+| [Preview 2 WinUI cutoff](docs/winui3-sync-2026-08-06.md) | Final stable/main/Gallery pins, complete upstream dispositions, and the continuous drift-monitoring policy. |
 
 ## Build from source
 
@@ -207,9 +209,9 @@ shared intermediate files.
 
 - Use [Discussions](https://github.com/Kinnara/ModernWpf/discussions) for
   questions, design ideas, and broader proposals.
-- Use [Issues](https://github.com/Kinnara/ModernWpf/issues) for reproducible
-  bugs and focused feature requests. Include the target framework, Windows
-  version, theme, and a minimal reproduction when relevant.
+- Use the structured [Preview bug form](https://github.com/Kinnara/ModernWpf/issues/new?template=preview-bug.yml)
+  for reproducible 1.0 preview problems, and [Issues](https://github.com/Kinnara/ModernWpf/issues)
+  for focused feature requests.
 - Read the related source-audit document under [`docs`](docs) before changing a
   WinUI-derived control or stock WPF template.
 - Add focused regression coverage and run the affected test project before

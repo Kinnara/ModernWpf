@@ -1,6 +1,7 @@
 name: Build
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master, maintenance-reboot-1x ]
   pull_request:
@@ -85,11 +86,22 @@ jobs:
         --configuration Release --framework net10.0-windows7.0 --no-build --no-restore
         --logger "trx;LogFileName=gallery-net10.trx" --results-directory "${{ env.TEST_RESULTS }}"
 
-    - name: Test complete WinUI suite
-      run: >-
-        dotnet test test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj
-        --configuration Release --framework net8.0-windows7.0 --no-build --no-restore
-        --logger "trx;LogFileName=winui-net8.trx" --results-directory "${{ env.TEST_RESULTS }}"
+    - name: Test complete WinUI suite three consecutive times
+      shell: pwsh
+      run: |
+        foreach ($run in 1..3) {
+          Write-Host "WinUI full-suite run $run of 3"
+          & dotnet test test\ModernWpf.WinUI.Tests\ModernWpf.WinUI.Tests.csproj `
+            --configuration Release `
+            --framework net8.0-windows7.0 `
+            --no-build `
+            --no-restore `
+            --logger "trx;LogFileName=winui-net8-run$run.trx" `
+            --results-directory "${{ env.TEST_RESULTS }}"
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+        }
 
     - name: Test retained legacy suite
       run: >-
@@ -110,7 +122,10 @@ jobs:
       shell: pwsh
       run: |
         $package = Get-ChildItem artifacts\ModernWpfUI.*.nupkg | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-        .\tools\release\Verify-ModernWpfPackage.ps1 -PackagePath $package.FullName
+        $headCommit = git rev-parse HEAD
+        .\tools\release\Verify-ModernWpfPackage.ps1 `
+          -PackagePath $package.FullName `
+          -ExpectedRepositoryCommit $headCommit
 
     - name: Execute packaged consumers
       shell: pwsh

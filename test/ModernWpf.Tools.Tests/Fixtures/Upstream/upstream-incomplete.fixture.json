@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-30T12:34:56Z",
+  "generatedAt": "2026-08-06T12:34:56Z",
   "stableTags": [
     {
       "repository": "winui-product",
@@ -25,14 +25,14 @@
     {
       "repository": "winui-gallery",
       "track": "main",
-      "revision": "f4dc3eb367f4bcecac1793829d9a221e924e5bfb",
+      "revision": "3669519356c67f1376152c33ed8ea45003a91f3a",
       "label": "main"
     }
   ],
   "comparisons": [
     {
       "repository": "winui-product",
-      "base": "eb75504a1978df0d37a3ad4574d6f72bf4d21583",
+      "base": "d5bdbb190cdba0b7f1baec4b3981208a9685a360",
       "head": "1111111111111111111111111111111111111111",
       "status": "ahead",
       "aheadBy": 1,

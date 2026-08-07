@@ -27,7 +27,88 @@ $stamp = "{0}-{1}" -f (Get-Date -Format "yyyyMMdd-HHmmssfff"), $PID
 $workRoot = Join-Path $repoRoot "artifacts\package-smoke\$stamp"
 $targetFrameworksValue = $TargetFrameworks -join ";"
 
-foreach ($resourceType in @("FluentControlsResources", "XamlControlsResources")) {
+function Assert-CandidateRestoredFromLocalFeed {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$PackagesPath,
+
+        [Parameter(Mandatory = $true)]
+        [string]$ExpectedFeed,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Version
+    )
+
+    $metadataPath = Join-Path $PackagesPath `
+        "modernwpfui\$Version\.nupkg.metadata"
+    if (-not (Test-Path -LiteralPath $metadataPath -PathType Leaf)) {
+        throw "NuGet did not write ModernWpfUI source metadata at '$metadataPath'."
+    }
+
+    $metadata = Get-Content -LiteralPath $metadataPath -Raw |
+        ConvertFrom-Json -Depth 5
+    $expectedSource = [IO.Path]::GetFullPath($ExpectedFeed).TrimEnd(
+        [IO.Path]::DirectorySeparatorChar,
+        [IO.Path]::AltDirectorySeparatorChar)
+    $actualSource = [IO.Path]::GetFullPath([string]$metadata.source).TrimEnd(
+        [IO.Path]::DirectorySeparatorChar,
+        [IO.Path]::AltDirectorySeparatorChar)
+    if (-not $actualSource.Equals(
+        $expectedSource,
+        [StringComparison]::OrdinalIgnoreCase)) {
+        throw "ModernWpfUI $Version restored from '$actualSource' instead of the candidate feed '$expectedSource'."
+    }
+}
+
+$checkedInProject = Join-Path `
+    $repoRoot `
+    "samples\PackageConsumer\ModernWpf.PackageConsumer.csproj"
+$checkedInPackages = Join-Path $workRoot "packages"
+
+dotnet restore $checkedInProject `
+    -p:ModernWpfPackageVersion=$packageVersion `
+    -p:ModernWpfPackageSource=$packageDirectory `
+    -p:RestorePackagesPath=$checkedInPackages `
+    --no-cache
+if ($LASTEXITCODE -ne 0) {
+    throw "Checked-in package consumer restore failed."
+}
+Assert-CandidateRestoredFromLocalFeed `
+    -PackagesPath $checkedInPackages `
+    -ExpectedFeed $packageDirectory `
+    -Version $packageVersion
+
+foreach ($targetFramework in $TargetFrameworks) {
+    dotnet build $checkedInProject `
+        --configuration $Configuration `
+        --framework $targetFramework `
+        --no-restore `
+        --maxcpucount:1 `
+        --warnaserror:MSB3277 `
+        -p:ModernWpfPackageVersion=$packageVersion `
+        -p:ModernWpfPackageSource=$packageDirectory `
+        -p:RestorePackagesPath=$checkedInPackages
+    if ($LASTEXITCODE -ne 0) {
+        throw "Checked-in package consumer build failed on '$targetFramework'."
+    }
+
+    $checkedInExecutable = Join-Path `
+        $repoRoot `
+        "samples\PackageConsumer\bin\$Configuration\$targetFramework\ModernWpf.PackageConsumer.exe"
+    if (-not (Test-Path $checkedInExecutable)) {
+        throw "Checked-in package consumer executable was not produced on '$targetFramework'."
+    }
+
+    & $checkedInExecutable --smoke-test
+    if ($LASTEXITCODE -ne 0) {
+        throw "Checked-in package consumer execution failed on '$targetFramework' with exit code $LASTEXITCODE."
+    }
+}
+
+# The checked-in consumer above exercises the recommended
+# FluentControlsResources path. Retain a generated migration consumer for the
+# legacy XamlControlsResources entry without advertising it as a new-app sample.
+foreach ($resourceType in @("XamlControlsResources")) {
     $projectDirectory = Join-Path $workRoot $resourceType
     New-Item -ItemType Directory -Force $projectDirectory | Out-Null
 
@@ -143,11 +224,19 @@ public partial class App : Application
 
     $projectPath = Join-Path $projectDirectory "ModernWpf.PackageSmoke.csproj"
     $nugetConfigPath = Join-Path $projectDirectory "nuget.config"
+    $legacyPackages = Join-Path $projectDirectory "packages"
 
-    dotnet restore $projectPath --configfile $nugetConfigPath
+    dotnet restore $projectPath `
+        --configfile $nugetConfigPath `
+        --packages $legacyPackages `
+        --no-cache
     if ($LASTEXITCODE -ne 0) {
         throw "Package smoke restore failed for '$resourceType'."
     }
+    Assert-CandidateRestoredFromLocalFeed `
+        -PackagesPath $legacyPackages `
+        -ExpectedFeed $packageDirectory `
+        -Version $packageVersion
 
     foreach ($targetFramework in $TargetFrameworks) {
         dotnet build $projectPath `
@@ -155,7 +244,8 @@ public partial class App : Application
             --framework $targetFramework `
             --no-restore `
             --maxcpucount:1 `
-            --warnaserror:MSB3277
+            --warnaserror:MSB3277 `
+            -p:RestorePackagesPath=$legacyPackages
         if ($LASTEXITCODE -ne 0) {
             throw "Package smoke build failed for '$resourceType' on '$targetFramework'."
         }
@@ -174,4 +264,4 @@ public partial class App : Application
     }
 }
 
-Write-Host "Executed ModernWpfUI package smoke applications from '$resolvedPackagePath' for both resource entries on: $($TargetFrameworks -join ', ')"
+Write-Host "Executed the checked-in FluentControlsResources consumer and legacy XamlControlsResources migration consumer from '$resolvedPackagePath' on: $($TargetFrameworks -join ', ')"

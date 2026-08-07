@@ -1,0 +1,107 @@
+name: Preview bug
+description: Report a reproducible problem in a ModernWPF 1.0 preview
+title: "[Preview bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing ModernWPF. Please provide a minimal reproduction when possible.
+
+  - type: input
+    id: package-version
+    attributes:
+      label: ModernWpfUI package version
+      description: Enter the complete NuGet version, including the preview suffix.
+      placeholder: 1.0.0-preview.2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: target-framework
+    attributes:
+      label: Target framework
+      options:
+        - net462
+        - net8.0-windows7.0
+        - net10.0-windows7.0
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: windows-version
+    attributes:
+      label: Windows version
+      description: Include the version and OS build number.
+      placeholder: Windows 11 24H2, build 26100
+    validations:
+      required: true
+
+  - type: dropdown
+    id: resource-entry
+    attributes:
+      label: Resource entry
+      options:
+        - FluentControlsResources
+        - XamlControlsResources (legacy migration)
+        - Custom or neither
+    validations:
+      required: true
+
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Theme
+      options:
+        - Light
+        - Dark
+        - High Contrast
+        - System or multiple themes
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Start the application.
+        2. Open ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Link a small repository or paste the smallest relevant XAML and code.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs and exception details
+      description: Paste only relevant diagnostics after removing personal or sensitive data.
+      render: shell
+
+  - type: checkboxes
+    id: sensitive-data
+    attributes:
+      label: Sensitive data confirmation
+      options:
+        - label: I removed passwords, tokens, personal data, and other secrets from this report and its attachments.
+          required: true

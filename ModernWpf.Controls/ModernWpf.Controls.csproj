@@ -8,6 +8,7 @@
     <NuspecFile>$(MSBuildThisFileDirectory)ModernWpfUI.nuspec</NuspecFile>
     <PackageId>ModernWpfUI</PackageId>
     <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <!-- WPF's pass-2 project is an intermediate assembly with compiler-only
@@ -52,6 +53,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="readme.md" Pack="true" PackagePath="" />
+    <None Update="icon.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <Target Name="GetDocumentationFile">
@@ -70,6 +72,7 @@
       <RepositoryCommit Condition="'$(RepositoryCommit)' == ''">$(SourceRevisionId)</RepositoryCommit>
       <NuspecProperties>$(NuspecProperties);id=$(PackageId)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);version=$(PackageVersion)</NuspecProperties>
+      <NuspecProperties>$(NuspecProperties);displayName=$(ModernWpfDisplayName)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);authors=$(Authors)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);configuration=$(Configuration)</NuspecProperties>
       <NuspecProperties>$(NuspecProperties);license=$(PackageLicenseExpression)</NuspecProperties>

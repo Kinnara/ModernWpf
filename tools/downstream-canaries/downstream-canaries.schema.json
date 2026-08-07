@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Kinnara/ModernWpf/tools/downstream-canaries/downstream-canaries.schema.json",
+  "title": "ModernWPF downstream canary manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "packageId",
+    "migrationGuidePath",
+    "repositories"
+  ],
+  "properties": {
+    "$schema": {
+      "const": "downstream-canaries.schema.json"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "packageId": {
+      "const": "ModernWpfUI"
+    },
+    "migrationGuidePath": {
+      "const": "docs/migrating-from-0.9.md"
+    },
+    "repositories": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/repository"
+      }
+    }
+  },
+  "$defs": {
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "repository",
+        "commit",
+        "project",
+        "targetFramework",
+        "buildTool",
+        "configuration",
+        "baselinePackageVersion",
+        "resourceEntry",
+        "license",
+        "migrations"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "repository": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "project": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "targetFramework": {
+          "type": "string",
+          "minLength": 1
+        },
+        "buildTool": {
+          "enum": [
+            "dotnet",
+            "msbuild"
+          ]
+        },
+        "configuration": {
+          "const": "Debug"
+        },
+        "baselinePackageVersion": {
+          "type": "string",
+          "pattern": "^0\\.9\\.[0-9]+$"
+        },
+        "resourceEntry": {
+          "const": "XamlControlsResources"
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1
+        },
+        "migrations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "$ref": "#/$defs/migration"
+          }
+        }
+      }
+    },
+    "migration": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/packageMigration"
+        },
+        {
+          "$ref": "#/$defs/textReplacementMigration"
+        }
+      ]
+    },
+    "packageMigration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "path",
+        "packageId",
+        "fromVersion"
+      ],
+      "properties": {
+        "kind": {
+          "const": "package-version"
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "packageId": {
+          "const": "ModernWpfUI"
+        },
+        "fromVersion": {
+          "type": "string",
+          "pattern": "^0\\.9\\.[0-9]+$"
+        }
+      }
+    },
+    "textReplacementMigration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "path",
+        "from",
+        "to",
+        "expectedOccurrences"
+      ],
+      "properties": {
+        "kind": {
+          "const": "text-replacement"
+        },
+        "path": {
+          "$ref": "#/$defs/xamlPath"
+        },
+        "from": {
+          "type": "string",
+          "minLength": 1
+        },
+        "to": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expectedOccurrences": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?![/\\\\])(?!.*(?:^|[/\\\\])\\.\\.(?:[/\\\\]|$)).+\\.csproj$"
+    },
+    "xamlPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:)(?![/\\\\])(?!.*(?:^|[/\\\\])\\.\\.(?:[/\\\\]|$)).+\\.xaml$"
+    }
+  }
+}

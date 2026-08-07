@@ -449,8 +449,8 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual(GalleryBranding.CloneCommand, cloneCommand.Text);
 
                     var openIssues = FindDescendants<Button>(root)
-                        .Single(button => AutomationProperties.GetName(button) == "Open Issues");
-                    Assert.AreEqual("Open Issues", AutomationProperties.GetName(openIssues));
+                        .Single(button => AutomationProperties.GetName(button) == "Report a preview bug");
+                    Assert.AreEqual("Report a preview bug", AutomationProperties.GetName(openIssues));
                     Assert.AreEqual(new Thickness(8), openIssues.Padding);
                     Assert.IsTrue(FocusManager.GetIsFocusScope(openIssues));
 
@@ -464,7 +464,7 @@ namespace ModernWpf.Gallery.Tests
                     CollectionAssert.IsSubsetOf(
                         new[]
                         {
-                            "ModernWPF UI Library",
+                            GalleryBranding.DisplayName,
                             "ModernWPF Controls",
                             "Microsoft.Xaml.Behaviors.Wpf",
                             "MIT License",

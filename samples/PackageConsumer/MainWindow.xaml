@@ -1,0 +1,27 @@
+<Window
+    x:Class="ModernWpf.PackageConsumer.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    Title="ModernWPF package consumer"
+    Width="640"
+    Height="420"
+    WindowStartupLocation="CenterScreen"
+    ui:WindowHelper.UseModernWindowStyle="True">
+    <ui:StackPanelEx Margin="32" Spacing="16">
+        <TextBlock
+            Text="ModernWPF package consumer"
+            Style="{StaticResource HeaderTextBlockStyle}" />
+        <TextBlock Text="This application references ModernWpfUI from NuGet rather than the repository projects." TextWrapping="Wrap" />
+        <ui:InfoBar
+            IsOpen="True"
+            IsClosable="False"
+            Severity="Success"
+            Title="Package loaded"
+            Message="FluentControlsResources and the ModernWPF controls are available." />
+        <Button
+            HorizontalAlignment="Left"
+            Content="ModernWPF accent button"
+            Style="{StaticResource AccentButtonStyle}" />
+    </ui:StackPanelEx>
+</Window>

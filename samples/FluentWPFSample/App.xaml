@@ -33,7 +33,7 @@
                 </ui:ThemeResources>
 
                 <!-- ModernWPF controls resources -->
-                <ui:XamlControlsResources />
+                <ui:FluentControlsResources />
 
             </ResourceDictionary.MergedDictionaries>
 

@@ -33,6 +33,7 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+$script:GitHubCompareFileLimit = 300
 
 function Get-ObjectProperty {
     param(
@@ -114,8 +115,12 @@ function Assert-Manifest {
             if ($null -eq $epochAdoption -or
                 [string]$epochAdoption.status -ne 'adopted' -or
                 [string]::IsNullOrWhiteSpace(
+                    [string]$epochAdoption.milestone) -or
+                [string]$epochAdoption.cutoffDate -notmatch
+                    '^[0-9]{4}-[0-9]{2}-[0-9]{2}$' -or
+                [string]::IsNullOrWhiteSpace(
                     [string]$epochAdoption.dispositionDocument)) {
-                throw "Track '$($repository.id)/$($track.id)' must have an adopted epoch with a disposition document."
+                throw "Track '$($repository.id)/$($track.id)' must have an adopted milestone cutoff with a date and disposition document."
             }
 
             $dispositionPath = Join-Path $RepositoryRoot (
@@ -447,12 +452,12 @@ function ConvertTo-Comparison {
     $isCompleteProperty = Get-ObjectProperty `
         -InputObject $Comparison `
         -Name 'isComplete'
-    $isComplete = if ($null -ne $isCompleteProperty) {
-        [bool]$isCompleteProperty
-    }
-    else {
-        $files.Count -lt 300
-    }
+    # GitHub's compare endpoint returns at most 300 changed files. Fail closed
+    # whenever that boundary is reached, even if a fixture or future response
+    # incorrectly claims the returned prefix is complete.
+    $fileLimitReached = $files.Count -ge $script:GitHubCompareFileLimit
+    $isComplete = -not $fileLimitReached -and (
+        $null -eq $isCompleteProperty -or [bool]$isCompleteProperty)
 
     return [pscustomobject][ordered]@{
         status = [string](Get-ObjectProperty `
@@ -484,6 +489,8 @@ function ConvertTo-Comparison {
                     -Name 'totalCommits' `
                     -DefaultValue 0))
         isComplete = $isComplete
+        fileLimit = $script:GitHubCompareFileLimit
+        fileLimitReached = $fileLimitReached
         files = $files
     }
 }
@@ -543,6 +550,8 @@ function Get-Comparison {
             behindBy = 0
             totalCommits = 0
             isComplete = $true
+            fileLimit = $script:GitHubCompareFileLimit
+            fileLimitReached = $false
             files = @()
         }
     }
@@ -747,7 +756,10 @@ function Get-ScopedComparison {
         behindBy = [int]$Comparison.behindBy
         totalCommits = [int]$Comparison.totalCommits
         isComplete = [bool]$Comparison.isComplete
+        fileLimit = [int]$Comparison.fileLimit
+        fileLimitReached = [bool]$Comparison.fileLimitReached
         changedFileCount = @($Comparison.files).Count
+        returnedFileCount = @($Comparison.files).Count
         watchedChangedFileCount = $matchedFiles.Count
         ignoredChangedFileCount = $ignoredFiles.Count
         unmappedChangedFileCount = $unmappedFiles.Count
@@ -766,7 +778,10 @@ function Get-NotEvaluatedComparison {
         behindBy = 0
         totalCommits = 0
         isComplete = $true
+        fileLimit = $script:GitHubCompareFileLimit
+        fileLimitReached = $false
         changedFileCount = 0
+        returnedFileCount = 0
         watchedChangedFileCount = 0
         ignoredChangedFileCount = 0
         unmappedChangedFileCount = 0
@@ -833,16 +848,32 @@ function Add-PhaseMarkdown {
         "``$(Get-ShortRevision -Revision $Phase.headRevision)`` " +
         "(``$($Phase.comparison.status)``; ahead $($Phase.comparison.aheadBy), " +
         "behind $($Phase.comparison.behindBy)).")
-    [void]$Builder.AppendLine(
-        "- Classification: $($Phase.comparison.watchedChangedFileCount) mapped, " +
-        "$($Phase.comparison.unmappedChangedFileCount) unmapped, " +
-        "$($Phase.comparison.ignoredChangedFileCount) explicitly ignored " +
-        "of $($Phase.comparison.changedFileCount) changed files.")
+    if ($Phase.comparison.isComplete) {
+        [void]$Builder.AppendLine(
+            "- Classification: $($Phase.comparison.watchedChangedFileCount) mapped, " +
+            "$($Phase.comparison.unmappedChangedFileCount) unmapped, " +
+            "$($Phase.comparison.ignoredChangedFileCount) explicitly ignored " +
+            "of $($Phase.comparison.changedFileCount) changed files.")
+    }
+    else {
+        [void]$Builder.AppendLine(
+            "- **Partial classification:** $($Phase.comparison.watchedChangedFileCount) mapped, " +
+            "$($Phase.comparison.unmappedChangedFileCount) unmapped, " +
+            "$($Phase.comparison.ignoredChangedFileCount) explicitly ignored among " +
+            "$($Phase.comparison.returnedFileCount) returned files. This is not a complete " +
+            "changed-path inventory.")
+    }
 
     if (-not $Phase.comparison.isComplete) {
+        $incompleteReason = if ($Phase.comparison.fileLimitReached) {
+            "GitHub returned its $($Phase.comparison.fileLimit)-file comparison limit"
+        }
+        else {
+            'the comparison source marked the result incomplete'
+        }
         [void]$Builder.AppendLine(
-            "- **Incomplete:** GitHub returned its 300-file comparison limit; " +
-            "review the upstream comparison directly before advancing a baseline.")
+            "- **Incomplete:** $incompleteReason. Use a full git-tree diff and record its " +
+            "exhaustive disposition before advancing a cutoff.")
     }
 
     [void]$Builder.AppendLine()
@@ -1009,6 +1040,8 @@ $trackResults = @(
                 }
                 epochAdoption = [pscustomobject][ordered]@{
                     status = [string]$track.epochAdoption.status
+                    milestone = [string]$track.epochAdoption.milestone
+                    cutoffDate = [string]$track.epochAdoption.cutoffDate
                     dispositionDocument =
                         [string]$track.epochAdoption.dispositionDocument
                 }
@@ -1115,7 +1148,9 @@ foreach ($trackResult in $trackResults) {
         "- Moving selector: ``$($trackResult.observedHead.selector)`` → " +
         "``$($trackResult.observedHead.label)``.")
     [void]$markdown.AppendLine(
-        "- Epoch adoption: ``$($trackResult.epochAdoption.status)``; disposition " +
+        "- Epoch adoption: ``$($trackResult.epochAdoption.status)`` for " +
+        "``$($trackResult.epochAdoption.milestone)`` at cutoff date " +
+        "``$($trackResult.epochAdoption.cutoffDate)``; disposition " +
         "``$($trackResult.epochAdoption.dispositionDocument)``.")
     [void]$markdown.AppendLine()
 
