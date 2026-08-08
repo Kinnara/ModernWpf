@@ -39,12 +39,31 @@ namespace ModernWpf.Gallery.Pages
     </Grid>
 </SplitView>";
 
+        private const string TwoPaneViewBasicXaml =
+@"<ui:TwoPaneView Pane1Length=""2*""
+                    Pane2Length=""*""
+                    MinWideModeWidth=""480""
+                    MinTallModeHeight=""260"">
+    <ui:TwoPaneView.Pane1>
+        <Border Padding=""24"">
+            <TextBlock Text=""Pane 1"" />
+        </Border>
+    </ui:TwoPaneView.Pane1>
+    <ui:TwoPaneView.Pane2>
+        <Border Padding=""24"">
+            <TextBlock Text=""Pane 2"" />
+        </Border>
+    </ui:TwoPaneView.Pane2>
+</ui:TwoPaneView>";
+
         public static UIElement Create(string uniqueId)
         {
             switch (uniqueId)
             {
                 case "SplitView":
                     return CreateSplitViewSample();
+                case "TwoPaneView":
+                    return CreateTwoPaneViewSample();
                 default:
                     return null;
             }
@@ -67,9 +86,237 @@ namespace ModernWpf.Gallery.Pages
                             null,
                             optionsContent)
                     };
+                case "TwoPaneView":
+                    var twoPaneContent = CreateBasicTwoPaneViewExampleContent(
+                        assignRootAutomationId: true,
+                        out var twoPaneOptions);
+                    return new[]
+                    {
+                        new GalleryExample(
+                            "A TwoPaneView that adapts between single, wide, and tall layouts.",
+                            twoPaneContent,
+                            TwoPaneViewBasicXaml,
+                            null,
+                            twoPaneOptions)
+                    };
                 default:
                     return Array.Empty<GalleryExample>();
             }
+        }
+
+        private static UIElement CreateTwoPaneViewSample()
+        {
+            var content = CreateBasicTwoPaneViewExampleContent(
+                assignRootAutomationId: true,
+                out var optionsContent);
+            return CreateTwoPaneViewStandaloneLayout(content, optionsContent);
+        }
+
+        private static GallerySamplePanel CreateBasicTwoPaneViewExampleContent(
+            bool assignRootAutomationId,
+            out UIElement optionsContent)
+        {
+            var status = new TextBlock
+            {
+                Margin = new Thickness(0, 0, 0, 8),
+                FontWeight = FontWeights.SemiBold
+            };
+            GalleryAutomation.WithAutomationId(
+                status,
+                GalleryAutomation.SampleElementId("TwoPaneView", "Mode"));
+
+            var view = new Mux.TwoPaneView
+            {
+                Width = 600,
+                Height = 330,
+                MinWideModeWidth = 480,
+                MinTallModeHeight = 260,
+                Pane1Length = new GridLength(2, GridUnitType.Star),
+                Pane2Length = new GridLength(1, GridUnitType.Star),
+                Pane1 = CreateTwoPaneContent(
+                    "Pane 1",
+                    "Primary content remains visible when the view collapses.",
+                    "ControlFillColorSecondaryBrush",
+                    "#E8E8E8"),
+                Pane2 = CreateTwoPaneContent(
+                    "Pane 2",
+                    "Secondary content appears beside or below the primary pane.",
+                    "SubtleFillColorSecondaryBrush",
+                    "#F3F3F3")
+            };
+            GalleryAutomation.WithAutomationId(
+                view,
+                GalleryAutomation.SampleElementId("TwoPaneView", "View"));
+
+            void UpdateStatus()
+            {
+                status.Text = "Current mode: " + view.Mode;
+            }
+
+            view.ModeChanged += delegate { UpdateStatus(); };
+            view.Loaded += delegate { UpdateStatus(); };
+            UpdateStatus();
+
+            var content = new GallerySamplePanel
+            {
+                Orientation = Orientation.Vertical,
+                Children =
+                {
+                    status,
+                    view
+                }
+            };
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(
+                    content,
+                    GalleryAutomation.SampleRootId("TwoPaneView"));
+            }
+
+            var wideConfiguration = CreateEnumComboBox(
+                Mux.TwoPaneViewWideModeConfiguration.LeftRight,
+                Enum.GetNames(typeof(Mux.TwoPaneViewWideModeConfiguration)));
+            GalleryAutomation.WithAutomationId(
+                wideConfiguration,
+                GalleryAutomation.SampleElementId("TwoPaneView", "WideConfiguration"));
+            wideConfiguration.SelectionChanged += delegate
+            {
+                if (wideConfiguration.SelectedItem is string value)
+                {
+                    view.WideModeConfiguration = (Mux.TwoPaneViewWideModeConfiguration)Enum.Parse(
+                        typeof(Mux.TwoPaneViewWideModeConfiguration),
+                        value);
+                }
+            };
+
+            var tallConfiguration = CreateEnumComboBox(
+                Mux.TwoPaneViewTallModeConfiguration.TopBottom,
+                Enum.GetNames(typeof(Mux.TwoPaneViewTallModeConfiguration)));
+            GalleryAutomation.WithAutomationId(
+                tallConfiguration,
+                GalleryAutomation.SampleElementId("TwoPaneView", "TallConfiguration"));
+            tallConfiguration.SelectionChanged += delegate
+            {
+                if (tallConfiguration.SelectedItem is string value)
+                {
+                    view.TallModeConfiguration = (Mux.TwoPaneViewTallModeConfiguration)Enum.Parse(
+                        typeof(Mux.TwoPaneViewTallModeConfiguration),
+                        value);
+                }
+            };
+
+            var priority = new Mux.ToggleSwitch
+            {
+                Header = "Single-pane priority",
+                OffContent = "Pane 1",
+                OnContent = "Pane 2"
+            };
+            GalleryAutomation.WithAutomationId(
+                priority,
+                GalleryAutomation.SampleElementId("TwoPaneView", "PanePriority"));
+            priority.Toggled += delegate
+            {
+                view.PanePriority = priority.IsOn
+                    ? Mux.TwoPaneViewPriority.Pane2
+                    : Mux.TwoPaneViewPriority.Pane1;
+            };
+
+            var viewWidth = CreateSlider("View width", 300, 800, view.Width);
+            GalleryAutomation.WithAutomationId(
+                viewWidth,
+                GalleryAutomation.SampleElementId("TwoPaneView", "Width"));
+            viewWidth.ValueChanged += delegate { view.Width = viewWidth.Value; };
+
+            var viewHeight = CreateSlider("View height", 180, 500, view.Height);
+            GalleryAutomation.WithAutomationId(
+                viewHeight,
+                GalleryAutomation.SampleElementId("TwoPaneView", "Height"));
+            viewHeight.ValueChanged += delegate { view.Height = viewHeight.Value; };
+
+            var minWideWidth = CreateSlider("Minimum wide width", 200, 900, view.MinWideModeWidth);
+            GalleryAutomation.WithAutomationId(
+                minWideWidth,
+                GalleryAutomation.SampleElementId("TwoPaneView", "MinWideWidth"));
+            minWideWidth.ValueChanged += delegate { view.MinWideModeWidth = minWideWidth.Value; };
+
+            var minTallHeight = CreateSlider("Minimum tall height", 200, 700, view.MinTallModeHeight);
+            GalleryAutomation.WithAutomationId(
+                minTallHeight,
+                GalleryAutomation.SampleElementId("TwoPaneView", "MinTallHeight"));
+            minTallHeight.ValueChanged += delegate { view.MinTallModeHeight = minTallHeight.Value; };
+
+            var options = new StackPanel();
+            options.Children.Add(priority);
+            options.Children.Add(CreateSplitViewOption("Wide configuration", wideConfiguration));
+            options.Children.Add(CreateSplitViewOption("Tall configuration", tallConfiguration));
+            options.Children.Add(viewWidth);
+            options.Children.Add(viewHeight);
+            options.Children.Add(minWideWidth);
+            options.Children.Add(minTallHeight);
+            optionsContent = options;
+            return content;
+        }
+
+        private static ComboBox CreateEnumComboBox(object selectedValue, IEnumerable<string> values)
+        {
+            var comboBox = new ComboBox
+            {
+                Width = 220,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+            foreach (var value in values)
+            {
+                comboBox.Items.Add(value);
+            }
+
+            comboBox.SelectedItem = selectedValue.ToString();
+            return comboBox;
+        }
+
+        private static Border CreateTwoPaneContent(
+            string title,
+            string description,
+            string resourceKey,
+            string fallbackColor)
+        {
+            return new Border
+            {
+                Padding = new Thickness(24),
+                Background = GetThemeBrush(resourceKey, fallbackColor),
+                Child = new StackPanel
+                {
+                    Children =
+                    {
+                        new TextBlock
+                        {
+                            Text = title,
+                            FontSize = 20,
+                            FontWeight = FontWeights.SemiBold
+                        },
+                        new TextBlock
+                        {
+                            Text = description,
+                            Margin = new Thickness(0, 8, 0, 0),
+                            TextWrapping = TextWrapping.Wrap
+                        }
+                    }
+                }
+            };
+        }
+
+        private static UIElement CreateTwoPaneViewStandaloneLayout(UIElement content, UIElement options)
+        {
+            var panel = new GallerySamplePanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+            panel.Children.Add(content);
+            panel.Children.Add(new Border
+            {
+                Margin = new Thickness(24, 0, 0, 0),
+                Child = options
+            });
+            return panel;
         }
 
         private static UIElement CreateSplitViewSample()

@@ -181,7 +181,7 @@
                             Padding="{TemplateBinding Padding}"
                             IsTabStop="False"
                             Focusable="False" />
-                        <TextBlock
+                        <local:NumberBoxPlaceholderTextBlock
                             x:Name="PlaceholderTextContentPresenter"
                             Grid.Row="1"
                             Grid.Column="0"

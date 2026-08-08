@@ -42,6 +42,11 @@ public class NumberBoxSourceAuditTests
         StringAssert.Contains(audit, "c621e68d731f9e807f3e4e58cb35850ca90b4f69");
         StringAssert.Contains(audit, "83f06ada54b15cb4d7debbace7de08edc42b3b3f");
         StringAssert.Contains(audit, "df38c7a189f7aac42f2ba6767aa72d541edafa43");
+        StringAssert.Contains(audit, "6a556bb28fc227acd2ec8fe67ee64853f559084b");
+        StringAssert.Contains(audit, "9ba10e29dfcb20f6afad5fdc1dcde3663410602d");
+        StringAssert.Contains(audit, "b33905ef8d8f385b8512fb29207cad4d1388cef6");
+        StringAssert.Contains(audit, "53903f709756cb631f5c6efeab7f79dbe1e3f805");
+        StringAssert.Contains(audit, "bc6f70d1c640d4a1cc4fcd1faaa503fa6c3a628a");
         StringAssert.Contains(audit, "artifacts/visual-checks/20260718-121201-546-28252/report.md");
         StringAssert.Contains(audit, "artifacts/visual-checks/20260718-121231-516-71104/report.md");
         StringAssert.Contains(audit, "| `132x59` / `132x59` | `1.84` |");
@@ -69,6 +74,7 @@ public class NumberBoxSourceAuditTests
         StringAssert.Contains(template, "Target=\"UpSpinButton.IsEnabled\" Value=\"False\"");
         StringAssert.Contains(template, "Content=\"&#xE70E;\"");
         StringAssert.Contains(template, "Content=\"&#xE70D;\"");
+        StringAssert.Contains(template, "<local:NumberBoxPlaceholderTextBlock");
 
         StringAssert.Contains(peer, "patternInterface == PatternInterface.RangeValue");
         StringAssert.Contains(peer, "return nameof(NumberBox);");

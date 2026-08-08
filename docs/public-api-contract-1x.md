@@ -177,9 +177,12 @@ existing manifest and add newly chosen public keys to the unshipped file.
 7. Pack the NuGet package. Strict cross-target validation always applies. When
    the current version differs from
    `ModernWpfPackageValidationBaselineVersion`, NuGet also compares with that
-   published package. To accept a deliberate break during previews, advance
-   that property to the current development version in the same change as the
-   source audit, inventory updates, tests, and release-note migration entry.
+   published package. Baseline validation uses normal compatibility mode: it
+   rejects binary breaks but permits additive APIs because additions are
+   separately review-gated by the checked-in public API inventories. To accept
+   a deliberate break during previews, advance that property to the current
+   development version in the same change as the source audit, inventory
+   updates, tests, and release-note migration entry.
    `ModernWpfPreviewAuditBaselineVersion` remains fixed at
    `1.0.0-preview.1` as the machine-readable identifier of the published
    historical package. It is available for explicit migration audits, but it

@@ -9,6 +9,7 @@ namespace ModernWpf.Gallery.Tests
         {
             return WpfGalleryPageRegistry.CreatePageContent(uniqueId)
                 ?? BasicInputSampleFactory.Create(uniqueId)
+                ?? DateTimeSampleFactory.Create(uniqueId)
                 ?? StatusInfoSampleFactory.Create(uniqueId)
                 ?? DialogsFlyoutsSampleFactory.Create(uniqueId)
                 ?? MenusToolbarsSampleFactory.Create(uniqueId)

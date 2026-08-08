@@ -157,6 +157,7 @@ namespace ModernWpf.Gallery.Tests
         private static UIElement CreateLegacyFactoryContent(string uniqueId)
         {
             return BasicInputSampleFactory.Create(uniqueId)
+                ?? DateTimeSampleFactory.Create(uniqueId)
                 ?? StatusInfoSampleFactory.Create(uniqueId)
                 ?? DialogsFlyoutsSampleFactory.Create(uniqueId)
                 ?? MenusToolbarsSampleFactory.Create(uniqueId)

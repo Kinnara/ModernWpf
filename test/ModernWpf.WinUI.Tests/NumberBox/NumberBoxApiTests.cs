@@ -382,6 +382,30 @@ public class NumberBoxApiTests
         });
     }
 
+    [TestMethod]
+    public void VisiblePlaceholderParticipatesInControlAccessibilityView()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var numberBox = new ModernWpf.Controls.NumberBox
+            {
+                PlaceholderText = "Enter a number"
+            };
+
+            using var host = new TestWindowHost(numberBox);
+            host.UpdateLayout();
+
+            var inputBox = FindTemplatePart<TextBox>(numberBox, "InputBox");
+            var placeholder = FindTemplatePart<TextBlock>(inputBox, "PlaceholderTextContentPresenter");
+            var peer = FrameworkElementAutomationPeer.CreatePeerForElement(placeholder);
+
+            Assert.AreEqual(Visibility.Visible, placeholder.Visibility);
+            Assert.IsNotNull(peer);
+            Assert.IsTrue(peer!.IsControlElement());
+            Assert.IsFalse(peer.IsContentElement());
+        });
+    }
+
     private static T FindTemplatePart<T>(DependencyObject root, string name)
         where T : FrameworkElement
     {

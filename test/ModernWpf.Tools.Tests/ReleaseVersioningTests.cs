@@ -77,6 +77,12 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(
                 packageProject,
                 ">$(ModernWpfPackageValidationBaselineVersion)</PackageValidationBaselineVersion>");
+            StringAssert.Contains(
+                packageProject,
+                "<EnableStrictModeForCompatibleFrameworksInPackage>true</EnableStrictModeForCompatibleFrameworksInPackage>");
+            StringAssert.Contains(
+                packageProject,
+                "<EnableStrictModeForBaselineValidation>false</EnableStrictModeForBaselineValidation>");
             Assert.IsFalse(packageProject.Contains(
                 "ModernWpfPreviewAuditBaselineVersion",
                 StringComparison.Ordinal));

@@ -1,1 +1,93 @@
 #nullable enable
+ModernWpf.Automation.Peers.TimePickerAutomationPeer
+ModernWpf.Controls.TimePicker
+ModernWpf.Controls.TimePicker.CornerRadius.get -> System.Windows.CornerRadius
+ModernWpf.Controls.TimePicker.CornerRadius.set -> void
+ModernWpf.Controls.TimePicker.HeaderPlacement.get -> ModernWpf.Controls.ControlHeaderPlacement
+ModernWpf.Controls.TimePicker.HeaderPlacement.set -> void
+ModernWpf.Controls.TimePicker.LightDismissOverlayMode.get -> ModernWpf.Controls.LightDismissOverlayMode
+ModernWpf.Controls.TimePicker.LightDismissOverlayMode.set -> void
+ModernWpf.Controls.TimePicker.MinuteIncrement.get -> int
+ModernWpf.Controls.TimePicker.MinuteIncrement.set -> void
+ModernWpf.Controls.TimePicker.SelectedTime.get -> System.TimeSpan?
+ModernWpf.Controls.TimePicker.SelectedTime.set -> void
+ModernWpf.Controls.TimePicker.SelectedTimeChanged -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TimePicker, ModernWpf.Controls.TimePickerSelectedValueChangedEventArgs>
+ModernWpf.Controls.TimePicker.Time.get -> System.TimeSpan
+ModernWpf.Controls.TimePicker.Time.set -> void
+ModernWpf.Controls.TimePicker.TimeChanged -> System.EventHandler<ModernWpf.Controls.TimePickerValueChangedEventArgs>
+ModernWpf.Controls.TimePicker.TimePicker() -> void
+ModernWpf.Controls.TimePickerSelectedValueChangedEventArgs
+ModernWpf.Controls.TimePickerSelectedValueChangedEventArgs.NewTime.get -> System.TimeSpan?
+ModernWpf.Controls.TimePickerSelectedValueChangedEventArgs.OldTime.get -> System.TimeSpan?
+ModernWpf.Controls.TimePickerValueChangedEventArgs
+ModernWpf.Controls.TimePickerValueChangedEventArgs.NewTime.get -> System.TimeSpan
+ModernWpf.Controls.TimePickerValueChangedEventArgs.OldTime.get -> System.TimeSpan
+ModernWpf.Controls.TwoPaneView
+ModernWpf.Controls.TwoPaneView.MinTallModeHeight.get -> double
+ModernWpf.Controls.TwoPaneView.MinTallModeHeight.set -> void
+ModernWpf.Controls.TwoPaneView.MinWideModeWidth.get -> double
+ModernWpf.Controls.TwoPaneView.MinWideModeWidth.set -> void
+ModernWpf.Controls.TwoPaneView.Mode.get -> ModernWpf.Controls.TwoPaneViewMode
+ModernWpf.Controls.TwoPaneView.ModeChanged -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TwoPaneView, object>
+ModernWpf.Controls.TwoPaneView.Pane1Length.get -> System.Windows.GridLength
+ModernWpf.Controls.TwoPaneView.Pane1Length.set -> void
+ModernWpf.Controls.TwoPaneView.Pane2Length.get -> System.Windows.GridLength
+ModernWpf.Controls.TwoPaneView.Pane2Length.set -> void
+ModernWpf.Controls.TwoPaneView.PanePriority.get -> ModernWpf.Controls.TwoPaneViewPriority
+ModernWpf.Controls.TwoPaneView.PanePriority.set -> void
+ModernWpf.Controls.TwoPaneView.TallModeConfiguration.get -> ModernWpf.Controls.TwoPaneViewTallModeConfiguration
+ModernWpf.Controls.TwoPaneView.TallModeConfiguration.set -> void
+ModernWpf.Controls.TwoPaneView.TwoPaneView() -> void
+ModernWpf.Controls.TwoPaneView.WideModeConfiguration.get -> ModernWpf.Controls.TwoPaneViewWideModeConfiguration
+ModernWpf.Controls.TwoPaneView.WideModeConfiguration.set -> void
+ModernWpf.Controls.TwoPaneViewMode
+ModernWpf.Controls.TwoPaneViewMode.SinglePane = 0 -> ModernWpf.Controls.TwoPaneViewMode
+ModernWpf.Controls.TwoPaneViewMode.Tall = 2 -> ModernWpf.Controls.TwoPaneViewMode
+ModernWpf.Controls.TwoPaneViewMode.Wide = 1 -> ModernWpf.Controls.TwoPaneViewMode
+ModernWpf.Controls.TwoPaneViewPriority
+ModernWpf.Controls.TwoPaneViewPriority.Pane1 = 0 -> ModernWpf.Controls.TwoPaneViewPriority
+ModernWpf.Controls.TwoPaneViewPriority.Pane2 = 1 -> ModernWpf.Controls.TwoPaneViewPriority
+ModernWpf.Controls.TwoPaneViewTallModeConfiguration
+ModernWpf.Controls.TwoPaneViewTallModeConfiguration.BottomTop = 2 -> ModernWpf.Controls.TwoPaneViewTallModeConfiguration
+ModernWpf.Controls.TwoPaneViewTallModeConfiguration.SinglePane = 0 -> ModernWpf.Controls.TwoPaneViewTallModeConfiguration
+ModernWpf.Controls.TwoPaneViewTallModeConfiguration.TopBottom = 1 -> ModernWpf.Controls.TwoPaneViewTallModeConfiguration
+ModernWpf.Controls.TwoPaneViewWideModeConfiguration
+ModernWpf.Controls.TwoPaneViewWideModeConfiguration.LeftRight = 1 -> ModernWpf.Controls.TwoPaneViewWideModeConfiguration
+ModernWpf.Controls.TwoPaneViewWideModeConfiguration.RightLeft = 2 -> ModernWpf.Controls.TwoPaneViewWideModeConfiguration
+ModernWpf.Controls.TwoPaneViewWideModeConfiguration.SinglePane = 0 -> ModernWpf.Controls.TwoPaneViewWideModeConfiguration
+override ModernWpf.Automation.Peers.TimePickerAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
+override ModernWpf.Controls.TimePicker.OnApplyTemplate() -> void
+override ModernWpf.Controls.TwoPaneView.OnApplyTemplate() -> void
+~ModernWpf.Automation.Peers.TimePickerAutomationPeer.TimePickerAutomationPeer(ModernWpf.Controls.TimePicker owner) -> void
+~ModernWpf.Controls.TimePicker.ClockIdentifier.get -> string
+~ModernWpf.Controls.TimePicker.ClockIdentifier.set -> void
+~ModernWpf.Controls.TimePicker.Header.get -> object
+~ModernWpf.Controls.TimePicker.Header.set -> void
+~ModernWpf.Controls.TimePicker.HeaderTemplate.get -> System.Windows.DataTemplate
+~ModernWpf.Controls.TimePicker.HeaderTemplate.set -> void
+~ModernWpf.Controls.TwoPaneView.Pane1.get -> System.Windows.UIElement
+~ModernWpf.Controls.TwoPaneView.Pane1.set -> void
+~ModernWpf.Controls.TwoPaneView.Pane2.get -> System.Windows.UIElement
+~ModernWpf.Controls.TwoPaneView.Pane2.set -> void
+~override ModernWpf.Automation.Peers.TimePickerAutomationPeer.GetClassNameCore() -> string
+~override ModernWpf.Automation.Peers.TimePickerAutomationPeer.GetNameCore() -> string
+~override ModernWpf.Controls.TimePicker.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
+~static readonly ModernWpf.Controls.TimePicker.ClockIdentifierProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TimePicker.CornerRadiusProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TimePicker.HeaderPlacementProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TimePicker.HeaderProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TimePicker.HeaderTemplateProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TimePicker.LightDismissOverlayModeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TimePicker.MinuteIncrementProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TimePicker.SelectedTimeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TimePicker.TimeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TwoPaneView.MinTallModeHeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TwoPaneView.MinWideModeWidthProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TwoPaneView.ModeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TwoPaneView.Pane1LengthProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TwoPaneView.Pane1Property -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TwoPaneView.Pane2LengthProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TwoPaneView.Pane2Property -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TwoPaneView.PanePriorityProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TwoPaneView.TallModeConfigurationProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TwoPaneView.WideModeConfigurationProperty -> System.Windows.DependencyProperty

@@ -1710,28 +1710,30 @@
     <Thickness x:Key="TimePickerFirstHostThemeMargin">0,0,20,0</Thickness>
     <Thickness x:Key="TimePickerThirdHostThemeMargin">20,0,0,0</Thickness>
     <FontWeight x:Key="TimePickerHeaderThemeFontWeight">Normal</FontWeight>
-    <m:StaticResource x:Key="TimePickerSpacerFill" ResourceKey="SystemControlForegroundBaseLowBrush" />
-    <m:StaticResource x:Key="TimePickerSpacerFillDisabled" ResourceKey="SystemControlDisabledBaseLowBrush" />
-    <m:StaticResource x:Key="TimePickerHeaderForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="TimePickerHeaderForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBorderBrush" ResourceKey="SystemControlForegroundBaseMediumBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumHighBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBorderBrushPressed" ResourceKey="SystemControlHighlightBaseMediumBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBorderBrushDisabled" ResourceKey="SystemControlDisabledBaseLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackground" ResourceKey="SystemControlBackgroundAltMediumLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackgroundPointerOver" ResourceKey="SystemControlPageBackgroundAltMediumBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackgroundPressed" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackgroundFocused" ResourceKey="SystemControlHighlightListAccentLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
-    <m:StaticResource x:Key="TimePickerButtonForegroundPointerOver" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="TimePickerButtonForegroundPressed" ResourceKey="SystemControlHighlightBaseHighBrush" />
-    <m:StaticResource x:Key="TimePickerButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
-    <m:StaticResource x:Key="TimePickerButtonForegroundFocused" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
-    <m:StaticResource x:Key="TimePickerFlyoutPresenterBackground" ResourceKey="SystemControlBackgroundChromeMediumLowBrush" />
-    <m:StaticResource x:Key="TimePickerFlyoutPresenterBorderBrush" ResourceKey="SystemControlTransientBorderBrush" />
-    <m:StaticResource x:Key="TimePickerFlyoutPresenterSpacerFill" ResourceKey="SystemControlForegroundBaseLowBrush" />
-    <m:StaticResource x:Key="TimePickerFlyoutPresenterHighlightFill" ResourceKey="SystemControlHighlightListAccentLowBrush" />
+    <m:StaticResource x:Key="TimePickerSpacerFill" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerSpacerFillDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerHeaderForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerHeaderForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrush" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrushPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrushPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrushDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackground" ResourceKey="SystemColorButtonFaceColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundPointerOver" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundPressed" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundDisabled" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundFocused" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForeground" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundDefault" ResourceKey="SystemColorButtonTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundPointerOver" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundPressed" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundDisabled" ResourceKey="SystemColorGrayTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundFocused" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterBackground" ResourceKey="SystemColorWindowColorBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterBorderBrush" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterSpacerFill" ResourceKey="SystemColorWindowTextColorBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterHighlightFill" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterHighlightForegroundColor" ResourceKey="SystemColorHighlightTextColor" />
     <m:StaticResource x:Key="TimePickerLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
 
     <!-- Resources for ToggleButton -->

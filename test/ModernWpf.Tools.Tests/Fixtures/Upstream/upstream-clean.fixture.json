@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T12:34:56Z",
+  "generatedAt": "2026-08-08T12:34:56Z",
   "stableTagPages": [
     {
       "repository": "winui-product",
@@ -38,7 +38,7 @@
     {
       "repository": "winui-product",
       "track": "main",
-      "revision": "d5bdbb190cdba0b7f1baec4b3981208a9685a360",
+      "revision": "6a556bb28fc227acd2ec8fe67ee64853f559084b",
       "label": "winui3/main"
     },
     {
@@ -51,12 +51,12 @@
   "comparisons": [
     {
       "repository": "winui-product",
-      "base": "eb75504a1978df0d37a3ad4574d6f72bf4d21583",
-      "head": "d5bdbb190cdba0b7f1baec4b3981208a9685a360",
+      "base": "d5bdbb190cdba0b7f1baec4b3981208a9685a360",
+      "head": "6a556bb28fc227acd2ec8fe67ee64853f559084b",
       "status": "ahead",
-      "aheadBy": 29,
+      "aheadBy": 12,
       "behindBy": 0,
-      "totalCommits": 29,
+      "totalCommits": 12,
       "isComplete": true,
       "files": [
         {
@@ -67,19 +67,14 @@
     },
     {
       "repository": "winui-gallery",
-      "base": "f4dc3eb367f4bcecac1793829d9a221e924e5bfb",
+      "base": "3669519356c67f1376152c33ed8ea45003a91f3a",
       "head": "3669519356c67f1376152c33ed8ea45003a91f3a",
-      "status": "ahead",
-      "aheadBy": 3,
+      "status": "identical",
+      "aheadBy": 0,
       "behindBy": 0,
-      "totalCommits": 3,
+      "totalCommits": 0,
       "isComplete": true,
-      "files": [
-        {
-          "filename": "eng/Versions.props",
-          "status": "modified"
-        }
-      ]
+      "files": []
     }
   ]
 }

@@ -15,13 +15,13 @@ namespace ModernWpf.Tools.Tests
     public class UpstreamDriftTests
     {
         private const string ProductReviewedRevision =
-            "eb75504a1978df0d37a3ad4574d6f72bf4d21583";
-        private const string ProductEpochRevision =
             "d5bdbb190cdba0b7f1baec4b3981208a9685a360";
+        private const string ProductEpochRevision =
+            "6a556bb28fc227acd2ec8fe67ee64853f559084b";
         private const string StableEpochRevision =
             "a97562621a1d1ea397a38a3f512c9eef99db52d8";
         private const string GalleryReviewedRevision =
-            "f4dc3eb367f4bcecac1793829d9a221e924e5bfb";
+            "3669519356c67f1376152c33ed8ea45003a91f3a";
         private const string GalleryEpochRevision =
             "3669519356c67f1376152c33ed8ea45003a91f3a";
 
@@ -115,10 +115,10 @@ namespace ModernWpf.Tools.Tests
                         "adopted",
                         RequiredString(epochAdoption, "status"));
                     Assert.AreEqual(
-                        "1.0.0-preview.2",
+                        "1.0.0-preview.3",
                         RequiredString(epochAdoption, "milestone"));
                     Assert.AreEqual(
-                        "2026-08-06",
+                        "2026-08-08",
                         RequiredString(epochAdoption, "cutoffDate"));
                     var dispositionDocument = RequiredString(
                         epochAdoption,
@@ -397,7 +397,7 @@ namespace ModernWpf.Tools.Tests
             Assert.IsTrue(root.GetProperty("hasObservedUnmappedDrift").GetBoolean());
             Assert.IsFalse(root.GetProperty("hasIncompleteComparison").GetBoolean());
             Assert.AreEqual(
-                DateTimeOffset.Parse("2026-08-06T12:34:56Z"),
+                DateTimeOffset.Parse("2026-08-08T12:34:56Z"),
                 DateTimeOffset.Parse(RequiredString(root, "generatedAt")));
 
             var stable = GetReportTrack(root, "winui-product", "stable");
@@ -425,7 +425,7 @@ namespace ModernWpf.Tools.Tests
                 "adopted",
                 RequiredString(productMain.GetProperty("epochAdoption"), "status"));
             Assert.AreEqual(
-                "docs/winui3-sync-2026-08-06.md",
+                "docs/winui3-sync-2026-08-08-preview3.md",
                 RequiredString(
                     productMain.GetProperty("epochAdoption"),
                     "dispositionDocument"));
@@ -476,14 +476,15 @@ namespace ModernWpf.Tools.Tests
                 RequiredString(observed.GetProperty("unmappedFiles")[0], "filename"));
 
             var galleryMain = GetReportTrack(root, "winui-gallery", "main");
+            var galleryEpoch = galleryMain
+                .GetProperty("epoch")
+                .GetProperty("comparison");
+            Assert.IsTrue(galleryEpoch.GetProperty("isEvaluated").GetBoolean());
+            Assert.AreEqual("identical", RequiredString(galleryEpoch, "status"));
             Assert.AreEqual(
-                "command-bar",
-                RequiredString(
-                    galleryMain
-                        .GetProperty("epoch")
-                        .GetProperty("comparison")
-                        .GetProperty("families")[0],
-                    "id"));
+                0,
+                galleryEpoch.GetProperty("actionableChangedFileCount").GetInt32());
+            Assert.AreEqual(0, galleryEpoch.GetProperty("families").GetArrayLength());
 
             StringAssert.Contains(
                 result.Markdown,
@@ -515,7 +516,7 @@ namespace ModernWpf.Tools.Tests
                 "does not port, merge, or advance any baseline");
             StringAssert.Contains(
                 result.Markdown,
-                "Epoch adoption: `adopted` for `1.0.0-preview.2` at cutoff date `2026-08-06`; disposition `docs/winui3-sync-2026-08-06.md`.");
+                "Epoch adoption: `adopted` for `1.0.0-preview.3` at cutoff date `2026-08-08`; disposition `docs/winui3-sync-2026-08-08-preview3.md`.");
         }
 
         [TestMethod]

@@ -317,7 +317,7 @@ public class CommonStylesResourceTests
     }
 
     [TestMethod]
-    public void ThemeResourcesUseWinUI2TimePickerAndLoopingSelectorHighContrastTokens()
+    public void ThemeResourcesUseCurrentWinUI3TimePickerAndLegacyLoopingSelectorTokens()
     {
         WpfTestHost.Run(() =>
         {
@@ -345,52 +345,56 @@ public class CommonStylesResourceTests
 
             foreach (var themeName in new[] { "Light", "Dark" })
             {
-                AssertThemeResourceReference(themeName, "TimePickerSpacerFill", "DividerStrokeColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "TimePickerSpacerFillDisabled", "AccentFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "TimePickerSpacerFill", "ControlStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "TimePickerSpacerFillDisabled", "ControlStrokeColorDefaultBrush");
                 AssertThemeResourceReference(themeName, "TimePickerHeaderForeground", "TextFillColorPrimaryBrush");
                 AssertThemeResourceReference(themeName, "TimePickerHeaderForegroundDisabled", "TextFillColorDisabledBrush");
-                AssertThemeResourceReference(themeName, "TimePickerButtonBorderBrush", "ControlAltFillColorTertiaryBrush");
-                AssertThemeResourceReference(themeName, "TimePickerButtonBorderBrushPointerOver", "ControlStrongStrokeColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "TimePickerButtonBorderBrush", "ControlElevationBorderBrush");
+                AssertThemeResourceReference(themeName, "TimePickerButtonBorderBrushPointerOver", "ControlElevationBorderBrush");
                 AssertThemeResourceReference(themeName, "TimePickerButtonBorderBrushPressed", "ControlStrokeColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "TimePickerButtonBorderBrushDisabled", "AccentFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "TimePickerButtonBorderBrushDisabled", "ControlStrokeColorDefaultBrush");
                 AssertThemeResourceReference(themeName, "TimePickerButtonBackground", "ControlFillColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "TimePickerButtonBackgroundPointerOver", "SubtleFillColorSecondaryBrush");
+                AssertThemeResourceReference(themeName, "TimePickerButtonBackgroundPointerOver", "ControlFillColorSecondaryBrush");
                 AssertThemeResourceReference(themeName, "TimePickerButtonBackgroundPressed", "ControlFillColorTertiaryBrush");
-                AssertThemeResourceReference(themeName, "TimePickerButtonBackgroundDisabled", "ControlFillColorTertiaryBrush");
-                AssertThemeResourceReference(themeName, "TimePickerButtonBackgroundFocused", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "TimePickerButtonBackgroundDisabled", "ControlFillColorDisabledBrush");
+                AssertThemeResourceReference(themeName, "TimePickerButtonBackgroundFocused", "ControlFillColorDefaultBrush");
                 AssertThemeResourceReference(themeName, "TimePickerButtonForeground", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "TimePickerButtonForegroundDefault", "TextFillColorSecondaryBrush");
                 AssertThemeResourceReference(themeName, "TimePickerButtonForegroundPointerOver", "TextFillColorPrimaryBrush");
-                AssertThemeResourceReference(themeName, "TimePickerButtonForegroundPressed", "TextFillColorPrimaryBrush");
+                AssertThemeResourceReference(themeName, "TimePickerButtonForegroundPressed", "TextFillColorSecondaryBrush");
                 AssertThemeResourceReference(themeName, "TimePickerButtonForegroundDisabled", "TextFillColorDisabledBrush");
                 AssertThemeResourceReference(themeName, "TimePickerButtonForegroundFocused", "TextFillColorPrimaryBrush");
                 AssertThemeResourceReference(themeName, "TimePickerFlyoutPresenterBackground", "AcrylicBackgroundFillColorDefaultBrush");
                 AssertThemeResourceReference(themeName, "TimePickerFlyoutPresenterBorderBrush", "SurfaceStrokeColorFlyoutBrush");
                 AssertThemeResourceReference(themeName, "TimePickerFlyoutPresenterSpacerFill", "DividerStrokeColorDefaultBrush");
-                AssertThemeResourceReference(themeName, "TimePickerFlyoutPresenterHighlightFill", "SubtleFillColorTertiaryBrush");
+                AssertThemeResourceReference(themeName, "TimePickerFlyoutPresenterHighlightFill", "AccentFillColorDefaultBrush");
+                AssertThemeResourceReference(themeName, "TimePickerFlyoutPresenterHighlightForegroundColor", "TextOnAccentAAFillColorPrimary");
             }
 
-            AssertThemeResourceReference("HighContrast", "TimePickerSpacerFill", "SystemControlForegroundBaseLowBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerSpacerFillDisabled", "SystemControlDisabledBaseLowBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerHeaderForeground", "SystemControlForegroundBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerHeaderForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonBorderBrush", "SystemControlForegroundBaseMediumBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonBorderBrushPointerOver", "SystemControlHighlightBaseMediumHighBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonBorderBrushPressed", "SystemControlHighlightBaseMediumBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonBorderBrushDisabled", "SystemControlDisabledBaseLowBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonBackground", "SystemControlBackgroundAltMediumLowBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonBackgroundPointerOver", "SystemControlPageBackgroundAltMediumBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonBackgroundPressed", "SystemControlBackgroundBaseLowBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonBackgroundDisabled", "SystemControlBackgroundBaseLowBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonBackgroundFocused", "SystemControlHighlightListAccentLowBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonForeground", "SystemControlForegroundBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonForegroundPointerOver", "SystemControlHighlightBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonForegroundPressed", "SystemControlHighlightBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonForegroundDisabled", "SystemControlDisabledBaseMediumLowBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerButtonForegroundFocused", "SystemControlHighlightAltBaseHighBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerFlyoutPresenterBackground", "SystemControlBackgroundChromeMediumLowBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerFlyoutPresenterBorderBrush", "SystemControlTransientBorderBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerFlyoutPresenterSpacerFill", "SystemControlForegroundBaseLowBrush");
-            AssertThemeResourceReference("HighContrast", "TimePickerFlyoutPresenterHighlightFill", "SystemControlHighlightListAccentLowBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerSpacerFill", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerSpacerFillDisabled", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerHeaderForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerHeaderForegroundDisabled", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonBorderBrush", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonBorderBrushPointerOver", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonBorderBrushPressed", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonBorderBrushDisabled", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonBackground", "SystemColorButtonFaceColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonBackgroundPointerOver", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonBackgroundPressed", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonBackgroundDisabled", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonBackgroundFocused", "SystemColorHighlightTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonForeground", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonForegroundDefault", "SystemColorButtonTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonForegroundPointerOver", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonForegroundPressed", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonForegroundDisabled", "SystemColorGrayTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerButtonForegroundFocused", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerFlyoutPresenterBackground", "SystemColorWindowColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerFlyoutPresenterBorderBrush", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerFlyoutPresenterSpacerFill", "SystemColorWindowTextColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerFlyoutPresenterHighlightFill", "SystemColorHighlightColorBrush");
+            AssertThemeResourceReference("HighContrast", "TimePickerFlyoutPresenterHighlightForegroundColor", "SystemColorHighlightTextColor");
         });
     }
 

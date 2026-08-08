@@ -56,10 +56,13 @@ The release gate enforces:
   until an accepted preview break deliberately updates the inventories.
 - NuGet package validation, including strict validation between compatible
   target frameworks. `ModernWpfPackageValidationBaselineVersion` selects the
-  active published-package comparison. During previews it may advance to the
-  current development version only as part of the audited breaking-change
-  workflow; equality disables the unavailable previous-package comparison
-  while the inventories remain authoritative. The immutable
+  active published-package comparison. That comparison rejects breaking
+  changes while permitting additions already accepted through the public API
+  inventories; strict equality still applies across the package's compatible
+  target frameworks. During previews the baseline may advance to the current
+  development version only as part of the audited breaking-change workflow;
+  equality disables the unavailable previous-package comparison while the
+  inventories remain authoritative. The immutable
   `ModernWpfPreviewAuditBaselineVersion` identifies the published
   `1.0.0-preview.1` package for explicit historical migration audits; it is
   informational and is not the active NuGet compatibility gate.

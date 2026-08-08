@@ -20,7 +20,10 @@
     <WarningsAsErrors>$(WarningsAsErrors);RS0016;RS0017;RS0024;RS0025</WarningsAsErrors>
     <EnablePackageValidation>true</EnablePackageValidation>
     <EnableStrictModeForCompatibleFrameworksInPackage>true</EnableStrictModeForCompatibleFrameworksInPackage>
-    <EnableStrictModeForBaselineValidation>true</EnableStrictModeForBaselineValidation>
+    <!-- Baseline validation rejects binary breaks but permits the reviewed
+         additive APIs assigned to later previews. PublicAPI.Unshipped.txt is
+         the separate, review-required gate for every addition. -->
+    <EnableStrictModeForBaselineValidation>false</EnableStrictModeForBaselineValidation>
     <PackageValidationBaselineVersion
       Condition="'$(Version)' != '$(ModernWpfPackageValidationBaselineVersion)' and '$(PackageValidationBaselineVersion)' == ''">$(ModernWpfPackageValidationBaselineVersion)</PackageValidationBaselineVersion>
   </PropertyGroup>

@@ -926,6 +926,40 @@
       ]
     },
     {
+      "UniqueId": "DateAndCalendar",
+      "Title": "Date & Calendar",
+      "IconGlyph": "",
+      "Items": [
+        {
+          "UniqueId": "TimePicker",
+          "Title": "TimePicker",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A configurable control that lets a user pick a time value.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/CalendarView.png",
+          "Description": "Use a TimePicker to let users set a time in your app, for example to set a reminder. The TimePicker displays controls for hour, minute, and AM/PM that work with keyboard, mouse, and touch input.",
+          "SourcePath": "/TimePicker",
+          "Docs": [
+            {
+              "Title": "TimePicker - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.timepicker"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/time-picker"
+            }
+          ],
+          "RelatedControls": []
+        }
+      ]
+    },
+    {
       "UniqueId": "Layout",
       "Title": "Layout",
       "IconGlyph": "",
@@ -957,6 +991,31 @@
           ],
           "RelatedControls": [
             "GridView"
+          ]
+        },
+        {
+          "UniqueId": "TwoPaneView",
+          "Title": "TwoPaneView",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "A container that presents one or two panes and adapts their arrangement to the available space.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/SplitView.png",
+          "Description": "Use a TwoPaneView to keep primary and secondary content together while adapting between single-pane, side-by-side, and stacked layouts. The WPF adaptation responds to its available size and does not infer a physical display hinge.",
+          "SourcePath": "/TwoPaneView",
+          "Docs": [
+            {
+              "Title": "TwoPaneView - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.twopaneview"
+            }
+          ],
+          "RelatedControls": [
+            "SplitView"
           ]
         }
       ]

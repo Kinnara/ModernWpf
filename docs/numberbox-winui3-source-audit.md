@@ -232,3 +232,22 @@ passes all three cards, exact `132x59` rest and `152x79` value-state crops, at
 deltas `1.83` / `1.75`. Final Dark
 `artifacts/visual-checks/interaction-inputs-dark-v2/20260721-180019-720-41456/report.md`
 passes the same exact geometry at `1.73` / `1.09`.
+
+## Preview 3 Placeholder Accessibility Update
+
+The Preview 3 finite cutoff at WinUI `winui3/main`
+`6a556bb28fc227acd2ec8fe67ee64853f559084b` includes commit
+`9ba10e29dfcb20f6afad5fdc1dcde3663410602d`, which changes a visible
+TextBox placeholder from the UIA Raw view to the Control view. The exact
+current inputs are `TextBoxPlaceholderTextHelper.cpp` blob
+`b33905ef8d8f385b8512fb29207cad4d1388cef6`, `TextBoxTests.cs` blob
+`53903f709756cb631f5c6efeab7f79dbe1e3f805`, and the NumberBox Axe page blob
+`bc6f70d1c640d4a1cc4fcd1faaa503fa6c3a628a`.
+
+ModernWpf NumberBox owns a WPF `TextBlock` placeholder rather than WinUI's
+shared TextBox helper. A private `NumberBoxPlaceholderTextBlock` now returns a
+peer in the Control view and outside the Content view, matching WinUI's
+`AccessibilityView.Control` semantics without adding public API. The focused
+`VisiblePlaceholderParticipatesInControlAccessibilityView` regression test
+proved that the ordinary WPF TextBlock peer was insufficient and now pins the
+ported behavior.

@@ -38,6 +38,7 @@ namespace ModernWpf.Gallery.Tests
             "RatingControl",
             "ToggleSwitch",
             "ColorPicker",
+            "TimePicker",
             "HyperlinkButton",
             "ProgressRing",
             "WinUIProgressBar",
@@ -47,6 +48,7 @@ namespace ModernWpf.Gallery.Tests
             "BreadcrumbBar",
             "SelectorBar",
             "SplitView",
+            "TwoPaneView",
             "AnnotatedScrollBar",
             "GridView",
             "PersonPicture",
@@ -59,7 +61,6 @@ namespace ModernWpf.Gallery.Tests
         {
             "CalendarDatePicker",
             "CalendarView",
-            "TimePicker",
             "TabView",
             "RichEditBox",
             "RichTextBlock",
@@ -75,7 +76,6 @@ namespace ModernWpf.Gallery.Tests
             "ConnectedAnimation",
             "SemanticZoom",
             "ParallaxView",
-            "TwoPaneView",
             "StandardUICommand",
             "XamlUICommand",
             "RadialGradientBrush",
@@ -891,7 +891,7 @@ namespace ModernWpf.Gallery.Tests
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(9, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(72, GalleryCatalog.Items.Count);
+            Assert.AreEqual(74, GalleryCatalog.Items.Count);
         }
 
         [TestMethod]

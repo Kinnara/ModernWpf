@@ -382,6 +382,22 @@ namespace ModernWpf.Gallery.Models
                         new GalleryDocLink[] { new GalleryDocLink("AnnotatedScrollBar - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.annotatedscrollbar") },
                         new string[] { "ItemsRepeater" }),
                 }),
+                new GalleryGroup("DateAndCalendar", "Date & Calendar", "", "pack://application:,,,/Assets/ControlImages/Placeholder.png", false, new GalleryItem[]
+                {
+                    new GalleryItem(
+                        "DateAndCalendar",
+                        "TimePicker",
+                        "TimePicker",
+                        "A configurable control that lets a user pick a time value.",
+                        "ms-appx:///Assets/ControlImages/CalendarView.png",
+                        "Use a TimePicker to let users set a time in your app, for example to set a reminder. The TimePicker displays controls for hour, minute, and AM/PM that work with keyboard, mouse, and touch input.",
+                        "ModernWpf.Controls",
+                        false,
+                        false,
+                        new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
+                        new GalleryDocLink[] { new GalleryDocLink("TimePicker - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.timepicker"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/time-picker") },
+                        new string[] { }),
+                }),
                 new GalleryGroup("Layout", "Layout", "", "pack://application:,,,/Assets/ControlImages/Placeholder.png", false, new GalleryItem[]
                 {
                     new GalleryItem(
@@ -397,6 +413,19 @@ namespace ModernWpf.Gallery.Models
                         new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
                         new GalleryDocLink[] { new GalleryDocLink("SplitView - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.splitview"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/split-view") },
                         new string[] { "GridView" }),
+                    new GalleryItem(
+                        "Layout",
+                        "TwoPaneView",
+                        "TwoPaneView",
+                        "A container that presents one or two panes and adapts their arrangement to the available space.",
+                        "ms-appx:///Assets/ControlImages/SplitView.png",
+                        "Use a TwoPaneView to keep primary and secondary content together while adapting between single-pane, side-by-side, and stacked layouts. The WPF adaptation responds to its available size and does not infer a physical display hinge.",
+                        "ModernWpf.Controls",
+                        false,
+                        false,
+                        new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
+                        new GalleryDocLink[] { new GalleryDocLink("TwoPaneView - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.twopaneview") },
+                        new string[] { "SplitView" }),
                 }),
                 new GalleryGroup("Navigation", "Navigation", "", "pack://application:,,,/Assets/ControlImages/Placeholder.png", false, new GalleryItem[]
                 {
