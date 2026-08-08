@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "WinUIProgressBar", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "Button", "CheckBox", "ComboBox", "RadioButton", "Slider", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "SystemBackdrop", "InfoBadge", "InfoBar", "ProgressRing", "WinUIProgressBar", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [string]$GalleryExe,
@@ -1453,6 +1453,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "IconElement" { return "GallerySample_IconElement_MonochromeButton" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_TranslationSlider" }
         "TitleBar" { return "GallerySample_TitleBar_SearchBox" }
+        "SystemBackdrop" { return "GallerySample_SystemBackdrop_MicaButton" }
         "InfoBadge" { return "GallerySample_InfoBadge_NavigationView" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "ProgressRing" { return "GallerySample_ProgressRing_ProgressRing" }
@@ -1679,6 +1680,7 @@ function Test-ControlSupportsOutputInteraction([string]$control) {
     switch ($control) {
         "RepeatButton" { return $true }
         "AppBarButton" { return $true }
+        "SystemBackdrop" { return $true }
         default { return $false }
     }
 }
@@ -4672,7 +4674,7 @@ function Get-OptionInteractionTriggerAutomationId([string]$control) {
 
 function Get-OptionInteractionExpectedElementAutomationId([string]$control) {
     switch ($control) {
-        "TitleBar" { return "GallerySample_TitleBar_BackButton" }
+        "TitleBar" { return "TitleBarBackButton" }
         default { return "" }
     }
 }
@@ -5268,6 +5270,7 @@ function Get-OutputInteractionOutputAutomationId([string]$control) {
     switch ($control) {
         "RepeatButton" { return "GallerySample_RepeatButton_Output" }
         "AppBarButton" { return "GallerySample_AppBarButton_Output" }
+        "SystemBackdrop" { return "GallerySample_SystemBackdrop_Status" }
         default { return "" }
     }
 }
@@ -5276,6 +5279,7 @@ function Get-OutputInteractionExpectedOutput([string]$control) {
     switch ($control) {
         "RepeatButton" { return "Number of clicks: 1" }
         "AppBarButton" { return "You clicked: Button1" }
+        "SystemBackdrop" { return "Requested Mica; effective material:" }
         default { return "" }
     }
 }
@@ -5304,7 +5308,7 @@ function Invoke-OutputInteraction($window, [string]$control, $sampleElement) {
     else {
         Invoke-ElementOnce $window $sampleElement
     }
-    Start-Sleep -Milliseconds 250
+    Start-Sleep -Milliseconds $(if ($control -eq "SystemBackdrop") { 800 } else { 250 })
     $after = Get-OutputInteractionElementText $output $control
 
     if ($before -eq $after) {
@@ -5314,13 +5318,20 @@ function Invoke-OutputInteraction($window, [string]$control, $sampleElement) {
                 for ($i = 0; $i -lt 3 -and $before -eq $after; $i++) {
                     $pattern.Invoke()
                     $invoked = $true
-                    Start-Sleep -Milliseconds 150
+                    Start-Sleep -Milliseconds $(if ($control -eq "SystemBackdrop") { 800 } else { 150 })
                     $after = Get-OutputInteractionElementText $output $control
                 }
             }
         }
         catch {
         }
+    }
+
+    $outputMatched = if ($control -eq "SystemBackdrop") {
+        $after.StartsWith($expectedOutput, [StringComparison]::Ordinal)
+    }
+    else {
+        [string]::IsNullOrWhiteSpace($expectedOutput) -or $after -eq $expectedOutput
     }
 
     return [ordered]@{
@@ -5331,7 +5342,7 @@ function Invoke-OutputInteraction($window, [string]$control, $sampleElement) {
         BeforeOutput = $before
         AfterOutput = $after
         ExpectedOutput = $expectedOutput
-        OutputMatched = ([string]::IsNullOrWhiteSpace($expectedOutput) -or $after -eq $expectedOutput)
+        OutputMatched = $outputMatched
         OutputChanged = $before -ne $after
     }
 }

@@ -3284,7 +3284,7 @@ namespace ModernWpf.Gallery.Tests
 
             var countMapMatch = Regex.Match(
                 visualChecks,
-                @"\$WinUIPortedControlExampleCounts\s*=\s*\[ordered\]@\{(?<items>.*?)\r?\n\}",
+                @"\$ModernWpfVisualExampleCounts\s*=\s*\[ordered\]@\{(?<items>.*?)\r?\n\}",
                 RegexOptions.Singleline);
             Assert.IsTrue(countMapMatch.Success, "Could not locate the WinUI-ported control example-count map.");
             var entries = Regex.Matches(
@@ -3296,11 +3296,12 @@ namespace ModernWpf.Gallery.Tests
                     match => match.Groups["control"].Value,
                     match => int.Parse(match.Groups["count"].Value),
                     StringComparer.Ordinal);
-            Assert.AreEqual(37, entries.Count, "Every WinUI-ported control route must be in the exhaustive visual matrix.");
-            Assert.AreEqual(94, entries.Values.Sum(), "Every displayed WinUI-ported sample must be in the exhaustive visual matrix.");
+            Assert.AreEqual(38, entries.Count, "Every curated ModernWPF control route must be in the exhaustive visual matrix.");
+            Assert.AreEqual(96, entries.Values.Sum(), "Every displayed curated sample must be in the exhaustive visual matrix.");
             Assert.AreEqual(8, entries["NavigationView"]);
             Assert.AreEqual(2, entries["WinUIProgressBar"]);
-            Assert.AreEqual(2, entries["TitleBar"]);
+            Assert.AreEqual(3, entries["TitleBar"]);
+            Assert.AreEqual(1, entries["SystemBackdrop"]);
 
             AssertContainsInOrder(
                 itemPageXaml,
@@ -5297,7 +5298,7 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
-        public void GalleryInteractionRecorderReadsRepeatButtonOutputFromHelpText()
+        public void GalleryInteractionRecorderValidatesRepeatButtonAndSystemBackdropOutput()
         {
             var source = File.ReadAllText(Path.Combine(
                 GetRepoRoot(),
@@ -5323,7 +5324,17 @@ namespace ModernWpf.Gallery.Tests
                 "$before = Get-OutputInteractionElementText $output $control",
                 "Invoke-ElementOnce $window $sampleElement",
                 "$after = Get-OutputInteractionElementText $output $control",
-                "OutputMatched = ([string]::IsNullOrWhiteSpace($expectedOutput) -or $after -eq $expectedOutput)");
+                "$outputMatched = if ($control -eq \"SystemBackdrop\")",
+                "$after.StartsWith($expectedOutput, [StringComparison]::Ordinal)",
+                "OutputMatched = $outputMatched");
+            AssertContainsInOrder(
+                source,
+                "function Test-ControlSupportsOutputInteraction([string]$control)",
+                "\"SystemBackdrop\" { return $true }",
+                "function Get-OutputInteractionOutputAutomationId([string]$control)",
+                "\"SystemBackdrop\" { return \"GallerySample_SystemBackdrop_Status\" }",
+                "function Get-OutputInteractionExpectedOutput([string]$control)",
+                "\"SystemBackdrop\" { return \"Requested Mica; effective material:\" }");
         }
 
         [TestMethod]
@@ -6290,7 +6301,7 @@ namespace ModernWpf.Gallery.Tests
                 "function Get-OptionInteractionTriggerName([string]$control)",
                 "\"TitleBar\" { return \"IsBackButtonVisible\" }",
                 "function Get-OptionInteractionExpectedElementAutomationId([string]$control)",
-                "\"TitleBar\" { return \"GallerySample_TitleBar_BackButton\" }",
+                "\"TitleBar\" { return \"TitleBarBackButton\" }",
                 "function Invoke-OptionInteraction($window, [string]$control, $sampleElement)",
                 "$expectedElementAutomationId = Get-OptionInteractionExpectedElementAutomationId $control",
                 "$beforeExpectedElementVisible = Test-AutomationElementUsable $expectedElement",

@@ -32,7 +32,7 @@
   "comparisons": [
     {
       "repository": "winui-product",
-      "base": "6a556bb28fc227acd2ec8fe67ee64853f559084b",
+      "base": "e1aa8f64df98d6229f6cd4074d59b654616254da",
       "head": "1111111111111111111111111111111111111111",
       "status": "ahead",
       "aheadBy": 1,

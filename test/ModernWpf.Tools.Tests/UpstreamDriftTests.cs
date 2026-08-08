@@ -15,9 +15,9 @@ namespace ModernWpf.Tools.Tests
     public class UpstreamDriftTests
     {
         private const string ProductReviewedRevision =
-            "d5bdbb190cdba0b7f1baec4b3981208a9685a360";
-        private const string ProductEpochRevision =
             "6a556bb28fc227acd2ec8fe67ee64853f559084b";
+        private const string ProductEpochRevision =
+            "e1aa8f64df98d6229f6cd4074d59b654616254da";
         private const string StableEpochRevision =
             "a97562621a1d1ea397a38a3f512c9eef99db52d8";
         private const string GalleryReviewedRevision =
@@ -115,7 +115,7 @@ namespace ModernWpf.Tools.Tests
                         "adopted",
                         RequiredString(epochAdoption, "status"));
                     Assert.AreEqual(
-                        "1.0.0-preview.3",
+                        "1.0.0-preview.4",
                         RequiredString(epochAdoption, "milestone"));
                     Assert.AreEqual(
                         "2026-08-08",
@@ -425,7 +425,7 @@ namespace ModernWpf.Tools.Tests
                 "adopted",
                 RequiredString(productMain.GetProperty("epochAdoption"), "status"));
             Assert.AreEqual(
-                "docs/winui3-sync-2026-08-08-preview3.md",
+                "docs/winui3-sync-2026-08-08-preview4.md",
                 RequiredString(
                     productMain.GetProperty("epochAdoption"),
                     "dispositionDocument"));
@@ -516,7 +516,7 @@ namespace ModernWpf.Tools.Tests
                 "does not port, merge, or advance any baseline");
             StringAssert.Contains(
                 result.Markdown,
-                "Epoch adoption: `adopted` for `1.0.0-preview.3` at cutoff date `2026-08-08`; disposition `docs/winui3-sync-2026-08-08-preview3.md`.");
+                "Epoch adoption: `adopted` for `1.0.0-preview.4` at cutoff date `2026-08-08`; disposition `docs/winui3-sync-2026-08-08-preview4.md`.");
         }
 
         [TestMethod]

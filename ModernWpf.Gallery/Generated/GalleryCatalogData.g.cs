@@ -558,6 +558,19 @@ namespace ModernWpf.Gallery.Models
                         new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
                         new GalleryDocLink[] { new GalleryDocLink("Title bar customization", "https://learn.microsoft.com/windows/apps/develop/title-bar"), new GalleryDocLink("Title bar - design guidelines", "https://learn.microsoft.com/windows/apps/design/basics/titlebar-design") },
                         new string[] { "" }),
+                    new GalleryItem(
+                        "MultipleWindows",
+                        "SystemBackdrop",
+                        "Window backdrops",
+                        "Apply native Mica or Desktop Acrylic to a WPF window with automatic fallbacks.",
+                        "ms-appx:///Assets/ControlImages/Placeholder.png",
+                        "WindowBackdrop requests a native DWM material when the operating system supports it and uses a normal theme brush for High Contrast, older Windows versions, disabled composition, or native failures.",
+                        "ModernWpf.Controls",
+                        true,
+                        false,
+                        new string[] { "Object" },
+                        new GalleryDocLink[] { new GalleryDocLink("Materials in Windows apps", "https://learn.microsoft.com/windows/apps/design/style/materials"), new GalleryDocLink("Mica material", "https://learn.microsoft.com/windows/apps/design/style/mica"), new GalleryDocLink("Acrylic material", "https://learn.microsoft.com/windows/apps/design/style/acrylic") },
+                        new string[] { "TitleBar" }),
                 }),
             };
         }

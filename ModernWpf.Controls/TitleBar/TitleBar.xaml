@@ -1,0 +1,372 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style x:Key="TitleBarButtonBaseStyle" TargetType="Button">
+        <Setter Property="Height" Value="Auto" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Margin" Value="2" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource {x:Static SystemParameters.FocusVisualStyleKey}}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="ButtonRoot"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4">
+                        <ContentPresenter
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonRoot" Property="Background" Value="{DynamicResource TitleBarBackButtonBackgroundPointerOver}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TitleBarBackButtonForegroundPointerOver}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="ButtonRoot" Property="Background" Value="{DynamicResource TitleBarBackButtonBackgroundPressed}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TitleBarBackButtonForegroundPressed}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ButtonRoot" Property="Background" Value="{DynamicResource TitleBarBackButtonBackgroundDisabled}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TitleBarBackButtonForegroundDisabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TitleBarBackButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarButtonBaseStyle}">
+        <Setter Property="Background" Value="{DynamicResource TitleBarBackButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource TitleBarBackButtonForeground}" />
+        <Setter Property="Width" Value="{DynamicResource TitleBarBackButtonWidth}" />
+        <Setter Property="Content">
+            <Setter.Value>
+                <ui:SymbolIcon Symbol="Back" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TitleBarPaneToggleButtonStyle" TargetType="Button" BasedOn="{StaticResource TitleBarButtonBaseStyle}">
+        <Setter Property="Background" Value="{DynamicResource TitleBarPaneToggleButtonBackground}" />
+        <Setter Property="Foreground" Value="{DynamicResource TitleBarPaneToggleButtonForeground}" />
+        <Setter Property="Width" Value="{DynamicResource TitleBarPaneToggleButtonWidth}" />
+        <Setter Property="Content">
+            <Setter.Value>
+                <ui:SymbolIcon Symbol="GlobalNavigationButton" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="ButtonRoot"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4">
+                        <ContentPresenter
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="ButtonRoot" Property="Background" Value="{DynamicResource TitleBarPaneToggleButtonBackgroundPointerOver}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TitleBarPaneToggleButtonForegroundPointerOver}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="ButtonRoot" Property="Background" Value="{DynamicResource TitleBarPaneToggleButtonBackgroundPressed}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TitleBarPaneToggleButtonForegroundPressed}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ButtonRoot" Property="Background" Value="{DynamicResource TitleBarPaneToggleButtonBackgroundDisabled}" />
+                            <Setter Property="Foreground" Value="{DynamicResource TitleBarPaneToggleButtonForegroundDisabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DefaultTitleBarStyle" TargetType="local:TitleBar">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="Foreground" Value="{DynamicResource TitleBarForegroundBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:TitleBar">
+                    <Grid
+                        x:Name="PART_LayoutRoot"
+                        Height="{DynamicResource TitleBarCompactHeight}"
+                        Background="{TemplateBinding Background}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="BackButtonGroup">
+                                <VisualState x:Name="BackButtonCollapsed" />
+                                <ui:VisualStateEx x:Name="BackButtonVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_BackButton.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="BackButtonDeactivated">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_BackButton.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PART_BackButton.Foreground" Value="{DynamicResource TitleBarDeactivatedForegroundBrush}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="PaneToggleButtonGroup">
+                                <VisualState x:Name="PaneToggleButtonCollapsed" />
+                                <ui:VisualStateEx x:Name="PaneToggleButtonVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_PaneToggleButton.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="PaneToggleButtonDeactivated">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_PaneToggleButton.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PART_PaneToggleButton.Foreground" Value="{DynamicResource TitleBarDeactivatedForegroundBrush}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="LeftHeaderGroup">
+                                <VisualState x:Name="LeftHeaderCollapsed" />
+                                <ui:VisualStateEx x:Name="LeftHeaderVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_LeftHeaderPresenter.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="LeftHeaderDeactivated">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_LeftHeaderPresenter.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PART_LeftHeaderPresenter.Opacity" Value="{DynamicResource TitleBarDeactivatedOpacity}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="IconGroup">
+                                <VisualState x:Name="IconCollapsed" />
+                                <ui:VisualStateEx x:Name="IconVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_Icon.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="IconDeactivated">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_Icon.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PART_Icon.Opacity" Value="{DynamicResource TitleBarDeactivatedOpacity}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="TitleTextGroup">
+                                <VisualState x:Name="TitleTextCollapsed" />
+                                <ui:VisualStateEx x:Name="TitleTextVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_TitleText.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="TitleTextDeactivated">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_TitleText.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PART_TitleText.Foreground" Value="{DynamicResource TitleBarDeactivatedForegroundBrush}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="SubtitleTextGroup">
+                                <VisualState x:Name="SubtitleTextCollapsed" />
+                                <ui:VisualStateEx x:Name="SubtitleTextVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_SubtitleText.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SubtitleTextDeactivated">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_SubtitleText.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PART_SubtitleText.Foreground" Value="{DynamicResource TitleBarSubtitleDeactivatedForegroundBrush}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="ContentGroup">
+                                <VisualState x:Name="ContentCollapsed" />
+                                <ui:VisualStateEx x:Name="ContentVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_ContentPresenterGrid.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="ContentDeactivated">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_ContentPresenterGrid.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PART_ContentPresenterGrid.Opacity" Value="{DynamicResource TitleBarDeactivatedOpacity}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="RightHeaderGroup">
+                                <VisualState x:Name="RightHeaderCollapsed" />
+                                <ui:VisualStateEx x:Name="RightHeaderVisible">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_RightHeaderPresenter.Visibility" Value="Visible" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="RightHeaderDeactivated">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_RightHeaderPresenter.Visibility" Value="Visible" />
+                                        <ui:VisualStateSetter Target="PART_RightHeaderPresenter.Opacity" Value="{DynamicResource TitleBarDeactivatedOpacity}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="HeightGroup">
+                                <VisualState x:Name="CompactHeight" />
+                                <ui:VisualStateEx x:Name="ExpandedHeight">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_LayoutRoot.Height" Value="{DynamicResource TitleBarExpandedHeight}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="DisplayModeGroup">
+                                <VisualState x:Name="Expanded" />
+                                <ui:VisualStateEx x:Name="Compact">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_TitleText.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PART_SubtitleText.Visibility" Value="Collapsed" />
+                                        <ui:VisualStateSetter Target="PART_ContentPresenter.HorizontalAlignment" Value="Left" />
+                                        <ui:VisualStateSetter Target="PART_ContentPresenter.Margin" Value="{DynamicResource TitleBarCompactContentMargin}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="LeftHeaderSpacingGroup">
+                                <VisualState x:Name="DefaultSpacing" />
+                                <ui:VisualStateEx x:Name="NegativeInsetSpacing">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_LeftHeaderPadding.Width" Value="{DynamicResource TitleBarHeaderNegativeInsetPaddingWidth}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border
+                            x:Name="PART_LeftPadding"
+                            Grid.Column="0"
+                            Width="{DynamicResource TitleBarLeftPaddingWidth}"
+                            IsHitTestVisible="False" />
+                        <Border
+                            x:Name="PART_LeftHeaderPadding"
+                            Grid.Column="4"
+                            Width="{DynamicResource TitleBarLeftHeaderPaddingWidth}"
+                            IsHitTestVisible="False" />
+                        <Border
+                            x:Name="PART_MinDragRegion"
+                            Grid.Column="10"
+                            Width="{DynamicResource TitleBarMinDragRegionWidth}"
+                            IsHitTestVisible="False" />
+                        <Border
+                            x:Name="PART_RightPadding"
+                            Grid.Column="11"
+                            Width="{DynamicResource TitleBarRightPaddingWidth}"
+                            IsHitTestVisible="False" />
+
+                        <Button
+                            x:Name="PART_BackButton"
+                            Grid.Column="1"
+                            Visibility="Collapsed"
+                            AutomationProperties.AutomationId="TitleBarBackButton"
+                            IsEnabled="{TemplateBinding IsBackButtonEnabled}"
+                            Style="{StaticResource TitleBarBackButtonStyle}" />
+                        <Button
+                            x:Name="PART_PaneToggleButton"
+                            Grid.Column="2"
+                            Visibility="Collapsed"
+                            AutomationProperties.AutomationId="TitleBarPaneToggleButton"
+                            Style="{StaticResource TitleBarPaneToggleButtonStyle}" />
+                        <ContentPresenter
+                            x:Name="PART_LeftHeaderPresenter"
+                            Grid.Column="3"
+                            Visibility="Collapsed"
+                            Content="{TemplateBinding LeftHeader}"
+                            HorizontalAlignment="{DynamicResource TitleBarLeftHeaderHorizontalAlignment}"
+                            VerticalAlignment="{DynamicResource TitleBarLeftHeaderVerticalAlignment}" />
+                        <Viewbox
+                            x:Name="PART_Icon"
+                            Grid.Column="5"
+                            Visibility="Collapsed"
+                            MaxWidth="{DynamicResource TitleBarIconMaxWidth}"
+                            MaxHeight="{DynamicResource TitleBarIconMaxHeight}"
+                            Margin="{DynamicResource TitleBarIconMargin}"
+                            VerticalAlignment="Center">
+                            <ContentPresenter Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.IconElement}" />
+                        </Viewbox>
+                        <TextBlock
+                            x:Name="PART_TitleText"
+                            Grid.Column="6"
+                            Visibility="Collapsed"
+                            Text="{TemplateBinding Title}"
+                            Style="{DynamicResource CaptionTextBlockStyle}"
+                            Foreground="{TemplateBinding Foreground}"
+                            Margin="{DynamicResource TitleBarTitleMargin}"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            MinWidth="{DynamicResource TitleBarTitleMinWidth}" />
+                        <TextBlock
+                            x:Name="PART_SubtitleText"
+                            Grid.Column="7"
+                            Visibility="Collapsed"
+                            Text="{TemplateBinding Subtitle}"
+                            Style="{DynamicResource CaptionTextBlockStyle}"
+                            Foreground="{DynamicResource TitleBarSubtitleForegroundBrush}"
+                            Margin="{DynamicResource TitleBarSubtitleMargin}"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            MinWidth="{DynamicResource TitleBarSubtitleMinWidth}" />
+                        <Grid
+                            x:Name="PART_ContentPresenterGrid"
+                            Grid.Column="8"
+                            Visibility="Collapsed">
+                            <ContentPresenter
+                                x:Name="PART_ContentPresenter"
+                                Content="{TemplateBinding Content}"
+                                HorizontalAlignment="{DynamicResource TitleBarContentHorizontalAlignment}"
+                                VerticalAlignment="{DynamicResource TitleBarContentVerticalAlignment}" />
+                        </Grid>
+                        <ContentPresenter
+                            x:Name="PART_RightHeaderPresenter"
+                            Grid.Column="9"
+                            Visibility="Collapsed"
+                            Content="{TemplateBinding RightHeader}"
+                            HorizontalAlignment="{DynamicResource TitleBarRightHeaderHorizontalAlignment}"
+                            VerticalAlignment="{DynamicResource TitleBarRightHeaderVerticalAlignment}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="local:TitleBar" BasedOn="{StaticResource DefaultTitleBarStyle}" />
+</ResourceDictionary>

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Windows.Shapes;
+using System.Windows.Data;
 using ModernWpf.Controls.Primitives;
 using ModernWpf.Gallery.Models;
 using Mux = ModernWpf.Controls;
@@ -19,14 +19,18 @@ namespace ModernWpf.Gallery.Pages
     Subtitle=""$(Subtitle)""
     IsBackButtonVisible=""$(BackButtonVisibility)""
     IsPaneToggleButtonVisible=""$(PaneToggleVisibility)"">
+    <TitleBar.Resources>
+        <HorizontalAlignment x:Key=""TitleBarContentHorizontalAlignment"">Stretch</HorizontalAlignment>
+    </TitleBar.Resources>
     <TitleBar.IconSource>
         <SymbolIconSource Symbol=""Library"" />
     </TitleBar.IconSource>
     <TitleBar.Content>
         <AutoSuggestBox
-            Width=""360""
+            MaxWidth=""580""
+            HorizontalAlignment=""Stretch""
             VerticalAlignment=""Center""
-            PlaceholderText=""Search..""
+            PlaceholderText=""Search...""
             QueryIcon=""Find"" />
     </TitleBar.Content>
     <TitleBar.RightHeader>
@@ -51,7 +55,7 @@ namespace ModernWpf.Gallery.Pages
         <HorizontalAlignment x:Key=""TitleBarContentHorizontalAlignment"">Stretch</HorizontalAlignment>
     </TitleBar.Resources>
     <TitleBar.Content>
-        <Grid ColumnSpacing=""8"" HorizontalAlignment=""Stretch"">
+        <Grid HorizontalAlignment=""Stretch"">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width=""*"" />
                 <ColumnDefinition Width=""Auto"" />
@@ -65,6 +69,7 @@ namespace ModernWpf.Gallery.Pages
             <Button
                 x:Name=""StatusBadge""
                 Grid.Column=""1""
+                Margin=""8,0,0,0""
                 VerticalAlignment=""Center""
                 Click=""StatusBadge_Click""
                 Content=""Status""
@@ -95,7 +100,7 @@ titleBar.RecomputeDragRegions();";
     <TitleBar
         x:Name=""titleBar""
         BackRequested=""TitleBar_BackRequested""
-        IsBackButtonVisible=""{x:Bind navFrame.CanGoBack, Mode=OneWay}""
+        IsBackButtonVisible=""{Binding ElementName=navFrame, Path=CanGoBack}""
         IsPaneToggleButtonVisible=""True""
         PaneToggleRequested=""TitleBar_PaneToggleRequested"" />
 
@@ -110,8 +115,28 @@ titleBar.RecomputeDragRegions();";
 </Grid>";
 
         private const string TitleBarEndToEndCSharp =
-@"this.ExtendsContentIntoTitleBar = true; // Extend the content into the title bar and hide the default titlebar
-this.SetTitleBar(titleBar); // Set the custom title bar";
+@"// Extend WPF content into ModernWPF's window chrome. TitleBar performs
+// live WPF hit testing so ordinary controls stay interactive while empty
+// title-bar space and TitleBar.IsDragRegion=True elements drag the window.
+WindowTitleBar.SetExtendsContentIntoTitleBar(this, true);
+WindowTitleBar.SetIsIconVisible(this, false);";
+
+        private const string SystemBackdropXaml =
+@"<Window
+    xmlns:ui=""http://schemas.modernwpf.com/2019""
+    ui:WindowBackdrop.Kind=""Mica""
+    ui:WindowBackdrop.FallbackBrush=""{DynamicResource WindowBackground}"">
+    <!-- Window content remains ordinary WPF. -->
+</Window>";
+
+        private const string SystemBackdropCSharp =
+@"// Windows 11 22H2 or newer uses the native DWM material.
+// High Contrast, disabled composition, older Windows, and DWM failures
+// automatically use FallbackBrush and report EffectiveKind=None.
+WindowBackdrop.SetFallbackBrush(window, fallbackBrush);
+WindowBackdrop.SetKind(window, WindowBackdropKind.Mica);
+
+WindowBackdropKind effective = WindowBackdrop.GetEffectiveKind(window);";
 
         public static UIElement Create(string uniqueId)
         {
@@ -119,6 +144,8 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             {
                 case "TitleBar":
                     return CreateTitleBarSample();
+                case "SystemBackdrop":
+                    return CreateSystemBackdropSample();
                 default:
                     return null;
             }
@@ -130,6 +157,8 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             {
                 case "TitleBar":
                     return CreateTitleBarExamples();
+                case "SystemBackdrop":
+                    return CreateSystemBackdropExamples();
                 default:
                     return Array.Empty<GalleryExample>();
             }
@@ -141,6 +170,8 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             {
                 case "TitleBar":
                     return CreateTitleBarIntroContent();
+                case "SystemBackdrop":
+                    return CreateSystemBackdropIntroContent();
                 default:
                     return null;
             }
@@ -175,6 +206,212 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             return textBlock;
         }
 
+        private static UIElement CreateSystemBackdropSample()
+        {
+            return CreateSystemBackdropExampleContent(assignRootAutomationId: true);
+        }
+
+        private static TextBlock CreateSystemBackdropIntroContent()
+        {
+            return new TextBlock
+            {
+                Margin = new Thickness(0, 12, 0, 0),
+                TextWrapping = TextWrapping.Wrap,
+                Text = "Use WindowBackdrop to request native Mica or Desktop Acrylic for a WPF Window. ModernWPF automatically uses a normal theme brush when the material is unavailable or inappropriate."
+            };
+        }
+
+        private static IReadOnlyList<GalleryExample> CreateSystemBackdropExamples()
+        {
+            return new[]
+            {
+                new GalleryExample(
+                    "Mica and Desktop Acrylic",
+                    CreateSystemBackdropExampleContent(assignRootAutomationId: true),
+                    SystemBackdropXaml,
+                    SystemBackdropCSharp)
+                    .WithContentAlignment(HorizontalAlignment.Stretch, VerticalAlignment.Center)
+            };
+        }
+
+        private static GallerySamplePanel CreateSystemBackdropExampleContent(bool assignRootAutomationId)
+        {
+            var root = new GallerySamplePanel
+            {
+                HorizontalAlignment = HorizontalAlignment.Stretch,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            if (assignRootAutomationId)
+            {
+                GalleryAutomation.WithAutomationId(
+                    root,
+                    GalleryAutomation.SampleRootId("SystemBackdrop"));
+            }
+
+            var stack = new StackPanel
+            {
+                MaxWidth = 640,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            stack.Children.Add(new TextBlock
+            {
+                Text = "Open a real WPF window to see each native material. On Windows 11 22H2 or newer, DWM supplies the backdrop; High Contrast, older systems, disabled composition, and native failures use the WindowBackground fallback.",
+                TextAlignment = TextAlignment.Center,
+                TextWrapping = TextWrapping.Wrap
+            });
+
+            var status = new TextBlock
+            {
+                Name = "SystemBackdropStatus",
+                Margin = new Thickness(0, 12, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Text = "No material window is open.",
+                TextWrapping = TextWrapping.Wrap
+            };
+            GalleryAutomation.WithAutomationId(
+                status,
+                GalleryAutomation.SampleElementId("SystemBackdrop", "Status"));
+            var sampleState = new SystemBackdropSampleState(status);
+
+            var buttons = new StackPanel
+            {
+                Margin = new Thickness(0, 16, 0, 0),
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            buttons.Children.Add(CreateSystemBackdropButton(
+                "Open Mica window",
+                "MicaButton",
+                Mux.WindowBackdropKind.Mica,
+                sampleState));
+            buttons.Children.Add(CreateSystemBackdropButton(
+                "Open Desktop Acrylic window",
+                "DesktopAcrylicButton",
+                Mux.WindowBackdropKind.DesktopAcrylic,
+                sampleState,
+                new Thickness(8, 0, 0, 0)));
+
+            stack.Children.Add(buttons);
+            stack.Children.Add(status);
+            root.Children.Add(stack);
+            return root;
+        }
+
+        private static Button CreateSystemBackdropButton(
+            string content,
+            string automationIdSuffix,
+            Mux.WindowBackdropKind kind,
+            SystemBackdropSampleState sampleState,
+            Thickness margin = default)
+        {
+            var button = new Button
+            {
+                Content = content,
+                Margin = margin
+            };
+            GalleryAutomation.WithAutomationId(
+                button,
+                GalleryAutomation.SampleElementId("SystemBackdrop", automationIdSuffix));
+            button.SetResourceReference(FrameworkElement.StyleProperty, "AccentButtonStyle");
+            button.Click += delegate
+            {
+                sampleState.ActiveWindow?.Close();
+
+                var window = CreateModernWindow(button, content, 720, 480);
+                sampleState.ActiveWindow = window;
+                GalleryAutomation.WithAutomationId(
+                    window,
+                    GalleryAutomation.SampleElementId("SystemBackdrop", kind + "Window"));
+                window.SetResourceReference(
+                    Mux.WindowBackdrop.FallbackBrushProperty,
+                    "WindowBackground");
+                Mux.WindowBackdrop.SetKind(window, kind);
+                window.Content = CreateSystemBackdropWindowBody(kind);
+                var effectiveKindDescriptor = DependencyPropertyDescriptor.FromProperty(
+                    Mux.WindowBackdrop.EffectiveKindProperty,
+                    typeof(Window));
+                EventHandler effectiveKindChanged = delegate
+                {
+                    UpdateSystemBackdropStatus(sampleState, window, kind);
+                };
+                effectiveKindDescriptor?.AddValueChanged(window, effectiveKindChanged);
+                window.ContentRendered += delegate
+                {
+                    UpdateSystemBackdropStatus(sampleState, window, kind);
+                };
+                window.Closed += delegate
+                {
+                    effectiveKindDescriptor?.RemoveValueChanged(window, effectiveKindChanged);
+                    if (ReferenceEquals(sampleState.ActiveWindow, window))
+                    {
+                        sampleState.ActiveWindow = null;
+                        sampleState.Status.Text = "No material window is open.";
+                    }
+                };
+                window.Show();
+            };
+            return button;
+        }
+
+        private static void UpdateSystemBackdropStatus(
+            SystemBackdropSampleState sampleState,
+            Window window,
+            Mux.WindowBackdropKind requestedKind)
+        {
+            if (ReferenceEquals(sampleState.ActiveWindow, window))
+            {
+                sampleState.Status.Text = string.Format(
+                    "Requested {0}; effective material: {1}.",
+                    requestedKind,
+                    Mux.WindowBackdrop.GetEffectiveKind(window));
+            }
+        }
+
+        private sealed class SystemBackdropSampleState
+        {
+            internal SystemBackdropSampleState(TextBlock status)
+            {
+                Status = status;
+            }
+
+            internal Window ActiveWindow { get; set; }
+
+            internal TextBlock Status { get; }
+        }
+
+        private static FrameworkElement CreateSystemBackdropWindowBody(Mux.WindowBackdropKind kind)
+        {
+            var root = new Grid
+            {
+                Margin = new Thickness(40)
+            };
+            var card = new Border
+            {
+                MaxWidth = 520,
+                Padding = new Thickness(28),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                CornerRadius = new CornerRadius(8)
+            };
+            card.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
+            var content = new StackPanel();
+            content.Children.Add(new TextBlock
+            {
+                Text = kind.ToString(),
+                FontSize = 24,
+                FontWeight = FontWeights.SemiBold
+            });
+            content.Children.Add(new TextBlock
+            {
+                Margin = new Thickness(0, 8, 0, 0),
+                Text = "This surface is ordinary WPF content. The material behind it is supplied by DWM when supported, with WindowBackground as the safe fallback.",
+                TextWrapping = TextWrapping.Wrap
+            });
+            card.Child = content;
+            root.Children.Add(card);
+            return root;
+        }
+
         private static IReadOnlyList<GalleryExample> CreateTitleBarExamples()
         {
             var configurationContent = CreateTitleBarConfigurationExampleContent(
@@ -188,6 +425,12 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                     TitleBarConfigurationXaml,
                     null,
                     configurationOptions)
+                    .WithContentAlignment(HorizontalAlignment.Stretch, VerticalAlignment.Center),
+                new GalleryExample(
+                    "TitleBar drag regions",
+                    CreateTitleBarDragRegionsExampleContent(),
+                    TitleBarDragRegionsXaml,
+                    TitleBarDragRegionsCSharp)
                     .WithContentAlignment(HorizontalAlignment.Stretch, VerticalAlignment.Center),
                 new GalleryExample(
                     "End to end TitleBar sample",
@@ -212,94 +455,16 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 GalleryAutomation.WithAutomationId(root, GalleryAutomation.SampleRootId("TitleBar"));
             }
 
-            var titleText = new TextBlock
-            {
-                Name = "TitleText",
-                Text = GalleryBranding.DisplayName,
-                FontWeight = FontWeights.SemiBold,
-                VerticalAlignment = VerticalAlignment.Bottom
-            };
-            var subtitleText = new TextBlock
-            {
-                Name = "SubtitleText",
-                Text = "Preview",
-                FontSize = 12,
-                Opacity = 0.72,
-                VerticalAlignment = VerticalAlignment.Top
-            };
-
-            var backButton = CreateTitleBarPreviewButton("BackButton", Mux.Symbol.Back);
-            var paneButton = CreateTitleBarPreviewButton("PaneToggleButton", Mux.Symbol.OpenPane);
-
-            var titleBarControl = new ContentControl
-            {
-                Name = "TitleBarControl",
-                Width = 470,
-                Height = 48,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                ClipToBounds = true,
-                Focusable = false
-            };
-            AutomationProperties.SetName(titleBarControl, "TitleBarControl");
-            GalleryAutomation.WithAutomationId(titleBarControl, GalleryAutomation.SampleElementId("TitleBar", "TitleBarControl"));
-            var titleBarRoot = new Grid();
-            var titleBarBackground = new Border
-            {
-                Name = "TitleBarSurface",
-                BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(4),
-                Margin = new Thickness(-1)
-            };
-            titleBarBackground.SetResourceReference(Border.BackgroundProperty, "CardBackgroundFillColorDefaultBrush");
-            titleBarBackground.SetResourceReference(Border.BorderBrushProperty, "SurfaceStrokeColorDefaultBrush");
-            titleBarRoot.Children.Add(titleBarBackground);
-
-            var titleBarGrid = new Grid();
-            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleBarGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-
-            Grid.SetColumn(backButton, 0);
-            Grid.SetColumn(paneButton, 1);
-            titleBarGrid.Children.Add(backButton);
-            titleBarGrid.Children.Add(paneButton);
-
-            var icon = new Mux.SymbolIcon(Mux.Symbol.Library)
-            {
-                Name = "TitleBarIcon",
-                Width = 16,
-                Height = 16,
-                Margin = new Thickness(14, 0, 16, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            Grid.SetColumn(icon, 2);
-            titleBarGrid.Children.Add(icon);
-
-            var titleStack = new StackPanel
-            {
-                VerticalAlignment = VerticalAlignment.Center,
-                Visibility = Visibility.Collapsed
-            };
-            titleStack.Children.Add(titleText);
-            titleStack.Children.Add(subtitleText);
-            Grid.SetColumn(titleStack, 5);
-            titleBarGrid.Children.Add(titleStack);
-
             var searchBox = new Mux.AutoSuggestBox
             {
                 Name = "TitleBarSearchBox",
-                Width = 186,
+                MaxWidth = 580,
+                HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Center,
-                PlaceholderText = "Search..",
-                QueryIcon = new Mux.SymbolIcon(Mux.Symbol.Find),
-                Margin = new Thickness(0, 0, 16, 0)
+                PlaceholderText = "Search...",
+                QueryIcon = new Mux.SymbolIcon(Mux.Symbol.Find)
             };
             GalleryAutomation.WithAutomationId(searchBox, GalleryAutomation.SampleElementId("TitleBar", "SearchBox"));
-            Grid.SetColumn(searchBox, 3);
-            titleBarGrid.Children.Add(searchBox);
 
             var personPicture = new Mux.PersonPicture
             {
@@ -307,13 +472,23 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 Width = 30,
                 Height = 30,
                 Initials = "JD",
-                Margin = new Thickness(0, 0, 16, 0),
                 VerticalAlignment = VerticalAlignment.Center
             };
-            Grid.SetColumn(personPicture, 4);
-            titleBarGrid.Children.Add(personPicture);
-            titleBarRoot.Children.Add(titleBarGrid);
-            titleBarControl.Content = titleBarRoot;
+
+            var titleBarControl = new Mux.TitleBar
+            {
+                Name = "TitleBarControl",
+                Width = 470,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Title = GalleryBranding.DisplayName,
+                Subtitle = "Preview",
+                IconSource = new Mux.SymbolIconSource { Symbol = Mux.Symbol.Library },
+                Content = searchBox,
+                RightHeader = personPicture
+            };
+            titleBarControl.Resources["TitleBarContentHorizontalAlignment"] = HorizontalAlignment.Stretch;
+            AutomationProperties.SetName(titleBarControl, "TitleBarControl");
+            GalleryAutomation.WithAutomationId(titleBarControl, GalleryAutomation.SampleElementId("TitleBar", "TitleBarControl"));
 
             var titleBox = new TextBox
             {
@@ -346,10 +521,10 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
 
             Action updatePreview = delegate
             {
-                titleText.Text = titleBox.Text;
-                subtitleText.Text = subtitleBox.Text;
-                backButton.Visibility = backButtonToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
-                paneButton.Visibility = paneToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+                titleBarControl.Title = titleBox.Text;
+                titleBarControl.Subtitle = subtitleBox.Text;
+                titleBarControl.IsBackButtonVisible = backButtonToggle.IsOn;
+                titleBarControl.IsPaneToggleButtonVisible = paneToggle.IsOn;
             };
             titleBox.TextChanged += delegate { updatePreview(); };
             subtitleBox.TextChanged += delegate { updatePreview(); };
@@ -429,6 +604,9 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                     "TitleBar drag regions sample",
                     900,
                     640);
+                GalleryAutomation.WithAutomationId(
+                    window,
+                    GalleryAutomation.SampleElementId("TitleBar", "DragRegionsWindow"));
                 Mux.WindowTitleBar.SetExtendsContentIntoTitleBar(window, true);
                 Mux.WindowTitleBar.SetIsIconVisible(window, false);
                 window.Content = CreateTitleBarDragRegionsWindowBody(window);
@@ -445,45 +623,6 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(48) });
             root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
 
-            var titleBar = new Grid
-            {
-                Name = "DragRegionsTitleBar",
-                Height = 48,
-                Margin = new Thickness(14, 0, 140, 0)
-            };
-            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-            var icon = new Mux.SymbolIcon(Mux.Symbol.Library)
-            {
-                Width = 16,
-                Height = 16,
-                Margin = new Thickness(0, 0, 16, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            titleBar.Children.Add(icon);
-
-            var titleStack = new StackPanel
-            {
-                Margin = new Thickness(0, 0, 16, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            titleStack.Children.Add(new TextBlock
-            {
-                Text = "Drag regions",
-                FontWeight = FontWeights.SemiBold
-            });
-            titleStack.Children.Add(new TextBlock
-            {
-                Text = "Try dragging the window",
-                FontSize = 12,
-                Opacity = 0.72
-            });
-            Grid.SetColumn(titleStack, 1);
-            titleBar.Children.Add(titleStack);
-
             var searchBox = new Mux.AutoSuggestBox
             {
                 Name = "DragRegionsSearchBox",
@@ -494,9 +633,6 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 QueryIcon = new Mux.SymbolIcon(Mux.Symbol.Find),
                 Margin = new Thickness(0, 0, 8, 0)
             };
-            Grid.SetColumn(searchBox, 2);
-            titleBar.Children.Add(searchBox);
-
             var rightHeaderPanel = new StackPanel
             {
                 Name = "RightHeaderPanel",
@@ -511,15 +647,18 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             };
             statusBadge.SetResourceReference(FrameworkElement.StyleProperty, "AccentButtonStyle");
             rightHeaderPanel.Children.Add(statusBadge);
-            Grid.SetColumn(rightHeaderPanel, 3);
-            titleBar.Children.Add(rightHeaderPanel);
-            titleBar.MouseLeftButtonDown += delegate(object sender, System.Windows.Input.MouseButtonEventArgs args)
+
+            var titleBar = new Mux.TitleBar
             {
-                if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
-                {
-                    window.DragMove();
-                }
+                Name = "DragRegionsTitleBar",
+                Title = "Drag regions",
+                Subtitle = "Try dragging the window",
+                IconSource = new Mux.SymbolIconSource { Symbol = Mux.Symbol.Library },
+                Content = searchBox,
+                RightHeader = rightHeaderPanel,
+                Margin = new Thickness(0, 0, 140, 0)
             };
+            titleBar.Resources["TitleBarContentHorizontalAlignment"] = HorizontalAlignment.Stretch;
             root.Children.Add(titleBar);
 
             var body = new StackPanel
@@ -574,21 +713,25 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             };
             statusBadge.Click += delegate { statusText.Text = "Status badge clicked"; };
 
-            System.Windows.Input.MouseButtonEventHandler forceDragHandler = delegate(object sender, System.Windows.Input.MouseButtonEventArgs args)
-            {
-                if (args.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
-                {
-                    args.Handled = true;
-                    window.DragMove();
-                }
-            };
             dragRegionOptions.SelectionChanged += delegate
             {
-                statusBadge.PreviewMouseLeftButtonDown -= forceDragHandler;
-                if (dragRegionOptions.SelectedIndex == 1)
+                switch (dragRegionOptions.SelectedIndex)
                 {
-                    statusBadge.PreviewMouseLeftButtonDown += forceDragHandler;
+                    case 1:
+                        Mux.TitleBar.SetIsDragRegion(statusBadge, true);
+                        statusText.Text = "Status badge is explicitly part of the drag region.";
+                        break;
+                    case 2:
+                        Mux.TitleBar.SetIsDragRegion(statusBadge, false);
+                        statusText.Text = "Status badge is explicitly interactive.";
+                        break;
+                    default:
+                        statusBadge.ClearValue(Mux.TitleBar.IsDragRegionProperty);
+                        statusText.Text = "Status badge uses the framework default and remains clickable.";
+                        break;
                 }
+
+                titleBar.RecomputeDragRegions();
             };
 
             body.Children.Add(new TextBlock
@@ -628,13 +771,15 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                         VerticalAlignment = VerticalAlignment.Center
                     };
                     rightHeaderPanel.Children.Insert(0, extraButton);
-                    statusText.Text = "Added a Button to TitleBar.Content. WPF updates its live drag/input tree automatically.";
+                    titleBar.RecomputeDragRegions();
+                    statusText.Text = "Added a Button and recomputed the title-bar drag regions.";
                 }
                 else
                 {
                     rightHeaderPanel.Children.Remove(extraButton);
                     extraButton = null;
-                    statusText.Text = "Removed the Button. WPF updates its live drag/input tree automatically.";
+                    titleBar.RecomputeDragRegions();
+                    statusText.Text = "Removed the Button and recomputed the title-bar drag regions.";
                 }
             };
             actionPanel.Children.Add(toggleExtraButton);
@@ -647,7 +792,8 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             };
             recomputeButton.Click += delegate
             {
-                statusText.Text = "WPF drag regions follow the live visual/input tree; no explicit recomputation is required.";
+                titleBar.RecomputeDragRegions();
+                statusText.Text = "Recomputed the live WPF drag/input tree.";
             };
             actionPanel.Children.Add(recomputeButton);
             body.Children.Add(actionPanel);
@@ -675,7 +821,7 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             stack.Children.Add(new TextBlock
             {
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Text = "Click the button below to see an end to end sample of a TitleBar in an new window, binding some of its properties to the NavigationView and navigation frame.",
+                Text = "Click the button below to see an end-to-end TitleBar in a new window, with properties bound to the NavigationView and navigation frame.",
                 TextAlignment = TextAlignment.Center,
                 TextWrapping = TextWrapping.Wrap
             });
@@ -686,36 +832,24 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 12, 0, 0)
             };
+            GalleryAutomation.WithAutomationId(
+                showWindowButton,
+                GalleryAutomation.SampleElementId("TitleBar", "EndToEndShowWindowButton"));
             showWindowButton.SetResourceReference(FrameworkElement.StyleProperty, "AccentButtonStyle");
             showWindowButton.Click += delegate
             {
                 var window = CreateModernWindow((FrameworkElement)showWindowButton, "TitleBarWindow", 760, 520);
+                GalleryAutomation.WithAutomationId(
+                    window,
+                    GalleryAutomation.SampleElementId("TitleBar", "EndToEndWindow"));
                 Mux.WindowTitleBar.SetExtendsContentIntoTitleBar(window, true);
-                Mux.WindowTitleBar.SetIsBackButtonVisible(window, true);
-                Mux.WindowTitleBar.SetIsBackEnabled(window, false);
+                Mux.WindowTitleBar.SetIsIconVisible(window, false);
                 window.Content = CreateTitleBarWindowBody();
                 window.Show();
             };
             stack.Children.Add(showWindowButton);
             root.Children.Add(stack);
             return root;
-        }
-
-        private static Button CreateTitleBarPreviewButton(string name, Mux.Symbol symbol)
-        {
-            var button = new Button
-            {
-                Name = name,
-                Width = 40,
-                Height = 40,
-                Padding = new Thickness(0),
-                Margin = new Thickness(4, 0, 0, 0),
-                VerticalAlignment = VerticalAlignment.Center,
-                Visibility = Visibility.Collapsed,
-                Content = new Mux.SymbolIcon(symbol)
-            };
-            GalleryAutomation.WithAutomationId(button, GalleryAutomation.SampleElementId("TitleBar", name));
-            return button;
         }
 
         private static FrameworkElement CreateTitleBarWindowBody()
@@ -755,7 +889,46 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 Icon = new Mux.SymbolIcon(Mux.Symbol.Document)
             });
 
-            return navigationView;
+            var titleBar = new Mux.TitleBar
+            {
+                Name = "EndToEndTitleBar",
+                Title = "TitleBarWindow",
+                IconSource = new Mux.SymbolIconSource { Symbol = Mux.Symbol.Library },
+                IsPaneToggleButtonVisible = true,
+                Margin = new Thickness(0, 0, 140, 0)
+            };
+            BindingOperations.SetBinding(
+                titleBar,
+                Mux.TitleBar.IsBackButtonVisibleProperty,
+                new Binding(nameof(Frame.CanGoBack)) { Source = frame });
+            BindingOperations.SetBinding(
+                titleBar,
+                Mux.TitleBar.IsBackButtonEnabledProperty,
+                new Binding(nameof(Frame.CanGoBack)) { Source = frame });
+            frame.Navigated += delegate
+            {
+                titleBar.GetBindingExpression(Mux.TitleBar.IsBackButtonVisibleProperty)?.UpdateTarget();
+                titleBar.GetBindingExpression(Mux.TitleBar.IsBackButtonEnabledProperty)?.UpdateTarget();
+            };
+            titleBar.BackRequested += delegate
+            {
+                if (frame.CanGoBack)
+                {
+                    frame.GoBack();
+                }
+            };
+            titleBar.PaneToggleRequested += delegate
+            {
+                navigationView.IsPaneOpen = !navigationView.IsPaneOpen;
+            };
+
+            var root = new Grid();
+            root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+            root.Children.Add(titleBar);
+            Grid.SetRow(navigationView, 1);
+            root.Children.Add(navigationView);
+            return root;
         }
 
         private static Window CreateModernWindow(FrameworkElement ownerElement, string title, double width, double height)
@@ -767,9 +940,9 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
                 Height = height,
                 MinWidth = 360,
                 MinHeight = 240,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                Background = CreateBrush("#F9F9F9")
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
+            window.SetResourceReference(Control.BackgroundProperty, "WindowBackground");
             var owner = Window.GetWindow(ownerElement);
             if (owner != null)
             {
@@ -780,299 +953,5 @@ this.SetTitleBar(titleBar); // Set the custom title bar";
             Mux.WindowTitleBar.SetIsIconVisible(window, true);
             return window;
         }
-
-        private static Border CreateWindowPreview(string title, string subtitle, Brush titleBarBrush, Brush titleBrush)
-        {
-            var titleText = new TextBlock
-            {
-                Name = "PreviewTitle",
-                Text = title,
-                Foreground = titleBrush,
-                FontWeight = FontWeights.SemiBold,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(12, 0, 0, 0)
-            };
-            var subtitleText = new TextBlock
-            {
-                Name = "PreviewSubtitle",
-                Text = subtitle,
-                TextWrapping = TextWrapping.Wrap,
-                Opacity = 0.72,
-                Margin = new Thickness(22, 18, 22, 0)
-            };
-            var icon = new Rectangle
-            {
-                Name = "Icon",
-                Width = 14,
-                Height = 14,
-                Fill = titleBrush,
-                RadiusX = 3,
-                RadiusY = 3,
-                Margin = new Thickness(14, 0, 0, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            var titleBar = new Grid
-            {
-                Name = "PreviewChrome",
-                Height = 38,
-                Background = titleBarBrush
-            };
-            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            Grid.SetColumn(icon, 0);
-            Grid.SetColumn(titleText, 1);
-            titleBar.Children.Add(icon);
-            titleBar.Children.Add(titleText);
-            titleBar.Children.Add(CreateCaptionButtons(titleBrush));
-
-            var content = new Grid();
-            content.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            content.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-            Grid.SetRow(titleBar, 0);
-            Grid.SetRow(subtitleText, 1);
-            content.Children.Add(titleBar);
-            content.Children.Add(subtitleText);
-
-            return new Border
-            {
-                Width = 520,
-                Height = 250,
-                CornerRadius = new CornerRadius(8),
-                BorderThickness = new Thickness(1),
-                BorderBrush = CreateBrush("#C8C8C8"),
-                Background = Brushes.White,
-                Child = content
-            };
-        }
-
-        private static Border CreateInteractiveTitleBarPreview()
-        {
-            var titleBar = new Grid
-            {
-                Height = 44,
-                Background = CreateBrush("#F9F9F9")
-            };
-            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            titleBar.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-            var back = new Button
-            {
-                Name = "BackButton",
-                Content = "<",
-                Width = 44,
-                Height = 32,
-                Margin = new Thickness(6, 6, 0, 6)
-            };
-            var icon = new Rectangle
-            {
-                Name = "Icon",
-                Width = 16,
-                Height = 16,
-                Fill = CreateBrush("#0078D4"),
-                RadiusX = 4,
-                RadiusY = 4,
-                Margin = new Thickness(10, 0, 8, 0),
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            var title = new TextBlock
-            {
-                Text = GalleryBranding.DisplayName,
-                VerticalAlignment = VerticalAlignment.Center,
-                FontWeight = FontWeights.SemiBold,
-                Margin = new Thickness(0, 0, 16, 0)
-            };
-            var search = new TextBox
-            {
-                Text = "Interactive content",
-                Width = 180,
-                VerticalAlignment = VerticalAlignment.Center,
-                Margin = new Thickness(0, 6, 16, 6)
-            };
-            var buttons = CreateCaptionButtons(CreateBrush("#202020"));
-
-            Grid.SetColumn(back, 0);
-            Grid.SetColumn(icon, 1);
-            Grid.SetColumn(title, 2);
-            Grid.SetColumn(search, 3);
-            Grid.SetColumn(buttons, 4);
-            titleBar.Children.Add(back);
-            titleBar.Children.Add(icon);
-            titleBar.Children.Add(title);
-            titleBar.Children.Add(search);
-            titleBar.Children.Add(buttons);
-
-            var body = new Border
-            {
-                Padding = new Thickness(20),
-                Child = new TextBlock
-                {
-                    Text = "The preview represents a " + GalleryBranding.BrandName + " title bar with drag region controls and optional interactive content.",
-                    TextWrapping = TextWrapping.Wrap,
-                    Opacity = 0.72
-                }
-            };
-            var root = new Grid
-            {
-                Background = Brushes.White
-            };
-            root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-            Grid.SetRow(titleBar, 0);
-            Grid.SetRow(body, 1);
-            root.Children.Add(titleBar);
-            root.Children.Add(body);
-
-            return new Border
-            {
-                Width = 560,
-                Height = 190,
-                BorderBrush = CreateBrush("#C8C8C8"),
-                BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(8),
-                Child = root
-            };
-        }
-
-        private static StackPanel CreateCaptionButtons(Brush foreground)
-        {
-            var panel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                HorizontalAlignment = HorizontalAlignment.Right
-            };
-            Grid.SetColumn(panel, 2);
-            panel.Children.Add(CreateCaptionGlyph("_", foreground));
-            panel.Children.Add(CreateCaptionGlyph("[]", foreground));
-            panel.Children.Add(CreateCaptionGlyph("X", foreground));
-            return panel;
-        }
-
-        private static TextBlock CreateCaptionGlyph(string text, Brush foreground)
-        {
-            return new TextBlock
-            {
-                Text = text,
-                Width = 44,
-                Height = 38,
-                Foreground = foreground,
-                TextAlignment = TextAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
-                Padding = new Thickness(0, 9, 0, 0)
-            };
-        }
-
-        private static void ApplyPreviewChrome(Border preview, Brush background, Brush foreground, bool iconVisible)
-        {
-            var chrome = FindNamedElement<Panel>(preview, "PreviewChrome");
-            if (chrome != null)
-            {
-                chrome.Background = background;
-            }
-            var title = FindNamedElement<TextBlock>(preview, "PreviewTitle");
-            if (title != null)
-            {
-                title.Foreground = foreground;
-            }
-            var icon = FindNamedElement<Rectangle>(preview, "Icon");
-            if (icon != null)
-            {
-                icon.Fill = foreground;
-                icon.Visibility = iconVisible ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-
-        private static void SetPreviewText(Border preview, string title, string subtitle)
-        {
-            var titleBlock = FindNamedElement<TextBlock>(preview, "PreviewTitle");
-            var subtitleBlock = FindNamedElement<TextBlock>(preview, "PreviewSubtitle");
-            if (titleBlock != null)
-            {
-                titleBlock.Text = title;
-            }
-            if (subtitleBlock != null)
-            {
-                subtitleBlock.Text = subtitle;
-            }
-        }
-
-        private static void SetNamedElementVisibility(Border root, string name, bool isVisible)
-        {
-            var element = FindNamedElement<UIElement>(root, name);
-            if (element != null)
-            {
-                element.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            }
-        }
-
-        private static void SetNamedElementOpacity(Border root, string name, double opacity)
-        {
-            var element = FindNamedElement<UIElement>(root, name);
-            if (element != null)
-            {
-                element.Opacity = opacity;
-            }
-        }
-
-        private static T FindNamedElement<T>(DependencyObject root, string name)
-            where T : UIElement
-        {
-            if (root == null)
-            {
-                return null;
-            }
-
-            var frameworkElement = root as FrameworkElement;
-            var typedElement = frameworkElement as T;
-            if (frameworkElement != null && frameworkElement.Name == name && typedElement != null)
-            {
-                return typedElement;
-            }
-
-            var childCount = VisualTreeHelper.GetChildrenCount(root);
-            for (var i = 0; i < childCount; i++)
-            {
-                var child = VisualTreeHelper.GetChild(root, i);
-                var match = FindNamedElement<T>(child, name);
-                if (match != null)
-                {
-                    return match;
-                }
-            }
-
-            return null;
-        }
-
-        private static Size GetWindowDimensions(int selectedIndex)
-        {
-            switch (selectedIndex)
-            {
-                case 1:
-                    return new Size(820, 460);
-                case 2:
-                    return new Size(380, 280);
-                default:
-                    return new Size(640, 420);
-            }
-        }
-
-        private static TextBlock CreateOutput(string text)
-        {
-            return new TextBlock
-            {
-                Text = text,
-                Margin = new Thickness(0, 12, 0, 0),
-                TextWrapping = TextWrapping.Wrap
-            };
-        }
-
-        private static SolidColorBrush CreateBrush(string color)
-        {
-            return (SolidColorBrush)new BrushConverter().ConvertFromString(color);
-        }
-
     }
 }

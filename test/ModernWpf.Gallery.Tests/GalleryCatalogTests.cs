@@ -54,7 +54,8 @@ namespace ModernWpf.Gallery.Tests
             "PersonPicture",
             "IconElement",
             "ThemeShadow",
-            "TitleBar"
+            "TitleBar",
+            "SystemBackdrop"
         };
 
         private static readonly string[] DeletedWinUIPageImplementationIds =
@@ -79,7 +80,6 @@ namespace ModernWpf.Gallery.Tests
             "StandardUICommand",
             "XamlUICommand",
             "RadialGradientBrush",
-            "SystemBackdrop",
             "CompactSizing",
             "AppWindow",
             "AppWindowTitleBar",
@@ -891,7 +891,7 @@ namespace ModernWpf.Gallery.Tests
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(9, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(74, GalleryCatalog.Items.Count);
+            Assert.AreEqual(75, GalleryCatalog.Items.Count);
         }
 
         [TestMethod]
