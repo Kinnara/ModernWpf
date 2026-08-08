@@ -11,8 +11,8 @@ but each shipped resource dictionary still gets its own row so a new or renamed
 control resource cannot bypass source-parity review.
 
 Current authority is the adopted epoch recorded in
-`docs/winui3-sync-2026-08-06.md`: product `winui3/main`
-`d5bdbb190cdba0b7f1baec4b3981208a9685a360`, latest stable
+`docs/winui3-sync-2026-08-08-preview3.md`: product `winui3/main`
+`6a556bb28fc227acd2ec8fe67ee64853f559084b`, latest stable
 `a97562621a1d1ea397a38a3f512c9eef99db52d8`, and Gallery `main`
 `3669519356c67f1376152c33ed8ea45003a91f3a`. Detailed family audits retain
 their prior blob-level pins; the central epoch record reconciles every change
@@ -69,4 +69,6 @@ bypassing parity review.
 | `TeachingTip/TeachingTip.xaml` | WinUI 3 source-backed WPF port | `docs\teachingtip-winui3-source-audit.md` |
 | `RadioButtons/RadioButtons.xaml` | WinUI 3 source-backed WPF port | `docs\radiobuttons-winui3-source-audit.md` |
 | `RadioMenuItem/RadioMenuItem.xaml` | WinUI 3 source-backed WPF port | `docs\radiomenuflyoutitem-winui3-source-audit.md` |
+| `TimePicker/TimePicker.xaml` | WinUI 3 source-backed WPF port | `docs\timepicker-winui3-source-audit.md` |
 | `ToggleSwitch/ToggleSwitch.xaml` | WinUI 3 source-backed WPF port | `docs\toggleswitch-winui3-source-audit.md` |
+| `TwoPaneView/TwoPaneView.xaml` | WinUI 3 source-backed WPF port | `docs\twopaneview-winui3-source-audit.md` |

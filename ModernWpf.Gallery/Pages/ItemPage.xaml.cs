@@ -225,6 +225,7 @@ namespace ModernWpf.Gallery.Pages
         private static object CreateWorkingSampleContent(string uniqueId)
         {
             return BasicInputSampleFactory.Create(uniqueId)
+                ?? DateTimeSampleFactory.Create(uniqueId)
                 ?? StatusInfoSampleFactory.Create(uniqueId)
                 ?? DialogsFlyoutsSampleFactory.Create(uniqueId)
                 ?? MenusToolbarsSampleFactory.Create(uniqueId)
@@ -265,6 +266,12 @@ namespace ModernWpf.Gallery.Pages
             if (basicInputExamples.Count != 0)
             {
                 return basicInputExamples;
+            }
+
+            var dateTimeExamples = DateTimeSampleFactory.CreateExamples(uniqueId);
+            if (dateTimeExamples.Count != 0)
+            {
+                return dateTimeExamples;
             }
 
             var menuToolbarExamples = MenusToolbarsSampleFactory.CreateExamples(uniqueId, sampleSnippets);

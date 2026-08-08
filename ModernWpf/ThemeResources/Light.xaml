@@ -1736,28 +1736,30 @@
     <Thickness x:Key="TimePickerFirstHostThemeMargin">0,0,20,0</Thickness>
     <Thickness x:Key="TimePickerThirdHostThemeMargin">20,0,0,0</Thickness>
     <FontWeight x:Key="TimePickerHeaderThemeFontWeight">Normal</FontWeight>
-    <m:StaticResource x:Key="TimePickerSpacerFill" ResourceKey="DividerStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="TimePickerSpacerFillDisabled" ResourceKey="AccentFillColorDisabledBrush" />
+    <m:StaticResource x:Key="TimePickerSpacerFill" ResourceKey="ControlStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="TimePickerSpacerFillDisabled" ResourceKey="ControlStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="TimePickerHeaderForeground" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="TimePickerHeaderForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBorderBrush" ResourceKey="ControlAltFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBorderBrushPointerOver" ResourceKey="ControlStrongStrokeColorDefaultBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrush" ResourceKey="ControlElevationBorderBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrushPointerOver" ResourceKey="ControlElevationBorderBrush" />
     <m:StaticResource x:Key="TimePickerButtonBorderBrushPressed" ResourceKey="ControlStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBorderBrushDisabled" ResourceKey="AccentFillColorDisabledBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBorderBrushDisabled" ResourceKey="ControlStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="TimePickerButtonBackground" ResourceKey="ControlFillColorDefaultBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackgroundPointerOver" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundPointerOver" ResourceKey="ControlFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TimePickerButtonBackgroundPressed" ResourceKey="ControlFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackgroundDisabled" ResourceKey="ControlFillColorTertiaryBrush" />
-    <m:StaticResource x:Key="TimePickerButtonBackgroundFocused" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundDisabled" ResourceKey="ControlFillColorDisabledBrush" />
+    <m:StaticResource x:Key="TimePickerButtonBackgroundFocused" ResourceKey="ControlFillColorDefaultBrush" />
     <m:StaticResource x:Key="TimePickerButtonForeground" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundDefault" ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TimePickerButtonForegroundPointerOver" ResourceKey="TextFillColorPrimaryBrush" />
-    <m:StaticResource x:Key="TimePickerButtonForegroundPressed" ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="TimePickerButtonForegroundPressed" ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TimePickerButtonForegroundDisabled" ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="TimePickerButtonForegroundFocused" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="TimePickerFlyoutPresenterBackground" ResourceKey="AcrylicBackgroundFillColorDefaultBrush" />
     <m:StaticResource x:Key="TimePickerFlyoutPresenterBorderBrush" ResourceKey="SurfaceStrokeColorFlyoutBrush" />
     <m:StaticResource x:Key="TimePickerFlyoutPresenterSpacerFill" ResourceKey="DividerStrokeColorDefaultBrush" />
-    <m:StaticResource x:Key="TimePickerFlyoutPresenterHighlightFill" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterHighlightFill" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="TimePickerFlyoutPresenterHighlightForegroundColor" ResourceKey="TextOnAccentAAFillColorPrimary" />
     <m:StaticResource x:Key="TimePickerLightDismissOverlayBackground" ResourceKey="SystemControlPageBackgroundMediumAltMediumBrush" />
 
     <!-- Resources for ToggleButton -->

@@ -41,6 +41,7 @@ against current WinUI 3 source before changing a mapped control.
 | `dev\CommonStyles\ScrollBar_themeresources.xaml` | 8 | `ModernWpf\Styles\ScrollBar.xaml` | Converted | Stock WPF `ScrollBar` is now intentionally governed by official WPF Fluent, so `ModernWpf\Styles\ScrollBar.xaml` uses WPF `ControlTemplate.Triggers` and pointer-over storyboards rather than WinUI `VisualStateEx.Setters`. The previous WinUI-derived auto-hide, panning-thumb, `ScrollBarHelper`, and setter-backed template branches were deleted for the stock control. |
 | `dev\SplitView\SplitView_themeresources.xaml` | 4 | `ModernWpf.Controls\SplitView\SplitView.xaml` | Converted | Closed compact, open inline left, and open compact overlay left direct setter blocks now use `VisualStateEx.Setters`; transition storyboards remain for animated pane movement. |
 | `dev\TeachingTip\TeachingTip.xaml` | 29 | `ModernWpf.Controls\TeachingTip\TeachingTip.xaml` | Converted | Light-dismiss background, button/content/close-button-location/icon/hero-placement, tail-placement, title, and subtitle states now use `VisualStateEx.Setters` driven by `TeachingTip`; WPF popup placement, sizing, and animations remain code-driven. |
+| `dev\CommonStyles\TimePicker_themeresources.xaml` | 1 | `ModernWpf.Controls\TimePicker\TimePicker.xaml` | Converted | The source no-time foreground setter is represented by the `HasNoTime` `VisualStateEx` state. Disabled header/divider setters are also state-backed; WPF popup and finite-selector substitutions are documented in `docs\timepicker-winui3-source-audit.md`. |
 | `dev\CommonStyles\ToggleSwitch_themeresources.xaml` | 1 | `ModernWpf.Controls\ToggleSwitch\ToggleSwitch.xaml` | Converted | WinUI's pressed knob alignment setters are represented in ModernWpf's active `Dragging` state, because this WPF port routes thumb interaction through that state instead of `CommonStates.Pressed`. |
 | `dev\MenuBar\MenuBarItem.xaml` | 3 | `ModernWpf.Controls\MenuBar\MenuBar.xaml` | Converted | MenuBarItem common/selected state setters now use `VisualStateEx.Setters` in the source-backed MenuBar template; the old WPF `Menu` / `MenuItem` mapping has been deleted. |
 
@@ -84,7 +85,6 @@ against current WinUI 3 source before changing a mapped control.
 | `dev\AnimatedIcon\TestUI\AnimatedIconPage.xaml` | 12 | TestUI sample only; `AnimatedIcon` itself is excluded from ModernWpf core. |
 | `dev\CommonStyles\InkToolbar_themeresources.xaml` | 112 | InkToolbar is not carried as a ModernWpf control. |
 | `dev\CommonStyles\MediaTransportControls_themeresources.xaml` | 11 | Media transport controls are not carried as ModernWpf controls. |
-| `dev\CommonStyles\TimePicker_themeresources.xaml` | 1 | TimePicker is not carried as a ModernWpf control. |
 | `dev\Materials\Reveal\*.xaml` and `dev\Materials\Reveal\TestUI\*.xaml` | 331 | WinUI compositor/reveal material system is excluded from the WPF port. |
 
 ## Runtime Gaps Blocking Full Conversion

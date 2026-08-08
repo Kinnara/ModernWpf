@@ -1,3 +1,9 @@
 # ModernWpf v1 public resource-key contract (unshipped).
 # Format: project-relative XAML path|literal top-level x:Key
 # Template parts, visual states, implicit/type keys, and unlisted keys are not contracted.
+ThemeResources/Dark.xaml|TimePickerButtonForegroundDefault
+ThemeResources/Dark.xaml|TimePickerFlyoutPresenterHighlightForegroundColor
+ThemeResources/HighContrast.xaml|TimePickerButtonForegroundDefault
+ThemeResources/HighContrast.xaml|TimePickerFlyoutPresenterHighlightForegroundColor
+ThemeResources/Light.xaml|TimePickerButtonForegroundDefault
+ThemeResources/Light.xaml|TimePickerFlyoutPresenterHighlightForegroundColor

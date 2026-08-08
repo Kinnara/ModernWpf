@@ -1,6 +1,6 @@
 # WPF Gallery Milestone 1 Tracker
 
-Last updated: 2026-07-19
+Last updated: 2026-08-08
 
 ## Non-Negotiable Execution Gate
 
@@ -41,11 +41,13 @@ Hard order:
 
 ## Immediate Status and Next Selection
 
-2026-06-03 touch-oriented control retirement: `PipsPager`, `ParallaxView`,
-`TwoPaneView`, and the gallery-only `FlipView` / `SemanticZoom` surfaces are
-retired from active ModernWpf/Gallery scope. Historical notes below may mention
-prior ports and recordings, but they are not active control obligations unless
-the controls are intentionally reintroduced.
+The original Milestone 1 retirement remains historical: `PipsPager` is
+deferred to 1.1, while `ParallaxView` and the gallery-only `FlipView` /
+`SemanticZoom` surfaces remain outside the active 1.0 roadmap. `TwoPaneView`
+was intentionally reintroduced as a source-audited Preview 3 control, and
+`TimePicker` is now a native ModernWpf control rather than a Gallery-only
+alias. Their current obligations are governed by `docs/roadmap-1.0.md`, their
+source audits, and the release gate; older tracker notes remain historical.
 
 Milestone 1 is complete for the current branch tip after the final row 6 audit.
 The visual, real OS High Contrast, high-drift, asset, measurement,
@@ -2548,12 +2550,12 @@ actual ModernWpf controls or explicitly retained WPF implementations:
 `TeachingTip`, `CommandBar`, `CommandBarFlyout`, `AppBarButton`,
 `AppBarToggleButton`, `AppBarSeparator`, `DropDownButton`, `SplitButton`,
 `ToggleSplitButton`, `RepeatButton`, `ToggleButton`, `MenuBar`, `MenuFlyout`,
-`ItemsRepeater`, `RatingControl`, `ToggleSwitch`, `ColorPicker`,
+`ItemsRepeater`, `RatingControl`, `ToggleSwitch`, `ColorPicker`, `TimePicker`,
 `HyperlinkButton`, `ProgressRing`, `WinUIProgressBar`, `InfoBadge`, `Flyout`, `Popup`,
-`BreadcrumbBar`, `SelectorBar`, `SplitView`, `AnnotatedScrollBar`,
+`BreadcrumbBar`, `SelectorBar`, `SplitView`, `TwoPaneView`, `AnnotatedScrollBar`,
 `GridView`, `PersonPicture`, `IconElement`, `ThemeShadow`, and `TitleBar`.
 Do not keep WinUI alias pages for `CalendarDatePicker`, `CalendarView`,
-`TimePicker`, `TabView`, `RichEditBox`, `RichTextBlock`, `ScrollViewer`,
+`TabView`, `RichEditBox`, `RichTextBlock`, `ScrollViewer`,
 `ScrollView`, `FlipView`, or `ItemsView`; retained WPF pages and retained
 ModernWpf pages may still use those words incidentally in examples or framework
 types. Older tracker notes for pruned pages are historical evidence only; do
@@ -9949,6 +9951,13 @@ primary deltas `8.49` / `10.63`; TimePicker has no primary-crop delta because
 the installed reference does not expose a stable first TimePicker primary UIA
 mapping. Avoid reopening these Date & Calendar extension source shapes unless a
 new local WinUI source, runtime, or crop regression appears.
+
+> Preview 3 supersession (2026-08-08): the paragraph above is retained as the
+> May 2026 evidence record. `TimePicker` is now a native, source-audited
+> ModernWpf control with a replacement Gallery page; only `CalendarDatePicker`
+> and `CalendarView` retain those earlier WPF-control adaptations. See
+> `docs/timepicker-winui3-source-audit.md`.
+
 The generated ModernWpf ItemsView extension page now uses the local official
 WinUI Gallery three-example structure from
 `D:\repos\WinUI-Gallery\WinUIGallery\Samples\ControlPages\ItemsViewPage.xaml`
