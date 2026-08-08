@@ -1,17 +1,15 @@
 # TitleBar current WinUI 3 and Gallery parity audit
 
 Date: 2026-07-18
-Updated: 2026-07-30
+Updated: 2026-08-08
 
 ## Pinned upstream snapshots
 
 | Source | Commit | Purpose |
 | --- | --- | --- |
-| microsoft-ui-xaml | `de3e767333c2f0717a6a70cb22bd192ced5ad885` | Detailed `winui3/main` product/template snapshot audited here. |
-| microsoft-ui-xaml | `eb75504a1978df0d37a3ad4574d6f72bf4d21583` | Current-source epoch target; its TitleBar API-status delta is disposed below. |
+| microsoft-ui-xaml | `e1aa8f64df98d6229f6cd4074d59b654616254da` | Preview 4 `winui3/main` product, API, template, test, and resource cutoff. |
 | microsoft-ui-xaml | `a97562621a1d1ea397a38a3f512c9eef99db52d8` | Latest stable `winui3/release/2.3.1` snapshot content-reconciled with the main epoch. |
-| microsoft-ui-xaml | `8463f45162149de0ec3ad7df752596893fe3e13e` | 2026-05-30 root-layout move from `src\controls` to `controls`; no TitleBar behavior or template change. |
-| WinUI Gallery | `29f62479d5c046a0b854a5868e5a7cd484572d87` | Current Gallery source and installed-app comparison target. |
+| WinUI Gallery | `3669519356c67f1376152c33ed8ea45003a91f3a` | Preview 4 Gallery source and sample cutoff. |
 | WinUI Gallery | `14a4a1a2b8ddc527dc4a7d5f7e743d7c2bc97db7` | Gallery sample-folder conversion baseline. |
 | WinUI Gallery | `9a14fa563584b19c06e3baccf10664a12f84fad5` | Stretchable search content and the drag-region example added by PR #2182. |
 
@@ -24,7 +22,7 @@ copy without changing behavior. The Performance2026 theme dictionary was also
 added and expresses the same resources, geometry, and visual states with
 setter-style assignments.
 
-### 2026-07-29 epoch reconciliation
+### Preview 4 disposition
 
 Main-line commit `54c81dcacb9d6e01a30da7c5299bfd4bf661d43e`
 changes `AutoRefreshDragRegions`, nullable attached `IsDragRegion`, and
@@ -33,14 +31,12 @@ changes `AutoRefreshDragRegions`, nullable attached `IsDragRegion`, and
 change is API-status metadata only; it does not change TitleBar runtime,
 template, resources, or Gallery behavior.
 
-ModernWpf does not currently ship a WinUI `TitleBar` clone. Its
-`WindowTitleBar` attached-property surface and `WindowTitleBarControl` remain a
-documented WPF window-shell facade that adapts title content, buttons, drag
-behavior, and `WindowChrome`. Promoting WinUI's APIs therefore corrects the
-authority/status record but does not add those members to the differently
-scoped facade. A future source-shaped `TitleBar` port can use the unclaimed
-`TitleBar` name and must treat these V11 members as public API from its first
-preview.
+Preview 4 adds the source-shaped `ModernWpf.Controls.TitleBar` control and
+keeps the older WPF window-shell APIs separate. `WindowTitleBar` remains the
+attached-property facade for `WindowChrome`, and
+`WindowTitleBarControl` remains the shell-owned caption control. The new
+`TitleBar` name is therefore not an alias or rename of either existing type.
+All V11 members are public in the first preview that contains the new control.
 
 ## Current WinUI product inventory
 
@@ -55,14 +51,14 @@ The following Git blob IDs pin the exact product inputs:
 | `controls\dev\Generated\TitleBarTemplateSettings.properties.h` | `bc110ebde46759b065e2d4a4f85b524cb7e58604` |
 | `controls\dev\TitleBar\TitleBar.cpp` | `e6885f5fb8c7deb5f6e552c7e88b3614742c2969` |
 | `controls\dev\TitleBar\TitleBar.h` | `ff669a51f2fb6be72d7e7cc5ef7dec1e9a2795ea` |
-| `controls\dev\TitleBar\TitleBar.idl` | `1ee8f768affcef049c302f7723cdd5d80ad1dd5c` |
+| `controls\dev\TitleBar\TitleBar.idl` | `f540ca36b93e557b6b9f1221fc7c08b988ca6fd0` |
 | `controls\dev\TitleBar\TitleBar.xaml` | `acd14c7c6f242d99a0467d69f701b8599d8dd9c5` |
 | `controls\dev\TitleBar\TitleBarAutomationPeer.cpp` | `f3a0717c2aeb1cc056f57138876206cf920c280d` |
 | `controls\dev\TitleBar\TitleBarAutomationPeer.h` | `fafa6fe28a11a74aa405e69d13ce0841ab91b1cd` |
 | `controls\dev\TitleBar\TitleBarTemplateSettings.cpp` | `acd296138d7ba7a4d0a03cf3f9d51be2680e81e3` |
 | `controls\dev\TitleBar\TitleBarTemplateSettings.h` | `77fef2adea98a66903fb28b1feec34aa8e48ec7d` |
 | `controls\dev\TitleBar\TitleBar_themeresources.xaml` | `b22068a7909c99426a1f1811e227db4ad11baa1c` |
-| `controls\dev\TitleBar\TitleBar_themeresources_performance2026.xaml` | `a093c18518d257b87bea607cdb5b6ef6310ee73d` |
+| `controls\dev\TitleBar\TitleBar_themeresources_perf2026.xaml` | `a093c18518d257b87bea607cdb5b6ef6310ee73d` |
 | `controls\dev\TitleBar\InteractionTests\TitleBarTests.cs` | `bc2dca716306280040390a3d446e95aae93ca904` |
 | `controls\dev\TitleBar\Strings\en-us\Resources.resw` | `a9dc89afc23e0c9d43f16463c76c3dab308e136b` |
 | `controls\dev\TitleBar\TestUI\TitleBarPageWindow.xaml` | `bb3a6a49b91d0f35c95711d96d1b056a5cdac735` |
@@ -88,6 +84,15 @@ the interactable list, and the native region immediately.
 The template preserves the expanded 48-DIP layout, 16-DIP icon, back and pane
 button states, compact/expanded content states, high-contrast resources, and
 the current classic and Performance2026 resource values.
+
+Preview 4 records 76 source-shaped TitleBar resource entries in
+`ModernWpf/PublicResourceKeys.Unshipped.txt`: 18 Light, Dark, and High Contrast
+brush aliases per theme plus 22 shared dimensions, margins, and alignments.
+The shared width resources drive live WPF spacer elements rather than private
+`GridLength` copies, so application overrides affect the rendered template.
+`TitleBarButtonBaseStyle` and the template itself remain unlisted
+implementation resources under the repository's documented resource-contract
+policy.
 
 ### Accessibility
 
@@ -124,15 +129,45 @@ these paths at the current Gallery pin.
 
 ## ModernWpf mapping and platform boundary
 
-ModernWpf predates the current WinUI control. Its WPF-specific attached-property
-facade is named `ModernWpf.Controls.WindowTitleBar`, leaving `TitleBar`
-available for a future port of the current WinUI control.
-`ModernWpf.Controls.Primitives.WindowTitleBarControl` is the retained WPF
-window-shell substitution. Its attached window state, icon handling, title
-content, back/pane buttons, and WPF `WindowChrome` integration remain native
-to WPF. The facade's `ExtendsContentIntoTitleBar` name follows the current
-Windows app-window terminology; `CoreApplicationViewTitleBar` retains the
-legacy UWP-shaped `ExtendViewIntoTitleBar` member.
+`ModernWpf.Controls.TitleBar`, `TitleBarTemplateSettings`, and
+`TitleBarAutomationPeer` now carry the current WinUI-shaped control contract.
+The template keeps the source 32/48-DIP height states, icon/title/subtitle,
+left/content/right slots, separate back and pane-toggle resources, compact
+layout, activation states, Light/Dark resources, and High Contrast aliases.
+
+WPF has no `InputNonClientPointerSource`, `XamlRoot`, or WinUI rectangular
+non-client region API. The adaptation classifies the live WPF visual/logical
+tree at pointer time: ordinary enabled controls and the complete left/right
+header regions stay clickable,
+non-interactive title-bar space calls `Window.DragMove`, and the nearest
+nullable `TitleBar.IsDragRegion` override wins. A double-click on a drag region
+maximizes or restores the WPF `Window`. `AutoRefreshDragRegions` listens to the
+content's `LayoutUpdated` event; `RecomputeDragRegions` updates layout and
+invalidates the control without manufacturing native rectangles.
+
+The back and pane-toggle buttons use the package's high-visibility WPF system
+focus visual, matching WinUI's `UseSystemFocusVisuals` intent in Light, Dark,
+and High Contrast. Their automation names and tooltips come from the
+control-local resource table (`Back` and `Toggle Navigation` in the neutral
+English resources), rather than hard-coded template text.
+
+The control marks its inherited WPF chrome subtree as client-hit-testable.
+This is required when it overlaps `WindowChrome.CaptionHeight`: buttons and
+other interactive content receive normal WPF input, while the control's own
+preview handler turns only classified drag space back into `DragMove` and
+double-click maximize/restore behavior.
+
+The control synchronizes a non-empty `Title` to the containing WPF
+`Window.Title` for shell/UIA consistency and restores the pre-control title
+when it detaches. It does not overwrite a title that the application changed
+after the control's last update. The automation peer reports TitleBar,
+`TitleBar`, and the control title as the fallback accessible name.
+
+The pre-existing WPF-specific attached-property facade remains
+`ModernWpf.Controls.WindowTitleBar`, and
+`ModernWpf.Controls.Primitives.WindowTitleBarControl` remains the shell-owned
+caption control. Their attached window state, icon handling, and
+`WindowChrome` integration are not redirected through the new content control.
 
 The retained shell's public `WindowTitleBar.HeightKey` is a WPF-specific
 customization point. A window-scoped override now drives the rendered
@@ -147,56 +182,38 @@ old control-wide `SymbolThemeFontFamily` setter is neither needed for those
 icons nor appropriate for arbitrary content. A nested `TextBlock` now inherits
 the host font unless the application explicitly gives it another font.
 
-`ModernWpf.Gallery\Pages\WindowingSampleFactory.cs` now mirrors all three
-current Gallery examples. The configuration code and visible preview use the
-stretch resource, `MaxWidth="580"`, and `Search...`. The new drag-region window
-adapts WinUI's `InputNonClientPointerSource` behavior to WPF: empty title-bar
-space and explicitly opted-in content call `Window.DragMove`; ordinary WPF
-buttons and the search box remain interactive; dynamically added controls are
-recognized immediately by WPF's live visual and input trees; and the
-recompute action documents that platform substitution. Runtime automation
-tests open the child window and exercise the radio choices, status button,
-dynamic button, and recompute status.
+`ModernWpf.Gallery\Pages\WindowingSampleFactory.cs` mirrors all three current
+Gallery examples with the real control rather than a hand-built title-bar
+facsimile. The configuration preview uses the stretch resource,
+`MaxWidth="580"`, and `Search...`. The drag-region window demonstrates unset,
+true, and false attached values plus dynamic content and explicit recompute.
+The end-to-end window uses WPF `Binding`, `WindowTitleBar` to extend content
+into the existing ModernWpf chrome, and the new control for back/pane events.
 
-The installed-Gallery primary comparison intentionally remains the first
-470x48 preview. With the back button, pane toggle, and left header collapsed,
-the AppWindow inset is zero: the template places 14 DIPs before the 16x16 icon
-and then its 16-DIP right margin. At the fixed comparison width the stretchable
-search box measures 186x32, followed by the 30x30 right header. The Gallery
-card owns the one-pixel rounded stroke; the WPF preview represents that parent
-ownership with its existing negative one-pixel surface margin so the crop
-does not alter control size or hit targets.
+## Validation and release gate
 
-## Validation
+Focused product coverage verifies the complete dependency-property/event
+surface, template height, button states and focus visuals, independent
+back/pane resource keys, live public layout-resource overrides, window-title
+synchronization, live drag classification, dynamic content, nullable attached
+overrides, header passthrough, and the automation peer. Focused Gallery
+coverage opens both real TitleBar windows and verifies the three-example
+order, snippets, real control identity, option updates, all drag-region modes,
+dynamic recomputation, pane toggling, bound back navigation, and exhaustive
+visual-artifact registration.
 
-| Theme | Installed Gallery / ModernWpf crop | Primary delta |
-| --- | --- | --- |
-| Light | `470x48` / `470x48` | `0.74` |
-| Dark | `470x48` / `470x48` | `0.82` |
-
-- Light: `artifacts/visual-checks/20260718-174511-923-56972/report.md`.
-- Dark: `artifacts/visual-checks/20260718-174542-034-92644/report.md`.
-- Both runs used the installed current WinUI Gallery and a freshly built
-  ModernWpf Gallery; both passed the strict `1.0` primary-delta threshold and
-  the exact-size threshold of `0`.
-- Fresh option-interaction recordings passed by toggling
-  `IsBackButtonVisible`: Light
-  `artifacts/gallery-recordings/20260718-184435-809/report.md` detected a
-  `6.819` local delta, and Dark
-  `artifacts/gallery-recordings/20260718-184510-347/report.md` detected a
-  `7.897` local delta.
-- Focused product tests cover the dependency-property shell contract,
-  title-bar automation peer, and this current-source audit.
-- Focused Gallery tests cover the three-example order, source snippets,
-  configuration preview, child-window drag-region adaptation, dynamic content,
-  and visual-harness gates on `net8.0-windows7.0` and
-  `net10.0-windows7.0`.
-- `ModernWpf.Controls` and `ModernWpf.Gallery` remain build-checked for the
-  retained `net462` target. The final Controls build completed with the
-  repository's existing warnings and zero errors; Gallery completed with zero
-  warnings and zero errors.
+The prior July `470x48` pixel reports describe the retired hand-built preview
+and are historical evidence only. They are not accepted as Preview 4 proof.
+Before the Preview 4 tag, the final clean tip must pass the complete serialized
+release gate and new Light, Dark, and real OS High Contrast Gallery checks on
+`net462`, `net8.0-windows7.0`, and `net10.0-windows7.0`. Manual evidence must
+exercise both title-bar buttons, interactive versus draggable content,
+double-click maximize/restore, dynamic attached-property changes, activation,
+keyboard focus, and window chrome. No pixel or manual result is claimed in
+this audit until that final-tip evidence exists.
 
 The unavailable native primitive is explicitly bounded: WPF has no direct
 equivalent of WinUI's `InputNonClientPointerSource` rectangular non-client
-region API. That affects implementation mechanics, not the visible preview,
-accessible role, interactive exclusions, or Gallery-demonstrated outcomes.
+region API. That affects implementation mechanics, not the public control
+shape, accessible role, interactive exclusions, or Gallery-demonstrated
+outcomes.

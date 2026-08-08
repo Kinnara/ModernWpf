@@ -2553,7 +2553,8 @@ actual ModernWpf controls or explicitly retained WPF implementations:
 `ItemsRepeater`, `RatingControl`, `ToggleSwitch`, `ColorPicker`, `TimePicker`,
 `HyperlinkButton`, `ProgressRing`, `WinUIProgressBar`, `InfoBadge`, `Flyout`, `Popup`,
 `BreadcrumbBar`, `SelectorBar`, `SplitView`, `TwoPaneView`, `AnnotatedScrollBar`,
-`GridView`, `PersonPicture`, `IconElement`, `ThemeShadow`, and `TitleBar`.
+`GridView`, `PersonPicture`, `IconElement`, `ThemeShadow`, `TitleBar`, and
+`SystemBackdrop`.
 Do not keep WinUI alias pages for `CalendarDatePicker`, `CalendarView`,
 `TabView`, `RichEditBox`, `RichTextBlock`, `ScrollViewer`,
 `ScrollView`, `FlipView`, or `ItemsView`; retained WPF pages and retained

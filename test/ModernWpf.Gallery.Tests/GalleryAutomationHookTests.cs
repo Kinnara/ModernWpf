@@ -80,6 +80,7 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "IconElement", "GallerySample_IconElement_Root", "GallerySample_IconElement_SlicesIcon" };
             yield return new object[] { "ThemeShadow", "GallerySample_ThemeShadow_Root", "GallerySample_ThemeShadow_ShadowRect" };
             yield return new object[] { "TitleBar", "GallerySample_TitleBar_Root", "GallerySample_TitleBar_TitleBarControl" };
+            yield return new object[] { "SystemBackdrop", "GallerySample_SystemBackdrop_Root", "GallerySample_SystemBackdrop_MicaButton" };
             yield return new object[] { "GridView", "GallerySample_GridView_Root", "GallerySample_GridView_BasicGridView" };
             yield return new object[] { "ItemsRepeater", "GallerySample_ItemsRepeater_Root", "GallerySample_ItemsRepeater_ItemsRepeater" };
             yield return new object[] { "BreadcrumbBar", "GallerySample_BreadcrumbBar_Root", "GallerySample_BreadcrumbBar_BreadcrumbBar" };
@@ -146,7 +147,8 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "PersonPicture", 1 };
             yield return new object[] { "IconElement", 6 };
             yield return new object[] { "ThemeShadow", 1 };
-            yield return new object[] { "TitleBar", 2 };
+            yield return new object[] { "TitleBar", 3 };
+            yield return new object[] { "SystemBackdrop", 1 };
         }
 
         public static IEnumerable<object[]> WinUIPortedControlExampleSupplementalContent()
@@ -167,7 +169,8 @@ namespace ModernWpf.Gallery.Tests
             yield return new object[] { "PersonPicture", "P" };
             yield return new object[] { "IconElement", "PNNNNN" };
             yield return new object[] { "ThemeShadow", "P" };
-            yield return new object[] { "TitleBar", "PN" };
+            yield return new object[] { "TitleBar", "PNN" };
+            yield return new object[] { "SystemBackdrop", "N" };
             yield return new object[] { "InfoBadge", "PPNP" };
             yield return new object[] { "InfoBar", "PPP" };
             yield return new object[] { "ProgressRing", "PP" };
@@ -4311,13 +4314,15 @@ namespace ModernWpf.Gallery.Tests
                         "Use the examples below to configure a ModernWPF TitleBar or integrate one with NavigationView.",
                         new TextRange(intro.ContentStart, intro.ContentEnd).Text.Trim());
 
-                    Assert.AreEqual(2, page.Examples.Count);
+                    Assert.AreEqual(3, page.Examples.Count);
                     Assert.AreEqual("TitleBar configuration", page.Examples[0].HeaderText);
-                    Assert.AreEqual("End to end TitleBar sample", page.Examples[1].HeaderText);
-                    Assert.AreEqual(HorizontalAlignment.Stretch, page.Examples[0].HorizontalContentAlignment);
-                    Assert.AreEqual(VerticalAlignment.Center, page.Examples[0].VerticalContentAlignment);
-                    Assert.AreEqual(HorizontalAlignment.Stretch, page.Examples[1].HorizontalContentAlignment);
-                    Assert.AreEqual(VerticalAlignment.Center, page.Examples[1].VerticalContentAlignment);
+                    Assert.AreEqual("TitleBar drag regions", page.Examples[1].HeaderText);
+                    Assert.AreEqual("End to end TitleBar sample", page.Examples[2].HeaderText);
+                    foreach (var example in page.Examples)
+                    {
+                        Assert.AreEqual(HorizontalAlignment.Stretch, example.HorizontalContentAlignment);
+                        Assert.AreEqual(VerticalAlignment.Center, example.VerticalContentAlignment);
+                    }
                     Assert.IsFalse(page.HasAdditionalSampleSnippets);
                     StringAssert.Contains(page.Examples[0].XamlCode, "<TitleBar");
                     StringAssert.Contains(page.Examples[0].XamlCode, "Title=\"$(Title)\"");
@@ -4325,25 +4330,35 @@ namespace ModernWpf.Gallery.Tests
                     StringAssert.Contains(page.Examples[0].XamlCode, "IsBackButtonVisible=\"$(BackButtonVisibility)\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "IsPaneToggleButtonVisible=\"$(PaneToggleVisibility)\"");
                     StringAssert.Contains(page.Examples[0].XamlCode, "<SymbolIconSource Symbol=\"Library\" />");
-                    Assert.IsFalse(page.Examples[0].XamlCode.Contains("TitleBarContentHorizontalAlignment"));
-                    StringAssert.Contains(page.Examples[0].XamlCode, "Width=\"360\"");
-                    StringAssert.Contains(page.Examples[0].XamlCode, "PlaceholderText=\"Search..\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "TitleBarContentHorizontalAlignment");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "MaxWidth=\"580\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "PlaceholderText=\"Search...\"");
                     Assert.IsNull(page.Examples[0].CSharpCode);
-                    StringAssert.Contains(page.Examples[1].XamlCode, "x:Name=\"titleBar\"");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "PaneToggleRequested=\"TitleBar_PaneToggleRequested\"");
-                    StringAssert.Contains(page.Examples[1].XamlCode, "<NavigationView");
-                    StringAssert.Contains(page.Examples[1].CSharpCode, "this.ExtendsContentIntoTitleBar = true;");
-                    StringAssert.Contains(page.Examples[1].CSharpCode, "this.SetTitleBar(titleBar);");
+                    StringAssert.Contains(page.Examples[1].XamlCode, "TitleBar.IsDragRegion");
+                    StringAssert.Contains(page.Examples[1].CSharpCode, "titleBar.RecomputeDragRegions();");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "x:Name=\"titleBar\"");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "PaneToggleRequested=\"TitleBar_PaneToggleRequested\"");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "{Binding ElementName=navFrame, Path=CanGoBack}");
+                    StringAssert.Contains(page.Examples[2].XamlCode, "<NavigationView");
+                    Assert.IsFalse(page.Examples[2].XamlCode.Contains("x:Bind"));
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "WindowTitleBar.SetExtendsContentIntoTitleBar(this, true);");
+                    StringAssert.Contains(page.Examples[2].CSharpCode, "WindowTitleBar.SetIsIconVisible(this, false);");
 
                     var root = (GallerySamplePanel)page.Examples[0].ExampleContent;
                     Assert.AreEqual(1, root.Children.Count);
                     Assert.AreEqual(VerticalAlignment.Center, root.VerticalAlignment);
-                    var titleBarControl = (ContentControl)FindByAutomationId(page, "GallerySample_TitleBar_TitleBarControl");
+                    var titleBarControl = (Mux.TitleBar)FindByAutomationId(page, "GallerySample_TitleBar_TitleBarControl");
                     Assert.IsNotNull(titleBarControl);
                     Assert.AreEqual("TitleBarControl", titleBarControl.Name);
                     Assert.AreEqual(470d, titleBarControl.Width);
-                    Assert.AreEqual(48d, titleBarControl.Height);
+                    Assert.AreEqual(48d, titleBarControl.ActualHeight, 0.1);
                     Assert.AreEqual("TitleBarControl", AutomationProperties.GetName(titleBarControl));
+                    Assert.AreEqual(GalleryBranding.DisplayName, titleBarControl.Title);
+                    Assert.AreEqual("Preview", titleBarControl.Subtitle);
+                    Assert.IsInstanceOfType<Mux.SymbolIconSource>(titleBarControl.IconSource);
+                    Assert.AreEqual(
+                        Mux.Symbol.Library,
+                        ((Mux.SymbolIconSource)titleBarControl.IconSource).Symbol);
                     var configurationCard = FindDescendants<ControlExample>(page)
                         .Single(example => example.HeaderText == "TitleBar configuration");
                     Assert.IsTrue(configurationCard.UseWinUIGalleryLayout);
@@ -4354,27 +4369,18 @@ namespace ModernWpf.Gallery.Tests
                         titleBarBoundsInDisplay.Top + titleBarBoundsInDisplay.Height / 2d,
                         1d,
                         "The TitleBar preview must remain vertically centered beside its taller options panel.");
-                    var titleBarSurface = FindNamedDescendant<Border>(titleBarControl, "TitleBarSurface");
-                    Assert.IsNotNull(titleBarSurface);
-                    Assert.AreEqual(new Thickness(-1), titleBarSurface.Margin);
-                    Assert.AreEqual(new Thickness(1), titleBarSurface.BorderThickness);
-                    Assert.AreEqual(new CornerRadius(4), titleBarSurface.CornerRadius);
-                    var titleBarIcon = FindNamedDescendant<Mux.SymbolIcon>(titleBarControl, "TitleBarIcon");
-                    Assert.IsNotNull(titleBarIcon);
-                    Assert.AreEqual(16d, titleBarIcon.Width);
-                    Assert.AreEqual(16d, titleBarIcon.Height);
-                    Assert.AreEqual(new Thickness(14, 0, 16, 0), titleBarIcon.Margin);
-                    Assert.AreEqual(Mux.Symbol.Library, titleBarIcon.Symbol);
                     var titleBarSearchBox = (Mux.AutoSuggestBox)FindByAutomationId(page, "GallerySample_TitleBar_SearchBox");
                     Assert.IsNotNull(titleBarSearchBox);
-                    Assert.AreEqual(186d, titleBarSearchBox.Width);
-                    Assert.AreEqual(new Thickness(0, 0, 16, 0), titleBarSearchBox.Margin);
-                    Assert.AreEqual("Search..", titleBarSearchBox.PlaceholderText);
-                    var rightHeader = FindNamedDescendant<Mux.PersonPicture>(titleBarControl, "TitleBarRightHeader");
+                    Assert.AreEqual(580d, titleBarSearchBox.MaxWidth);
+                    Assert.AreEqual(HorizontalAlignment.Stretch, titleBarSearchBox.HorizontalAlignment);
+                    Assert.AreEqual("Search...", titleBarSearchBox.PlaceholderText);
+                    Assert.AreSame(titleBarSearchBox, titleBarControl.Content);
+                    var rightHeader = (Mux.PersonPicture)titleBarControl.RightHeader;
                     Assert.IsNotNull(rightHeader);
+                    Assert.AreEqual("TitleBarRightHeader", rightHeader.Name);
                     Assert.AreEqual(30d, rightHeader.Width);
                     Assert.AreEqual(30d, rightHeader.Height);
-                    Assert.AreEqual(new Thickness(0, 0, 16, 0), rightHeader.Margin);
+                    Assert.AreEqual("JD", rightHeader.Initials);
 
                     var titleBox = FindNamedDescendant<TextBox>(page, "TitleBox");
                     Assert.IsNotNull(titleBox);
@@ -4406,24 +4412,88 @@ namespace ModernWpf.Gallery.Tests
                     Assert.AreEqual("IsPaneToggleButtonVisible", paneToggle.Header);
                     Assert.IsFalse(paneToggle.IsOn);
                     Assert.AreEqual(280d, ((FrameworkElement)titleHeader.Parent).ActualHeight, 0.01);
-                    var previewBackButton = (Button)FindByAutomationId(page, "GallerySample_TitleBar_BackButton");
+                    var previewBackButton = (Button)FindByAutomationId(page, "TitleBarBackButton");
                     Assert.IsNotNull(previewBackButton);
                     Assert.AreEqual(Visibility.Collapsed, previewBackButton.Visibility);
-                    var previewPaneButton = (Button)FindByAutomationId(page, "GallerySample_TitleBar_PaneToggleButton");
+                    var previewPaneButton = (Button)FindByAutomationId(page, "TitleBarPaneToggleButton");
                     Assert.IsNotNull(previewPaneButton);
                     Assert.AreEqual(Visibility.Collapsed, previewPaneButton.Visibility);
 
-                    var titleText = FindNamedDescendant<TextBlock>(page, "TitleText");
-                    var subtitleText = FindNamedDescendant<TextBlock>(page, "SubtitleText");
+                    var titleText = FindNamedDescendant<TextBlock>(titleBarControl, "PART_TitleText");
+                    var subtitleText = FindNamedDescendant<TextBlock>(titleBarControl, "PART_SubtitleText");
                     Assert.IsNotNull(titleText);
                     Assert.IsNotNull(subtitleText);
                     Assert.AreEqual(GalleryBranding.DisplayName, titleText.Text);
                     Assert.AreEqual("Preview", subtitleText.Text);
+                    titleBox.Text = "Documents";
+                    subtitleBox.Text = "Contoso";
                     backButtonToggle.IsOn = true;
+                    paneToggle.IsOn = true;
                     WpfTestHost.DoEvents();
+                    Assert.AreEqual("Documents", titleBarControl.Title);
+                    Assert.AreEqual("Contoso", titleBarControl.Subtitle);
                     Assert.AreEqual(Visibility.Visible, previewBackButton.Visibility);
+                    Assert.AreEqual(Visibility.Visible, previewPaneButton.Visibility);
 
-                    var endToEndRoot = (GallerySamplePanel)page.Examples[1].ExampleContent;
+                    var dragRegionsRoot = (GallerySamplePanel)page.Examples[1].ExampleContent;
+                    var dragRegionsButton = (Button)FindByAutomationId(
+                        dragRegionsRoot,
+                        "GallerySample_TitleBar_DragRegionsShowWindowButton");
+                    Assert.IsNotNull(dragRegionsButton);
+                    Assert.AreSame(
+                        dragRegionsButton.TryFindResource("AccentButtonStyle"),
+                        dragRegionsButton.Style);
+
+                    dragRegionsButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    var dragRegionsWindow = Application.Current.Windows
+                        .Cast<Window>()
+                        .Single(candidate => string.Equals(
+                            AutomationProperties.GetAutomationId(candidate),
+                            GalleryAutomation.SampleElementId("TitleBar", "DragRegionsWindow"),
+                            StringComparison.Ordinal));
+                    Assert.IsTrue(Mux.WindowTitleBar.GetExtendsContentIntoTitleBar(dragRegionsWindow));
+                    Assert.IsFalse(Mux.WindowTitleBar.GetIsIconVisible(dragRegionsWindow));
+                    var dragRegionsTitleBar = FindNamedDescendant<Mux.TitleBar>(
+                        dragRegionsWindow,
+                        "DragRegionsTitleBar");
+                    var dragRegionsSearchBox = FindNamedDescendant<Mux.AutoSuggestBox>(
+                        dragRegionsWindow,
+                        "DragRegionsSearchBox");
+                    var statusBadge = FindNamedDescendant<Button>(dragRegionsWindow, "StatusBadge");
+                    var dragRegionOptions = FindNamedDescendant<Mux.RadioButtons>(
+                        dragRegionsWindow,
+                        "BadgeIsDragRegionRadios");
+                    Assert.IsNotNull(dragRegionsTitleBar);
+                    Assert.IsNotNull(dragRegionsSearchBox);
+                    Assert.IsNotNull(statusBadge);
+                    Assert.IsNotNull(dragRegionOptions);
+                    Assert.AreSame(dragRegionsSearchBox, dragRegionsTitleBar.Content);
+                    Assert.IsNull(Mux.TitleBar.GetIsDragRegion(statusBadge));
+                    dragRegionOptions.SelectedIndex = 1;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(true, Mux.TitleBar.GetIsDragRegion(statusBadge));
+                    dragRegionOptions.SelectedIndex = 2;
+                    WpfTestHost.DoEvents();
+                    Assert.AreEqual(false, Mux.TitleBar.GetIsDragRegion(statusBadge));
+                    dragRegionOptions.SelectedIndex = 0;
+                    WpfTestHost.DoEvents();
+                    Assert.IsNull(Mux.TitleBar.GetIsDragRegion(statusBadge));
+
+                    var toggleExtraButton = FindNamedDescendant<Button>(
+                        dragRegionsWindow,
+                        "ToggleExtraTitleBarButton");
+                    Assert.IsNotNull(toggleExtraButton);
+                    toggleExtraButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.IsNotNull(FindNamedDescendant<Button>(dragRegionsWindow, "ExtraTitleBarButton"));
+                    toggleExtraButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.IsNull(FindNamedDescendant<Button>(dragRegionsWindow, "ExtraTitleBarButton"));
+                    dragRegionsWindow.Close();
+                    WpfTestHost.DoEvents();
+
+                    var endToEndRoot = (GallerySamplePanel)page.Examples[2].ExampleContent;
                     Assert.AreEqual(1, endToEndRoot.Children.Count);
                     var endToEndStack = (StackPanel)endToEndRoot.Children[0];
                     Assert.AreEqual(560d, endToEndStack.MaxWidth);
@@ -4440,11 +4510,212 @@ namespace ModernWpf.Gallery.Tests
                     var showWindowButton = FindButtonByContent(endToEndRoot, "Show window");
                     Assert.IsNotNull(showWindowButton);
                     Assert.AreSame(showWindowButton.TryFindResource("AccentButtonStyle"), showWindowButton.Style);
+                    Assert.AreEqual(
+                        GalleryAutomation.SampleElementId("TitleBar", "EndToEndShowWindowButton"),
+                        AutomationProperties.GetAutomationId(showWindowButton));
+
+                    showWindowButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    var endToEndWindow = Application.Current.Windows
+                        .Cast<Window>()
+                        .Single(candidate => string.Equals(
+                            AutomationProperties.GetAutomationId(candidate),
+                            GalleryAutomation.SampleElementId("TitleBar", "EndToEndWindow"),
+                            StringComparison.Ordinal));
+                    Assert.IsTrue(Mux.WindowTitleBar.GetExtendsContentIntoTitleBar(endToEndWindow));
+                    Assert.IsFalse(Mux.WindowTitleBar.GetIsIconVisible(endToEndWindow));
+                    var endToEndTitleBar = FindNamedDescendant<Mux.TitleBar>(
+                        endToEndWindow,
+                        "EndToEndTitleBar");
+                    var navigationView = FindNamedDescendant<Mux.NavigationView>(endToEndWindow, "navView");
+                    var navigationFrame = FindNamedDescendant<Frame>(endToEndWindow, "navFrame");
+                    Assert.IsNotNull(endToEndTitleBar);
+                    Assert.IsNotNull(navigationView);
+                    Assert.IsNotNull(navigationFrame);
+                    Assert.IsNotNull(
+                        endToEndTitleBar.GetBindingExpression(Mux.TitleBar.IsBackButtonVisibleProperty));
+                    Assert.IsNotNull(
+                        endToEndTitleBar.GetBindingExpression(Mux.TitleBar.IsBackButtonEnabledProperty));
+
+                    var firstPage = new Page { Content = "First page" };
+                    var secondPage = new Page { Content = "Second page" };
+                    Assert.IsTrue(navigationFrame.Navigate(firstPage));
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(navigationFrame.Navigate(secondPage));
+                    WpfTestHost.DoEvents();
+                    Assert.IsTrue(navigationFrame.CanGoBack);
+                    Assert.IsTrue(endToEndTitleBar.IsBackButtonVisible);
+                    Assert.IsTrue(endToEndTitleBar.IsBackButtonEnabled);
+
+                    var paneToggleButton = (Button)FindByAutomationId(
+                        endToEndTitleBar,
+                        "TitleBarPaneToggleButton");
+                    Assert.IsNotNull(paneToggleButton);
+                    var wasPaneOpen = navigationView.IsPaneOpen;
+                    paneToggleButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.AreNotEqual(wasPaneOpen, navigationView.IsPaneOpen);
+
+                    var backButton = (Button)FindByAutomationId(
+                        endToEndTitleBar,
+                        "TitleBarBackButton");
+                    Assert.IsNotNull(backButton);
+                    backButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    Assert.AreSame(firstPage, navigationFrame.Content);
+                    endToEndWindow.Close();
+                    WpfTestHost.DoEvents();
                 }
                 finally
                 {
+                    foreach (Window ownedWindow in Application.Current.Windows.Cast<Window>().ToArray())
+                    {
+                        if (!ReferenceEquals(ownedWindow, window) &&
+                            AutomationProperties.GetAutomationId(ownedWindow).StartsWith(
+                                "GallerySample_TitleBar_",
+                                StringComparison.Ordinal))
+                        {
+                            ownedWindow.Close();
+                        }
+                    }
+
                     window.Content = null;
                     window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void SystemBackdropSampleOpensRealMaterialWindowsWithFallbacks()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("SystemBackdrop"));
+                var hostWindow = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+                try
+                {
+                    hostWindow.Show();
+                    WpfTestHost.DoEvents();
+                    hostWindow.UpdateLayout();
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsTrue(page.ShowIntroContent);
+                    Assert.AreEqual(1, page.Examples.Count);
+                    Assert.AreEqual("Mica and Desktop Acrylic", page.Examples[0].HeaderText);
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ui:WindowBackdrop.Kind=\"Mica\"");
+                    StringAssert.Contains(page.Examples[0].XamlCode, "ui:WindowBackdrop.FallbackBrush");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "WindowBackdropKind.Mica");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "WindowBackdrop.GetEffectiveKind(window)");
+                    StringAssert.Contains(page.Examples[0].CSharpCode, "High Contrast");
+
+                    VerifyBackdropWindow(
+                        page,
+                        "GallerySample_SystemBackdrop_MicaButton",
+                        Mux.WindowBackdropKind.Mica);
+                    VerifyBackdropWindow(
+                        page,
+                        "GallerySample_SystemBackdrop_DesktopAcrylicButton",
+                        Mux.WindowBackdropKind.DesktopAcrylic);
+                }
+                finally
+                {
+                    foreach (Window window in Application.Current.Windows.Cast<Window>().ToArray())
+                    {
+                        if (!ReferenceEquals(window, hostWindow) &&
+                            AutomationProperties.GetAutomationId(window).StartsWith(
+                                "GallerySample_SystemBackdrop_",
+                                StringComparison.Ordinal))
+                        {
+                            window.Close();
+                        }
+                    }
+
+                    hostWindow.Content = null;
+                    hostWindow.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
+        public void SystemBackdropSampleKeepsOneActiveMaterialWindow()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var page = new ItemPage(GalleryCatalog.FindItem("SystemBackdrop"));
+                var hostWindow = new Window
+                {
+                    Width = 1024,
+                    Height = 768,
+                    Left = -32000,
+                    Top = -32000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual,
+                    Content = page
+                };
+                try
+                {
+                    hostWindow.Show();
+                    WpfTestHost.DoEvents();
+
+                    var micaButton = (Button)FindByAutomationId(
+                        page,
+                        "GallerySample_SystemBackdrop_MicaButton");
+                    micaButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+                    var micaWindow = Application.Current.Windows
+                        .Cast<Window>()
+                        .Single(window => string.Equals(
+                            AutomationProperties.GetAutomationId(window),
+                            "GallerySample_SystemBackdrop_MicaWindow",
+                            StringComparison.Ordinal));
+
+                    var acrylicButton = (Button)FindByAutomationId(
+                        page,
+                        "GallerySample_SystemBackdrop_DesktopAcrylicButton");
+                    acrylicButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+                    WpfTestHost.DoEvents();
+
+                    Assert.IsFalse(micaWindow.IsVisible);
+                    var acrylicWindow = Application.Current.Windows
+                        .Cast<Window>()
+                        .Single(window => string.Equals(
+                            AutomationProperties.GetAutomationId(window),
+                            "GallerySample_SystemBackdrop_DesktopAcrylicWindow",
+                            StringComparison.Ordinal));
+                    Assert.IsTrue(acrylicWindow.IsVisible);
+                    var status = (TextBlock)FindByAutomationId(
+                        page,
+                        "GallerySample_SystemBackdrop_Status");
+                    StringAssert.StartsWith(
+                        status.Text,
+                        "Requested DesktopAcrylic; effective material:");
+                }
+                finally
+                {
+                    foreach (Window window in Application.Current.Windows.Cast<Window>().ToArray())
+                    {
+                        if (!ReferenceEquals(window, hostWindow) &&
+                            AutomationProperties.GetAutomationId(window).StartsWith(
+                                "GallerySample_SystemBackdrop_",
+                                StringComparison.Ordinal))
+                        {
+                            window.Close();
+                        }
+                    }
+
+                    hostWindow.Content = null;
+                    hostWindow.Close();
                     WpfTestHost.DoEvents();
                 }
             });
@@ -6539,6 +6810,59 @@ namespace ModernWpf.Gallery.Tests
             }
 
             return count;
+        }
+
+        private static void VerifyBackdropWindow(
+            DependencyObject page,
+            string buttonAutomationId,
+            Mux.WindowBackdropKind requestedKind)
+        {
+            var button = (Button)FindByAutomationId(page, buttonAutomationId);
+            Assert.IsNotNull(button);
+            Assert.AreSame(button.TryFindResource("AccentButtonStyle"), button.Style);
+
+            button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+            WpfTestHost.DoEvents();
+
+            var windowAutomationId = GalleryAutomation.SampleElementId(
+                "SystemBackdrop",
+                requestedKind + "Window");
+            var materialWindow = Application.Current.Windows
+                .Cast<Window>()
+                .Single(window => string.Equals(
+                    AutomationProperties.GetAutomationId(window),
+                    windowAutomationId,
+                    StringComparison.Ordinal));
+            try
+            {
+                Assert.AreEqual(requestedKind, Mux.WindowBackdrop.GetKind(materialWindow));
+                Assert.IsNotNull(Mux.WindowBackdrop.GetFallbackBrush(materialWindow));
+                var effectiveKind = Mux.WindowBackdrop.GetEffectiveKind(materialWindow);
+                Assert.IsTrue(
+                    effectiveKind == requestedKind || effectiveKind == Mux.WindowBackdropKind.None,
+                    $"Unexpected effective material {effectiveKind} for {requestedKind}.");
+                if (effectiveKind == requestedKind)
+                {
+                    Assert.AreSame(Brushes.Transparent, materialWindow.Background);
+                }
+                else
+                {
+                    Assert.AreSame(
+                        Mux.WindowBackdrop.GetFallbackBrush(materialWindow),
+                        materialWindow.Background);
+                }
+
+                var status = (TextBlock)FindByAutomationId(
+                    page,
+                    "GallerySample_SystemBackdrop_Status");
+                StringAssert.Contains(status.Text, $"Requested {requestedKind}");
+                StringAssert.Contains(status.Text, $"effective material: {effectiveKind}");
+            }
+            finally
+            {
+                materialWindow.Close();
+                WpfTestHost.DoEvents();
+            }
         }
 
         private static void AssertAnnotatedColorItem(WrapPanel itemsRepeater, int index, Color expectedColor)

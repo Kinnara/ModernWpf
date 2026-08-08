@@ -17,6 +17,7 @@ namespace ModernWpf
         public const string SR_NavigationViewItemDefaultControlName = "NavigationViewItemDefaultControlName";
         public const string SR_NavigationBackButtonName = "NavigationBackButtonName";
         public const string SR_NavigationBackButtonToolTip = "NavigationBackButtonToolTip";
+        public const string SR_NavigationButtonToggleName = "NavigationButtonToggleName";
         public const string SR_NavigationCloseButtonName = "NavigationCloseButtonName";
         public const string SR_NavigationOverflowButtonName = "NavigationOverflowButtonName";
         public const string SR_NavigationOverflowButtonText = "NavigationOverflowButtonText";

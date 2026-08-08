@@ -31,6 +31,31 @@
     <sys:Double x:Key="NumberBoxMinWidth">120</sys:Double>
     <Thickness x:Key="NumberBoxPopupIndicatorMargin">0,0,8,0</Thickness>
 
+    <!--#region TitleBar-->
+    <sys:Double x:Key="TitleBarBackButtonWidth">40</sys:Double>
+    <sys:Double x:Key="TitleBarPaneToggleButtonWidth">40</sys:Double>
+    <sys:Double x:Key="TitleBarLeftPaddingWidth">2</sys:Double>
+    <sys:Double x:Key="TitleBarRightPaddingWidth">0</sys:Double>
+    <sys:Double x:Key="TitleBarLeftHeaderPaddingWidth">14</sys:Double>
+    <sys:Double x:Key="TitleBarHeaderNegativeInsetPaddingWidth">2</sys:Double>
+    <sys:Double x:Key="TitleBarMinDragRegionWidth">48</sys:Double>
+    <sys:Double x:Key="TitleBarDeactivatedOpacity">0.5</sys:Double>
+    <Thickness x:Key="TitleBarCompactContentMargin">0,0,16,0</Thickness>
+    <sys:Double x:Key="TitleBarIconMaxWidth">16</sys:Double>
+    <sys:Double x:Key="TitleBarIconMaxHeight">16</sys:Double>
+    <sys:Double x:Key="TitleBarTitleMinWidth">0</sys:Double>
+    <sys:Double x:Key="TitleBarSubtitleMinWidth">0</sys:Double>
+    <Thickness x:Key="TitleBarIconMargin">0,0,16,0</Thickness>
+    <Thickness x:Key="TitleBarTitleMargin">0,0,8,0</Thickness>
+    <Thickness x:Key="TitleBarSubtitleMargin">0,0,16,0</Thickness>
+    <HorizontalAlignment x:Key="TitleBarLeftHeaderHorizontalAlignment">Left</HorizontalAlignment>
+    <VerticalAlignment x:Key="TitleBarLeftHeaderVerticalAlignment">Center</VerticalAlignment>
+    <HorizontalAlignment x:Key="TitleBarContentHorizontalAlignment">Center</HorizontalAlignment>
+    <VerticalAlignment x:Key="TitleBarContentVerticalAlignment">Center</VerticalAlignment>
+    <HorizontalAlignment x:Key="TitleBarRightHeaderHorizontalAlignment">Right</HorizontalAlignment>
+    <VerticalAlignment x:Key="TitleBarRightHeaderVerticalAlignment">Center</VerticalAlignment>
+    <!--#endregion-->
+
     <!--#region RadioButtons-->
     <sys:Double x:Key="RadioButtonsColumnSpacing">7</sys:Double>
     <sys:Double x:Key="RadioButtonsRowSpacing">8</sys:Double>

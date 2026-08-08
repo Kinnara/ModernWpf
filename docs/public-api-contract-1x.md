@@ -78,8 +78,8 @@ Notable 0.9 migration changes include:
 - `SimpleStackPanel` is replaced by the current `StackPanelEx` surface.
 - `IElementFactoryShim` consumers should implement `IElementFactory`.
 - The WPF window-shell facade and control are named `WindowTitleBar` and
-  `WindowTitleBarControl`, leaving `TitleBar` available for a future port of
-  the current WinUI control.
+  `WindowTitleBarControl`; Preview 4 adds the distinct, content-oriented
+  WinUI-shaped `TitleBar` control.
 - Types under `ModernWpf.Controls.Primitives` that existed only to service
   templates are no longer public.
 
@@ -91,6 +91,7 @@ These public names or shapes are not accidental WinUI drift:
 | --- | --- |
 | `StackPanelEx` | Avoids colliding with WPF's stock `StackPanel` while adding WinUI spacing and scroll-snap behavior. |
 | `WindowTitleBar` and `WindowTitleBarControl` | WPF window-chrome adapter distinct from current WinUI's content-oriented `TitleBar` control. |
+| `WindowBackdrop` and `WindowBackdropKind` | WPF attached-property adapter over DWM system backdrops, with explicit supported-OS, composition, High Contrast, and solid-brush fallbacks. |
 | `ContextFlyoutService` and `FlyoutService` | WPF attached-property adapters for WinUI flyout ownership. |
 | `INumberBoxNumberFormatter` | WPF-friendly formatting contract in place of WinRT number-formatting interfaces. |
 | `ListViewBaseItem` and its automation peer | WPF realization of platform/XamlOM list-item primitives used by the WinUI control family. |

@@ -1321,6 +1321,35 @@
             }
           ],
           "RelatedControls": []
+        },
+        {
+          "UniqueId": "SystemBackdrop",
+          "Title": "Window backdrops",
+          "BaseClasses": [
+            "Object"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Apply native Mica or Desktop Acrylic to a WPF window with automatic fallbacks.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/Placeholder.png",
+          "Description": "WindowBackdrop requests a native DWM material when the operating system supports it and uses a normal theme brush for High Contrast, older Windows versions, disabled composition, or native failures.",
+          "IsNew": true,
+          "Docs": [
+            {
+              "Title": "Materials in Windows apps",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/style/materials"
+            },
+            {
+              "Title": "Mica material",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/style/mica"
+            },
+            {
+              "Title": "Acrylic material",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/style/acrylic"
+            }
+          ],
+          "RelatedControls": [
+            "TitleBar"
+          ]
         }
       ]
     }

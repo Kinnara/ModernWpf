@@ -105,7 +105,8 @@ namespace ModernWpf.Gallery.Models
             "PersonPicture",
             "IconElement",
             "ThemeShadow",
-            "TitleBar"
+            "TitleBar",
+            "SystemBackdrop"
         };
 
         private static readonly IReadOnlyDictionary<string, string> WpfGalleryLookupAliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
