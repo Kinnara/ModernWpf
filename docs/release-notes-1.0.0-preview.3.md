@@ -73,8 +73,9 @@ keys are additive preview surfaces and may be adopted independently.
 
 ## Known preview limitations
 
-- This preview remains unpublished until the tagged Trusted Publishing
-  workflow completes.
+- This release is not the stable 1.x compatibility boundary. Intentional,
+  source-audited API or public resource-key corrections may still occur before
+  the RC freeze and will carry explicit migration guidance.
 - `TitleBar`, window materials, `TabView`, `ItemContainer`,
   `LinedFlowLayout`, and `ItemsView` remain assigned to later 1.0 previews.
 - `PipsPager` remains deferred to 1.1.
