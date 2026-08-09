@@ -31,6 +31,40 @@
     <sys:Double x:Key="NumberBoxMinWidth">120</sys:Double>
     <Thickness x:Key="NumberBoxPopupIndicatorMargin">0,0,8,0</Thickness>
 
+    <!--#region TabView-->
+    <Thickness x:Key="TabViewHeaderPadding">0,8,0,0</Thickness>
+    <Thickness x:Key="TabViewItemAddButtonContainerPadding">3,0,0,3</Thickness>
+    <sys:Double x:Key="TabViewItemAddButtonFontSize">12</sys:Double>
+    <sys:Double x:Key="TabViewItemAddButtonHeight">24</sys:Double>
+    <sys:Double x:Key="TabViewItemAddButtonWidth">32</sys:Double>
+    <Thickness x:Key="TabViewItemBorderThickness">1</Thickness>
+    <sys:Double x:Key="TabViewItemHeaderCloseButtonHeight">24</sys:Double>
+    <sys:Double x:Key="TabViewItemHeaderCloseButtonSize">16</sys:Double>
+    <sys:Double x:Key="TabViewItemHeaderCloseButtonWidth">32</sys:Double>
+    <sys:Double x:Key="TabViewItemHeaderCloseFontSize">12</sys:Double>
+    <Thickness x:Key="TabViewItemHeaderCloseMargin">4,0,0,0</Thickness>
+    <sys:Double x:Key="TabViewItemHeaderFontSize">12</sys:Double>
+    <Thickness x:Key="TabViewItemHeaderIconMargin">0,0,10,0</Thickness>
+    <sys:Double x:Key="TabViewItemHeaderIconSize">16</sys:Double>
+    <Thickness x:Key="TabViewItemHeaderPadding">8,3,4,3</Thickness>
+    <Thickness x:Key="TabViewItemHeaderPaddingWithCloseButton">8,3,4,3</Thickness>
+    <Thickness x:Key="TabViewItemHeaderPaddingWithoutCloseButton">8,3,8,3</Thickness>
+    <Thickness x:Key="TabViewItemLeftScrollButtonContainerPadding">8,0,3,3</Thickness>
+    <sys:Double x:Key="TabViewItemMaxWidth">240</sys:Double>
+    <sys:Double x:Key="TabViewItemMinHeight">32</sys:Double>
+    <sys:Double x:Key="TabViewItemMinWidth">100</sys:Double>
+    <Thickness x:Key="TabViewItemRightScrollButtonContainerPadding">3,0,8,3</Thickness>
+    <sys:Double x:Key="TabViewItemScrollButonFontSize">8</sys:Double>
+    <sys:Double x:Key="TabViewItemScrollButtonHeight">24</sys:Double>
+    <Thickness x:Key="TabViewItemScrollButtonPadding">7,3,7,3</Thickness>
+    <sys:Double x:Key="TabViewItemScrollButtonWidth">32</sys:Double>
+    <Thickness x:Key="TabViewItemSeparatorMargin">0,8,0,8</Thickness>
+    <Thickness x:Key="TabViewSelectedItemBorderThickness">1,1,1,0</Thickness>
+    <Thickness x:Key="TabViewSelectedItemHeaderMargin">-1,0,-1,1</Thickness>
+    <Thickness x:Key="TabViewSelectedItemHeaderPadding">9,3,5,4</Thickness>
+    <sys:Double x:Key="TabViewShadowDepth">16</sys:Double>
+    <!--#endregion-->
+
     <!--#region TitleBar-->
     <sys:Double x:Key="TitleBarBackButtonWidth">40</sys:Double>
     <sys:Double x:Key="TitleBarPaneToggleButtonWidth">40</sys:Double>

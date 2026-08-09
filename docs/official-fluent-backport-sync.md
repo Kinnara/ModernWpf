@@ -872,7 +872,7 @@ Source inspected:
 
 | Resource key / style | Official WPF Fluent value | ModernWpf backport value | Reason retained |
 | --- | --- | --- | --- |
-| WinUI `TabView` control APIs and template parts | Separate WinUI control surface | Excluded | This phase does not add a `TabView` control; stock WPF `TabControl` now follows official WPF Fluent instead. |
+| WinUI `TabView` control APIs and template parts | Separate WinUI control surface | Excluded from this stock-style batch; implemented separately in Preview 5 | Stock WPF `TabControl` continues to follow official WPF Fluent. The separate `ModernWpf.Controls.TabView` port is governed by `docs/tabview-winui3-source-audit.md`. |
 | Historical TabView sizing resources | Not consumed by official WPF Fluent `TabControl.xaml` | Not used by the stock TabControl style | The old WinUI density/min-width helper path was deleted for the stock WPF control. |
 | Dragablz sample icon helper path | No official stock TabItem helper | Sample no longer uses `TabItemHelper.Icon` | The helper was part of the deleted guessed TabView-shaped layer. |
 

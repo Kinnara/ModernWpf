@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "SystemBackdrop", "InfoBadge", "InfoBar", "ProgressRing", "WinUIProgressBar", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "SystemBackdrop", "InfoBadge", "InfoBar", "ProgressRing", "WinUIProgressBar", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -94,6 +94,7 @@ $ModernWpfVisualExampleCounts = [ordered]@{
     Popup = 1
     BreadcrumbBar = 2
     SelectorBar = 3
+    TabView = 10
     SplitView = 1
     AnnotatedScrollBar = 1
     GridView = 3
@@ -677,6 +678,20 @@ function Find-ReferencePrimaryByName($root, [string]$control, [string]$name) {
 }
 
 function Reset-WinUIReferenceSampleScroll($window, [string]$control) {
+    if ($control -ne "TabView") {
+        return
+    }
+
+    $samplePanel = Find-DescendantByAutomationId $window "svPanel"
+    if ($null -eq $samplePanel) {
+        return
+    }
+
+    $scrollPattern = $null
+    if ($samplePanel.TryGetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern, [ref]$scrollPattern)) {
+        $scrollPattern.SetScrollPercent([System.Windows.Automation.ScrollPattern]::NoScroll, 0)
+        Start-Sleep -Milliseconds 500
+    }
 }
 
 function Find-DescendantByAnyName($root, [string[]]$names) {
@@ -1237,6 +1252,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
         "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
+        "TabView" { return "GallerySample_TabView_TabView" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
         "Flyout" { return "GallerySample_Flyout_Button" }
@@ -1399,6 +1415,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
         "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
+        "TabView" { return "GallerySample_TabView_TabView" }
         "Flyout" { return "GallerySample_Flyout_Button" }
         "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
@@ -1448,6 +1465,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "GridView" { return "BasicGridView" }
         "BreadcrumbBar" { return "BreadcrumbBar1" }
         "SelectorBar" { return "PART_ItemsView" }
+        "TabView" { return "TabView1" }
         default { return "" }
     }
 }

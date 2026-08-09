@@ -3296,12 +3296,13 @@ namespace ModernWpf.Gallery.Tests
                     match => match.Groups["control"].Value,
                     match => int.Parse(match.Groups["count"].Value),
                     StringComparer.Ordinal);
-            Assert.AreEqual(38, entries.Count, "Every curated ModernWPF control route must be in the exhaustive visual matrix.");
-            Assert.AreEqual(96, entries.Values.Sum(), "Every displayed curated sample must be in the exhaustive visual matrix.");
+            Assert.AreEqual(39, entries.Count, "Every curated ModernWPF control route must be in the exhaustive visual matrix.");
+            Assert.AreEqual(106, entries.Values.Sum(), "Every displayed curated sample must be in the exhaustive visual matrix.");
             Assert.AreEqual(8, entries["NavigationView"]);
             Assert.AreEqual(2, entries["WinUIProgressBar"]);
             Assert.AreEqual(3, entries["TitleBar"]);
             Assert.AreEqual(1, entries["SystemBackdrop"]);
+            Assert.AreEqual(10, entries["TabView"]);
 
             AssertContainsInOrder(
                 itemPageXaml,

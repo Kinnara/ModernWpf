@@ -36,9 +36,10 @@ official `DefaultTopTabControlStyle`, `DefaultBottomTabControlStyle`,
 - The stock TabControl template no longer uses `VisualStateEx`,
   `VisualStateManagerEx`, `ContentPresenterEx`, `ThemeShadowChrome`, or
   helper-driven header/footer/icon state tracking.
-- WinUI `TabView` remains excluded because this phase does not add new controls
-  and WPF `TabControl` exposes a different item, close, reorder, and overflow
-  model.
+- WinUI `TabView` was excluded from this stock-control phase because WPF
+  `TabControl` exposes a different item, close, reorder, and overflow model.
+  Preview 5 adds `ModernWpf.Controls.TabView` as a separate source-audited
+  control; it does not replace or restyle the stock controls covered here.
 
 ## Substitutions
 
@@ -46,7 +47,7 @@ official `DefaultTopTabControlStyle`, `DefaultBottomTabControlStyle`,
 | --- | --- | --- |
 | Official `TabViewForeground`, `TabViewItemForegroundSelected`, `TabViewBorderBrush`, and `TabViewSelectedItemBorderBrush` resources | Added as ModernWpf theme aliases across Light, Dark, and HighContrast | Required by the copied official templates while keeping ModernWpf's theme alias conventions. |
 | `DefaultControlFocusVisualStyle` | Added as an alias to ModernWpf's existing `HighVisibilityFocusVisual` style | Official WPF Fluent stock styles consume this key directly. |
-| WinUI `TabView` control surface | Excluded | ModernWpf does not add a `TabView` control in this phase; stock WPF `TabControl` follows official WPF Fluent instead. |
+| WinUI `TabView` control surface | Excluded from the stock-control mapping; implemented separately in Preview 5 | Stock WPF `TabControl` continues to follow official WPF Fluent. `ModernWpf.Controls.TabView` is governed by `docs/tabview-winui3-source-audit.md` and has its own items, close, overflow, reorder, automation, and WPF tear-out behavior. |
 | Dragablz sample `TabItemHelper.Icon` usage | Removed from the sample | The deleted helper was part of the old guessed TabView-shaped layer, not official WPF Fluent stock TabControl behavior. |
 
 ## Test Evidence

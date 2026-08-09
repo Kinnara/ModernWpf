@@ -67,6 +67,7 @@ bypassing parity review.
 | `SplitButton/SplitButton.xaml` | WinUI 3 source-backed WPF family | `docs\splitbutton-winui3-source-audit.md` |
 | `SplitView/SplitView.xaml` | WinUI 3 source-backed WPF port | `docs\splitview-winui3-source-audit.md` |
 | `TeachingTip/TeachingTip.xaml` | WinUI 3 source-backed WPF port | `docs\teachingtip-winui3-source-audit.md` |
+| `TabView/TabView.xaml` | WinUI 3 source-backed WPF port | `docs\tabview-winui3-source-audit.md` |
 | `RadioButtons/RadioButtons.xaml` | WinUI 3 source-backed WPF port | `docs\radiobuttons-winui3-source-audit.md` |
 | `RadioMenuItem/RadioMenuItem.xaml` | WinUI 3 source-backed WPF port | `docs\radiomenuflyoutitem-winui3-source-audit.md` |
 | `TimePicker/TimePicker.xaml` | WinUI 3 source-backed WPF port | `docs\timepicker-winui3-source-audit.md` |

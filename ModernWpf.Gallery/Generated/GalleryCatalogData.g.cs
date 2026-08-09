@@ -468,6 +468,19 @@ namespace ModernWpf.Gallery.Models
                         new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
                         new GalleryDocLink[] { new GalleryDocLink("SelectorBar - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.selectorbar"), new GalleryDocLink("SelectorBarItem - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.selectorbaritem") },
                         new string[] { "NavigationView" }),
+                    new GalleryItem(
+                        "Navigation",
+                        "TabView",
+                        "TabView",
+                        "Displays a set of tabs with add, close, overflow, reorder, and windowing support.",
+                        "ms-appx:///Assets/ControlImages/TabView.png",
+                        "TabView presents document-like tabs with application-owned content, close requests, keyboard navigation, drag reorder, and an adapted WPF Window tear-out model.",
+                        "ModernWpf.Controls",
+                        true,
+                        false,
+                        new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
+                        new GalleryDocLink[] { new GalleryDocLink("TabView - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.tabview"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/tab-view") },
+                        new string[] { "NavigationView", "SelectorBar" }),
                 }),
                 new GalleryGroup("Media", "Media", "", "pack://application:,,,/Assets/ControlImages/Placeholder.png", false, new GalleryItem[]
                 {
