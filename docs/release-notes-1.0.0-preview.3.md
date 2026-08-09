@@ -1,7 +1,5 @@
 # ModernWPF 1.0.0-preview.3
 
-<!-- RELEASE-NOTES: DRAFT -->
-
 `1.0.0-preview.3` adds source-audited `TimePicker` and `TwoPaneView` controls
 and carries the applicable WinUI accessibility change for the visible
 `NumberBox` placeholder. This is the third milestone in the fixed ModernWPF
@@ -55,7 +53,7 @@ migration policies.
   for pane priority, wide/tall configuration, thresholds, and size.
 - Focused API, layout, input, automation, source-audit, catalog, and theme
   coverage accompanies the new surfaces. The complete release gate remains
-  required before this draft is published.
+  required before publication.
 
 ## Upstream cutoff
 
@@ -75,8 +73,8 @@ keys are additive preview surfaces and may be adopted independently.
 
 ## Known preview limitations
 
-- Until the draft marker is removed and the tagged workflow completes, this
-  file describes an unpublished development package.
+- This preview remains unpublished until the tagged Trusted Publishing
+  workflow completes.
 - `TitleBar`, window materials, `TabView`, `ItemContainer`,
   `LinedFlowLayout`, and `ItemsView` remain assigned to later 1.0 previews.
 - `PipsPager` remains deferred to 1.1.
