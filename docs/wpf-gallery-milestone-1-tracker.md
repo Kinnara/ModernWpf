@@ -2552,11 +2552,11 @@ actual ModernWpf controls or explicitly retained WPF implementations:
 `ToggleSplitButton`, `RepeatButton`, `ToggleButton`, `MenuBar`, `MenuFlyout`,
 `ItemsRepeater`, `RatingControl`, `ToggleSwitch`, `ColorPicker`, `TimePicker`,
 `HyperlinkButton`, `ProgressRing`, `WinUIProgressBar`, `InfoBadge`, `Flyout`, `Popup`,
-`BreadcrumbBar`, `SelectorBar`, `SplitView`, `TwoPaneView`, `AnnotatedScrollBar`,
+`BreadcrumbBar`, `SelectorBar`, `TabView`, `SplitView`, `TwoPaneView`, `AnnotatedScrollBar`,
 `GridView`, `PersonPicture`, `IconElement`, `ThemeShadow`, `TitleBar`, and
 `SystemBackdrop`.
 Do not keep WinUI alias pages for `CalendarDatePicker`, `CalendarView`,
-`TabView`, `RichEditBox`, `RichTextBlock`, `ScrollViewer`,
+`RichEditBox`, `RichTextBlock`, `ScrollViewer`,
 `ScrollView`, `FlipView`, or `ItemsView`; retained WPF pages and retained
 ModernWpf pages may still use those words incidentally in examples or framework
 types. Older tracker notes for pruned pages are historical evidence only; do
