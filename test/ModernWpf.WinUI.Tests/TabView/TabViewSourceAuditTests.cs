@@ -63,6 +63,11 @@ public class TabViewSourceAuditTests
         var controlSource = File.ReadAllText(Path.Combine(root, "ModernWpf.Controls", "TabView", "TabView.cs"));
 
         StringAssert.Contains(peerSource, "TabViewItemAutomationPeer : FrameworkElementAutomationPeer, ISelectionItemProvider, IScrollItemProvider");
+        StringAssert.Contains(peerSource, "FromElement(selectedTab)");
+        StringAssert.Contains(peerSource, "FromElement(owner)");
+        StringAssert.Contains(peerSource, "protected override List<AutomationPeer> GetChildrenCore()");
+        StringAssert.Contains(peerSource, "child is ScrollViewerAutomationPeer");
+        StringAssert.Contains(controlSource, "GetTabContainersSnapshot()");
         StringAssert.Contains(peerSource, "OwnerItem.BringIntoView()");
         StringAssert.Contains(peerSource, "AutomationEvents.SelectionItemPatternOnElementSelected");
         StringAssert.Contains(controlSource, "peer?.RaiseAutomationEvent(AutomationEvents.StructureChanged)");

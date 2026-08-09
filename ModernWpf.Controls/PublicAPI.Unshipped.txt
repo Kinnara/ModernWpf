@@ -233,6 +233,7 @@ override ModernWpf.Controls.TwoPaneView.OnApplyTemplate() -> void
 ~ModernWpf.Controls.TwoPaneView.Pane1.set -> void
 ~ModernWpf.Controls.TwoPaneView.Pane2.get -> System.Windows.UIElement
 ~ModernWpf.Controls.TwoPaneView.Pane2.set -> void
+~override ModernWpf.Automation.Peers.TabViewAutomationPeer.GetChildrenCore() -> System.Collections.Generic.List<System.Windows.Automation.Peers.AutomationPeer>
 ~override ModernWpf.Automation.Peers.TabViewAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Automation.Peers.TabViewAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
 ~override ModernWpf.Automation.Peers.TabViewItemAutomationPeer.GetClassNameCore() -> string

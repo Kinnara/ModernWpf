@@ -30,8 +30,9 @@ migration policies.
   scroll the strip and bring the selected tab into view; close buttons support
   the current Auto, pointer-over, and Always modes.
 - Ctrl+Tab, Ctrl+Shift+Tab, Ctrl+F4, arrow-key focus traversal, middle-click
-  close, right-click without selection, localized button labels, and required
-  single-selection automation are covered by focused tests.
+  close, right-click without selection, localized button labels, and a
+  connected required single-selection Tab/TabItem automation tree are covered
+  by focused tests.
 - Drag start/completion, mutable-source reorder, external drop, drop-outside,
   and source-shaped public resource keys are included across Light, Dark, High
   Contrast, and compact resources.

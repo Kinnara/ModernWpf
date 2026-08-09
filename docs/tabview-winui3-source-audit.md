@@ -136,6 +136,14 @@ for a public selector owner; using it here would force an extra selectable list
 layer into the automation tree. The WPF item peer therefore derives from
 `FrameworkElementAutomationPeer` and directly implements the source
 selection-item and scroll-item provider contracts against the owning TabView.
+When WPF has already registered either peer, provider lookup reuses it through
+`FromElement` before asking WPF to create a peer. This avoids constructing a
+detached fallback peer whose raw provider can be null in a longer automation
+test or host session.
+The public TabView peer also replaces its internal `ScrollViewer` child with
+the realized public TabViewItem peers while retaining the strip's scroll and
+add buttons. This gives WPF a connected Tab/TabItem provider tree and prevents
+the internal ItemsControl from exposing generic list-item duplicates.
 
 ## Current WinUI Gallery inventory
 
