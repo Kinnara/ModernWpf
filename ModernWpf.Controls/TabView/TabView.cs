@@ -411,6 +411,21 @@ namespace ModernWpf.Controls
 
         internal TabViewItem SelectedTab => ResolveTabViewItemForIndex(SelectedIndex);
 
+        internal IReadOnlyList<TabViewItem> GetTabContainersSnapshot()
+        {
+            var containers = new List<TabViewItem>();
+            for (var index = 0; index < GetItemCount(); index++)
+            {
+                var container = ResolveTabViewItemForIndex(index);
+                if (container != null)
+                {
+                    containers.Add(container);
+                }
+            }
+
+            return containers;
+        }
+
         internal void SelectTab(TabViewItem tab)
         {
             if (tab == null || !tab.IsEnabled || tab.Visibility != Visibility.Visible)

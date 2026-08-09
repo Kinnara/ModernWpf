@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
@@ -26,7 +27,9 @@ namespace ModernWpf.Automation.Peers
                 return Array.Empty<IRawElementProviderSimple>();
             }
 
-            var peer = CreatePeerForElement(selectedTab) ?? new TabViewItemAutomationPeer(selectedTab);
+            var peer = FromElement(selectedTab)
+                ?? CreatePeerForElement(selectedTab)
+                ?? new TabViewItemAutomationPeer(selectedTab);
             return new[] { ProviderFromPeer(peer) };
         }
 
@@ -43,6 +46,38 @@ namespace ModernWpf.Automation.Peers
         protected override AutomationControlType GetAutomationControlTypeCore()
         {
             return AutomationControlType.Tab;
+        }
+
+        protected override List<AutomationPeer> GetChildrenCore()
+        {
+            var children = new List<AutomationPeer>();
+            var baseChildren = base.GetChildrenCore();
+            var tabInsertIndex = 0;
+
+            if (baseChildren != null)
+            {
+                foreach (var child in baseChildren)
+                {
+                    if (child is ScrollViewerAutomationPeer)
+                    {
+                        tabInsertIndex = children.Count;
+                    }
+                    else
+                    {
+                        children.Add(child);
+                    }
+                }
+            }
+
+            foreach (var tab in OwnerTabView.GetTabContainersSnapshot())
+            {
+                var peer = FromElement(tab)
+                    ?? CreatePeerForElement(tab)
+                    ?? new TabViewItemAutomationPeer(tab);
+                children.Insert(tabInsertIndex++, peer);
+            }
+
+            return children;
         }
 
         private TabView OwnerTabView => (TabView)Owner;
@@ -67,7 +102,9 @@ namespace ModernWpf.Automation.Peers
                     return null;
                 }
 
-                var peer = CreatePeerForElement(owner) ?? new TabViewAutomationPeer(owner);
+                var peer = FromElement(owner)
+                    ?? CreatePeerForElement(owner)
+                    ?? new TabViewAutomationPeer(owner);
                 return ProviderFromPeer(peer);
             }
         }

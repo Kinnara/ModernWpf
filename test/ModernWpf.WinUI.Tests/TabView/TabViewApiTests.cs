@@ -277,7 +277,9 @@ public class TabViewApiTests
 
             var viewPeer = FrameworkElementAutomationPeer.CreatePeerForElement(tabView);
             var selection = (ISelectionProvider)viewPeer.GetPattern(PatternInterface.Selection);
-            var itemPeer = FrameworkElementAutomationPeer.CreatePeerForElement(second);
+            var itemPeer = viewPeer.GetChildren()
+                .OfType<ModernWpf.Automation.Peers.TabViewItemAutomationPeer>()
+                .Single(peer => peer.GetName() == "Second");
             var selectionItem = (ISelectionItemProvider)itemPeer.GetPattern(PatternInterface.SelectionItem);
             selectionItem.Select();
 
@@ -285,13 +287,19 @@ public class TabViewApiTests
             Assert.AreEqual(AutomationControlType.Tab, viewPeer.GetAutomationControlType());
             Assert.IsFalse(selection.CanSelectMultiple);
             Assert.IsTrue(selection.IsSelectionRequired);
-            Assert.AreEqual(1, selection.GetSelection().Length);
+            var selectedProviders = selection.GetSelection();
+            Assert.AreEqual(1, selectedProviders.Length);
+            Assert.IsNotNull(selectedProviders[0]);
             Assert.AreSame(second, tabView.SelectedItem);
             Assert.IsTrue(selectionItem.IsSelected);
             Assert.AreEqual("Second", itemPeer.GetName());
             Assert.AreEqual("TabViewItem", itemPeer.GetClassName());
             Assert.AreEqual(AutomationControlType.TabItem, itemPeer.GetAutomationControlType());
-            Assert.IsNotNull(selectionItem.SelectionContainer);
+            Assert.AreSame(viewPeer, FrameworkElementAutomationPeer.FromElement(tabView));
+            Assert.AreSame(itemPeer, FrameworkElementAutomationPeer.FromElement(second));
+            var expectedSelectionContainer = new AutomationPeerBridge(tabView).GetProviderFromPeer(viewPeer);
+            Assert.IsNotNull(expectedSelectionContainer);
+            Assert.AreSame(expectedSelectionContainer, selectionItem.SelectionContainer);
             Assert.IsNotNull(itemPeer.GetPattern(PatternInterface.ScrollItem));
         });
     }
@@ -766,6 +774,19 @@ public class TabViewApiTests
             {
                 yield return descendant;
             }
+        }
+    }
+
+    private sealed class AutomationPeerBridge : FrameworkElementAutomationPeer
+    {
+        public AutomationPeerBridge(FrameworkElement owner)
+            : base(owner)
+        {
+        }
+
+        public IRawElementProviderSimple? GetProviderFromPeer(AutomationPeer peer)
+        {
+            return ProviderFromPeer(peer);
         }
     }
 
