@@ -99,6 +99,31 @@ documents its explicit WPF `ScrollViewer` substitution; applications should
 not build a public compatibility layer around Preview 6's internal scroll
 host.
 
+### Adopt `ItemsView` intentionally
+
+Preview 7 adds `ModernWpf.Controls.ItemsView`; it does not rename or replace
+WPF `ListBox` or `ListView`. Keep the stock selectors when an application
+depends on their item containers, routed selection events, collection views,
+grouping, or established WPF automation behavior. Adopt ItemsView when it
+needs WinUI-shaped virtualized layouts, item invocation, viewport lookup,
+bring-into-view options, or the `None`/`Single`/`Multiple`/`Extended`
+selection model over `ItemsRepeater`.
+
+An ItemsView template must realize `ItemContainer` at its root. WPF
+`DataTemplate`, `DataTemplateSelector`, and ModernWPF `IElementFactory` inputs
+are accepted, but a UIElement supplied directly by the source must already be
+an ItemContainer. Handle `ItemInvoked` or `SelectionChanged` to update the
+application; ItemsView does not navigate or mutate the source collection on
+the application's behalf.
+
+The public `ScrollView` property is intentionally
+`System.Windows.Controls.ScrollViewer`, and `BringIntoViewOptions` maps target
+rectangles, offsets, and alignment ratios onto WPF scrolling. Do not cast it
+to a WinUI ScrollView or depend on internal ItemsViewScrollHost details.
+WinUI's compositor-only `ItemTransitionProvider` is not published. See the
+[ItemsView source audit](itemsview-winui3-source-audit.md) and
+[WPF scrolling adaptation](itemsview-scrolling-wpf-adaptation.md).
+
 ## 4. Migrate MahApps integration
 
 `ModernWpfUI.MahApps` remains on the legacy 0.9.x line and is not produced for

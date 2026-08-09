@@ -340,7 +340,36 @@
             }
           ],
           "RelatedControls": [
+            "ItemsView",
             "ItemsRepeater"
+          ]
+        },
+        {
+          "UniqueId": "ItemsView",
+          "Title": "ItemsView",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Presents a virtualized collection with selection, invocation, and swappable layouts.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ItemsRepeater.png",
+          "Description": "ItemsView combines ItemsRepeater virtualization, ItemContainer interaction and automation, selection policies, item invocation, and configurable layouts in one collection control.",
+          "SourcePath": "/ItemsView",
+          "IsNew": true,
+          "Docs": [
+            {
+              "Title": "ItemsView - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.itemsview"
+            }
+          ],
+          "RelatedControls": [
+            "ItemContainer",
+            "ItemsRepeater",
+            "LinedFlowLayout"
           ]
         },
         {
@@ -377,6 +406,7 @@
           "RelatedControls": [
             "GridView",
             "ItemContainer",
+            "ItemsView",
             "LinedFlowLayout"
           ]
         },
@@ -402,6 +432,7 @@
             }
           ],
           "RelatedControls": [
+            "ItemsView",
             "ItemsRepeater",
             "ItemContainer"
           ]
