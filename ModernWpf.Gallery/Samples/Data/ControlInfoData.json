@@ -312,7 +312,36 @@
               "Uri": "https://learn.microsoft.com/windows/apps/design/controls/lists"
             }
           ],
-          "RelatedControls": []
+          "RelatedControls": [
+            "ItemContainer",
+            "ItemsRepeater"
+          ]
+        },
+        {
+          "UniqueId": "ItemContainer",
+          "Title": "ItemContainer",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Provides item chrome, selection state, and item automation semantics.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/GridView.png",
+          "Description": "ItemContainer presents arbitrary UI content with WinUI-shaped selected, pointer, focus, and automation states. It is the item-container foundation for ItemsView.",
+          "SourcePath": "/ItemContainer",
+          "IsNew": true,
+          "Docs": [
+            {
+              "Title": "ItemContainer - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.itemcontainer"
+            }
+          ],
+          "RelatedControls": [
+            "ItemsRepeater"
+          ]
         },
         {
           "UniqueId": "ItemsRepeater",
@@ -346,7 +375,35 @@
             }
           ],
           "RelatedControls": [
-            "GridView"
+            "GridView",
+            "ItemContainer",
+            "LinedFlowLayout"
+          ]
+        },
+        {
+          "UniqueId": "LinedFlowLayout",
+          "Title": "LinedFlowLayout",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "Layout",
+            "VirtualizingLayout"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Arranges variable-width items in equal-height virtualized lines.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/ItemsRepeater.png",
+          "Description": "LinedFlowLayout uses item aspect-ratio information to create dense, equal-height rows while retaining ItemsRepeater realization and recycling.",
+          "SourcePath": "/Repeater/LinedFlowLayout",
+          "IsNew": true,
+          "Docs": [
+            {
+              "Title": "LinedFlowLayout - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.linedflowlayout"
+            }
+          ],
+          "RelatedControls": [
+            "ItemsRepeater",
+            "ItemContainer"
           ]
         }
       ]

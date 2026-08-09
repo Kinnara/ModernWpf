@@ -903,7 +903,8 @@
       "id": "repeater",
       "displayName": "ItemsRepeater",
       "auditDocuments": [
-        "docs/repeater-winui3-source-audit.md"
+        "docs/repeater-winui3-source-audit.md",
+        "docs/linedflowlayout-winui3-source-audit.md"
       ],
       "watches": [
         {
@@ -923,6 +924,22 @@
       ]
     },
     {
+      "id": "item-container",
+      "displayName": "ItemContainer",
+      "auditDocuments": [
+        "docs/itemcontainer-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/ItemContainer*",
+            "controls/dev/ItemContainer/**"
+          ]
+        }
+      ]
+    },
+    {
       "id": "selector-bar",
       "displayName": "SelectorBar",
       "auditDocuments": [
@@ -933,7 +950,6 @@
           "repository": "winui-product",
           "paths": [
             "controls/dev/Generated/SelectorBar*",
-            "controls/dev/ItemContainer/**",
             "controls/dev/ItemsView/**",
             "controls/dev/SelectorBar/**"
           ]

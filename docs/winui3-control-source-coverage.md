@@ -53,6 +53,7 @@ bypassing parity review.
 | `HyperlinkButton/HyperlinkButton.xaml` | WinUI 3 source-backed WPF port | `docs\hyperlinkbutton-winui3-source-audit.md` |
 | `InfoBadge/InfoBadge.xaml` | WinUI 3 source-backed WPF port | `docs\infobadge-winui3-source-audit.md` |
 | `InfoBar/InfoBar.xaml` | WinUI 3 source-backed WPF port | `docs\infobar-winui3-source-audit.md` |
+| `ItemContainer/ItemContainer.xaml` | WinUI 3 source-backed WPF port | `docs\itemcontainer-winui3-source-audit.md` |
 | `ListView/ListView.xaml` | WinUI 3 source-backed WPF family | `docs\listview-winui3-source-audit.md` |
 | `ListView/GridView.xaml` | WinUI 3 source-backed WPF family | `docs\listview-winui3-source-audit.md` |
 | `MenuBar/MenuBar.xaml` | WinUI 3 source-backed WPF port | `docs\menubar-winui3-source-audit.md` |

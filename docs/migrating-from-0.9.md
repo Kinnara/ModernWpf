@@ -82,6 +82,23 @@ event handler. For tear-out, the application creates the destination WPF
 `Window` and moves the item after accepting the request; ModernWPF does not
 guess the application's window type or view-model lifetime.
 
+### Adopt the ItemsView foundations deliberately
+
+Preview 6 adds `ModernWpf.Controls.ItemContainer` and `LinedFlowLayout` as
+additive controls; neither replaces a 0.9.x type. `ItemContainer` supplies
+WinUI-shaped item chrome and selected-state automation. It is not a WPF
+selector and does not independently own a selection collection. Use stock
+`ListBoxItem` or `ListViewItem` when an application needs the corresponding
+stock WPF selector behavior.
+
+Host `LinedFlowLayout` on `ItemsRepeater` inside the existing
+`ItemsRepeaterScrollHost` and a WPF `ScrollViewer` to retain viewport-driven
+realization and recycling. ModernWPF does not publish partial `ScrollView` or
+`ScrollPresenter` facades. Preview 7 adds the complete `ItemsView` surface and
+documents its explicit WPF `ScrollViewer` substitution; applications should
+not build a public compatibility layer around Preview 6's internal scroll
+host.
+
 ## 4. Migrate MahApps integration
 
 `ModernWpfUI.MahApps` remains on the legacy 0.9.x line and is not produced for

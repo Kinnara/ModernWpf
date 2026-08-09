@@ -2012,6 +2012,22 @@
     <SolidColorBrush x:Key="TitleBarButtonBackground" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
     <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="{m:ThemeResource SystemColorButtonFaceColor}" />
 
+    <!-- Resources for ItemContainer -->
+    <m:StaticResource x:Key="ItemContainerBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ItemContainerPointerOverBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ItemContainerPressedBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ItemContainerBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ItemContainerPointerOverBorderBrush" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ItemContainerPressedBorderBrush" ResourceKey="SystemColorHighlightColorBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectedBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectedPointerOverBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectedPressedBackground" ResourceKey="SystemControlTransparentBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectionVisualBackground" ResourceKey="SystemControlHighlightListAccentLowBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectionVisualPointerOverBackground" ResourceKey="SystemControlForegroundAccentBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectionVisualPressedBackground" ResourceKey="SystemControlForegroundAccentBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectedInnerBorderBrush" ResourceKey="SystemColorHighlightTextColorBrush" />
+    <m:StaticResource x:Key="ItemContainerCheckboxBackgroundUnchecked" ResourceKey="SystemColorButtonFaceColorBrush" />
+
     <!-- Resources for InfoBadge -->
     <m:StaticResource x:Key="InfoBadgeForeground" ResourceKey="SystemControlHighlightAltChromeWhiteBrush" />
     <m:StaticResource x:Key="InfoBadgeBackground" ResourceKey="SystemControlHighlightAccentBrush" />

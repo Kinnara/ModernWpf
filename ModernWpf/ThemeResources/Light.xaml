@@ -2045,6 +2045,22 @@
     <SolidColorBrush x:Key="TitleBarButtonBackground" Color="Transparent" />
     <SolidColorBrush x:Key="TitleBarButtonBackgroundInactive" Color="Transparent" />
 
+    <!-- Resources for ItemContainer -->
+    <m:StaticResource x:Key="ItemContainerBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ItemContainerPointerOverBackground" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ItemContainerPressedBackground" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ItemContainerBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ItemContainerPointerOverBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ItemContainerPressedBorderBrush" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectedBackground" ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectedPointerOverBackground" ResourceKey="SubtleFillColorSecondaryBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectedPressedBackground" ResourceKey="SubtleFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectionVisualBackground" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectionVisualPointerOverBackground" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectionVisualPressedBackground" ResourceKey="AccentFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ItemContainerSelectedInnerBorderBrush" ResourceKey="ControlSolidFillColorDefaultBrush" />
+    <m:StaticResource x:Key="ItemContainerCheckboxBackgroundUnchecked" ResourceKey="ControlOnImageFillColorDefaultBrush" />
+
     <!-- Resources for InfoBadge -->
     <m:StaticResource x:Key="InfoBadgeForeground" ResourceKey="TextOnAccentFillColorPrimaryBrush" />
     <m:StaticResource x:Key="InfoBadgeBackground" ResourceKey="AccentFillColorDefaultBrush" />

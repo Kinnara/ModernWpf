@@ -31,6 +31,16 @@
     <sys:Double x:Key="NumberBoxMinWidth">120</sys:Double>
     <Thickness x:Key="NumberBoxPopupIndicatorMargin">0,0,8,0</Thickness>
 
+    <!--#region ItemContainer-->
+    <sys:Double x:Key="ItemContainerDisabledOpacity">0.3</sys:Double>
+    <sys:Double x:Key="ItemContainerCheckboxMinWidth">0</sys:Double>
+    <Thickness x:Key="ItemContainerCheckboxMargin">4,-2</Thickness>
+    <Thickness x:Key="ItemContainerSelectedInnerMargin">2</Thickness>
+    <Thickness x:Key="ItemContainerSelectedInnerThickness">1</Thickness>
+    <HorizontalAlignment x:Key="ItemContainerCheckboxHorizontalAlignment">Right</HorizontalAlignment>
+    <VerticalAlignment x:Key="ItemContainerCheckboxVerticalAlignment">Top</VerticalAlignment>
+    <!--#endregion-->
+
     <!--#region TabView-->
     <Thickness x:Key="TabViewHeaderPadding">0,8,0,0</Thickness>
     <Thickness x:Key="TabViewItemAddButtonContainerPadding">3,0,0,3</Thickness>

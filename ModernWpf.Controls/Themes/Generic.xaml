@@ -18,6 +18,7 @@
         <ResourceDictionary Source="/ModernWpf.Controls;component/Flyout/FlyoutPresenter.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/HyperlinkButton/HyperlinkButton.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/InfoBadge/InfoBadge.xaml" />
+        <ResourceDictionary Source="/ModernWpf.Controls;component/ItemContainer/ItemContainer.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/InfoBar/InfoBar.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ListView/ListView.xaml" />
         <ResourceDictionary Source="/ModernWpf.Controls;component/ListView/GridView.xaml" />

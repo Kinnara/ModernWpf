@@ -34,7 +34,9 @@ namespace ModernWpf.Gallery.Tests
             "ToggleButton",
             "MenuBar",
             "MenuFlyout",
+            "ItemContainer",
             "ItemsRepeater",
+            "LinedFlowLayout",
             "RatingControl",
             "ToggleSwitch",
             "ColorPicker",
@@ -368,14 +370,14 @@ namespace ModernWpf.Gallery.Tests
                 "Frame",
                 "NavigationWindow",
                 "TextBox",
-                "Popup",
-                "SelectorBar",
-                "TabView"
+                "ItemContainer",
+                "LinedFlowLayout",
+                "Popup"
             };
 
             var actual = GalleryCatalog.NewOrUpdatedItems.Select(item => item.UniqueId).ToArray();
 
-            CollectionAssert.AreEqual(expected, actual);
+            CollectionAssert.AreEqual(expected, actual, string.Join(", ", actual));
         }
 
         [TestMethod]
@@ -891,7 +893,7 @@ namespace ModernWpf.Gallery.Tests
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(9, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(76, GalleryCatalog.Items.Count);
+            Assert.AreEqual(78, GalleryCatalog.Items.Count);
         }
 
         [TestMethod]

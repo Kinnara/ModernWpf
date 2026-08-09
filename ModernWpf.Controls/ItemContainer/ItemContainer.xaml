@@ -1,0 +1,92 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style x:Key="ItemContainerSelectionCheckboxStyle" TargetType="CheckBox">
+        <Setter Property="Width" Value="{DynamicResource CheckBoxSize}" />
+        <Setter Property="Height" Value="{DynamicResource CheckBoxSize}" />
+        <Setter Property="MinWidth" Value="{DynamicResource ItemContainerCheckboxMinWidth}" />
+        <Setter Property="Margin" Value="{DynamicResource ItemContainerCheckboxMargin}" />
+        <Setter Property="HorizontalAlignment" Value="{DynamicResource ItemContainerCheckboxHorizontalAlignment}" />
+        <Setter Property="VerticalAlignment" Value="{DynamicResource ItemContainerCheckboxVerticalAlignment}" />
+        <Setter Property="Background" Value="{DynamicResource ItemContainerCheckboxBackgroundUnchecked}" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="AutomationProperties.IsOffscreenBehavior" Value="Onscreen" />
+    </Style>
+
+    <Style TargetType="local:ItemContainer">
+        <Setter Property="Background" Value="{DynamicResource ItemContainerBackground}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource DefaultControlFocusVisualStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ItemContainer">
+                    <Grid x:Name="PART_ContainerRoot" Opacity="1">
+                        <Border
+                            x:Name="PART_SelectionVisual"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            BorderThickness="3"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            IsHitTestVisible="False" />
+                        <Border
+                            x:Name="PART_CommonVisual"
+                            Margin="0"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{DynamicResource ItemContainerBorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            IsHitTestVisible="False" />
+                        <ContentPresenter
+                            x:Name="PART_ContentPresenter"
+                            Content="{TemplateBinding Child}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        <CheckBox
+                            x:Name="PART_SelectionCheckbox"
+                            Style="{StaticResource ItemContainerSelectionCheckboxStyle}"
+                            Visibility="Collapsed" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="PART_SelectionVisual" Property="BorderBrush" Value="{DynamicResource ItemContainerSelectionVisualBackground}" />
+                            <Setter TargetName="PART_CommonVisual" Property="Margin" Value="{DynamicResource ItemContainerSelectedInnerMargin}" />
+                            <Setter TargetName="PART_CommonVisual" Property="BorderThickness" Value="{DynamicResource ItemContainerSelectedInnerThickness}" />
+                            <Setter TargetName="PART_CommonVisual" Property="Background" Value="{DynamicResource ItemContainerSelectedBackground}" />
+                            <Setter TargetName="PART_CommonVisual" Property="BorderBrush" Value="{DynamicResource ItemContainerSelectedInnerBorderBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="PART_CommonVisual" Property="Background" Value="{DynamicResource ItemContainerPointerOverBackground}" />
+                            <Setter TargetName="PART_CommonVisual" Property="BorderBrush" Value="{DynamicResource ItemContainerPointerOverBorderBrush}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_SelectionVisual" Property="BorderBrush" Value="{DynamicResource ItemContainerSelectionVisualPointerOverBackground}" />
+                            <Setter TargetName="PART_CommonVisual" Property="Background" Value="{DynamicResource ItemContainerSelectedPointerOverBackground}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsMouseCaptured" Value="True">
+                            <Setter TargetName="PART_CommonVisual" Property="Background" Value="{DynamicResource ItemContainerPressedBackground}" />
+                            <Setter TargetName="PART_CommonVisual" Property="BorderBrush" Value="{DynamicResource ItemContainerPressedBorderBrush}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="IsMouseCaptured" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="PART_SelectionVisual" Property="BorderBrush" Value="{DynamicResource ItemContainerSelectionVisualPressedBackground}" />
+                            <Setter TargetName="PART_CommonVisual" Property="Background" Value="{DynamicResource ItemContainerSelectedPressedBackground}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="PART_ContainerRoot" Property="Opacity" Value="{DynamicResource ItemContainerDisabledOpacity}" />
+                            <Setter TargetName="PART_SelectionVisual" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

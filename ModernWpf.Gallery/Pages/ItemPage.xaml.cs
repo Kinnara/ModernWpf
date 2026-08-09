@@ -232,6 +232,7 @@ namespace ModernWpf.Gallery.Pages
                 ?? CollectionsSampleFactory.Create(uniqueId)
                 ?? ScrollingSampleFactory.Create(uniqueId)
                 ?? LayoutSampleFactory.Create(uniqueId)
+                ?? ItemsViewFoundationsSampleFactory.Create(uniqueId)
                 ?? TabViewSampleFactory.Create(uniqueId)
                 ?? NavigationSampleFactory.Create(uniqueId)
                 ?? MediaSampleFactory.Create(uniqueId)
@@ -303,6 +304,12 @@ namespace ModernWpf.Gallery.Pages
             if (layoutExamples.Count != 0)
             {
                 return layoutExamples;
+            }
+
+            var itemsViewFoundationExamples = ItemsViewFoundationsSampleFactory.CreateExamples(uniqueId);
+            if (itemsViewFoundationExamples.Count != 0)
+            {
+                return itemsViewFoundationExamples;
             }
 
             var tabViewExamples = TabViewSampleFactory.CreateExamples(uniqueId);

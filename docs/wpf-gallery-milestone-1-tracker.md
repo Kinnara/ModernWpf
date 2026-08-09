@@ -2550,7 +2550,8 @@ actual ModernWpf controls or explicitly retained WPF implementations:
 `TeachingTip`, `CommandBar`, `CommandBarFlyout`, `AppBarButton`,
 `AppBarToggleButton`, `AppBarSeparator`, `DropDownButton`, `SplitButton`,
 `ToggleSplitButton`, `RepeatButton`, `ToggleButton`, `MenuBar`, `MenuFlyout`,
-`ItemsRepeater`, `RatingControl`, `ToggleSwitch`, `ColorPicker`, `TimePicker`,
+`ItemContainer`, `ItemsRepeater`, `LinedFlowLayout`, `RatingControl`,
+`ToggleSwitch`, `ColorPicker`, `TimePicker`,
 `HyperlinkButton`, `ProgressRing`, `WinUIProgressBar`, `InfoBadge`, `Flyout`, `Popup`,
 `BreadcrumbBar`, `SelectorBar`, `TabView`, `SplitView`, `TwoPaneView`, `AnnotatedScrollBar`,
 `GridView`, `PersonPicture`, `IconElement`, `ThemeShadow`, `TitleBar`, and
