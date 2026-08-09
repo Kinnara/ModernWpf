@@ -270,6 +270,7 @@ public class TabViewApiTests
             var first = new TabViewItem { Header = "First" };
             var second = new TabViewItem { Header = "Second" };
             var tabView = new ModernWpf.Controls.TabView();
+            AutomationProperties.SetAutomationId(tabView, "TabViewUnderTest");
             tabView.TabItems.Add(first);
             tabView.TabItems.Add(second);
 
@@ -287,9 +288,6 @@ public class TabViewApiTests
             Assert.AreEqual(AutomationControlType.Tab, viewPeer.GetAutomationControlType());
             Assert.IsFalse(selection.CanSelectMultiple);
             Assert.IsTrue(selection.IsSelectionRequired);
-            var selectedProviders = selection.GetSelection();
-            Assert.AreEqual(1, selectedProviders.Length);
-            Assert.IsNotNull(selectedProviders[0]);
             Assert.AreSame(second, tabView.SelectedItem);
             Assert.IsTrue(selectionItem.IsSelected);
             Assert.AreEqual("Second", itemPeer.GetName());
@@ -297,10 +295,25 @@ public class TabViewApiTests
             Assert.AreEqual(AutomationControlType.TabItem, itemPeer.GetAutomationControlType());
             Assert.AreSame(viewPeer, FrameworkElementAutomationPeer.FromElement(tabView));
             Assert.AreSame(itemPeer, FrameworkElementAutomationPeer.FromElement(second));
-            var expectedSelectionContainer = new AutomationPeerBridge(tabView).GetProviderFromPeer(viewPeer);
-            Assert.IsNotNull(expectedSelectionContainer);
-            Assert.AreSame(expectedSelectionContainer, selectionItem.SelectionContainer);
             Assert.IsNotNull(itemPeer.GetPattern(PatternInterface.ScrollItem));
+
+            var rootElement = AutomationElement.FromHandle(
+                new System.Windows.Interop.WindowInteropHelper(host.Window).Handle);
+            var viewElement = rootElement.FindFirst(
+                TreeScope.Descendants,
+                new PropertyCondition(
+                    AutomationElement.AutomationIdProperty,
+                    "TabViewUnderTest"));
+            Assert.IsNotNull(viewElement);
+
+            var externalSelection = (SelectionPattern)viewElement.GetCurrentPattern(SelectionPattern.Pattern);
+            var selectedElements = externalSelection.Current.GetSelection();
+            Assert.AreEqual(1, selectedElements.Length);
+            Assert.AreEqual("Second", selectedElements[0].Current.Name);
+
+            var externalSelectionItem = (SelectionItemPattern)selectedElements[0].GetCurrentPattern(
+                SelectionItemPattern.Pattern);
+            Assert.AreEqual(viewElement, externalSelectionItem.Current.SelectionContainer);
         });
     }
 
@@ -774,19 +787,6 @@ public class TabViewApiTests
             {
                 yield return descendant;
             }
-        }
-    }
-
-    private sealed class AutomationPeerBridge : FrameworkElementAutomationPeer
-    {
-        public AutomationPeerBridge(FrameworkElement owner)
-            : base(owner)
-        {
-        }
-
-        public IRawElementProviderSimple? GetProviderFromPeer(AutomationPeer peer)
-        {
-            return ProviderFromPeer(peer);
         }
     }
 
