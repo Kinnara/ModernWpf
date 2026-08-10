@@ -153,6 +153,7 @@ namespace ModernWpf
         public const string SR_AutomationNameEllipsisBreadcrumbBarItem = "AutomationNameEllipsisBreadcrumbBarItem";
         public const string SR_BreadcrumbBarItemLocalizedControlType = "BreadcrumbBarItemLocalizedControlType";
         public const string SR_SelectorBarItemDefaultControlName = "SelectorBarItemDefaultControlName";
+        public const string SR_ItemContainerDefaultControlName = "ItemContainerDefaultControlName";
         public const string SR_TimePickerAutomationName = "TimePickerAutomationName";
         public const string SR_TimePickerFlyoutButtonAutomationName = "TimePickerFlyoutButtonAutomationName";
         public const string SR_TimePickerHourPlaceholder = "TimePickerHourPlaceholder";

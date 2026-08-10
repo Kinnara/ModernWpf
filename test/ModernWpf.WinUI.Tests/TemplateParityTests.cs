@@ -624,9 +624,9 @@ public class TemplateParityTests
     [TestMethod]
     public void WinUI3SourceAuthorityUsesAdoptedEpochManifest()
     {
-        const string currentProductCommit = "e1aa8f64df98d6229f6cd4074d59b654616254da";
+        const string currentProductCommit = "23a73be03d194ea0ece97da71de98b6b53021b70";
         const string currentStableCommit = "a97562621a1d1ea397a38a3f512c9eef99db52d8";
-        const string currentGalleryCommit = "3669519356c67f1376152c33ed8ea45003a91f3a";
+        const string currentGalleryCommit = "b78c440193aab788215888561e45adf72da848cb";
         var repoRoot = FindRepoRoot();
         var docsDirectory = Path.Combine(repoRoot, "docs");
         using var manifest = JsonDocument.Parse(File.ReadAllText(Path.Combine(
@@ -690,7 +690,7 @@ public class TemplateParityTests
 
         var epochDocument = File.ReadAllText(Path.Combine(
             docsDirectory,
-            "winui3-sync-2026-08-08-preview4.md"));
+            "winui3-sync-2026-08-10-preview6.md"));
         StringAssert.Contains(epochDocument, currentProductCommit);
         StringAssert.Contains(epochDocument, currentStableCommit);
         StringAssert.Contains(epochDocument, currentGalleryCommit);

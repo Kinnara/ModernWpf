@@ -69,8 +69,9 @@ namespace ModernWpf.Tools.Tests
             StringAssert.Contains(readiness, "`.signature.p7s` entry to differ");
             StringAssert.Contains(readiness, "After publication:");
             StringAssert.Contains(readiness, "mark every listed 0.9.x version as **Legacy**");
-            StringAssert.Contains(readiness, "`1.0.0-preview.3`");
-            StringAssert.Contains(readiness, "`1.0.0-preview.2` the active package-validation");
+            StringAssert.Contains(readiness, "advances development to the next fixed");
+            StringAssert.Contains(readiness, "just-published preview the active");
+            StringAssert.Contains(readiness, "Do not combine that bump with the tagged");
             StringAssert.Contains(readme, "[1.0 roadmap](docs/roadmap-1.0.md)");
         }
 

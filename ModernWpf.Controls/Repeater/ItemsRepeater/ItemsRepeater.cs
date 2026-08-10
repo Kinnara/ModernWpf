@@ -386,6 +386,10 @@ namespace ModernWpf.Controls
             {
                 OnLayoutChanged((Layout)args.OldValue, (Layout)args.NewValue);
             }
+            else if (property == ItemTransitionProviderProperty)
+            {
+                OnTransitionProviderChanged((ItemCollectionTransitionProvider)args.NewValue);
+            }
             else if (property == AnimatorProperty)
             {
                 OnAnimatorChanged((ElementAnimator)args.OldValue, (ElementAnimator)args.NewValue);
@@ -698,6 +702,11 @@ namespace ModernWpf.Controls
                 newValue.InitializeForContext(GetLayoutContext());
                 newValue.MeasureInvalidated += InvalidateMeasureForLayout;
                 newValue.ArrangeInvalidated += InvalidateArrangeForLayout;
+
+                if (m_ownsTransitionProvider)
+                {
+                    AnimationManager.OnTransitionProviderChanged(newValue.GetDefaultItemTransitionProvider());
+                }
             }
 
             bool isVirtualizingLayout = newValue != null && newValue as VirtualizingLayout != null;
@@ -714,6 +723,12 @@ namespace ModernWpf.Controls
                 // UIAffinityQueue cleanup. To avoid that bug, take a strong ref
                 m_animator = newValue;
             }
+        }
+
+        private void OnTransitionProviderChanged(ItemCollectionTransitionProvider newValue)
+        {
+            m_ownsTransitionProvider = false;
+            AnimationManager.OnTransitionProviderChanged(newValue);
         }
 
         private void OnItemsSourceViewChanged(object sender, NotifyCollectionChangedEventArgs args)
@@ -806,6 +821,7 @@ namespace ModernWpf.Controls
         private object m_itemTemplate;
         private Layout m_layout;
         private ElementAnimator m_animator;
+        private bool m_ownsTransitionProvider = true;
 
         // Bug where DataTemplate with no content causes a crash.
         // See: https://github.com/microsoft/microsoft-ui-xaml/issues/776

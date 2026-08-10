@@ -1,4 +1,10 @@
 #nullable enable
+ModernWpf.Automation.Peers.ItemContainerAutomationPeer
+ModernWpf.Automation.Peers.ItemContainerAutomationPeer.AddToSelection() -> void
+ModernWpf.Automation.Peers.ItemContainerAutomationPeer.Invoke() -> void
+ModernWpf.Automation.Peers.ItemContainerAutomationPeer.IsSelected.get -> bool
+ModernWpf.Automation.Peers.ItemContainerAutomationPeer.RemoveFromSelection() -> void
+ModernWpf.Automation.Peers.ItemContainerAutomationPeer.Select() -> void
 ModernWpf.Automation.Peers.TabViewAutomationPeer
 ModernWpf.Automation.Peers.TabViewAutomationPeer.CanSelectMultiple.get -> bool
 ModernWpf.Automation.Peers.TabViewAutomationPeer.IsSelectionRequired.get -> bool
@@ -9,6 +15,72 @@ ModernWpf.Automation.Peers.TabViewItemAutomationPeer.RemoveFromSelection() -> vo
 ModernWpf.Automation.Peers.TabViewItemAutomationPeer.Select() -> void
 ModernWpf.Automation.Peers.TimePickerAutomationPeer
 ModernWpf.Automation.Peers.TitleBarAutomationPeer
+ModernWpf.Controls.ItemCollectionTransition
+ModernWpf.Controls.ItemCollectionTransition.HasStarted.get -> bool
+ModernWpf.Controls.ItemCollectionTransition.NewBounds.get -> System.Windows.Rect
+ModernWpf.Controls.ItemCollectionTransition.OldBounds.get -> System.Windows.Rect
+ModernWpf.Controls.ItemCollectionTransition.Operation.get -> ModernWpf.Controls.ItemCollectionTransitionOperation
+ModernWpf.Controls.ItemCollectionTransition.Triggers.get -> ModernWpf.Controls.ItemCollectionTransitionTriggers
+ModernWpf.Controls.ItemCollectionTransitionCompletedEventArgs
+ModernWpf.Controls.ItemCollectionTransitionOperation
+ModernWpf.Controls.ItemCollectionTransitionOperation.Add = 0 -> ModernWpf.Controls.ItemCollectionTransitionOperation
+ModernWpf.Controls.ItemCollectionTransitionOperation.Move = 2 -> ModernWpf.Controls.ItemCollectionTransitionOperation
+ModernWpf.Controls.ItemCollectionTransitionOperation.Remove = 1 -> ModernWpf.Controls.ItemCollectionTransitionOperation
+ModernWpf.Controls.ItemCollectionTransitionProgress
+ModernWpf.Controls.ItemCollectionTransitionProgress.Complete() -> void
+ModernWpf.Controls.ItemCollectionTransitionProvider
+ModernWpf.Controls.ItemCollectionTransitionProvider.ItemCollectionTransitionProvider() -> void
+ModernWpf.Controls.ItemCollectionTransitionProvider.TransitionCompleted -> ModernWpf.TypedEventHandler<ModernWpf.Controls.ItemCollectionTransitionProvider, ModernWpf.Controls.ItemCollectionTransitionCompletedEventArgs>
+ModernWpf.Controls.ItemCollectionTransitionTriggers
+ModernWpf.Controls.ItemCollectionTransitionTriggers.CollectionChangeAdd = 1 -> ModernWpf.Controls.ItemCollectionTransitionTriggers
+ModernWpf.Controls.ItemCollectionTransitionTriggers.CollectionChangeRemove = 2 -> ModernWpf.Controls.ItemCollectionTransitionTriggers
+ModernWpf.Controls.ItemCollectionTransitionTriggers.CollectionChangeReset = 4 -> ModernWpf.Controls.ItemCollectionTransitionTriggers
+ModernWpf.Controls.ItemCollectionTransitionTriggers.LayoutTransition = 8 -> ModernWpf.Controls.ItemCollectionTransitionTriggers
+ModernWpf.Controls.ItemContainer
+ModernWpf.Controls.ItemContainer.CornerRadius.get -> System.Windows.CornerRadius
+ModernWpf.Controls.ItemContainer.CornerRadius.set -> void
+ModernWpf.Controls.ItemContainer.IsSelected.get -> bool
+ModernWpf.Controls.ItemContainer.IsSelected.set -> void
+ModernWpf.Controls.ItemContainer.ItemContainer() -> void
+ModernWpf.Controls.LinedFlowLayout
+ModernWpf.Controls.LinedFlowLayout.ActualLineHeight.get -> double
+ModernWpf.Controls.LinedFlowLayout.InvalidateItemsInfo() -> void
+ModernWpf.Controls.LinedFlowLayout.ItemsInfoRequested -> ModernWpf.TypedEventHandler<ModernWpf.Controls.LinedFlowLayout, ModernWpf.Controls.LinedFlowLayoutItemsInfoRequestedEventArgs>
+ModernWpf.Controls.LinedFlowLayout.ItemsJustification.get -> ModernWpf.Controls.LinedFlowLayoutItemsJustification
+ModernWpf.Controls.LinedFlowLayout.ItemsJustification.set -> void
+ModernWpf.Controls.LinedFlowLayout.ItemsStretch.get -> ModernWpf.Controls.LinedFlowLayoutItemsStretch
+ModernWpf.Controls.LinedFlowLayout.ItemsStretch.set -> void
+ModernWpf.Controls.LinedFlowLayout.ItemsUnlocked -> ModernWpf.TypedEventHandler<ModernWpf.Controls.LinedFlowLayout, object>
+ModernWpf.Controls.LinedFlowLayout.LinedFlowLayout() -> void
+ModernWpf.Controls.LinedFlowLayout.LineHeight.get -> double
+ModernWpf.Controls.LinedFlowLayout.LineHeight.set -> void
+ModernWpf.Controls.LinedFlowLayout.LineSpacing.get -> double
+ModernWpf.Controls.LinedFlowLayout.LineSpacing.set -> void
+ModernWpf.Controls.LinedFlowLayout.LockItemToLine(int itemIndex) -> int
+ModernWpf.Controls.LinedFlowLayout.MinItemSpacing.get -> double
+ModernWpf.Controls.LinedFlowLayout.MinItemSpacing.set -> void
+ModernWpf.Controls.LinedFlowLayout.RequestedRangeLength.get -> int
+ModernWpf.Controls.LinedFlowLayout.RequestedRangeStartIndex.get -> int
+ModernWpf.Controls.LinedFlowLayoutItemCollectionTransitionProvider
+ModernWpf.Controls.LinedFlowLayoutItemCollectionTransitionProvider.LinedFlowLayoutItemCollectionTransitionProvider() -> void
+ModernWpf.Controls.LinedFlowLayoutItemsInfoRequestedEventArgs
+ModernWpf.Controls.LinedFlowLayoutItemsInfoRequestedEventArgs.ItemsRangeRequestedLength.get -> int
+ModernWpf.Controls.LinedFlowLayoutItemsInfoRequestedEventArgs.ItemsRangeStartIndex.get -> int
+ModernWpf.Controls.LinedFlowLayoutItemsInfoRequestedEventArgs.ItemsRangeStartIndex.set -> void
+ModernWpf.Controls.LinedFlowLayoutItemsInfoRequestedEventArgs.MaxWidth.get -> double
+ModernWpf.Controls.LinedFlowLayoutItemsInfoRequestedEventArgs.MaxWidth.set -> void
+ModernWpf.Controls.LinedFlowLayoutItemsInfoRequestedEventArgs.MinWidth.get -> double
+ModernWpf.Controls.LinedFlowLayoutItemsInfoRequestedEventArgs.MinWidth.set -> void
+ModernWpf.Controls.LinedFlowLayoutItemsJustification
+ModernWpf.Controls.LinedFlowLayoutItemsJustification.Center = 1 -> ModernWpf.Controls.LinedFlowLayoutItemsJustification
+ModernWpf.Controls.LinedFlowLayoutItemsJustification.End = 2 -> ModernWpf.Controls.LinedFlowLayoutItemsJustification
+ModernWpf.Controls.LinedFlowLayoutItemsJustification.SpaceAround = 3 -> ModernWpf.Controls.LinedFlowLayoutItemsJustification
+ModernWpf.Controls.LinedFlowLayoutItemsJustification.SpaceBetween = 4 -> ModernWpf.Controls.LinedFlowLayoutItemsJustification
+ModernWpf.Controls.LinedFlowLayoutItemsJustification.SpaceEvenly = 5 -> ModernWpf.Controls.LinedFlowLayoutItemsJustification
+ModernWpf.Controls.LinedFlowLayoutItemsJustification.Start = 0 -> ModernWpf.Controls.LinedFlowLayoutItemsJustification
+ModernWpf.Controls.LinedFlowLayoutItemsStretch
+ModernWpf.Controls.LinedFlowLayoutItemsStretch.Fill = 1 -> ModernWpf.Controls.LinedFlowLayoutItemsStretch
+ModernWpf.Controls.LinedFlowLayoutItemsStretch.None = 0 -> ModernWpf.Controls.LinedFlowLayoutItemsStretch
 ModernWpf.Controls.TabView
 ModernWpf.Controls.TabView.AddTabButtonClick -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TabView, object>
 ModernWpf.Controls.TabView.AllowDropTabs.get -> bool
@@ -140,21 +212,39 @@ ModernWpf.Controls.TwoPaneViewWideModeConfiguration
 ModernWpf.Controls.TwoPaneViewWideModeConfiguration.LeftRight = 1 -> ModernWpf.Controls.TwoPaneViewWideModeConfiguration
 ModernWpf.Controls.TwoPaneViewWideModeConfiguration.RightLeft = 2 -> ModernWpf.Controls.TwoPaneViewWideModeConfiguration
 ModernWpf.Controls.TwoPaneViewWideModeConfiguration.SinglePane = 0 -> ModernWpf.Controls.TwoPaneViewWideModeConfiguration
+override ModernWpf.Automation.Peers.ItemContainerAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.TabViewAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.TabViewItemAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.TimePickerAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.TitleBarAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
+override ModernWpf.Controls.ItemContainer.OnApplyTemplate() -> void
 override ModernWpf.Controls.TabView.OnApplyTemplate() -> void
 override ModernWpf.Controls.TabViewItem.OnApplyTemplate() -> void
 override ModernWpf.Controls.TimePicker.OnApplyTemplate() -> void
 override ModernWpf.Controls.TitleBar.OnApplyTemplate() -> void
 override ModernWpf.Controls.TwoPaneView.OnApplyTemplate() -> void
+~ModernWpf.Automation.Peers.ItemContainerAutomationPeer.ItemContainerAutomationPeer(ModernWpf.Controls.ItemContainer owner) -> void
+~ModernWpf.Automation.Peers.ItemContainerAutomationPeer.SelectionContainer.get -> System.Windows.Automation.Provider.IRawElementProviderSimple
 ~ModernWpf.Automation.Peers.TabViewAutomationPeer.GetSelection() -> System.Windows.Automation.Provider.IRawElementProviderSimple[]
 ~ModernWpf.Automation.Peers.TabViewAutomationPeer.TabViewAutomationPeer(ModernWpf.Controls.TabView owner) -> void
 ~ModernWpf.Automation.Peers.TabViewItemAutomationPeer.SelectionContainer.get -> System.Windows.Automation.Provider.IRawElementProviderSimple
 ~ModernWpf.Automation.Peers.TabViewItemAutomationPeer.TabViewItemAutomationPeer(ModernWpf.Controls.TabViewItem owner) -> void
 ~ModernWpf.Automation.Peers.TimePickerAutomationPeer.TimePickerAutomationPeer(ModernWpf.Controls.TimePicker owner) -> void
 ~ModernWpf.Automation.Peers.TitleBarAutomationPeer.TitleBarAutomationPeer(ModernWpf.Controls.TitleBar owner) -> void
+~ModernWpf.Controls.ItemCollectionTransition.Start() -> ModernWpf.Controls.ItemCollectionTransitionProgress
+~ModernWpf.Controls.ItemCollectionTransitionCompletedEventArgs.Element.get -> System.Windows.UIElement
+~ModernWpf.Controls.ItemCollectionTransitionCompletedEventArgs.Transition.get -> ModernWpf.Controls.ItemCollectionTransition
+~ModernWpf.Controls.ItemCollectionTransitionProgress.Element.get -> System.Windows.UIElement
+~ModernWpf.Controls.ItemCollectionTransitionProgress.Transition.get -> ModernWpf.Controls.ItemCollectionTransition
+~ModernWpf.Controls.ItemCollectionTransitionProvider.QueueTransition(ModernWpf.Controls.ItemCollectionTransition transition) -> void
+~ModernWpf.Controls.ItemCollectionTransitionProvider.ShouldAnimate(ModernWpf.Controls.ItemCollectionTransition transition) -> bool
+~ModernWpf.Controls.ItemContainer.Child.get -> System.Windows.UIElement
+~ModernWpf.Controls.ItemContainer.Child.set -> void
+~ModernWpf.Controls.ItemsRepeater.ItemTransitionProvider.get -> ModernWpf.Controls.ItemCollectionTransitionProvider
+~ModernWpf.Controls.ItemsRepeater.ItemTransitionProvider.set -> void
+~ModernWpf.Controls.LinedFlowLayoutItemsInfoRequestedEventArgs.SetDesiredAspectRatios(double[] values) -> void
+~ModernWpf.Controls.LinedFlowLayoutItemsInfoRequestedEventArgs.SetMaxWidths(double[] values) -> void
+~ModernWpf.Controls.LinedFlowLayoutItemsInfoRequestedEventArgs.SetMinWidths(double[] values) -> void
 ~ModernWpf.Controls.TabView.AddTabButtonCommand.get -> System.Windows.Input.ICommand
 ~ModernWpf.Controls.TabView.AddTabButtonCommand.set -> void
 ~ModernWpf.Controls.TabView.AddTabButtonCommandParameter.get -> object
@@ -233,6 +323,10 @@ override ModernWpf.Controls.TwoPaneView.OnApplyTemplate() -> void
 ~ModernWpf.Controls.TwoPaneView.Pane1.set -> void
 ~ModernWpf.Controls.TwoPaneView.Pane2.get -> System.Windows.UIElement
 ~ModernWpf.Controls.TwoPaneView.Pane2.set -> void
+~override ModernWpf.Automation.Peers.ItemContainerAutomationPeer.GetClassNameCore() -> string
+~override ModernWpf.Automation.Peers.ItemContainerAutomationPeer.GetLocalizedControlTypeCore() -> string
+~override ModernWpf.Automation.Peers.ItemContainerAutomationPeer.GetNameCore() -> string
+~override ModernWpf.Automation.Peers.ItemContainerAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
 ~override ModernWpf.Automation.Peers.TabViewAutomationPeer.GetChildrenCore() -> System.Collections.Generic.List<System.Windows.Automation.Peers.AutomationPeer>
 ~override ModernWpf.Automation.Peers.TabViewAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Automation.Peers.TabViewAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
@@ -243,6 +337,24 @@ override ModernWpf.Controls.TwoPaneView.OnApplyTemplate() -> void
 ~override ModernWpf.Automation.Peers.TimePickerAutomationPeer.GetNameCore() -> string
 ~override ModernWpf.Automation.Peers.TitleBarAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Automation.Peers.TitleBarAutomationPeer.GetNameCore() -> string
+~override ModernWpf.Controls.ItemContainer.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
+~override ModernWpf.Controls.ItemContainer.OnGotKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e) -> void
+~override ModernWpf.Controls.ItemContainer.OnLostKeyboardFocus(System.Windows.Input.KeyboardFocusChangedEventArgs e) -> void
+~override ModernWpf.Controls.ItemContainer.OnLostMouseCapture(System.Windows.Input.MouseEventArgs e) -> void
+~override ModernWpf.Controls.ItemContainer.OnMouseEnter(System.Windows.Input.MouseEventArgs e) -> void
+~override ModernWpf.Controls.ItemContainer.OnMouseLeave(System.Windows.Input.MouseEventArgs e) -> void
+~override ModernWpf.Controls.ItemContainer.OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e) -> void
+~override ModernWpf.Controls.ItemContainer.OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e) -> void
+~override ModernWpf.Controls.ItemContainer.OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e) -> void
+~override ModernWpf.Controls.ItemContainer.OnKeyDown(System.Windows.Input.KeyEventArgs e) -> void
+~override ModernWpf.Controls.LinedFlowLayout.ArrangeOverride(ModernWpf.Controls.VirtualizingLayoutContext context, System.Windows.Size finalSize) -> System.Windows.Size
+~override ModernWpf.Controls.LinedFlowLayout.CreateDefaultItemTransitionProvider() -> ModernWpf.Controls.ItemCollectionTransitionProvider
+~override ModernWpf.Controls.LinedFlowLayout.InitializeForContextCore(ModernWpf.Controls.VirtualizingLayoutContext context) -> void
+~override ModernWpf.Controls.LinedFlowLayout.MeasureOverride(ModernWpf.Controls.VirtualizingLayoutContext context, System.Windows.Size availableSize) -> System.Windows.Size
+~override ModernWpf.Controls.LinedFlowLayout.OnItemsChangedCore(ModernWpf.Controls.VirtualizingLayoutContext context, object source, System.Collections.Specialized.NotifyCollectionChangedEventArgs args) -> void
+~override ModernWpf.Controls.LinedFlowLayout.UninitializeForContextCore(ModernWpf.Controls.VirtualizingLayoutContext context) -> void
+~override ModernWpf.Controls.LinedFlowLayoutItemCollectionTransitionProvider.ShouldAnimateCore(ModernWpf.Controls.ItemCollectionTransition transition) -> bool
+~override ModernWpf.Controls.LinedFlowLayoutItemCollectionTransitionProvider.StartTransitions(System.Collections.Generic.IList<ModernWpf.Controls.ItemCollectionTransition> transitions) -> void
 ~override ModernWpf.Controls.TabView.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
 ~override ModernWpf.Controls.TabView.OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e) -> void
 ~override ModernWpf.Controls.TabViewItem.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
@@ -260,6 +372,16 @@ override ModernWpf.Controls.TwoPaneView.OnApplyTemplate() -> void
 ~override ModernWpf.Controls.TitleBar.OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e) -> void
 ~static ModernWpf.Controls.TitleBar.GetIsDragRegion(System.Windows.UIElement element) -> bool?
 ~static ModernWpf.Controls.TitleBar.SetIsDragRegion(System.Windows.UIElement element, bool? value) -> void
+~static readonly ModernWpf.Controls.ItemContainer.ChildProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemContainer.CornerRadiusProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemContainer.IsSelectedProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.ItemsRepeater.ItemTransitionProviderProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.LinedFlowLayout.ActualLineHeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.LinedFlowLayout.ItemsJustificationProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.LinedFlowLayout.ItemsStretchProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.LinedFlowLayout.LineHeightProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.LinedFlowLayout.LineSpacingProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.LinedFlowLayout.MinItemSpacingProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TabView.AddTabButtonCommandParameterProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TabView.AddTabButtonCommandProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TabView.AllowDropTabsProperty -> System.Windows.DependencyProperty
@@ -318,3 +440,6 @@ override ModernWpf.Controls.TwoPaneView.OnApplyTemplate() -> void
 ~static readonly ModernWpf.Controls.TwoPaneView.PanePriorityProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TwoPaneView.TallModeConfigurationProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TwoPaneView.WideModeConfigurationProperty -> System.Windows.DependencyProperty
+~virtual ModernWpf.Controls.ItemCollectionTransitionProvider.ShouldAnimateCore(ModernWpf.Controls.ItemCollectionTransition transition) -> bool
+~virtual ModernWpf.Controls.ItemCollectionTransitionProvider.StartTransitions(System.Collections.Generic.IList<ModernWpf.Controls.ItemCollectionTransition> transitions) -> void
+~virtual ModernWpf.Controls.Layout.CreateDefaultItemTransitionProvider() -> ModernWpf.Controls.ItemCollectionTransitionProvider

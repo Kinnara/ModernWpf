@@ -138,6 +138,16 @@ namespace ModernWpf.Controls
             m_indexBasedLayoutOrientation = orientation;
         }
 
+        protected virtual ItemCollectionTransitionProvider CreateDefaultItemTransitionProvider()
+        {
+            return null;
+        }
+
+        internal ItemCollectionTransitionProvider GetDefaultItemTransitionProvider()
+        {
+            return CreateDefaultItemTransitionProvider();
+        }
+
         private IndexBasedLayoutOrientation m_indexBasedLayoutOrientation = IndexBasedLayoutOrientation.None;
     }
 
