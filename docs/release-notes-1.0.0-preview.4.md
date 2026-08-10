@@ -1,15 +1,13 @@
 # ModernWPF 1.0.0-preview.4
 
-<!-- RELEASE-NOTES: DRAFT -->
-
 `1.0.0-preview.4` adds the source-audited WinUI-shaped `TitleBar` control and
 WPF-native Mica and Desktop Acrylic window materials. This is the fourth
 milestone in the fixed ModernWPF 1.0 roadmap.
 
 ## Preview compatibility
 
-- `1.0.0-preview.3` becomes the active package-validation baseline for this
-  development cycle after Preview 3 is published.
+- `1.0.0-preview.3` is the active package-validation baseline for this
+  development cycle.
 - `1.0.0-preview.1` remains the immutable historical audit and migration
   baseline rather than an API freeze across later previews.
 - Stable `1.0.0` will establish the SemVer compatibility boundary for
@@ -59,8 +57,8 @@ migration policies.
   updates its status when the effective result changes.
 - Focused API, template, input, automation, chrome, fallback, source-audit,
   Gallery, theme, and public-contract tests accompany the new surfaces. The
-  complete release gate and final-tip visual/manual matrix remain required
-  before this draft is published.
+  tagged release is also subject to the complete release gate and final-tip
+  Light, Dark, and real OS High Contrast Gallery evidence matrix.
 
 ## Upstream cutoff
 
@@ -84,8 +82,8 @@ preview surfaces and may be adopted independently.
 
 ## Known preview limitations
 
-- These notes remain a draft until the final Preview 4 release gates and
-  evidence review are complete.
+- Preview APIs and resource keys remain subject to source-audited changes
+  before stable 1.0, with inventories and migration guidance updated together.
 - `TabView`, `ItemContainer`, `LinedFlowLayout`, and `ItemsView` remain
   assigned to later 1.0 previews.
 - `PipsPager` remains deferred to 1.1.
