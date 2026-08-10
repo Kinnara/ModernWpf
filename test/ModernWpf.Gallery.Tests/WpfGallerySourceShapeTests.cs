@@ -6818,6 +6818,30 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void GalleryVisualChecksFallsBackToWpfForHighContrastPngMetrics()
+        {
+            var source = ReadRepoFile("tools", "visual-checks", "Run-GalleryVisualChecks.ps1");
+
+            AssertContainsInOrder(
+                source,
+                "Add-Type -AssemblyName PresentationCore",
+                "function Get-WpfImageData([string]$path)",
+                "[System.Windows.Media.Imaging.BitmapDecoder]::Create(",
+                "[System.Windows.Media.PixelFormats]::Bgra32",
+                "$source.CopyPixels($pixels, $stride, 0)",
+                "function Test-WpfImageDataNotBlank($image)",
+                "function Get-WpfImageAnalysis([string]$path, [int]$step)",
+                "function Test-ImageNotBlank([string]$path)",
+                "return Test-WpfImageDataNotBlank (Get-WpfImageData $path)",
+                "function Get-ImageSize([string]$path)",
+                "$image = Get-WpfImageData $path",
+                "function Get-ImageVisibleStdDev([string]$path, [int]$step = 3)",
+                "return (Get-WpfImageAnalysis $path $step).StdDev",
+                "function Get-ImageMeanLuminance([string]$path, [int]$step = 3)",
+                "$mean = (Get-WpfImageAnalysis $path $step).Mean");
+        }
+
+        [TestMethod]
         public void GalleryVisualChecksTypesAutoSuggestBoxAndChoosesSuggestion()
         {
             var source = File.ReadAllText(Path.Combine(
