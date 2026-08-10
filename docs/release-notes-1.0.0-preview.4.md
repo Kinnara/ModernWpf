@@ -84,8 +84,8 @@ preview surfaces and may be adopted independently.
 
 ## Known preview limitations
 
-- Until Preview 3 is published, the development version and package baseline
-  cannot advance to Preview 4; this draft must not be used for publication.
+- These notes remain a draft until the final Preview 4 release gates and
+  evidence review are complete.
 - `TabView`, `ItemContainer`, `LinedFlowLayout`, and `ItemsView` remain
   assigned to later 1.0 previews.
 - `PipsPager` remains deferred to 1.1.

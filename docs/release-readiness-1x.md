@@ -197,7 +197,7 @@ match `Directory.Build.props`. Dispatch the workflow from that same tag ref;
 for example:
 
 ```powershell
-gh workflow run release.yml --ref v1.0.0-preview.3 -f tag=v1.0.0-preview.3
+gh workflow run release.yml --ref v1.0.0-preview.4 -f tag=v1.0.0-preview.4
 ```
 
 Stable publication also names the accepted RC explicitly:

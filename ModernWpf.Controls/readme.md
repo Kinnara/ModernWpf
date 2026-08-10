@@ -5,14 +5,14 @@ Presentation Foundation applications. **ModernWPF** is the product name;
 `ModernWpfUI` remains the NuGet package ID and `ModernWpf` remains the CLR
 namespace and repository name.
 
-![ModernWPF Gallery showing controls, samples, and navigation](https://raw.githubusercontent.com/Kinnara/ModernWpf/v1.0.0-preview.3/docs/images/Gallery.Light.png)
+![ModernWPF Gallery showing controls, samples, and navigation](https://raw.githubusercontent.com/Kinnara/ModernWpf/v1.0.0-preview.4/docs/images/Gallery.Light.png)
 
-## Install Preview 3
+## Install Preview 4
 
 Install the preview explicitly:
 
 ```powershell
-dotnet add package ModernWpfUI --version 1.0.0-preview.3
+dotnet add package ModernWpfUI --version 1.0.0-preview.4
 ```
 
 | Target framework | Stock-control theme |
@@ -60,7 +60,7 @@ The 1.0 preview series may make source-audited API or resource-key corrections
 before stable `1.0.0`. Intentional changes are documented with migration
 guidance; stable 1.0 will establish the SemVer compatibility boundary for 1.x.
 
-- [Preview 3 release notes](https://github.com/Kinnara/ModernWpf/blob/v1.0.0-preview.3/docs/release-notes-1.0.0-preview.3.md)
-- [Migrate from ModernWPF 0.9.x](https://github.com/Kinnara/ModernWpf/blob/v1.0.0-preview.3/docs/migrating-from-0.9.md)
+- [Preview 4 release notes](https://github.com/Kinnara/ModernWpf/blob/v1.0.0-preview.4/docs/release-notes-1.0.0-preview.4.md)
+- [Migrate from ModernWPF 0.9.x](https://github.com/Kinnara/ModernWpf/blob/v1.0.0-preview.4/docs/migrating-from-0.9.md)
 - [Report a Preview bug](https://github.com/Kinnara/ModernWpf/issues/new?template=preview-bug.yml)
 - [Documentation and source](https://github.com/Kinnara/ModernWpf#documentation)
