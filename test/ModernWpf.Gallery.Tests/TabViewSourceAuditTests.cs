@@ -119,6 +119,9 @@ namespace ModernWpf.Gallery.Tests
             var scrollViewer = (ScrollViewer)tabView.Template.FindName("PART_ScrollViewer", tabView);
             var increase = (RepeatButton)tabView.Template.FindName("PART_ScrollIncreaseButton", tabView);
             WpfTestHost.DoEvents();
+            Assert.IsTrue(
+                double.IsNaN(tabView.Width),
+                "The overflow sample must use the available Gallery column width so its scroll buttons remain reachable.");
             Assert.IsNotNull(scrollViewer);
             Assert.IsNotNull(increase);
             Assert.IsTrue(scrollViewer.ScrollableWidth > 0.0);

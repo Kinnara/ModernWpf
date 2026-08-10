@@ -352,7 +352,6 @@ private void TabView_ExternalTornOutTabsDropping(TabView sender,
         {
             var root = CreateRoot("Widths");
             var tabView = CreateTabView("TabView3");
-            tabView.Width = 620;
             tabView.HorizontalAlignment = HorizontalAlignment.Left;
             for (var index = 1; index <= 12; index++)
             {
