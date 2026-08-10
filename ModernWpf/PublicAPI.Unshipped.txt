@@ -1,4 +1,18 @@
 #nullable enable
+ModernWpf.BringIntoViewOptions
+ModernWpf.BringIntoViewOptions.AnimationDesired.get -> bool
+ModernWpf.BringIntoViewOptions.AnimationDesired.set -> void
+ModernWpf.BringIntoViewOptions.BringIntoViewOptions() -> void
+ModernWpf.BringIntoViewOptions.HorizontalAlignmentRatio.get -> double
+ModernWpf.BringIntoViewOptions.HorizontalAlignmentRatio.set -> void
+ModernWpf.BringIntoViewOptions.HorizontalOffset.get -> double
+ModernWpf.BringIntoViewOptions.HorizontalOffset.set -> void
+ModernWpf.BringIntoViewOptions.TargetRect.get -> System.Windows.Rect?
+ModernWpf.BringIntoViewOptions.TargetRect.set -> void
+ModernWpf.BringIntoViewOptions.VerticalAlignmentRatio.get -> double
+ModernWpf.BringIntoViewOptions.VerticalAlignmentRatio.set -> void
+ModernWpf.BringIntoViewOptions.VerticalOffset.get -> double
+ModernWpf.BringIntoViewOptions.VerticalOffset.set -> void
 ModernWpf.Controls.WindowBackdrop
 ModernWpf.Controls.WindowBackdropKind
 ModernWpf.Controls.WindowBackdropKind.DesktopAcrylic = 2 -> ModernWpf.Controls.WindowBackdropKind

@@ -98,6 +98,32 @@ setting. The scrolling bridge required by Preview 7 is internal; Preview 6
 does not publish incomplete `ScrollView`, `ScrollPresenter`, or `ItemsView`
 shells. Existing Preview 5 applications require only a package-version update.
 
+### Adopt Preview 7 ItemsView intentionally
+
+Preview 7 adds `ModernWpf.Controls.ItemsView`; it does not rename or replace
+WPF `ItemsControl`, `ListBox`, `ListView`, or `GridView`. Keep the stock WPF
+controls when their established item-container, grouping, editing, or
+collection-view behavior is the application requirement. Adopt ItemsView when
+the application needs the WinUI-shaped combination of `ItemsRepeater`
+virtualization, `ItemContainer` interaction and automation, swappable layouts,
+current-item tracking, invocation, and source selection policies.
+
+ItemsView templates must realize `ItemContainer` roots. WPF `DataTemplate` and
+`DataTemplateSelector` inputs and the existing `IElementFactory` abstraction
+are accepted through the `object`-typed `ItemTemplate` property. Move custom
+item visuals inside `ItemContainer` instead of returning an unrelated root.
+
+`ItemsView.ScrollView` returns `System.Windows.Controls.ScrollViewer`, and
+`ModernWpf.BringIntoViewOptions` carries target rectangle, alignment, offset,
+and animation intent into the WPF scrolling bridge. Do not cast that property
+to a WinUI `ScrollView` or depend on private `ScrollPresenter` behavior.
+`ItemTransitionProvider` can use the Preview 6 LinedFlow provider for add,
+remove, move, and layout transitions.
+
+The new ItemsView and BringIntoViewOptions APIs are additive. Preview 7 makes
+no intentional Preview 6 API or resource-key break, so existing Preview 6
+applications require only a package-version update.
+
 ## 4. Migrate MahApps integration
 
 `ModernWpfUI.MahApps` remains on the legacy 0.9.x line and is not produced for

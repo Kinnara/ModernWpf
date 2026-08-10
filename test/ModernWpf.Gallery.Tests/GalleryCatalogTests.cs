@@ -35,6 +35,7 @@ namespace ModernWpf.Gallery.Tests
             "MenuBar",
             "MenuFlyout",
             "ItemContainer",
+            "ItemsView",
             "ItemsRepeater",
             "LinedFlowLayout",
             "RatingControl",
@@ -71,7 +72,6 @@ namespace ModernWpf.Gallery.Tests
             "ScrollView",
             "FlipView",
             "PipsPager",
-            "ItemsView",
             "EasingFunction",
             "PageTransition",
             "ThemeTransition",
@@ -371,8 +371,8 @@ namespace ModernWpf.Gallery.Tests
                 "NavigationWindow",
                 "TextBox",
                 "ItemContainer",
-                "LinedFlowLayout",
-                "Popup"
+                "ItemsView",
+                "LinedFlowLayout"
             };
 
             var actual = GalleryCatalog.NewOrUpdatedItems.Select(item => item.UniqueId).ToArray();
@@ -893,7 +893,7 @@ namespace ModernWpf.Gallery.Tests
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(9, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(78, GalleryCatalog.Items.Count);
+            Assert.AreEqual(79, GalleryCatalog.Items.Count);
         }
 
         [TestMethod]

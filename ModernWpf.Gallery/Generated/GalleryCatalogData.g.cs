@@ -134,7 +134,20 @@ namespace ModernWpf.Gallery.Models
                         false,
                         new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
                         new GalleryDocLink[] { new GalleryDocLink("ItemContainer - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.itemcontainer") },
-                        new string[] { "ItemsRepeater" }),
+                        new string[] { "ItemsView", "ItemsRepeater" }),
+                    new GalleryItem(
+                        "Collections",
+                        "ItemsView",
+                        "ItemsView",
+                        "Presents a virtualized collection with selection, invocation, and swappable layouts.",
+                        "ms-appx:///Assets/ControlImages/ItemsRepeater.png",
+                        "ItemsView combines ItemsRepeater virtualization, ItemContainer interaction and automation, selection policies, item invocation, configurable layouts, and item transitions in one collection control.",
+                        "ModernWpf.Controls",
+                        true,
+                        false,
+                        new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement", "Control" },
+                        new GalleryDocLink[] { new GalleryDocLink("ItemsView - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.itemsview") },
+                        new string[] { "ItemContainer", "ItemsRepeater", "LinedFlowLayout" }),
                     new GalleryItem(
                         "Collections",
                         "ItemsRepeater",
@@ -147,7 +160,7 @@ namespace ModernWpf.Gallery.Models
                         false,
                         new string[] { "Object", "DependencyObject", "UIElement", "FrameworkElement" },
                         new GalleryDocLink[] { new GalleryDocLink("ItemsRepeater - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.itemsrepeater"), new GalleryDocLink("Guidelines", "https://learn.microsoft.com/windows/apps/design/controls/items-repeater"), new GalleryDocLink("StackLayout - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.stacklayout"), new GalleryDocLink("UniformGridLayout - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.uniformgridlayout") },
-                        new string[] { "GridView", "ItemContainer", "LinedFlowLayout" }),
+                        new string[] { "GridView", "ItemContainer", "ItemsView", "LinedFlowLayout" }),
                     new GalleryItem(
                         "Collections",
                         "LinedFlowLayout",
@@ -160,7 +173,7 @@ namespace ModernWpf.Gallery.Models
                         false,
                         new string[] { "Object", "DependencyObject", "Layout", "VirtualizingLayout" },
                         new GalleryDocLink[] { new GalleryDocLink("LinedFlowLayout - API", "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.linedflowlayout") },
-                        new string[] { "ItemsRepeater", "ItemContainer" }),
+                        new string[] { "ItemsView", "ItemsRepeater", "ItemContainer" }),
                 }),
                 new GalleryGroup("BasicInput", "Basic input", "", "pack://application:,,,/Assets/ControlImages/Placeholder.png", false, new GalleryItem[]
                 {
