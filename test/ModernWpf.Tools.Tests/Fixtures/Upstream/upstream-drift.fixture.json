@@ -39,8 +39,8 @@
   "comparisons": [
     {
       "repository": "winui-product",
-      "base": "d5bdbb190cdba0b7f1baec4b3981208a9685a360",
-      "head": "6a556bb28fc227acd2ec8fe67ee64853f559084b",
+      "base": "6a556bb28fc227acd2ec8fe67ee64853f559084b",
+      "head": "e1aa8f64df98d6229f6cd4074d59b654616254da",
       "status": "ahead",
       "aheadBy": 12,
       "behindBy": 0,
@@ -96,7 +96,7 @@
     },
     {
       "repository": "winui-product",
-      "base": "6a556bb28fc227acd2ec8fe67ee64853f559084b",
+      "base": "e1aa8f64df98d6229f6cd4074d59b654616254da",
       "head": "1111111111111111111111111111111111111111",
       "status": "ahead",
       "aheadBy": 1,

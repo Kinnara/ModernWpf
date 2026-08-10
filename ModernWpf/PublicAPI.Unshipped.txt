@@ -1,1 +1,14 @@
 #nullable enable
+ModernWpf.Controls.WindowBackdrop
+ModernWpf.Controls.WindowBackdropKind
+ModernWpf.Controls.WindowBackdropKind.DesktopAcrylic = 2 -> ModernWpf.Controls.WindowBackdropKind
+ModernWpf.Controls.WindowBackdropKind.Mica = 1 -> ModernWpf.Controls.WindowBackdropKind
+ModernWpf.Controls.WindowBackdropKind.None = 0 -> ModernWpf.Controls.WindowBackdropKind
+~static ModernWpf.Controls.WindowBackdrop.GetEffectiveKind(System.Windows.Window window) -> ModernWpf.Controls.WindowBackdropKind
+~static ModernWpf.Controls.WindowBackdrop.GetFallbackBrush(System.Windows.Window window) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.WindowBackdrop.GetKind(System.Windows.Window window) -> ModernWpf.Controls.WindowBackdropKind
+~static ModernWpf.Controls.WindowBackdrop.SetFallbackBrush(System.Windows.Window window, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.WindowBackdrop.SetKind(System.Windows.Window window, ModernWpf.Controls.WindowBackdropKind value) -> void
+~static readonly ModernWpf.Controls.WindowBackdrop.EffectiveKindProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowBackdrop.FallbackBrushProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowBackdrop.KindProperty -> System.Windows.DependencyProperty

@@ -1,5 +1,6 @@
 #nullable enable
 ModernWpf.Automation.Peers.TimePickerAutomationPeer
+ModernWpf.Automation.Peers.TitleBarAutomationPeer
 ModernWpf.Controls.TimePicker
 ModernWpf.Controls.TimePicker.CornerRadius.get -> System.Windows.CornerRadius
 ModernWpf.Controls.TimePicker.CornerRadius.set -> void
@@ -22,6 +23,21 @@ ModernWpf.Controls.TimePickerSelectedValueChangedEventArgs.OldTime.get -> System
 ModernWpf.Controls.TimePickerValueChangedEventArgs
 ModernWpf.Controls.TimePickerValueChangedEventArgs.NewTime.get -> System.TimeSpan
 ModernWpf.Controls.TimePickerValueChangedEventArgs.OldTime.get -> System.TimeSpan
+ModernWpf.Controls.TitleBar
+ModernWpf.Controls.TitleBar.AutoRefreshDragRegions.get -> bool
+ModernWpf.Controls.TitleBar.AutoRefreshDragRegions.set -> void
+ModernWpf.Controls.TitleBar.BackRequested -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TitleBar, object>
+ModernWpf.Controls.TitleBar.IsBackButtonEnabled.get -> bool
+ModernWpf.Controls.TitleBar.IsBackButtonEnabled.set -> void
+ModernWpf.Controls.TitleBar.IsBackButtonVisible.get -> bool
+ModernWpf.Controls.TitleBar.IsBackButtonVisible.set -> void
+ModernWpf.Controls.TitleBar.IsPaneToggleButtonVisible.get -> bool
+ModernWpf.Controls.TitleBar.IsPaneToggleButtonVisible.set -> void
+ModernWpf.Controls.TitleBar.PaneToggleRequested -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TitleBar, object>
+ModernWpf.Controls.TitleBar.RecomputeDragRegions() -> void
+ModernWpf.Controls.TitleBar.TitleBar() -> void
+ModernWpf.Controls.TitleBarTemplateSettings
+ModernWpf.Controls.TitleBarTemplateSettings.TitleBarTemplateSettings() -> void
 ModernWpf.Controls.TwoPaneView
 ModernWpf.Controls.TwoPaneView.MinTallModeHeight.get -> double
 ModernWpf.Controls.TwoPaneView.MinTallModeHeight.set -> void
@@ -56,22 +72,45 @@ ModernWpf.Controls.TwoPaneViewWideModeConfiguration.LeftRight = 1 -> ModernWpf.C
 ModernWpf.Controls.TwoPaneViewWideModeConfiguration.RightLeft = 2 -> ModernWpf.Controls.TwoPaneViewWideModeConfiguration
 ModernWpf.Controls.TwoPaneViewWideModeConfiguration.SinglePane = 0 -> ModernWpf.Controls.TwoPaneViewWideModeConfiguration
 override ModernWpf.Automation.Peers.TimePickerAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
+override ModernWpf.Automation.Peers.TitleBarAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Controls.TimePicker.OnApplyTemplate() -> void
+override ModernWpf.Controls.TitleBar.OnApplyTemplate() -> void
 override ModernWpf.Controls.TwoPaneView.OnApplyTemplate() -> void
 ~ModernWpf.Automation.Peers.TimePickerAutomationPeer.TimePickerAutomationPeer(ModernWpf.Controls.TimePicker owner) -> void
+~ModernWpf.Automation.Peers.TitleBarAutomationPeer.TitleBarAutomationPeer(ModernWpf.Controls.TitleBar owner) -> void
 ~ModernWpf.Controls.TimePicker.ClockIdentifier.get -> string
 ~ModernWpf.Controls.TimePicker.ClockIdentifier.set -> void
 ~ModernWpf.Controls.TimePicker.Header.get -> object
 ~ModernWpf.Controls.TimePicker.Header.set -> void
 ~ModernWpf.Controls.TimePicker.HeaderTemplate.get -> System.Windows.DataTemplate
 ~ModernWpf.Controls.TimePicker.HeaderTemplate.set -> void
+~ModernWpf.Controls.TitleBar.Content.get -> System.Windows.UIElement
+~ModernWpf.Controls.TitleBar.Content.set -> void
+~ModernWpf.Controls.TitleBar.IconSource.get -> ModernWpf.Controls.IconSource
+~ModernWpf.Controls.TitleBar.IconSource.set -> void
+~ModernWpf.Controls.TitleBar.LeftHeader.get -> System.Windows.UIElement
+~ModernWpf.Controls.TitleBar.LeftHeader.set -> void
+~ModernWpf.Controls.TitleBar.RightHeader.get -> System.Windows.UIElement
+~ModernWpf.Controls.TitleBar.RightHeader.set -> void
+~ModernWpf.Controls.TitleBar.Subtitle.get -> string
+~ModernWpf.Controls.TitleBar.Subtitle.set -> void
+~ModernWpf.Controls.TitleBar.TemplateSettings.get -> ModernWpf.Controls.TitleBarTemplateSettings
+~ModernWpf.Controls.TitleBar.Title.get -> string
+~ModernWpf.Controls.TitleBar.Title.set -> void
+~ModernWpf.Controls.TitleBarTemplateSettings.IconElement.get -> ModernWpf.Controls.IconElement
 ~ModernWpf.Controls.TwoPaneView.Pane1.get -> System.Windows.UIElement
 ~ModernWpf.Controls.TwoPaneView.Pane1.set -> void
 ~ModernWpf.Controls.TwoPaneView.Pane2.get -> System.Windows.UIElement
 ~ModernWpf.Controls.TwoPaneView.Pane2.set -> void
 ~override ModernWpf.Automation.Peers.TimePickerAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Automation.Peers.TimePickerAutomationPeer.GetNameCore() -> string
+~override ModernWpf.Automation.Peers.TitleBarAutomationPeer.GetClassNameCore() -> string
+~override ModernWpf.Automation.Peers.TitleBarAutomationPeer.GetNameCore() -> string
 ~override ModernWpf.Controls.TimePicker.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
+~override ModernWpf.Controls.TitleBar.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
+~override ModernWpf.Controls.TitleBar.OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e) -> void
+~static ModernWpf.Controls.TitleBar.GetIsDragRegion(System.Windows.UIElement element) -> bool?
+~static ModernWpf.Controls.TitleBar.SetIsDragRegion(System.Windows.UIElement element, bool? value) -> void
 ~static readonly ModernWpf.Controls.TimePicker.ClockIdentifierProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TimePicker.CornerRadiusProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TimePicker.HeaderPlacementProperty -> System.Windows.DependencyProperty
@@ -81,6 +120,19 @@ override ModernWpf.Controls.TwoPaneView.OnApplyTemplate() -> void
 ~static readonly ModernWpf.Controls.TimePicker.MinuteIncrementProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TimePicker.SelectedTimeProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TimePicker.TimeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.AutoRefreshDragRegionsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.ContentProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.IconSourceProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.IsBackButtonEnabledProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.IsBackButtonVisibleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.IsDragRegionProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.IsPaneToggleButtonVisibleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.LeftHeaderProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.RightHeaderProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.SubtitleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.TemplateSettingsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBar.TitleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TitleBarTemplateSettings.IconElementProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TwoPaneView.MinTallModeHeightProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TwoPaneView.MinWideModeWidthProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TwoPaneView.ModeProperty -> System.Windows.DependencyProperty

@@ -12,34 +12,55 @@ public class TitleBarSourceAuditTests
     {
         var repoRoot = FindRepoRoot();
         var audit = Read(repoRoot, "docs", "titlebar-winui3-gallery-parity.md");
-        var control = Read(repoRoot, "ModernWpf", "TitleBar", "WindowTitleBarControl.cs");
-        var controlTemplate = Read(repoRoot, "ModernWpf", "TitleBar", "WindowTitleBarControl.xaml");
-        var buttonStyle = Read(repoRoot, "ModernWpf", "TitleBar", "TitleBarButton.xaml");
-        var peer = Read(repoRoot, "ModernWpf", "TitleBar", "WindowTitleBarControlAutomationPeer.cs");
-        var titleBarTests = Read(
+        var control = Read(repoRoot, "ModernWpf.Controls", "TitleBar", "TitleBar.cs");
+        var template = Read(repoRoot, "ModernWpf.Controls", "TitleBar", "TitleBar.xaml");
+        var templateSettings = Read(
+            repoRoot,
+            "ModernWpf.Controls",
+            "TitleBar",
+            "TitleBarTemplateSettings.cs");
+        var strings = Read(
+            repoRoot,
+            "ModernWpf.Controls",
+            "TitleBar",
+            "Strings",
+            "Resources.resx");
+        var peer = Read(
+            repoRoot,
+            "ModernWpf.Controls",
+            "TitleBar",
+            "TitleBarAutomationPeer.cs");
+        var generic = Read(repoRoot, "ModernWpf.Controls", "Themes", "Generic.xaml");
+        var publicApi = Read(repoRoot, "ModernWpf.Controls", "PublicAPI.Unshipped.txt");
+        var publicResourceKeys = Read(repoRoot, "ModernWpf", "PublicResourceKeys.Unshipped.txt");
+        var controlsResources = Read(repoRoot, "ModernWpf", "ModernWpfControlsResources.xaml");
+        var highContrastResources = Read(repoRoot, "ModernWpf", "ThemeResources", "HighContrast.xaml");
+        var tests = Read(
             repoRoot,
             "test",
             "ModernWpf.WinUI.Tests",
             "TitleBar",
-            "TitleBarApiTests.cs");
-        var windowTests = Read(
+            "TitleBarControlApiTests.cs");
+        var galleryFactory = Read(
             repoRoot,
-            "test",
-            "ModernWpf.WinUI.Tests",
-            "CommonStyles",
-            "WindowVisualStateTests.cs");
-        var galleryFactory = Read(repoRoot, "ModernWpf.Gallery", "Pages", "WindowingSampleFactory.cs");
-        var harness = Read(repoRoot, "tools", "visual-checks", "Run-GalleryVisualChecks.ps1");
+            "ModernWpf.Gallery",
+            "Pages",
+            "WindowingSampleFactory.cs");
+        var visualHarness = Read(
+            repoRoot,
+            "tools",
+            "visual-checks",
+            "Run-GalleryVisualChecks.ps1");
+        var interactionHarness = Read(
+            repoRoot,
+            "tools",
+            "visual-checks",
+            "Record-GalleryControlInteractions.ps1");
 
-        StringAssert.Contains(audit, "de3e767333c2f0717a6a70cb22bd192ced5ad885");
-        StringAssert.Contains(audit, "eb75504a1978df0d37a3ad4574d6f72bf4d21583");
+        StringAssert.Contains(audit, "e1aa8f64df98d6229f6cd4074d59b654616254da");
         StringAssert.Contains(audit, "a97562621a1d1ea397a38a3f512c9eef99db52d8");
-        StringAssert.Contains(audit, "54c81dcacb9d6e01a30da7c5299bfd4bf661d43e");
-        StringAssert.Contains(audit, "8463f45162149de0ec3ad7df752596893fe3e13e");
-        StringAssert.Contains(audit, "29f62479d5c046a0b854a5868e5a7cd484572d87");
-        StringAssert.Contains(audit, "14a4a1a2b8ddc527dc4a7d5f7e743d7c2bc97db7");
-        StringAssert.Contains(audit, "9a14fa563584b19c06e3baccf10664a12f84fad5");
-        StringAssert.Contains(audit, "5134559ff2de382759847e60c6797e16837db1a9");
+        StringAssert.Contains(audit, "3669519356c67f1376152c33ed8ea45003a91f3a");
+        StringAssert.Contains(audit, "f540ca36b93e557b6b9f1221fc7c08b988ca6fd0");
         StringAssert.Contains(audit, "e6885f5fb8c7deb5f6e552c7e88b3614742c2969");
         StringAssert.Contains(audit, "acd14c7c6f242d99a0467d69f701b8599d8dd9c5");
         StringAssert.Contains(audit, "f3a0717c2aeb1cc056f57138876206cf920c280d");
@@ -52,58 +73,82 @@ public class TitleBarSourceAuditTests
         StringAssert.Contains(audit, "809fd3df59b5383279de02be9eefe76fd61fd5cc");
         StringAssert.Contains(audit, "a63138f1d89beee02b4ffb8b7626e398b557e8c0");
         StringAssert.Contains(audit, "6e2fb83489d8c0df9b08758bceec24afe401c595");
-        StringAssert.Contains(audit, "ec23c47c91b0c164d875c449df8246f085350aec");
-        StringAssert.Contains(audit, "e138e59bc558add94bfb98fcbc1dd094e8d67b87");
-        StringAssert.Contains(audit, "artifacts/visual-checks/20260718-174511-923-56972/report.md");
-        StringAssert.Contains(audit, "artifacts/visual-checks/20260718-174542-034-92644/report.md");
-        StringAssert.Contains(audit, "artifacts/gallery-recordings/20260718-184435-809/report.md");
-        StringAssert.Contains(audit, "artifacts/gallery-recordings/20260718-184510-347/report.md");
-        StringAssert.Contains(audit, "| `470x48` / `470x48` | `0.74` |");
-        StringAssert.Contains(audit, "| `470x48` / `470x48` | `0.82` |");
-        StringAssert.Contains(audit, "`6.819` local delta");
-        StringAssert.Contains(audit, "`7.897` local delta");
-        StringAssert.Contains(audit, "controls\\dev\\TitleBar\\TitleBar.cpp");
-        StringAssert.Contains(audit, "WindowTitleBar.HeightKey");
-        StringAssert.Contains(audit, "WindowChrome.CaptionHeight");
-        StringAssert.Contains(audit, "WM_NCHITTEST");
-        StringAssert.Contains(audit, "normal WPF content-font inheritance");
-        StringAssert.Contains(audit, "public V11");
-        StringAssert.Contains(audit, "`MUX_PUBLIC_V11`");
-        StringAssert.Contains(audit, "does not currently ship a WinUI `TitleBar` clone");
-        Assert.IsFalse(audit.Contains("Preview APIs add", StringComparison.Ordinal));
-        Assert.IsFalse(audit.Contains("`src\\controls\\dev\\TitleBar", StringComparison.Ordinal));
-
-        StringAssert.Contains(control, "return new WindowTitleBarControlAutomationPeer(this);");
-        StringAssert.Contains(control, "UpdateWindowChromeCaptionHeight");
-        StringAssert.Contains(control, "WindowChrome.WindowChromeProperty");
-        StringAssert.Contains(control, "CloneCurrentValue");
-        StringAssert.Contains(peer, "return AutomationControlType.TitleBar;");
-        StringAssert.Contains(peer, "return \"TitleBar\";");
-        StringAssert.Contains(peer, "name = ((WindowTitleBarControl)Owner).Title;");
-        StringAssert.Contains(controlTemplate, "<StreamGeometry x:Key=\"ChromeClose\">");
-        StringAssert.Contains(controlTemplate, "<local:FontIconFallback Data=\"{Binding}\" />");
+        StringAssert.Contains(audit, "WPF has no `InputNonClientPointerSource`");
+        StringAssert.Contains(audit, "final clean tip");
+        StringAssert.Contains(audit, "real OS High Contrast");
         Assert.IsFalse(
-            buttonStyle.Contains(
-                "<Setter Property=\"FontFamily\" Value=\"{DynamicResource SymbolThemeFontFamily}\" />",
-                StringComparison.Ordinal));
+            audit.Contains("does not currently ship a WinUI `TitleBar` clone", StringComparison.Ordinal));
 
-        StringAssert.Contains(titleBarTests, "TitleBarButtonTextContentInheritsHostFontFamily");
-        StringAssert.Contains(titleBarTests, "Assert.AreEqual(expectedFontFamily.Source, textBlock.FontFamily.Source);");
-        StringAssert.Contains(windowTests, "TitleBarHeightResourceControlsRenderedAndDraggableHeight");
-        StringAssert.Contains(windowTests, "WmNcHitTest");
-        StringAssert.Contains(windowTests, "Assert.AreSame(replacementChrome, synchronizedReplacement);");
+        StringAssert.Contains(control, "public class TitleBar : Control");
+        StringAssert.Contains(control, "public static readonly DependencyProperty AutoRefreshDragRegionsProperty");
+        StringAssert.Contains(control, "typeof(bool?)");
+        StringAssert.Contains(control, "public static bool? GetIsDragRegion(UIElement element)");
+        StringAssert.Contains(control, "element.ClearValue(IsDragRegionProperty);");
+        StringAssert.Contains(control, "public void RecomputeDragRegions()");
+        StringAssert.Contains(control, "WindowChrome.SetIsHitTestVisibleInChrome(this, true);");
+        StringAssert.Contains(control, "window.DragMove();");
+        StringAssert.Contains(control, "window.WindowState == WindowState.Maximized");
+        StringAssert.Contains(control, "IsBackButtonVisible == IsPaneToggleButtonVisible");
+        StringAssert.Contains(control, "private bool IsDragTarget(DependencyObject originalSource)");
+        StringAssert.Contains(control, "current is Control control && control.IsEnabled");
+        StringAssert.Contains(control, "ReferenceEquals(current, _leftHeaderPresenter)");
+        StringAssert.Contains(control, "ReferenceEquals(current, _rightHeaderPresenter)");
+        StringAssert.Contains(control, "SR_NavigationButtonToggleName");
+        StringAssert.Contains(control, "InitializeButtonAccessibility();");
+        StringAssert.Contains(control, "return new TitleBarAutomationPeer(this);");
+        StringAssert.Contains(templateSettings, "public class TitleBarTemplateSettings : DependencyObject");
+        StringAssert.Contains(peer, "return AutomationControlType.TitleBar;");
+        StringAssert.Contains(peer, "return nameof(TitleBar);");
+        StringAssert.Contains(strings, "<data name=\"NavigationButtonToggleName\"");
+        StringAssert.Contains(strings, "<value>Toggle Navigation</value>");
 
+        StringAssert.Contains(template, "x:Name=\"PART_BackButton\"");
+        StringAssert.Contains(template, "x:Name=\"PART_PaneToggleButton\"");
+        StringAssert.Contains(template, "AutomationProperties.AutomationId=\"TitleBarBackButton\"");
+        StringAssert.Contains(template, "AutomationProperties.AutomationId=\"TitleBarPaneToggleButton\"");
+        StringAssert.Contains(template, "TitleBarPaneToggleButtonBackgroundPointerOver");
+        StringAssert.Contains(template, "TitleBarPaneToggleButtonForegroundPressed");
+        StringAssert.Contains(template, "{x:Static SystemParameters.FocusVisualStyleKey}");
+        StringAssert.Contains(template, "x:Name=\"ExpandedHeight\"");
+        StringAssert.Contains(template, "x:Name=\"Compact\"");
+        StringAssert.Contains(template, "x:Name=\"PART_MinDragRegion\"");
+        StringAssert.Contains(template, "Width=\"{DynamicResource TitleBarMinDragRegionWidth}\"");
+        Assert.IsFalse(template.Contains("TitleBarMinDragRegionGridLength", StringComparison.Ordinal));
+        StringAssert.Contains(generic, "Source=\"/ModernWpf.Controls;component/TitleBar/TitleBar.xaml\"");
+
+        StringAssert.Contains(publicApi, "ModernWpf.Controls.TitleBar");
+        StringAssert.Contains(publicApi, "ModernWpf.Controls.TitleBarTemplateSettings");
+        StringAssert.Contains(publicApi, "ModernWpf.Automation.Peers.TitleBarAutomationPeer");
+        StringAssert.Contains(publicApi, "ModernWpf.Controls.TitleBar.AutoRefreshDragRegions.get -> bool");
+        StringAssert.Contains(publicApi, "~static ModernWpf.Controls.TitleBar.GetIsDragRegion(System.Windows.UIElement element) -> bool?");
+        StringAssert.Contains(publicResourceKeys, "ModernWpfControlsResources.xaml|TitleBarMinDragRegionWidth");
+        StringAssert.Contains(publicResourceKeys, "ThemeResources/Light.xaml|TitleBarBackButtonBackgroundPointerOver");
+        StringAssert.Contains(publicResourceKeys, "ThemeResources/Dark.xaml|TitleBarPaneToggleButtonForegroundPressed");
+        StringAssert.Contains(publicResourceKeys, "ThemeResources/HighContrast.xaml|TitleBarSubtitleForegroundBrush");
+        StringAssert.Contains(controlsResources, "x:Key=\"TitleBarContentHorizontalAlignment\"");
+        StringAssert.Contains(highContrastResources, "x:Key=\"TitleBarBackButtonBackgroundPointerOver\" ResourceKey=\"SystemControlHighlightListLowBrush\"");
+
+        StringAssert.Contains(tests, "DefaultsAndSettersMatchCurrentWinUIV11Contract");
+        StringAssert.Contains(tests, "DragRegionOverridesInteractiveControlDefaults");
+        StringAssert.Contains(tests, "WindowTitleIsAppliedAndRestoredWithoutOverwritingExternalChanges");
+        StringAssert.Contains(tests, "AutomationPeerUsesTitleBarRoleAndTitleFallback");
+        StringAssert.Contains(tests, "BackAndPaneButtonsUseTheirOwnStateResourceContracts");
+        StringAssert.Contains(tests, "PublicLayoutResourcesOverrideTheLiveTemplate");
+        StringAssert.Contains(tests, "LeftHeaderSpacingMatchesTheCurrentWinUIButtonCombinationRule");
+        StringAssert.Contains(tests, "ExtendedChromeTreatsTheTitleBarTreeAsClientInput");
+
+        StringAssert.Contains(galleryFactory, "new Mux.TitleBar");
         StringAssert.Contains(galleryFactory, "TitleBarContentHorizontalAlignment");
-        StringAssert.Contains(galleryFactory, "MaxWidth=\"\"580\"\"");
-        StringAssert.Contains(galleryFactory, "PlaceholderText=\"\"Search...\"\"");
+        StringAssert.Contains(galleryFactory, "MaxWidth = 580");
+        StringAssert.Contains(galleryFactory, "PlaceholderText = \"Search...\"");
         StringAssert.Contains(galleryFactory, "TitleBarDragRegionsXaml");
         StringAssert.Contains(galleryFactory, "CreateTitleBarDragRegionsWindowBody");
-        StringAssert.Contains(galleryFactory, "GalleryAutomation.SampleElementId(\"TitleBar\", \"DragRegionsShowWindowButton\")");
-        StringAssert.Contains(galleryFactory, "Mux.WindowTitleBar.SetExtendsContentIntoTitleBar(window, true);");
-        StringAssert.Contains(galleryFactory, "WPF updates its live drag/input tree automatically.");
+        StringAssert.Contains(galleryFactory, "titleBar.RecomputeDragRegions();");
+        StringAssert.Contains(galleryFactory, "WindowTitleBar.SetExtendsContentIntoTitleBar(this, true);");
+        Assert.IsFalse(galleryFactory.Contains("this.SetTitleBar(titleBar);", StringComparison.Ordinal));
 
-        StringAssert.Contains(harness, "\"TitleBar\" { return 1.0 }");
-        StringAssert.Contains(harness, "\"TitleBar\" { return 0 }");
+        StringAssert.Contains(visualHarness, "TitleBar = 3");
+        StringAssert.Contains(interactionHarness, "\"TitleBar\" { return \"TitleBarBackButton\" }");
     }
 
     private static string Read(string repoRoot, params string[] parts)

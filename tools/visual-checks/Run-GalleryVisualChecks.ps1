@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "InfoBadge", "InfoBar", "ProgressRing", "WinUIProgressBar", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "SystemBackdrop", "InfoBadge", "InfoBar", "ProgressRing", "WinUIProgressBar", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -63,7 +63,7 @@ $WpfGalleryOnlyVisualAuditCases = @(
     "TreeView"
 )
 
-$WinUIPortedControlExampleCounts = [ordered]@{
+$ModernWpfVisualExampleCounts = [ordered]@{
     NavigationView = 8
     InfoBar = 3
     NumberBox = 3
@@ -100,7 +100,8 @@ $WinUIPortedControlExampleCounts = [ordered]@{
     PersonPicture = 1
     IconElement = 6
     ThemeShadow = 1
-    TitleBar = 2
+    TitleBar = 3
+    SystemBackdrop = 1
 }
 
 if ($Reference -eq "InstalledWinUI3Gallery") {
@@ -1226,6 +1227,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "ImageIcon" { return "GallerySample_IconElement_ImageExample1" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_ShadowRect" }
         "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
+        "SystemBackdrop" { return "GallerySample_SystemBackdrop_MicaButton" }
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "InfoBar" { return "GallerySample_InfoBar_InfoBar" }
         "ProgressRing" { return "GallerySample_ProgressRing_DeterminateProgressRing" }
@@ -1388,6 +1390,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "ImageIcon" { return "GallerySample_IconElement_ImageExample1" }
         "ThemeShadow" { return "GallerySample_ThemeShadow_Root" }
         "TitleBar" { return "GallerySample_TitleBar_TitleBarControl" }
+        "SystemBackdrop" { return "GallerySample_SystemBackdrop_Root" }
         "InfoBadge" { return "GallerySample_InfoBadge_InfoBadge" }
         "ProgressRing" { return "GallerySample_ProgressRing_DeterminateProgressRing" }
         "WinUIProgressBar" { return "GallerySample_WinUIProgressBar_DeterminateProgressBar" }
@@ -9582,11 +9585,11 @@ function Stop-WinUIReferenceProcesses {
 }
 
 function Get-ControlExampleArtifactEvidence([string]$control, [string]$artifactDir) {
-    if (!$WinUIPortedControlExampleCounts.Contains($control)) {
+    if (!$ModernWpfVisualExampleCounts.Contains($control)) {
         return $null
     }
 
-    $expectedCount = [int]$WinUIPortedControlExampleCounts[$control]
+    $expectedCount = [int]$ModernWpfVisualExampleCounts[$control]
     $artifacts = @()
     foreach ($index in 1..$expectedCount) {
         $automationId = "GallerySample_${control}_Example${index}"
@@ -9773,11 +9776,11 @@ function Test-AutomationElementVisibleIn($element, $container, $window, [double]
 }
 
 function Capture-ModernControlExampleScreenArtifacts([string]$control, [string]$caseDir, $window) {
-    if (!$WinUIPortedControlExampleCounts.Contains($control)) {
+    if (!$ModernWpfVisualExampleCounts.Contains($control)) {
         return $null
     }
 
-    $expectedCount = [int]$WinUIPortedControlExampleCounts[$control]
+    $expectedCount = [int]$ModernWpfVisualExampleCounts[$control]
     $artifactDirectory = Join-Path $caseDir "modernwpf-control-example-screen"
     New-Item -ItemType Directory -Force -Path $artifactDirectory | Out-Null
     $artifacts = @()
@@ -9876,11 +9879,11 @@ function Capture-ModernControlExampleScreenArtifacts([string]$control, [string]$
 }
 
 function Capture-WinUIControlExampleScreenArtifacts([string]$control, [string]$caseDir, $window) {
-    if (!$WinUIPortedControlExampleCounts.Contains($control)) {
+    if (!$ModernWpfVisualExampleCounts.Contains($control)) {
         return $null
     }
 
-    $expectedCount = [int]$WinUIPortedControlExampleCounts[$control]
+    $expectedCount = [int]$ModernWpfVisualExampleCounts[$control]
     $artifactDirectory = Join-Path $caseDir "winui3-control-example-screen"
     New-Item -ItemType Directory -Force -Path $artifactDirectory | Out-Null
     $artifacts = @()
@@ -10926,7 +10929,7 @@ foreach ($control in $Controls) {
             Set-VisualCheckReferenceFailure $modern $controlExampleComparisons.Reason
         }
     }
-    elseif ($FailOnDifference -and $WinUIPortedControlExampleCounts.Contains($control)) {
+    elseif ($FailOnDifference -and $ModernWpfVisualExampleCounts.Contains($control)) {
         Set-VisualCheckReferenceFailure $modern "$control all-sample ControlExample reference evidence was unavailable."
     }
     if ((Test-ControlSupportsVisualStateMatrix $control) -and $IncludeInteractions -and

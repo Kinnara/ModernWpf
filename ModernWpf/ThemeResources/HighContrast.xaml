@@ -1976,6 +1976,24 @@
     <m:StaticResource x:Key="PageBackground" ResourceKey="SystemControlTransparentBrush" />
     <m:StaticResource x:Key="TitleBarForegroundBrush" ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="TitleBarDeactivatedForegroundBrush" ResourceKey="TextFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="TitleBarSubtitleForegroundBrush" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="TitleBarSubtitleDeactivatedForegroundBrush" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="TitleBarBackButtonBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="TitleBarBackButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+    <m:StaticResource x:Key="TitleBarBackButtonBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+    <m:StaticResource x:Key="TitleBarBackButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="TitleBarBackButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="TitleBarBackButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="TitleBarBackButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="TitleBarBackButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
+    <m:StaticResource x:Key="TitleBarPaneToggleButtonBackground" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="TitleBarPaneToggleButtonBackgroundPointerOver" ResourceKey="SystemControlHighlightListLowBrush" />
+    <m:StaticResource x:Key="TitleBarPaneToggleButtonBackgroundPressed" ResourceKey="SystemControlHighlightListMediumBrush" />
+    <m:StaticResource x:Key="TitleBarPaneToggleButtonBackgroundDisabled" ResourceKey="SystemControlBackgroundBaseLowBrush" />
+    <m:StaticResource x:Key="TitleBarPaneToggleButtonForeground" ResourceKey="SystemControlForegroundBaseHighBrush" />
+    <m:StaticResource x:Key="TitleBarPaneToggleButtonForegroundPointerOver" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="TitleBarPaneToggleButtonForegroundPressed" ResourceKey="SystemControlHighlightAltBaseHighBrush" />
+    <m:StaticResource x:Key="TitleBarPaneToggleButtonForegroundDisabled" ResourceKey="SystemControlDisabledBaseMediumLowBrush" />
     <m:StaticResource x:Key="TitleBarButtonForegroundColor" ResourceKey="TextFillColorPrimary" />
     <m:StaticResource x:Key="TitleBarButtonHoverForegroundColor" ResourceKey="TextFillColorPrimary" />
     <m:StaticResource x:Key="TitleBarButtonPressedForegroundColor" ResourceKey="TextFillColorSecondary" />

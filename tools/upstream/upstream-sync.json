@@ -102,9 +102,9 @@
           },
           "epochAdoption": {
             "status": "adopted",
-            "milestone": "1.0.0-preview.3",
+            "milestone": "1.0.0-preview.4",
             "cutoffDate": "2026-08-08",
-            "dispositionDocument": "docs/winui3-sync-2026-08-08-preview3.md"
+            "dispositionDocument": "docs/winui3-sync-2026-08-08-preview4.md"
           },
           "latestStableAtEpoch": {
             "tag": "winui3/release/2.3.1",
@@ -119,18 +119,18 @@
           "id": "main",
           "channel": "main",
           "reviewedBaseline": {
-            "revision": "d5bdbb190cdba0b7f1baec4b3981208a9685a360",
-            "label": "Preview 2 cutoff 2026-08-06 winui3/main"
-          },
-          "epochTarget": {
             "revision": "6a556bb28fc227acd2ec8fe67ee64853f559084b",
             "label": "Preview 3 cutoff 2026-08-08 winui3/main"
           },
+          "epochTarget": {
+            "revision": "e1aa8f64df98d6229f6cd4074d59b654616254da",
+            "label": "Preview 4 cutoff 2026-08-08 winui3/main"
+          },
           "epochAdoption": {
             "status": "adopted",
-            "milestone": "1.0.0-preview.3",
+            "milestone": "1.0.0-preview.4",
             "cutoffDate": "2026-08-08",
-            "dispositionDocument": "docs/winui3-sync-2026-08-08-preview3.md"
+            "dispositionDocument": "docs/winui3-sync-2026-08-08-preview4.md"
           },
           "observedHead": {
             "kind": "ref",
@@ -207,9 +207,9 @@
           },
           "epochAdoption": {
             "status": "adopted",
-            "milestone": "1.0.0-preview.3",
+            "milestone": "1.0.0-preview.4",
             "cutoffDate": "2026-08-08",
-            "dispositionDocument": "docs/winui3-sync-2026-08-08-preview3.md"
+            "dispositionDocument": "docs/winui3-sync-2026-08-08-preview4.md"
           },
           "observedHead": {
             "kind": "ref",
