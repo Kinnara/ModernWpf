@@ -993,6 +993,31 @@
       ]
     },
     {
+      "id": "tab-view",
+      "displayName": "TabView",
+      "auditDocuments": [
+        "docs/tabview-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/TabView*",
+            "controls/dev/TabView/**",
+            "controls/test/TabViewTearOutApp/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Helpers/TabViewHelper.cs",
+            "WinUIGallery/SampleSupport/SamplePages/TabViewWindowingSamplePage*",
+            "WinUIGallery/Samples/TabView/**"
+          ]
+        }
+      ]
+    },
+    {
       "id": "teaching-tip",
       "displayName": "TeachingTip",
       "auditDocuments": [

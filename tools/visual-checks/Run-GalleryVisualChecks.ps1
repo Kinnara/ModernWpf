@@ -1,5 +1,5 @@
 param(
-    [string[]]$Controls = @("TeachingTip", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "SystemBackdrop", "InfoBadge", "InfoBar", "ProgressRing", "WinUIProgressBar", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
+    [string[]]$Controls = @("TeachingTip", "ColorPicker", "HyperlinkButton", "RatingControl", "RepeatButton", "ToggleButton", "DropDownButton", "SplitButton", "ToggleSplitButton", "ToggleSwitch", "NumberBox", "AutoSuggestBox", "SplitView", "PersonPicture", "IconElement", "ThemeShadow", "TitleBar", "SystemBackdrop", "InfoBadge", "InfoBar", "ProgressRing", "WinUIProgressBar", "AnnotatedScrollBar", "GridView", "ItemsRepeater", "BreadcrumbBar", "SelectorBar", "TabView", "NavigationView", "ContentDialog", "Flyout", "Popup", "MenuBar", "MenuFlyout", "AppBarButton", "AppBarSeparator", "AppBarToggleButton", "CommandBar", "CommandBarFlyout"),
     [ValidateSet("Light", "Dark", "Default")]
     [string]$Theme = "Light",
     [ValidateSet("None", "InstalledWinUI3Gallery")]
@@ -94,6 +94,7 @@ $ModernWpfVisualExampleCounts = [ordered]@{
     Popup = 1
     BreadcrumbBar = 2
     SelectorBar = 3
+    TabView = 10
     SplitView = 1
     AnnotatedScrollBar = 1
     GridView = 3
@@ -124,6 +125,8 @@ if (!(Test-Path $GalleryExe)) {
 
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
+Add-Type -AssemblyName PresentationCore
+Add-Type -AssemblyName WindowsBase
 try {
     Add-Type -AssemblyName System.Drawing.Common
 }
@@ -677,6 +680,20 @@ function Find-ReferencePrimaryByName($root, [string]$control, [string]$name) {
 }
 
 function Reset-WinUIReferenceSampleScroll($window, [string]$control) {
+    if ($control -ne "TabView") {
+        return
+    }
+
+    $samplePanel = Find-DescendantByAutomationId $window "svPanel"
+    if ($null -eq $samplePanel) {
+        return
+    }
+
+    $scrollPattern = $null
+    if ($samplePanel.TryGetCurrentPattern([System.Windows.Automation.ScrollPattern]::Pattern, [ref]$scrollPattern)) {
+        $scrollPattern.SetScrollPercent([System.Windows.Automation.ScrollPattern]::NoScroll, 0)
+        Start-Sleep -Milliseconds 500
+    }
 }
 
 function Find-DescendantByAnyName($root, [string[]]$names) {
@@ -1237,6 +1254,7 @@ function Get-RequiredSampleAutomationId([string]$control) {
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
         "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
+        "TabView" { return "GallerySample_TabView_TabView" }
         "NavigationView" { return "GallerySample_NavigationView_NavigationView" }
         "ContentDialog" { return "GallerySample_ContentDialog_ShowButton" }
         "Flyout" { return "GallerySample_Flyout_Button" }
@@ -1399,6 +1417,7 @@ function Get-ModernPrimaryCropAutomationId([string]$control) {
         "ItemsRepeater" { return "GallerySample_ItemsRepeater_ItemsRepeater" }
         "BreadcrumbBar" { return "GallerySample_BreadcrumbBar_BreadcrumbBar" }
         "SelectorBar" { return "GallerySample_SelectorBar_SelectorBar" }
+        "TabView" { return "GallerySample_TabView_TabView" }
         "Flyout" { return "GallerySample_Flyout_Button" }
         "Popup" { return "GallerySample_Popup_Button" }
         "MenuBar" { return "GallerySample_MenuBar_MenuBar" }
@@ -1448,6 +1467,7 @@ function Get-ReferencePrimaryAutomationId([string]$control) {
         "GridView" { return "BasicGridView" }
         "BreadcrumbBar" { return "BreadcrumbBar1" }
         "SelectorBar" { return "PART_ItemsView" }
+        "TabView" { return "TabView1" }
         default { return "" }
     }
 }
@@ -2187,35 +2207,155 @@ function Test-BitmapHasClientContent([System.Drawing.Bitmap]$bitmap) {
     return $colors.Count -gt 8 -and $sampleCount -gt 0 -and ($nonBlackCount / [double]$sampleCount) -gt 0.015
 }
 
-function Test-ImageNotBlank([string]$path) {
-    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
+function Get-WpfImageData([string]$path) {
+    $stream = [IO.File]::OpenRead($path)
     try {
-        return Test-BitmapNotBlank $bitmap
+        $decoder = [System.Windows.Media.Imaging.BitmapDecoder]::Create(
+            $stream,
+            [System.Windows.Media.Imaging.BitmapCreateOptions]::PreservePixelFormat,
+            [System.Windows.Media.Imaging.BitmapCacheOption]::OnLoad)
+        $source = $decoder.Frames[0]
     }
     finally {
-        $bitmap.Dispose()
+        $stream.Dispose()
+    }
+
+    if ($source.Format -ne [System.Windows.Media.PixelFormats]::Bgra32) {
+        $source = [System.Windows.Media.Imaging.FormatConvertedBitmap]::new(
+            $source,
+            [System.Windows.Media.PixelFormats]::Bgra32,
+            $null,
+            0)
+    }
+
+    $stride = $source.PixelWidth * 4
+    $pixels = [byte[]]::new($stride * $source.PixelHeight)
+    $source.CopyPixels($pixels, $stride, 0)
+    return [pscustomobject]@{
+        Width = $source.PixelWidth
+        Height = $source.PixelHeight
+        Stride = $stride
+        Pixels = $pixels
+    }
+}
+
+function Test-WpfImageDataNotBlank($image) {
+    $colors = New-Object "System.Collections.Generic.HashSet[int]"
+    $visibleSamples = 0
+    $nonBlackSamples = 0
+    $stepX = [Math]::Max(1, [int]($image.Width / 32))
+    $stepY = [Math]::Max(1, [int]($image.Height / 32))
+    for ($x = 0; $x -lt $image.Width; $x += $stepX) {
+        for ($y = 0; $y -lt $image.Height; $y += $stepY) {
+            $pixel = ($y * $image.Stride) + ($x * 4)
+            $blue = [int]$image.Pixels[$pixel]
+            $green = [int]$image.Pixels[$pixel + 1]
+            $red = [int]$image.Pixels[$pixel + 2]
+            $alpha = [int]$image.Pixels[$pixel + 3]
+            if ($alpha -gt 16) {
+                $visibleSamples++
+                [void]$colors.Add(($red -shl 16) -bor ($green -shl 8) -bor $blue)
+                if (($red + $green + $blue) -gt 36) {
+                    $nonBlackSamples++
+                }
+            }
+        }
+    }
+
+    return $colors.Count -gt 4 -and $visibleSamples -gt 0 -and $nonBlackSamples -gt 0
+}
+
+function Get-WpfImageAnalysis([string]$path, [int]$step) {
+    $image = Get-WpfImageData $path
+    $step = [Math]::Max(1, $step)
+    $sum = 0.0
+    $sumSquared = 0.0
+    $samples = 0L
+    for ($y = 0; $y -lt $image.Height; $y += $step) {
+        for ($x = 0; $x -lt $image.Width; $x += $step) {
+            $pixel = ($y * $image.Stride) + ($x * 4)
+            $alpha = [int]$image.Pixels[$pixel + 3]
+            if ($alpha -le 16) {
+                continue
+            }
+
+            $luminance =
+                (0.2126 * [int]$image.Pixels[$pixel + 2]) +
+                (0.7152 * [int]$image.Pixels[$pixel + 1]) +
+                (0.0722 * [int]$image.Pixels[$pixel])
+            $sum += $luminance
+            $sumSquared += $luminance * $luminance
+            $samples++
+        }
+    }
+
+    if ($samples -eq 0) {
+        return [pscustomobject]@{ Mean = $null; StdDev = 0.0 }
+    }
+
+    $mean = $sum / $samples
+    $variance = ($sumSquared / $samples) - ($mean * $mean)
+    return [pscustomobject]@{
+        Mean = [Math]::Round($mean, 2)
+        StdDev = [Math]::Round([Math]::Sqrt([Math]::Max(0.0, $variance)), 2)
+    }
+}
+
+function Test-ImageNotBlank([string]$path) {
+    $bitmap = $null
+    try {
+        $bitmap = [System.Drawing.Bitmap]::FromFile($path)
+        return Test-BitmapNotBlank $bitmap
+    }
+    catch {
+        return Test-WpfImageDataNotBlank (Get-WpfImageData $path)
+    }
+    finally {
+        if ($null -ne $bitmap) {
+            $bitmap.Dispose()
+        }
     }
 }
 
 function Get-ImageSize([string]$path) {
-    $bitmap = [System.Drawing.Bitmap]::FromFile($path)
+    $bitmap = $null
     try {
+        $bitmap = [System.Drawing.Bitmap]::FromFile($path)
         return [ordered]@{
             Width = $bitmap.Width
             Height = $bitmap.Height
         }
     }
+    catch {
+        $image = Get-WpfImageData $path
+        return [ordered]@{
+            Width = $image.Width
+            Height = $image.Height
+        }
+    }
     finally {
-        $bitmap.Dispose()
+        if ($null -ne $bitmap) {
+            $bitmap.Dispose()
+        }
     }
 }
 
 function Get-ImageVisibleStdDev([string]$path, [int]$step = 3) {
-    return [GalleryImageMetrics]::GetVisibleStdDev($path, $step)
+    try {
+        return [GalleryImageMetrics]::GetVisibleStdDev($path, $step)
+    }
+    catch {
+        return (Get-WpfImageAnalysis $path $step).StdDev
+    }
 }
 
 function Get-ImageMeanLuminance([string]$path, [int]$step = 3) {
-    $mean = [GalleryImageMetrics]::GetMeanLuminance($path, $step)
+    try {
+        $mean = [GalleryImageMetrics]::GetMeanLuminance($path, $step)
+    }
+    catch {
+        $mean = (Get-WpfImageAnalysis $path $step).Mean
+    }
     return $(if ([double]::IsNaN($mean)) { $null } else { $mean })
 }
 

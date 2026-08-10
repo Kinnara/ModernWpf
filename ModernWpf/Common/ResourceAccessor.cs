@@ -144,6 +144,7 @@ namespace ModernWpf
         public const string SR_TabViewCloseButtonTooltipWithKA = "TabViewCloseButtonTooltipWithKA";
         public const string SR_TabViewScrollDecreaseButtonTooltip = "TabViewScrollDecreaseButtonTooltip";
         public const string SR_TabViewScrollIncreaseButtonTooltip = "TabViewScrollIncreaseButtonTooltip";
+        public const string SR_TabViewNewTabAddedNotification = "TabViewNewTabAddedNotification";
         public const string SR_NumberBoxUpSpinButtonName = "NumberBoxUpSpinButtonName";
         public const string SR_NumberBoxDownSpinButtonName = "NumberBoxDownSpinButtonName";
         public const string SR_NumberBoxMinimumValueStatus = "NumberBoxMinimumValueStatus";

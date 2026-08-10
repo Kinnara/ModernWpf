@@ -98,6 +98,7 @@ namespace ModernWpf.Gallery.Models
             "Popup",
             "BreadcrumbBar",
             "SelectorBar",
+            "TabView",
             "SplitView",
             "TwoPaneView",
             "AnnotatedScrollBar",

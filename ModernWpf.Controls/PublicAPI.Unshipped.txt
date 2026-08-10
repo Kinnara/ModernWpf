@@ -1,6 +1,75 @@
 #nullable enable
+ModernWpf.Automation.Peers.TabViewAutomationPeer
+ModernWpf.Automation.Peers.TabViewAutomationPeer.CanSelectMultiple.get -> bool
+ModernWpf.Automation.Peers.TabViewAutomationPeer.IsSelectionRequired.get -> bool
+ModernWpf.Automation.Peers.TabViewItemAutomationPeer
+ModernWpf.Automation.Peers.TabViewItemAutomationPeer.AddToSelection() -> void
+ModernWpf.Automation.Peers.TabViewItemAutomationPeer.IsSelected.get -> bool
+ModernWpf.Automation.Peers.TabViewItemAutomationPeer.RemoveFromSelection() -> void
+ModernWpf.Automation.Peers.TabViewItemAutomationPeer.Select() -> void
 ModernWpf.Automation.Peers.TimePickerAutomationPeer
 ModernWpf.Automation.Peers.TitleBarAutomationPeer
+ModernWpf.Controls.TabView
+ModernWpf.Controls.TabView.AddTabButtonClick -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TabView, object>
+ModernWpf.Controls.TabView.AllowDropTabs.get -> bool
+ModernWpf.Controls.TabView.AllowDropTabs.set -> void
+ModernWpf.Controls.TabView.CanDragTabs.get -> bool
+ModernWpf.Controls.TabView.CanDragTabs.set -> void
+ModernWpf.Controls.TabView.CanReorderTabs.get -> bool
+ModernWpf.Controls.TabView.CanReorderTabs.set -> void
+ModernWpf.Controls.TabView.CanTearOutTabs.get -> bool
+ModernWpf.Controls.TabView.CanTearOutTabs.set -> void
+ModernWpf.Controls.TabView.CloseButtonOverlayMode.get -> ModernWpf.Controls.TabViewCloseButtonOverlayMode
+ModernWpf.Controls.TabView.CloseButtonOverlayMode.set -> void
+ModernWpf.Controls.TabView.ExternalTornOutTabsDropped -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TabView, ModernWpf.Controls.TabViewExternalTornOutTabsDroppedEventArgs>
+ModernWpf.Controls.TabView.ExternalTornOutTabsDropping -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TabView, ModernWpf.Controls.TabViewExternalTornOutTabsDroppingEventArgs>
+ModernWpf.Controls.TabView.IsAddTabButtonVisible.get -> bool
+ModernWpf.Controls.TabView.IsAddTabButtonVisible.set -> void
+ModernWpf.Controls.TabView.SelectedIndex.get -> int
+ModernWpf.Controls.TabView.SelectedIndex.set -> void
+ModernWpf.Controls.TabView.SelectionChanged -> System.Windows.Controls.SelectionChangedEventHandler
+ModernWpf.Controls.TabView.TabCloseRequested -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TabView, ModernWpf.Controls.TabViewTabCloseRequestedEventArgs>
+ModernWpf.Controls.TabView.TabDragCompleted -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TabView, ModernWpf.Controls.TabViewTabDragCompletedEventArgs>
+ModernWpf.Controls.TabView.TabDragStarting -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TabView, ModernWpf.Controls.TabViewTabDragStartingEventArgs>
+ModernWpf.Controls.TabView.TabDroppedOutside -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TabView, ModernWpf.Controls.TabViewTabDroppedOutsideEventArgs>
+ModernWpf.Controls.TabView.TabItemsChanged -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TabView, System.Collections.Specialized.NotifyCollectionChangedEventArgs>
+ModernWpf.Controls.TabView.TabStripDragOver -> System.Windows.DragEventHandler
+ModernWpf.Controls.TabView.TabStripDrop -> System.Windows.DragEventHandler
+ModernWpf.Controls.TabView.TabTearOutRequested -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TabView, ModernWpf.Controls.TabViewTabTearOutRequestedEventArgs>
+ModernWpf.Controls.TabView.TabTearOutWindowRequested -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TabView, ModernWpf.Controls.TabViewTabTearOutWindowRequestedEventArgs>
+ModernWpf.Controls.TabView.TabView() -> void
+ModernWpf.Controls.TabView.TabWidthMode.get -> ModernWpf.Controls.TabViewWidthMode
+ModernWpf.Controls.TabView.TabWidthMode.set -> void
+ModernWpf.Controls.TabViewCloseButtonOverlayMode
+ModernWpf.Controls.TabViewCloseButtonOverlayMode.Always = 2 -> ModernWpf.Controls.TabViewCloseButtonOverlayMode
+ModernWpf.Controls.TabViewCloseButtonOverlayMode.Auto = 0 -> ModernWpf.Controls.TabViewCloseButtonOverlayMode
+ModernWpf.Controls.TabViewCloseButtonOverlayMode.OnPointerOver = 1 -> ModernWpf.Controls.TabViewCloseButtonOverlayMode
+ModernWpf.Controls.TabViewExternalTornOutTabsDroppedEventArgs
+ModernWpf.Controls.TabViewExternalTornOutTabsDroppedEventArgs.DropIndex.get -> int
+ModernWpf.Controls.TabViewExternalTornOutTabsDroppingEventArgs
+ModernWpf.Controls.TabViewExternalTornOutTabsDroppingEventArgs.AllowDrop.get -> bool
+ModernWpf.Controls.TabViewExternalTornOutTabsDroppingEventArgs.AllowDrop.set -> void
+ModernWpf.Controls.TabViewExternalTornOutTabsDroppingEventArgs.DropIndex.get -> int
+ModernWpf.Controls.TabViewItem
+ModernWpf.Controls.TabViewItem.CloseRequested -> ModernWpf.TypedEventHandler<ModernWpf.Controls.TabViewItem, ModernWpf.Controls.TabViewTabCloseRequestedEventArgs>
+ModernWpf.Controls.TabViewItem.IsClosable.get -> bool
+ModernWpf.Controls.TabViewItem.IsClosable.set -> void
+ModernWpf.Controls.TabViewItem.TabViewItem() -> void
+ModernWpf.Controls.TabViewItemTemplateSettings
+ModernWpf.Controls.TabViewItemTemplateSettings.TabViewItemTemplateSettings() -> void
+ModernWpf.Controls.TabViewTabCloseRequestedEventArgs
+ModernWpf.Controls.TabViewTabDragCompletedEventArgs
+ModernWpf.Controls.TabViewTabDragCompletedEventArgs.DropResult.get -> System.Windows.DragDropEffects
+ModernWpf.Controls.TabViewTabDragStartingEventArgs
+ModernWpf.Controls.TabViewTabDragStartingEventArgs.Cancel.get -> bool
+ModernWpf.Controls.TabViewTabDragStartingEventArgs.Cancel.set -> void
+ModernWpf.Controls.TabViewTabDroppedOutsideEventArgs
+ModernWpf.Controls.TabViewTabTearOutRequestedEventArgs
+ModernWpf.Controls.TabViewTabTearOutWindowRequestedEventArgs
+ModernWpf.Controls.TabViewWidthMode
+ModernWpf.Controls.TabViewWidthMode.Compact = 2 -> ModernWpf.Controls.TabViewWidthMode
+ModernWpf.Controls.TabViewWidthMode.Equal = 0 -> ModernWpf.Controls.TabViewWidthMode
+ModernWpf.Controls.TabViewWidthMode.SizeToContent = 1 -> ModernWpf.Controls.TabViewWidthMode
 ModernWpf.Controls.TimePicker
 ModernWpf.Controls.TimePicker.CornerRadius.get -> System.Windows.CornerRadius
 ModernWpf.Controls.TimePicker.CornerRadius.set -> void
@@ -71,13 +140,75 @@ ModernWpf.Controls.TwoPaneViewWideModeConfiguration
 ModernWpf.Controls.TwoPaneViewWideModeConfiguration.LeftRight = 1 -> ModernWpf.Controls.TwoPaneViewWideModeConfiguration
 ModernWpf.Controls.TwoPaneViewWideModeConfiguration.RightLeft = 2 -> ModernWpf.Controls.TwoPaneViewWideModeConfiguration
 ModernWpf.Controls.TwoPaneViewWideModeConfiguration.SinglePane = 0 -> ModernWpf.Controls.TwoPaneViewWideModeConfiguration
+override ModernWpf.Automation.Peers.TabViewAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
+override ModernWpf.Automation.Peers.TabViewItemAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.TimePickerAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
 override ModernWpf.Automation.Peers.TitleBarAutomationPeer.GetAutomationControlTypeCore() -> System.Windows.Automation.Peers.AutomationControlType
+override ModernWpf.Controls.TabView.OnApplyTemplate() -> void
+override ModernWpf.Controls.TabViewItem.OnApplyTemplate() -> void
 override ModernWpf.Controls.TimePicker.OnApplyTemplate() -> void
 override ModernWpf.Controls.TitleBar.OnApplyTemplate() -> void
 override ModernWpf.Controls.TwoPaneView.OnApplyTemplate() -> void
+~ModernWpf.Automation.Peers.TabViewAutomationPeer.GetSelection() -> System.Windows.Automation.Provider.IRawElementProviderSimple[]
+~ModernWpf.Automation.Peers.TabViewAutomationPeer.TabViewAutomationPeer(ModernWpf.Controls.TabView owner) -> void
+~ModernWpf.Automation.Peers.TabViewItemAutomationPeer.SelectionContainer.get -> System.Windows.Automation.Provider.IRawElementProviderSimple
+~ModernWpf.Automation.Peers.TabViewItemAutomationPeer.TabViewItemAutomationPeer(ModernWpf.Controls.TabViewItem owner) -> void
 ~ModernWpf.Automation.Peers.TimePickerAutomationPeer.TimePickerAutomationPeer(ModernWpf.Controls.TimePicker owner) -> void
 ~ModernWpf.Automation.Peers.TitleBarAutomationPeer.TitleBarAutomationPeer(ModernWpf.Controls.TitleBar owner) -> void
+~ModernWpf.Controls.TabView.AddTabButtonCommand.get -> System.Windows.Input.ICommand
+~ModernWpf.Controls.TabView.AddTabButtonCommand.set -> void
+~ModernWpf.Controls.TabView.AddTabButtonCommandParameter.get -> object
+~ModernWpf.Controls.TabView.AddTabButtonCommandParameter.set -> void
+~ModernWpf.Controls.TabView.ContainerFromIndex(int index) -> System.Windows.DependencyObject
+~ModernWpf.Controls.TabView.ContainerFromItem(object item) -> System.Windows.DependencyObject
+~ModernWpf.Controls.TabView.SelectedItem.get -> object
+~ModernWpf.Controls.TabView.SelectedItem.set -> void
+~ModernWpf.Controls.TabView.TabItems.get -> System.Collections.ObjectModel.ObservableCollection<object>
+~ModernWpf.Controls.TabView.TabItemsSource.get -> System.Collections.IEnumerable
+~ModernWpf.Controls.TabView.TabItemsSource.set -> void
+~ModernWpf.Controls.TabView.TabItemTemplate.get -> System.Windows.DataTemplate
+~ModernWpf.Controls.TabView.TabItemTemplate.set -> void
+~ModernWpf.Controls.TabView.TabItemTemplateSelector.get -> System.Windows.Controls.DataTemplateSelector
+~ModernWpf.Controls.TabView.TabItemTemplateSelector.set -> void
+~ModernWpf.Controls.TabView.TabStripFooter.get -> object
+~ModernWpf.Controls.TabView.TabStripFooter.set -> void
+~ModernWpf.Controls.TabView.TabStripFooterTemplate.get -> System.Windows.DataTemplate
+~ModernWpf.Controls.TabView.TabStripFooterTemplate.set -> void
+~ModernWpf.Controls.TabView.TabStripHeader.get -> object
+~ModernWpf.Controls.TabView.TabStripHeader.set -> void
+~ModernWpf.Controls.TabView.TabStripHeaderTemplate.get -> System.Windows.DataTemplate
+~ModernWpf.Controls.TabView.TabStripHeaderTemplate.set -> void
+~ModernWpf.Controls.TabViewExternalTornOutTabsDroppedEventArgs.Items.get -> object[]
+~ModernWpf.Controls.TabViewExternalTornOutTabsDroppedEventArgs.Tabs.get -> System.Windows.UIElement[]
+~ModernWpf.Controls.TabViewExternalTornOutTabsDroppingEventArgs.Items.get -> object[]
+~ModernWpf.Controls.TabViewExternalTornOutTabsDroppingEventArgs.Tabs.get -> System.Windows.UIElement[]
+~ModernWpf.Controls.TabViewItem.Header.get -> object
+~ModernWpf.Controls.TabViewItem.Header.set -> void
+~ModernWpf.Controls.TabViewItem.HeaderTemplate.get -> System.Windows.DataTemplate
+~ModernWpf.Controls.TabViewItem.HeaderTemplate.set -> void
+~ModernWpf.Controls.TabViewItem.IconSource.get -> ModernWpf.Controls.IconSource
+~ModernWpf.Controls.TabViewItem.IconSource.set -> void
+~ModernWpf.Controls.TabViewItem.TabViewTemplateSettings.get -> ModernWpf.Controls.TabViewItemTemplateSettings
+~ModernWpf.Controls.TabViewItemTemplateSettings.IconElement.get -> ModernWpf.Controls.IconElement
+~ModernWpf.Controls.TabViewItemTemplateSettings.IconElement.set -> void
+~ModernWpf.Controls.TabViewItemTemplateSettings.TabGeometry.get -> System.Windows.Media.Geometry
+~ModernWpf.Controls.TabViewItemTemplateSettings.TabGeometry.set -> void
+~ModernWpf.Controls.TabViewTabCloseRequestedEventArgs.Item.get -> object
+~ModernWpf.Controls.TabViewTabCloseRequestedEventArgs.Tab.get -> ModernWpf.Controls.TabViewItem
+~ModernWpf.Controls.TabViewTabDragCompletedEventArgs.Item.get -> object
+~ModernWpf.Controls.TabViewTabDragCompletedEventArgs.Tab.get -> ModernWpf.Controls.TabViewItem
+~ModernWpf.Controls.TabViewTabDragStartingEventArgs.Data.get -> System.Windows.IDataObject
+~ModernWpf.Controls.TabViewTabDragStartingEventArgs.Item.get -> object
+~ModernWpf.Controls.TabViewTabDragStartingEventArgs.Tab.get -> ModernWpf.Controls.TabViewItem
+~ModernWpf.Controls.TabViewTabDroppedOutsideEventArgs.Item.get -> object
+~ModernWpf.Controls.TabViewTabDroppedOutsideEventArgs.Tab.get -> ModernWpf.Controls.TabViewItem
+~ModernWpf.Controls.TabViewTabTearOutRequestedEventArgs.Items.get -> object[]
+~ModernWpf.Controls.TabViewTabTearOutRequestedEventArgs.NewWindow.get -> System.Windows.Window
+~ModernWpf.Controls.TabViewTabTearOutRequestedEventArgs.Tabs.get -> System.Windows.UIElement[]
+~ModernWpf.Controls.TabViewTabTearOutWindowRequestedEventArgs.Items.get -> object[]
+~ModernWpf.Controls.TabViewTabTearOutWindowRequestedEventArgs.NewWindow.get -> System.Windows.Window
+~ModernWpf.Controls.TabViewTabTearOutWindowRequestedEventArgs.NewWindow.set -> void
+~ModernWpf.Controls.TabViewTabTearOutWindowRequestedEventArgs.Tabs.get -> System.Windows.UIElement[]
 ~ModernWpf.Controls.TimePicker.ClockIdentifier.get -> string
 ~ModernWpf.Controls.TimePicker.ClockIdentifier.set -> void
 ~ModernWpf.Controls.TimePicker.Header.get -> object
@@ -102,15 +233,59 @@ override ModernWpf.Controls.TwoPaneView.OnApplyTemplate() -> void
 ~ModernWpf.Controls.TwoPaneView.Pane1.set -> void
 ~ModernWpf.Controls.TwoPaneView.Pane2.get -> System.Windows.UIElement
 ~ModernWpf.Controls.TwoPaneView.Pane2.set -> void
+~override ModernWpf.Automation.Peers.TabViewAutomationPeer.GetChildrenCore() -> System.Collections.Generic.List<System.Windows.Automation.Peers.AutomationPeer>
+~override ModernWpf.Automation.Peers.TabViewAutomationPeer.GetClassNameCore() -> string
+~override ModernWpf.Automation.Peers.TabViewAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
+~override ModernWpf.Automation.Peers.TabViewItemAutomationPeer.GetClassNameCore() -> string
+~override ModernWpf.Automation.Peers.TabViewItemAutomationPeer.GetNameCore() -> string
+~override ModernWpf.Automation.Peers.TabViewItemAutomationPeer.GetPattern(System.Windows.Automation.Peers.PatternInterface patternInterface) -> object
 ~override ModernWpf.Automation.Peers.TimePickerAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Automation.Peers.TimePickerAutomationPeer.GetNameCore() -> string
 ~override ModernWpf.Automation.Peers.TitleBarAutomationPeer.GetClassNameCore() -> string
 ~override ModernWpf.Automation.Peers.TitleBarAutomationPeer.GetNameCore() -> string
+~override ModernWpf.Controls.TabView.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
+~override ModernWpf.Controls.TabView.OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e) -> void
+~override ModernWpf.Controls.TabViewItem.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
+~override ModernWpf.Controls.TabViewItem.OnMouseEnter(System.Windows.Input.MouseEventArgs e) -> void
+~override ModernWpf.Controls.TabViewItem.OnMouseLeave(System.Windows.Input.MouseEventArgs e) -> void
+~override ModernWpf.Controls.TabViewItem.OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e) -> void
+~override ModernWpf.Controls.TabViewItem.OnMouseLeftButtonUp(System.Windows.Input.MouseButtonEventArgs e) -> void
+~override ModernWpf.Controls.TabViewItem.OnMouseMove(System.Windows.Input.MouseEventArgs e) -> void
+~override ModernWpf.Controls.TabViewItem.OnMouseUp(System.Windows.Input.MouseButtonEventArgs e) -> void
+~override ModernWpf.Controls.TabViewItem.OnPreviewKeyDown(System.Windows.Input.KeyEventArgs e) -> void
+~override ModernWpf.Controls.TabViewItem.OnSelected(System.Windows.RoutedEventArgs e) -> void
+~override ModernWpf.Controls.TabViewItem.OnUnselected(System.Windows.RoutedEventArgs e) -> void
 ~override ModernWpf.Controls.TimePicker.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
 ~override ModernWpf.Controls.TitleBar.OnCreateAutomationPeer() -> System.Windows.Automation.Peers.AutomationPeer
 ~override ModernWpf.Controls.TitleBar.OnPreviewMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs e) -> void
 ~static ModernWpf.Controls.TitleBar.GetIsDragRegion(System.Windows.UIElement element) -> bool?
 ~static ModernWpf.Controls.TitleBar.SetIsDragRegion(System.Windows.UIElement element, bool? value) -> void
+~static readonly ModernWpf.Controls.TabView.AddTabButtonCommandParameterProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.AddTabButtonCommandProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.AllowDropTabsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.CanDragTabsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.CanReorderTabsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.CanTearOutTabsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.CloseButtonOverlayModeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.IsAddTabButtonVisibleProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.SelectedIndexProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.SelectedItemProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.TabItemsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.TabItemsSourceProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.TabItemTemplateProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.TabItemTemplateSelectorProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.TabStripFooterProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.TabStripFooterTemplateProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.TabStripHeaderProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.TabStripHeaderTemplateProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabView.TabWidthModeProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabViewItem.HeaderProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabViewItem.HeaderTemplateProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabViewItem.IconSourceProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabViewItem.IsClosableProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabViewItem.TabViewTemplateSettingsProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabViewItemTemplateSettings.IconElementProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.TabViewItemTemplateSettings.TabGeometryProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TimePicker.ClockIdentifierProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TimePicker.CornerRadiusProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.TimePicker.HeaderPlacementProperty -> System.Windows.DependencyProperty

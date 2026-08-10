@@ -1661,6 +1661,7 @@
     <m:StaticResource x:Key="TabViewSelectedItemBorderBrush"                          ResourceKey="CardStrokeColorDefaultBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackground"                             ResourceKey="LayerOnMicaBaseAltFillColorTransparentBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundSelected"                     ResourceKey="SolidBackgroundFillColorTertiaryBrush" />
+    <m:StaticResource x:Key="TabViewItemHeaderDragBackground"                         ResourceKey="SolidBackgroundFillColorTertiaryBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundPointerOver"                  ResourceKey="LayerOnMicaBaseAltFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundPressed"                      ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderBackgroundDisabled"                     ResourceKey="LayerOnMicaBaseAltFillColorTransparentBrush" />
@@ -1675,10 +1676,12 @@
     <m:StaticResource x:Key="TabViewItemIconForegroundPointerOver"                    ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TabViewItemIconForegroundDisabled"                       ResourceKey="TextFillColorDisabledBrush" />
     <m:StaticResource x:Key="TabViewButtonBackground"                                 ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TabViewButtonBackgroundActiveTab"                        ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="TabViewButtonBackgroundPressed"                          ResourceKey="SubtleFillColorTertiaryBrush" />
     <m:StaticResource x:Key="TabViewButtonBackgroundPointerOver"                      ResourceKey="SubtleFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TabViewButtonBackgroundDisabled"                         ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="TabViewButtonForeground"                                 ResourceKey="TextFillColorPrimaryBrush" />
+    <m:StaticResource x:Key="TabViewButtonForegroundActiveTab"                        ResourceKey="ControlStrongFillColorDefaultBrush" />
     <m:StaticResource x:Key="TabViewButtonForegroundPressed"                          ResourceKey="TextFillColorSecondaryBrush" />
     <m:StaticResource x:Key="TabViewButtonForegroundPointerOver"                      ResourceKey="TextFillColorPrimaryBrush" />
     <m:StaticResource x:Key="TabViewButtonForegroundDisabled"                         ResourceKey="TextFillColorDisabledBrush" />
@@ -1718,6 +1721,9 @@
     <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBorderBrushPressed"          ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBorderBrushSelected"         ResourceKey="SubtleFillColorTransparentBrush" />
     <m:StaticResource x:Key="TabViewItemHeaderCloseButtonBorderBrushDisabled"         ResourceKey="SubtleFillColorTransparentBrush" />
+    <m:StaticResource x:Key="TabViewItemBorderBrush"                                  ResourceKey="SubtleFillColorTransparentBrush" />
+    <Thickness x:Key="TabViewButtonBorderThickness">0</Thickness>
+    <Thickness x:Key="TabViewItemHeaderCloseButtonBorderThickness">0</Thickness>
 
     <!-- Resources for Thumb -->
     <m:StaticResource x:Key="ThumbBackground" ResourceKey="ControlStrongFillColorDefaultBrush" />

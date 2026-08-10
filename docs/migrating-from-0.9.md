@@ -67,6 +67,21 @@ but an accepted WinUI parity change may deliberately rebaseline them with
 focused tests and migration guidance. They do not assert compatibility with
 0.9.x.
 
+### Choose `TabControl` or `TabView` intentionally
+
+Preview 5 adds `ModernWpf.Controls.TabView`; it does not rename or replace
+`System.Windows.Controls.TabControl`. Keep `TabControl` when the application
+needs ordinary WPF tab selection and official WPF Fluent styling. Adopt the
+new `TabView` when it needs WinUI-shaped add/close commands, compact or
+content-sized headers, overflow scrolling, drag/reorder, or the documented
+WPF window tear-out flow.
+
+`TabView` raises close and tear-out requests but does not remove or move the
+application's data on its own. Update the bound collection in the relevant
+event handler. For tear-out, the application creates the destination WPF
+`Window` and moves the item after accepting the request; ModernWPF does not
+guess the application's window type or view-model lifetime.
+
 ## 4. Migrate MahApps integration
 
 `ModernWpfUI.MahApps` remains on the legacy 0.9.x line and is not produced for

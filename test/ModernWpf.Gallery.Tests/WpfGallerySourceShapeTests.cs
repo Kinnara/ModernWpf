@@ -3296,12 +3296,13 @@ namespace ModernWpf.Gallery.Tests
                     match => match.Groups["control"].Value,
                     match => int.Parse(match.Groups["count"].Value),
                     StringComparer.Ordinal);
-            Assert.AreEqual(38, entries.Count, "Every curated ModernWPF control route must be in the exhaustive visual matrix.");
-            Assert.AreEqual(96, entries.Values.Sum(), "Every displayed curated sample must be in the exhaustive visual matrix.");
+            Assert.AreEqual(39, entries.Count, "Every curated ModernWPF control route must be in the exhaustive visual matrix.");
+            Assert.AreEqual(106, entries.Values.Sum(), "Every displayed curated sample must be in the exhaustive visual matrix.");
             Assert.AreEqual(8, entries["NavigationView"]);
             Assert.AreEqual(2, entries["WinUIProgressBar"]);
             Assert.AreEqual(3, entries["TitleBar"]);
             Assert.AreEqual(1, entries["SystemBackdrop"]);
+            Assert.AreEqual(10, entries["TabView"]);
 
             AssertContainsInOrder(
                 itemPageXaml,
@@ -6814,6 +6815,30 @@ namespace ModernWpf.Gallery.Tests
             Assert.IsFalse(
                 source.Contains("InvokeAutomationPatternAsync", StringComparison.Ordinal),
                 "MessageBox must not share a UIA InvokePattern object across threads; the closer re-finds elements in its own runspace.");
+        }
+
+        [TestMethod]
+        public void GalleryVisualChecksFallsBackToWpfForHighContrastPngMetrics()
+        {
+            var source = ReadRepoFile("tools", "visual-checks", "Run-GalleryVisualChecks.ps1");
+
+            AssertContainsInOrder(
+                source,
+                "Add-Type -AssemblyName PresentationCore",
+                "function Get-WpfImageData([string]$path)",
+                "[System.Windows.Media.Imaging.BitmapDecoder]::Create(",
+                "[System.Windows.Media.PixelFormats]::Bgra32",
+                "$source.CopyPixels($pixels, $stride, 0)",
+                "function Test-WpfImageDataNotBlank($image)",
+                "function Get-WpfImageAnalysis([string]$path, [int]$step)",
+                "function Test-ImageNotBlank([string]$path)",
+                "return Test-WpfImageDataNotBlank (Get-WpfImageData $path)",
+                "function Get-ImageSize([string]$path)",
+                "$image = Get-WpfImageData $path",
+                "function Get-ImageVisibleStdDev([string]$path, [int]$step = 3)",
+                "return (Get-WpfImageAnalysis $path $step).StdDev",
+                "function Get-ImageMeanLuminance([string]$path, [int]$step = 3)",
+                "$mean = (Get-WpfImageAnalysis $path $step).Mean");
         }
 
         [TestMethod]

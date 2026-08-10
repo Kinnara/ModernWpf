@@ -47,6 +47,7 @@ namespace ModernWpf.Gallery.Tests
             "Popup",
             "BreadcrumbBar",
             "SelectorBar",
+            "TabView",
             "SplitView",
             "TwoPaneView",
             "AnnotatedScrollBar",
@@ -62,7 +63,6 @@ namespace ModernWpf.Gallery.Tests
         {
             "CalendarDatePicker",
             "CalendarView",
-            "TabView",
             "RichEditBox",
             "RichTextBlock",
             "ScrollViewer",
@@ -370,7 +370,7 @@ namespace ModernWpf.Gallery.Tests
                 "TextBox",
                 "Popup",
                 "SelectorBar",
-                "ThemeShadow"
+                "TabView"
             };
 
             var actual = GalleryCatalog.NewOrUpdatedItems.Select(item => item.UniqueId).ToArray();
@@ -891,7 +891,7 @@ namespace ModernWpf.Gallery.Tests
         public void CatalogContainsWpfFirstGallerySurface()
         {
             Assert.AreEqual(9, GalleryCatalog.Groups.Count);
-            Assert.AreEqual(75, GalleryCatalog.Items.Count);
+            Assert.AreEqual(76, GalleryCatalog.Items.Count);
         }
 
         [TestMethod]

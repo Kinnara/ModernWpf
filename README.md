@@ -104,7 +104,7 @@ Install an explicit 1.x version so NuGet does not select a frozen 0.9.x
 package:
 
 ```powershell
-dotnet add package ModernWpfUI --version 1.0.0-preview.2
+dotnet add package ModernWpfUI --version 1.0.0-preview.5
 ```
 
 If the requested preview is not yet listed on NuGet, use a validated workflow
@@ -180,11 +180,14 @@ also requires the .NET Framework 4.6.2 Developer Pack. In Visual Studio, open
 | Resource | Purpose |
 | --- | --- |
 | [1.0 roadmap](docs/roadmap-1.0.md) | Planned feature previews, the API-frozen release candidate, downstream evidence, and stable graduation rules. |
-| [1.0.0-preview.2 release notes](docs/release-notes-1.0.0-preview.2.md) | Current synchronization, packaging, migration, and known-preview information. |
+| [1.0.0-preview.5 release notes](docs/release-notes-1.0.0-preview.5.md) | Current TabView milestone, WPF tear-out adaptation, validation, and preview limitations. |
+| [1.0.0-preview.4 release notes](docs/release-notes-1.0.0-preview.4.md) | TitleBar, Mica, Desktop Acrylic, fallback behavior, and migration information. |
+| [1.0.0-preview.3 release notes](docs/release-notes-1.0.0-preview.3.md) | TimePicker and TwoPaneView APIs, WPF adaptations, and migration information. |
+| [1.0.0-preview.2 release notes](docs/release-notes-1.0.0-preview.2.md) | Synchronization, packaging, migration, and known-preview information. |
 | [1.0.0-preview.1 release notes](docs/release-notes-1.0.0-preview.1.md) | Package changes, intentional 0.9 breaks, recommended resources, and preview limitations. |
 | [Migrating from 0.9.x](docs/migrating-from-0.9.md) | Step-by-step application migration guidance. |
 | [1.x public API contract](docs/public-api-contract-1x.md) | Preview governance and stable compatibility policy for CLR APIs and public resource keys. |
-| [Preview 2 WinUI cutoff](docs/winui3-sync-2026-08-06.md) | Final stable/main/Gallery pins, complete upstream dispositions, and the continuous drift-monitoring policy. |
+| [WinUI source parity](docs/winui3-source-parity.md) | Adopted stable/main/Gallery pins, source-audit rules, milestone dispositions, and continuous drift monitoring. |
 
 ## Build from source
 

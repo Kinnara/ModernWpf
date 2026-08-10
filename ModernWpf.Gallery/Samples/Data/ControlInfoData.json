@@ -1115,6 +1115,37 @@
           "RelatedControls": [
             "NavigationView"
           ]
+        },
+        {
+          "UniqueId": "TabView",
+          "Title": "TabView",
+          "BaseClasses": [
+            "Object",
+            "DependencyObject",
+            "UIElement",
+            "FrameworkElement",
+            "Control"
+          ],
+          "ApiNamespace": "ModernWpf.Controls",
+          "Subtitle": "Displays a set of tabs with add, close, overflow, reorder, and windowing support.",
+          "ImagePath": "ms-appx:///Assets/ControlImages/TabView.png",
+          "Description": "TabView presents document-like tabs with application-owned content, close requests, keyboard navigation, drag reorder, and an adapted WPF Window tear-out model.",
+          "SourcePath": "/TabView",
+          "IsNew": true,
+          "Docs": [
+            {
+              "Title": "TabView - API",
+              "Uri": "https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.controls.tabview"
+            },
+            {
+              "Title": "Guidelines",
+              "Uri": "https://learn.microsoft.com/windows/apps/design/controls/tab-view"
+            }
+          ],
+          "RelatedControls": [
+            "NavigationView",
+            "SelectorBar"
+          ]
         }
       ]
     },

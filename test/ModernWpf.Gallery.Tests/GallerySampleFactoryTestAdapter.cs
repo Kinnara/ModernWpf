@@ -16,6 +16,7 @@ namespace ModernWpf.Gallery.Tests
                 ?? CollectionsSampleFactory.Create(uniqueId)
                 ?? ScrollingSampleFactory.Create(uniqueId)
                 ?? LayoutSampleFactory.Create(uniqueId)
+                ?? TabViewSampleFactory.Create(uniqueId)
                 ?? NavigationSampleFactory.Create(uniqueId)
                 ?? MediaSampleFactory.Create(uniqueId)
                 ?? StylesSampleFactory.Create(uniqueId)
