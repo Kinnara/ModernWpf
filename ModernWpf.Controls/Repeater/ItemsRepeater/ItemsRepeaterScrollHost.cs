@@ -71,6 +71,7 @@ namespace ModernWpf.Controls
                 m_isAnchorElementDirty = true;
 
                 PostArrange?.Invoke(this);
+                scrollViewer.InvalidateScrollInfo();
             }
 
             return result;
@@ -217,8 +218,9 @@ namespace ModernWpf.Controls
                 bool hasLockedViewport = HasPendingBringIntoView;
                 var transformer = elem.SafeTransformToVisual(hasLockedViewport ? scrollViewer.GetContentTemplateRoot() : scrollViewer);
                 var zoomFactor = 1.0;
-                double viewportWidth = scrollViewer.ViewportWidth / zoomFactor;
-                double viewportHeight = scrollViewer.ViewportHeight / zoomFactor;
+                Size viewportSize = scrollViewer.GetEffectiveViewportSize();
+                double viewportWidth = viewportSize.Width / zoomFactor;
+                double viewportHeight = viewportSize.Height / zoomFactor;
 
                 var elementOffset = transformer.Transform(new Point());
 
@@ -244,7 +246,8 @@ namespace ModernWpf.Controls
             double alignmentY,
             double offsetX,
             double offsetY,
-            bool animate)
+            bool animate,
+            Rect? targetRect = null)
         {
             m_pendingBringIntoView = new BringIntoViewState(
                 element,
@@ -252,7 +255,8 @@ namespace ModernWpf.Controls
                 alignmentY,
                 offsetX,
                 offsetY,
-                animate);
+                animate,
+                targetRect);
         }
 
         private void ApplyPendingChangeView(ScrollViewer scrollViewer)
@@ -265,24 +269,35 @@ namespace ModernWpf.Controls
             var layoutSlot = CachedVisualTreeHelpers.GetLayoutSlot((FrameworkElement)bringIntoView.TargetElement);
 
             // Arrange bounds are absolute.
+            var targetBounds = bringIntoView.TargetRect ??
+                new Rect(0, 0, layoutSlot.Width, layoutSlot.Height);
             var arrangeBounds = bringIntoView
                 .TargetElement
                 .SafeTransformToVisual(scrollViewer.GetContentTemplateRoot())
-                .TransformBounds(new Rect(0, 0, layoutSlot.Width, layoutSlot.Height));
-
-            var scrollableArea = new Point(
-                scrollViewer.ViewportWidth - arrangeBounds.Width,
-                scrollViewer.ViewportHeight - arrangeBounds.Height);
+                .TransformBounds(targetBounds);
 
             // Calculate the target offset based on the alignment and offset parameters.
             // Make sure that we are constrained to the ScrollViewer's extent.
+            Size viewportSize = scrollViewer.GetEffectiveViewportSize();
+            Size extentSize = scrollViewer.GetEffectiveExtentSize();
+            Vector currentOffset = scrollViewer.GetEffectiveOffset();
             var changeViewOffset = new Point(
-                Math.Max(0, Math.Min(
-                    arrangeBounds.X + bringIntoView.OffsetX - scrollableArea.X * bringIntoView.AlignmentX,
-                    scrollViewer.ExtentWidth - scrollViewer.ViewportWidth)),
-                Math.Max(0, Math.Min(
-                    arrangeBounds.Y + bringIntoView.OffsetY - scrollableArea.Y * bringIntoView.AlignmentY,
-                    scrollViewer.ExtentHeight - scrollViewer.ViewportHeight)));
+                GetBringIntoViewOffset(
+                    arrangeBounds.X,
+                    arrangeBounds.Width,
+                    viewportSize.Width,
+                    currentOffset.X,
+                    extentSize.Width,
+                    bringIntoView.AlignmentX,
+                    bringIntoView.OffsetX),
+                GetBringIntoViewOffset(
+                    arrangeBounds.Y,
+                    arrangeBounds.Height,
+                    viewportSize.Height,
+                    currentOffset.Y,
+                    extentSize.Height,
+                    bringIntoView.AlignmentY,
+                    bringIntoView.OffsetY));
             bringIntoView.ChangeViewOffset = changeViewOffset;
 
             scrollViewer.ChangeView(
@@ -291,7 +306,55 @@ namespace ModernWpf.Controls
                 null,
                 !bringIntoView.Animate);
 
+            Vector appliedOffset = scrollViewer.GetEffectiveOffset();
+            if (Math.Abs(appliedOffset.X - changeViewOffset.X) < 0.0001 &&
+                Math.Abs(appliedOffset.Y - changeViewOffset.Y) < 0.0001)
+            {
+                m_pendingBringIntoView.Reset();
+                ViewportChanged?.Invoke(this, true /* isFinal */);
+            }
+
             //m_pendingBringIntoView = std::move(bringIntoView);
+        }
+
+        private static double GetBringIntoViewOffset(
+            double targetStart,
+            double targetSize,
+            double viewportSize,
+            double currentOffset,
+            double extentSize,
+            double alignmentRatio,
+            double additionalOffset)
+        {
+            double targetOffset;
+            if (double.IsNaN(alignmentRatio))
+            {
+                double targetEnd = targetStart + targetSize;
+                double viewportEnd = currentOffset + viewportSize;
+                if (targetStart < currentOffset)
+                {
+                    targetOffset = targetStart;
+                }
+                else if (targetEnd > viewportEnd)
+                {
+                    targetOffset = targetEnd - viewportSize;
+                }
+                else
+                {
+                    targetOffset = currentOffset;
+                }
+
+                targetOffset += additionalOffset;
+            }
+            else
+            {
+                targetOffset = targetStart + additionalOffset -
+                    (viewportSize - targetSize) * alignmentRatio;
+            }
+
+            return Math.Max(
+                0.0,
+                Math.Min(targetOffset, Math.Max(0.0, extentSize - viewportSize)));
         }
 
         private double TrackElement(UIElement element, Rect previousBounds, ScrollViewer scrollViewer)
@@ -492,7 +555,8 @@ namespace ModernWpf.Controls
                 double alignmentY,
                 double offsetX,
                 double offsetY,
-                bool animate)
+                bool animate,
+                Rect? targetRect)
             {
                 TargetElement = targetElement;
                 AlignmentX = alignmentX;
@@ -500,6 +564,7 @@ namespace ModernWpf.Controls
                 OffsetX = offsetX;
                 OffsetY = offsetY;
                 Animate = animate;
+                TargetRect = targetRect;
                 ChangeViewCalled = default;
                 ChangeViewOffset = default;
             }
@@ -510,6 +575,7 @@ namespace ModernWpf.Controls
             public double OffsetX { get; private set; }
             public double OffsetY { get; private set; }
             public bool Animate { get; private set; }
+            public Rect? TargetRect { get; private set; }
             public bool ChangeViewCalled { get; set; }
             public Point ChangeViewOffset { get; set; }
 
@@ -518,6 +584,7 @@ namespace ModernWpf.Controls
                 TargetElement = null;
                 AlignmentX = AlignmentY = OffsetX = OffsetY = 0.0;
                 Animate = ChangeViewCalled = false;
+                TargetRect = null;
                 ChangeViewOffset = default;
             }
         }

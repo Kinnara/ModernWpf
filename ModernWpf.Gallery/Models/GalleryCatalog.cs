@@ -86,6 +86,7 @@ namespace ModernWpf.Gallery.Models
             "MenuBar",
             "MenuFlyout",
             "ItemContainer",
+            "ItemsView",
             "ItemsRepeater",
             "LinedFlowLayout",
             "RatingControl",

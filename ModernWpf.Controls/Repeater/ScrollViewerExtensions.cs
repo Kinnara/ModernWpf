@@ -11,6 +11,31 @@ namespace ModernWpf.Controls
             return scrollViewer.Content as UIElement;
         }
 
+        public static Size GetEffectiveViewportSize(this ScrollViewer scrollViewer)
+        {
+            ScrollContentPresenter presenter = GetScrollContentPresenter(scrollViewer);
+            return new Size(
+                GetEffectiveMetric(scrollViewer.ViewportWidth, presenter?.ViewportWidth, scrollViewer.ActualWidth),
+                GetEffectiveMetric(scrollViewer.ViewportHeight, presenter?.ViewportHeight, scrollViewer.ActualHeight));
+        }
+
+        public static Size GetEffectiveExtentSize(this ScrollViewer scrollViewer)
+        {
+            ScrollContentPresenter presenter = GetScrollContentPresenter(scrollViewer);
+            Size viewport = scrollViewer.GetEffectiveViewportSize();
+            return new Size(
+                GetEffectiveMetric(scrollViewer.ExtentWidth, presenter?.ExtentWidth, viewport.Width),
+                GetEffectiveMetric(scrollViewer.ExtentHeight, presenter?.ExtentHeight, viewport.Height));
+        }
+
+        public static Vector GetEffectiveOffset(this ScrollViewer scrollViewer)
+        {
+            ScrollContentPresenter presenter = GetScrollContentPresenter(scrollViewer);
+            return new Vector(
+                GetEffectiveOffset(scrollViewer.HorizontalOffset, presenter?.HorizontalOffset),
+                GetEffectiveOffset(scrollViewer.VerticalOffset, presenter?.VerticalOffset));
+        }
+
         public static bool ChangeView(this ScrollViewer scrollViewer,
             double? horizontalOffset,
             double? verticalOffset,
@@ -30,6 +55,14 @@ namespace ModernWpf.Controls
                 throw new ArgumentException("The value cannot be infinite or NaN.", nameof(zoomFactor));
             }
 
+            Size viewport = scrollViewer.GetEffectiveViewportSize();
+            Size extent = scrollViewer.GetEffectiveExtentSize();
+            Vector currentOffset = scrollViewer.GetEffectiveOffset();
+            ScrollContentPresenter presenter = GetScrollContentPresenter(scrollViewer);
+            bool usePresenterFallback = presenter != null &&
+                (scrollViewer.ViewportWidth <= 0 || scrollViewer.ViewportHeight <= 0) &&
+                (presenter.ViewportWidth > 0 || presenter.ViewportHeight > 0);
+
             double? targetHorizontalOffset = null;
             double? targetVerticalOffset = null;
 
@@ -37,7 +70,7 @@ namespace ModernWpf.Controls
             {
                 targetHorizontalOffset = CoerceOffset(
                     horizontalOffset.Value,
-                    scrollViewer.ScrollableWidth,
+                    Math.Max(0, extent.Width - viewport.Width),
                     nameof(horizontalOffset));
             }
 
@@ -45,7 +78,7 @@ namespace ModernWpf.Controls
             {
                 targetVerticalOffset = CoerceOffset(
                     verticalOffset.Value,
-                    scrollViewer.ScrollableHeight,
+                    Math.Max(0, extent.Height - viewport.Height),
                     nameof(verticalOffset));
             }
 
@@ -53,23 +86,73 @@ namespace ModernWpf.Controls
 
             if (targetHorizontalOffset.HasValue)
             {
-                if (!AreClose(scrollViewer.HorizontalOffset, targetHorizontalOffset.Value))
+                if (!AreClose(currentOffset.X, targetHorizontalOffset.Value))
                 {
-                    scrollViewer.ScrollToHorizontalOffset(targetHorizontalOffset.Value);
+                    if (usePresenterFallback)
+                    {
+                        presenter.SetHorizontalOffset(targetHorizontalOffset.Value);
+                    }
+                    else
+                    {
+                        scrollViewer.ScrollToHorizontalOffset(targetHorizontalOffset.Value);
+                    }
                     handled = true;
                 }
             }
 
             if (targetVerticalOffset.HasValue)
             {
-                if (!AreClose(scrollViewer.VerticalOffset, targetVerticalOffset.Value))
+                if (!AreClose(currentOffset.Y, targetVerticalOffset.Value))
                 {
-                    scrollViewer.ScrollToVerticalOffset(targetVerticalOffset.Value);
+                    if (usePresenterFallback)
+                    {
+                        presenter.SetVerticalOffset(targetVerticalOffset.Value);
+                    }
+                    else
+                    {
+                        scrollViewer.ScrollToVerticalOffset(targetVerticalOffset.Value);
+                    }
                     handled = true;
                 }
             }
 
+            if (handled && usePresenterFallback)
+            {
+                scrollViewer.InvalidateScrollInfo();
+            }
+
             return handled;
+        }
+
+        private static ScrollContentPresenter GetScrollContentPresenter(ScrollViewer scrollViewer)
+        {
+            scrollViewer.ApplyTemplate();
+            return scrollViewer.Template?.FindName("PART_ScrollContentPresenter", scrollViewer) as ScrollContentPresenter;
+        }
+
+        private static double GetEffectiveMetric(double cachedValue, double? presenterValue, double fallbackValue)
+        {
+            if (cachedValue > 0)
+            {
+                return cachedValue;
+            }
+
+            if (presenterValue.HasValue && presenterValue.Value > 0)
+            {
+                return presenterValue.Value;
+            }
+
+            return Math.Max(0, fallbackValue);
+        }
+
+        private static double GetEffectiveOffset(double cachedValue, double? presenterValue)
+        {
+            if (presenterValue.HasValue && !AreClose(cachedValue, presenterValue.Value))
+            {
+                return presenterValue.Value;
+            }
+
+            return cachedValue;
         }
 
         private static double CoerceOffset(double offset, double scrollableExtent, string parameterName)

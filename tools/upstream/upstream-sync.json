@@ -605,6 +605,28 @@
       ]
     },
     {
+      "id": "items-view",
+      "displayName": "ItemsView",
+      "auditDocuments": [
+        "docs/itemsview-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/ItemsView*",
+            "controls/dev/ItemsView/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/ItemsView/**"
+          ]
+        }
+      ]
+    },
+    {
       "id": "layout-chrome",
       "displayName": "Layout chrome",
       "auditDocuments": [
@@ -960,7 +982,6 @@
           "paths": [
             "controls/dev/Generated/SelectorBar*",
             "controls/dev/ItemContainer/**",
-            "controls/dev/ItemsView/**",
             "controls/dev/SelectorBar/**"
           ]
         },

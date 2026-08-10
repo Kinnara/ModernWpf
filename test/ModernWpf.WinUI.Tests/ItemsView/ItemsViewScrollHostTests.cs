@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,6 +12,64 @@ namespace ModernWpf.WinUI.Tests.ItemsView;
 [TestClass]
 public class ItemsViewScrollHostTests
 {
+    [TestMethod]
+    public void ReportsViewportWhenNestedInRepeaterScrollHost()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var scrollViewer = new ItemsViewScrollHost
+            {
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                Content = new Border { Width = 200, Height = 720 }
+            };
+            var scrollHost = new ItemsRepeaterScrollHost
+            {
+                ScrollViewer = scrollViewer
+            };
+
+            using var host = new TestWindowHost(scrollHost, width: 300, height: 180);
+            host.UpdateLayout();
+
+            Assert.IsGreaterThan(0.0, scrollViewer.GetEffectiveViewportSize().Height);
+            Assert.IsGreaterThan(
+                scrollViewer.GetEffectiveViewportSize().Height,
+                scrollViewer.GetEffectiveExtentSize().Height);
+        });
+    }
+
+    [TestMethod]
+    public void ReportsViewportWithItemsRepeaterContent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var repeater = new ItemsRepeater
+            {
+                ItemsSource = Enumerable.Range(0, 200).Select(index => $"Item {index}").ToArray(),
+                ItemTemplate = new ItemsViewElementFactory(),
+                Layout = new StackLayout()
+            };
+            var scrollViewer = new ItemsViewScrollHost
+            {
+                Width = 240,
+                Height = 120,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                Content = repeater
+            };
+            var scrollHost = new ItemsRepeaterScrollHost
+            {
+                ScrollViewer = scrollViewer
+            };
+
+            using var host = new TestWindowHost(scrollHost, width: 300, height: 180);
+            host.UpdateLayout();
+
+            Assert.IsGreaterThan(0.0, scrollViewer.GetEffectiveViewportSize().Height);
+            Assert.IsGreaterThan(
+                scrollViewer.GetEffectiveViewportSize().Height,
+                scrollViewer.GetEffectiveExtentSize().Height);
+        });
+    }
+
     [TestMethod]
     public void BridgesExternalVerticalControllerToWpfScrollViewer()
     {

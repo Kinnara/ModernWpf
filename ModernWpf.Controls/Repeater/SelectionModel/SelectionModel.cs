@@ -436,6 +436,14 @@ namespace ModernWpf.Controls
             OnSelectionChanged();
         }
 
+        // ItemsView does not support grouped sources. Selecting the root node
+        // avoids realizing or selecting descendants of enumerable data items.
+        internal void SelectAllFlat()
+        {
+            m_rootNode.SelectAll();
+            OnSelectionChanged();
+        }
+
         public void ClearSelection()
         {
             ClearSelection(true /*resetAnchor*/, true /* raiseSelectionChanged */);

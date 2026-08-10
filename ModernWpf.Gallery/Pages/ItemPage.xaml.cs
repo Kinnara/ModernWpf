@@ -230,6 +230,7 @@ namespace ModernWpf.Gallery.Pages
                 ?? DialogsFlyoutsSampleFactory.Create(uniqueId)
                 ?? MenusToolbarsSampleFactory.Create(uniqueId)
                 ?? CollectionsSampleFactory.Create(uniqueId)
+                ?? ItemsViewSampleFactory.Create(uniqueId)
                 ?? ItemsViewFoundationsSampleFactory.Create(uniqueId)
                 ?? ScrollingSampleFactory.Create(uniqueId)
                 ?? LayoutSampleFactory.Create(uniqueId)
@@ -286,6 +287,12 @@ namespace ModernWpf.Gallery.Pages
             if (collectionsExamples.Count != 0)
             {
                 return collectionsExamples;
+            }
+
+            var itemsViewExamples = ItemsViewSampleFactory.CreateExamples(uniqueId);
+            if (itemsViewExamples.Count != 0)
+            {
+                return itemsViewExamples;
             }
 
             var itemsViewFoundationExamples = ItemsViewFoundationsSampleFactory.CreateExamples(uniqueId);
