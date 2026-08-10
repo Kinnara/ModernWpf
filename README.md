@@ -187,7 +187,7 @@ also requires the .NET Framework 4.6.2 Developer Pack. In Visual Studio, open
 | [1.0.0-preview.1 release notes](docs/release-notes-1.0.0-preview.1.md) | Package changes, intentional 0.9 breaks, recommended resources, and preview limitations. |
 | [Migrating from 0.9.x](docs/migrating-from-0.9.md) | Step-by-step application migration guidance. |
 | [1.x public API contract](docs/public-api-contract-1x.md) | Preview governance and stable compatibility policy for CLR APIs and public resource keys. |
-| [Preview 2 WinUI cutoff](docs/winui3-sync-2026-08-06.md) | Final stable/main/Gallery pins, complete upstream dispositions, and the continuous drift-monitoring policy. |
+| [WinUI source parity](docs/winui3-source-parity.md) | Adopted stable/main/Gallery pins, source-audit rules, milestone dispositions, and continuous drift monitoring. |
 
 ## Build from source
 
