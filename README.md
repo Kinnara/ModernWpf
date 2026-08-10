@@ -104,7 +104,7 @@ Install an explicit 1.x version so NuGet does not select a frozen 0.9.x
 package:
 
 ```powershell
-dotnet add package ModernWpfUI --version 1.0.0-preview.5
+dotnet add package ModernWpfUI --version 1.0.0-preview.6
 ```
 
 If the requested preview is not yet listed on NuGet, use a validated workflow
@@ -180,7 +180,8 @@ also requires the .NET Framework 4.6.2 Developer Pack. In Visual Studio, open
 | Resource | Purpose |
 | --- | --- |
 | [1.0 roadmap](docs/roadmap-1.0.md) | Planned feature previews, the API-frozen release candidate, downstream evidence, and stable graduation rules. |
-| [1.0.0-preview.5 release notes](docs/release-notes-1.0.0-preview.5.md) | Current TabView milestone, WPF tear-out adaptation, validation, and preview limitations. |
+| [1.0.0-preview.6 release notes](docs/release-notes-1.0.0-preview.6.md) | ItemContainer, LinedFlowLayout, transition and scrolling prerequisites, WPF adaptations, and migration information. |
+| [1.0.0-preview.5 release notes](docs/release-notes-1.0.0-preview.5.md) | TabView milestone, WPF tear-out adaptation, validation, and preview limitations. |
 | [1.0.0-preview.4 release notes](docs/release-notes-1.0.0-preview.4.md) | TitleBar, Mica, Desktop Acrylic, fallback behavior, and migration information. |
 | [1.0.0-preview.3 release notes](docs/release-notes-1.0.0-preview.3.md) | TimePicker and TwoPaneView APIs, WPF adaptations, and migration information. |
 | [1.0.0-preview.2 release notes](docs/release-notes-1.0.0-preview.2.md) | Synchronization, packaging, migration, and known-preview information. |

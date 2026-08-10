@@ -102,9 +102,9 @@
           },
           "epochAdoption": {
             "status": "adopted",
-            "milestone": "1.0.0-preview.4",
-            "cutoffDate": "2026-08-08",
-            "dispositionDocument": "docs/winui3-sync-2026-08-08-preview4.md"
+            "milestone": "1.0.0-preview.6",
+            "cutoffDate": "2026-08-10",
+            "dispositionDocument": "docs/winui3-sync-2026-08-10-preview6.md"
           },
           "latestStableAtEpoch": {
             "tag": "winui3/release/2.3.1",
@@ -119,18 +119,18 @@
           "id": "main",
           "channel": "main",
           "reviewedBaseline": {
-            "revision": "6a556bb28fc227acd2ec8fe67ee64853f559084b",
-            "label": "Preview 3 cutoff 2026-08-08 winui3/main"
+            "revision": "e1aa8f64df98d6229f6cd4074d59b654616254da",
+            "label": "Preview 5 cutoff 2026-08-08 winui3/main"
           },
           "epochTarget": {
-            "revision": "e1aa8f64df98d6229f6cd4074d59b654616254da",
-            "label": "Preview 4 cutoff 2026-08-08 winui3/main"
+            "revision": "23a73be03d194ea0ece97da71de98b6b53021b70",
+            "label": "Preview 6 cutoff 2026-08-10 winui3/main"
           },
           "epochAdoption": {
             "status": "adopted",
-            "milestone": "1.0.0-preview.4",
-            "cutoffDate": "2026-08-08",
-            "dispositionDocument": "docs/winui3-sync-2026-08-08-preview4.md"
+            "milestone": "1.0.0-preview.6",
+            "cutoffDate": "2026-08-10",
+            "dispositionDocument": "docs/winui3-sync-2026-08-10-preview6.md"
           },
           "observedHead": {
             "kind": "ref",
@@ -199,17 +199,17 @@
           "channel": "main",
           "reviewedBaseline": {
             "revision": "3669519356c67f1376152c33ed8ea45003a91f3a",
-            "label": "Preview 2 cutoff 2026-08-06 main"
+            "label": "Preview 5 cutoff 2026-08-08 main"
           },
           "epochTarget": {
-            "revision": "3669519356c67f1376152c33ed8ea45003a91f3a",
-            "label": "Preview 2 cutoff 2026-08-06 main"
+            "revision": "b78c440193aab788215888561e45adf72da848cb",
+            "label": "Preview 6 cutoff 2026-08-10 main"
           },
           "epochAdoption": {
             "status": "adopted",
-            "milestone": "1.0.0-preview.4",
-            "cutoffDate": "2026-08-08",
-            "dispositionDocument": "docs/winui3-sync-2026-08-08-preview4.md"
+            "milestone": "1.0.0-preview.6",
+            "cutoffDate": "2026-08-10",
+            "dispositionDocument": "docs/winui3-sync-2026-08-10-preview6.md"
           },
           "observedHead": {
             "kind": "ref",
@@ -583,6 +583,28 @@
       ]
     },
     {
+      "id": "item-container",
+      "displayName": "ItemContainer",
+      "auditDocuments": [
+        "docs/itemcontainer-winui3-source-audit.md"
+      ],
+      "watches": [
+        {
+          "repository": "winui-product",
+          "paths": [
+            "controls/dev/Generated/ItemContainer*",
+            "controls/dev/ItemContainer/**"
+          ]
+        },
+        {
+          "repository": "winui-gallery",
+          "paths": [
+            "WinUIGallery/Samples/ItemsView/**"
+          ]
+        }
+      ]
+    },
+    {
       "id": "layout-chrome",
       "displayName": "Layout chrome",
       "auditDocuments": [
@@ -903,13 +925,16 @@
       "id": "repeater",
       "displayName": "ItemsRepeater",
       "auditDocuments": [
-        "docs/repeater-winui3-source-audit.md"
+        "docs/repeater-winui3-source-audit.md",
+        "docs/linedflowlayout-winui3-source-audit.md"
       ],
       "watches": [
         {
           "repository": "winui-product",
           "paths": [
             "controls/dev/Generated/ItemsRepeater*",
+            "controls/dev/Generated/ItemCollectionTransition*",
+            "controls/dev/Generated/LinedFlowLayout*",
             "controls/dev/Generated/Repeater*",
             "controls/dev/Repeater/**"
           ]
@@ -917,7 +942,8 @@
         {
           "repository": "winui-gallery",
           "paths": [
-            "WinUIGallery/Samples/ItemsRepeater/**"
+            "WinUIGallery/Samples/ItemsRepeater/**",
+            "WinUIGallery/Samples/ItemsView/**"
           ]
         }
       ]

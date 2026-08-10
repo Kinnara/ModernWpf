@@ -17,7 +17,7 @@ the feed directory:
 ```powershell
 dotnet run --project .\samples\PackageConsumer\ModernWpf.PackageConsumer.csproj `
     --framework net8.0-windows7.0 `
-    -p:ModernWpfPackageVersion=1.0.0-preview.5 `
+    -p:ModernWpfPackageVersion=1.0.0-preview.6 `
     -p:ModernWpfPackageSource=.\artifacts
 ```
 

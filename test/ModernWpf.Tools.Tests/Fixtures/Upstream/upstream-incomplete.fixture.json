@@ -25,14 +25,14 @@
     {
       "repository": "winui-gallery",
       "track": "main",
-      "revision": "3669519356c67f1376152c33ed8ea45003a91f3a",
+      "revision": "b78c440193aab788215888561e45adf72da848cb",
       "label": "main"
     }
   ],
   "comparisons": [
     {
       "repository": "winui-product",
-      "base": "e1aa8f64df98d6229f6cd4074d59b654616254da",
+      "base": "23a73be03d194ea0ece97da71de98b6b53021b70",
       "head": "1111111111111111111111111111111111111111",
       "status": "ahead",
       "aheadBy": 1,

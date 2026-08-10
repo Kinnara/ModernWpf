@@ -1,0 +1,18 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "LinedFlowLayout"
+  },
+  "properties": [
+    { "name": "ItemsJustification", "type": "LinedFlowLayoutItemsJustification", "default": "LinedFlowLayoutItemsJustification.Start", "changed": "OnPropertyChanged" },
+    { "name": "ItemsStretch", "type": "LinedFlowLayoutItemsStretch", "default": "LinedFlowLayoutItemsStretch.None", "changed": "OnPropertyChanged" },
+    { "name": "MinItemSpacing", "type": "double", "default": "0.0", "changed": "OnPropertyChanged" },
+    { "name": "LineSpacing", "type": "double", "default": "0.0", "changed": "OnPropertyChanged" },
+    { "name": "LineHeight", "type": "double", "default": "double.NaN", "changed": "OnPropertyChanged" },
+    { "name": "ActualLineHeight", "type": "double", "kind": "RegisterReadOnly", "default": "0.0", "changed": "OnPropertyChanged", "setterAccessibility": "private" }
+  ]
+}

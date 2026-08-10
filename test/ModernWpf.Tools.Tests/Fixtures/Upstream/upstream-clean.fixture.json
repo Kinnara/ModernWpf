@@ -38,21 +38,21 @@
     {
       "repository": "winui-product",
       "track": "main",
-      "revision": "e1aa8f64df98d6229f6cd4074d59b654616254da",
+      "revision": "23a73be03d194ea0ece97da71de98b6b53021b70",
       "label": "winui3/main"
     },
     {
       "repository": "winui-gallery",
       "track": "main",
-      "revision": "3669519356c67f1376152c33ed8ea45003a91f3a",
+      "revision": "b78c440193aab788215888561e45adf72da848cb",
       "label": "main"
     }
   ],
   "comparisons": [
     {
       "repository": "winui-product",
-      "base": "6a556bb28fc227acd2ec8fe67ee64853f559084b",
-      "head": "e1aa8f64df98d6229f6cd4074d59b654616254da",
+      "base": "e1aa8f64df98d6229f6cd4074d59b654616254da",
+      "head": "23a73be03d194ea0ece97da71de98b6b53021b70",
       "status": "ahead",
       "aheadBy": 12,
       "behindBy": 0,
@@ -68,13 +68,22 @@
     {
       "repository": "winui-gallery",
       "base": "3669519356c67f1376152c33ed8ea45003a91f3a",
-      "head": "3669519356c67f1376152c33ed8ea45003a91f3a",
-      "status": "identical",
-      "aheadBy": 0,
+      "head": "b78c440193aab788215888561e45adf72da848cb",
+      "status": "ahead",
+      "aheadBy": 1,
       "behindBy": 0,
-      "totalCommits": 0,
+      "totalCommits": 1,
       "isComplete": true,
-      "files": []
+      "files": [
+        {
+          "filename": "WinUIGallery/SampleSupport/SamplePages/DetailedInfoPage.xaml.cs",
+          "status": "modified"
+        },
+        {
+          "filename": "WinUIGallery/Samples/ConnectedAnimation/ConnectedAnimationListPage.txt",
+          "status": "modified"
+        }
+      ]
     }
   ]
 }

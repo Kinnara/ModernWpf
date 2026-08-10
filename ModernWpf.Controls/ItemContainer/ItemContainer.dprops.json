@@ -1,0 +1,20 @@
+{
+  "usings": [
+    "System.Windows"
+  ],
+  "namespace": "ModernWpf.Controls",
+  "type": {
+    "declaration": "public partial class",
+    "name": "ItemContainer"
+  },
+  "properties": [
+    {
+      "name": "CornerRadius",
+      "type": "CornerRadius",
+      "kind": "AddOwner",
+      "sourceProperty": "System.Windows.Controls.Border.CornerRadiusProperty"
+    },
+    { "name": "Child", "type": "UIElement", "metadataType": "FrameworkPropertyMetadata", "default": "null" },
+    { "name": "IsSelected", "type": "bool", "metadataType": "FrameworkPropertyMetadata", "default": "false", "changed": "OnIsSelectedPropertyChanged" }
+  ]
+}

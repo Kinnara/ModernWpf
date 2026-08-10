@@ -1,0 +1,133 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:local="clr-namespace:ModernWpf.Controls">
+
+    <Style x:Key="ItemContainerSelectionCheckboxStyle" TargetType="CheckBox">
+        <Setter Property="Margin" Value="{DynamicResource ItemContainerCheckboxMargin}" />
+        <Setter Property="MinWidth" Value="{DynamicResource ItemContainerCheckboxMinWidth}" />
+        <Setter Property="HorizontalAlignment" Value="{DynamicResource ItemContainerCheckboxHorizontalAlignment}" />
+        <Setter Property="VerticalAlignment" Value="{DynamicResource ItemContainerCheckboxVerticalAlignment}" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="Focusable" Value="False" />
+    </Style>
+
+    <Style TargetType="local:ItemContainer">
+        <Setter Property="Background" Value="{DynamicResource ItemContainerBackground}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ItemContainerBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="CornerRadius" Value="{DynamicResource ControlCornerRadius}" />
+        <Setter Property="Focusable" Value="True" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:ItemContainer">
+                    <ui:GridEx
+                        x:Name="PART_ContainerRoot"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <VisualStateManager.CustomVisualStateManager>
+                            <ui:VisualStateManagerEx />
+                        </VisualStateManager.CustomVisualStateManager>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CombinedStates">
+                                <VisualState x:Name="UnselectedNormal" />
+                                <ui:VisualStateEx x:Name="UnselectedPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.Background" Value="{DynamicResource ItemContainerPointerOverBackground}" />
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.BorderBrush" Value="{DynamicResource ItemContainerPointerOverBorderBrush}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="UnselectedPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.Background" Value="{DynamicResource ItemContainerPressedBackground}" />
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.BorderBrush" Value="{DynamicResource ItemContainerPressedBorderBrush}" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SelectedNormal">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.Background" Value="{DynamicResource ItemContainerSelectedBackground}" />
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.BorderBrush" Value="{DynamicResource ItemContainerSelectedInnerBorderBrush}" />
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.Margin" Value="{DynamicResource ItemContainerSelectedInnerMargin}" />
+                                        <ui:VisualStateSetter Target="PART_SelectionVisual.BorderBrush" Value="{DynamicResource ItemContainerSelectionVisualBackground}" />
+                                        <ui:VisualStateSetter Target="PART_SelectionVisual.Opacity" Value="1" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SelectedPointerOver">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.Background" Value="{DynamicResource ItemContainerSelectedPointerOverBackground}" />
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.BorderBrush" Value="{DynamicResource ItemContainerSelectedInnerBorderBrush}" />
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.Margin" Value="{DynamicResource ItemContainerSelectedInnerMargin}" />
+                                        <ui:VisualStateSetter Target="PART_SelectionVisual.BorderBrush" Value="{DynamicResource ItemContainerSelectionVisualPointerOverBackground}" />
+                                        <ui:VisualStateSetter Target="PART_SelectionVisual.Opacity" Value="1" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                                <ui:VisualStateEx x:Name="SelectedPressed">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.Background" Value="{DynamicResource ItemContainerSelectedPressedBackground}" />
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.BorderBrush" Value="{DynamicResource ItemContainerSelectedInnerBorderBrush}" />
+                                        <ui:VisualStateSetter Target="PART_CommonVisual.Margin" Value="{DynamicResource ItemContainerSelectedInnerMargin}" />
+                                        <ui:VisualStateSetter Target="PART_SelectionVisual.BorderBrush" Value="{DynamicResource ItemContainerSelectionVisualPressedBackground}" />
+                                        <ui:VisualStateSetter Target="PART_SelectionVisual.Opacity" Value="1" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="MultiSelectStates">
+                                <VisualState x:Name="Single" />
+                                <ui:VisualStateEx x:Name="Multiple">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_SelectionCheckbox.Opacity" Value="1" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="DisabledStates">
+                                <VisualState x:Name="Enabled" />
+                                <ui:VisualStateEx x:Name="Disabled">
+                                    <ui:VisualStateEx.Setters>
+                                        <ui:VisualStateSetter Target="PART_ContainerRoot.Opacity" Value="{DynamicResource ItemContainerDisabledOpacity}" />
+                                        <ui:VisualStateSetter Target="PART_SelectionVisual.Visibility" Value="Collapsed" />
+                                    </ui:VisualStateEx.Setters>
+                                </ui:VisualStateEx>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <ContentPresenter
+                            x:Name="PART_ContentPresenter"
+                            Content="{TemplateBinding Child}"
+                            ContentTemplate="{x:Null}"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+
+                        <ui:GridEx
+                            x:Name="PART_SelectionVisual"
+                            BorderBrush="Transparent"
+                            BorderThickness="2"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            IsHitTestVisible="False"
+                            Opacity="0" />
+
+                        <ui:GridEx
+                            x:Name="PART_CommonVisual"
+                            Background="{DynamicResource ItemContainerBackground}"
+                            BorderBrush="{DynamicResource ItemContainerBorderBrush}"
+                            BorderThickness="{DynamicResource ItemContainerSelectedInnerThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            IsHitTestVisible="False" />
+
+                        <CheckBox
+                            x:Name="PART_SelectionCheckbox"
+                            Style="{StaticResource ItemContainerSelectionCheckboxStyle}"
+                            IsChecked="{Binding IsSelected, RelativeSource={RelativeSource TemplatedParent}}"
+                            Opacity="0" />
+                    </ui:GridEx>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -11,6 +11,7 @@
     { "name": "ItemsSource", "type": "object", "changed": "OnPropertyChanged" },
     { "name": "ItemTemplate", "type": "object", "changed": "OnPropertyChanged" },
     { "name": "Layout", "type": "Layout", "changed": "OnPropertyChanged" },
+    { "name": "ItemTransitionProvider", "type": "ItemCollectionTransitionProvider", "changed": "OnPropertyChanged" },
     { "name": "Animator", "type": "ElementAnimator", "changed": "OnPropertyChanged", "propertyAccessibility": "internal" },
     { "name": "HorizontalCacheLength", "type": "double", "default": "2.0", "changed": "OnPropertyChanged" },
     { "name": "VerticalCacheLength", "type": "double", "default": "2.0", "changed": "OnPropertyChanged" },

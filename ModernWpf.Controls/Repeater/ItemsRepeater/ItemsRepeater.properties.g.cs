@@ -59,6 +59,23 @@ namespace ModernWpf.Controls
 
         #endregion
 
+        #region ItemTransitionProvider
+
+        public static readonly DependencyProperty ItemTransitionProviderProperty =
+            DependencyProperty.Register(
+                nameof(ItemTransitionProvider),
+                typeof(ItemCollectionTransitionProvider),
+                typeof(ItemsRepeater),
+                new PropertyMetadata(OnPropertyChanged));
+
+        public ItemCollectionTransitionProvider ItemTransitionProvider
+        {
+            get => (ItemCollectionTransitionProvider)GetValue(ItemTransitionProviderProperty);
+            set => SetValue(ItemTransitionProviderProperty, value);
+        }
+
+        #endregion
+
         #region Animator
 
         public static readonly DependencyProperty AnimatorProperty =

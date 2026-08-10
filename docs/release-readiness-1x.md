@@ -197,7 +197,7 @@ match `Directory.Build.props`. Dispatch the workflow from that same tag ref;
 for example:
 
 ```powershell
-gh workflow run release.yml --ref v1.0.0-preview.5 -f tag=v1.0.0-preview.5
+gh workflow run release.yml --ref v1.0.0-preview.6 -f tag=v1.0.0-preview.6
 ```
 
 Stable publication also names the accepted RC explicitly:
@@ -291,9 +291,10 @@ After publication:
 3. For Preview 2, mark every listed 0.9.x version as **Legacy** while keeping it
    listed and restorable. The deprecation message must link to the migration
    guide and state that 0.9.x is frozen and unsupported.
-4. Land a small follow-up change that advances development to
-   `1.0.0-preview.3` and makes `1.0.0-preview.2` the active package-validation
-   baseline. Do not combine that bump with the tagged Preview 2 tree.
+4. Land a small follow-up change that advances development to the next fixed
+   roadmap milestone and makes the just-published preview the active
+   package-validation baseline. Do not combine that bump with the tagged
+   release tree.
 
 When adding an explicitly supported resource key, run:
 

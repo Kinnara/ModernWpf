@@ -11,10 +11,10 @@ but each shipped resource dictionary still gets its own row so a new or renamed
 control resource cannot bypass source-parity review.
 
 Current authority is the adopted epoch recorded in
-`docs/winui3-sync-2026-08-08-preview4.md`: product `winui3/main`
-`e1aa8f64df98d6229f6cd4074d59b654616254da`, latest stable
+`docs/winui3-sync-2026-08-10-preview6.md`: product `winui3/main`
+`23a73be03d194ea0ece97da71de98b6b53021b70`, latest stable
 `a97562621a1d1ea397a38a3f512c9eef99db52d8`, and Gallery `main`
-`3669519356c67f1376152c33ed8ea45003a91f3a`. Detailed family audits retain
+`b78c440193aab788215888561e45adf72da848cb`. Detailed family audits retain
 their prior blob-level pins; the central epoch record reconciles every change
 after those pins.
 
@@ -53,6 +53,7 @@ bypassing parity review.
 | `HyperlinkButton/HyperlinkButton.xaml` | WinUI 3 source-backed WPF port | `docs\hyperlinkbutton-winui3-source-audit.md` |
 | `InfoBadge/InfoBadge.xaml` | WinUI 3 source-backed WPF port | `docs\infobadge-winui3-source-audit.md` |
 | `InfoBar/InfoBar.xaml` | WinUI 3 source-backed WPF port | `docs\infobar-winui3-source-audit.md` |
+| `ItemContainer/ItemContainer.xaml` | WinUI 3 source-backed WPF port | `docs\itemcontainer-winui3-source-audit.md` |
 | `ListView/ListView.xaml` | WinUI 3 source-backed WPF family | `docs\listview-winui3-source-audit.md` |
 | `ListView/GridView.xaml` | WinUI 3 source-backed WPF family | `docs\listview-winui3-source-audit.md` |
 | `MenuBar/MenuBar.xaml` | WinUI 3 source-backed WPF port | `docs\menubar-winui3-source-audit.md` |

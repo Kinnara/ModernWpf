@@ -14,6 +14,7 @@ namespace ModernWpf.Gallery.Tests
                 ?? DialogsFlyoutsSampleFactory.Create(uniqueId)
                 ?? MenusToolbarsSampleFactory.Create(uniqueId)
                 ?? CollectionsSampleFactory.Create(uniqueId)
+                ?? ItemsViewFoundationsSampleFactory.Create(uniqueId)
                 ?? ScrollingSampleFactory.Create(uniqueId)
                 ?? LayoutSampleFactory.Create(uniqueId)
                 ?? TabViewSampleFactory.Create(uniqueId)
