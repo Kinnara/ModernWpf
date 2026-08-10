@@ -485,7 +485,8 @@ $environment = [ordered]@{
     processArchitecture = [Runtime.InteropServices.RuntimeInformation]::ProcessArchitecture.ToString()
     sessionId = [Diagnostics.Process]::GetCurrentProcess().SessionId
     sessionName = [Environment]::GetEnvironmentVariable("SESSIONNAME")
-    rdpSession = [Environment]::GetEnvironmentVariable("SESSIONNAME") -like "RDP-*"
+    sessionKind = $(if ([System.Windows.SystemParameters]::IsRemoteSession) { "Remote Desktop" } else { "Console" })
+    rdpSession = [System.Windows.SystemParameters]::IsRemoteSession
     primaryScreenWidth = [System.Windows.SystemParameters]::PrimaryScreenWidth
     primaryScreenHeight = [System.Windows.SystemParameters]::PrimaryScreenHeight
     winAppVersion = $winAppVersion
@@ -600,7 +601,7 @@ $reportLines.Add("# ModernWPF Preview 7 ItemsView Gallery evidence")
 $reportLines.Add("")
 $reportLines.Add("- Commit: ``$actualCommit``")
 $reportLines.Add("- Windows build: ``$($environment.osVersion)``")
-$reportLines.Add("- Session: ``$($environment.sessionName)`` (ID $($environment.sessionId), RDP=$($environment.rdpSession))")
+$reportLines.Add("- Session: ``$($environment.sessionKind)`` (ID $($environment.sessionId), RDP=$($environment.rdpSession))")
 $reportLines.Add("- Capture/input: ``$($manifest.provider)``")
 $reportLines.Add("- Resource entry: ``$($manifest.resourceEntry)``; compact resources: ``$($manifest.useCompactResources)``")
 $reportLines.Add("")

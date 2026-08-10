@@ -209,6 +209,7 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(script, "Requested themes do not match real OS High Contrast state");
             StringAssert.Contains(script, "git -C $RepositoryRoot status --porcelain");
             StringAssert.Contains(script, "[Environment]::OSVersion.Version.ToString()");
+            StringAssert.Contains(script, "[System.Windows.SystemParameters]::IsRemoteSession");
             StringAssert.Contains(script, "WinApp Windows.Graphics.Capture");
             StringAssert.Contains(script, "SHA256SUMS");
             StringAssert.Contains(script, "net462");
