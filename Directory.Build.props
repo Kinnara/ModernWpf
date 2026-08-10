@@ -8,7 +8,7 @@
          this only in the same change as an accepted breaking-change audit,
          inventory rebaseline, focused tests, and release-note migration entry.
          Once stable 1.0.0 ships, this becomes the SemVer baseline for 1.x. -->
-    <ModernWpfPackageValidationBaselineVersion>1.0.0-preview.2</ModernWpfPackageValidationBaselineVersion>
+    <ModernWpfPackageValidationBaselineVersion>1.0.0-preview.3</ModernWpfPackageValidationBaselineVersion>
     <ModernWpfPublicApiAnalyzersVersion>5.6.0</ModernWpfPublicApiAnalyzersVersion>
     <ModernWpfSystemValueTupleVersion>4.6.2</ModernWpfSystemValueTupleVersion>
     <ModernWpfWindowsSdkContractsVersion>10.0.28000.2526</ModernWpfWindowsSdkContractsVersion>
