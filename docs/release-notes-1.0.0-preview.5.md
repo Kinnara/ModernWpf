@@ -1,7 +1,5 @@
 # ModernWPF 1.0.0-preview.5
 
-<!-- RELEASE-NOTES: DRAFT -->
-
 `1.0.0-preview.5` adds the complete current-WinUI-shaped `TabView` control
 family. This is the fifth milestone in the fixed ModernWPF 1.0 roadmap.
 
@@ -55,9 +53,9 @@ view-model lifetime, and collection mutation.
   strip header/footer, width and close-overlay modes, color icons, accent
   styling, overflow, and a real WPF window tear-out/rejoin flow.
 - Product, automation, input, resource, source-audit, Gallery, and visual-route
-  tests accompany the new control. The complete release gate and final-tip
-  Light, Dark, and real OS High Contrast matrix on all supported targets remain
-  required before this draft is published.
+  tests accompany the new control. Publication requires the complete release
+  gate and a final-tip Light, Dark, and real OS High Contrast matrix on all
+  supported targets.
 
 Detailed source pins and WPF substitutions are recorded in the
 [TabView current-source audit](tabview-winui3-source-audit.md).
@@ -73,8 +71,6 @@ where its close, overflow, reorder, or tear-out model is required.
 
 ## Known preview limitations
 
-- Until this draft marker is removed, this file describes an unpublished
-  development package.
 - `ItemContainer`, `LinedFlowLayout`, and the adapted scrolling prerequisites
   remain assigned to Preview 6; `ItemsView` remains assigned to Preview 7.
 - `PipsPager` remains deferred to 1.1.
