@@ -7,8 +7,8 @@ family. This is the fifth milestone in the fixed ModernWPF 1.0 roadmap.
 
 ## Preview compatibility
 
-- `1.0.0-preview.4` becomes the active package-validation baseline for this
-  development cycle after Preview 4 is published.
+- `1.0.0-preview.4` is the active package-validation baseline for this
+  development cycle.
 - `1.0.0-preview.1` remains the immutable historical audit and migration
   baseline rather than an API freeze across later previews.
 - Stable `1.0.0` will establish the SemVer compatibility boundary for
@@ -73,8 +73,8 @@ where its close, overflow, reorder, or tear-out model is required.
 
 ## Known preview limitations
 
-- Until Preview 4 is published and this draft marker is removed, this file
-  describes an unpublished development package.
+- Until this draft marker is removed, this file describes an unpublished
+  development package.
 - `ItemContainer`, `LinedFlowLayout`, and the adapted scrolling prerequisites
   remain assigned to Preview 6; `ItemsView` remains assigned to Preview 7.
 - `PipsPager` remains deferred to 1.1.

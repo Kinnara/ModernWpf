@@ -52,6 +52,24 @@ public class TabViewApiTests
     }
 
     [TestMethod]
+    public void AddButtonForwardsRoutedEventArgsLikeCurrentWinUI()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var tabView = new ModernWpf.Controls.TabView();
+            using var host = new TestWindowHost(tabView, width: 400, height: 200);
+            var addButton = Part<ButtonBase>(tabView, "PART_AddButton");
+            object? receivedArgs = null;
+            tabView.AddTabButtonClick += (_, args) => receivedArgs = args;
+            var clickArgs = new RoutedEventArgs(ButtonBase.ClickEvent, addButton);
+
+            addButton.RaiseEvent(clickArgs);
+
+            Assert.AreSame(clickArgs, receivedArgs);
+        });
+    }
+
+    [TestMethod]
     public void ExplicitItemsSelectDisplayAndResolveContainers()
     {
         WpfTestHost.Run(() =>

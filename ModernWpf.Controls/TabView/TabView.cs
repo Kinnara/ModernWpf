@@ -683,7 +683,7 @@ namespace ModernWpf.Controls
         private void OnEffectiveItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             TabItemsChanged?.Invoke(this, e);
-            RaiseTabItemsAutomationChanged(e);
+            RaiseTabItemsAutomationChanged();
 
             if (_reordering)
             {
@@ -722,20 +722,10 @@ namespace ModernWpf.Controls
             Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(PrepareRealizedContainers));
         }
 
-        private void RaiseTabItemsAutomationChanged(NotifyCollectionChangedEventArgs e)
+        private void RaiseTabItemsAutomationChanged()
         {
             var peer = UIElementAutomationPeer.FromElement(this);
             peer?.RaiseAutomationEvent(AutomationEvents.StructureChanged);
-#if NETCOREAPP
-            if (peer != null && e.Action == NotifyCollectionChangedAction.Add)
-            {
-                peer.RaiseNotificationEvent(
-                    AutomationNotificationKind.ItemAdded,
-                    AutomationNotificationProcessing.MostRecent,
-                    ResourceAccessor.GetLocalizedStringResource(SR_TabViewNewTabAddedNotification),
-                    "TabViewItemAdded");
-            }
-#endif
         }
 
         private void RefreshItemsSource()
@@ -1109,7 +1099,15 @@ namespace ModernWpf.Controls
 
         private void OnAddButtonClick(object sender, RoutedEventArgs e)
         {
-            AddTabButtonClick?.Invoke(this, null);
+            AddTabButtonClick?.Invoke(this, e);
+#if NETCOREAPP
+            var peer = UIElementAutomationPeer.FromElement(this);
+            peer?.RaiseNotificationEvent(
+                AutomationNotificationKind.ItemAdded,
+                AutomationNotificationProcessing.MostRecent,
+                ResourceAccessor.GetLocalizedStringResource(SR_TabViewNewTabAddedNotification),
+                "TabViewNewTabAddedNotificationActivityId");
+#endif
         }
 
         private void OnAddButtonPreviewKeyDown(object sender, KeyEventArgs e)

@@ -56,7 +56,7 @@ public class TabViewSourceAuditTests
     }
 
     [TestMethod]
-    public void AutomationPreservesWpfItemProvidersAndRaisesCollectionNotifications()
+    public void AutomationPreservesWpfItemProvidersAndAlignsAddButtonNotification()
     {
         var root = FindRepositoryRoot();
         var peerSource = File.ReadAllText(Path.Combine(root, "ModernWpf.Controls", "TabView", "TabViewAutomationPeers.cs"));
@@ -71,8 +71,10 @@ public class TabViewSourceAuditTests
         StringAssert.Contains(peerSource, "OwnerItem.BringIntoView()");
         StringAssert.Contains(peerSource, "AutomationEvents.SelectionItemPatternOnElementSelected");
         StringAssert.Contains(controlSource, "peer?.RaiseAutomationEvent(AutomationEvents.StructureChanged)");
+        StringAssert.Contains(controlSource, "AddTabButtonClick?.Invoke(this, e)");
         StringAssert.Contains(controlSource, "AutomationNotificationKind.ItemAdded");
         StringAssert.Contains(controlSource, "ResourceAccessor.GetLocalizedStringResource(SR_TabViewNewTabAddedNotification)");
+        StringAssert.Contains(controlSource, "TabViewNewTabAddedNotificationActivityId");
     }
 
     [TestMethod]
