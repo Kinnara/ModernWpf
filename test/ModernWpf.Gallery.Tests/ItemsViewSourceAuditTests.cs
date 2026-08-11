@@ -187,6 +187,39 @@ namespace ModernWpf.Gallery.Tests
             StringAssert.Contains(galleryFactory, "LinedFlowLayoutItemCollectionTransitionProvider");
         }
 
+        [TestMethod]
+        public void ItemsViewGalleryEvidenceUsesWinAppPhysicalInputAndRealHighContrastGuard()
+        {
+            string root = FindRepoRoot();
+            string script = Read(
+                root,
+                "tools",
+                "visual-checks",
+                "Invoke-ItemsViewGalleryEvidence.ps1");
+
+            StringAssert.Contains(script, "modernwpf-itemsview-gallery-evidence-v1");
+            StringAssert.Contains(script, "WinApp Windows.Graphics.Capture + physical pointer + SendInput keyboard");
+            StringAssert.Contains(script, "GallerySample_ItemsView_PrimaryItemsView");
+            StringAssert.Contains(script, "GallerySample_ItemsView_LayoutSelector");
+            StringAssert.Contains(script, "GallerySample_ItemsView_SelectionItemsView");
+            StringAssert.Contains(script, "GallerySample_ItemsView_SelectionStatus");
+            StringAssert.Contains(script, "--double");
+            StringAssert.Contains(script, "ctrl+a");
+            StringAssert.Contains(script, "[System.Windows.SystemParameters]::HighContrast");
+            StringAssert.Contains(script, "Requested themes do not match real OS High Contrast state");
+            StringAssert.Contains(script, "git -C $RepositoryRoot status --porcelain");
+            StringAssert.Contains(script, "[Environment]::OSVersion.Version.ToString()");
+            StringAssert.Contains(script, "[System.Windows.SystemParameters]::IsRemoteSession");
+            StringAssert.Contains(script, "WinApp Windows.Graphics.Capture");
+            StringAssert.Contains(script, "SHA256SUMS");
+            StringAssert.Contains(script, "net462");
+            StringAssert.Contains(script, "net8.0-windows7.0");
+            StringAssert.Contains(script, "net10.0-windows7.0");
+            Assert.IsFalse(script.Contains("UIAutomationClient", StringComparison.Ordinal));
+            Assert.IsFalse(script.Contains("System.Windows.Automation", StringComparison.Ordinal));
+            Assert.IsFalse(script.Contains("D:\\repos\\ModernWpf", StringComparison.Ordinal));
+        }
+
         private static T FindByAutomationId<T>(DependencyObject root, string automationId)
             where T : DependencyObject
         {
