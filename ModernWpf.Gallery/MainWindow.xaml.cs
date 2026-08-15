@@ -181,26 +181,9 @@ namespace ModernWpf.Gallery
 
         internal static Thickness GetMainGridMargin(WindowState windowState, bool isHighContrast)
         {
-            return GetMainGridMargin(windowState, isHighContrast, IsWindows11OrGreater());
-        }
-
-        internal static Thickness GetMainGridMargin(
-            WindowState windowState,
-            bool isHighContrast,
-            bool isWindows11OrGreater)
-        {
             if (windowState == WindowState.Maximized)
             {
                 return isHighContrast ? new Thickness(0, 8, 0, 0) : new Thickness(8);
-            }
-
-            // A WinUI 3 AppWindow lays its client content inside the normal
-            // eight-DIP resize frame. WindowChrome extends WPF content beneath
-            // that frame, so compensate here to keep the title bar,
-            // NavigationView, and right content on the same pixel boundaries.
-            if (!isHighContrast && isWindows11OrGreater)
-            {
-                return new Thickness(8, 0, 8, 8);
             }
 
             return default;

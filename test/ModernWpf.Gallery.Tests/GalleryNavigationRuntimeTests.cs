@@ -899,6 +899,52 @@ namespace ModernWpf.Gallery.Tests
         }
 
         [TestMethod]
+        public void MainWindowCloseButtonReachesRightEdgeInNormalState()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var window = new MainWindow
+                {
+                    Left = -30000,
+                    Top = -30000,
+                    ShowInTaskbar = false,
+                    WindowStartupLocation = WindowStartupLocation.Manual
+                };
+
+                try
+                {
+                    window.Show();
+                    WpfTestHost.DoEvents();
+
+                    var highContrastBorder = (Border)window.FindName("HighContrastBorder");
+                    var mainGrid = (Grid)window.FindName("MainGrid");
+                    var closeButton = (Button)window.FindName("CloseButton");
+
+                    highContrastBorder.BorderThickness = MainWindow.GetHighContrastBorderThickness(false);
+                    mainGrid.Margin = MainWindow.GetMainGridMargin(
+                        WindowState.Normal,
+                        isHighContrast: false);
+                    window.UpdateLayout();
+
+                    Assert.IsTrue(closeButton.ActualWidth > 0);
+                    var closeButtonRight = closeButton.TranslatePoint(
+                        new Point(closeButton.ActualWidth, 0),
+                        highContrastBorder).X;
+                    Assert.AreEqual(
+                        highContrastBorder.ActualWidth,
+                        closeButtonRight,
+                        0.01,
+                        "The normal-window close button must reach the rendered window's right edge.");
+                }
+                finally
+                {
+                    window.Close();
+                    WpfTestHost.DoEvents();
+                }
+            });
+        }
+
+        [TestMethod]
         public void MainWindowChromePolicyMatchesWpfGalleryHighContrastPath()
         {
             WpfTestHost.Run(() =>
@@ -912,23 +958,15 @@ namespace ModernWpf.Gallery.Tests
                 Assert.AreEqual(MainWindow.GetPrefferedNonClientFrameEdges(), chrome.NonClientFrameEdges);
 
                 Assert.AreEqual(
-                    new Thickness(8, 0, 8, 8),
+                    new Thickness(0),
                     MainWindow.GetMainGridMargin(
                         WindowState.Normal,
-                        isHighContrast: false,
-                        isWindows11OrGreater: true));
+                        isHighContrast: false));
                 Assert.AreEqual(
                     new Thickness(0),
                     MainWindow.GetMainGridMargin(
                         WindowState.Normal,
-                        isHighContrast: false,
-                        isWindows11OrGreater: false));
-                Assert.AreEqual(
-                    new Thickness(0),
-                    MainWindow.GetMainGridMargin(
-                        WindowState.Normal,
-                        isHighContrast: true,
-                        isWindows11OrGreater: true));
+                        isHighContrast: true));
                 Assert.AreEqual(new Thickness(8), MainWindow.GetMainGridMargin(WindowState.Maximized, false));
                 Assert.AreEqual(new Thickness(0, 8, 0, 0), MainWindow.GetMainGridMargin(WindowState.Maximized, true));
                 Assert.AreEqual(new Thickness(0), MainWindow.GetHighContrastBorderThickness(false));
