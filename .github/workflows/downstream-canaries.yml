@@ -98,7 +98,7 @@ jobs:
           dotnet-version: ${{ env.DOWNSTREAM_MSBUILD_SDK_VERSION }}
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+        uses: microsoft/setup-msbuild@v3
 
       - name: Download exact candidate package
         uses: actions/download-artifact@v8
