@@ -40,7 +40,7 @@ The contract applies to all supported package targets:
 
 The RC 1 checked-in CLR baseline contains 1,586 API entries for
 `ModernWpf.dll` and 3,225 for `ModernWpf.Controls.dll`. The packaged .NET 8
-assemblies expose 125 and 265 supported top-level types respectively. WPF's
+assemblies expose 126 and 270 supported top-level types respectively. WPF's
 generated `GeneratedInternalTypeHelper` is compiler infrastructure and is not
 a supported ModernWpf API.
 
