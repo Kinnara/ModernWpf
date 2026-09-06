@@ -1,7 +1,5 @@
 # ModernWPF 1.0.0-rc.1
 
-<!-- RELEASE-NOTES: DRAFT -->
-
 `1.0.0-rc.1` is the release-candidate milestone after Preview 7. It freezes
 the intended 1.0 public CLR API and resource-key surface; it does not add
 another feature preview or start the stable-release soak before acceptance.
@@ -42,11 +40,14 @@ The ItemsView transition-forwarding test uses a non-animating test provider
 instead of invoking the abstract-by-convention animation behavior of the base
 provider when OS animations are enabled. No product animation behavior changes.
 
-Release preparation must complete the serialized build/test/package gate,
+Release acceptance requires the serialized build/test/package gate,
 three consecutive complete WinUI runs from the final clean tip, all three
 downstream canaries, and Light, Dark, and real OS High Contrast visual and
-manual input checks on all supported targets. This draft is not publication
-approval and does not record those pending checks as passing.
+manual input checks on all supported targets.
+
+CommandBar overflow-order tests now constrain the control's actual width,
+independently of system window chrome and minimum HWND dimensions. This
+removes High Contrast-specific test failures without changing overflow behavior.
 
 The unchanged 14-day RC soak starts only after package publication and the
 required visual/downstream evidence have been accepted. An accepted surface
