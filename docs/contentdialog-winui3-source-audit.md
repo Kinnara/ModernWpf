@@ -1,5 +1,14 @@
 # ContentDialog WinUI 3 Source Audit
 
+## 2026-09-06 initial-focus correction (#779)
+
+The current upstream `ContentDialog::SetInitialFocusElement` still searches
+content first, then the default button, then the first focusable command button.
+ModernWpf now follows that order using WPF tab navigation after descendant
+visibility and layout have updated. Initial focus precedes `Opened`, so an
+application handler can override it. Tests cover in-place and detached dialogs,
+content templates, disabled content, command fallback, and handler overrides.
+
 Audit refreshed 2026-07-18 against official `microsoft-ui-xaml` commit
 `de3e767333c2f0717a6a70cb22bd192ced5ad885` (2026-07-17) and WinUI Gallery
 commit `29f62479d5c046a0b854a5868e5a7cd484572d87` (2026-07-13).

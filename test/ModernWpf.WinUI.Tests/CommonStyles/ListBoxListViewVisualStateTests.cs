@@ -22,6 +22,52 @@ namespace ModernWpf.WinUI.Tests.CommonStyles;
 public class ListBoxListViewVisualStateTests
 {
     [TestMethod]
+    [DataRow(false, true)]
+    [DataRow(true, true)]
+    [DataRow(false, false)]
+    [DataRow(true, false)]
+    public void GroupedListsHonorExplicitVirtualization(bool useListView, bool enableVirtualization)
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+            ListBox list = useListView ? new WpfListView() : new ListBox();
+            if (enableVirtualization)
+            {
+                VirtualizingPanel.SetIsVirtualizingWhenGrouping(list, true);
+            }
+            var source = new CollectionViewSource
+            {
+                Source = Enumerable.Range(0, 2000).Select(index => new { Group = index / 100, Name = "Item " + index }).ToArray()
+            };
+            source.GroupDescriptions.Add(new PropertyGroupDescription("Group"));
+            list.ItemsSource = source.View;
+            list.DisplayMemberPath = "Name";
+            list.GroupStyle.Add(new GroupStyle());
+            using var host = new TestWindowHost(list, width: 320, height: 240);
+            host.UpdateLayout();
+            var realized = VisualTreeTestHelper.EnumerateDescendants(list).OfType<ListBoxItem>().Count();
+            Assert.AreEqual(enableVirtualization, VirtualizingPanel.GetIsVirtualizingWhenGrouping(list));
+            if (enableVirtualization)
+            {
+                Assert.IsTrue(realized > 0 && realized < 200,
+                    $"Expected a bounded viewport of grouped containers, got {realized} of 2000.");
+                list.ScrollIntoView(list.Items[list.Items.Count - 1]);
+                host.UpdateLayout();
+                WpfTestHost.DoEvents();
+                var visibleContainers = VisualTreeTestHelper.EnumerateDescendants(list).OfType<ListBoxItem>().ToArray();
+                Assert.IsTrue(visibleContainers.Length > 0 && visibleContainers.Length < 200);
+                Assert.IsTrue(visibleContainers.Any(item => Equals(item.DataContext, list.Items[list.Items.Count - 1])),
+                    "The last grouped item must remain reachable when virtualizing.");
+            }
+            else
+            {
+                Assert.AreEqual(2000, realized, "The WPF default remains non-virtualized grouping.");
+            }
+        });
+    }
+
+    [TestMethod]
     public void DefaultListBoxStylesUseOfficialWpfFluentTemplateShape()
     {
         WpfTestHost.Run(() =>

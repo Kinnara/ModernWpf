@@ -889,6 +889,106 @@ public class ContentDialogApiTests
         });
     }
 
+    [TestMethod]
+    [DataRow(ContentDialogButton.None, false)]
+    [DataRow(ContentDialogButton.Primary, false)]
+    [DataRow(ContentDialogButton.None, true)]
+    [DataRow(ContentDialogButton.Primary, true)]
+    public void InitialFocusPrefersEditableContent(ContentDialogButton defaultButton, bool detached)
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+            var editor = new TextBox();
+            var dialog = CreateDialog();
+            dialog.Content = editor;
+            dialog.DefaultButton = defaultButton;
+            var opened = false;
+            dialog.Opened += (_, _) => opened = true;
+            using var host = detached
+                ? new TestWindowHost(new Grid(), width: 640, height: 480)
+                : CreateInPlaceHost(dialog);
+            dialog.Owner = host.Window;
+            var task = detached ? dialog.ShowAsync() : ShowInPlace(dialog);
+            try
+            {
+                PumpUntil(() => opened);
+                Assert.IsTrue(editor.IsKeyboardFocused,
+                    $"Editable content should receive initial keyboard focus. Visible={editor.IsVisible}, focused={Keyboard.FocusedElement?.GetType().Name}.");
+            }
+            finally
+            {
+                dialog.Hide();
+                WaitForResult(task);
+            }
+        });
+    }
+
+    [TestMethod]
+    [DataRow(ContentDialogButton.None, "PrimaryButton")]
+    [DataRow(ContentDialogButton.Secondary, "SecondaryButton")]
+    [DataRow(ContentDialogButton.Close, "CloseButton")]
+    public void InitialFocusFallsBackToCommandButtons(ContentDialogButton defaultButton, string expectedButton)
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+            var dialog = CreateDialog();
+            dialog.DefaultButton = defaultButton;
+            using var host = CreateInPlaceHost(dialog);
+            var opened = false;
+            dialog.Opened += (_, _) => opened = true;
+            var task = ShowInPlace(dialog);
+            try
+            {
+                PumpUntil(() => opened);
+                Assert.IsTrue(GetTemplateButton(dialog, expectedButton).IsKeyboardFocused);
+            }
+            finally
+            {
+                dialog.Hide();
+                WaitForResult(task);
+            }
+        });
+    }
+
+    [TestMethod]
+    public void InitialFocusExpandsContentTemplateAndOpenedCanOverrideIt()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+            var dialog = CreateDialog();
+            dialog.ContentTemplate = (DataTemplate)System.Windows.Markup.XamlReader.Parse(
+                "<DataTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'>" +
+                "<StackPanel><TextBox IsEnabled='False'/><TextBox x:Name='Editor' " +
+                "xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'/></StackPanel></DataTemplate>");
+            using var host = CreateInPlaceHost(dialog);
+            var opened = false;
+            var focusedContentAtOpen = false;
+            dialog.Opened += (_, _) =>
+            {
+                focusedContentAtOpen = Keyboard.FocusedElement is TextBox box && box.Name == "Editor";
+                GetTemplateButton(dialog, "CloseButton").Focus();
+                opened = true;
+            };
+            var task = ShowInPlace(dialog);
+            try
+            {
+                PumpUntil(() => opened);
+                Assert.IsTrue(focusedContentAtOpen, "The content template's enabled editor must be focused before Opened.");
+                WpfTestHost.DoEvents();
+                Assert.IsTrue(GetTemplateButton(dialog, "CloseButton").IsKeyboardFocused,
+                    "Initial focus must not overwrite the application's Opened handler.");
+            }
+            finally
+            {
+                dialog.Hide();
+                WaitForResult(task);
+            }
+        });
+    }
+
     private static ContentDialog CreateDialog()
     {
         return new ContentDialog

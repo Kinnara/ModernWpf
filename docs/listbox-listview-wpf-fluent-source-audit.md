@@ -2,6 +2,17 @@
 
 Date: 2026-05-18
 
+## 2026-09-06 grouping virtualization correction (#781)
+
+Current WPF Fluent still disables `ScrollViewer.CanContentScroll` unconditionally
+when grouping. This prevents the stock ListBox/ListView templates from honoring
+an application's explicit `VirtualizingPanel.IsVirtualizingWhenGrouping=True`.
+ModernWpf now applies that scrolling fallback only when grouping virtualization
+is false, an intentional adaptation of the upstream template. The WPF default
+remains false; no default-on enhancement or custom group panel is introduced.
+Runtime tests check bounded realization and scrolling to the last of 2,000
+grouped items when enabled, and unchanged default behavior when not enabled.
+
 ## Source Inspected
 
 - `D:\repos\wpf\src\Microsoft.DotNet.Wpf\src\Themes\PresentationFramework.Fluent\Styles\ListBox.xaml`

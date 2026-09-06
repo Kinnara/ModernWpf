@@ -511,7 +511,15 @@ namespace ModernWpf.Controls
                     Focus();
                 }
 
-                OnOpened();
+                // IsVisibleChanged is raised before descendants have updated their
+                // visibility. Wait for layout so content can accept keyboard focus.
+                Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+                {
+                    if (IsShowing)
+                    {
+                        OnOpened();
+                    }
+                }));
             }
             else
             {
@@ -562,8 +570,28 @@ namespace ModernWpf.Controls
             if (m_opening)
             {
                 m_opening = false;
+                SetInitialFocus();
                 Opened?.Invoke(this, new ContentDialogOpenedEventArgs());
             }
+        }
+
+        private void SetInitialFocus()
+        {
+            // Expand content templates before asking WPF for their first tab stop.
+            var contentPresenter = GetTemplateChild("Content") as FrameworkElement;
+            contentPresenter?.UpdateLayout();
+            if (contentPresenter?.MoveFocus(new TraversalRequest(FocusNavigationDirection.First)) == true)
+            {
+                return;
+            }
+
+            var defaultButton = GetDefaultButton();
+            if (defaultButton != null && defaultButton.IsVisible && defaultButton.IsEnabled && defaultButton.Focus())
+            {
+                return;
+            }
+
+            CommandSpace?.MoveFocus(new TraversalRequest(FocusNavigationDirection.First));
         }
 
         private void OnClosed()
