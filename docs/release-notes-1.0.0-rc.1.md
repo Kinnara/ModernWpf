@@ -30,6 +30,8 @@ See [Migrating from ModernWPF 0.9.x](migrating-from-0.9.md) and the
 - Gallery title-bar close glyph alignment is corrected.
 - Gallery Settings reflects the active theme when reopened, so returning to
   the system theme remains available after an explicit Light or Dark choice.
+- CommandBar and CommandBarFlyout More-button icons follow the state-specific
+  foreground, preserving contrast on Aquatic High Contrast highlight backgrounds.
 
 ## Validation and release status
 

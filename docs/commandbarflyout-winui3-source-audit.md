@@ -104,6 +104,13 @@ CommandBarFlyout page/sample change after Gallery conversion commit
 
 ## WPF Substitutions
 
+- The More-button icon explicitly binds to its visual `ContentPresenterEx`
+  foreground. WPF otherwise inherits from the logical `ToggleButton` parent,
+  bypassing the source-shaped pointer-over and pressed foreground setters.
+  Real Aquatic High Contrast testing exposed the resulting pale ellipsis on
+  the highlight background. The focused regression covers live presenter
+  foreground changes, clearing the override, and disabled/re-enabled states;
+  no public API or resource-key change is needed.
 - WPF has no WinUI compositor `ThemeShadow` or system backdrop equivalent. Presenter and overflow-root shadows are represented by `ThemeShadowChrome`; exact compositor rasterization and backdrop material remain platform gaps.
 - WPF's built-in `Popup` does not expose WinUI `Popup.ActualPlacement`; ModernWpf uses `WindowedPopup` for the CommandBarFlyout overflow surface. Its separate `HwndSource` needs a measured two-pixel platform-anchor compensation (`HorizontalOffset=2`; `VerticalOffset=-2` downward or `+2` upward) to produce the same raw union as WinUI. Opacity storyboards target the hosted `OuterOverflowContentRootShadowChrome` instead of the placeholder popup element.
 - WPF automation does not expose WinRT `AutomationEvents.MenuOpened` / `MenuClosed`. Control types, localized type names, expanded ellipsis name, app-visible behavior, and focus routing are matched and covered; only the WinRT-specific event identifiers remain a platform gap.

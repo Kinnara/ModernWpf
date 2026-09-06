@@ -342,6 +342,49 @@ public class CommandBarFlyoutApiTests
     }
 
     [TestMethod]
+    public void FlyoutMoreButtonIconTracksPresenterForeground()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var flyout = new CommandBarFlyout();
+            flyout.PrimaryCommands.Add(new AppBarButton { Label = "Share" });
+            flyout.SecondaryCommands.Add(new AppBarButton { Label = "Resize" });
+            var target = new System.Windows.Controls.Button { Content = "Show" };
+            using var host = new TestWindowHost(target, width: 520, height: 300);
+            flyout.ShowAt(target);
+            WpfTestHost.DoEvents();
+            try
+            {
+                var commandBar = GetCommandBar(flyout);
+                var moreButton = FindTemplateChild<ToggleButton>(commandBar, "MoreButton");
+                var presenter = FindTemplateChild<ContentPresenterEx>(moreButton, "ContentPresenter");
+                var icon = FindTemplateChild<FontIconFallback>(commandBar, "EllipsisIcon");
+                foreach (var foreground in new[] { Brushes.Lime, Brushes.Magenta })
+                {
+                    presenter.SetCurrentValue(ContentPresenterEx.ForegroundProperty, foreground);
+                    host.UpdateLayout();
+                    Assert.AreSame(foreground, icon.Foreground);
+                }
+
+                presenter.ClearValue(ContentPresenterEx.ForegroundProperty);
+                host.UpdateLayout();
+                Assert.AreSame(presenter.Foreground, icon.Foreground);
+
+                commandBar.IsEnabled = false;
+                host.UpdateLayout();
+                Assert.AreSame(presenter.Foreground, icon.Foreground);
+                commandBar.IsEnabled = true;
+                host.UpdateLayout();
+                Assert.AreSame(presenter.Foreground, icon.Foreground);
+            }
+            finally
+            {
+                HideAndWait(flyout);
+            }
+        });
+    }
+
+    [TestMethod]
     public void CommandsExposeWinUIFlyoutAutomationRolesAndMoreButtonName()
     {
         WpfTestHost.Run(() =>

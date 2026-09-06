@@ -79,6 +79,13 @@ bounds.
 
 ## WPF pixel substitutions
 
+- WPF gives the More-button icon a logical parent of `ToggleButton`, so it
+  does not inherit state-specific foregrounds from the visual
+  `ContentPresenterEx`. The icon explicitly binds to that presenter's foreground
+  to preserve the source pointer-over and pressed contrast. This fixes the
+  pale ellipsis on the Aquatic system-highlight background without changing
+  theme resources or public contracts. A regression covers live foreground
+  changes, clearing the override, and disabling/re-enabling the command bar.
 - WPF Segoe UI label measurement is one pixel narrower per Right-label button
   at Gallery scale. `AppBarButtonTextLabelOnRightMargin` and the toggle
   equivalent retain every source value except a documented 12-to-13 trailing

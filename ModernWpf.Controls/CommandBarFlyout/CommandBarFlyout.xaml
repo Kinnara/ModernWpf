@@ -1098,6 +1098,7 @@
                                             </ToggleButton.RenderTransform>
                                             <ui:FontIconFallback
                                                 x:Name="EllipsisIcon"
+                                                Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ui:ContentPresenterEx}}"
                                                 HorizontalAlignment="Center"
                                                 VerticalAlignment="Center"
                                                 FontFamily="{DynamicResource SymbolThemeFontFamily}"

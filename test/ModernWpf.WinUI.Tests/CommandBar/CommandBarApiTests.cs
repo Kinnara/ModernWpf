@@ -574,6 +574,43 @@ public class CommandBarApiTests
     }
 
     [TestMethod]
+    public void CommandBarMoreButtonIconTracksPresenterForeground()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+            var commandBar = new ModernWpf.Controls.CommandBar
+            {
+                OverflowButtonVisibility = CommandBarOverflowButtonVisibility.Visible
+            };
+            using var host = new TestWindowHost(commandBar, width: 360, height: 160);
+            var moreButton = FindTemplateChild<ToggleButton>(commandBar, "MoreButton");
+            var presenter = FindTemplateChild<ContentPresenterEx>(moreButton, "ContentPresenter");
+            var icon = FindTemplateChild<FontIconFallback>(commandBar, "EllipsisIcon");
+
+            // Pointer-over and pressed triggers change the visual presenter, not
+            // the ToggleButton that is the icon's logical parent.
+            foreach (var foreground in new[] { Brushes.Lime, Brushes.Magenta })
+            {
+                presenter.SetCurrentValue(ContentPresenterEx.ForegroundProperty, foreground);
+                host.UpdateLayout();
+                Assert.AreSame(foreground, icon.Foreground);
+            }
+
+            presenter.ClearValue(ContentPresenterEx.ForegroundProperty);
+            host.UpdateLayout();
+            Assert.AreSame(presenter.Foreground, icon.Foreground);
+
+            commandBar.IsEnabled = false;
+            host.UpdateLayout();
+            Assert.AreSame(presenter.Foreground, icon.Foreground);
+            commandBar.IsEnabled = true;
+            host.UpdateLayout();
+            Assert.AreSame(presenter.Foreground, icon.Foreground);
+        });
+    }
+
+    [TestMethod]
     public void CommandBarMoreButtonIconDataCanBeOverriddenPerInstance()
     {
         WpfTestHost.Run(() =>
