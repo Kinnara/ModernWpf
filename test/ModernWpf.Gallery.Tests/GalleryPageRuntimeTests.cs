@@ -498,13 +498,47 @@ namespace ModernWpf.Gallery.Tests
                     var page = new SettingsPage();
                     var themeMode = (ComboBox)page.FindName("Change_ThemeMode");
 
-                    Assert.AreEqual(2, themeMode.SelectedIndex);
-                    Assert.AreEqual("Use system setting", ((ComboBoxItem)themeMode.SelectedItem).Content);
+                    Assert.AreEqual(1, themeMode.SelectedIndex);
+                    Assert.AreEqual("Dark", ((ComboBoxItem)themeMode.SelectedItem).Content);
                     Assert.AreEqual(ApplicationTheme.Dark, ThemeManager.Current.ApplicationTheme);
                 }
                 finally
                 {
                     ThemeManager.Current.ApplicationTheme = previousTheme;
+                }
+            });
+        }
+
+        [TestMethod]
+        public void SettingsPageRecreationReflectsCurrentThemeAndCanReturnToSystem()
+        {
+            WpfTestHost.Run(() =>
+            {
+                var previousTheme = ThemeManager.Current.ApplicationTheme;
+                try
+                {
+                    GalleryDiagnostics.ResetForTests();
+                    ThemeManager.Current.ApplicationTheme = null;
+                    foreach (var selectedIndex in new[] { 0, 1, 2 })
+                    {
+                        var page = new SettingsPage();
+                        var themeMode = (ComboBox)page.FindName("Change_ThemeMode");
+                        themeMode.SelectedIndex = selectedIndex;
+                        var selectedTheme = ThemeManager.Current.ApplicationTheme;
+
+                        var reopenedPage = new SettingsPage();
+                        var reopenedThemeMode = (ComboBox)reopenedPage.FindName("Change_ThemeMode");
+                        Assert.AreEqual(selectedIndex, reopenedThemeMode.SelectedIndex);
+                        Assert.AreEqual(selectedTheme, ThemeManager.Current.ApplicationTheme);
+
+                        reopenedThemeMode.SelectedIndex = 2;
+                        Assert.IsNull(ThemeManager.Current.ApplicationTheme);
+                    }
+                }
+                finally
+                {
+                    ThemeManager.Current.ApplicationTheme = previousTheme;
+                    GalleryDiagnostics.ResetForTests();
                 }
             });
         }

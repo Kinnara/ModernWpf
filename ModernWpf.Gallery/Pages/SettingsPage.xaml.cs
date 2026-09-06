@@ -27,7 +27,7 @@ namespace ModernWpf.Gallery.Pages
             ViewModel = viewModel;
             DataContext = this;
             InitializeComponent();
-            ApplyVisualTestThemeSelection();
+            InitializeThemeSelection();
             _canApplyThemeSelection = true;
         }
 
@@ -84,10 +84,13 @@ namespace ModernWpf.Gallery.Pages
             }
         }
 
-        private void ApplyVisualTestThemeSelection()
+        private void InitializeThemeSelection()
         {
             if (!GalleryDiagnostics.IsEnabled)
             {
+                var theme = ThemeManager.Current.ApplicationTheme;
+                Change_ThemeMode.SelectedIndex = theme == ApplicationTheme.Light ? 0
+                    : theme == ApplicationTheme.Dark ? 1 : 2;
                 return;
             }
 

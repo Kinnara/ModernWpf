@@ -28,6 +28,8 @@ See [Migrating from ModernWPF 0.9.x](migrating-from-0.9.md) and the
 - RadioMenuItem group bookkeeping remains correct through unload/reload.
 - Pack resource lookup is cached without retaining resource streams.
 - Gallery title-bar close glyph alignment is corrected.
+- Gallery Settings reflects the active theme when reopened, so returning to
+  the system theme remains available after an explicit Light or Dark choice.
 
 ## Validation and release status
 
