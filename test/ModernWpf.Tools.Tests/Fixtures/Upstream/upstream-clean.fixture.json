@@ -19,9 +19,9 @@
       "track": "stable",
       "tags": [
         {
-          "name": "winui3/release/2.3.1",
+          "name": "winui3/release/2.4.0",
           "commit": {
-            "sha": "a97562621a1d1ea397a38a3f512c9eef99db52d8"
+            "sha": "e8442d07ae57d2d3e653e616831f504937881bd3"
           },
           "published_at": "2026-07-17T12:00:00Z"
         }
@@ -32,27 +32,27 @@
     {
       "repository": "winui-product",
       "track": "stable",
-      "revision": "a97562621a1d1ea397a38a3f512c9eef99db52d8",
-      "label": "winui3/release/2.3.1"
+      "revision": "e8442d07ae57d2d3e653e616831f504937881bd3",
+      "label": "winui3/release/2.4.0"
     },
     {
       "repository": "winui-product",
       "track": "main",
-      "revision": "23a73be03d194ea0ece97da71de98b6b53021b70",
+      "revision": "26eb4a71b836378151a7961eb84ff60c8b5ae6e5",
       "label": "winui3/main"
     },
     {
       "repository": "winui-gallery",
       "track": "main",
-      "revision": "b78c440193aab788215888561e45adf72da848cb",
+      "revision": "b1730cb60a36014b1715df6b797e79a3f7c414ce",
       "label": "main"
     }
   ],
   "comparisons": [
     {
       "repository": "winui-product",
-      "base": "e1aa8f64df98d6229f6cd4074d59b654616254da",
-      "head": "23a73be03d194ea0ece97da71de98b6b53021b70",
+      "base": "23a73be03d194ea0ece97da71de98b6b53021b70",
+      "head": "26eb4a71b836378151a7961eb84ff60c8b5ae6e5",
       "status": "ahead",
       "aheadBy": 12,
       "behindBy": 0,
@@ -67,8 +67,8 @@
     },
     {
       "repository": "winui-gallery",
-      "base": "3669519356c67f1376152c33ed8ea45003a91f3a",
-      "head": "b78c440193aab788215888561e45adf72da848cb",
+      "base": "b78c440193aab788215888561e45adf72da848cb",
+      "head": "b1730cb60a36014b1715df6b797e79a3f7c414ce",
       "status": "ahead",
       "aheadBy": 1,
       "behindBy": 0,

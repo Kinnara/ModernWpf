@@ -11,7 +11,7 @@
     {
       "repository": "winui-product",
       "track": "stable",
-      "name": "winui3/release/2.3.2",
+      "name": "winui3/release/2.4.1",
       "revision": "2222222222222222222222222222222222222222",
       "published_at": "2026-07-01T12:00:00Z"
     }
@@ -21,7 +21,7 @@
       "repository": "winui-product",
       "track": "stable",
       "revision": "2222222222222222222222222222222222222222",
-      "label": "winui3/release/2.3.2"
+      "label": "winui3/release/2.4.1"
     },
     {
       "repository": "winui-product",
@@ -32,15 +32,15 @@
     {
       "repository": "winui-gallery",
       "track": "main",
-      "revision": "b78c440193aab788215888561e45adf72da848cb",
+      "revision": "b1730cb60a36014b1715df6b797e79a3f7c414ce",
       "label": "main"
     }
   ],
   "comparisons": [
     {
       "repository": "winui-product",
-      "base": "e1aa8f64df98d6229f6cd4074d59b654616254da",
-      "head": "23a73be03d194ea0ece97da71de98b6b53021b70",
+      "base": "23a73be03d194ea0ece97da71de98b6b53021b70",
+      "head": "26eb4a71b836378151a7961eb84ff60c8b5ae6e5",
       "status": "ahead",
       "aheadBy": 12,
       "behindBy": 0,
@@ -80,7 +80,7 @@
     },
     {
       "repository": "winui-product",
-      "base": "a97562621a1d1ea397a38a3f512c9eef99db52d8",
+      "base": "e8442d07ae57d2d3e653e616831f504937881bd3",
       "head": "2222222222222222222222222222222222222222",
       "status": "ahead",
       "aheadBy": 1,
@@ -96,7 +96,7 @@
     },
     {
       "repository": "winui-product",
-      "base": "23a73be03d194ea0ece97da71de98b6b53021b70",
+      "base": "26eb4a71b836378151a7961eb84ff60c8b5ae6e5",
       "head": "1111111111111111111111111111111111111111",
       "status": "ahead",
       "aheadBy": 1,
@@ -116,8 +116,8 @@
     },
     {
       "repository": "winui-gallery",
-      "base": "3669519356c67f1376152c33ed8ea45003a91f3a",
-      "head": "b78c440193aab788215888561e45adf72da848cb",
+      "base": "b78c440193aab788215888561e45adf72da848cb",
+      "head": "b1730cb60a36014b1715df6b797e79a3f7c414ce",
       "status": "ahead",
       "aheadBy": 1,
       "behindBy": 0,
@@ -130,6 +130,22 @@
         },
         {
           "filename": "WinUIGallery/Samples/ConnectedAnimation/ConnectedAnimationListPage.txt",
+          "status": "modified"
+        }
+      ]
+    },
+    {
+      "repository": "winui-product",
+      "base": "a97562621a1d1ea397a38a3f512c9eef99db52d8",
+      "head": "e8442d07ae57d2d3e653e616831f504937881bd3",
+      "status": "ahead",
+      "aheadBy": 1,
+      "behindBy": 0,
+      "totalCommits": 1,
+      "isComplete": true,
+      "files": [
+        {
+          "filename": "eng/Version.Details.xml",
           "status": "modified"
         }
       ]

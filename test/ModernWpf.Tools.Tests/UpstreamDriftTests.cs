@@ -15,15 +15,17 @@ namespace ModernWpf.Tools.Tests
     public class UpstreamDriftTests
     {
         private const string ProductReviewedRevision =
-            "e1aa8f64df98d6229f6cd4074d59b654616254da";
-        private const string ProductEpochRevision =
             "23a73be03d194ea0ece97da71de98b6b53021b70";
-        private const string StableEpochRevision =
+        private const string ProductEpochRevision =
+            "26eb4a71b836378151a7961eb84ff60c8b5ae6e5";
+        private const string StableReviewedRevision =
             "a97562621a1d1ea397a38a3f512c9eef99db52d8";
+        private const string StableEpochRevision =
+            "e8442d07ae57d2d3e653e616831f504937881bd3";
         private const string GalleryReviewedRevision =
-            "3669519356c67f1376152c33ed8ea45003a91f3a";
-        private const string GalleryEpochRevision =
             "b78c440193aab788215888561e45adf72da848cb";
+        private const string GalleryEpochRevision =
+            "b1730cb60a36014b1715df6b797e79a3f7c414ce";
 
         [TestMethod]
         public void ManifestSchemaCoversAuditedFamiliesAndGenericResources()
@@ -115,10 +117,10 @@ namespace ModernWpf.Tools.Tests
                         "adopted",
                         RequiredString(epochAdoption, "status"));
                     Assert.AreEqual(
-                        "1.0.0-preview.6",
+                        "1.0.0-rc.1",
                         RequiredString(epochAdoption, "milestone"));
                     Assert.AreEqual(
-                        "2026-08-10",
+                        "2026-09-06",
                         RequiredString(epochAdoption, "cutoffDate"));
                     var dispositionDocument = RequiredString(
                         epochAdoption,
@@ -149,13 +151,13 @@ namespace ModernWpf.Tools.Tests
                 "BuildTransportPackageCmdWrapper.cmd");
             CollectionAssert.Contains(productIgnorePaths, "buildsamples.cmd");
             var stable = GetTrack(product, "stable");
-            AssertRevision(stable, "reviewedBaseline", StableEpochRevision);
+            AssertRevision(stable, "reviewedBaseline", StableReviewedRevision);
             AssertRevision(stable, "epochTarget", StableEpochRevision);
             Assert.AreEqual(
                 StableEpochRevision,
                 RequiredString(stable.GetProperty("latestStableAtEpoch"), "revision"));
             Assert.AreEqual(
-                "winui3/release/2.3.1",
+                "winui3/release/2.4.0",
                 RequiredString(stable.GetProperty("latestStableAtEpoch"), "tag"));
             Assert.AreEqual(
                 "latestStableRelease",
@@ -402,7 +404,7 @@ namespace ModernWpf.Tools.Tests
 
             var stable = GetReportTrack(root, "winui-product", "stable");
             Assert.AreEqual(
-                "winui3/release/2.3.2",
+                "winui3/release/2.4.1",
                 RequiredString(stable.GetProperty("observedHead"), "label"));
             Assert.AreEqual(
                 1,
@@ -425,7 +427,7 @@ namespace ModernWpf.Tools.Tests
                 "adopted",
                 RequiredString(productMain.GetProperty("epochAdoption"), "status"));
             Assert.AreEqual(
-                "docs/winui3-sync-2026-08-10-preview6.md",
+                "docs/winui3-sync-2026-09-06-rc1.md",
                 RequiredString(
                     productMain.GetProperty("epochAdoption"),
                     "dispositionDocument"));
@@ -527,7 +529,7 @@ namespace ModernWpf.Tools.Tests
                 "does not port, merge, or advance any baseline");
             StringAssert.Contains(
                 result.Markdown,
-                "Epoch adoption: `adopted` for `1.0.0-preview.6` at cutoff date `2026-08-10`; disposition `docs/winui3-sync-2026-08-10-preview6.md`.");
+                "Epoch adoption: `adopted` for `1.0.0-rc.1` at cutoff date `2026-09-06`; disposition `docs/winui3-sync-2026-09-06-rc1.md`.");
         }
 
         [TestMethod]
@@ -569,7 +571,7 @@ namespace ModernWpf.Tools.Tests
                     "winui-product",
                     "stable");
                 Assert.AreEqual(
-                    "winui3/release/2.3.1",
+                    "winui3/release/2.4.0",
                     RequiredString(cleanStable.GetProperty("observedHead"), "label"),
                     "Stable selection must use highest SemVer even when an older train was published later.");
             }
