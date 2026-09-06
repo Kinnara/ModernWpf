@@ -15,7 +15,8 @@ public class WindowBackdropSourceAuditTests
         var implementation = Read(repoRoot, "ModernWpf", "Window", "WindowBackdrop.cs");
         var kind = Read(repoRoot, "ModernWpf", "Window", "WindowBackdropKind.cs");
         var osVersion = Read(repoRoot, "ModernWpf", "Helpers", "OSVersionHelper.cs");
-        var publicApi = Read(repoRoot, "ModernWpf", "PublicAPI.Unshipped.txt");
+        var publicApi = Read(repoRoot, "ModernWpf", "PublicAPI.Shipped.txt") +
+            Read(repoRoot, "ModernWpf", "PublicAPI.Unshipped.txt");
         var tests = Read(
             repoRoot,
             "test",

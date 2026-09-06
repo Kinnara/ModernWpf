@@ -624,9 +624,9 @@ public class TemplateParityTests
     [TestMethod]
     public void WinUI3SourceAuthorityUsesAdoptedEpochManifest()
     {
-        const string currentProductCommit = "23a73be03d194ea0ece97da71de98b6b53021b70";
-        const string currentStableCommit = "a97562621a1d1ea397a38a3f512c9eef99db52d8";
-        const string currentGalleryCommit = "b78c440193aab788215888561e45adf72da848cb";
+        const string currentProductCommit = "26eb4a71b836378151a7961eb84ff60c8b5ae6e5";
+        const string currentStableCommit = "e8442d07ae57d2d3e653e616831f504937881bd3";
+        const string currentGalleryCommit = "b1730cb60a36014b1715df6b797e79a3f7c414ce";
         var repoRoot = FindRepoRoot();
         var docsDirectory = Path.Combine(repoRoot, "docs");
         using var manifest = JsonDocument.Parse(File.ReadAllText(Path.Combine(
@@ -690,10 +690,37 @@ public class TemplateParityTests
 
         var epochDocument = File.ReadAllText(Path.Combine(
             docsDirectory,
-            "winui3-sync-2026-08-10-preview6.md"));
+            "winui3-sync-2026-09-06-rc1.md"));
         StringAssert.Contains(epochDocument, currentProductCommit);
         StringAssert.Contains(epochDocument, currentStableCommit);
         StringAssert.Contains(epochDocument, currentGalleryCommit);
+
+        foreach (var track in new[] { productMain, productStable, galleryMain })
+        {
+            var adoption = track.GetProperty("epochAdoption");
+            Assert.AreEqual("adopted", adoption.GetProperty("status").GetString());
+            Assert.AreEqual("1.0.0-rc.1", adoption.GetProperty("milestone").GetString());
+            Assert.AreEqual("docs/winui3-sync-2026-09-06-rc1.md",
+                adoption.GetProperty("dispositionDocument").GetString());
+        }
+
+        var dispositions = File.ReadAllLines(Path.Combine(
+            docsDirectory, "winui3-sync-2026-09-06-rc1-paths.tsv"))
+            .Skip(1).Where(line => !string.IsNullOrWhiteSpace(line))
+            .Select(line => line.Split('\t')).ToArray();
+        Assert.AreEqual(424, dispositions.Length);
+        Assert.IsTrue(dispositions.All(row => row.Length == 5));
+        Assert.AreEqual(11, dispositions.Count(row => row[0] == "stable"));
+        Assert.AreEqual(378, dispositions.Count(row => row[0] == "main"));
+        Assert.AreEqual(35, dispositions.Count(row => row[0] == "gallery"));
+        Assert.AreEqual(dispositions.Length,
+            dispositions.Select(row => row[0] + ":" + row[2]).Distinct().Count());
+        foreach (var row in dispositions)
+        {
+            Assert.IsFalse(string.IsNullOrWhiteSpace(row[2]));
+            Assert.IsFalse(string.IsNullOrWhiteSpace(row[4]));
+            StringAssert.Contains(epochDocument, "| " + row[4] + " |");
+        }
     }
 
     [TestMethod]

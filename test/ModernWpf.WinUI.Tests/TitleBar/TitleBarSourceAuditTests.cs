@@ -31,8 +31,10 @@ public class TitleBarSourceAuditTests
             "TitleBar",
             "TitleBarAutomationPeer.cs");
         var generic = Read(repoRoot, "ModernWpf.Controls", "Themes", "Generic.xaml");
-        var publicApi = Read(repoRoot, "ModernWpf.Controls", "PublicAPI.Unshipped.txt");
-        var publicResourceKeys = Read(repoRoot, "ModernWpf", "PublicResourceKeys.Unshipped.txt");
+        var publicApi = Read(repoRoot, "ModernWpf.Controls", "PublicAPI.Shipped.txt") +
+            Read(repoRoot, "ModernWpf.Controls", "PublicAPI.Unshipped.txt");
+        var publicResourceKeys = Read(repoRoot, "ModernWpf", "PublicResourceKeys.Shipped.txt") +
+            Read(repoRoot, "ModernWpf", "PublicResourceKeys.Unshipped.txt");
         var controlsResources = Read(repoRoot, "ModernWpf", "ModernWpfControlsResources.xaml");
         var highContrastResources = Read(repoRoot, "ModernWpf", "ThemeResources", "HighContrast.xaml");
         var tests = Read(
