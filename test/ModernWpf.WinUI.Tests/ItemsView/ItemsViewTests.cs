@@ -378,7 +378,7 @@ public class ItemsViewTests
     {
         WpfTestHost.Run(() =>
         {
-            var firstProvider = new ItemCollectionTransitionProvider();
+            var firstProvider = new NonAnimatingTransitionProvider();
             var itemsView = CreateItemsView("Alpha", "Beta", "Gamma");
             itemsView.ItemTransitionProvider = firstProvider;
 
@@ -390,7 +390,7 @@ public class ItemsViewTests
                 itemsView);
             Assert.AreSame(firstProvider, repeater.ItemTransitionProvider);
 
-            var secondProvider = new ItemCollectionTransitionProvider();
+            var secondProvider = new NonAnimatingTransitionProvider();
             itemsView.ItemTransitionProvider = secondProvider;
             Assert.AreSame(secondProvider, repeater.ItemTransitionProvider);
         });
@@ -469,6 +469,13 @@ public class ItemsViewTests
                 Assert.AreEqual(1, itemsView.CurrentItemIndex, $"{scenario.Name} should move from the first item to the next spatial item.");
             }
         });
+    }
+
+    // The base provider intentionally throws from ShouldAnimateCore. This
+    // forwarding test must also work when Windows client-area animation is on.
+    private sealed class NonAnimatingTransitionProvider : ItemCollectionTransitionProvider
+    {
+        protected override bool ShouldAnimateCore(ItemCollectionTransition transition) => false;
     }
 
     private static Controls.ItemsView CreateItemsView(params string[] items)

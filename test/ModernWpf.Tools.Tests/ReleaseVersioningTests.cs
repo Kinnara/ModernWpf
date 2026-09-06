@@ -12,7 +12,7 @@ namespace ModernWpf.Tools.Tests
     public class ReleaseVersioningTests
     {
         [TestMethod]
-        public void ActivePackageBaselineShipsEveryPublicContractEntry()
+        public void ReleaseCandidateOrActivePackageBaselineShipsEveryPublicContractEntry()
         {
             var repoRoot = FindRepoRoot();
             var props = XDocument.Load(Path.Combine(repoRoot, "Directory.Build.props"));
@@ -21,7 +21,8 @@ namespace ModernWpf.Tools.Tests
                 props,
                 "ModernWpfPackageValidationBaselineVersion");
 
-            if (!string.Equals(version, baseline, StringComparison.Ordinal))
+            if (!version.Contains("-rc.", StringComparison.Ordinal) &&
+                !string.Equals(version, baseline, StringComparison.Ordinal))
             {
                 return;
             }

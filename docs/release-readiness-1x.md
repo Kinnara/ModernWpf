@@ -69,8 +69,9 @@ The release gate enforces:
 - The source-qualified public resource-key inventories in
   `ModernWpf/PublicResourceKeys.Shipped.txt` and
   `ModernWpf/PublicResourceKeys.Unshipped.txt`.
-- When the current package version equals the active package baseline, every
-  unshipped CLR and resource-key inventory must contain no contract entries.
+- For a release candidate, or when the current package version equals the
+  active package baseline, every unshipped CLR and resource-key inventory must
+  contain no contract entries.
 - Package export checks. Public top-level types must be in `ModernWpf`
   namespaces, apart from WPF's compiler-generated
   `XamlGeneratedNamespace.GeneratedInternalTypeHelper`, and the supported

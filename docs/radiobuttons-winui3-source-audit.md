@@ -75,6 +75,27 @@ Current authoritative blob identities:
 | `APITests/RadioButtonsTests.cs` | `0796f498aaa3a51f2b16bd00094336922e992438` |
 | `InteractionTests/RadioButtonsTests.cs` | `7d1bd8046b88f33520a1a0d5f3c5dc29c19292fd` |
 
+## RC 1 recycling update — 2026-09-06
+
+The review through product commit
+`26eb4a71b836378151a7961eb84ff60c8b5ae6e5` includes the upstream
+RadioButtonsElementFactory recycling fix. Factory-owned RadioButton wrappers
+are pooled and their checked/content/template state is cleared on recycling;
+user-created containers are returned to the configured item factory.
+
+WPF retains recycled elements as children of their ItemsRepeater. The pool
+therefore reuses a wrapper only for its original visual parent and discards
+the pool when a different parent requests an element. The ownership marker
+is a private attached property, not a new package API. WPF additionally clears
+ContentTemplateSelector alongside ContentTemplate.
+
+Three regressions cover virtualized scroll cycles, state clearing and parent
+ownership, and custom-factory recycling. Before the fix, the virtualizing
+test grew from 16 to 66 children and all three regressions failed. After the
+fix, the RadioButtons and ItemsView transition-forwarding slice passed all
+27 tests with no skips. The earlier blob table above records the pre-RC audit
+and is not an assertion that the factory/test blobs remain unchanged.
+
 ## Current WinUI Gallery Coverage
 
 The official WinUI Gallery tree at

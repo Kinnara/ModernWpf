@@ -5,14 +5,14 @@ Presentation Foundation applications. **ModernWPF** is the product name;
 `ModernWpfUI` remains the NuGet package ID and `ModernWpf` remains the CLR
 namespace and repository name.
 
-![ModernWPF Gallery showing controls, samples, and navigation](https://raw.githubusercontent.com/Kinnara/ModernWpf/v1.0.0-preview.7/docs/images/Gallery.Light.png)
+![ModernWPF Gallery showing controls, samples, and navigation](https://raw.githubusercontent.com/Kinnara/ModernWpf/v1.0.0-rc.1/docs/images/Gallery.Light.png)
 
-## Install Preview 7
+## Install Release Candidate 1
 
-Install the preview explicitly:
+Install the release candidate explicitly:
 
 ```powershell
-dotnet add package ModernWpfUI --version 1.0.0-preview.7
+dotnet add package ModernWpfUI --version 1.0.0-rc.1
 ```
 
 | Target framework | Stock-control theme |
@@ -56,11 +56,11 @@ frozen and unsupported; no maintenance or security updates are planned.
 
 ## Preview expectations and feedback
 
-The 1.0 preview series may make source-audited API or resource-key corrections
-before stable `1.0.0`. Intentional changes are documented with migration
-guidance; stable 1.0 will establish the SemVer compatibility boundary for 1.x.
+The release candidate freezes the intended 1.0 API and resource-key surface.
+Any accepted surface correction requires a new RC and restarts the soak;
+stable 1.0 will establish the SemVer compatibility boundary for 1.x.
 
-- [Preview 7 release notes](https://github.com/Kinnara/ModernWpf/blob/v1.0.0-preview.7/docs/release-notes-1.0.0-preview.7.md)
-- [Migrate from ModernWPF 0.9.x](https://github.com/Kinnara/ModernWpf/blob/v1.0.0-preview.7/docs/migrating-from-0.9.md)
+- [RC 1 release notes](https://github.com/Kinnara/ModernWpf/blob/v1.0.0-rc.1/docs/release-notes-1.0.0-rc.1.md)
+- [Migrate from ModernWPF 0.9.x](https://github.com/Kinnara/ModernWpf/blob/v1.0.0-rc.1/docs/migrating-from-0.9.md)
 - [Report a Preview bug](https://github.com/Kinnara/ModernWpf/issues/new?template=preview-bug.yml)
 - [Documentation and source](https://github.com/Kinnara/ModernWpf#documentation)

@@ -4,6 +4,20 @@ ModernWpf.ApplicationTheme.Dark = 1 -> ModernWpf.ApplicationTheme
 ModernWpf.ApplicationTheme.Light = 0 -> ModernWpf.ApplicationTheme
 ModernWpf.Automation.Peers.ProgressBarAutomationPeer
 ModernWpf.Automation.Peers.WindowTitleBarControlAutomationPeer
+ModernWpf.BringIntoViewOptions
+ModernWpf.BringIntoViewOptions.AnimationDesired.get -> bool
+ModernWpf.BringIntoViewOptions.AnimationDesired.set -> void
+ModernWpf.BringIntoViewOptions.BringIntoViewOptions() -> void
+ModernWpf.BringIntoViewOptions.HorizontalAlignmentRatio.get -> double
+ModernWpf.BringIntoViewOptions.HorizontalAlignmentRatio.set -> void
+ModernWpf.BringIntoViewOptions.HorizontalOffset.get -> double
+ModernWpf.BringIntoViewOptions.HorizontalOffset.set -> void
+ModernWpf.BringIntoViewOptions.TargetRect.get -> System.Windows.Rect?
+ModernWpf.BringIntoViewOptions.TargetRect.set -> void
+ModernWpf.BringIntoViewOptions.VerticalAlignmentRatio.get -> double
+ModernWpf.BringIntoViewOptions.VerticalAlignmentRatio.set -> void
+ModernWpf.BringIntoViewOptions.VerticalOffset.get -> double
+ModernWpf.BringIntoViewOptions.VerticalOffset.set -> void
 ModernWpf.ColorPaletteResources
 ModernWpf.ColorPaletteResources.Accent.get -> System.Windows.Media.Color?
 ModernWpf.ColorPaletteResources.Accent.set -> void
@@ -671,6 +685,11 @@ ModernWpf.Controls.VariableSizedWrapGrid.Orientation.set -> void
 ModernWpf.Controls.VariableSizedWrapGrid.VariableSizedWrapGrid() -> void
 ModernWpf.Controls.VariableSizedWrapGrid.VerticalChildrenAlignment.get -> System.Windows.VerticalAlignment
 ModernWpf.Controls.VariableSizedWrapGrid.VerticalChildrenAlignment.set -> void
+ModernWpf.Controls.WindowBackdrop
+ModernWpf.Controls.WindowBackdropKind
+ModernWpf.Controls.WindowBackdropKind.DesktopAcrylic = 2 -> ModernWpf.Controls.WindowBackdropKind
+ModernWpf.Controls.WindowBackdropKind.Mica = 1 -> ModernWpf.Controls.WindowBackdropKind
+ModernWpf.Controls.WindowBackdropKind.None = 0 -> ModernWpf.Controls.WindowBackdropKind
 ModernWpf.Controls.WindowTitleBar
 ModernWpf.Controls.WrapGrid
 ModernWpf.Controls.WrapGrid.WrapGrid() -> void
@@ -773,7 +792,6 @@ ModernWpf.ThemeResources.RequestedTheme.get -> ModernWpf.ApplicationTheme?
 ModernWpf.ThemeResources.RequestedTheme.set -> void
 ModernWpf.ThemeResources.ThemeResources() -> void
 ModernWpf.TypedEventHandler<TSender, TResult>
-virtual ModernWpf.TypedEventHandler<TSender, TResult>.Invoke(TSender sender, TResult args) -> void
 ModernWpf.VisualStateEx
 ModernWpf.VisualStateEx.VisualStateEx() -> void
 ModernWpf.VisualStateManagerEx
@@ -821,6 +839,7 @@ override ModernWpf.Controls.VariableSizedWrapGrid.ArrangeOverride(System.Windows
 override ModernWpf.Controls.VariableSizedWrapGrid.MeasureOverride(System.Windows.Size availableSize) -> System.Windows.Size
 override ModernWpf.Media.Animation.CubicBezierEase.EaseInCore(double normalizedTime) -> double
 override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
+virtual ModernWpf.TypedEventHandler<TSender, TResult>.Invoke(TSender sender, TResult args) -> void
 ~ModernWpf.Automation.Peers.ProgressBarAutomationPeer.ProgressBarAutomationPeer(ModernWpf.Controls.ProgressBar owner) -> void
 ~ModernWpf.Automation.Peers.WindowTitleBarControlAutomationPeer.WindowTitleBarControlAutomationPeer(ModernWpf.Controls.Primitives.WindowTitleBarControl owner) -> void
 ~ModernWpf.Controls.BitmapIcon.UriSource.get -> System.Uri
@@ -1204,6 +1223,11 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~static ModernWpf.Controls.VariableSizedWrapGrid.GetRowSpan(System.Windows.UIElement element) -> int
 ~static ModernWpf.Controls.VariableSizedWrapGrid.SetColumnSpan(System.Windows.UIElement element, int value) -> void
 ~static ModernWpf.Controls.VariableSizedWrapGrid.SetRowSpan(System.Windows.UIElement element, int value) -> void
+~static ModernWpf.Controls.WindowBackdrop.GetEffectiveKind(System.Windows.Window window) -> ModernWpf.Controls.WindowBackdropKind
+~static ModernWpf.Controls.WindowBackdrop.GetFallbackBrush(System.Windows.Window window) -> System.Windows.Media.Brush
+~static ModernWpf.Controls.WindowBackdrop.GetKind(System.Windows.Window window) -> ModernWpf.Controls.WindowBackdropKind
+~static ModernWpf.Controls.WindowBackdrop.SetFallbackBrush(System.Windows.Window window, System.Windows.Media.Brush value) -> void
+~static ModernWpf.Controls.WindowBackdrop.SetKind(System.Windows.Window window, ModernWpf.Controls.WindowBackdropKind value) -> void
 ~static ModernWpf.Controls.WindowTitleBar.AddBackRequestedHandler(System.Windows.Window window, System.EventHandler<ModernWpf.Controls.BackRequestedEventArgs> handler) -> void
 ~static ModernWpf.Controls.WindowTitleBar.GetBackButtonCommand(System.Windows.Window window) -> System.Windows.Input.ICommand
 ~static ModernWpf.Controls.WindowTitleBar.GetBackButtonCommandParameter(System.Windows.Window window) -> object
@@ -1516,6 +1540,9 @@ override ModernWpf.Media.Animation.CubicBezierEase.OnChanged() -> void
 ~static readonly ModernWpf.Controls.VariableSizedWrapGrid.OrientationProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.VariableSizedWrapGrid.RowSpanProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.VariableSizedWrapGrid.VerticalChildrenAlignmentProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowBackdrop.EffectiveKindProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowBackdrop.FallbackBrushProperty -> System.Windows.DependencyProperty
+~static readonly ModernWpf.Controls.WindowBackdrop.KindProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.WindowTitleBar.BackButtonCommandParameterProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.WindowTitleBar.BackButtonCommandProperty -> System.Windows.DependencyProperty
 ~static readonly ModernWpf.Controls.WindowTitleBar.BackButtonCommandTargetProperty -> System.Windows.DependencyProperty

@@ -35,11 +35,11 @@ The contract applies to all supported package targets:
 | Current ModernWpf | The API that ships in `ModernWpf.dll` and `ModernWpf.Controls.dll`. | Audited against `1.0.0-preview.1` and later accepted package baselines. Preview changes may be deliberately rebaselined; stable 1.x changes follow SemVer. |
 | `0.9.7-preview.2` | Last public prerelease and historical migration input. | Not a compatibility baseline. It has 263 ModernWpf top-level public types; the v1 candidate has 347. The v1 set adds 117 and removes 33 relative to this release. |
 | `0.9.6` | Last stable public release and historical migration input. | Not a compatibility baseline. It has 261 ModernWpf top-level public types; v1 adds 119 and removes 33 relative to it. |
-| Current WinUI | Primary naming, control-shape, event, sealing, and versionability authority for WinUI-derived ModernWpf controls. | Follow current applicable WinUI, including API changes during previews, unless WPF requires a documented adaptation. The adopted product epoch is [`microsoft-ui-xaml` commit `23a73be0`](https://github.com/microsoft/microsoft-ui-xaml/commit/23a73be03d194ea0ece97da71de98b6b53021b70), reconciled with stable `winui3/release/2.3.1` and Gallery in `docs/winui3-sync-2026-08-10-preview6.md`; moving selectors and family mappings live in `tools/upstream/upstream-sync.json`. |
+| Current WinUI | Primary naming, control-shape, event, sealing, and versionability authority for WinUI-derived ModernWpf controls. | Follow current applicable WinUI, including API changes during previews, unless WPF requires a documented adaptation. The adopted product epoch is [`microsoft-ui-xaml` commit `26eb4a71`](https://github.com/microsoft/microsoft-ui-xaml/commit/26eb4a71b836378151a7961eb84ff60c8b5ae6e5), reconciled with stable `winui3/release/2.4.0` and Gallery in `docs/winui3-sync-2026-09-06-rc1.md`; moving selectors and family mappings live in `tools/upstream/upstream-sync.json`. |
 | Official WPF Fluent | Primary styling and behavior authority for stock WPF controls, and the platform Fluent implementation used on .NET 10. | Complements WinUI; it does not rename ModernWpf custom-control CLR APIs. Audited source is [`dotnet/wpf` commit `7f005faa`](https://github.com/dotnet/wpf/commit/7f005faa89e79b0b1fa1cb2c21283bab7916c092). |
 
-The current checked-in CLR baseline contains 1,572 API entries for
-`ModernWpf.dll` and 3,163 for `ModernWpf.Controls.dll`. The packaged .NET 8
+The RC 1 checked-in CLR baseline contains 1,586 API entries for
+`ModernWpf.dll` and 3,225 for `ModernWpf.Controls.dll`. The packaged .NET 8
 assemblies expose 125 and 265 supported top-level types respectively. WPF's
 generated `GeneratedInternalTypeHelper` is compiler infrastructure and is not
 a supported ModernWpf API.
@@ -173,9 +173,13 @@ existing manifest and add newly chosen public keys to the unshipped file.
    unshipped resource entries. Update or remove an existing entry only under
    the deliberate-break rule.
 5. Build every target framework and run the theme/resource tests.
-6. Before publishing an accepted package baseline, promote every accepted
-   entry to the corresponding shipped inventory. A build whose version equals
-   the active package baseline requires all unshipped inventories to be empty.
+6. Before publishing a release candidate or an accepted package baseline,
+   promote every accepted entry to the corresponding shipped inventory. RC
+   builds and builds whose version equals the active package baseline require
+   all unshipped inventories to be empty. RC 1 freezes 5,501 source-qualified
+   resource entries and the CLR counts above without changing the combined
+   Shipped/Unshipped surface. Surface changes after RC acceptance require a
+   new RC and restart the unchanged 14-day soak.
 7. Pack the NuGet package. Strict cross-target validation always applies. When
    the current version differs from
    `ModernWpfPackageValidationBaselineVersion`, NuGet also compares with that

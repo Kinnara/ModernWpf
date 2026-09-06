@@ -21,6 +21,104 @@ namespace ModernWpf.WinUI.Tests.RadioButtons;
 public class RadioButtonsApiTests
 {
     [TestMethod]
+    public void VerifyVirtualizingTemplateDoesNotRetainRecycledContainers()
+    {
+        WpfTestHost.Run(() =>
+        {
+            TestApplication.EnsureInitialized();
+            var radioButtons = new ModernWpf.Controls.RadioButtons
+            {
+                ItemsSource = Enumerable.Range(0, 100).Select(index => $"Option {index}").ToArray(),
+                SelectedIndex = 0,
+                Template = (ControlTemplate)XamlReader.Parse(@"
+                    <ControlTemplate xmlns='http://schemas.microsoft.com/winfx/2006/xaml/presentation'
+                        xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'
+                        xmlns:ui='clr-namespace:ModernWpf.Controls;assembly=ModernWpf.Controls'
+                        TargetType='{x:Type ui:RadioButtons}'>
+                        <ui:ItemsRepeaterScrollHost>
+                            <ScrollViewer x:Name='Scroller' Height='120' VerticalScrollBarVisibility='Auto'
+                                HorizontalScrollBarVisibility='Disabled'>
+                                <ui:ItemsRepeater x:Name='InnerRepeater' VerticalCacheLength='0'>
+                                    <ui:ItemsRepeater.Layout><ui:StackLayout/></ui:ItemsRepeater.Layout>
+                                </ui:ItemsRepeater>
+                            </ScrollViewer>
+                        </ui:ItemsRepeaterScrollHost>
+                    </ControlTemplate>")
+            };
+            using var host = new TestWindowHost(radioButtons, width: 320, height: 200);
+            var scroller = FindNamedDescendant<ScrollViewer>(radioButtons, "Scroller");
+            var repeater = FindNamedDescendant<ItemsRepeater>(radioButtons, "InnerRepeater");
+            var clearingCount = 0;
+            repeater.ElementClearing += (_, _) => clearingCount++;
+
+            void Scroll(bool toEnd)
+            {
+                scroller.ScrollToVerticalOffset(toEnd ? scroller.ScrollableHeight : 0);
+                host.UpdateLayout();
+                WpfTestHost.DoEvents();
+                host.UpdateLayout();
+            }
+
+            Scroll(true);
+            Scroll(false);
+            var baselineChildCount = VisualTreeHelper.GetChildrenCount(repeater);
+            Assert.IsTrue(baselineChildCount > 0 && baselineChildCount < 100);
+            for (var iteration = 0; iteration < 5; iteration++)
+            {
+                Scroll(true);
+                Scroll(false);
+            }
+
+            Assert.IsTrue(clearingCount > 0);
+            Assert.AreEqual(baselineChildCount, VisualTreeHelper.GetChildrenCount(repeater));
+            Assert.AreEqual("Option 0", ((RadioButton)radioButtons.ContainerFromIndex(0)).Content);
+        });
+    }
+
+    [TestMethod]
+    public void RecycledWrappersClearStateAndStayWithTheirOriginalParent()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var factory = new RadioButtonsElementFactory();
+            var parent = new StackPanel();
+            var wrapper = (RadioButton)((IElementFactory)factory).GetElement(
+                new ElementFactoryGetArgs { Parent = parent, Data = "First" });
+            parent.Children.Add(wrapper);
+            wrapper.IsChecked = true;
+            wrapper.ContentTemplate = new DataTemplate();
+            wrapper.ContentTemplateSelector = new ConstantTemplateSelector(new DataTemplate());
+            ((IElementFactory)factory).RecycleElement(new ElementFactoryRecycleArgs { Parent = parent, Element = wrapper });
+            Assert.IsFalse(wrapper.IsChecked == true);
+            Assert.IsNull(wrapper.Content);
+            Assert.IsNull(wrapper.ContentTemplate);
+            Assert.IsNull(wrapper.ContentTemplateSelector);
+
+            var reused = ((IElementFactory)factory).GetElement(new ElementFactoryGetArgs { Parent = parent, Data = "Second" });
+            Assert.AreSame(wrapper, reused);
+            Assert.AreEqual("Second", wrapper.Content);
+            ((IElementFactory)factory).RecycleElement(new ElementFactoryRecycleArgs { Parent = parent, Element = wrapper });
+            var other = ((IElementFactory)factory).GetElement(new ElementFactoryGetArgs { Parent = new StackPanel(), Data = "Other" });
+            Assert.AreNotSame(wrapper, other);
+        });
+    }
+
+    [TestMethod]
+    public void RecyclingUserContainersDelegatesToTheirFactory()
+    {
+        WpfTestHost.Run(() =>
+        {
+            var userFactory = new RecordingRadioButtonFactory();
+            var factory = new RadioButtonsElementFactory();
+            factory.UserElementFactory(userFactory);
+            var element = ((IElementFactory)factory).GetElement(new ElementFactoryGetArgs { Data = "User" });
+            var args = new ElementFactoryRecycleArgs { Element = element };
+            ((IElementFactory)factory).RecycleElement(args);
+            Assert.AreSame(args, userFactory.RecycledArgs);
+        });
+    }
+
+    [TestMethod]
     public void VerifyHeaderPresenterMatchesWinUITemplate()
     {
         WpfTestHost.Run(() =>
@@ -308,6 +406,15 @@ public class RadioButtonsApiTests
         }
 
         throw new AssertFailedException($"Could not find descendant named '{name}'.");
+    }
+
+    private sealed class RecordingRadioButtonFactory : ElementFactory
+    {
+        public ElementFactoryRecycleArgs? RecycledArgs { get; private set; }
+
+        protected override UIElement GetElementCore(ElementFactoryGetArgs args) => new RadioButton { Content = args.Data };
+
+        protected override void RecycleElementCore(ElementFactoryRecycleArgs args) => RecycledArgs = args;
     }
 
     private sealed class ConstantTemplateSelector : DataTemplateSelector
