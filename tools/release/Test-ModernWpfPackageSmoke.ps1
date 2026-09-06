@@ -224,7 +224,10 @@ public partial class App : Application
 
     $projectPath = Join-Path $projectDirectory "ModernWpf.PackageSmoke.csproj"
     $nugetConfigPath = Join-Path $projectDirectory "nuget.config"
-    $legacyPackages = Join-Path $projectDirectory "packages"
+    # Keep restored files outside the project: SDK None/Content globs feed
+    # ResolveAssemblyReference's CandidateAssemblyFiles and can otherwise let
+    # net462 resolve framework references from restored net8/net10 packs.
+    $legacyPackages = Join-Path $workRoot "legacy-packages"
 
     dotnet restore $projectPath `
         --configfile $nugetConfigPath `

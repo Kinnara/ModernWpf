@@ -397,6 +397,25 @@ namespace ModernWpf.Tools.Tests
         }
 
         [TestMethod]
+        public void PackageSmokeKeepsRestoreCachesOutsideConsumerProjects()
+        {
+            var smoke = File.ReadAllText(Path.Combine(
+                FindRepoRoot(), "tools", "release", "Test-ModernWpfPackageSmoke.ps1"));
+
+            // An in-project cache is globbed into None/Content and therefore
+            // ResolveAssemblyReference's CandidateAssemblyFiles. A net462
+            // consumer can then pick up a restored net8 reference assembly.
+            StringAssert.Contains(smoke, "$projectDirectory = Join-Path $workRoot $resourceType");
+            StringAssert.Contains(smoke, "$checkedInPackages = Join-Path $workRoot \"packages\"");
+            StringAssert.Contains(smoke, "$legacyPackages = Join-Path $workRoot \"legacy-packages\"");
+            Assert.IsFalse(smoke.Contains("$legacyPackages = Join-Path $projectDirectory", StringComparison.Ordinal));
+            StringAssert.Contains(smoke, "--packages $legacyPackages");
+            StringAssert.Contains(smoke, "-p:RestorePackagesPath=$legacyPackages");
+            StringAssert.Contains(smoke, "--warnaserror:MSB3277");
+            StringAssert.Contains(smoke, "-PackagesPath $legacyPackages");
+        }
+
+        [TestMethod]
         public void PublicSamplesUseRecommendedFluentResourceEntry()
         {
             var repoRoot = FindRepoRoot();
